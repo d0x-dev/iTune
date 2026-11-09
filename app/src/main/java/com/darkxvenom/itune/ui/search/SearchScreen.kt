@@ -1,6 +1,8 @@
 package com.darkxvenom.itune.ui.search
 
 import android.widget.Toast
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,6 +37,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,8 +45,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -68,6 +73,18 @@ fun SearchScreen(
     val context = LocalContext.current
     val gridState = rememberLazyGridState()
     var searchQuery by remember { mutableStateOf("") }
+
+    val isScrolled by remember {
+        derivedStateOf {
+            gridState.firstVisibleItemIndex > 0 || gridState.firstVisibleItemScrollOffset > 4
+        }
+    }
+
+    val topShadeAlpha by animateFloatAsState(
+        targetValue = if (isScrolled) 1f else 0f,
+        animationSpec = tween(durationMillis = 300),
+        label = "SearchTopShadeAlpha"
+    )
 
     val filteredCategories = remember(searchQuery) {
         if (searchQuery.isBlank()) {
@@ -148,6 +165,26 @@ fun SearchScreen(
                 )
             }
         }
+
+        // Top Status Bar Area Black Blur Shade Scrim: Only appears when scrolling down
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .height(110.dp)
+                .graphicsLayer { alpha = topShadeAlpha }
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            AppleOledBlack,
+                            AppleOledBlack.copy(alpha = 0.94f),
+                            AppleOledBlack.copy(alpha = 0.65f),
+                            AppleOledBlack.copy(alpha = 0.25f),
+                            Color.Transparent
+                        )
+                    )
+                )
+        )
     }
 }
 

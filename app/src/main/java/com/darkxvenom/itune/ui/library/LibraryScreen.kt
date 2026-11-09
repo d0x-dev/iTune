@@ -1,6 +1,8 @@
 package com.darkxvenom.itune.ui.library
 
 import android.widget.Toast
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
@@ -27,11 +30,15 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -58,6 +65,19 @@ fun LibraryScreen(
     onRecentAlbumClick: (LibraryRecentAlbum) -> Unit = {}
 ) {
     val context = LocalContext.current
+    val listState = rememberLazyListState()
+
+    val isScrolled by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 4
+        }
+    }
+
+    val topShadeAlpha by animateFloatAsState(
+        targetValue = if (isScrolled) 1f else 0f,
+        animationSpec = tween(durationMillis = 300),
+        label = "LibraryTopShadeAlpha"
+    )
 
     Box(
         modifier = modifier
@@ -65,6 +85,7 @@ fun LibraryScreen(
             .background(AppleOledBlack)
     ) {
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .springOverscroll(),
@@ -221,6 +242,26 @@ fun LibraryScreen(
                 }
             }
         }
+
+        // Top Status Bar Area Black Blur Shade Scrim: Only appears when scrolling down
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .height(110.dp)
+                .graphicsLayer { alpha = topShadeAlpha }
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            AppleOledBlack,
+                            AppleOledBlack.copy(alpha = 0.94f),
+                            AppleOledBlack.copy(alpha = 0.65f),
+                            AppleOledBlack.copy(alpha = 0.25f),
+                            Color.Transparent
+                        )
+                    )
+                )
+        )
     }
 }
 
