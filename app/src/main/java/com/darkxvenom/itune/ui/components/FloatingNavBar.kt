@@ -1,7 +1,6 @@
 package com.darkxvenom.itune.ui.components
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -38,6 +37,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,12 +86,13 @@ fun FloatingNavBar(
     val density = LocalDensity.current
     val coroutineScope = rememberCoroutineScope()
 
+    val currentSelectedTab by rememberUpdatedState(selectedTab)
+    val currentOnTabSelected by rememberUpdatedState(onTabSelected)
+
     var dockWidthPx by remember { mutableFloatStateOf(0f) }
     var isHolding by remember { mutableStateOf(false) }
     var dragFingerX by remember { mutableFloatStateOf(0f) }
     var hoveredIndex by remember { mutableIntStateOf(selectedTab?.ordinal ?: 0) }
-
-    val bubbleScale = remember { Animatable(1.0f) }
 
     LaunchedEffect(selectedTab, isHolding, isSearchActive) {
         if (!isHolding && selectedTab != null) {
@@ -99,24 +100,24 @@ fun FloatingNavBar(
         }
     }
 
-    // Dynamic morphing between:
-    // 1. Resting Shell: subtle inside-dock oval capsule (58dp x 46dp) matching media_1794248305825_dc654f82.png
-    // 2. Glassy Water Droplet: 3D protruding liquid bubble (72dp x 65dp) matching media_1794246658446_33556023.png on tap-and-hold
+    // Dynamic morphing:
+    // 1. Normal resting shade: subtle inside-dock oval capsule (58dp x 44dp) with red text/icon
+    // 2. Tap-and-hold glassy bubble: width kept wide (72dp), height decreased to sleek 48dp (compact, not tall)
     val currentBubbleWidthDp by animateDpAsState(
         targetValue = if (isHolding) 72.dp else 58.dp,
-        animationSpec = spring(dampingRatio = 0.65f, stiffness = 340f),
+        animationSpec = tween(durationMillis = 160),
         label = "BubbleWidth"
     )
 
     val currentBubbleHeightDp by animateDpAsState(
-        targetValue = if (isHolding) 65.dp else 46.dp,
-        animationSpec = spring(dampingRatio = 0.65f, stiffness = 340f),
+        targetValue = if (isHolding) 48.dp else 44.dp,
+        animationSpec = tween(durationMillis = 160),
         label = "BubbleHeight"
     )
 
     val holdingProgress by animateFloatAsState(
         targetValue = if (isHolding) 1f else 0f,
-        animationSpec = spring(dampingRatio = 0.70f, stiffness = 300f),
+        animationSpec = tween(durationMillis = 160),
         label = "HoldingProgress"
     )
 
@@ -129,7 +130,7 @@ fun FloatingNavBar(
     val restingX = slotCenterX - bubbleWidthPx / 2f
 
     val targetBubbleX = if (isHolding) {
-        (dragFingerX - bubbleWidthPx / 2f).coerceIn(-12f, dockWidthPx - bubbleWidthPx + 12f)
+        (dragFingerX - bubbleWidthPx / 2f).coerceIn(0f, dockWidthPx - bubbleWidthPx)
     } else {
         restingX
     }
@@ -173,78 +174,69 @@ fun FloatingNavBar(
                 .onSizeChanged { size ->
                     dockWidthPx = size.width.toFloat()
                 }
-                .pointerInput(selectedTab, slotWidthPx, isSearchActive) {
+                .pointerInput(Unit) {
                     awaitEachGesture {
                         val down = awaitFirstDown(requireUnconsumed = false)
-                        val sWidth = if (dockWidthPx > 0f) dockWidthPx / tabCount else size.width.toFloat() / tabCount
-                        val targetSlot = (down.position.x / sWidth).toInt().coerceIn(0, tabCount - 1)
+                        val sWidth = size.width.toFloat() / tabCount
+                        val startSlot = (down.position.x / sWidth).toInt().coerceIn(0, tabCount - 1)
 
-                        // 1. Immediately switch tab on touch (0ms latency, zero delay!)
-                        onTabSelected(NavTab.entries[targetSlot])
                         dragFingerX = down.position.x
-                        hoveredIndex = targetSlot
+                        hoveredIndex = startSlot
 
-                        // 2. Tap-and-hold triggers the 3D liquid glassy water droplet bubble!
-                        var isDragging = false
+                        var isHoldActive = false
+                        var isDragActive = false
+
+                        // Hold timer (260ms). If user lifts finger before 260ms, it is a normal TAP:
+                        // holdJob is cancelled, isHolding remains FALSE, glassy bubble NEVER appears!
                         val holdJob = coroutineScope.launch {
-                            delay(110)
+                            delay(260)
+                            isHoldActive = true
                             isHolding = true
-                            bubbleScale.animateTo(
-                                targetValue = 1.28f,
-                                animationSpec = spring(
-                                    dampingRatio = 0.62f,
-                                    stiffness = 220f
-                                )
-                            )
                         }
 
                         while (true) {
                             val event = awaitPointerEvent()
                             val change = event.changes.firstOrNull { it.id == down.id } ?: break
-                            if (!change.pressed) break
 
-                            val moveDelta = abs(change.position.x - down.position.x)
-                            if (moveDelta > 8f) {
-                                isDragging = true
+                            if (!change.pressed) {
+                                // FINGER LIFTED (RELEASED)
+                                holdJob.cancel()
+                                if (isHoldActive || isDragActive) {
+                                    // User held/slid and released: select destination tab, immediately convert back to normal shade
+                                    val finalSlot = (dragFingerX / sWidth).toInt().coerceIn(0, tabCount - 1)
+                                    isHolding = false
+                                    hoveredIndex = finalSlot
+                                    currentOnTabSelected(NavTab.entries[finalSlot])
+                                } else {
+                                    // Simple one-tap: IMMEDIATELY select tab, stay in normal resting shade!
+                                    isHolding = false
+                                    hoveredIndex = startSlot
+                                    currentOnTabSelected(NavTab.entries[startSlot])
+                                }
+                                change.consume()
+                                break
+                            }
+
+                            // Pointer moving
+                            val moveDistance = abs(change.position.x - down.position.x)
+                            if (moveDistance > 12f) {
+                                isDragActive = true
                                 dragFingerX = change.position.x
                                 val currentSlot = (change.position.x / sWidth).toInt().coerceIn(0, tabCount - 1)
                                 hoveredIndex = currentSlot
 
-                                if (!isHolding) {
+                                if (!isHoldActive) {
+                                    holdJob.cancel()
+                                    isHoldActive = true
                                     isHolding = true
-                                    coroutineScope.launch {
-                                        bubbleScale.animateTo(
-                                            targetValue = 1.28f,
-                                            animationSpec = spring(
-                                                dampingRatio = 0.62f,
-                                                stiffness = 220f
-                                            )
-                                        )
-                                    }
                                 }
                                 change.consume()
                             }
                         }
 
+                        // Guaranteed safety cleanup on any pointer exit
                         holdJob.cancel()
-                        val finalFingerX = dragFingerX
-                        val wasHolding = isHolding
                         isHolding = false
-
-                        coroutineScope.launch {
-                            bubbleScale.animateTo(
-                                targetValue = 1.0f,
-                                animationSpec = spring(
-                                    dampingRatio = 0.55f,
-                                    stiffness = 280f
-                                )
-                            )
-                        }
-
-                        if (isDragging || wasHolding) {
-                            val destinationSlot = (finalFingerX / sWidth).toInt().coerceIn(0, tabCount - 1)
-                            onTabSelected(NavTab.entries[destinationSlot])
-                        }
                     }
                 },
             contentAlignment = Alignment.CenterStart
@@ -265,7 +257,7 @@ fun FloatingNavBar(
                     .border(0.75.dp, AppleGlassBorder, shape = RoundedCornerShape(percent = 50))
             )
 
-            // Layer 2: Selected Indicator (Morphs between resting shell & liquid glassy water droplet on hold)
+            // Layer 2: Selected Indicator (Normal resting shade by default; sleek glassy bubble ONLY on hold)
             if (dockWidthPx > 0f && (selectedTab != null || isHolding)) {
                 Box(
                     modifier = Modifier
@@ -274,24 +266,22 @@ fun FloatingNavBar(
                         .width(currentBubbleWidthDp)
                         .height(currentBubbleHeightDp)
                         .graphicsLayer {
-                            scaleX = bubbleScale.value
-                            scaleY = bubbleScale.value
                             alpha = bubbleAlpha
                         }
                         .shadow(
-                            elevation = (18.dp * holdingProgress),
+                            elevation = (12.dp * holdingProgress),
                             shape = RoundedCornerShape(percent = 50),
-                            ambientColor = Color.Black.copy(alpha = 0.70f * holdingProgress),
-                            spotColor = Color.Black.copy(alpha = 0.85f * holdingProgress)
+                            ambientColor = Color.Black.copy(alpha = 0.50f * holdingProgress),
+                            spotColor = Color.Black.copy(alpha = 0.70f * holdingProgress)
                         )
                         .clip(RoundedCornerShape(percent = 50))
-                        // Resting Shell Background (Subtle dark translucent oval inside dock, matches media_1794248305825_dc654f82.png)
+                        // Resting Normal Shade (subtle dark oval, matches media_1794248305825_dc654f82.png)
                         .background(
                             Color.White.copy(alpha = 0.12f * (1f - holdingProgress * 0.4f)),
                             shape = RoundedCornerShape(percent = 50)
                         )
                 ) {
-                    // Glassy Water Droplet Overlay (Comes alive on tap-and-hold, matches media_1794246658446_33556023.png)
+                    // Glassy Water Droplet Overlay (Comes alive ONLY on tap-and-hold, height 48dp)
                     if (holdingProgress > 0.01f) {
                         Box(
                             modifier = Modifier
@@ -309,7 +299,7 @@ fun FloatingNavBar(
                                     shape = RoundedCornerShape(percent = 50)
                                 )
                                 .border(
-                                    width = 1.25.dp,
+                                    width = 1.1.dp,
                                     brush = Brush.verticalGradient(
                                         colors = listOf(
                                             Color.White.copy(alpha = 0.85f),
@@ -321,13 +311,13 @@ fun FloatingNavBar(
                                     shape = RoundedCornerShape(percent = 50)
                                 )
                         ) {
-                            // Top Specular Lens Glare Arc (Convex Water Droplet Lens Highlight)
+                            // Top Specular Lens Glare Arc
                             Box(
                                 modifier = Modifier
-                                    .padding(top = 3.dp)
+                                    .padding(top = 2.dp)
                                     .align(Alignment.TopCenter)
-                                    .width(34.dp)
-                                    .height(5.dp)
+                                    .width(32.dp)
+                                    .height(4.dp)
                                     .clip(RoundedCornerShape(percent = 50))
                                     .background(
                                         Brush.verticalGradient(
@@ -342,9 +332,9 @@ fun FloatingNavBar(
                             // Bottom Ambient Meniscus Light Bounce
                             Box(
                                 modifier = Modifier
-                                    .padding(bottom = 3.dp)
+                                    .padding(bottom = 2.dp)
                                     .align(Alignment.BottomCenter)
-                                    .width(26.dp)
+                                    .width(24.dp)
                                     .height(3.dp)
                                     .clip(RoundedCornerShape(percent = 50))
                                     .background(
@@ -361,7 +351,7 @@ fun FloatingNavBar(
                 }
             }
 
-            // Layer 3: Tabs Row (Red on resting shell, White inside glassy bubble when holding)
+            // Layer 3: Tabs Row (Red on normal shade, White inside glassy bubble when holding)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -404,7 +394,7 @@ fun FloatingNavBar(
             }
         }
 
-        // Circular Apple Search Button (Highlighted in Apple Music Red when Search Screen is active)
+        // Circular Apple Search Button
         Box(
             modifier = Modifier
                 .size(dockHeight)
@@ -463,9 +453,6 @@ private fun AppleNavTabItem(
     isHolding: Boolean,
     modifier: Modifier = Modifier
 ) {
-    // 1. Initially selected shell at rest: Apple Music Red (matches media_1794248305825_dc654f82.png)
-    // 2. When tap-and-held inside 3D glassy water droplet: Color.White (matches media_1794246658446_33556023.png)
-    // 3. Unselected tabs: White with 0.85 alpha
     val targetColor = when {
         isHighlighted && isHolding -> Color.White
         isHighlighted -> AppleMusicRed
