@@ -1,12 +1,8 @@
 package com.darkxvenom.itune.ui.home
 
 import android.widget.Toast
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,8 +67,21 @@ fun HomeScreen(
     var isPlaying by remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) }
 
+    // Retain visited screens in memory so navigation is 100% instantaneous with zero GC or layout stutter
+    var hasVisitedBrowse by remember { mutableStateOf(false) }
+    var hasVisitedLibrary by remember { mutableStateOf(false) }
+    var hasVisitedSearch by remember { mutableStateOf(false) }
+
+    LaunchedEffect(currentScreen) {
+        when (currentScreen) {
+            AppScreen.BROWSE -> hasVisitedBrowse = true
+            AppScreen.LIBRARY -> hasVisitedLibrary = true
+            AppScreen.SEARCH -> hasVisitedSearch = true
+            AppScreen.HOME -> Unit
+        }
+    }
+
     // ONLY trigger loading when pulling down from the very top of the list (item 0)
-    // Never trigger at the bottom/end of the screen
     LaunchedEffect(overscrollState.offset.value) {
         if (listState.firstVisibleItemIndex == 0 && overscrollState.offset.value > 25f && !isRefreshing) {
             isRefreshing = true
@@ -104,154 +113,182 @@ fun HomeScreen(
             .fillMaxSize()
             .background(AppleOledBlack)
     ) {
-        AnimatedContent(
-            targetState = currentScreen,
-            transitionSpec = { fadeIn(tween(220)) togetherWith fadeOut(tween(220)) },
-            label = "ScreenTransition"
-        ) { screen ->
-            when (screen) {
-                AppScreen.HOME -> {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        // Main Scrollable Body with Unlocked Deep Spring Physics
-                        LazyColumn(
-                            state = listState,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .springOverscroll(overscrollState)
-                        ) {
-                            // Top Bar with ic_itune_waves and Apple Memoji Avatar
-                            item(key = "top_header") {
-                                TopHeaderBar(
-                                    onProfileClick = {
-                                        Toast.makeText(context, "Apple Account Profile", Toast.LENGTH_SHORT).show()
-                                    }
-                                )
-                            }
-
-                            // Featured Hero Carousel (Today's Hits / New Album)
-                            item(key = "featured_hero") {
-                                FeaturedHeroCarousel(
-                                    cards = MusicRepository.featuredCards,
-                                    modifier = Modifier.padding(top = 4.dp),
-                                    onCardClick = { card ->
-                                        Toast.makeText(context, "Opening ${card.title}", Toast.LENGTH_SHORT).show()
-                                    }
-                                )
-                            }
-
-                            item(key = "spacer_hero") {
-                                Spacer(modifier = Modifier.height(24.dp))
-                            }
-
-                            // Latest Songs Section with Horizontal Paging Columns
-                            item(key = "latest_songs") {
-                                LatestSongsSection(
-                                    songColumns = MusicRepository.latestSongColumns,
-                                    onSeeAllClick = {
-                                        Toast.makeText(context, "Browsing all latest songs", Toast.LENGTH_SHORT).show()
-                                    },
-                                    onTrackClick = { track ->
-                                        currentTrack = track
-                                        isPlaying = true
-                                        Toast.makeText(context, "Now playing: ${track.title}", Toast.LENGTH_SHORT).show()
-                                    },
-                                    onTrackMenuClick = { track ->
-                                        Toast.makeText(context, "Options for ${track.title}", Toast.LENGTH_SHORT).show()
-                                    }
-                                )
-                            }
-
-                            item(key = "spacer_songs") {
-                                Spacer(modifier = Modifier.height(28.dp))
-                            }
-
-                            // Curated Playlists (Spatial Audio & Essentials)
-                            item(key = "curated_playlists") {
-                                CuratedPlaylistsSection(
-                                    playlists = MusicRepository.essentialPlaylists,
-                                    onPlaylistClick = { playlist ->
-                                        Toast.makeText(context, "Playlist: ${playlist.title}", Toast.LENGTH_SHORT).show()
-                                    }
-                                )
-                            }
-
-                            item(key = "spacer_playlists") {
-                                Spacer(modifier = Modifier.height(28.dp))
-                            }
-
-                            // Live Radio Stations
-                            item(key = "live_radio") {
-                                RadioStationsSection(
-                                    stations = MusicRepository.radioStations,
-                                    onStationClick = { station ->
-                                        Toast.makeText(context, "Tuning into ${station.name}", Toast.LENGTH_SHORT).show()
-                                    }
-                                )
-                            }
-
-                            // Generous bottom spacing so bottom content scrolls above floating nav & mini player
-                            item(key = "bottom_spacer") {
-                                Spacer(modifier = Modifier.height(190.dp))
-                            }
+        // SCREEN 1: HOME SCREEN (Retained in GPU layer, 0ms switch time)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer {
+                    alpha = if (currentScreen == AppScreen.HOME) 1f else 0f
+                    translationY = if (currentScreen == AppScreen.HOME) 0f else 99999f
+                }
+        ) {
+            // Main Scrollable Body with Unlocked Deep Spring Physics
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .springOverscroll(overscrollState)
+            ) {
+                // Top Bar with ic_itune_waves and Apple Memoji Avatar
+                item(key = "top_header") {
+                    TopHeaderBar(
+                        onProfileClick = {
+                            Toast.makeText(context, "Apple Account Profile", Toast.LENGTH_SHORT).show()
                         }
+                    )
+                }
 
-                        // Top Status Bar Area Black Blur Shade Scrim: Only appears when scrolling down
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.TopCenter)
-                                .fillMaxWidth()
-                                .height(110.dp)
-                                .graphicsLayer { alpha = topShadeAlpha }
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(
-                                            AppleOledBlack,
-                                            AppleOledBlack.copy(alpha = 0.94f),
-                                            AppleOledBlack.copy(alpha = 0.65f),
-                                            AppleOledBlack.copy(alpha = 0.25f),
-                                            Color.Transparent
-                                        )
-                                    )
-                                )
-                        )
+                // Featured Hero Carousel (Today's Hits / New Album)
+                item(key = "featured_hero") {
+                    FeaturedHeroCarousel(
+                        cards = MusicRepository.featuredCards,
+                        modifier = Modifier.padding(top = 4.dp),
+                        onCardClick = { card ->
+                            Toast.makeText(context, "Opening ${card.title}", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
 
-                        // Sleek Left-to-Right Animated Loading Line: ONLY visible when at the top (never at the bottom)
-                        TopSpringLoadingBar(
-                            isVisible = isRefreshing && listState.firstVisibleItemIndex == 0,
-                            modifier = Modifier.align(Alignment.TopCenter)
+                item(key = "spacer_hero") {
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+
+                // Latest Songs Section with Horizontal Paging Columns
+                item(key = "latest_songs") {
+                    LatestSongsSection(
+                        songColumns = MusicRepository.latestSongColumns,
+                        onSeeAllClick = {
+                            Toast.makeText(context, "Browsing all latest songs", Toast.LENGTH_SHORT).show()
+                        },
+                        onTrackClick = { track ->
+                            currentTrack = track
+                            isPlaying = true
+                            Toast.makeText(context, "Now playing: ${track.title}", Toast.LENGTH_SHORT).show()
+                        },
+                        onTrackMenuClick = { track ->
+                            Toast.makeText(context, "Options for ${track.title}", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
+
+                item(key = "spacer_songs") {
+                    Spacer(modifier = Modifier.height(28.dp))
+                }
+
+                // Curated Playlists (Spatial Audio & Essentials)
+                item(key = "curated_playlists") {
+                    CuratedPlaylistsSection(
+                        playlists = MusicRepository.essentialPlaylists,
+                        onPlaylistClick = { playlist ->
+                            Toast.makeText(context, "Playlist: ${playlist.title}", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
+
+                item(key = "spacer_playlists") {
+                    Spacer(modifier = Modifier.height(28.dp))
+                }
+
+                // Live Radio Stations
+                item(key = "live_radio") {
+                    RadioStationsSection(
+                        stations = MusicRepository.radioStations,
+                        onStationClick = { station ->
+                            Toast.makeText(context, "Tuning into ${station.name}", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
+
+                // Generous bottom spacing so bottom content scrolls above floating nav & mini player
+                item(key = "bottom_spacer") {
+                    Spacer(modifier = Modifier.height(190.dp))
+                }
+            }
+
+            // Top Status Bar Area Black Blur Shade Scrim: Only appears when scrolling down
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth()
+                    .height(110.dp)
+                    .graphicsLayer { alpha = topShadeAlpha }
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                AppleOledBlack,
+                                AppleOledBlack.copy(alpha = 0.94f),
+                                AppleOledBlack.copy(alpha = 0.65f),
+                                AppleOledBlack.copy(alpha = 0.25f),
+                                Color.Transparent
+                            )
                         )
+                    )
+            )
+
+            // Sleek Left-to-Right Animated Loading Line: ONLY visible when at the top
+            TopSpringLoadingBar(
+                isVisible = isRefreshing && listState.firstVisibleItemIndex == 0,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+        }
+
+        // SCREEN 2: BROWSE SCREEN (Retained)
+        if (hasVisitedBrowse || currentScreen == AppScreen.BROWSE) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        alpha = if (currentScreen == AppScreen.BROWSE) 1f else 0f
+                        translationY = if (currentScreen == AppScreen.BROWSE) 0f else 99999f
                     }
-                }
+            ) {
+                BrowseScreen(
+                    onCategoryClick = { item ->
+                        Toast.makeText(context, "Opening ${item.title}", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+        }
 
-                AppScreen.SEARCH -> {
-                    SearchScreen(
-                        onCategoryClick = { category ->
-                            Toast.makeText(context, "Category: ${category.title}", Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                }
+        // SCREEN 3: LIBRARY SCREEN (Retained)
+        if (hasVisitedLibrary || currentScreen == AppScreen.LIBRARY) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        alpha = if (currentScreen == AppScreen.LIBRARY) 1f else 0f
+                        translationY = if (currentScreen == AppScreen.LIBRARY) 0f else 99999f
+                    }
+            ) {
+                LibraryScreen(
+                    onPinClick = { pin ->
+                        Toast.makeText(context, "Library Pin: ${pin.title}", Toast.LENGTH_SHORT).show()
+                    },
+                    onMenuItemClick = { item ->
+                        Toast.makeText(context, "Navigating to ${item.title}", Toast.LENGTH_SHORT).show()
+                    },
+                    onRecentAlbumClick = { album ->
+                        Toast.makeText(context, "Recent: ${album.title} by ${album.artist}", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+        }
 
-                AppScreen.LIBRARY -> {
-                    LibraryScreen(
-                        onPinClick = { pin ->
-                            Toast.makeText(context, "Library Pin: ${pin.title}", Toast.LENGTH_SHORT).show()
-                        },
-                        onMenuItemClick = { item ->
-                            Toast.makeText(context, "Navigating to ${item.title}", Toast.LENGTH_SHORT).show()
-                        },
-                        onRecentAlbumClick = { album ->
-                            Toast.makeText(context, "Recent: ${album.title} by ${album.artist}", Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                }
-
-                AppScreen.BROWSE -> {
-                    BrowseScreen(
-                        onCategoryClick = { item ->
-                            Toast.makeText(context, "Opening ${item.title}", Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                }
+        // SCREEN 4: SEARCH SCREEN (Retained)
+        if (hasVisitedSearch || currentScreen == AppScreen.SEARCH) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        alpha = if (currentScreen == AppScreen.SEARCH) 1f else 0f
+                        translationY = if (currentScreen == AppScreen.SEARCH) 0f else 99999f
+                    }
+            ) {
+                SearchScreen(
+                    onCategoryClick = { category ->
+                        Toast.makeText(context, "Category: ${category.title}", Toast.LENGTH_SHORT).show()
+                    }
+                )
             }
         }
 

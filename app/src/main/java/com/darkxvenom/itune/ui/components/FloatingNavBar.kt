@@ -2,7 +2,6 @@ package com.darkxvenom.itune.ui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -82,6 +81,10 @@ fun FloatingNavBar(
     val dockHeight = 58.dp
     val containerHeight = 88.dp
 
+    // Ultra-realistic water droplet dimensions: bulges prominently above and below dock edges
+    val bubbleWidthDp = 72.dp
+    val bubbleHeightDp = 65.dp
+
     val density = LocalDensity.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -100,16 +103,15 @@ fun FloatingNavBar(
 
     val tabCount = 4
     val slotWidthPx = if (dockWidthPx > 0f) dockWidthPx / tabCount else 0f
+    val bubbleWidthPx = with(density) { bubbleWidthDp.toPx() }
 
-    val bubbleWidthPx = with(density) { 58.dp.toPx() }
-    val bubbleHeightPx = with(density) { 48.dp.toPx() }
-
+    val activeSlot = if (isHolding) hoveredIndex else (selectedTab?.ordinal ?: 0)
     val restingX = if (slotWidthPx > 0f && selectedTab != null) {
-        selectedTab.ordinal * slotWidthPx + (slotWidthPx - bubbleWidthPx) / 2f
+        activeSlot * slotWidthPx + (slotWidthPx - bubbleWidthPx) / 2f
     } else 0f
 
     val targetBubbleX = if (isHolding) {
-        (dragFingerX - bubbleWidthPx / 2f).coerceIn(-14f, dockWidthPx - bubbleWidthPx + 14f)
+        (dragFingerX - bubbleWidthPx / 2f).coerceIn(-12f, dockWidthPx - bubbleWidthPx + 12f)
     } else {
         restingX
     }
@@ -117,23 +119,22 @@ fun FloatingNavBar(
     val currentBubbleX by animateFloatAsState(
         targetValue = targetBubbleX,
         animationSpec = if (isHolding) {
-            spring(dampingRatio = 0.85f, stiffness = 650f)
+            spring(dampingRatio = 0.85f, stiffness = 750f)
         } else {
-            spring(dampingRatio = 0.55f, stiffness = 220f)
+            spring(dampingRatio = 0.65f, stiffness = 380f)
         },
         label = "BubbleX"
     )
 
     val targetAlpha = when {
-        isHolding -> 0.52f
         isSearchActive -> 0.0f
-        selectedTab != null -> 0.22f
+        selectedTab != null || isHolding -> 1.0f
         else -> 0.0f
     }
 
     val bubbleAlpha by animateFloatAsState(
         targetValue = targetAlpha,
-        animationSpec = tween(durationMillis = 180),
+        animationSpec = tween(durationMillis = 150),
         label = "BubbleAlpha"
     )
 
@@ -158,94 +159,79 @@ fun FloatingNavBar(
                     awaitEachGesture {
                         val down = awaitFirstDown(requireUnconsumed = false)
                         val sWidth = if (dockWidthPx > 0f) dockWidthPx / tabCount else size.width.toFloat() / tabCount
-                        val currentTabStart = (selectedTab?.ordinal ?: -1) * sWidth
-                        val currentTabEnd = currentTabStart + sWidth
+                        val targetSlot = (down.position.x / sWidth).toInt().coerceIn(0, tabCount - 1)
+                        val isCurrentTab = (selectedTab != null && !isSearchActive && targetSlot == selectedTab.ordinal)
 
-                        if (selectedTab != null && !isSearchActive && down.position.x in currentTabStart..currentTabEnd) {
-                            var isDragging = false
-                            dragFingerX = down.position.x
-                            hoveredIndex = selectedTab.ordinal
+                        // 1. Immediately switch tab on touch (0ms latency, zero delay!)
+                        onTabSelected(NavTab.entries[targetSlot])
+                        dragFingerX = down.position.x
+                        hoveredIndex = targetSlot
 
-                            val holdJob = coroutineScope.launch {
-                                delay(120)
-                                isHolding = true
-                                bubbleScale.animateTo(
-                                    targetValue = 1.44f,
-                                    animationSpec = spring(
-                                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                                        stiffness = 160f
-                                    )
+                        // 2. Liquid glass hold & drag physics
+                        var isDragging = false
+                        val holdJob = coroutineScope.launch {
+                            delay(120)
+                            isHolding = true
+                            bubbleScale.animateTo(
+                                targetValue = 1.30f,
+                                animationSpec = spring(
+                                    dampingRatio = 0.62f,
+                                    stiffness = 220f
                                 )
-                            }
+                            )
+                        }
 
-                            while (true) {
-                                val event = awaitPointerEvent()
-                                val change = event.changes.firstOrNull { it.id == down.id } ?: break
-                                if (!change.pressed) break
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                            if (!change.pressed) break
 
-                                val moveDelta = abs(change.position.x - down.position.x)
-                                if (moveDelta > 6f) {
-                                    isDragging = true
-                                    dragFingerX = change.position.x
-                                    val currentSlot = (change.position.x / sWidth).toInt().coerceIn(0, 3)
-                                    hoveredIndex = currentSlot
+                            val moveDelta = abs(change.position.x - down.position.x)
+                            if (moveDelta > 8f) {
+                                isDragging = true
+                                dragFingerX = change.position.x
+                                val currentSlot = (change.position.x / sWidth).toInt().coerceIn(0, tabCount - 1)
+                                hoveredIndex = currentSlot
 
-                                    if (!isHolding) {
-                                        isHolding = true
-                                        coroutineScope.launch {
-                                            bubbleScale.animateTo(
-                                                targetValue = 1.44f,
-                                                animationSpec = spring(
-                                                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                                                    stiffness = 160f
-                                                )
+                                if (!isHolding) {
+                                    isHolding = true
+                                    coroutineScope.launch {
+                                        bubbleScale.animateTo(
+                                            targetValue = 1.30f,
+                                            animationSpec = spring(
+                                                dampingRatio = 0.62f,
+                                                stiffness = 220f
                                             )
-                                        }
+                                        )
                                     }
-                                    change.consume()
                                 }
+                                change.consume()
                             }
+                        }
 
-                            holdJob.cancel()
-                            val finalFingerX = dragFingerX
-                            isHolding = false
+                        holdJob.cancel()
+                        val finalFingerX = dragFingerX
+                        isHolding = false
 
-                            coroutineScope.launch {
-                                bubbleScale.animateTo(
-                                    targetValue = 1.0f,
-                                    animationSpec = spring(
-                                        dampingRatio = 0.52f,
-                                        stiffness = 200f
-                                    )
+                        coroutineScope.launch {
+                            bubbleScale.animateTo(
+                                targetValue = 1.0f,
+                                animationSpec = spring(
+                                    dampingRatio = 0.55f,
+                                    stiffness = 280f
                                 )
-                            }
+                            )
+                        }
 
-                            if (isDragging) {
-                                val destinationSlot = (finalFingerX / sWidth).toInt().coerceIn(0, 3)
-                                onTabSelected(NavTab.entries[destinationSlot])
-                            }
-                        } else {
-                            val targetSlot = (down.position.x / sWidth).toInt().coerceIn(0, 3)
-                            var isDrag = false
-                            while (true) {
-                                val event = awaitPointerEvent()
-                                val change = event.changes.firstOrNull { it.id == down.id } ?: break
-                                if (!change.pressed) {
-                                    if (!isDrag) {
-                                        onTabSelected(NavTab.entries[targetSlot])
-                                    }
-                                    break
-                                }
-                                if (abs(change.position.x - down.position.x) > 10f) {
-                                    isDrag = true
-                                }
-                            }
+                        if (isDragging) {
+                            val destinationSlot = (finalFingerX / sWidth).toInt().coerceIn(0, tabCount - 1)
+                            onTabSelected(NavTab.entries[destinationSlot])
                         }
                     }
                 },
             contentAlignment = Alignment.CenterStart
         ) {
-            // Layer 1: Dock Capsule Background
+            // Layer 1: Dock Capsule Background (58.dp height)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -261,48 +247,88 @@ fun FloatingNavBar(
                     .border(0.75.dp, AppleGlassBorder, shape = RoundedCornerShape(percent = 50))
             )
 
-            // Layer 2: Selected Highlight / Water-Drop Bubble Indicator
+            // Layer 2: Authentic 3D Liquid Glass Water Droplet Bubble (65.dp height, bulges outside dock)
             if (dockWidthPx > 0f && (selectedTab != null || isHolding)) {
                 Box(
                     modifier = Modifier
                         .offset { IntOffset(currentBubbleX.roundToInt(), 0) }
                         .align(Alignment.CenterStart)
-                        .width(with(density) { bubbleWidthPx.toDp() })
-                        .height(with(density) { bubbleHeightPx.toDp() })
+                        .width(bubbleWidthDp)
+                        .height(bubbleHeightDp)
                         .graphicsLayer {
                             scaleX = bubbleScale.value
                             scaleY = bubbleScale.value
                             alpha = bubbleAlpha
                         }
                         .shadow(
-                            elevation = if (isHolding) 18.dp else 0.dp,
+                            elevation = if (isHolding) 20.dp else 12.dp,
                             shape = RoundedCornerShape(percent = 50),
-                            ambientColor = if (isHolding) AppleMusicRed.copy(alpha = 0.50f) else Color.Transparent,
-                            spotColor = if (isHolding) Color.White.copy(alpha = 0.55f) else Color.Transparent
+                            ambientColor = Color.Black.copy(alpha = 0.70f),
+                            spotColor = Color.Black.copy(alpha = 0.85f)
                         )
                         .clip(RoundedCornerShape(percent = 50))
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(
-                                    Color.White.copy(alpha = bubbleAlpha),
-                                    Color.White.copy(alpha = bubbleAlpha * 0.70f)
+                                    Color.White.copy(alpha = 0.28f),
+                                    Color.White.copy(alpha = 0.10f),
+                                    Color(0x35000000),
+                                    Color.White.copy(alpha = 0.15f)
                                 )
                             )
                         )
                         .border(
-                            width = if (isHolding) 1.2.dp else 0.dp,
+                            width = 1.25.dp,
                             brush = Brush.verticalGradient(
                                 colors = listOf(
-                                    Color.White.copy(alpha = if (isHolding) 0.85f else 0f),
-                                    Color.White.copy(alpha = if (isHolding) 0.40f else 0f)
+                                    Color.White.copy(alpha = 0.85f),
+                                    Color.White.copy(alpha = 0.45f),
+                                    Color.White.copy(alpha = 0.18f),
+                                    Color.White.copy(alpha = 0.38f)
                                 )
                             ),
                             shape = RoundedCornerShape(percent = 50)
                         )
-                )
+                ) {
+                    // Top Specular Lens Glare Arc (Convex Water Droplet Lens Highlight)
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 3.dp)
+                            .align(Alignment.TopCenter)
+                            .width(34.dp)
+                            .height(5.dp)
+                            .clip(RoundedCornerShape(percent = 50))
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0.45f),
+                                        Color.White.copy(alpha = 0.0f)
+                                    )
+                                )
+                            )
+                    )
+
+                    // Bottom Ambient Meniscus Light Bounce
+                    Box(
+                        modifier = Modifier
+                            .padding(bottom = 3.dp)
+                            .align(Alignment.BottomCenter)
+                            .width(26.dp)
+                            .height(3.dp)
+                            .clip(RoundedCornerShape(percent = 50))
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0.0f),
+                                        Color.White.copy(alpha = 0.22f)
+                                    )
+                                )
+                            )
+                    )
+                }
             }
 
-            // Layer 3: Tabs Row
+            // Layer 3: Tabs Row (Pure White on active bubble, translucent white when inactive)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -315,7 +341,6 @@ fun FloatingNavBar(
                     label = "Home",
                     iconRes = R.drawable.ic_nav_home,
                     isHighlighted = !isSearchActive && (if (isHolding) hoveredIndex == 0 else selectedTab == NavTab.HOME),
-                    onClick = { onTabSelected(NavTab.HOME) },
                     modifier = Modifier.weight(1f)
                 )
 
@@ -323,7 +348,6 @@ fun FloatingNavBar(
                     label = "New",
                     iconRes = R.drawable.ic_nav_new,
                     isHighlighted = !isSearchActive && (if (isHolding) hoveredIndex == 1 else selectedTab == NavTab.NEW),
-                    onClick = { onTabSelected(NavTab.NEW) },
                     modifier = Modifier.weight(1f)
                 )
 
@@ -331,7 +355,6 @@ fun FloatingNavBar(
                     label = "Radio",
                     iconRes = R.drawable.ic_nav_radio,
                     isHighlighted = !isSearchActive && (if (isHolding) hoveredIndex == 2 else selectedTab == NavTab.RADIO),
-                    onClick = { onTabSelected(NavTab.RADIO) },
                     modifier = Modifier.weight(1f)
                 )
 
@@ -339,7 +362,6 @@ fun FloatingNavBar(
                     label = "Library",
                     iconRes = R.drawable.ic_nav_library,
                     isHighlighted = !isSearchActive && (if (isHolding) hoveredIndex == 3 else selectedTab == NavTab.LIBRARY),
-                    onClick = { onTabSelected(NavTab.LIBRARY) },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -401,25 +423,21 @@ private fun AppleNavTabItem(
     label: String,
     iconRes: Int,
     isHighlighted: Boolean,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val activeColor = AppleMusicRed
-    val inactiveColor = Color.White.copy(alpha = 0.92f)
+    // Pure White when inside active water drop bubble (matches media_1794246658446_33556023.png)
+    val activeColor = Color.White
+    val inactiveColor = Color.White.copy(alpha = 0.65f)
 
     val contentColor by animateColorAsState(
         targetValue = if (isHighlighted) activeColor else inactiveColor,
-        animationSpec = tween(durationMillis = 160),
+        animationSpec = tween(durationMillis = 140),
         label = "TabContentColor"
     )
 
     Box(
         modifier = modifier
             .fillMaxHeight()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onClick() }
             .padding(horizontal = 4.dp, vertical = 2.dp),
         contentAlignment = Alignment.Center
     ) {
