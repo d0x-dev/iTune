@@ -293,6 +293,10 @@ object MusicRepository {
         BrowseCategoryItem("b5", "Orchestras", "$GITHUB_IMAGE_BASE_URL/browse_orchestras.png"),
         BrowseCategoryItem("b6", "Soloists", "$GITHUB_IMAGE_BASE_URL/browse_soloists.png"),
         BrowseCategoryItem("b7", "Ensembles", "$GITHUB_IMAGE_BASE_URL/browse_ensembles.png"),
-        BrowseCategoryItem("b8", "Choirs", "$GITHUB_IMAGE_BASE_URL/browse_choirs.png")
+        BrowseCategoryItem("b8", "Choirs", "$GITHUB_IMAGE_BASE_URL/browse_choirs.png"),
+        BrowseCategoryItem("b9", "Instruments", "$GITHUB_IMAGE_BASE_URL/browse_instruments.png"),
+        BrowseCategoryItem("b10", "Spatial Audio", "$GITHUB_IMAGE_BASE_URL/browse_spatial_audio.png"),
+        BrowseCategoryItem("b11", "Classical", "$GITHUB_IMAGE_BASE_URL/browse_classical.png"),
+        BrowseCategoryItem("b12", "Contemporary", "$GITHUB_IMAGE_BASE_URL/browse_contemporary.png")
     )
 }

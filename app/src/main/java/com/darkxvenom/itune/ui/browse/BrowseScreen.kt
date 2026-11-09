@@ -276,5 +276,17 @@ private fun BrowseCategoryCardItem(
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
+
+        // Apple Classical category title in bold San Francisco typography
+        Text(
+            text = item.title,
+            color = Color.White,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = (-0.2).sp,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 14.dp, bottom = 12.dp)
+        )
     }
 }
