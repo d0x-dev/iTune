@@ -110,7 +110,7 @@ fun FloatingNavBar(
     )
 
     val currentBubbleHeightDp by animateDpAsState(
-        targetValue = if (isHolding) 48.dp else 44.dp,
+        targetValue = if (isHolding) 54.dp else 44.dp,
         animationSpec = tween(durationMillis = 160),
         label = "BubbleHeight"
     )
