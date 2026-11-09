@@ -31,9 +31,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,10 +56,13 @@ import com.darkxvenom.itune.data.model.LibraryPinItem
 import com.darkxvenom.itune.data.model.LibraryRecentAlbum
 import com.darkxvenom.itune.data.repository.MusicRepository
 import com.darkxvenom.itune.ui.components.AppleMemojiAvatar
+import com.darkxvenom.itune.ui.components.TopSpringLoadingBar
+import com.darkxvenom.itune.ui.components.rememberSpringOverscrollState
 import com.darkxvenom.itune.ui.components.springOverscroll
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.AppleTextPrimary
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
+import kotlinx.coroutines.delay
 
 @Composable
 fun LibraryScreen(
@@ -67,6 +73,23 @@ fun LibraryScreen(
 ) {
     val context = LocalContext.current
     val listState = rememberLazyListState()
+    val overscrollState = rememberSpringOverscrollState()
+    var isRefreshing by remember { mutableStateOf(false) }
+
+    // ONLY trigger loading when pulling down from the very top of the list (item 0)
+    // Never trigger at the bottom/end of the screen
+    LaunchedEffect(overscrollState.offset.value) {
+        if (listState.firstVisibleItemIndex == 0 && overscrollState.offset.value > 25f && !isRefreshing) {
+            isRefreshing = true
+        }
+    }
+
+    LaunchedEffect(isRefreshing) {
+        if (isRefreshing) {
+            delay(3500) // Keep loading beam active for ~3.5 seconds
+            isRefreshing = false
+        }
+    }
 
     val isScrolled by remember {
         derivedStateOf {
@@ -89,7 +112,7 @@ fun LibraryScreen(
             state = listState,
             modifier = Modifier
                 .fillMaxSize()
-                .springOverscroll(),
+                .springOverscroll(overscrollState),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 190.dp)
         ) {
             // Header: Large Title "Library" + Profile Avatar (NO 3-dot button)
@@ -262,6 +285,12 @@ fun LibraryScreen(
                         )
                     )
                 )
+        )
+
+        // Sleek Left-to-Right Animated Loading Line: ONLY visible when at the top (never at the bottom)
+        TopSpringLoadingBar(
+            isVisible = isRefreshing && listState.firstVisibleItemIndex == 0,
+            modifier = Modifier.align(Alignment.TopCenter)
         )
     }
 }
