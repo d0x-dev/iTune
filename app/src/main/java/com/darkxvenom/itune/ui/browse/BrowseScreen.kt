@@ -277,16 +277,22 @@ private fun BrowseCategoryCardItem(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Apple Classical category title in bold San Francisco typography
+        // Apple Classical category title in crisp San Francisco typography with soft shadow
         Text(
             text = item.title,
             color = Color.White,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 13.5.sp,
+            fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.2).sp,
+            style = androidx.compose.ui.text.TextStyle(
+                shadow = androidx.compose.ui.graphics.Shadow(
+                    color = Color.Black.copy(alpha = 0.65f),
+                    blurRadius = 6f
+                )
+            ),
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(start = 14.dp, bottom = 12.dp)
+                .padding(start = 12.dp, bottom = 9.dp)
         )
     }
 }
