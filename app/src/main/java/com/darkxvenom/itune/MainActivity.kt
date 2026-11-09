@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.data.repository.AvatarManager
 import com.darkxvenom.itune.ui.home.HomeScreen
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
@@ -18,6 +19,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AvatarManager.init(this)
+        MusicPlayerState.init(this)
         enableEdgeToEdge()
         setContent {
             ITuneTheme {
@@ -29,6 +31,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        MusicPlayerState.release()
     }
 }
 

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,10 +32,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.darkxvenom.itune.backend.MusicTrack
+import com.darkxvenom.itune.backend.highQualityThumbnail
 import com.darkxvenom.itune.data.model.Track
 import com.darkxvenom.itune.ui.theme.AppleGlassBorder
 import com.darkxvenom.itune.ui.theme.AppleGlassMiniPlayer
@@ -48,6 +53,7 @@ fun FloatingMiniPlayer(
     onPlayPauseClick: () -> Unit,
     onNextClick: () -> Unit,
     onClick: () -> Unit,
+    realTrack: MusicTrack? = null,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -71,7 +77,21 @@ fun FloatingMiniPlayer(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Thumbnail / Music Note icon
-            if (currentTrack != null) {
+            if (realTrack != null && !realTrack.thumbnailUrl.isNullOrBlank()) {
+                Box(
+                    modifier = Modifier
+                        .size(38.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color(0xFF2C2C2E))
+                ) {
+                    AsyncImage(
+                        model = realTrack.thumbnailUrl.highQualityThumbnail(),
+                        contentDescription = realTrack.title,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            } else if (currentTrack != null) {
                 AlbumArtwork(
                     type = currentTrack.coverType,
                     size = 38.dp,
@@ -101,16 +121,16 @@ fun FloatingMiniPlayer(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = currentTrack?.title ?: "Not Playing",
+                    text = realTrack?.title ?: currentTrack?.title ?: "Not Playing",
                     color = AppleTextPrimary,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                if (currentTrack != null) {
+                if (realTrack != null || currentTrack != null) {
                     Text(
-                        text = currentTrack.artist,
+                        text = realTrack?.artists ?: currentTrack?.artist.orEmpty(),
                         color = AppleTextSecondary,
                         fontSize = 12.sp,
                         maxLines = 1,

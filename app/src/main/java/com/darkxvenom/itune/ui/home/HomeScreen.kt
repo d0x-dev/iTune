@@ -27,6 +27,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import com.darkxvenom.itune.backend.MusicPlayerState
+import com.darkxvenom.itune.ui.player.ITuneMusicPlayer
 import com.darkxvenom.itune.data.model.Track
 import com.darkxvenom.itune.data.repository.MusicRepository
 import com.darkxvenom.itune.ui.browse.BrowseScreen
@@ -326,11 +335,15 @@ fun HomeScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
         ) {
+            val realTrack = MusicPlayerState.currentTrack
             FloatingMiniPlayer(
                 currentTrack = currentTrack,
-                isPlaying = isPlaying,
+                realTrack = realTrack,
+                isPlaying = if (realTrack != null) MusicPlayerState.isPlaying else isPlaying,
                 onPlayPauseClick = {
-                    if (currentTrack == null && MusicRepository.latestSongColumns.isNotEmpty()) {
+                    if (realTrack != null) {
+                        MusicPlayerState.togglePlayPause()
+                    } else if (currentTrack == null && MusicRepository.latestSongColumns.isNotEmpty()) {
                         currentTrack = MusicRepository.latestSongColumns[0][0]
                         isPlaying = true
                     } else {
@@ -338,22 +351,30 @@ fun HomeScreen(
                     }
                 },
                 onNextClick = {
-                    val allTracks = MusicRepository.latestSongColumns.flatten()
-                    val currentIndex = allTracks.indexOf(currentTrack)
-                    val nextTrack = if (currentIndex != -1 && currentIndex + 1 < allTracks.size) {
-                        allTracks[currentIndex + 1]
+                    if (realTrack != null) {
+                        MusicPlayerState.skipNext()
                     } else {
-                        allTracks.firstOrNull()
+                        val allTracks = MusicRepository.latestSongColumns.flatten()
+                        val currentIndex = allTracks.indexOf(currentTrack)
+                        val nextTrack = if (currentIndex != -1 && currentIndex + 1 < allTracks.size) {
+                            allTracks[currentIndex + 1]
+                        } else {
+                            allTracks.firstOrNull()
+                        }
+                        currentTrack = nextTrack
+                        isPlaying = true
                     }
-                    currentTrack = nextTrack
-                    isPlaying = true
                 },
                 onClick = {
-                    Toast.makeText(
-                        context,
-                        currentTrack?.let { "Now Playing: ${it.title} • ${it.artist}" } ?: "Select a track to play",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    if (realTrack != null) {
+                        MusicPlayerState.expanded = true
+                    } else {
+                        Toast.makeText(
+                            context,
+                            currentTrack?.let { "Now Playing: ${it.title} • ${it.artist}" } ?: "Select a track to play",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             )
 
@@ -393,6 +414,23 @@ fun HomeScreen(
         if (showAvatarDialog) {
             AvatarSelectionDialog(
                 onDismiss = { showAvatarDialog = false }
+            )
+        }
+
+        // Apple Music Full-Screen Player overlay copied from iTube
+        AnimatedVisibility(
+            visible = MusicPlayerState.expanded && MusicPlayerState.currentTrack != null,
+            enter = slideInVertically(
+                initialOffsetY = { it },
+                animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = 0.85f)
+            ) + fadeIn(tween(250)),
+            exit = slideOutVertically(
+                targetOffsetY = { it },
+                animationSpec = tween(durationMillis = 280)
+            ) + fadeOut(tween(250))
+        ) {
+            ITuneMusicPlayer(
+                onCollapse = { MusicPlayerState.expanded = false }
             )
         }
     }

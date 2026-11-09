@@ -1,0 +1,266 @@
+package com.darkxvenom.itune.backend
+
+import android.content.Context
+import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
+import org.json.JSONObject
+import org.schabi.newpipe.extractor.MediaFormat
+import org.schabi.newpipe.extractor.NewPipe
+import org.schabi.newpipe.extractor.ServiceList
+import org.schabi.newpipe.extractor.search.SearchInfo
+import org.schabi.newpipe.extractor.stream.AudioTrackType
+import org.schabi.newpipe.extractor.stream.DeliveryMethod
+import org.schabi.newpipe.extractor.stream.StreamInfo
+import org.schabi.newpipe.extractor.stream.StreamInfoItem
+
+object MusicBackend {
+    private const val TAG = "MusicBackend"
+    private const val SEARCH_URL = "https://music.youtube.com/youtubei/v1/search?prettyPrint=false"
+    private const val SONG_PARAMS = "EgWKAQIIAWoKEAkQBRAKEAMQBA%3D%3D"
+    private val JSON_TYPE = "application/json; charset=utf-8".toMediaType()
+
+    private var initialized = false
+
+    fun init(context: Context) {
+        if (initialized) return
+        try {
+            NewPipe.init(NewPipeDownloader.instance)
+            org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor.setFetchIosClient(false)
+            initialized = true
+            Log.d(TAG, "NewPipeExtractor initialized successfully")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed initializing NewPipe: ${e.message}", e)
+        }
+    }
+
+    suspend fun searchMusic(query: String): List<MusicTrack> = withContext(Dispatchers.IO) {
+        val tracks = mutableListOf<MusicTrack>()
+        try {
+            val root = postInnerTubeSearch(query, SONG_PARAMS)
+            root.walk { key, itemObj ->
+                if (key == "musicResponsiveListItemRenderer") {
+                    val wrapper = JSONObject().put("musicResponsiveListItemRenderer", itemObj)
+                    parseTrackItem(wrapper)?.let { tracks.add(it) }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Search failed for '$query': ${e.message}")
+        }
+
+        if (tracks.isEmpty()) {
+            try {
+                val service = ServiceList.YouTube
+                val searchInfo = SearchInfo.getInfo(service, service.searchQHFactory.fromQuery(query))
+                for (item in searchInfo.relatedItems) {
+                    if (item is StreamInfoItem) {
+                        tracks.add(
+                            MusicTrack(
+                                id = item.url.substringAfter("v=").substringBefore("&"),
+                                title = item.name,
+                                artists = item.uploaderName.orEmpty(),
+                                thumbnailUrl = item.thumbnails.lastOrNull()?.url?.highQualityThumbnail(),
+                                durationSec = item.duration
+                            )
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "NewPipe fallback search failed: ${e.message}")
+            }
+        }
+
+        tracks.distinctBy { it.id }
+    }
+
+    suspend fun resolveAudioStream(videoId: String): String? = withContext(Dispatchers.IO) {
+        try {
+            val url = "https://www.youtube.com/watch?v=$videoId"
+            val info = StreamInfo.getInfo(ServiceList.YouTube, url)
+
+            val audioStreams = info.audioStreams
+            if (audioStreams.isNullOrEmpty()) {
+                Log.w(TAG, "No audio streams found for $videoId")
+                return@withContext null
+            }
+
+            val bestM4a = audioStreams
+                .filter { it.format == MediaFormat.M4A && it.deliveryMethod == DeliveryMethod.PROGRESSIVE_HTTP && it.audioTrackType != AudioTrackType.DUBBED }
+                .maxByOrNull { it.averageBitrate }
+
+            val bestAny = audioStreams
+                .filter { it.deliveryMethod == DeliveryMethod.PROGRESSIVE_HTTP && it.audioTrackType != AudioTrackType.DUBBED }
+                .maxByOrNull { it.averageBitrate }
+
+            val chosen = bestM4a ?: bestAny ?: audioStreams.firstOrNull()
+            Log.d(TAG, "Selected stream: ${chosen?.format} @ ${chosen?.averageBitrate} kbps")
+            return@withContext chosen?.content
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to resolve stream for $videoId: ${e.message}", e)
+            return@withContext null
+        }
+    }
+
+    suspend fun resolveAudioStreamUrl(videoId: String): String? = resolveAudioStream(videoId)
+
+    private fun postInnerTubeSearch(query: String, params: String? = null): JSONObject {
+        val clientObj = JSONObject()
+            .put("clientName", "WEB_REMIX")
+            .put("clientVersion", "1.20240101.01.00")
+            .put("hl", "en")
+            .put("gl", "US")
+
+        val body = JSONObject()
+            .put("query", query)
+            .put("context", JSONObject().put("client", clientObj))
+
+        if (params != null) {
+            body.put("params", params)
+        }
+
+        val request = Request.Builder()
+            .url(SEARCH_URL)
+            .post(body.toString().toRequestBody(JSON_TYPE))
+            .header("Origin", "https://music.youtube.com")
+            .header("Referer", "https://music.youtube.com/")
+            .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+            .build()
+
+        Net.client.newCall(request).execute().use { response ->
+            val text = response.body?.string().orEmpty()
+            return JSONObject(text)
+        }
+    }
+
+    private fun parseTrackItem(itemObj: JSONObject): MusicTrack? {
+        itemObj.optJSONObject("musicResponsiveListItemRenderer")?.let { responsive ->
+            val videoId = responsive.optJSONObject("playlistItemData")?.optString("videoId")
+                ?: responsive.optJSONObject("navigationEndpoint")?.optJSONObject("watchEndpoint")?.optString("videoId")
+                ?: responsive.optJSONObject("overlay")?.optJSONObject("musicItemThumbnailOverlayRenderer")
+                    ?.optJSONObject("content")?.optJSONObject("musicPlayButtonRenderer")
+                    ?.optJSONObject("playNavigationEndpoint")?.optJSONObject("watchEndpoint")?.optString("videoId")
+            if (videoId.isNullOrBlank()) return null
+
+            val flexColumns = responsive.optJSONArray("flexColumns")
+            val title = flexColumns?.optJSONObject(0)
+                ?.optJSONObject("musicResponsiveListItemFlexColumnRenderer")
+                ?.optJSONObject("text")
+                ?.optJSONArray("runs")
+                ?.optJSONObject(0)
+                ?.optString("text").orEmpty()
+
+            val subRuns = flexColumns?.optJSONObject(1)
+                ?.optJSONObject("musicResponsiveListItemFlexColumnRenderer")
+                ?.optJSONObject("text")
+                ?.optJSONArray("runs")
+
+            var artists = ""
+            var artistId: String? = null
+            var album: String? = null
+            var albumId: String? = null
+            var durationSec = 0L
+
+            if (subRuns != null && subRuns.length() > 0) {
+                val nonDelimiterRuns = mutableListOf<Pair<String, String?>>()
+                for (r in 0 until subRuns.length()) {
+                    val runObj = subRuns.optJSONObject(r)
+                    val t = runObj?.optString("text").orEmpty().trim()
+                    val bId = runObj?.optJSONObject("navigationEndpoint")?.optJSONObject("browseEndpoint")?.optString("browseId")
+                    if (t.isNotEmpty() && t != "•" && t != "·") {
+                        if (t.contains(":") && t.matches(Regex("\\d+:\\d+(:\\d+)?"))) {
+                            durationSec = parseTimeString(t)
+                        } else {
+                            nonDelimiterRuns.add(t to bId)
+                        }
+                    }
+                }
+                if (nonDelimiterRuns.isNotEmpty()) {
+                    artists = nonDelimiterRuns[0].first
+                    artistId = nonDelimiterRuns[0].second
+                    if (nonDelimiterRuns.size > 1) {
+                        album = nonDelimiterRuns[1].first
+                        albumId = nonDelimiterRuns[1].second
+                    }
+                }
+            }
+
+            val thumbUrl = responsive.optJSONObject("thumbnail")
+                ?.optJSONObject("musicThumbnailRenderer")
+                ?.optJSONObject("thumbnail")
+                ?.optJSONArray("thumbnails")
+                ?.let { thumbs ->
+                    thumbs.optJSONObject(thumbs.length() - 1)?.optString("url")
+                }?.highQualityThumbnail()
+
+            return MusicTrack(
+                id = videoId,
+                title = title.ifBlank { "Unknown Title" },
+                artists = artists.ifBlank { "Various Artists" },
+                artistId = artistId,
+                album = album,
+                albumId = albumId,
+                thumbnailUrl = thumbUrl,
+                durationSec = durationSec
+            )
+        }
+
+        itemObj.optJSONObject("musicTwoRowItemRenderer")?.let { twoRow ->
+            val watchEndpoint = twoRow.optJSONObject("navigationEndpoint")?.optJSONObject("watchEndpoint")
+            val videoId = watchEndpoint?.optString("videoId")
+            if (videoId.isNullOrBlank()) return null
+
+            val title = twoRow.optJSONObject("title")
+                ?.optJSONArray("runs")
+                ?.optJSONObject(0)
+                ?.optString("text").orEmpty()
+
+            val subtitleRuns = twoRow.optJSONObject("subtitle")?.optJSONArray("runs")
+            val artists = subtitleRuns?.optJSONObject(0)?.optString("text").orEmpty()
+            val artistId = subtitleRuns?.optJSONObject(0)?.optJSONObject("navigationEndpoint")
+                ?.optJSONObject("browseEndpoint")?.optString("browseId")
+
+            val thumbUrl = twoRow.optJSONObject("thumbnailRenderer")
+                ?.optJSONObject("musicThumbnailRenderer")
+                ?.optJSONObject("thumbnail")
+                ?.optJSONArray("thumbnails")
+                ?.let { thumbs ->
+                    thumbs.optJSONObject(thumbs.length() - 1)?.optString("url")
+                }?.highQualityThumbnail()
+
+            return MusicTrack(
+                id = videoId,
+                title = title.ifBlank { "Unknown Title" },
+                artists = artists.ifBlank { "Various Artists" },
+                artistId = artistId,
+                thumbnailUrl = thumbUrl
+            )
+        }
+
+        return null
+    }
+}
+
+/** Depth-first visit of every object-valued key in the tree. */
+internal fun JSONObject.walk(visit: (key: String, obj: JSONObject) -> Unit) {
+    val keys = keys()
+    while (keys.hasNext()) {
+        val k = keys.next()
+        when (val v = opt(k)) {
+            is JSONObject -> { visit(k, v); v.walk(visit) }
+            is JSONArray -> v.walkArray(visit)
+        }
+    }
+}
+
+private fun JSONArray.walkArray(visit: (key: String, obj: JSONObject) -> Unit) {
+    for (i in 0 until length()) {
+        when (val v = opt(i)) {
+            is JSONObject -> v.walk(visit)
+            is JSONArray -> v.walkArray(visit)
+        }
+    }
+}
