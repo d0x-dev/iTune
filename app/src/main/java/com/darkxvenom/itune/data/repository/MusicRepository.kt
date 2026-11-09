@@ -4,6 +4,9 @@ import androidx.compose.ui.graphics.Color
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.data.model.CoverArtType
 import com.darkxvenom.itune.data.model.FeaturedCard
+import com.darkxvenom.itune.data.model.LibraryMenuItem
+import com.darkxvenom.itune.data.model.LibraryPinItem
+import com.darkxvenom.itune.data.model.LibraryRecentAlbum
 import com.darkxvenom.itune.data.model.Playlist
 import com.darkxvenom.itune.data.model.RadioStation
 import com.darkxvenom.itune.data.model.SearchCategory
@@ -254,5 +257,28 @@ object MusicRepository {
             type = SearchCategoryType.CHILL,
             backgroundColor = Color(0xFF2E7D7A)
         )
+    )
+
+    val libraryPins = listOf(
+        LibraryPinItem("lp1", "Why Not More?", R.drawable.lib_album_why_not_more),
+        LibraryPinItem("lp2", "R&B Now", R.drawable.lib_album_rnb_now),
+        LibraryPinItem("lp3", "MIKE", R.drawable.lib_album_mike),
+        LibraryPinItem("lp4", "Like A Ribbon", R.drawable.lib_album_like_a_ribbon),
+        LibraryPinItem("lp5", "Earcandy", R.drawable.lib_album_earcandy),
+        LibraryPinItem("lp6", "Jupiter", R.drawable.lib_album_jupiter)
+    )
+
+    val libraryMenuItems = listOf(
+        LibraryMenuItem("lm1", "Playlists", R.drawable.ic_lib_playlists),
+        LibraryMenuItem("lm2", "Artists", R.drawable.ic_lib_artists),
+        LibraryMenuItem("lm3", "Albums", R.drawable.ic_lib_albums),
+        LibraryMenuItem("lm4", "Songs", R.drawable.ic_lib_songs)
+    )
+
+    val libraryRecentAlbums = listOf(
+        LibraryRecentAlbum("lr1", "The Mirror", "Polo & Pan", R.drawable.lib_recent_mirror),
+        LibraryRecentAlbum("lr2", "Wildest Dreams", "Taylor Swift", R.drawable.lib_recent_cloud),
+        LibraryRecentAlbum("lr3", "Why Not More?", "Gilles Peterson", R.drawable.lib_album_why_not_more),
+        LibraryRecentAlbum("lr4", "Like A Ribbon", "John Carroll Kirby", R.drawable.lib_album_like_a_ribbon)
     )
 }

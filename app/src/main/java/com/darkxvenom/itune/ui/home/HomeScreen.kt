@@ -44,13 +44,15 @@ import com.darkxvenom.itune.ui.components.TopHeaderBar
 import com.darkxvenom.itune.ui.components.TopSpringLoadingBar
 import com.darkxvenom.itune.ui.components.rememberSpringOverscrollState
 import com.darkxvenom.itune.ui.components.springOverscroll
+import com.darkxvenom.itune.ui.library.LibraryScreen
 import com.darkxvenom.itune.ui.search.SearchScreen
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import kotlinx.coroutines.delay
 
 enum class AppScreen {
     HOME,
-    SEARCH
+    SEARCH,
+    LIBRARY
 }
 
 @Composable
@@ -226,6 +228,20 @@ fun HomeScreen(
                         }
                     )
                 }
+
+                AppScreen.LIBRARY -> {
+                    LibraryScreen(
+                        onPinClick = { pin ->
+                            Toast.makeText(context, "Library Pin: ${pin.title}", Toast.LENGTH_SHORT).show()
+                        },
+                        onMenuItemClick = { item ->
+                            Toast.makeText(context, "Navigating to ${item.title}", Toast.LENGTH_SHORT).show()
+                        },
+                        onRecentAlbumClick = { album ->
+                            Toast.makeText(context, "Recent: ${album.title} by ${album.artist}", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
             }
         }
 
@@ -286,14 +302,25 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(6.dp))
 
             FloatingNavBar(
-                selectedTab = if (currentScreen == AppScreen.HOME) selectedTab else null,
+                selectedTab = when (currentScreen) {
+                    AppScreen.HOME -> selectedTab
+                    AppScreen.LIBRARY -> NavTab.LIBRARY
+                    AppScreen.SEARCH -> null
+                },
                 isSearchActive = currentScreen == AppScreen.SEARCH,
                 onTabSelected = { tab ->
                     selectedTab = tab
-                    currentScreen = AppScreen.HOME
+                    currentScreen = when (tab) {
+                        NavTab.LIBRARY -> AppScreen.LIBRARY
+                        else -> AppScreen.HOME
+                    }
                 },
                 onSearchClick = {
-                    currentScreen = if (currentScreen == AppScreen.SEARCH) AppScreen.HOME else AppScreen.SEARCH
+                    currentScreen = if (currentScreen == AppScreen.SEARCH) {
+                        if (selectedTab == NavTab.LIBRARY) AppScreen.LIBRARY else AppScreen.HOME
+                    } else {
+                        AppScreen.SEARCH
+                    }
                 }
             )
         }

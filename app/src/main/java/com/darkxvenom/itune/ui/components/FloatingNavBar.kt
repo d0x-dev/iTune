@@ -224,6 +224,22 @@ fun FloatingNavBar(
                                 val destinationSlot = (finalFingerX / sWidth).toInt().coerceIn(0, 3)
                                 onTabSelected(NavTab.entries[destinationSlot])
                             }
+                        } else {
+                            val targetSlot = (down.position.x / sWidth).toInt().coerceIn(0, 3)
+                            var isDrag = false
+                            while (true) {
+                                val event = awaitPointerEvent()
+                                val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                                if (!change.pressed) {
+                                    if (!isDrag) {
+                                        onTabSelected(NavTab.entries[targetSlot])
+                                    }
+                                    break
+                                }
+                                if (abs(change.position.x - down.position.x) > 10f) {
+                                    isDrag = true
+                                }
+                            }
                         }
                     }
                 },
