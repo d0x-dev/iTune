@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.darkxvenom.itune.data.model.Track
 import com.darkxvenom.itune.data.repository.MusicRepository
 import com.darkxvenom.itune.ui.browse.BrowseScreen
+import com.darkxvenom.itune.ui.components.AvatarSelectionDialog
 import com.darkxvenom.itune.ui.components.CuratedPlaylistsSection
 import com.darkxvenom.itune.ui.components.FeaturedHeroCarousel
 import com.darkxvenom.itune.ui.components.FloatingNavBar
@@ -66,6 +67,7 @@ fun HomeScreen(
     var currentTrack by remember { mutableStateOf<Track?>(null) }
     var isPlaying by remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) }
+    var showAvatarDialog by remember { mutableStateOf(false) }
 
     // Retain visited screens in memory so navigation is 100% instantaneous with zero GC or layout stutter
     var hasVisitedBrowse by remember { mutableStateOf(false) }
@@ -133,7 +135,7 @@ fun HomeScreen(
                 item(key = "top_header") {
                     TopHeaderBar(
                         onProfileClick = {
-                            Toast.makeText(context, "Apple Account Profile", Toast.LENGTH_SHORT).show()
+                            showAvatarDialog = true
                         }
                     )
                 }
@@ -245,6 +247,9 @@ fun HomeScreen(
                 BrowseScreen(
                     onCategoryClick = { item ->
                         Toast.makeText(context, "Opening ${item.title}", Toast.LENGTH_SHORT).show()
+                    },
+                    onProfileClick = {
+                        showAvatarDialog = true
                     }
                 )
             }
@@ -269,6 +274,9 @@ fun HomeScreen(
                     },
                     onRecentAlbumClick = { album ->
                         Toast.makeText(context, "Recent: ${album.title} by ${album.artist}", Toast.LENGTH_SHORT).show()
+                    },
+                    onProfileClick = {
+                        showAvatarDialog = true
                     }
                 )
             }
@@ -287,6 +295,9 @@ fun HomeScreen(
                 SearchScreen(
                     onCategoryClick = { category ->
                         Toast.makeText(context, "Category: ${category.title}", Toast.LENGTH_SHORT).show()
+                    },
+                    onProfileClick = {
+                        showAvatarDialog = true
                     }
                 )
             }
@@ -375,6 +386,13 @@ fun HomeScreen(
                         AppScreen.SEARCH
                     }
                 }
+            )
+        }
+
+        // Apple iOS-styled Avatar Selection Modal Dialog
+        if (showAvatarDialog) {
+            AvatarSelectionDialog(
+                onDismiss = { showAvatarDialog = false }
             )
         }
     }

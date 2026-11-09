@@ -69,7 +69,8 @@ fun LibraryScreen(
     modifier: Modifier = Modifier,
     onPinClick: (LibraryPinItem) -> Unit = {},
     onMenuItemClick: (LibraryMenuItem) -> Unit = {},
-    onRecentAlbumClick: (LibraryRecentAlbum) -> Unit = {}
+    onRecentAlbumClick: (LibraryRecentAlbum) -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -139,9 +140,7 @@ fun LibraryScreen(
                         // Profile Icon Only (No 3-dot button)
                         AppleMemojiAvatar(
                             size = 38.dp,
-                            onClick = {
-                                Toast.makeText(context, "Apple Account Profile", Toast.LENGTH_SHORT).show()
-                            }
+                            onClick = onProfileClick
                         )
                     }
                 }

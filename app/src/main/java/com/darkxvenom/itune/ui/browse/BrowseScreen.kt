@@ -61,7 +61,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun BrowseScreen(
     modifier: Modifier = Modifier,
-    onCategoryClick: (BrowseCategoryItem) -> Unit = {}
+    onCategoryClick: (BrowseCategoryItem) -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val gridState = rememberLazyGridState()
@@ -135,9 +136,7 @@ fun BrowseScreen(
 
                         AppleMemojiAvatar(
                             size = 38.dp,
-                            onClick = {
-                                Toast.makeText(context, "Apple Account Profile", Toast.LENGTH_SHORT).show()
-                            }
+                            onClick = onProfileClick
                         )
                     }
 

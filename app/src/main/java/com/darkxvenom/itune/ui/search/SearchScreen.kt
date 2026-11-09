@@ -69,7 +69,8 @@ import com.darkxvenom.itune.ui.theme.AppleTextSecondary
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    onCategoryClick: (SearchCategory) -> Unit = {}
+    onCategoryClick: (SearchCategory) -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val gridState = rememberLazyGridState()
@@ -136,9 +137,7 @@ fun SearchScreen(
 
                         AppleMemojiAvatar(
                             size = 38.dp,
-                            onClick = {
-                                Toast.makeText(context, "Apple Account Profile", Toast.LENGTH_SHORT).show()
-                            }
+                            onClick = onProfileClick
                         )
                     }
 
