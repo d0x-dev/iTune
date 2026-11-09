@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import coil.compose.AsyncImage
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -279,14 +280,15 @@ private fun LibraryPinCard(
             ) { onClick() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = pin.artworkRes),
+        AsyncImage(
+            model = pin.imageUrl,
             contentDescription = pin.title,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(9.dp))
+                .background(Color(0xFF1C1C1E))
         )
 
         Spacer(modifier = Modifier.height(6.dp))
@@ -362,14 +364,15 @@ private fun LibraryRecentAlbumCard(
                 indication = null
             ) { onClick() }
     ) {
-        Image(
-            painter = painterResource(id = album.artworkRes),
+        AsyncImage(
+            model = album.imageUrl,
             contentDescription = album.title,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(10.dp))
+                .background(Color(0xFF1C1C1E))
         )
 
         Spacer(modifier = Modifier.height(7.dp))

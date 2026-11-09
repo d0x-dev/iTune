@@ -1,6 +1,5 @@
 package com.darkxvenom.itune.data.model
 
-import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
 
 enum class SearchCategoryType {
@@ -23,5 +22,5 @@ data class SearchCategory(
     val title: String,
     val type: SearchCategoryType,
     val backgroundColor: Color,
-    @DrawableRes val imageRes: Int? = null
+    val imageUrl: String? = null
 )

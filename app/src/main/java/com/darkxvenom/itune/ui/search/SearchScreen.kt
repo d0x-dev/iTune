@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import coil.compose.AsyncImage
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -286,14 +287,15 @@ fun SearchCategoryCardItem(
             .fillMaxWidth()
             .aspectRatio(1.765f)
             .clip(RoundedCornerShape(14.dp))
+            .background(category.backgroundColor)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) { onClick() }
     ) {
-        if (category.imageRes != null) {
-            Image(
-                painter = painterResource(id = category.imageRes),
+        if (category.imageUrl != null) {
+            AsyncImage(
+                model = category.imageUrl,
                 contentDescription = category.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

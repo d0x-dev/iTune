@@ -174,76 +174,78 @@ object MusicRepository {
         )
     )
 
+    private const val GITHUB_IMAGE_BASE_URL = "https://raw.githubusercontent.com/d0x-dev/iTune/main/assets/images"
+
     val searchCategories = listOf(
         SearchCategory(
             id = "c1",
             title = "Apple Music Live",
             type = SearchCategoryType.APPLE_MUSIC_LIVE,
             backgroundColor = Color(0xFF18181A),
-            imageRes = R.drawable.card_apple_music_live
+            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_apple_music_live.png"
         ),
         SearchCategory(
             id = "c2",
             title = "Hits",
             type = SearchCategoryType.HITS,
             backgroundColor = Color(0xFFE5AC15),
-            imageRes = R.drawable.card_hits
+            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_hits.png"
         ),
         SearchCategory(
             id = "c3",
             title = "Alternative",
             type = SearchCategoryType.ALTERNATIVE,
             backgroundColor = Color(0xFFC4B526),
-            imageRes = R.drawable.card_alternative
+            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_alternative.png"
         ),
         SearchCategory(
             id = "c4",
             title = "Pop",
             type = SearchCategoryType.POP,
             backgroundColor = Color(0xFFE63B6B),
-            imageRes = R.drawable.card_pop
+            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_pop.png"
         ),
         SearchCategory(
             id = "c5",
             title = "Hip-Hop",
             type = SearchCategoryType.HIP_HOP,
             backgroundColor = Color(0xFF5087EC),
-            imageRes = R.drawable.card_hip_hop
+            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_hip_hop.png"
         ),
         SearchCategory(
             id = "c6",
             title = "Country",
             type = SearchCategoryType.COUNTRY,
             backgroundColor = Color(0xFFD97724),
-            imageRes = R.drawable.card_country
+            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_country.png"
         ),
         SearchCategory(
             id = "c7",
             title = "Dance",
             type = SearchCategoryType.DANCE,
             backgroundColor = Color(0xFF0FB854),
-            imageRes = R.drawable.card_dance
+            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_dance.png"
         ),
         SearchCategory(
             id = "c8",
             title = "Rock",
             type = SearchCategoryType.ROCK,
             backgroundColor = Color(0xFFDC4E33),
-            imageRes = R.drawable.card_rock
+            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_rock.png"
         ),
         SearchCategory(
             id = "c9",
             title = "Latin",
             type = SearchCategoryType.LATIN,
             backgroundColor = Color(0xFFD83375),
-            imageRes = R.drawable.card_latin
+            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_latin.png"
         ),
         SearchCategory(
             id = "c10",
             title = "R&B",
             type = SearchCategoryType.RNB,
             backgroundColor = Color(0xFF826FE3),
-            imageRes = R.drawable.card_rnb
+            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_rnb.png"
         ),
         SearchCategory(
             id = "c11",
@@ -260,12 +262,12 @@ object MusicRepository {
     )
 
     val libraryPins = listOf(
-        LibraryPinItem("lp1", "Why Not More?", R.drawable.lib_album_why_not_more),
-        LibraryPinItem("lp2", "R&B Now", R.drawable.lib_album_rnb_now),
-        LibraryPinItem("lp3", "MIKE", R.drawable.lib_album_mike),
-        LibraryPinItem("lp4", "Like A Ribbon", R.drawable.lib_album_like_a_ribbon),
-        LibraryPinItem("lp5", "Earcandy", R.drawable.lib_album_earcandy),
-        LibraryPinItem("lp6", "Jupiter", R.drawable.lib_album_jupiter)
+        LibraryPinItem("lp1", "Why Not More?", "$GITHUB_IMAGE_BASE_URL/lib_album_why_not_more.png"),
+        LibraryPinItem("lp2", "R&B Now", "$GITHUB_IMAGE_BASE_URL/lib_album_rnb_now.png"),
+        LibraryPinItem("lp3", "MIKE", "$GITHUB_IMAGE_BASE_URL/lib_album_mike.png"),
+        LibraryPinItem("lp4", "Like A Ribbon", "$GITHUB_IMAGE_BASE_URL/lib_album_like_a_ribbon.png"),
+        LibraryPinItem("lp5", "Earcandy", "$GITHUB_IMAGE_BASE_URL/lib_album_earcandy.png"),
+        LibraryPinItem("lp6", "Jupiter", "$GITHUB_IMAGE_BASE_URL/lib_album_jupiter.png")
     )
 
     val libraryMenuItems = listOf(
@@ -276,9 +278,9 @@ object MusicRepository {
     )
 
     val libraryRecentAlbums = listOf(
-        LibraryRecentAlbum("lr1", "The Mirror", "Polo & Pan", R.drawable.lib_recent_mirror),
-        LibraryRecentAlbum("lr2", "Wildest Dreams", "Taylor Swift", R.drawable.lib_recent_cloud),
-        LibraryRecentAlbum("lr3", "Why Not More?", "Gilles Peterson", R.drawable.lib_album_why_not_more),
-        LibraryRecentAlbum("lr4", "Like A Ribbon", "John Carroll Kirby", R.drawable.lib_album_like_a_ribbon)
+        LibraryRecentAlbum("lr1", "The Mirror", "Polo & Pan", "$GITHUB_IMAGE_BASE_URL/lib_recent_mirror.png"),
+        LibraryRecentAlbum("lr2", "Wildest Dreams", "Taylor Swift", "$GITHUB_IMAGE_BASE_URL/lib_recent_cloud.png"),
+        LibraryRecentAlbum("lr3", "Why Not More?", "Gilles Peterson", "$GITHUB_IMAGE_BASE_URL/lib_album_why_not_more.png"),
+        LibraryRecentAlbum("lr4", "Like A Ribbon", "John Carroll Kirby", "$GITHUB_IMAGE_BASE_URL/lib_album_like_a_ribbon.png")
     )
 }

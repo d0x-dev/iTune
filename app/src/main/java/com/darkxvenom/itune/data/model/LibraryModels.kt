@@ -5,7 +5,7 @@ import androidx.annotation.DrawableRes
 data class LibraryPinItem(
     val id: String,
     val title: String,
-    @param:DrawableRes val artworkRes: Int
+    val imageUrl: String
 )
 
 data class LibraryMenuItem(
@@ -18,5 +18,5 @@ data class LibraryRecentAlbum(
     val id: String,
     val title: String,
     val artist: String,
-    @param:DrawableRes val artworkRes: Int
+    val imageUrl: String
 )
