@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.darkxvenom.itune.data.model.Track
 import com.darkxvenom.itune.data.repository.MusicRepository
+import com.darkxvenom.itune.ui.browse.BrowseScreen
 import com.darkxvenom.itune.ui.components.CuratedPlaylistsSection
 import com.darkxvenom.itune.ui.components.FeaturedHeroCarousel
 import com.darkxvenom.itune.ui.components.FloatingNavBar
@@ -52,7 +53,8 @@ import kotlinx.coroutines.delay
 enum class AppScreen {
     HOME,
     SEARCH,
-    LIBRARY
+    LIBRARY,
+    BROWSE
 }
 
 @Composable
@@ -242,6 +244,14 @@ fun HomeScreen(
                         }
                     )
                 }
+
+                AppScreen.BROWSE -> {
+                    BrowseScreen(
+                        onCategoryClick = { item ->
+                            Toast.makeText(context, "Opening ${item.title}", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
             }
         }
 
@@ -304,6 +314,7 @@ fun HomeScreen(
             FloatingNavBar(
                 selectedTab = when (currentScreen) {
                     AppScreen.HOME -> selectedTab
+                    AppScreen.BROWSE -> NavTab.NEW
                     AppScreen.LIBRARY -> NavTab.LIBRARY
                     AppScreen.SEARCH -> null
                 },
@@ -311,13 +322,18 @@ fun HomeScreen(
                 onTabSelected = { tab ->
                     selectedTab = tab
                     currentScreen = when (tab) {
+                        NavTab.NEW -> AppScreen.BROWSE
                         NavTab.LIBRARY -> AppScreen.LIBRARY
                         else -> AppScreen.HOME
                     }
                 },
                 onSearchClick = {
                     currentScreen = if (currentScreen == AppScreen.SEARCH) {
-                        if (selectedTab == NavTab.LIBRARY) AppScreen.LIBRARY else AppScreen.HOME
+                        when (selectedTab) {
+                            NavTab.NEW -> AppScreen.BROWSE
+                            NavTab.LIBRARY -> AppScreen.LIBRARY
+                            else -> AppScreen.HOME
+                        }
                     } else {
                         AppScreen.SEARCH
                     }

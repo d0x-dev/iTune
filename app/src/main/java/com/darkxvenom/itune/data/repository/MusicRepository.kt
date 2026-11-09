@@ -2,6 +2,7 @@ package com.darkxvenom.itune.data.repository
 
 import androidx.compose.ui.graphics.Color
 import com.darkxvenom.itune.R
+import com.darkxvenom.itune.data.model.BrowseCategoryItem
 import com.darkxvenom.itune.data.model.CoverArtType
 import com.darkxvenom.itune.data.model.FeaturedCard
 import com.darkxvenom.itune.data.model.LibraryMenuItem
@@ -282,5 +283,16 @@ object MusicRepository {
         LibraryRecentAlbum("lr2", "Wildest Dreams", "Taylor Swift", "$GITHUB_IMAGE_BASE_URL/lib_recent_cloud.png"),
         LibraryRecentAlbum("lr3", "Why Not More?", "Gilles Peterson", "$GITHUB_IMAGE_BASE_URL/lib_album_why_not_more.png"),
         LibraryRecentAlbum("lr4", "Like A Ribbon", "John Carroll Kirby", "$GITHUB_IMAGE_BASE_URL/lib_album_like_a_ribbon.png")
+    )
+
+    val browseCategories = listOf(
+        BrowseCategoryItem("b1", "Composers", "$GITHUB_IMAGE_BASE_URL/browse_composers.png"),
+        BrowseCategoryItem("b2", "Periods", "$GITHUB_IMAGE_BASE_URL/browse_periods.png"),
+        BrowseCategoryItem("b3", "Genres", "$GITHUB_IMAGE_BASE_URL/browse_genres.png"),
+        BrowseCategoryItem("b4", "Conductors", "$GITHUB_IMAGE_BASE_URL/browse_conductors.png"),
+        BrowseCategoryItem("b5", "Orchestras", "$GITHUB_IMAGE_BASE_URL/browse_orchestras.png"),
+        BrowseCategoryItem("b6", "Soloists", "$GITHUB_IMAGE_BASE_URL/browse_soloists.png"),
+        BrowseCategoryItem("b7", "Ensembles", "$GITHUB_IMAGE_BASE_URL/browse_ensembles.png"),
+        BrowseCategoryItem("b8", "Choirs", "$GITHUB_IMAGE_BASE_URL/browse_choirs.png")
     )
 }
