@@ -279,8 +279,8 @@ object MusicRepository {
     )
 
     val libraryRecentAlbums = listOf(
-        LibraryRecentAlbum("lr1", "The Mirror", "Polo & Pan", "$GITHUB_IMAGE_BASE_URL/lib_recent_mirror.png"),
-        LibraryRecentAlbum("lr2", "Wildest Dreams", "Taylor Swift", "$GITHUB_IMAGE_BASE_URL/lib_recent_cloud.png"),
+        LibraryRecentAlbum("lr1", "Eclipse Aura", "Kavinsky", "$GITHUB_IMAGE_BASE_URL/lib_recent_headphones.png"),
+        LibraryRecentAlbum("lr2", "Sakura Dimension", "Komorebi", "$GITHUB_IMAGE_BASE_URL/lib_recent_sakura.png"),
         LibraryRecentAlbum("lr3", "Why Not More?", "Gilles Peterson", "$GITHUB_IMAGE_BASE_URL/lib_album_why_not_more.png"),
         LibraryRecentAlbum("lr4", "Like A Ribbon", "John Carroll Kirby", "$GITHUB_IMAGE_BASE_URL/lib_album_like_a_ribbon.png")
     )
