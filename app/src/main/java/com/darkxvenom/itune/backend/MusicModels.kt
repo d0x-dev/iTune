@@ -39,6 +39,20 @@ data class MusicPlaylistRef(
     val year: String? = null,
 )
 
+@Immutable
+data class LyricsLine(
+    val timeMs: Long,
+    val text: String,
+    val words: List<WordTiming> = emptyList(),
+)
+
+@Immutable
+data class WordTiming(
+    val startMs: Long,
+    val endMs: Long,
+    val text: String,
+)
+
 /** Upgrades YouTube and Google CDN album artwork to high resolution (544px / 720p). */
 fun String.highQualityThumbnail(): String {
     var url = this

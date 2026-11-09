@@ -1,11 +1,8 @@
 package com.darkxvenom.itune.ui.search
 
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -24,13 +21,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -132,81 +127,76 @@ fun SearchScreen(
             .fillMaxSize()
             .background(AppleOledBlack)
     ) {
-        Column(
+        // Main Grid with spring overscroll physics containing BOTH the Header and the Content
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            state = gridState,
             modifier = Modifier
                 .fillMaxSize()
-                .statusBarsPadding()
+                .springOverscroll(),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 180.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Header: Large Title "Search" + Profile Avatar
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Search",
-                        color = AppleTextPrimary,
-                        fontSize = 34.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = (-0.5).sp
-                    )
-
-                    AppleMemojiAvatar(
-                        size = 38.dp,
-                        onClick = onProfileClick
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Apple Music Search Input Field
-                AppleSearchBar(
-                    query = searchQuery,
-                    onQueryChange = { searchQuery = it },
-                    onMicClick = {
-                        Toast.makeText(context, "Voice Search listening...", Toast.LENGTH_SHORT).show()
-                    }
-                )
-            }
-
-            // CONTENT AREA: Categories when empty query, live search results when query entered
-            if (searchQuery.isBlank()) {
-                // Main 2-Column Category Grid
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    state = gridState,
+            // Header: Large Title "Search" + Profile Avatar + Search Bar
+            // Attached inside grid so pulling/scrolling bounces the entire screen together
+            item(span = { GridItemSpan(2) }, key = "search_header") {
+                Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .springOverscroll(),
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 180.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(vertical = 8.dp)
                 ) {
-                    items(MusicRepository.searchCategories, key = { it.id }) { category ->
-                        SearchCategoryCardItem(
-                            category = category,
-                            onClick = {
-                                onCategoryClick(category)
-                                searchQuery = category.title
-                            }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Search",
+                            color = AppleTextPrimary,
+                            fontSize = 34.sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = (-0.5).sp
+                        )
+
+                        AppleMemojiAvatar(
+                            size = 38.dp,
+                            onClick = onProfileClick
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Apple Music Search Input Field
+                    AppleSearchBar(
+                        query = searchQuery,
+                        onQueryChange = { searchQuery = it },
+                        onMicClick = {
+                            Toast.makeText(context, "Voice Search listening...", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
+            }
+
+            // CONTENT: Categories when query is empty, live YouTube Music results when typed
+            if (searchQuery.isBlank()) {
+                items(MusicRepository.searchCategories, key = { it.id }) { category ->
+                    SearchCategoryCardItem(
+                        category = category,
+                        onClick = {
+                            onCategoryClick(category)
+                            searchQuery = category.title
+                        }
+                    )
                 }
             } else {
-                // Live Music Search Results from iTube Backend
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    if (isSearching && searchResults.isEmpty()) {
+                if (isSearching && searchResults.isEmpty()) {
+                    item(span = { GridItemSpan(2) }, key = "search_loading") {
                         Box(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(bottom = 120.dp),
+                                .fillMaxWidth()
+                                .padding(vertical = 48.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -215,7 +205,7 @@ fun SearchScreen(
                                     strokeWidth = 2.5.dp,
                                     modifier = Modifier.size(36.dp)
                                 )
-                                Spacer(modifier = Modifier.height(12.dp))
+                                Spacer(modifier = Modifier.height(14.dp))
                                 Text(
                                     text = "Searching YouTube Music...",
                                     color = AppleTextSecondary,
@@ -223,71 +213,42 @@ fun SearchScreen(
                                 )
                             }
                         }
-                    } else if (searchResults.isEmpty()) {
+                    }
+                } else if (!isSearching && searchResults.isEmpty()) {
+                    item(span = { GridItemSpan(2) }, key = "search_empty") {
                         Box(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(bottom = 120.dp),
+                                .fillMaxWidth()
+                                .padding(vertical = 48.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "No songs found for \"$searchQuery\"",
+                                text = "No results found for \"$searchQuery\"",
                                 color = AppleTextSecondary,
                                 fontSize = 15.sp
                             )
                         }
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .springOverscroll(),
-                            contentPadding = PaddingValues(top = 8.dp, bottom = 190.dp)
-                        ) {
-                            item(key = "top_songs_header") {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 6.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = "Top Results",
-                                        color = AppleTextPrimary,
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-
-                                    if (isSearching) {
-                                        CircularProgressIndicator(
-                                            color = Color(0xFFFA2D48),
-                                            strokeWidth = 2.dp,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                    }
-                                }
+                    }
+                } else {
+                    items(searchResults, key = { it.id }, span = { GridItemSpan(2) }) { track ->
+                        SearchResultItem(
+                            track = track,
+                            isCurrent = MusicPlayerState.currentTrack?.id == track.id,
+                            isPlaying = MusicPlayerState.isPlaying,
+                            onClick = {
+                                focusManager.clearFocus(force = true)
+                                keyboardController?.hide()
+                                MusicPlayerState.play(track, searchResults)
                             }
-
-                            items(searchResults, key = { it.id }) { track ->
-                                MusicSearchTrackRow(
-                                    track = track,
-                                    onClick = {
-                                        focusManager.clearFocus(force = true)
-                                        keyboardController?.hide()
-                                        MusicPlayerState.play(track, searchResults)
-                                    }
-                                )
-                            }
-                        }
+                        )
                     }
                 }
             }
         }
 
-        // Top Status Bar Area Black Blur Shade Scrim: Only appears when scrolling down
+        // Top subtle gradient shade on scroll for status bar transparency
         Box(
             modifier = Modifier
-                .align(Alignment.TopCenter)
                 .fillMaxWidth()
                 .height(110.dp)
                 .graphicsLayer { alpha = topShadeAlpha }
@@ -306,21 +267,24 @@ fun SearchScreen(
     }
 }
 
-/** AirBeats / iTube styled music search track item row with cover art, titles, and live animated equalizer. */
+/**
+ * Apple Music styled search result item with high quality thumbnail,
+ * red playing title highlight, animated equalizer, and formatted metadata.
+ */
 @Composable
-fun MusicSearchTrackRow(
+private fun SearchResultItem(
     track: MusicTrack,
+    isCurrent: Boolean,
+    isPlaying: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
-    val isCurrent = MusicPlayerState.currentTrack?.id == track.id
-    val isPlaying = isCurrent && MusicPlayerState.isPlaying
-
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(horizontal = 16.dp, vertical = 7.dp),
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick)
+            .padding(vertical = 6.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Thumbnail with rounded corners and playing indicator
