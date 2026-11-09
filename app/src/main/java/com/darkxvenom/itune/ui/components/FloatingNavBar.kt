@@ -2,6 +2,7 @@ package com.darkxvenom.itune.ui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -81,10 +83,6 @@ fun FloatingNavBar(
     val dockHeight = 58.dp
     val containerHeight = 88.dp
 
-    // Ultra-realistic water droplet dimensions: bulges prominently above and below dock edges
-    val bubbleWidthDp = 72.dp
-    val bubbleHeightDp = 65.dp
-
     val density = LocalDensity.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -101,14 +99,34 @@ fun FloatingNavBar(
         }
     }
 
+    // Dynamic morphing between:
+    // 1. Resting Shell: subtle inside-dock oval capsule (58dp x 46dp) matching media_1794248305825_dc654f82.png
+    // 2. Glassy Water Droplet: 3D protruding liquid bubble (72dp x 65dp) matching media_1794246658446_33556023.png on tap-and-hold
+    val currentBubbleWidthDp by animateDpAsState(
+        targetValue = if (isHolding) 72.dp else 58.dp,
+        animationSpec = spring(dampingRatio = 0.65f, stiffness = 340f),
+        label = "BubbleWidth"
+    )
+
+    val currentBubbleHeightDp by animateDpAsState(
+        targetValue = if (isHolding) 65.dp else 46.dp,
+        animationSpec = spring(dampingRatio = 0.65f, stiffness = 340f),
+        label = "BubbleHeight"
+    )
+
+    val holdingProgress by animateFloatAsState(
+        targetValue = if (isHolding) 1f else 0f,
+        animationSpec = spring(dampingRatio = 0.70f, stiffness = 300f),
+        label = "HoldingProgress"
+    )
+
     val tabCount = 4
     val slotWidthPx = if (dockWidthPx > 0f) dockWidthPx / tabCount else 0f
-    val bubbleWidthPx = with(density) { bubbleWidthDp.toPx() }
+    val bubbleWidthPx = with(density) { currentBubbleWidthDp.toPx() }
 
     val activeSlot = if (isHolding) hoveredIndex else (selectedTab?.ordinal ?: 0)
-    val restingX = if (slotWidthPx > 0f && selectedTab != null) {
-        activeSlot * slotWidthPx + (slotWidthPx - bubbleWidthPx) / 2f
-    } else 0f
+    val slotCenterX = if (slotWidthPx > 0f) activeSlot * slotWidthPx + slotWidthPx / 2f else 0f
+    val restingX = slotCenterX - bubbleWidthPx / 2f
 
     val targetBubbleX = if (isHolding) {
         (dragFingerX - bubbleWidthPx / 2f).coerceIn(-12f, dockWidthPx - bubbleWidthPx + 12f)
@@ -160,20 +178,19 @@ fun FloatingNavBar(
                         val down = awaitFirstDown(requireUnconsumed = false)
                         val sWidth = if (dockWidthPx > 0f) dockWidthPx / tabCount else size.width.toFloat() / tabCount
                         val targetSlot = (down.position.x / sWidth).toInt().coerceIn(0, tabCount - 1)
-                        val isCurrentTab = (selectedTab != null && !isSearchActive && targetSlot == selectedTab.ordinal)
 
                         // 1. Immediately switch tab on touch (0ms latency, zero delay!)
                         onTabSelected(NavTab.entries[targetSlot])
                         dragFingerX = down.position.x
                         hoveredIndex = targetSlot
 
-                        // 2. Liquid glass hold & drag physics
+                        // 2. Tap-and-hold triggers the 3D liquid glassy water droplet bubble!
                         var isDragging = false
                         val holdJob = coroutineScope.launch {
-                            delay(120)
+                            delay(110)
                             isHolding = true
                             bubbleScale.animateTo(
-                                targetValue = 1.30f,
+                                targetValue = 1.28f,
                                 animationSpec = spring(
                                     dampingRatio = 0.62f,
                                     stiffness = 220f
@@ -197,7 +214,7 @@ fun FloatingNavBar(
                                     isHolding = true
                                     coroutineScope.launch {
                                         bubbleScale.animateTo(
-                                            targetValue = 1.30f,
+                                            targetValue = 1.28f,
                                             animationSpec = spring(
                                                 dampingRatio = 0.62f,
                                                 stiffness = 220f
@@ -211,6 +228,7 @@ fun FloatingNavBar(
 
                         holdJob.cancel()
                         val finalFingerX = dragFingerX
+                        val wasHolding = isHolding
                         isHolding = false
 
                         coroutineScope.launch {
@@ -223,7 +241,7 @@ fun FloatingNavBar(
                             )
                         }
 
-                        if (isDragging) {
+                        if (isDragging || wasHolding) {
                             val destinationSlot = (finalFingerX / sWidth).toInt().coerceIn(0, tabCount - 1)
                             onTabSelected(NavTab.entries[destinationSlot])
                         }
@@ -247,88 +265,103 @@ fun FloatingNavBar(
                     .border(0.75.dp, AppleGlassBorder, shape = RoundedCornerShape(percent = 50))
             )
 
-            // Layer 2: Authentic 3D Liquid Glass Water Droplet Bubble (65.dp height, bulges outside dock)
+            // Layer 2: Selected Indicator (Morphs between resting shell & liquid glassy water droplet on hold)
             if (dockWidthPx > 0f && (selectedTab != null || isHolding)) {
                 Box(
                     modifier = Modifier
                         .offset { IntOffset(currentBubbleX.roundToInt(), 0) }
                         .align(Alignment.CenterStart)
-                        .width(bubbleWidthDp)
-                        .height(bubbleHeightDp)
+                        .width(currentBubbleWidthDp)
+                        .height(currentBubbleHeightDp)
                         .graphicsLayer {
                             scaleX = bubbleScale.value
                             scaleY = bubbleScale.value
                             alpha = bubbleAlpha
                         }
                         .shadow(
-                            elevation = if (isHolding) 20.dp else 12.dp,
+                            elevation = (18.dp * holdingProgress),
                             shape = RoundedCornerShape(percent = 50),
-                            ambientColor = Color.Black.copy(alpha = 0.70f),
-                            spotColor = Color.Black.copy(alpha = 0.85f)
+                            ambientColor = Color.Black.copy(alpha = 0.70f * holdingProgress),
+                            spotColor = Color.Black.copy(alpha = 0.85f * holdingProgress)
                         )
                         .clip(RoundedCornerShape(percent = 50))
+                        // Resting Shell Background (Subtle dark translucent oval inside dock, matches media_1794248305825_dc654f82.png)
                         .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.White.copy(alpha = 0.28f),
-                                    Color.White.copy(alpha = 0.10f),
-                                    Color(0x35000000),
-                                    Color.White.copy(alpha = 0.15f)
-                                )
-                            )
-                        )
-                        .border(
-                            width = 1.25.dp,
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.White.copy(alpha = 0.85f),
-                                    Color.White.copy(alpha = 0.45f),
-                                    Color.White.copy(alpha = 0.18f),
-                                    Color.White.copy(alpha = 0.38f)
-                                )
-                            ),
+                            Color.White.copy(alpha = 0.12f * (1f - holdingProgress * 0.4f)),
                             shape = RoundedCornerShape(percent = 50)
                         )
                 ) {
-                    // Top Specular Lens Glare Arc (Convex Water Droplet Lens Highlight)
-                    Box(
-                        modifier = Modifier
-                            .padding(top = 3.dp)
-                            .align(Alignment.TopCenter)
-                            .width(34.dp)
-                            .height(5.dp)
-                            .clip(RoundedCornerShape(percent = 50))
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.White.copy(alpha = 0.45f),
-                                        Color.White.copy(alpha = 0.0f)
-                                    )
+                    // Glassy Water Droplet Overlay (Comes alive on tap-and-hold, matches media_1794246658446_33556023.png)
+                    if (holdingProgress > 0.01f) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .graphicsLayer { alpha = holdingProgress }
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.White.copy(alpha = 0.28f),
+                                            Color.White.copy(alpha = 0.10f),
+                                            Color(0x35000000),
+                                            Color.White.copy(alpha = 0.15f)
+                                        )
+                                    ),
+                                    shape = RoundedCornerShape(percent = 50)
                                 )
+                                .border(
+                                    width = 1.25.dp,
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.White.copy(alpha = 0.85f),
+                                            Color.White.copy(alpha = 0.45f),
+                                            Color.White.copy(alpha = 0.18f),
+                                            Color.White.copy(alpha = 0.38f)
+                                        )
+                                    ),
+                                    shape = RoundedCornerShape(percent = 50)
+                                )
+                        ) {
+                            // Top Specular Lens Glare Arc (Convex Water Droplet Lens Highlight)
+                            Box(
+                                modifier = Modifier
+                                    .padding(top = 3.dp)
+                                    .align(Alignment.TopCenter)
+                                    .width(34.dp)
+                                    .height(5.dp)
+                                    .clip(RoundedCornerShape(percent = 50))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color.White.copy(alpha = 0.45f),
+                                                Color.White.copy(alpha = 0.0f)
+                                            )
+                                        )
+                                    )
                             )
-                    )
 
-                    // Bottom Ambient Meniscus Light Bounce
-                    Box(
-                        modifier = Modifier
-                            .padding(bottom = 3.dp)
-                            .align(Alignment.BottomCenter)
-                            .width(26.dp)
-                            .height(3.dp)
-                            .clip(RoundedCornerShape(percent = 50))
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.White.copy(alpha = 0.0f),
-                                        Color.White.copy(alpha = 0.22f)
+                            // Bottom Ambient Meniscus Light Bounce
+                            Box(
+                                modifier = Modifier
+                                    .padding(bottom = 3.dp)
+                                    .align(Alignment.BottomCenter)
+                                    .width(26.dp)
+                                    .height(3.dp)
+                                    .clip(RoundedCornerShape(percent = 50))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color.White.copy(alpha = 0.0f),
+                                                Color.White.copy(alpha = 0.22f)
+                                            )
+                                        )
                                     )
-                                )
                             )
-                    )
+                        }
+                    }
                 }
             }
 
-            // Layer 3: Tabs Row (Pure White on active bubble, translucent white when inactive)
+            // Layer 3: Tabs Row (Red on resting shell, White inside glassy bubble when holding)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -341,6 +374,7 @@ fun FloatingNavBar(
                     label = "Home",
                     iconRes = R.drawable.ic_nav_home,
                     isHighlighted = !isSearchActive && (if (isHolding) hoveredIndex == 0 else selectedTab == NavTab.HOME),
+                    isHolding = isHolding,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -348,6 +382,7 @@ fun FloatingNavBar(
                     label = "New",
                     iconRes = R.drawable.ic_nav_new,
                     isHighlighted = !isSearchActive && (if (isHolding) hoveredIndex == 1 else selectedTab == NavTab.NEW),
+                    isHolding = isHolding,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -355,6 +390,7 @@ fun FloatingNavBar(
                     label = "Radio",
                     iconRes = R.drawable.ic_nav_radio,
                     isHighlighted = !isSearchActive && (if (isHolding) hoveredIndex == 2 else selectedTab == NavTab.RADIO),
+                    isHolding = isHolding,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -362,6 +398,7 @@ fun FloatingNavBar(
                     label = "Library",
                     iconRes = R.drawable.ic_nav_library,
                     isHighlighted = !isSearchActive && (if (isHolding) hoveredIndex == 3 else selectedTab == NavTab.LIBRARY),
+                    isHolding = isHolding,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -423,14 +460,20 @@ private fun AppleNavTabItem(
     label: String,
     iconRes: Int,
     isHighlighted: Boolean,
+    isHolding: Boolean,
     modifier: Modifier = Modifier
 ) {
-    // Pure White when inside active water drop bubble (matches media_1794246658446_33556023.png)
-    val activeColor = Color.White
-    val inactiveColor = Color.White.copy(alpha = 0.65f)
+    // 1. Initially selected shell at rest: Apple Music Red (matches media_1794248305825_dc654f82.png)
+    // 2. When tap-and-held inside 3D glassy water droplet: Color.White (matches media_1794246658446_33556023.png)
+    // 3. Unselected tabs: White with 0.85 alpha
+    val targetColor = when {
+        isHighlighted && isHolding -> Color.White
+        isHighlighted -> AppleMusicRed
+        else -> Color.White.copy(alpha = 0.85f)
+    }
 
     val contentColor by animateColorAsState(
-        targetValue = if (isHighlighted) activeColor else inactiveColor,
+        targetValue = targetColor,
         animationSpec = tween(durationMillis = 140),
         label = "TabContentColor"
     )
