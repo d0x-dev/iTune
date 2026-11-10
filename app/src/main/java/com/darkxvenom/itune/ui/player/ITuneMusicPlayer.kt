@@ -185,8 +185,8 @@ fun ITuneMusicPlayer(
     val panelProgress by animateFloatAsState(
         targetValue = if (isPanelOpen) 1f else 0f,
         animationSpec = spring(
-            dampingRatio = 0.86f,
-            stiffness = Spring.StiffnessMediumLow
+            dampingRatio = 0.90f,
+            stiffness = 170f
         ),
         label = "panelProgress"
     )
@@ -237,19 +237,19 @@ fun ITuneMusicPlayer(
 
     val controlsTranslationY by animateFloatAsState(
         targetValue = if (!isLyricsOpen || areLyricsControlsVisible) 0f else with(density) { 340.dp.toPx() },
-        animationSpec = spring(dampingRatio = 0.86f, stiffness = Spring.StiffnessMediumLow),
+        animationSpec = spring(dampingRatio = 0.90f, stiffness = 170f),
         label = "lyricsControlsTranslationY"
     )
 
     val controlsAlpha by animateFloatAsState(
         targetValue = if (!isLyricsOpen || areLyricsControlsVisible) 1f else 0f,
-        animationSpec = tween(durationMillis = 280),
+        animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing),
         label = "lyricsControlsAlpha"
     )
 
     val contentBottomPadding by animateDpAsState(
         targetValue = if (!areLyricsControlsVisible && isLyricsOpen) 24.dp else 295.dp,
-        animationSpec = spring(dampingRatio = 0.86f, stiffness = Spring.StiffnessMediumLow),
+        animationSpec = spring(dampingRatio = 0.90f, stiffness = 170f),
         label = "contentBottomPadding"
     )
 
@@ -271,7 +271,7 @@ fun ITuneMusicPlayer(
         // ── 1. Fullscreen Ambient Blurred Artwork Layer ──
         val blurScale by animateFloatAsState(
             targetValue = if (isPanelOpen) 1.45f else 1.35f,
-            animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing),
+            animationSpec = spring(dampingRatio = 0.90f, stiffness = 170f),
             label = "blurScale"
         )
 
@@ -624,16 +624,17 @@ fun ITuneMusicPlayer(
         // ── 5d. Continuous Morphing Star (Favorite / Like) Button ──
         // Initially positioned beside the 3-dot button at the end of the Title & Artist row in player mode (matching Apple Music),
         // glides smoothly upward into the top header next to the 3-dot button when Queue or Lyrics opens.
+        // Kept at the exact same size (36dp, 20dp icon) at both resting player and top header positions.
         val startStarTopPx = startTitleTopPx + with(density) { 6.dp.toPx() }
-        val targetStarTopPx = with(density) { (statusBarTopDp + 6.dp).toPx() }
+        val targetStarTopPx = with(density) { (statusBarTopDp + 10.dp).toPx() }
         val startStarLeftPx = with(density) { (maxWidth - 104.dp).toPx() }
         val targetStarLeftPx = with(density) { (maxWidth - 104.dp).toPx() }
 
         val curStarTopPx = lerpFloat(startStarTopPx, targetStarTopPx, panelProgress)
         val curStarLeftPx = lerpFloat(startStarLeftPx, targetStarLeftPx, panelProgress)
-        val curStarSizeDp = lerpDp(36.dp, 44.dp, progressClamped)
-        val curStarIconSizeDp = lerpDp(20.dp, 24.dp, progressClamped)
-        val curStarBgAlpha = lerpFloat(if (isFavorite) 0.22f else 0.16f, 0.12f, progressClamped)
+        val curStarSizeDp = 36.dp
+        val curStarIconSizeDp = 20.dp
+        val curStarBgAlpha = if (isFavorite) 0.22f else 0.16f
 
         Box(
             modifier = Modifier
@@ -664,16 +665,17 @@ fun ITuneMusicPlayer(
         // ── 5e. Continuous Morphing More Button ──
         // Initially positioned at the far right end of the Title & Artist row in player mode (matching Apple Music),
         // glides smoothly upward into the top-right header corner when Queue or Lyrics opens.
+        // Kept at the exact same size (36dp, 22dp icon) at both resting player and top header positions.
         val startMoreTopPx = startTitleTopPx + with(density) { 6.dp.toPx() }
-        val targetMoreTopPx = with(density) { (statusBarTopDp + 6.dp).toPx() }
+        val targetMoreTopPx = with(density) { (statusBarTopDp + 10.dp).toPx() }
         val startMoreLeftPx = with(density) { (maxWidth - 60.dp).toPx() }
-        val targetMoreLeftPx = with(density) { (maxWidth - 56.dp).toPx() }
+        val targetMoreLeftPx = with(density) { (maxWidth - 60.dp).toPx() }
 
         val curMoreTopPx = lerpFloat(startMoreTopPx, targetMoreTopPx, panelProgress)
         val curMoreLeftPx = lerpFloat(startMoreLeftPx, targetMoreLeftPx, panelProgress)
-        val curMoreSizeDp = lerpDp(36.dp, 44.dp, progressClamped)
-        val curMoreIconSizeDp = lerpDp(22.dp, 28.dp, progressClamped)
-        val curMoreBgAlpha = lerpFloat(0.16f, 0.12f, progressClamped)
+        val curMoreSizeDp = 36.dp
+        val curMoreIconSizeDp = 22.dp
+        val curMoreBgAlpha = 0.16f
 
         Box(
             modifier = Modifier
