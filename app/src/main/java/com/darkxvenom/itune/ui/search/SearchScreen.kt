@@ -471,7 +471,66 @@ fun SearchScreen(
                         }
                     }
 
-                else -> Unit
+                    SearchUiMode.SUGGESTIONS -> {
+                        if (mergedSuggestions.isEmpty()) {
+                            item(span = { GridItemSpan(2) }, key = "suggestion_direct_search") {
+                                SearchQuerySuggestionRow(
+                                    text = searchQuery.trim(),
+                                    highlightQuery = searchQuery.trim(),
+                                    isHistory = false,
+                                    showBottomDivider = false,
+                                    onSelect = { submitSearch(searchQuery) },
+                                    onFillQuery = { fillQueryForEditing(searchQuery.trim()) }
+                                )
+                            }
+                        } else {
+                            itemsIndexed(
+                                items = mergedSuggestions,
+                                key = { idx, item -> "sugg_${item.text.lowercase()}_$idx" },
+                                span = { _, _ -> GridItemSpan(2) }
+                            ) { idx, item ->
+                                SearchQuerySuggestionRow(
+                                    text = item.text,
+                                    highlightQuery = searchQuery.trim(),
+                                    isHistory = item.isHistory,
+                                    showBottomDivider = idx < mergedSuggestions.lastIndex,
+                                    onSelect = { submitSearch(item.text) },
+                                    onFillQuery = { fillQueryForEditing(item.text) }
+                                )
+                            }
+                        }
+                    }
+
+                    SearchUiMode.RESULTS -> {
+                        if (isSearching && searchResults.isEmpty) {
+                            item(span = { GridItemSpan(2) }, key = "search_results_skeleton") {
+                                SearchResultsSkeletonBlock()
+                            }
+                        } else if (!isSearching && searchResults.isEmpty) {
+                            item(span = { GridItemSpan(2) }, key = "search_empty") {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 48.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "No results found for \"$submittedQuery\"",
+                                        color = AppleTextSecondary,
+                                        fontSize = 15.sp
+                                    )
+                                }
+                            }
+                        } else {
+                            val showSongs = selectedFilter == SearchResultFilter.ALL || selectedFilter == SearchResultFilter.SONGS
+                            val showArtists = selectedFilter == SearchResultFilter.ALL || selectedFilter == SearchResultFilter.ARTISTS
+                            val showAlbums = selectedFilter == SearchResultFilter.ALL || selectedFilter == SearchResultFilter.ALBUMS
+                            val showPlaylists = selectedFilter == SearchResultFilter.ALL || selectedFilter == SearchResultFilter.PLAYLISTS
+
+
+                        } else Unit
+                    }
+                }
             }
         }
                             AppleOledBlack.copy(alpha = 0.65f),
