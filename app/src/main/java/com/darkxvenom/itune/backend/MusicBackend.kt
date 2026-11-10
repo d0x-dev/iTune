@@ -354,6 +354,90 @@ object MusicBackend {
      * Fetches full category browse content (carousels, grids, playlists, albums, songs)
      * for any tapped AirBeats Moods & Moments item (`FEmusic_moods_and_genres_category`).
      */
+    suspend fun fetchMoodCategoryPage(
+        browseId: String,
+        params: String?,
+        fallbackTitle: String = "",
+        forceRefresh: Boolean = false,
+    ): MoodCategoryPage = withContext(Dispatchers.IO) {
+        val cacheKey = "$browseId|${params.orEmpty()}"
+        if (!forceRefresh) {
+            moodCategoryCache[cacheKey]?.let { return@withContext it }
+        }
+
+        val body = JSONObject().put("browseId", browseId)
+        if (!params.isNullOrBlank()) body.put("params", params)
+        val root = postInnerTube(BROWSE_URL, body)
+
+        val headerTitle = buildRunsText(
+            root.optJSONObject("header")
+                ?.optJSONObject("musicHeaderRenderer")
+                ?.optJSONObject("title")
+                ?.optJSONArray("runs")
+        ).ifBlank { fallbackTitle }
+
+        val sectionsJson = root.optJSONObject("contents")
+            ?.optJSONObject("singleColumnBrowseResultsRenderer")
+            ?.optJSONArray("tabs")
+            ?.optJSONObject(0)
+            ?.optJSONObject("tabRenderer")
+            ?.optJSONObject("content")
+            ?.optJSONObject("sectionListRenderer")
+            ?.optJSONArray("contents")
+            ?: root.optJSONObject("contents")
+                ?.optJSONObject("sectionListRenderer")
+                ?.optJSONArray("contents")
+
+        val parsedSections = buildList {
+            if (sectionsJson != null) {
+                for (i in 0 until sectionsJson.length()) {
+                    val sectionObj = sectionsJson.optJSONObject(i) ?: continue
+                    sectionObj.optJSONObject("musicCarouselShelfRenderer")?.let { carousel ->
+                        val title = buildRunsText(
+                            carousel.optJSONObject("header")
+                                ?.optJSONObject("musicCarouselShelfBasicHeaderRenderer")
+                                ?.optJSONObject("title")
+                                ?.optJSONArray("runs")
+                        )
+                        val contents = carousel.optJSONArray("contents")
+                        val items = parseMoodContainerItems(contents)
+                        if (items.isNotEmpty()) {
+                            add(MoodCategorySection(title = title.ifBlank { headerTitle }, items = items, isGrid = false))
+                        }
+                    }
+                    sectionObj.optJSONObject("gridRenderer")?.let { grid ->
+                        val title = buildRunsText(
+                            grid.optJSONObject("header")
+                                ?.optJSONObject("gridHeaderRenderer")
+                                ?.optJSONObject("title")
+                                ?.optJSONArray("runs")
+                        )
+                        val items = parseMoodContainerItems(grid.optJSONArray("items"))
+                        if (items.isNotEmpty()) {
+                            add(MoodCategorySection(title = title.ifBlank { headerTitle }, items = items, isGrid = true))
+                        }
+                    }
+                    sectionObj.optJSONObject("musicShelfRenderer")?.let { shelf ->
+                        val title = buildRunsText(shelf.optJSONObject("title")?.optJSONArray("runs"))
+                        val items = parseMoodContainerItems(shelf.optJSONArray("contents"))
+                        if (items.isNotEmpty()) {
+                            add(MoodCategorySection(title = title.ifBlank { "Tracks" }, items = items, isGrid = false))
+                        }
+                    }
+                }
+            }
+        }
+
+        val page = MoodCategoryPage(
+            title = headerTitle.ifBlank { fallbackTitle },
+            sections = parsedSections
+        )
+        if (parsedSections.isNotEmpty()) {
+            moodCategoryCache[cacheKey] = page
+        }
+        page
+    }
+
     suspend fun getOrLoadStreamInfo(videoId: String): StreamInfo = withContext(Dispatchers.IO) {
         val now = System.currentTimeMillis()
         streamCache[videoId]?.let { cached ->
