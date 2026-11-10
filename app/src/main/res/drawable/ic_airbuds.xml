@@ -1,4 +1,3 @@
-
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="1254dp"
     android:height="1254dp"
@@ -7,7 +6,7 @@
 
     <path
         android:name="path_1"
-        android:fillColor="#E5E0E0"
+        android:fillColor="#FFFFFF"
         android:pathData="
             M772 340.06
             C687.92 350.31,628.03 432.77,642.4 518.5

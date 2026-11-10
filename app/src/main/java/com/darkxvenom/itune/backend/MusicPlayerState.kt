@@ -52,6 +52,8 @@ object MusicPlayerState : Player.Listener {
     private var lyricsJob: Job? = null
     private var sleepTimerJob: Job? = null
     private var resolvingStream = false
+    private var restoredPendingStream = false
+    private var lastPersistedAtMs = 0L
 
     // ── Observable UI States ──
     var currentTrack by mutableStateOf<MusicTrack?>(null)
@@ -167,7 +169,81 @@ object MusicPlayerState : Player.Listener {
                 volume = this@MusicPlayerState.volume
             }
 
+        restorePlaybackSession(appContext)
         startProgressLoop()
+    }
+
+    private fun prewarmTrackThumbnail(ctx: Context, track: MusicTrack) {
+        val thumb = track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl
+        if (!thumb.isNullOrBlank()) {
+            val preReq = ImageRequest.Builder(ctx)
+                .data(thumb)
+                .size(Size.ORIGINAL)
+                .crossfade(200)
+                .build()
+            ctx.imageLoader.enqueue(preReq)
+        }
+    }
+
+    private fun restorePlaybackSession(ctx: Context) {
+        val snapshot = PlaybackSessionStore.load(ctx) ?: return
+        loadJob?.cancel()
+        resolvingStream = false
+        restoredPendingStream = true
+        currentTrack = snapshot.track
+        queue.clear()
+        queue.addAll(snapshot.queue)
+        queueIndex = snapshot.queueIndex
+        shuffleEnabled = snapshot.shuffleEnabled
+        repeatMode = snapshot.repeatMode
+        positionMs = snapshot.positionMs
+        durationMs = if (snapshot.durationMs > 0L) {
+            snapshot.durationMs
+        } else {
+            (snapshot.track.durationSec * 1000L).coerceAtLeast(0L)
+        }
+        isPlaying = false
+        isLoading = false
+        expanded = false
+        queueOpen = false
+        lyricsOpen = false
+        exoPlayer?.let { player ->
+            player.shuffleModeEnabled = shuffleEnabled
+            player.repeatMode = repeatMode
+        }
+        prewarmTrackThumbnail(ctx, snapshot.track)
+        fetchLyricsForCurrentTrack(snapshot.track)
+    }
+
+    /** Persists the current track, queue, and timestamp so cold relaunch restores the Mini Player. */
+    fun savePlaybackSession(sync: Boolean = false) {
+        val ctx = appContext ?: return
+        val track = currentTrack ?: return
+        val currentPos = if (!restoredPendingStream && !resolvingStream) {
+            exoPlayer?.currentPosition?.coerceAtLeast(0L) ?: positionMs
+        } else {
+            positionMs
+        }
+        val currentDur = if (!restoredPendingStream && !resolvingStream) {
+            exoPlayer?.duration?.takeIf { it > 0L } ?: durationMs
+        } else {
+            durationMs
+        }
+        positionMs = currentPos
+        durationMs = currentDur
+        PlaybackSessionStore.save(
+            context = ctx,
+            snapshot = PlaybackSessionSnapshot(
+                track = track,
+                positionMs = currentPos,
+                durationMs = currentDur,
+                queue = queue.toList(),
+                queueIndex = queueIndex,
+                shuffleEnabled = shuffleEnabled,
+                repeatMode = repeatMode
+            ),
+            sync = sync
+        )
     }
 
     private fun startProgressLoop() {
@@ -175,49 +251,61 @@ object MusicPlayerState : Player.Listener {
         progressJob = scope.launch {
             while (isActive) {
                 exoPlayer?.let { player ->
-                    positionMs = player.currentPosition.coerceAtLeast(0L)
-                    val dur = player.duration
-                    if (dur > 0) {
-                        durationMs = dur
+                    if (!restoredPendingStream && !resolvingStream) {
+                        positionMs = player.currentPosition.coerceAtLeast(0L)
+                        val dur = player.duration
+                        if (dur > 0) {
+                            durationMs = dur
+                        }
+                        isPlaying = player.isPlaying
+                        isLoading = !player.isPlaying && player.playbackState == Player.STATE_BUFFERING
+
+                        val now = System.currentTimeMillis()
+                        if (player.isPlaying && now - lastPersistedAtMs >= 2000L) {
+                            lastPersistedAtMs = now
+                            savePlaybackSession(sync = false)
+                        }
                     }
-                    isPlaying = player.isPlaying
-                    isLoading = !player.isPlaying && (resolvingStream || player.playbackState == Player.STATE_BUFFERING)
                 }
                 delay(200)
             }
         }
     }
 
-    fun play(track: MusicTrack, newQueue: List<MusicTrack>? = null) {
-        expanded = true
+    fun play(
+        track: MusicTrack,
+        newQueue: List<MusicTrack>? = null,
+        startPositionMs: Long = 0L,
+        expandPlayer: Boolean = true
+    ) {
+        if (expandPlayer) expanded = true
         loadJob?.cancel()
 
         exoPlayer?.let { player ->
             player.playWhenReady = false
             player.pause()
         }
+        val safeStartMs = startPositionMs.coerceAtLeast(0L)
+        val sameTrack = currentTrack?.id == track.id
+        restoredPendingStream = false
         resolvingStream = true
         isPlaying = false
         isLoading = true
-        positionMs = 0L
-        durationMs = 0L
+        positionMs = safeStartMs
+        durationMs = when {
+            sameTrack && durationMs > 0L -> durationMs
+            track.durationSec > 0L -> track.durationSec * 1000L
+            else -> 0L
+        }
         currentTrack = track
 
-        // Automatically fetch synchronized lyrics for current song
-        fetchLyricsForCurrentTrack(track)
+        // Fetch synchronized lyrics unless already loaded for this restored track
+        if (!sameTrack || (lyrics.isEmpty() && !lyricsLoading)) {
+            fetchLyricsForCurrentTrack(track)
+        }
 
         // Pre-warm thumbnail in Coil cache with ultra-high quality
-        appContext?.let { ctx ->
-            val thumb = track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl
-            if (!thumb.isNullOrBlank()) {
-                val preReq = ImageRequest.Builder(ctx)
-                    .data(thumb)
-                    .size(Size.ORIGINAL)
-                    .crossfade(200)
-                    .build()
-                ctx.imageLoader.enqueue(preReq)
-            }
-        }
+        appContext?.let { ctx -> prewarmTrackThumbnail(ctx, track) }
 
         loadJob = scope.launch {
             try {
@@ -236,20 +324,13 @@ object MusicPlayerState : Player.Listener {
                         queueIndex = queue.lastIndex
                     }
                 }
+                savePlaybackSession(sync = false)
 
                 // Pre-warm the next 3 queued tracks in original master quality
                 if (appContext != null) {
                     for (step in 1..3) {
                         val nextInQueue = queue.getOrNull(queueIndex + step) ?: continue
-                        val nextThumb = nextInQueue.thumbnailUrl?.highQualityThumbnail() ?: nextInQueue.thumbnailUrl
-                        if (!nextThumb.isNullOrBlank()) {
-                            val nextPreReq = ImageRequest.Builder(appContext!!)
-                                .data(nextThumb)
-                                .size(Size.ORIGINAL)
-                                .crossfade(200)
-                                .build()
-                            appContext!!.imageLoader.enqueue(nextPreReq)
-                        }
+                        prewarmTrackThumbnail(appContext!!, nextInQueue)
                     }
                 }
 
@@ -274,7 +355,7 @@ object MusicPlayerState : Player.Listener {
                                 .build()
                         )
                         .build()
-                    player.setMediaItem(mediaItem)
+                    player.setMediaItem(mediaItem, safeStartMs)
                     player.prepare()
                     player.setPlaybackSpeed(if (holdingFast) 2f else playbackSpeed)
                     player.playWhenReady = true
@@ -318,6 +399,13 @@ object MusicPlayerState : Player.Listener {
     }
 
     fun togglePlayPause() {
+        val track = currentTrack ?: return
+        if (restoredPendingStream) {
+            if (!resolvingStream) {
+                play(track = track, startPositionMs = positionMs, expandPlayer = expanded)
+            }
+            return
+        }
         exoPlayer?.let { player ->
             if (player.isPlaying) {
                 player.pause()
@@ -325,6 +413,20 @@ object MusicPlayerState : Player.Listener {
                 player.play()
             }
         }
+    }
+
+    fun hasNextTrack(): Boolean {
+        if (queue.isEmpty()) return false
+        return (shuffleEnabled && queue.size > 1) ||
+            (queueIndex + 1 < queue.size) ||
+            (repeatMode == Player.REPEAT_MODE_ALL && queue.isNotEmpty())
+    }
+
+    fun hasPreviousTrack(): Boolean {
+        if (queue.isEmpty()) return false
+        return positionMs > 3000L ||
+            queueIndex > 0 ||
+            ((shuffleEnabled || repeatMode == Player.REPEAT_MODE_ALL) && queue.size > 1)
     }
 
     fun skipNext() {
@@ -341,12 +443,15 @@ object MusicPlayerState : Player.Listener {
         }
         val nextTrack = queue.getOrNull(nextIndex) ?: return
         queueIndex = nextIndex
-        play(nextTrack)
+        play(nextTrack, expandPlayer = expanded)
     }
 
-    fun skipPrevious() {
+    fun skipPrevious(forcePrevious: Boolean = false) {
         if (queue.isEmpty()) return
-        if (positionMs > 3000L) {
+        val hasPreviousInQueue = (shuffleEnabled && queue.size > 1) ||
+            queueIndex > 0 ||
+            (repeatMode == Player.REPEAT_MODE_ALL && queue.size > 1)
+        if ((!forcePrevious || !hasPreviousInQueue) && positionMs > 3000L) {
             seekTo(0L)
             return
         }
@@ -359,12 +464,16 @@ object MusicPlayerState : Player.Listener {
         }
         val prevTrack = queue.getOrNull(prevIndex) ?: return
         queueIndex = prevIndex
-        play(prevTrack)
+        play(prevTrack, expandPlayer = expanded)
     }
 
     fun seekTo(positionMs: Long) {
-        this.positionMs = positionMs
-        exoPlayer?.seekTo(positionMs)
+        val safePos = positionMs.coerceAtLeast(0L)
+        this.positionMs = safePos
+        if (!restoredPendingStream) {
+            exoPlayer?.seekTo(safePos)
+        }
+        savePlaybackSession(sync = false)
     }
 
     fun adjustVolume(vol: Float) {
@@ -375,6 +484,7 @@ object MusicPlayerState : Player.Listener {
     fun toggleShuffle() {
         shuffleEnabled = !shuffleEnabled
         exoPlayer?.shuffleModeEnabled = shuffleEnabled
+        savePlaybackSession(sync = false)
     }
 
     fun toggleRepeat() {
@@ -384,6 +494,7 @@ object MusicPlayerState : Player.Listener {
             else -> Player.REPEAT_MODE_OFF
         }
         exoPlayer?.repeatMode = repeatMode
+        savePlaybackSession(sync = false)
     }
 
     fun removeFromQueue(index: Int) {
@@ -397,10 +508,12 @@ object MusicPlayerState : Player.Listener {
             }
             if (wasPlayingCurrent) {
                 if (queue.isNotEmpty() && queueIndex in queue.indices) {
-                    play(queue[queueIndex])
+                    play(queue[queueIndex], expandPlayer = expanded)
                 } else {
                     close()
                 }
+            } else {
+                savePlaybackSession(sync = false)
             }
         }
     }
@@ -410,6 +523,8 @@ object MusicPlayerState : Player.Listener {
         lyricsJob?.cancel()
         exoPlayer?.stop()
         exoPlayer?.clearMediaItems()
+        restoredPendingStream = false
+        resolvingStream = false
         currentTrack = null
         queue.clear()
         queueIndex = 0
@@ -423,6 +538,7 @@ object MusicPlayerState : Player.Listener {
         lyricsOpen = false
         lyrics = emptyList()
         lyricsLoading = false
+        appContext?.let { PlaybackSessionStore.clear(it) }
     }
 
     fun startFastHold(): Boolean {
@@ -443,6 +559,8 @@ object MusicPlayerState : Player.Listener {
         this.isPlaying = isPlaying
         if (isPlaying) {
             isLoading = false
+        } else if (!restoredPendingStream && !resolvingStream) {
+            savePlaybackSession(sync = false)
         }
     }
 

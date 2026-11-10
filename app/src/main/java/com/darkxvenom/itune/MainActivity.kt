@@ -35,7 +35,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        MusicPlayerState.savePlaybackSession(sync = true)
+    }
+
     override fun onDestroy() {
+        MusicPlayerState.savePlaybackSession(sync = true)
         super.onDestroy()
         MusicPlayerState.release()
     }

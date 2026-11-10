@@ -4,6 +4,8 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -14,11 +16,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.input.pointer.util.addPointerInputChange
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 /**
  * 1:1 Gesture-driven Sheet Morph replicated directly from iTube / AirBeats.
@@ -139,82 +143,264 @@ fun Modifier.sheetMorphDrag(morph: SheetMorph): Modifier = this.pointerInput(mor
 }
 
 /**
- * Modifier for FloatingMiniPlayer with 1:1 tip-of-finger physics:
+ * Modifier for FloatingMiniPlayer with axis-locked 1:1 tip-of-finger physics:
  * - Upward drag: expands full player via SheetMorph
- * - Downward drag: moves mini player down and dismisses + stops song when released past threshold
+ * - Downward drag: moves mini player down and dismisses when released past threshold
+ * - Left / Right swipe: slides mini player smoothly for Next / Previous track
  */
 fun Modifier.miniPlayerGestures(
     morph: SheetMorph,
     dismissOffset: Animatable<Float, *>,
+    swipeOffsetX: Animatable<Float, *>,
     scope: CoroutineScope,
     dismissThresholdPx: Float,
     dismissTargetPx: Float,
-    onDismiss: () -> Unit
+    swipeThresholdPx: Float,
+    maxSwipeDistancePx: Float,
+    canSkipNext: () -> Boolean,
+    canSkipPrevious: () -> Boolean,
+    onDismiss: () -> Unit,
+    onSwipeNext: () -> Unit,
+    onSwipePrevious: () -> Unit
 ): Modifier = this.pointerInput(morph) {
     val velocityTracker = VelocityTracker()
-    detectVerticalDragGestures(
-        onDragStart = {
-            velocityTracker.resetTracking()
-        },
-        onVerticalDrag = { change, dragAmount ->
+    val touchSlop = viewConfiguration.touchSlop
+
+    awaitEachGesture {
+        val down = awaitFirstDown(requireUnconsumed = false)
+        velocityTracker.resetTracking()
+        velocityTracker.addPointerInputChange(down)
+
+        var lockedAxis = 0 // 0 = undecided, 1 = horizontal, 2 = vertical
+        var accumX = 0f
+        var accumY = 0f
+        var pointerId = down.id
+
+        while (true) {
+            val event = awaitPointerEvent()
+            val change = event.changes.firstOrNull { it.id == pointerId } ?: event.changes.firstOrNull()
+            if (change == null) break
+            pointerId = change.id
+
+            if (!change.pressed) {
+                when (lockedAxis) {
+                    1 -> settleHorizontalMiniSwipe(
+                        swipeOffsetX = swipeOffsetX,
+                        velocityX = velocityTracker.calculateVelocity().x,
+                        swipeThresholdPx = swipeThresholdPx,
+                        maxSwipeDistancePx = maxSwipeDistancePx,
+                        canSkipNext = canSkipNext,
+                        canSkipPrevious = canSkipPrevious,
+                        onSwipeNext = onSwipeNext,
+                        onSwipePrevious = onSwipePrevious,
+                        scope = scope
+                    )
+                    2 -> settleVerticalMiniDrag(
+                        morph = morph,
+                        dismissOffset = dismissOffset,
+                        velocityY = velocityTracker.calculateVelocity().y,
+                        dismissThresholdPx = dismissThresholdPx,
+                        dismissTargetPx = dismissTargetPx,
+                        onDismiss = onDismiss,
+                        scope = scope
+                    )
+                }
+                velocityTracker.resetTracking()
+                break
+            }
+
+            if (change.isConsumed) {
+                if (lockedAxis == 1) {
+                    scope.launch {
+                        swipeOffsetX.animateTo(0f, spring(dampingRatio = 0.8f, stiffness = 500f))
+                    }
+                } else if (lockedAxis == 2) {
+                    cancelVerticalMiniDrag(morph, dismissOffset, scope)
+                }
+                velocityTracker.resetTracking()
+                break
+            }
+
             velocityTracker.addPointerInputChange(change)
-            if (dragAmount > 0f) {
-                // Dragging DOWN
-                if (morph.progress.value > 0.001f) {
-                    morph.dragBy(dragAmount)
-                } else {
-                    val newDismiss = dismissOffset.value + dragAmount
-                    scope.launch(start = CoroutineStart.UNDISPATCHED) {
-                        dismissOffset.snapTo(newDismiss)
-                    }
-                }
-            } else if (dragAmount < 0f) {
-                // Dragging UP
-                if (dismissOffset.value > 0.001f) {
-                    val newDismiss = (dismissOffset.value + dragAmount).coerceAtLeast(0f)
-                    scope.launch(start = CoroutineStart.UNDISPATCHED) {
-                        dismissOffset.snapTo(newDismiss)
-                    }
-                } else {
-                    morph.dragBy(dragAmount)
-                }
-            }
-            change.consume()
-        },
-        onDragCancel = {
-            velocityTracker.resetTracking()
-            if (dismissOffset.value > 0f) {
-                scope.launch {
-                    dismissOffset.animateTo(0f, spring(dampingRatio = 0.85f, stiffness = 600f))
-                }
-            }
-            morph.settle(0f)
-        },
-        onDragEnd = {
-            val velocityY = velocityTracker.calculateVelocity().y
-            velocityTracker.resetTracking()
-            if (dismissOffset.value > 0.001f) {
-                val shouldDismiss = velocityY > 350f || dismissOffset.value > dismissThresholdPx
-                scope.launch {
-                    if (shouldDismiss) {
-                        dismissOffset.animateTo(
-                            targetValue = dismissTargetPx,
-                            animationSpec = tween(durationMillis = 180, easing = FastOutLinearInEasing)
+            val delta = change.positionChange()
+            accumX += delta.x
+            accumY += delta.y
+
+            if (lockedAxis == 0) {
+                val distSq = accumX * accumX + accumY * accumY
+                if (distSq > touchSlop * touchSlop) {
+                    if (abs(accumX) > abs(accumY) && morph.progress.value <= 0.05f) {
+                        lockedAxis = 1
+                        applyHorizontalMiniDrag(
+                            swipeOffsetX = swipeOffsetX,
+                            deltaX = accumX,
+                            maxSwipeDistancePx = maxSwipeDistancePx,
+                            canSkipNext = canSkipNext,
+                            canSkipPrevious = canSkipPrevious,
+                            scope = scope
                         )
-                        onDismiss()
-                        dismissOffset.snapTo(0f)
                     } else {
-                        dismissOffset.animateTo(
-                            targetValue = 0f,
-                            animationSpec = spring(dampingRatio = 0.85f, stiffness = 600f)
-                        )
+                        lockedAxis = 2
+                        applyVerticalMiniDrag(morph, dismissOffset, accumY, scope)
                     }
+                    change.consume()
                 }
+            } else if (lockedAxis == 1) {
+                applyHorizontalMiniDrag(
+                    swipeOffsetX = swipeOffsetX,
+                    deltaX = delta.x,
+                    maxSwipeDistancePx = maxSwipeDistancePx,
+                    canSkipNext = canSkipNext,
+                    canSkipPrevious = canSkipPrevious,
+                    scope = scope
+                )
+                change.consume()
             } else {
-                morph.settle(velocityY)
+                applyVerticalMiniDrag(morph, dismissOffset, delta.y, scope)
+                change.consume()
             }
         }
-    )
+    }
+}
+
+private fun applyHorizontalMiniDrag(
+    swipeOffsetX: Animatable<Float, *>,
+    deltaX: Float,
+    maxSwipeDistancePx: Float,
+    canSkipNext: () -> Boolean,
+    canSkipPrevious: () -> Boolean,
+    scope: CoroutineScope
+) {
+    val current = swipeOffsetX.value
+    val target = current + deltaX
+    val atBlockedEdge = (target < 0f && !canSkipNext()) || (target > 0f && !canSkipPrevious())
+    val weightedDelta = if (atBlockedEdge) deltaX * 0.28f else deltaX
+    val nextX = (current + weightedDelta).coerceIn(-maxSwipeDistancePx, maxSwipeDistancePx)
+    scope.launch(start = CoroutineStart.UNDISPATCHED) {
+        swipeOffsetX.snapTo(nextX)
+    }
+}
+
+private fun settleHorizontalMiniSwipe(
+    swipeOffsetX: Animatable<Float, *>,
+    velocityX: Float,
+    swipeThresholdPx: Float,
+    maxSwipeDistancePx: Float,
+    canSkipNext: () -> Boolean,
+    canSkipPrevious: () -> Boolean,
+    onSwipeNext: () -> Unit,
+    onSwipePrevious: () -> Unit,
+    scope: CoroutineScope
+) {
+    val x = swipeOffsetX.value
+    val triggeredNext = (x < -swipeThresholdPx || (velocityX < -420f && x < -swipeThresholdPx * 0.35f)) && canSkipNext()
+    val triggeredPrev = (x > swipeThresholdPx || (velocityX > 420f && x > swipeThresholdPx * 0.35f)) && canSkipPrevious()
+
+    scope.launch {
+        when {
+            triggeredNext -> {
+                swipeOffsetX.animateTo(
+                    targetValue = -maxSwipeDistancePx,
+                    animationSpec = tween(durationMillis = 120, easing = FastOutLinearInEasing)
+                )
+                onSwipeNext()
+                swipeOffsetX.snapTo(maxSwipeDistancePx * 0.55f)
+                swipeOffsetX.animateTo(
+                    targetValue = 0f,
+                    animationSpec = spring(dampingRatio = 0.80f, stiffness = 440f)
+                )
+            }
+            triggeredPrev -> {
+                swipeOffsetX.animateTo(
+                    targetValue = maxSwipeDistancePx,
+                    animationSpec = tween(durationMillis = 120, easing = FastOutLinearInEasing)
+                )
+                onSwipePrevious()
+                swipeOffsetX.snapTo(-maxSwipeDistancePx * 0.55f)
+                swipeOffsetX.animateTo(
+                    targetValue = 0f,
+                    animationSpec = spring(dampingRatio = 0.80f, stiffness = 440f)
+                )
+            }
+            else -> {
+                swipeOffsetX.animateTo(
+                    targetValue = 0f,
+                    animationSpec = spring(dampingRatio = 0.78f, stiffness = 520f)
+                )
+            }
+        }
+    }
+}
+
+private fun applyVerticalMiniDrag(
+    morph: SheetMorph,
+    dismissOffset: Animatable<Float, *>,
+    deltaY: Float,
+    scope: CoroutineScope
+) {
+    if (deltaY > 0f) {
+        if (morph.progress.value > 0.001f) {
+            morph.dragBy(deltaY)
+        } else {
+            val newDismiss = dismissOffset.value + deltaY
+            scope.launch(start = CoroutineStart.UNDISPATCHED) {
+                dismissOffset.snapTo(newDismiss)
+            }
+        }
+    } else if (deltaY < 0f) {
+        if (dismissOffset.value > 0.001f) {
+            val newDismiss = (dismissOffset.value + deltaY).coerceAtLeast(0f)
+            scope.launch(start = CoroutineStart.UNDISPATCHED) {
+                dismissOffset.snapTo(newDismiss)
+            }
+        } else {
+            morph.dragBy(deltaY)
+        }
+    }
+}
+
+private fun cancelVerticalMiniDrag(
+    morph: SheetMorph,
+    dismissOffset: Animatable<Float, *>,
+    scope: CoroutineScope
+) {
+    if (dismissOffset.value > 0f) {
+        scope.launch {
+            dismissOffset.animateTo(0f, spring(dampingRatio = 0.85f, stiffness = 600f))
+        }
+    }
+    morph.settle(0f)
+}
+
+private fun settleVerticalMiniDrag(
+    morph: SheetMorph,
+    dismissOffset: Animatable<Float, *>,
+    velocityY: Float,
+    dismissThresholdPx: Float,
+    dismissTargetPx: Float,
+    onDismiss: () -> Unit,
+    scope: CoroutineScope
+) {
+    if (dismissOffset.value > 0.001f) {
+        val shouldDismiss = velocityY > 350f || dismissOffset.value > dismissThresholdPx
+        scope.launch {
+            if (shouldDismiss) {
+                dismissOffset.animateTo(
+                    targetValue = dismissTargetPx,
+                    animationSpec = tween(durationMillis = 180, easing = FastOutLinearInEasing)
+                )
+                onDismiss()
+                dismissOffset.snapTo(0f)
+            } else {
+                dismissOffset.animateTo(
+                    targetValue = 0f,
+                    animationSpec = spring(dampingRatio = 0.85f, stiffness = 600f)
+                )
+            }
+        }
+    } else {
+        morph.settle(velocityY)
+    }
 }
 
 /**

@@ -1,20 +1,27 @@
 package com.darkxvenom.itune.ui.player
 
 import android.content.Intent
+import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -48,10 +55,14 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
@@ -61,6 +72,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -81,6 +93,7 @@ import com.darkxvenom.itune.R
 import com.darkxvenom.itune.backend.LyricsLine
 import com.darkxvenom.itune.backend.MusicPlayerState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.math.PI
@@ -93,6 +106,32 @@ val SFProDisplay = FontFamily(
 
 private const val MANUAL_SCROLL_TIMEOUT_MS = 3000L
 private val HEAD_LYRICS_ENTRY = AirBeatsLyricsEntry(time = 0L, text = "")
+
+// BitChord-inspired handover curve, row stagger wave, progressive opacity, and lightweight blur falloff
+private val LYRIC_EASING = CubicBezierEasing(0.41f, 0f, 0.12f, 0.99f)
+private const val LYRIC_SETTLE_MS = 400
+private const val SCROLL_LEAD_MIN_MS = 350L
+private const val SCROLL_LEAD_MAX_MS = 500L
+private const val STAGGER_STEPS = 3
+private const val STAGGER_FRACTION = 0.06f
+private val LINE_FALLOFF_ALPHA_PHONE = floatArrayOf(1f, 0.72f, 0.56f, 0.44f, 0.34f, 0.26f)
+private val LINE_FALLOFF_BLUR = arrayOf(0.dp, 0.9.dp, 1.35.dp, 1.85.dp, 2.35.dp)
+
+private class LyricsScrollRun(val id: Int, val delta: Float, val durationMs: Int) {
+    val spanMs: Float get() = durationMs * (1f + STAGGER_FRACTION * STAGGER_STEPS)
+}
+
+private fun computeScrollLeadMs(entries: List<AirBeatsLyricsEntry>, positionMs: Long): Long {
+    val currentIdx = findCurrentLineIndex(entries, positionMs)
+    if (currentIdx < 1) return SCROLL_LEAD_MIN_MS
+    val curr = entries[currentIdx]
+    val next = entries.getOrNull(currentIdx + 1) ?: return SCROLL_LEAD_MIN_MS
+    val lineEndMs = curr.words?.lastOrNull()?.endTime?.let { (it * 1000).toLong() } ?: curr.time
+    val gap = (next.time - lineEndMs).let {
+        if (it > 0L) it else ((next.time - curr.time) * 0.14f).toLong()
+    }
+    return gap.coerceIn(SCROLL_LEAD_MIN_MS, SCROLL_LEAD_MAX_MS)
+}
 
 data class AirBeatsWordTimestamp(
     val text: String,
@@ -174,8 +213,8 @@ internal fun AirBeatsLyricsV2Content(
     val lyricsLoading = MusicPlayerState.lyricsLoading
 
     val textColor = Color.White
-    val inactiveAlpha = 0.38f
-    val lyricsTextSize = 27f
+    val inactiveAlpha = 0.42f
+    val lyricsTextSize = 27.5f
 
     var isSelectionModeActive by rememberSaveable { mutableStateOf(false) }
     val selectedIndices = remember { mutableStateListOf<Int>() }
@@ -208,8 +247,9 @@ internal fun AirBeatsLyricsV2Content(
 
     var currentPositionMs by remember { mutableLongStateOf(0L) }
     var currentLineIndex by remember { mutableIntStateOf(0) }
+    var scrollFocusIndex by remember { mutableIntStateOf(0) }
 
-    // 60fps frame loop
+    // 60fps frame loop: word glow follows exact playhead; scroll target leads by adaptive 350-500ms while playing
     LaunchedEffect(entriesWithWords, isSynced) {
         if (!isSynced || entriesWithWords.isEmpty()) return@LaunchedEffect
         while (isActive) {
@@ -217,7 +257,13 @@ internal fun AirBeatsLyricsV2Content(
             val pos = sliderPos ?: MusicPlayerState.positionMs
 
             currentPositionMs = pos
-            currentLineIndex = findCurrentLineIndex(entriesWithWords, currentPositionMs)
+            currentLineIndex = findCurrentLineIndex(entriesWithWords, pos)
+            val scrollProbe = if (MusicPlayerState.isPlaying && sliderPos == null) {
+                pos + computeScrollLeadMs(entriesWithWords, pos)
+            } else {
+                pos
+            }
+            scrollFocusIndex = findCurrentLineIndex(entriesWithWords, scrollProbe)
             delay(16L)
         }
     }
@@ -225,6 +271,19 @@ internal fun AirBeatsLyricsV2Content(
     val listState = rememberLazyListState()
     var isManualScrolling by remember { mutableStateOf(false) }
     var lastManualScrollTime by remember { mutableLongStateOf(0L) }
+    var hasPlacedInitialLine by remember(entriesWithWords) { mutableStateOf(false) }
+
+    // Single shared handover clock driving staggered row catch-up inside graphicsLayer with zero recompositions
+    var scrollRun by remember(entriesWithWords) { mutableStateOf(LyricsScrollRun(0, 0f, LYRIC_SETTLE_MS)) }
+    val runElapsed = remember(entriesWithWords) { mutableFloatStateOf(0f) }
+    LaunchedEffect(scrollRun.id) {
+        if (scrollRun.id == 0) return@LaunchedEffect
+        animate(
+            initialValue = 0f,
+            targetValue = scrollRun.spanMs,
+            animationSpec = tween(durationMillis = scrollRun.spanMs.toInt().coerceAtLeast(1), easing = LinearEasing)
+        ) { value, _ -> runElapsed.floatValue = value }
+    }
 
     val nestedScrollConnection = remember(onUserInteraction) {
         object : NestedScrollConnection {
@@ -246,22 +305,45 @@ internal fun AirBeatsLyricsV2Content(
         }
     }
 
-    LaunchedEffect(currentLineIndex, isManualScrolling) {
+    // Top-anchored staggered curve auto-scroll matching BitChord's exact handover
+    LaunchedEffect(scrollFocusIndex, isManualScrolling, entriesWithWords) {
         if (isManualScrolling || !isSynced) return@LaunchedEffect
-        if (currentLineIndex < 0 || currentLineIndex >= entriesWithWords.size) return@LaunchedEffect
+        if (scrollFocusIndex < 0 || scrollFocusIndex >= entriesWithWords.size) return@LaunchedEffect
 
-        val visibleInfo = listState.layoutInfo
-        val viewportHeight = visibleInfo.viewportSize.height
-        val targetOffset = (viewportHeight * 0.35f).toInt()
+        snapshotFlow { listState.layoutInfo }.first { it.viewportSize.height > 0 }
+        val visible = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == scrollFocusIndex }
 
-        val distance = abs(currentLineIndex - listState.firstVisibleItemIndex)
-        if (distance > 15) {
-            listState.scrollToItem((currentLineIndex - 2).coerceAtLeast(0), 0)
+        when {
+            !hasPlacedInitialLine -> {
+                listState.scrollToItem(scrollFocusIndex, scrollOffset = 0)
+                hasPlacedInitialLine = true
+            }
+            visible != null -> {
+                val span = computeScrollLeadMs(entriesWithWords, currentPositionMs).toInt()
+                val distance = visible.offset.toFloat()
+                if (abs(distance) > 1f) {
+                    scrollRun = LyricsScrollRun(scrollRun.id + 1, distance, span)
+                    listState.animateScrollBy(
+                        value = distance,
+                        animationSpec = tween(durationMillis = span, easing = LYRIC_EASING)
+                    )
+                }
+            }
+            else -> {
+                val approxDiff = abs(scrollFocusIndex - listState.firstVisibleItemIndex)
+                if (approxDiff > 12) {
+                    listState.scrollToItem((scrollFocusIndex - 2).coerceAtLeast(0), 0)
+                }
+                listState.animateScrollToItem(index = scrollFocusIndex, scrollOffset = 0)
+                val settled = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == scrollFocusIndex }
+                if (settled != null && abs(settled.offset) > 1) {
+                    listState.animateScrollBy(
+                        value = settled.offset.toFloat(),
+                        animationSpec = tween(durationMillis = LYRIC_SETTLE_MS, easing = LYRIC_EASING)
+                    )
+                }
+            }
         }
-        listState.animateScrollToItem(
-            index = currentLineIndex,
-            scrollOffset = -targetOffset
-        )
     }
 
     BackHandler(enabled = isSelectionModeActive) {
@@ -321,15 +403,14 @@ internal fun AirBeatsLyricsV2Content(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(nestedScrollConnection)
-                .smoothFadingEdge(vertical = 80.dp)
-                .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen },
+                .smoothFadingEdge(top = 34.dp, bottom = 92.dp),
             contentPadding = PaddingValues(
-                start = 22.dp,
-                end = 22.dp,
-                top = 24.dp,
-                bottom = 280.dp
+                start = 24.dp,
+                end = 24.dp,
+                top = 30.dp,
+                bottom = 320.dp
             ),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp),
             horizontalAlignment = Alignment.Start
         ) {
             itemsIndexed(
@@ -337,7 +418,7 @@ internal fun AirBeatsLyricsV2Content(
                 key = { index, entry -> "${index}_${entry.time}" }
             ) { index, item ->
                 if (item == HEAD_LYRICS_ENTRY) {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
                     return@itemsIndexed
                 }
 
@@ -346,27 +427,79 @@ internal fun AirBeatsLyricsV2Content(
 
                 val isActive = isSynced && index == currentLineIndex
                 val isPast = isSynced && index < currentLineIndex
+                val browsing = isManualScrolling || isSelectionModeActive
 
-                val distanceFromActive = if (isSynced) abs(index - currentLineIndex) else 0
-                val lineAlpha = when {
+                val distanceFromActive = if (isSynced) abs(index - scrollFocusIndex) else 0
+                val alphaStep = distanceFromActive.coerceAtMost(LINE_FALLOFF_ALPHA_PHONE.lastIndex)
+                val blurStep = distanceFromActive.coerceAtMost(LINE_FALLOFF_BLUR.lastIndex)
+
+                val targetAlpha = when {
                     !isSynced -> 0.95f
                     isActive -> 1f
-                    else -> (inactiveAlpha - (distanceFromActive - 1) * 0.04f).coerceIn(0.18f, inactiveAlpha)
+                    browsing -> 0.80f
+                    else -> LINE_FALLOFF_ALPHA_PHONE[alphaStep]
                 }
-                val wordLineAlpha = if (item.words != null && isSynced) 1f else lineAlpha
+                val targetBlur = when {
+                    !isSynced || browsing || isActive || Build.VERSION.SDK_INT < Build.VERSION_CODES.S -> 0.dp
+                    else -> LINE_FALLOFF_BLUR[blurStep]
+                }
+                val targetScale = when {
+                    !isSynced -> 1f
+                    isActive -> 1.06f
+                    else -> 0.96f
+                }
+
+                val animatedAlpha by animateFloatAsState(
+                    targetValue = targetAlpha,
+                    animationSpec = tween(durationMillis = LYRIC_SETTLE_MS, easing = LYRIC_EASING),
+                    label = "lyricRowAlpha"
+                )
+                val animatedBlur by animateDpAsState(
+                    targetValue = targetBlur,
+                    animationSpec = tween(durationMillis = LYRIC_SETTLE_MS, easing = LYRIC_EASING),
+                    label = "lyricRowBlur"
+                )
+                val animatedScale by animateFloatAsState(
+                    targetValue = targetScale,
+                    animationSpec = spring(
+                        dampingRatio = 0.82f,
+                        stiffness = Spring.StiffnessMediumLow
+                    ),
+                    label = "lyricRowScale"
+                )
 
                 val isSelected = selectedIndices.contains(index)
-                val lineScale = if (isActive && isSynced) 1.04f else 1f
+                val behind = if (scrollRun.delta >= 0f) index - scrollFocusIndex else scrollFocusIndex - index
+                val staggerDelay = behind.coerceIn(0, STAGGER_STEPS) * STAGGER_FRACTION * scrollRun.durationMs
 
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(end = 18.dp)
                         .graphicsLayer {
-                            scaleX = lineScale
-                            scaleY = lineScale
-                            transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0f, 0.5f)
-                            alpha = wordLineAlpha
+                            scaleX = animatedScale
+                            scaleY = animatedScale
+                            transformOrigin = TransformOrigin(0f, 0.5f)
+                            alpha = animatedAlpha
+                            translationY = if (staggerDelay <= 0f || scrollRun.delta == 0f) {
+                                0f
+                            } else {
+                                val elapsed = runElapsed.floatValue
+                                scrollRun.delta * (
+                                    LYRIC_EASING.transform((elapsed / scrollRun.durationMs).coerceIn(0f, 1f)) -
+                                        LYRIC_EASING.transform(
+                                            ((elapsed - staggerDelay) / scrollRun.durationMs).coerceIn(0f, 1f)
+                                        )
+                                    )
+                            }
                         }
+                        .then(
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && animatedBlur > 0.05.dp) {
+                                Modifier.blur(animatedBlur, BlurredEdgeTreatment.Unbounded)
+                            } else {
+                                Modifier
+                            }
+                        )
                         .background(
                             color = if (isSelected && isSelectionModeActive)
                                 Color(0xFFFA2D48).copy(alpha = 0.35f)
@@ -416,12 +549,12 @@ internal fun AirBeatsLyricsV2Content(
                             text = item.text,
                             style = TextStyle(
                                 fontFamily = SFProDisplay,
-                                fontSize = if (isSynced) 27.sp else 23.sp,
+                                fontSize = if (isSynced) lyricsTextSize.sp else 23.sp,
                                 fontWeight = if (isActive) FontWeight.W800 else FontWeight.W700,
                                 letterSpacing = (-0.6).sp,
-                                lineHeight = 33.sp
+                                lineHeight = 35.sp
                             ),
-                            color = textColor.copy(alpha = if (isActive) 1f else inactiveAlpha),
+                            color = textColor,
                             textAlign = textAlign,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -439,11 +572,17 @@ internal fun AirBeatsLyricsV2Content(
                 onClick = {
                     isManualScrolling = false
                     scope.launch {
-                        val viewportHeight = listState.layoutInfo.viewportSize.height
-                        listState.animateScrollToItem(
-                            index = currentLineIndex,
-                            scrollOffset = -(viewportHeight * 0.35f).toInt()
-                        )
+                        val visible = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == currentLineIndex }
+                        if (visible != null) {
+                            val dist = visible.offset.toFloat()
+                            scrollRun = LyricsScrollRun(scrollRun.id + 1, dist, LYRIC_SETTLE_MS)
+                            listState.animateScrollBy(
+                                value = dist,
+                                animationSpec = tween(durationMillis = LYRIC_SETTLE_MS, easing = LYRIC_EASING)
+                            )
+                        } else {
+                            listState.animateScrollToItem(index = currentLineIndex, scrollOffset = 0)
+                        }
                     }
                 },
                 modifier = Modifier
@@ -643,45 +782,54 @@ private fun AirBeatsAnimatedWordV2(
                 scaleY = wordScale
             }
     ) {
-        Text(
-            text = word.text,
-            style = wordStyle,
-            color = textColor.copy(alpha = inactiveAlpha)
-        )
-
-        if (isWordComplete || isWordActive || isLinePast) {
+        if (!isLineActive) {
+            // Inactive upcoming & past rows inherit progressive opacity and blur cleanly from parent row
             Text(
                 text = word.text,
-                style = wordStyle.copy(
-                    shadow = if (glowAlpha > 0f) {
-                        Shadow(
-                            color = textColor.copy(alpha = glowAlpha),
-                            offset = Offset.Zero,
-                            blurRadius = glowRadius.coerceAtLeast(1f)
-                        )
-                    } else null
-                ),
-                color = textColor,
-                modifier = if (isWordActive && !isWordComplete) {
-                    Modifier
-                        .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-                        .drawWithContent {
-                            drawContent()
-                            val edgeWidth = 8.dp.toPx()
-                            val center = (size.width + edgeWidth * 2) * progress - edgeWidth
-                            drawRect(
-                                brush = Brush.horizontalGradient(
-                                    colors = listOf(Color.Black, Color.Transparent),
-                                    startX = center - edgeWidth,
-                                    endX = center + edgeWidth
-                                ),
-                                blendMode = BlendMode.DstIn
-                            )
-                        }
-                } else {
-                    Modifier
-                }
+                style = wordStyle,
+                color = textColor
             )
+        } else {
+            Text(
+                text = word.text,
+                style = wordStyle,
+                color = textColor.copy(alpha = inactiveAlpha)
+            )
+
+            if (isWordComplete || isWordActive) {
+                Text(
+                    text = word.text,
+                    style = wordStyle.copy(
+                        shadow = if (glowAlpha > 0f) {
+                            Shadow(
+                                color = textColor.copy(alpha = glowAlpha),
+                                offset = Offset.Zero,
+                                blurRadius = glowRadius.coerceAtLeast(1f)
+                            )
+                        } else null
+                    ),
+                    color = textColor,
+                    modifier = if (isWordActive && !isWordComplete) {
+                        Modifier
+                            .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+                            .drawWithContent {
+                                drawContent()
+                                val edgeWidth = 8.dp.toPx()
+                                val center = (size.width + edgeWidth * 2) * progress - edgeWidth
+                                drawRect(
+                                    brush = Brush.horizontalGradient(
+                                        colors = listOf(Color.Black, Color.Transparent),
+                                        startX = center - edgeWidth,
+                                        endX = center + edgeWidth
+                                    ),
+                                    blendMode = BlendMode.DstIn
+                                )
+                            }
+                    } else {
+                        Modifier
+                    }
+                )
+            }
         }
     }
 }
@@ -738,19 +886,19 @@ private fun findCurrentLineIndex(
 }
 
 private fun Modifier.smoothFadingEdge(
-    vertical: Dp = 80.dp,
-): Modifier = graphicsLayer(alpha = 0.99f)
+    top: Dp = 34.dp,
+    bottom: Dp = 92.dp,
+): Modifier = graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
     .drawWithContent {
         drawContent()
-        val topPx = vertical.toPx()
+        val topPx = top.toPx()
         drawRect(
             brush = Brush.verticalGradient(
                 colorStops = arrayOf(
                     0.0f to Color.Transparent,
-                    0.3f to Color.Black.copy(alpha = 0.15f),
-                    0.5f to Color.Black.copy(alpha = 0.4f),
-                    0.7f to Color.Black.copy(alpha = 0.7f),
-                    0.85f to Color.Black.copy(alpha = 0.9f),
+                    0.35f to Color.Black.copy(alpha = 0.22f),
+                    0.65f to Color.Black.copy(alpha = 0.62f),
+                    0.85f to Color.Black.copy(alpha = 0.88f),
                     1.0f to Color.Black,
                 ),
                 startY = 0f,
@@ -758,7 +906,7 @@ private fun Modifier.smoothFadingEdge(
             ),
             blendMode = BlendMode.DstIn,
         )
-        val bottomPx = vertical.toPx()
+        val bottomPx = bottom.toPx()
         drawRect(
             brush = Brush.verticalGradient(
                 colorStops = arrayOf(

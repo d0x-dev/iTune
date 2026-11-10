@@ -3,6 +3,7 @@ package com.darkxvenom.itune.ui.home
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
+import android.view.HapticFeedbackConstants
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
@@ -77,6 +79,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.runtime.mutableFloatStateOf
 import kotlinx.coroutines.delay
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 private fun lerpDp(start: Dp, stop: Dp, fraction: Float): Dp =
@@ -422,10 +425,15 @@ fun HomeScreen(
         ) {
             val realTrack = MusicPlayerState.currentTrack
             if (realTrack != null) {
+                val view = LocalView.current
                 val miniPlayerDismissY = remember { Animatable(0f) }
+                val miniPlayerSwipeX = remember { Animatable(0f) }
                 val density = LocalDensity.current
                 val dismissThresholdPx = with(density) { 45.dp.toPx() }
                 val dismissTargetPx = with(density) { 160.dp.toPx() }
+                val swipeThresholdPx = with(density) { 64.dp.toPx() }
+                val maxSwipeDistancePx = with(density) { 145.dp.toPx() }
+                val swipeFraction = (abs(miniPlayerSwipeX.value) / maxSwipeDistancePx).coerceIn(0f, 1f)
 
                 FloatingMiniPlayer(
                     modifier = Modifier
@@ -442,16 +450,33 @@ fun HomeScreen(
                         }
                         .graphicsLayer {
                             translationY = miniPlayerDismissY.value
-                            alpha = (1f - (miniPlayerDismissY.value / dismissTargetPx)).coerceIn(0f, 1f)
+                            translationX = miniPlayerSwipeX.value
+                            alpha = (1f - (miniPlayerDismissY.value / dismissTargetPx)).coerceIn(0f, 1f) *
+                                (1f - swipeFraction * 0.55f)
+                            scaleX = 1f - swipeFraction * 0.03f
+                            scaleY = 1f - swipeFraction * 0.03f
                         }
                         .miniPlayerGestures(
                             morph = sheetMorph,
                             dismissOffset = miniPlayerDismissY,
+                            swipeOffsetX = miniPlayerSwipeX,
                             scope = coroutineScope,
                             dismissThresholdPx = dismissThresholdPx,
                             dismissTargetPx = dismissTargetPx,
+                            swipeThresholdPx = swipeThresholdPx,
+                            maxSwipeDistancePx = maxSwipeDistancePx,
+                            canSkipNext = { MusicPlayerState.hasNextTrack() },
+                            canSkipPrevious = { MusicPlayerState.hasPreviousTrack() },
                             onDismiss = {
                                 MusicPlayerState.close()
+                            },
+                            onSwipeNext = {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                MusicPlayerState.skipNext()
+                            },
+                            onSwipePrevious = {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                MusicPlayerState.skipPrevious(forcePrevious = true)
                             }
                         ),
                     currentTrack = currentTrack,

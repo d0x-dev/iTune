@@ -455,7 +455,8 @@ fun AppleMoreOptionsPopup(
                         )
                     }
 
-                    // Track Summary Header (Avatar + Title + Artist)
+                    // Track Summary Header (Avatar + Title + Artist + Favorite Star)
+                    val isFavorite = MusicPlayerState.isFavorite(track.id)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -512,6 +513,31 @@ fun AppleMoreOptionsPopup(
                                 color = Color.White.copy(alpha = 0.66f),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = if (isFavorite) 0.24f else 0.14f))
+                                .clickable {
+                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                    MusicPlayerState.toggleFavorite(track.id)
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(
+                                    if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_outline
+                                ),
+                                contentDescription = if (isFavorite) "Favorited" else "Favorite",
+                                colorFilter = ColorFilter.tint(
+                                    if (isFavorite) Color.White else Color.White.copy(alpha = 0.90f)
+                                ),
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     }
