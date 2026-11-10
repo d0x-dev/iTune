@@ -611,54 +611,82 @@ internal fun AppleSearchMorePopup(
                                         )
                                     }
 
-                        is SearchMoreTarget.Collection -> {
-                            MorePopupVectorOptionRow(
-                                icon = Icons.Rounded.PlayArrow,
-                                title = if (target.item.isAlbum) "Play Album" else "Play Playlist",
-                                onClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    closeSmoothly()
-                                    onPlayCollection(
-                                        target.item.id,
-                                        target.item.title,
-                                        target.item.author,
-                                        target.item.thumbnailUrl
-                                    )
-                                }
-                            )
-                            PopupMenuDivider()
-                            MorePopupVectorOptionRow(
-                                icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
-                                title = "Add to Queue",
-                                onClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    closeSmoothly()
-                                    onQueueCollection(
-                                        target.item.id,
-                                        target.item.title,
-                                        target.item.author,
-                                        target.item.thumbnailUrl
-                                    )
-                                }
-                            )
-                            PopupMenuDivider()
-                            MorePopupVectorOptionRow(
-                                icon = Icons.AutoMirrored.Rounded.QueueMusic,
-                                title = if (target.item.isAlbum) "Open Album" else "Open Playlist",
-                                onClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    closeSmoothly()
-                                    onOpenDetail(
-                                        SearchDetailState(
-                                            browseId = target.item.id,
-                                            title = target.item.title,
-                                            subtitle = target.item.author,
-                                            thumbnailUrl = target.item.thumbnailUrl,
-                                            initialType = if (target.item.isAlbum) BrowseType.ALBUM else BrowseType.PLAYLIST
+                                    is SearchMoreTarget.Collection -> {
+                                        MorePopupVectorOptionRow(
+                                            icon = Icons.Rounded.PlayArrow,
+                                            title = if (target.item.isAlbum) "Play Album" else "Play Playlist",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                closeSmoothly()
+                                                onPlayCollection(
+                                                    target.item.id,
+                                                    target.item.title,
+                                                    target.item.author,
+                                                    target.item.thumbnailUrl
+                                                )
+                                            }
                                         )
-                                    )
+                                        PopupMenuDivider()
+                                        MorePopupVectorOptionRow(
+                                            icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
+                                            title = "Add to Queue",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                closeSmoothly()
+                                                onQueueCollection(
+                                                    target.item.id,
+                                                    target.item.title,
+                                                    target.item.author,
+                                                    target.item.thumbnailUrl
+                                                )
+                                            }
+                                        )
+                                        PopupMenuDivider()
+                                        val savedReleases by ArtistStateStore.savedReleases.collectAsState()
+                                        val isSaved = target.item.id in savedReleases
+                                        MorePopupVectorOptionRow(
+                                            icon = if (isSaved) Icons.Rounded.Check else Icons.Rounded.Add,
+                                            title = if (isSaved) "Remove from Library" else "Add to Library",
+                                            iconTint = if (isSaved) Color(0xFFFA2D48) else Color.White.copy(alpha = 0.92f),
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                ArtistStateStore.toggleReleaseSaved(
+                                                    context = context,
+                                                    browseId = target.item.id,
+                                                    title = target.item.title,
+                                                    subtitle = target.item.author,
+                                                    thumbnailUrl = target.item.thumbnailUrl,
+                                                    type = if (target.item.isAlbum) BrowseType.ALBUM else BrowseType.PLAYLIST,
+                                                )
+                                                Toast.makeText(
+                                                    context,
+                                                    if (isSaved) "Removed from Library" else "Added to Library",
+                                                    Toast.LENGTH_SHORT,
+                                                ).show()
+                                                closeSmoothly()
+                                            }
+                                        )
+                                        PopupMenuDivider()
+                                        MorePopupVectorOptionRow(
+                                            icon = Icons.AutoMirrored.Rounded.QueueMusic,
+                                            title = if (target.item.isAlbum) "Open Album" else "Open Playlist",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                closeSmoothly()
+                                                onOpenDetail(
+                                                    SearchDetailState(
+                                                        browseId = target.item.id,
+                                                        title = target.item.title,
+                                                        subtitle = target.item.author,
+                                                        thumbnailUrl = target.item.thumbnailUrl,
+                                                        initialType = if (target.item.isAlbum) BrowseType.ALBUM else BrowseType.PLAYLIST
+                                                    )
+                                                )
+                                            }
+                                        )
+                                    }
                                 }
-                            )
+                            }
                         }
                     }
                 }
