@@ -53,15 +53,15 @@ data class WordTiming(
     val text: String,
 )
 
-/** Upgrades YouTube and Google CDN album artwork to ultra high resolution (8K / 4K / Original uncompressed master upload). */
+/** Upgrades YouTube and Google CDN album artwork to ultra high resolution (1440p QHD / Original master upload). */
 fun String.highQualityThumbnail(): String {
     var url = this
     if (url.contains("googleusercontent.com") || url.contains("ggpht.com")) {
-        // Strip any existing sizing / formatting parameter after the last '=' and request '=s0' (raw master resolution, up to 4K/8K original upload)
+        // Request '=w1440-h1440-l90-rj': 1440p QHD master retina clarity with 90% quality, fast ~400KB load time
         url = if (url.contains("=")) {
-            url.substringBeforeLast("=") + "=s0"
+            url.substringBeforeLast("=") + "=w1440-h1440-l90-rj"
         } else {
-            "$url=s0"
+            "$url=w1440-h1440-l90-rj"
         }
     } else if (url.contains("i.ytimg.com/vi/")) {
         // Strip query parameters like ?sqp=... that constrain size and crop

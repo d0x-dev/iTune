@@ -126,6 +126,7 @@ import androidx.compose.ui.zIndex
 import androidx.media3.common.Player
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import coil.size.Size
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
@@ -275,21 +276,23 @@ fun ITuneMusicPlayer(
             label = "blurScale"
         )
 
-        key(track.id) {
-            AsyncImage(
-                model = track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .blur(48.dp)
-                    .graphicsLayer {
-                        scaleX = blurScale
-                        scaleY = blurScale
-                        alpha = 0.95f
-                    }
-            )
-        }
+        AsyncImage(
+            model = ImageRequest.Builder(context)
+                .data(track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl)
+                .size(Size.ORIGINAL)
+                .crossfade(200)
+                .build(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+                .blur(48.dp)
+                .graphicsLayer {
+                    scaleX = blurScale
+                    scaleY = blurScale
+                    alpha = 0.95f
+                }
+        )
 
         // ── 2. Luminous Scrim Gradient ──
         Box(
@@ -420,34 +423,33 @@ fun ITuneMusicPlayer(
             val fadeStart = lerpFloat(1.0f, 0.72f, playerFadeWeight)
             val fadeEndAlpha = lerpFloat(1.0f, 0.0f, playerFadeWeight)
 
-            key(track.id) {
-                AsyncImage(
-                    model = ImageRequest.Builder(context)
-                        .data(track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl)
-                        .crossfade(200)
-                        .build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            compositingStrategy = CompositingStrategy.Offscreen
-                        }
-                        .drawWithContent {
-                            drawContent()
-                            if (fadeStart < 0.999f || fadeEndAlpha < 0.999f) {
-                                val mask = Brush.verticalGradient(
-                                    colorStops = arrayOf(
-                                        0f to Color.Black,
-                                        fadeStart to Color.Black,
-                                        1f to Color.Black.copy(alpha = fadeEndAlpha)
-                                    )
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data(track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl)
+                    .size(Size.ORIGINAL)
+                    .crossfade(200)
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        compositingStrategy = CompositingStrategy.Offscreen
+                    }
+                    .drawWithContent {
+                        drawContent()
+                        if (fadeStart < 0.999f || fadeEndAlpha < 0.999f) {
+                            val mask = Brush.verticalGradient(
+                                colorStops = arrayOf(
+                                    0f to Color.Black,
+                                    fadeStart to Color.Black,
+                                    1f to Color.Black.copy(alpha = fadeEndAlpha)
                                 )
-                                drawRect(brush = mask, blendMode = BlendMode.DstIn)
-                            }
+                            )
+                            drawRect(brush = mask, blendMode = BlendMode.DstIn)
                         }
-                )
-            }
+                    }
+            )
         }
 
         // ── 5b. Continuous Morphing Title & Artist ──
@@ -1174,8 +1176,13 @@ private fun InPlayerQueueContent(
                     .padding(vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val itemContext = LocalContext.current
                 AsyncImage(
-                    model = currentTrack.thumbnailUrl?.highQualityThumbnail(),
+                    model = ImageRequest.Builder(itemContext)
+                        .data(currentTrack.thumbnailUrl?.highQualityThumbnail() ?: currentTrack.thumbnailUrl)
+                        .memoryCacheKey("${currentTrack.id}_queue_thumb_46")
+                        .crossfade(200)
+                        .build(),
                     contentDescription = currentTrack.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -1298,8 +1305,13 @@ private fun InPlayerQueueContent(
 
                     Spacer(Modifier.width(10.dp))
 
+                    val itemContext = LocalContext.current
                     AsyncImage(
-                        model = item.thumbnailUrl?.highQualityThumbnail(),
+                        model = ImageRequest.Builder(itemContext)
+                            .data(item.thumbnailUrl?.highQualityThumbnail() ?: item.thumbnailUrl)
+                            .memoryCacheKey("${item.id}_queue_thumb_46")
+                            .crossfade(200)
+                            .build(),
                         contentDescription = item.title,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier

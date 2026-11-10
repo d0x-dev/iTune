@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import coil.size.Size
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.highQualityThumbnail
 import com.darkxvenom.itune.data.model.Track
@@ -96,8 +97,13 @@ fun FloatingMiniPlayer(
                         .clip(RoundedCornerShape(6.dp))
                         .background(Color(0xFF2C2C2E))
                 ) {
+                    val context = LocalContext.current
                     AsyncImage(
-                        model = realTrack.thumbnailUrl.highQualityThumbnail(),
+                        model = ImageRequest.Builder(context)
+                            .data(realTrack.thumbnailUrl.highQualityThumbnail())
+                            .size(Size.ORIGINAL)
+                            .crossfade(200)
+                            .build(),
                         contentDescription = realTrack.title,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()

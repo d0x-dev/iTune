@@ -295,8 +295,13 @@ private fun SearchResultItem(
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color(0xFF2C2C2E))
         ) {
+            val context = LocalContext.current
             AsyncImage(
-                model = track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl,
+                model = ImageRequest.Builder(context)
+                    .data(track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl)
+                    .memoryCacheKey("${track.id}_search_thumb_54")
+                    .crossfade(200)
+                    .build(),
                 contentDescription = track.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

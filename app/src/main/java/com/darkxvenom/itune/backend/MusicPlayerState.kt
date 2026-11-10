@@ -24,6 +24,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import coil.imageLoader
 import coil.request.ImageRequest
+import coil.size.Size
 import com.darkxvenom.itune.backend.lyrics.LyricsHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -192,6 +193,7 @@ object MusicPlayerState : Player.Listener {
             if (!thumb.isNullOrBlank()) {
                 val preReq = ImageRequest.Builder(ctx)
                     .data(thumb)
+                    .size(Size.ORIGINAL)
                     .crossfade(200)
                     .build()
                 ctx.imageLoader.enqueue(preReq)
@@ -214,6 +216,18 @@ object MusicPlayerState : Player.Listener {
                         queue.add(track)
                         queueIndex = queue.lastIndex
                     }
+                }
+
+                // Pre-warm the next queued track in original master quality
+                val nextInQueue = queue.getOrNull(queueIndex + 1)
+                val nextThumb = nextInQueue?.thumbnailUrl?.highQualityThumbnail() ?: nextInQueue?.thumbnailUrl
+                if (appContext != null && !nextThumb.isNullOrBlank()) {
+                    val nextPreReq = ImageRequest.Builder(appContext!!)
+                        .data(nextThumb)
+                        .size(Size.ORIGINAL)
+                        .crossfade(200)
+                        .build()
+                    appContext!!.imageLoader.enqueue(nextPreReq)
                 }
 
                 val streamUrl = MusicBackend.resolveAudioStreamUrl(track.id)
