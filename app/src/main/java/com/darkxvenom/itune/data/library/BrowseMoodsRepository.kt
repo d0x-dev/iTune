@@ -30,3 +30,34 @@ object BrowseMoodsRepository {
     fun ensureLoaded() {
         if (syncedFromNetwork || fetchJob?.isActive == true) return
         refresh()
+    }
+
+    fun refresh() {
+        if (fetchJob?.isActive == true) return
+        fetchJob = scope.launch {
+            _isRefreshing.value = true
+            try {
+                val liveMoods = MusicBackend.fetchMoodsAndMoments()
+                if (liveMoods.isNotEmpty()) {
+                    val baseImages = MusicRepository.browseCategories
+                    val merged = liveMoods.take(baseImages.size).mapIndexed { idx, mood ->
+                        val slot = baseImages[idx]
+                        BrowseCategoryItem(
+                            id = slot.id,
+                            title = mood.title,
+                            imageUrl = slot.imageUrl,
+                            browseId = mood.browseId,
+                            params = mood.params,
+                        )
+                    }
+                    _categories.value = merged
+                    syncedFromNetwork = true
+                }
+            } catch (_: Exception) {
+                // Keep seeded defaults cleanly
+            } finally {
+                _isRefreshing.value = false
+            }
+        }
+    }
+}
