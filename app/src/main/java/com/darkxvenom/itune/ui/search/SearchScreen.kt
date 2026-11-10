@@ -527,18 +527,377 @@ fun SearchScreen(
                             val showAlbums = selectedFilter == SearchResultFilter.ALL || selectedFilter == SearchResultFilter.ALBUMS
                             val showPlaylists = selectedFilter == SearchResultFilter.ALL || selectedFilter == SearchResultFilter.PLAYLISTS
 
+                            val songsList = if (selectedFilter == SearchResultFilter.SONGS) searchResults.songs else searchResults.songs.take(8)
+                            val artistsList = if (selectedFilter == SearchResultFilter.ARTISTS) searchResults.artists else searchResults.artists.take(6)
+                            val albumsList = if (selectedFilter == SearchResultFilter.ALBUMS) searchResults.albums else searchResults.albums.take(6)
+                            val playlistsList = if (selectedFilter == SearchResultFilter.PLAYLISTS) searchResults.playlists else searchResults.playlists.take(6)
 
-                        } else Unit
+                            if (topResult != null) {
+                                item(span = { GridItemSpan(2) }, key = "header_top_result") {
+                                    SearchSectionHeader(title = "Top Result")
+                                }
+                                item(span = { GridItemSpan(2) }, key = "top_result_${topResult.stableKey}") {
+                                    val isCurrentTopSong = topResult is TopResultItem.Song &&
+                                        MusicPlayerState.currentTrack?.id == topResult.track.id
+                                    val isTopSaved = when (topResult) {
+                                        is TopResultItem.Artist -> false
+                                        is TopResultItem.Song -> MusicPlayerState.favoriteIds.contains(topResult.track.id)
+                                        is TopResultItem.Album -> topResult.album.id in savedReleases
+                                        is TopResultItem.Playlist -> topResult.playlist.id in savedReleases
+                                    }
+
+                                    TopResultHeroCard(
+                                        item = topResult,
+                                        isCurrentSong = isCurrentTopSong,
+                                        isPlaying = MusicPlayerState.isPlaying,
+                                        isSaved = isTopSaved,
+                                        busyAction = topResultBusyAction,
+                                        onCardClick = {
+                                            when (topResult) {
+                                                is TopResultItem.Artist -> openCollectionDetail(
+                                                    SearchDetailState(
+                                                        browseId = topResult.artist.id,
+                                                        title = topResult.artist.name,
+                                                        subtitle = topResult.artist.subscribers ?: "Artist",
+                                                        thumbnailUrl = topResult.artist.thumbnailUrl,
+                                                        initialType = BrowseType.ARTIST
+                                                    )
+                                                )
+                                                is TopResultItem.Song -> {
+                                                    focusManager.clearFocus(force = true)
+                                                    keyboardController?.hide()
+                                                    val queue = if (songsList.any { it.id == topResult.track.id }) {
+                                                        songsList
+                                                    } else {
+                                                        listOf(topResult.track) + songsList
+                                                    }
+                                                    MusicPlayerState.play(topResult.track, queue)
+                                                }
+                                                is TopResultItem.Album -> openCollectionDetail(
+                                                    SearchDetailState(
+                                                        browseId = topResult.album.id,
+                                                        title = topResult.album.title,
+                                                        subtitle = topResult.album.author,
+                                                        thumbnailUrl = topResult.album.thumbnailUrl,
+                                                        initialType = BrowseType.ALBUM
+                                                    )
+                                                )
+                                                is TopResultItem.Playlist -> openCollectionDetail(
+                                                    SearchDetailState(
+                                                        browseId = topResult.playlist.id,
+                                                        title = topResult.playlist.title,
+                                                        subtitle = topResult.playlist.author,
+                                                        thumbnailUrl = topResult.playlist.thumbnailUrl,
+                                                        initialType = BrowseType.PLAYLIST
+                                                    )
+                                                )
+                                            }
+                                        },
+                                        onArtistShuffleClick = {
+                                            val artist = (topResult as? TopResultItem.Artist)?.artist ?: return@TopResultHeroCard
+                                            activeArtistActionJob?.cancel()
+                                            topResultBusyAction = TopResultBusyAction.ARTIST_SHUFFLE
+                                            activeArtistActionJob = coroutineScope.launch {
+                                                try {
+                                                    val page = ArtistRepository.artistPage(artist.id).getOrNull()
+                                                    val targetQueue = page?.shuffle?.let {
+                                                        ArtistRepository.watchQueue(it).getOrNull()
+                                                    }.orEmpty().map { it.toMusicTrack() }
+                                                    val fallbackQueue = if (targetQueue.isNotEmpty()) {
+                                                        targetQueue
+                                                    } else {
+                                                        val raw = page?.songs.orEmpty().map { it.toMusicTrack() }
+                                                            .ifEmpty {
+                                                                MusicBackend.loadCollectionTracks(
+                                                                    browseId = artist.id,
+                                                                    fallbackArtist = artist.name,
+                                                                    fallbackThumbnailUrl = artist.thumbnailUrl
+                                                                )
+                                                            }
+                                                            .ifEmpty {
+                                                                searchResults.songs.filter {
+                                                                    it.artists.contains(artist.name, ignoreCase = true)
+                                                                }
+                                                            }
+                                                        raw.shuffled()
+                                                    }
+                                                    if (fallbackQueue.isNotEmpty()) {
+                                                        MusicPlayerState.play(
+                                                            fallbackQueue.first(),
+                                                            fallbackQueue,
+                                                            expandPlayer = false
+                                                        )
+                                                    } else {
+                                                        Toast.makeText(context, "No tracks found", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                } finally {
+                                                    topResultBusyAction = null
+                                                }
+                                            }
+                                        },
+                                        onArtistMixClick = {
+                                            val artist = (topResult as? TopResultItem.Artist)?.artist ?: return@TopResultHeroCard
+                                            activeArtistActionJob?.cancel()
+                                            topResultBusyAction = TopResultBusyAction.ARTIST_MIX
+                                            activeArtistActionJob = coroutineScope.launch {
+                                                try {
+                                                    val page = ArtistRepository.artistPage(artist.id).getOrNull()
+                                                    val watchTracks = page?.radio?.let {
+                                                        ArtistRepository.watchQueue(it).getOrNull()
+                                                    }.orEmpty().map { it.toMusicTrack() }
+                                                    val mixTracks = if (watchTracks.isNotEmpty()) {
+                                                        watchTracks
+                                                    } else {
+                                                        val seedId = page?.songs?.firstOrNull()?.videoId
+                                                            ?: searchResults.songs.firstOrNull {
+                                                                it.artists.contains(artist.name, ignoreCase = true)
+                                                            }?.id
+                                                        if (seedId != null) {
+                                                            ArtistRepository.radio(seedId).getOrNull()
+                                                                .orEmpty().map { it.toMusicTrack() }
+                                                        } else {
+                                                            emptyList()
+                                                        }
+                                                    }
+                                                    if (mixTracks.isNotEmpty()) {
+                                                        MusicPlayerState.play(
+                                                            mixTracks.first(),
+                                                            mixTracks,
+                                                            expandPlayer = false
+                                                        )
+                                                    } else {
+                                                        Toast.makeText(context, "Couldn't start mix", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                } finally {
+                                                    topResultBusyAction = null
+                                                }
+                                            }
+                                        },
+                                        onPlayClick = {
+                                            when (topResult) {
+                                                is TopResultItem.Song -> {
+                                                    val queue = if (songsList.any { it.id == topResult.track.id }) {
+                                                        songsList
+                                                    } else {
+                                                        listOf(topResult.track) + songsList
+                                                    }
+                                                    MusicPlayerState.play(
+                                                        topResult.track,
+                                                        queue,
+                                                        expandPlayer = false
+                                                    )
+                                                }
+                                                is TopResultItem.Album -> {
+                                                    coroutineScope.launch {
+                                                        val loaded = MusicBackend.loadCollectionTracks(
+                                                            browseId = topResult.album.id,
+                                                            fallbackArtist = topResult.album.title,
+                                                            fallbackThumbnailUrl = topResult.album.thumbnailUrl
+                                                        )
+                                                        if (loaded.isNotEmpty()) {
+                                                            MusicPlayerState.play(loaded.first(), loaded, expandPlayer = false)
+                                                        } else {
+                                                            Toast.makeText(context, "No tracks found", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    }
+                                                }
+                                                is TopResultItem.Playlist -> {
+                                                    coroutineScope.launch {
+                                                        val loaded = MusicBackend.loadCollectionTracks(
+                                                            browseId = topResult.playlist.id,
+                                                            fallbackArtist = topResult.playlist.title,
+                                                            fallbackThumbnailUrl = topResult.playlist.thumbnailUrl
+                                                        )
+                                                        if (loaded.isNotEmpty()) {
+                                                            MusicPlayerState.play(loaded.first(), loaded, expandPlayer = false)
+                                                        } else {
+                                                            Toast.makeText(context, "No tracks found", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    }
+                                                }
+                                                is TopResultItem.Artist -> Unit
+                                            }
+                                        },
+                                        onSaveToggleClick = {
+                                            when (topResult) {
+                                                is TopResultItem.Song -> {
+                                                    MusicPlayerState.toggleFavorite(topResult.track)
+                                                }
+                                                is TopResultItem.Album -> {
+                                                    ArtistStateStore.toggleReleaseSaved(
+                                                        context = context,
+                                                        browseId = topResult.album.id,
+                                                        title = topResult.album.title,
+                                                        subtitle = topResult.album.author,
+                                                        thumbnailUrl = topResult.album.thumbnailUrl,
+                                                        type = BrowseType.ALBUM
+                                                    )
+                                                }
+                                                is TopResultItem.Playlist -> {
+                                                    ArtistStateStore.toggleReleaseSaved(
+                                                        context = context,
+                                                        browseId = topResult.playlist.id,
+                                                        title = topResult.playlist.title,
+                                                        subtitle = topResult.playlist.author,
+                                                        thumbnailUrl = topResult.playlist.thumbnailUrl,
+                                                        type = BrowseType.PLAYLIST
+                                                    )
+                                                }
+                                                is TopResultItem.Artist -> Unit
+                                            }
+                                        },
+                                        onMoreClick = { anchor ->
+                                            moreRequest = when (topResult) {
+                                                is TopResultItem.Song -> SearchMoreRequest(SearchMoreTarget.Song(topResult.track), anchor)
+                                                is TopResultItem.Album -> SearchMoreRequest(SearchMoreTarget.Collection(topResult.album), anchor)
+                                                is TopResultItem.Playlist -> SearchMoreRequest(SearchMoreTarget.Collection(topResult.playlist), anchor)
+                                                is TopResultItem.Artist -> SearchMoreRequest(SearchMoreTarget.Artist(topResult.artist), anchor)
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+
+                            item(span = { GridItemSpan(2) }, key = "search_filter_selector") {
+
+                                subtitle = track.artists,
+                                thumbnailUrl = track.thumbnailUrl,
+                                cacheKey = "${track.id}_search_song_48",
+                                isCurrent = MusicPlayerState.currentTrack?.id == track.id,
+                                isPlaying = MusicPlayerState.isPlaying,
+                                onClick = {
+                                    focusManager.clearFocus(force = true)
+                                    keyboardController?.hide()
+                                    MusicPlayerState.play(track, songsList)
+                                },
+                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Song(track), pos) }
+                            )
+                        }
+                    }
+
+                    if (artistsList.isNotEmpty()) {
+                        item(span = { GridItemSpan(2) }, key = "header_artists") {
+                            SearchSectionHeader(title = "Artists")
+                        }
+                        itemsIndexed(
+                            items = artistsList,
+                            key = { idx, a -> "artist_${a.id}_$idx" },
+                            span = { _, _ -> GridItemSpan(2) }
+                        ) { _, artist ->
+                            SearchUnifiedRow(
+                                title = artist.name,
+                                subtitle = artist.subscribers ?: "Artist",
+                                thumbnailUrl = artist.thumbnailUrl,
+                                cacheKey = "${artist.id}_search_artist_48",
+                                onClick = {
+                                    openCollectionDetail(
+                                        SearchDetailState(
+                                            browseId = artist.id,
+                                            title = artist.name,
+                                            subtitle = artist.subscribers ?: "Artist",
+                                            thumbnailUrl = artist.thumbnailUrl,
+                                            initialType = BrowseType.ARTIST
+                                        )
+                                    )
+                                },
+                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Artist(artist), pos) }
+                            )
+                        }
+                    }
+
+                    if (albumsList.isNotEmpty()) {
+                        item(span = { GridItemSpan(2) }, key = "header_albums") {
+                            SearchSectionHeader(title = "Albums")
+                        }
+                        itemsIndexed(
+                            items = albumsList,
+                            key = { idx, a -> "album_${a.id}_$idx" },
+                            span = { _, _ -> GridItemSpan(2) }
+                        ) { _, album ->
+                            SearchUnifiedRow(
+                                title = album.title,
+                                subtitle = album.author,
+                                thumbnailUrl = album.thumbnailUrl,
+                                cacheKey = "${album.id}_search_album_48",
+                                onClick = {
+                                    openCollectionDetail(
+                                        SearchDetailState(
+                                            browseId = album.id,
+                                            title = album.title,
+                                            subtitle = album.author,
+                                            thumbnailUrl = album.thumbnailUrl,
+                                            initialType = BrowseType.ALBUM
+                                        )
+                                    )
+                                },
+                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Collection(album), pos) }
+                            )
+                        }
+                    }
+
+                    if (playlistsList.isNotEmpty()) {
+                        item(span = { GridItemSpan(2) }, key = "header_playlists") {
+                            SearchSectionHeader(title = "Playlists")
+                        }
+                        itemsIndexed(
+                            items = playlistsList,
+                            key = { idx, p -> "playlist_${p.id}_$idx" },
+                            span = { _, _ -> GridItemSpan(2) }
+                        ) { idx, playlist ->
+                            SearchUnifiedRow(
+                                title = playlist.title,
+                                subtitle = playlist.author,
+                                thumbnailUrl = playlist.thumbnailUrl,
+                                cacheKey = "${playlist.id}_search_playlist_48",
+                                showBottomDivider = idx < playlistsList.lastIndex,
+                                onClick = {
+                                    openCollectionDetail(
+                                        SearchDetailState(
+                                            browseId = playlist.id,
+                                            title = playlist.title,
+                                            subtitle = playlist.author,
+                                            thumbnailUrl = playlist.thumbnailUrl,
+                                            initialType = BrowseType.PLAYLIST
+                                        )
+                                    )
+                                },
+                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Collection(playlist), pos) }
+                            )
+                        }
                     }
                 }
             }
         }
-                            AppleOledBlack.copy(alpha = 0.65f),
-                            AppleOledBlack.copy(alpha = 0.25f),
-                            Color.Transparent
-                        )
+
+        // Top subtle gradient shade on scroll for status bar transparency
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(110.dp)
+                .graphicsLayer { alpha = topShadeAlpha }
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(32.dp)
+                .statusBarsPadding()
+                .graphicsLayer { alpha = topShadeAlpha * 0.45f }
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(AppleOledBlack, Color.Transparent)
                     )
                 )
+        )
+
+        // Real-time red loading bar across top whenever a submitted search query is executing
+        TopSpringLoadingBar(
+            isVisible = isSearching,
+            modifier = Modifier.align(Alignment.TopCenter)
         )
 
         AppleSearchMorePopup(
@@ -577,17 +936,6 @@ fun SearchScreen(
         )
     }
 }
-
-@Composable
-fun AppleSearchBar(
-    query: String,
-    onQueryChange: (String) -> Unit,
-    onMicClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
 
 @Composable
 fun AppleSearchBar(
