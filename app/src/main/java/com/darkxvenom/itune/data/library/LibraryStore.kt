@@ -376,3 +376,94 @@ object LibraryStore {
         }
     }
 
+    fun saveRelease(
+        context: Context,
+        browseId: String,
+        title: String,
+        subtitle: String,
+        thumbnailUrl: String?,
+        type: BrowseType,
+    ) {
+        ensureInit(context)
+        if (browseId.isBlank()) return
+        val resolvedType = resolveReleaseType(browseId, type)
+        val entry = SavedCollectionEntry(
+            browseId = browseId,
+            title = title.ifBlank {
+                if (resolvedType == BrowseType.PLAYLIST) "Playlist" else "Album"
+            },
+            subtitle = subtitle,
+            thumbnailUrl = thumbnailUrl,
+            type = resolvedType,
+        )
+        synchronized(this) {
+            if (resolvedType == BrowseType.PLAYLIST) {
+                val updated = listOf(entry) + _savedPlaylists.value.filterNot { it.browseId == browseId }
+                _savedPlaylists.value = updated
+                persistCollections(KEY_PLAYLISTS, updated)
+            } else {
+                val updated = listOf(entry) + _savedAlbums.value.filterNot { it.browseId == browseId }
+                _savedAlbums.value = updated
+                persistCollections(KEY_ALBUMS, updated)
+            }
+        }
+        if (thumbnailUrl.isNullOrBlank() || title.isBlank()) {
+            hydrateRelease(context, browseId, resolvedType)
+        }
+    }
+
+    fun updateReleaseMetadataIfSaved(
+        context: Context,
+        browseId: String,
+        title: String,
+        subtitle: String,
+        thumbnailUrl: String?,
+        type: BrowseType,
+    ) {
+        ensureInit(context)
+        val resolvedType = resolveReleaseType(browseId, type)
+        synchronized(this) {
+            if (resolvedType == BrowseType.PLAYLIST) {
+                val idx = _savedPlaylists.value.indexOfFirst { it.browseId == browseId }
+                if (idx < 0) return
+                val cur = _savedPlaylists.value[idx]
+                val next = _savedPlaylists.value.toMutableList()
+                next[idx] = cur.copy(
+                    title = title.ifBlank { cur.title },
+                    subtitle = subtitle.ifBlank { cur.subtitle },
+                    thumbnailUrl = thumbnailUrl ?: cur.thumbnailUrl,
+                )
+                _savedPlaylists.value = next
+                persistCollections(KEY_PLAYLISTS, next)
+            } else {
+                val idx = _savedAlbums.value.indexOfFirst { it.browseId == browseId }
+                if (idx < 0) return
+                val cur = _savedAlbums.value[idx]
+                val next = _savedAlbums.value.toMutableList()
+                next[idx] = cur.copy(
+                    title = title.ifBlank { cur.title },
+                    subtitle = subtitle.ifBlank { cur.subtitle },
+                    thumbnailUrl = thumbnailUrl ?: cur.thumbnailUrl,
+                )
+                _savedAlbums.value = next
+                persistCollections(KEY_ALBUMS, next)
+            }
+        }
+    }
+
+    fun removeRelease(context: Context, browseId: String) {
+        ensureInit(context)
+        synchronized(this) {
+            val albumsUpdated = _savedAlbums.value.filterNot { it.browseId == browseId }
+            if (albumsUpdated.size != _savedAlbums.value.size) {
+                _savedAlbums.value = albumsUpdated
+                persistCollections(KEY_ALBUMS, albumsUpdated)
+            }
+            val playlistsUpdated = _savedPlaylists.value.filterNot { it.browseId == browseId }
+            if (playlistsUpdated.size != _savedPlaylists.value.size) {
+                _savedPlaylists.value = playlistsUpdated
+                persistCollections(KEY_PLAYLISTS, playlistsUpdated)
+            }
+        }
+    }
+
