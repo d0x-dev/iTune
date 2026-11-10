@@ -933,3 +933,135 @@ fun LibraryGlassPillButton(
     }
 }
 
+@Composable
+fun LibraryFilterBar(
+    visible: Boolean,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onClose: () -> Unit,
+    autoFocus: Boolean,
+    onFocused: () -> Unit,
+    placeholder: String,
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = expandVertically(tween(220)) + fadeIn(tween(180)),
+        exit = shrinkVertically(tween(180)) + fadeOut(tween(140)),
+    ) {
+        val focusRequester = remember { FocusRequester() }
+        val focusManager = LocalFocusManager.current
+        LaunchedEffect(autoFocus, visible) {
+            if (visible && autoFocus) {
+                focusRequester.requestFocus()
+                onFocused()
+            }
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 8.dp)
+                .height(46.dp)
+                .clip(CircleShape)
+                .lightweightLiquidGlass(
+                    shape = CircleShape,
+                    fallbackColor = Color(0x441E1E24),
+                )
+                .border(0.8.dp, Color.White.copy(alpha = 0.16f), CircleShape)
+                .padding(horizontal = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = ITubeIcons.Search,
+                contentDescription = null,
+                tint = Color.White.copy(alpha = 0.65f),
+                modifier = Modifier.size(18.dp),
+            )
+            Spacer(Modifier.width(10.dp))
+            Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+                if (query.isEmpty()) {
+                    Text(
+                        text = placeholder,
+                        color = Color.White.copy(alpha = 0.45f),
+                        fontSize = 15.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                BasicTextField(
+                    value = query,
+                    onValueChange = onQueryChange,
+                    singleLine = true,
+                    cursorBrush = SolidColor(LibraryCrimsonAccent),
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                        color = Color.White,
+                        fontSize = 15.sp,
+                    ),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
+                )
+            }
+            IconButton(
+                onClick = {
+                    if (query.isNotEmpty()) {
+                        onQueryChange("")
+                    } else {
+                        focusManager.clearFocus()
+                        onClose()
+                    }
+                },
+                modifier = Modifier.size(28.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = "Clear",
+                    tint = Color.White.copy(alpha = 0.72f),
+                    modifier = Modifier.size(17.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun LibraryGlassCardContainer(
+    modifier: Modifier = Modifier,
+    cornerRadius: Dp = 22.dp,
+    accentTint: Color? = null,
+    useBackdropGlass: Boolean = true,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    val shape = RoundedCornerShape(cornerRadius)
+    val glassActive = LocalLiquidGlassEnabled.current && isGlassSupported() && useBackdropGlass
+    Column(
+        modifier = modifier
+            .clip(shape)
+            .then(
+                if (glassActive) {
+                    Modifier
+                        .liquidGlass(shape, surfaceTint = accentTint?.copy(alpha = 0.16f))
+                        .background(
+                            Brush.linearGradient(
+                                listOf(
+                                    Color.White.copy(alpha = 0.08f),
+                                    Color.White.copy(alpha = 0.02f),
+                                ),
+                            ),
+                        )
+                        .border(0.8.dp, Color.White.copy(alpha = 0.16f), shape)
+                } else {
+                    Modifier
+                        .lightweightLiquidGlass(
+                            shape = shape,
+                            fallbackColor = Color(0x5C15131B),
+                        )
+                        .liquidGlassRim(shape)
+                        .border(0.8.dp, Color.White.copy(alpha = 0.14f), shape)
+                },
+            ),
+        content = content,
+    )
+}
+
