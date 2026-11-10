@@ -288,6 +288,16 @@ fun CategoryCardArtwork(
                 val shadowColor = Color(0xFF092928)
                 drawOval(shadowColor, Offset(w * 0.50f, h * 0.35f), Size(w * 0.45f, h * 0.55f))
             }
+
+            else -> {
+                drawRect(
+                    brush = Brush.radialGradient(
+                        colors = listOf(Color.White.copy(alpha = 0.22f), Color.Transparent),
+                        center = Offset(w * 0.72f, h * 0.28f),
+                        radius = w * 0.85f
+                    )
+                )
+            }
         }
 
         // Bottom dark vignette overlay across ALL cards so category title is razor sharp
