@@ -216,22 +216,32 @@ fun LibraryScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     val menuItems = MusicRepository.libraryMenuItems
+                    val likedSongs by LibraryStore.likedSongs.collectAsStateWithLifecycle()
                     menuItems.forEachIndexed { index, item ->
                         LibraryMenuRow(
                             item = item,
                             onClick = {
                                 onMenuItemClick(item)
-                                Toast.makeText(context, "Viewing ${item.title}", Toast.LENGTH_SHORT).show()
                             }
                         )
-                        if (index < menuItems.size - 1) {
-                            HorizontalDivider(
-                                modifier = Modifier.padding(start = 44.dp),
-                                color = Color(0x1FFFFFFF),
-                                thickness = 0.5.dp
-                            )
-                        }
+                        HorizontalDivider(
+                            modifier = Modifier.padding(start = 44.dp),
+                            color = Color(0x1FFFFFFF),
+                            thickness = 0.5.dp
+                        )
                     }
+                    LibraryLikedSongsMenuRow(
+                        count = likedSongs.size,
+                        onClick = {
+                            onMenuItemClick(
+                                LibraryMenuItem(
+                                    id = "lm5",
+                                    title = "Liked Songs",
+                                    iconRes = R.drawable.ic_lib_songs,
+                                ),
+                            )
+                        },
+                    )
                 }
             }
 
