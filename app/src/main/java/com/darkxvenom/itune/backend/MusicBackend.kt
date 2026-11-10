@@ -281,7 +281,154 @@ object MusicBackend {
         }
     }
 
-    private fun parseTrackItem(itemObj: JSONObject): MusicTrack? {
+    private fun <T> collectRenderers(
+        root: JSONObject,
+        parser: (JSONObject) -> T?
+    ): List<T> {
+        val out = mutableListOf<T>()
+        root.walk { key, itemObj ->
+            if (key == "musicResponsiveListItemRenderer" || key == "musicTwoRowItemRenderer") {
+                val wrapper = JSONObject().put(key, itemObj)
+                parser(wrapper)?.let(out::add)
+            }
+        }
+        return out
+    }
+
+    private fun JSONObject.extractBestThumbnail(): String? =
+        optJSONObject("thumbnail")
+            ?.optJSONObject("musicThumbnailRenderer")
+            ?.optJSONObject("thumbnail")
+            ?.optJSONArray("thumbnails")
+            ?.let { thumbs -> thumbs.optJSONObject(thumbs.length() - 1)?.optString("url") }
+            ?.takeIf { it.isNotBlank() }
+            ?.highQualityThumbnail()
+
+    private fun JSONObject.extractColumnText(colIndex: Int): String {
+        val runs = optJSONArray("flexColumns")
+            ?.optJSONObject(colIndex)
+            ?.optJSONObject("musicResponsiveListItemFlexColumnRenderer")
+            ?.optJSONObject("text")
+            ?.optJSONArray("runs") ?: return ""
+        return buildString {
+            for (i in 0 until runs.length()) {
+                append(runs.optJSONObject(i)?.optString("text").orEmpty())
+            }
+        }.trim()
+    }
+
+    /** Splits Innertube flex column runs at bullet separators (`•` / `·`) preserving multi-artist credits like `"A, B, C"`. */
+    private fun extractSegmentedRuns(subRuns: JSONArray?): List<Pair<String, String?>> {
+        if (subRuns == null || subRuns.length() == 0) return emptyList()
+        val segments = mutableListOf<Pair<String, String?>>()
+        val currentText = StringBuilder()
+        var firstBrowseId: String? = null
+
+        fun flushSegment() {
+            val cleaned = currentText.toString().trim()
+            if (cleaned.isNotEmpty()) {
+                segments.add(cleaned to firstBrowseId)
+            }
+            currentText.setLength(0)
+            firstBrowseId = null
+        }
+
+        for (r in 0 until subRuns.length()) {
+            val runObj = subRuns.optJSONObject(r) ?: continue
+            val t = runObj.optString("text")
+            val trimmed = t.trim()
+            if (trimmed == "•" || trimmed == "·") {
+                flushSegment()
+                continue
+            }
+            if (firstBrowseId == null) {
+                firstBrowseId = runObj.optJSONObject("navigationEndpoint")
+                    ?.optJSONObject("browseEndpoint")
+                    ?.optString("browseId")
+                    ?.takeIf { it.isNotBlank() }
+            }
+            currentText.append(t)
+        }
+        flushSegment()
+        return segments
+    }
+
+    private fun parseArtistItem(itemObj: JSONObject): MusicArtist? {
+        val responsive = itemObj.optJSONObject("musicResponsiveListItemRenderer") ?: return null
+        val browseId = responsive.optJSONObject("navigationEndpoint")
+            ?.optJSONObject("browseEndpoint")
+            ?.optString("browseId")
+            ?.takeIf { it.isNotBlank() } ?: return null
+
+        val name = responsive.extractColumnText(0).ifBlank { return null }
+        val subRuns = responsive.optJSONArray("flexColumns")
+            ?.optJSONObject(1)
+            ?.optJSONObject("musicResponsiveListItemFlexColumnRenderer")
+            ?.optJSONObject("text")
+            ?.optJSONArray("runs")
+        val segments = extractSegmentedRuns(subRuns)
+            .map { it.first }
+            .filter { !it.equals("Artist", ignoreCase = true) }
+        val subtitle = segments.joinToString(" · ").ifBlank { "Artist" }
+
+        return MusicArtist(
+            id = browseId,
+            name = name,
+            thumbnailUrl = responsive.optJSONObject("thumbnail")?.let {
+                JSONObject().put("thumbnail", it).extractBestThumbnail()
+            },
+            subscribers = subtitle
+        )
+    }
+
+    private fun parsePlaylistOrAlbumItem(itemObj: JSONObject, isAlbum: Boolean): MusicPlaylistRef? {
+        val responsive = itemObj.optJSONObject("musicResponsiveListItemRenderer") ?: return null
+        val browseId = responsive.optJSONObject("navigationEndpoint")
+            ?.optJSONObject("browseEndpoint")
+            ?.optString("browseId")
+            ?.takeIf { it.isNotBlank() } ?: return null
+
+        val title = responsive.extractColumnText(0).ifBlank { return null }
+        val subRuns = responsive.optJSONArray("flexColumns")
+            ?.optJSONObject(1)
+            ?.optJSONObject("musicResponsiveListItemFlexColumnRenderer")
+            ?.optJSONObject("text")
+            ?.optJSONArray("runs")
+        val subtitle = extractSegmentedRuns(subRuns)
+            .map { it.first }
+            .filter {
+                !it.equals("Playlist", ignoreCase = true) &&
+                    !it.equals("Album", ignoreCase = true)
+            }
+            .joinToString(" · ")
+
+        val watchPlaylistId = responsive.optJSONObject("overlay")
+            ?.optJSONObject("musicItemThumbnailOverlayRenderer")
+            ?.optJSONObject("content")
+            ?.optJSONObject("musicPlayButtonRenderer")
+            ?.optJSONObject("playNavigationEndpoint")
+            ?.optJSONObject("watchPlaylistEndpoint")
+            ?.optString("playlistId")
+            ?.takeIf { it.isNotBlank() }
+
+        val thumbUrl = JSONObject().put("thumbnail", responsive.optJSONObject("thumbnail"))
+            .extractBestThumbnail()
+
+        return MusicPlaylistRef(
+            id = browseId,
+            title = title,
+            author = subtitle.ifBlank { if (isAlbum) "Album" else "Playlist" },
+            thumbnailUrl = thumbUrl,
+            isAlbum = isAlbum,
+            watchPlaylistId = watchPlaylistId
+        )
+    }
+
+    private fun parseTrackItem(
+        itemObj: JSONObject,
+        fallbackArtist: String = "",
+        fallbackThumbnailUrl: String? = null
+    ): MusicTrack? {
         itemObj.optJSONObject("musicResponsiveListItemRenderer")?.let { responsive ->
             val videoId = responsive.optJSONObject("playlistItemData")?.optString("videoId")
                 ?: responsive.optJSONObject("navigationEndpoint")?.optJSONObject("watchEndpoint")?.optString("videoId")
