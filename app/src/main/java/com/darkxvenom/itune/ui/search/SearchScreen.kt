@@ -759,128 +759,198 @@ fun SearchScreen(
                             }
 
                             item(span = { GridItemSpan(2) }, key = "search_filter_selector") {
+                                SearchResultFilterBar(
+                                    selectedFilter = selectedFilter,
+                                    onSelect = { selectedFilter = it }
+                                )
+                            }
 
-                                subtitle = track.artists,
-                                thumbnailUrl = track.thumbnailUrl,
-                                cacheKey = "${track.id}_search_song_48",
-                                isCurrent = MusicPlayerState.currentTrack?.id == track.id,
-                                isPlaying = MusicPlayerState.isPlaying,
-                                onClick = {
-                                    focusManager.clearFocus(force = true)
-                                    keyboardController?.hide()
-                                    MusicPlayerState.play(track, songsList)
-                                },
-                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Song(track), pos) }
-                            )
-                        }
-                    }
-
-                    if (artistsList.isNotEmpty()) {
-                        item(span = { GridItemSpan(2) }, key = "header_artists") {
-                            SearchSectionHeader(title = "Artists")
-                        }
-                        itemsIndexed(
-                            items = artistsList,
-                            key = { idx, a -> "artist_${a.id}_$idx" },
-                            span = { _, _ -> GridItemSpan(2) }
-                        ) { _, artist ->
-                            SearchUnifiedRow(
-                                title = artist.name,
-                                subtitle = artist.subscribers ?: "Artist",
-                                thumbnailUrl = artist.thumbnailUrl,
-                                cacheKey = "${artist.id}_search_artist_48",
-                                onClick = {
-                                    openCollectionDetail(
-                                        SearchDetailState(
-                                            browseId = artist.id,
-                                            title = artist.name,
-                                            subtitle = artist.subscribers ?: "Artist",
-                                            thumbnailUrl = artist.thumbnailUrl,
-                                            initialType = BrowseType.ARTIST
-                                        )
+                            if (showSongs && songsList.isNotEmpty()) {
+                                item(span = { GridItemSpan(2) }, key = "header_songs") {
+                                    SearchSectionHeader(title = "Songs")
+                                }
+                                itemsIndexed(
+                                    items = songsList,
+                                    key = { idx, t -> "song_${t.id}_$idx" },
+                                    span = { _, _ -> GridItemSpan(2) }
+                                ) { idx, track ->
+                                    SearchUnifiedRow(
+                                        title = track.title,
+                                        subtitle = track.artists,
+                                        thumbnailUrl = track.thumbnailUrl,
+                                        cacheKey = "${track.id}_search_song_48",
+                                        isCurrent = MusicPlayerState.currentTrack?.id == track.id,
+                                        isPlaying = MusicPlayerState.isPlaying,
+                                        showBottomDivider = selectedFilter == SearchResultFilter.ALL || idx < songsList.lastIndex,
+                                        onClick = {
+                                            focusManager.clearFocus(force = true)
+                                            keyboardController?.hide()
+                                            MusicPlayerState.play(track, songsList)
+                                        },
+                                        onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Song(track), pos) }
                                     )
-                                },
-                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Artist(artist), pos) }
-                            )
-                        }
-                    }
-
-                    if (albumsList.isNotEmpty()) {
-                        item(span = { GridItemSpan(2) }, key = "header_albums") {
-                            SearchSectionHeader(title = "Albums")
-                        }
-                        itemsIndexed(
-                            items = albumsList,
-                            key = { idx, a -> "album_${a.id}_$idx" },
-                            span = { _, _ -> GridItemSpan(2) }
-                        ) { _, album ->
-                            SearchUnifiedRow(
-                                title = album.title,
-                                subtitle = album.author,
-                                thumbnailUrl = album.thumbnailUrl,
-                                cacheKey = "${album.id}_search_album_48",
-                                onClick = {
-                                    openCollectionDetail(
-                                        SearchDetailState(
-                                            browseId = album.id,
-                                            title = album.title,
-                                            subtitle = album.author,
-                                            thumbnailUrl = album.thumbnailUrl,
-                                            initialType = BrowseType.ALBUM
+                                }
+                            } else if (selectedFilter == SearchResultFilter.SONGS) {
+                                item(span = { GridItemSpan(2) }, key = "empty_songs_filter") {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 36.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "No songs found",
+                                            color = AppleTextSecondary,
+                                            fontSize = 14.5.sp
                                         )
-                                    )
-                                },
-                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Collection(album), pos) }
-                            )
-                        }
-                    }
+                                    }
+                                }
+                            }
 
-                    if (playlistsList.isNotEmpty()) {
-                        item(span = { GridItemSpan(2) }, key = "header_playlists") {
-                            SearchSectionHeader(title = "Playlists")
-                        }
-                        itemsIndexed(
-                            items = playlistsList,
-                            key = { idx, p -> "playlist_${p.id}_$idx" },
-                            span = { _, _ -> GridItemSpan(2) }
-                        ) { idx, playlist ->
-                            SearchUnifiedRow(
-                                title = playlist.title,
-                                subtitle = playlist.author,
-                                thumbnailUrl = playlist.thumbnailUrl,
-                                cacheKey = "${playlist.id}_search_playlist_48",
-                                showBottomDivider = idx < playlistsList.lastIndex,
-                                onClick = {
-                                    openCollectionDetail(
-                                        SearchDetailState(
-                                            browseId = playlist.id,
-                                            title = playlist.title,
-                                            subtitle = playlist.author,
-                                            thumbnailUrl = playlist.thumbnailUrl,
-                                            initialType = BrowseType.PLAYLIST
-                                        )
+                            if (showArtists && artistsList.isNotEmpty()) {
+                                item(span = { GridItemSpan(2) }, key = "header_artists") {
+                                    SearchSectionHeader(title = "Artists")
+                                }
+                                itemsIndexed(
+                                    items = artistsList,
+                                    key = { idx, a -> "artist_${a.id}_$idx" },
+                                    span = { _, _ -> GridItemSpan(2) }
+                                ) { idx, artist ->
+                                    SearchUnifiedRow(
+                                        title = artist.name,
+                                        subtitle = artist.subscribers ?: "Artist",
+                                        thumbnailUrl = artist.thumbnailUrl,
+                                        cacheKey = "${artist.id}_search_artist_48",
+                                        showBottomDivider = selectedFilter == SearchResultFilter.ALL || idx < artistsList.lastIndex,
+                                        onClick = {
+                                            openCollectionDetail(
+                                                SearchDetailState(
+                                                    browseId = artist.id,
+                                                    title = artist.name,
+                                                    subtitle = artist.subscribers ?: "Artist",
+                                                    thumbnailUrl = artist.thumbnailUrl,
+                                                    initialType = BrowseType.ARTIST
+                                                )
+                                            )
+                                        },
+                                        onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Artist(artist), pos) }
                                     )
-                                },
-                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Collection(playlist), pos) }
-                            )
+                                }
+                            } else if (selectedFilter == SearchResultFilter.ARTISTS) {
+                                item(span = { GridItemSpan(2) }, key = "empty_artists_filter") {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 36.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "No artists found",
+                                            color = AppleTextSecondary,
+                                            fontSize = 14.5.sp
+                                        )
+                                    }
+                                }
+                            }
+
+                            if (showAlbums && albumsList.isNotEmpty()) {
+                                item(span = { GridItemSpan(2) }, key = "header_albums") {
+                                    SearchSectionHeader(title = "Albums")
+                                }
+                                itemsIndexed(
+                                    items = albumsList,
+                                    key = { idx, a -> "album_${a.id}_$idx" },
+                                    span = { _, _ -> GridItemSpan(2) }
+                                ) { idx, album ->
+                                    SearchUnifiedRow(
+                                        title = album.title,
+                                        subtitle = album.author,
+                                        thumbnailUrl = album.thumbnailUrl,
+                                        cacheKey = "${album.id}_search_album_48",
+                                        showBottomDivider = selectedFilter == SearchResultFilter.ALL || idx < albumsList.lastIndex,
+                                        onClick = {
+                                            openCollectionDetail(
+                                                SearchDetailState(
+                                                    browseId = album.id,
+                                                    title = album.title,
+                                                    subtitle = album.author,
+                                                    thumbnailUrl = album.thumbnailUrl,
+                                                    initialType = BrowseType.ALBUM
+                                                )
+                                            )
+                                        },
+                                        onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Collection(album), pos) }
+                                    )
+                                }
+                            } else if (selectedFilter == SearchResultFilter.ALBUMS) {
+                                item(span = { GridItemSpan(2) }, key = "empty_albums_filter") {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 36.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "No albums found",
+                                            color = AppleTextSecondary,
+                                            fontSize = 14.5.sp
+                                        )
+                                    }
+                                }
+                            }
+
+                            if (showPlaylists && playlistsList.isNotEmpty()) {
+                                item(span = { GridItemSpan(2) }, key = "header_playlists") {
+                                    SearchSectionHeader(title = "Playlists")
+                                }
+                                itemsIndexed(
+                                    items = playlistsList,
+                                    key = { idx, p -> "playlist_${p.id}_$idx" },
+                                    span = { _, _ -> GridItemSpan(2) }
+                                ) { idx, playlist ->
+                                    SearchUnifiedRow(
+                                        title = playlist.title,
+                                        subtitle = playlist.author,
+                                        thumbnailUrl = playlist.thumbnailUrl,
+                                        cacheKey = "${playlist.id}_search_playlist_48",
+                                        showBottomDivider = idx < playlistsList.lastIndex,
+                                        onClick = {
+                                            openCollectionDetail(
+                                                SearchDetailState(
+                                                    browseId = playlist.id,
+                                                    title = playlist.title,
+                                                    subtitle = playlist.author,
+                                                    thumbnailUrl = playlist.thumbnailUrl,
+                                                    initialType = BrowseType.PLAYLIST
+                                                )
+                                            )
+                                        },
+                                        onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Collection(playlist), pos) }
+                                    )
+                                }
+                            } else if (selectedFilter == SearchResultFilter.PLAYLISTS) {
+                                item(span = { GridItemSpan(2) }, key = "empty_playlists_filter") {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 36.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "No playlists found",
+                                            color = AppleTextSecondary,
+                                            fontSize = 14.5.sp
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
 
-        // Top subtle gradient shade on scroll for status bar transparency
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(110.dp)
-                .graphicsLayer { alpha = topShadeAlpha }
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-
-            }
-        }
+        // Top subtle gradient shade on scroll
         Box(
             modifier = Modifier
                 .fillMaxWidth()
