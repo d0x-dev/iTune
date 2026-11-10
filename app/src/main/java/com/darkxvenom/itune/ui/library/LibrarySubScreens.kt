@@ -649,3 +649,195 @@ fun LibraryAlbumsScreen(
     }
 }
 
+@Composable
+fun LibrarySongsScreen(
+    controller: LibraryHostController,
+    hasMiniPlayer: Boolean,
+    onBack: () -> Unit,
+    onExploreClick: () -> Unit,
+) {
+    val likedMeta by LibraryStore.likedSongs.collectAsStateWithLifecycle()
+    val recentMeta by LibraryStore.recentSongs.collectAsStateWithLifecycle()
+    val favoriteIds = MusicPlayerState.favoriteIds
+    val query = controller.searchQuery
+    val sort = controller.songSort
+
+    val mergedMeta = remember(likedMeta, recentMeta) {
+        val seen = LinkedHashSet<String>()
+        buildList {
+            likedMeta.forEach { if (seen.add(it.id)) add(it) }
+            recentMeta.forEach { if (seen.add(it.id)) add(it) }
+        }
+    }
+    val allSongs = remember(mergedMeta, sort) {
+        sortLibrarySongs(mergedMeta, sort).map { it.toSong() }
+    }
+    val visibleSongs = remember(allSongs, query) {
+        if (query.isBlank()) allSongs else allSongs.filter { s ->
+            s.title.contains(query, ignoreCase = true) ||
+                s.artist.contains(query, ignoreCase = true) ||
+                s.albumName?.contains(query, ignoreCase = true) == true
+        }
+    }
+    val backdropArts = remember(mergedMeta) {
+        mergedMeta.mapNotNull { it.thumbnailUrl.ifBlank { null } }.distinct().take(4)
+    }
+    val listState = controller.listStates.getOrPut(LibraryDestination.SONGS) { LazyListState() }
+    val isScrolled by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 140
+        }
+    }
+    val currentSongId = MusicPlayerState.currentTrack?.id
+    val isPlaying = MusicPlayerState.isPlaying
+
+    LibraryFrostedScreenScaffold(
+        controller = controller,
+        artworkUrls = backdropArts,
+        scrolledTitle = "Songs",
+        isScrolled = isScrolled,
+        hasMiniPlayer = hasMiniPlayer,
+        fallbackAccent = LibraryCrimsonAccent,
+        onBack = onBack,
+        topBarActions = {
+            LibraryTopBarActionButtons(
+                controller = controller,
+                showSort = allSongs.isNotEmpty(),
+                onMoreClick = {
+                    controller.openTopMenu(
+                        LibraryTopMenuRequest(
+                            destination = LibraryDestination.SONGS,
+                            songs = visibleSongs.ifEmpty { allSongs },
+                            stationLabel = "Library Songs",
+                            showSort = allSongs.isNotEmpty(),
+                        ),
+                    )
+                },
+            )
+        },
+    ) { contentPadding ->
+        LazyColumn(
+            state = listState,
+            contentPadding = PaddingValues(
+                top = contentPadding.calculateTopPadding() + 8.dp,
+                bottom = contentPadding.calculateBottomPadding(),
+            ),
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            item(key = "songs_header") {
+                Column(Modifier.padding(horizontal = 16.dp)) {
+                    LibraryScreenTitleHeader(
+                        title = "Songs",
+                        countText = "${allSongs.size} Library Tracks",
+                    )
+                    LibraryFilterBar(
+                        visible = controller.searchOpen,
+                        query = query,
+                        onQueryChange = { controller.searchQuery = it },
+                        onClose = controller::toggleSearch,
+                        autoFocus = controller.focusSearchNext,
+                        onFocused = { controller.focusSearchNext = false },
+                        placeholder = "Filter library songs...",
+                    )
+                    if (visibleSongs.isNotEmpty()) {
+                        Spacer(Modifier.height(10.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        ) {
+                            LibraryGlassPillButton(
+                                icon = ITubeIcons.Play,
+                                label = stringResource(R.string.play),
+                                onClick = { controller.playSongs(visibleSongs, 0) },
+                                filled = true,
+                                height = 46.dp,
+                                modifier = Modifier.weight(1f),
+                            )
+                            LibraryGlassPillButton(
+                                icon = ITubeIcons.Shuffle,
+                                label = stringResource(R.string.shuffle),
+                                onClick = { controller.playSongs(visibleSongs, 0, shuffle = true) },
+                                filled = false,
+                                height = 46.dp,
+                                modifier = Modifier.weight(1f),
+                            )
+                            LibraryGlassPillButton(
+                                icon = SfIcons.Radio,
+                                label = "Radio",
+                                onClick = { controller.startRadioFromSongs(visibleSongs, "Library Songs") },
+                                filled = false,
+                                accentTint = LibraryCrimsonAccent,
+                                height = 46.dp,
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(12.dp))
+                }
+            }
+
+            if (allSongs.isEmpty()) {
+                item(key = "songs_empty") {
+                    LibraryGlassEmptyCard(
+                        icon = SfIcons.MusicNote,
+                        title = "Your Library Is Quiet",
+                        subtitle = "Like tracks or play songs across iTube to build your frosted Liquid Glass song collection.",
+                        actionLabel = "Explore Music",
+                        onAction = onExploreClick,
+                    )
+                }
+            } else if (visibleSongs.isEmpty()) {
+                item(key = "songs_no_match") {
+                    LibraryGlassEmptyCard(
+                        icon = ITubeIcons.Search,
+                        title = "No Songs Found",
+                        subtitle = "No library songs matched \"$query\".",
+                        actionLabel = "Clear Filter",
+                        onAction = { controller.searchQuery = "" },
+                    )
+                }
+            } else {
+                itemsIndexed(
+                    items = visibleSongs,
+                    key = { _, song -> song.videoId },
+                ) { index, song ->
+                    val isLiked = favoriteIds.contains(song.videoId)
+                    SongRow(
+                        song = song,
+                        onClick = { controller.playSongs(visibleSongs, index) },
+                        onLongPress = { controller.openSongMenu(song) },
+                        onMore = { controller.openSongMenu(song) },
+                        onSwipeToQueue = {
+                            MusicPlayerState.playNext(song.toMusicTrack())
+                            controller.showToast("Playing \"${song.title}\" next")
+                        },
+                        rowBackground = Color.Transparent,
+                        subtitleColor = Color.White.copy(alpha = 0.64f),
+                        isCurrent = song.videoId == currentSongId,
+                        isPlaying = isPlaying,
+                        activeTint = LibraryCrimsonAccent,
+                        searchPlayingStyle = true,
+                        trailing = if (isLiked) {
+                            {
+                                Icon(
+                                    imageVector = SfIcons.StarFill,
+                                    contentDescription = "Liked",
+                                    tint = LibraryCrimsonAccent,
+                                    modifier = Modifier.size(14.dp),
+                                )
+                            }
+                        } else null,
+                    )
+                    if (index < visibleSongs.lastIndex) {
+                        HorizontalDivider(
+                            color = Color.White.copy(alpha = 0.08f),
+                            thickness = 0.5.dp,
+                            modifier = Modifier.padding(start = 82.dp, end = 16.dp),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
