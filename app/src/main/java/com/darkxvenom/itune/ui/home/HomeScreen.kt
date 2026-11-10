@@ -423,6 +423,23 @@ fun HomeScreen(
                         showAvatarDialog = true
                     }
                 )
+                if (libraryHostController.isOpen) {
+                    BackHandler(
+                        enabled = currentScreen == AppScreen.LIBRARY &&
+                            !artistHostController.isOpen &&
+                            !MusicPlayerState.expanded,
+                    ) {
+                        libraryHostController.pop()
+                    }
+                    LibraryScreenOverlayContent(
+                        controller = libraryHostController,
+                        hasMiniPlayer = MusicPlayerState.currentTrack != null,
+                        onExploreClick = {
+                            libraryHostController.clearAll()
+                            currentScreen = AppScreen.SEARCH
+                        },
+                    )
+                }
             }
         }
 
@@ -437,9 +454,7 @@ fun HomeScreen(
                     }
             ) {
                 SearchScreen(
-                    onCategoryClick = { category ->
-                        Toast.makeText(context, "Category: ${category.title}", Toast.LENGTH_SHORT).show()
-                    },
+                    onCategoryClick = {},
                     onProfileClick = {
                         showAvatarDialog = true
                     }
