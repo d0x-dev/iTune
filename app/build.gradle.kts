@@ -48,7 +48,9 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.1.5")
     val media3 = "1.5.1"
     implementation("androidx.media3:media3-exoplayer:$media3")
+    implementation("androidx.media3:media3-exoplayer-hls:$media3")
     implementation("androidx.media3:media3-datasource-okhttp:$media3")
+    implementation("androidx.media3:media3-database:$media3")
     implementation("com.github.TeamNewPipe:NewPipeExtractor:v0.26.5")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation(platform(libs.androidx.compose.bom))
