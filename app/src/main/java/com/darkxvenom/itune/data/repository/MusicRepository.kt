@@ -177,55 +177,57 @@ object MusicRepository {
 
     private const val GITHUB_IMAGE_BASE_URL = "https://raw.githubusercontent.com/d0x-dev/iTune/main/assets/images"
 
+    private const val UNSPLASH_SUFFIX = "auto=format&fit=crop&w=600&q=80"
+
     val searchCategories = listOf(
         SearchCategory(
             id = "c1",
-            title = "Apple Music Live",
-            type = SearchCategoryType.APPLE_MUSIC_LIVE,
-            backgroundColor = Color(0xFF18181A),
-            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_apple_music_live.png"
+            title = "Chill",
+            type = SearchCategoryType.CHILL,
+            backgroundColor = Color(0xFF5A758D),
+            imageUrl = "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?$UNSPLASH_SUFFIX"
         ),
         SearchCategory(
             id = "c2",
-            title = "Hits",
-            type = SearchCategoryType.HITS,
-            backgroundColor = Color(0xFFE5AC15),
-            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_hits.png"
+            title = "Community",
+            type = SearchCategoryType.COMMUNITY,
+            backgroundColor = Color(0xFF8F7523),
+            imageUrl = "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?$UNSPLASH_SUFFIX"
         ),
         SearchCategory(
             id = "c3",
-            title = "Alternative",
-            type = SearchCategoryType.ALTERNATIVE,
-            backgroundColor = Color(0xFFC4B526),
-            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_alternative.png"
+            title = "Energize",
+            type = SearchCategoryType.ENERGIZE,
+            backgroundColor = Color(0xFFA89547),
+            imageUrl = "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?$UNSPLASH_SUFFIX"
         ),
         SearchCategory(
             id = "c4",
-            title = "Pop",
-            type = SearchCategoryType.POP,
-            backgroundColor = Color(0xFFE63B6B),
-            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_pop.png"
+            title = "Feel good",
+            type = SearchCategoryType.FEEL_GOOD,
+            backgroundColor = Color(0xFF5B8E60),
+            imageUrl = "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?$UNSPLASH_SUFFIX"
         ),
         SearchCategory(
             id = "c5",
-            title = "Hip-Hop",
-            type = SearchCategoryType.HIP_HOP,
-            backgroundColor = Color(0xFF5087EC),
-            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_hip_hop.png"
+            title = "Focus",
+            type = SearchCategoryType.FOCUS,
+            backgroundColor = Color(0xFF6B7A7A),
+            imageUrl = "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?$UNSPLASH_SUFFIX"
         ),
         SearchCategory(
             id = "c6",
-            title = "Country",
-            type = SearchCategoryType.COUNTRY,
-            backgroundColor = Color(0xFFD97724),
-            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_country.png"
+            title = "Gaming",
+            type = SearchCategoryType.GAMING,
+            backgroundColor = Color(0xFF383E44),
+            imageUrl = "https://images.unsplash.com/photo-1542751371-adc38448a05e?$UNSPLASH_SUFFIX"
         ),
         SearchCategory(
             id = "c7",
-            title = "Dance",
-            type = SearchCategoryType.DANCE,
-            backgroundColor = Color(0xFF0FB854),
-            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_dance.png"
+            title = "Party",
+            type = SearchCategoryType.PARTY,
+            backgroundColor = Color(0xFF74528E),
+            imageUrl = "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?$UNSPLASH_SUFFIX"
         ),
         SearchCategory(
             id = "c8",
