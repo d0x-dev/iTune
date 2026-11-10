@@ -551,3 +551,192 @@ fun IosAddToPlaylistMenuView(
  * In-place Apple-styled iOS popover step for naming & creating a new playlist
  * (empty or initialized with pending tracks so its avatar builds from added song thumbnails).
  */
+@Composable
+fun IosCreatePlaylistMenuView(
+    payload: PendingPlaylistPayload? = null,
+    renameTarget: UserPlaylist? = null,
+    backLabel: String = "Back",
+    onBack: () -> Unit,
+    onDone: (UserPlaylist?) -> Unit,
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val colors = iosMenuColors()
+    val accent = MaterialTheme.colorScheme.primary
+    val (resolvedSongs, loading) = rememberResolvedPayloadSongs(payload)
+
+    var nameInput by remember(renameTarget, payload) {
+        mutableStateOf(renameTarget?.name.orEmpty())
+    }
+    var busy by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    BackHandler(onBack = onBack)
+
+    val previewArts = remember(renameTarget, payload, resolvedSongs) {
+        when {
+            renameTarget != null -> renameTarget.artworkUrls
+            payload != null -> (resolvedSongs.mapNotNull { it.thumbnailUrl.ifBlank { null } } +
+                listOfNotNull(payload.artworkUrl)).distinct().take(4)
+            else -> emptyList()
+        }
+    }
+
+    fun submit() {
+        if (busy) return
+        val clean = nameInput.trim()
+        if (clean.isBlank()) {
+            Toast.makeText(context, "Enter a playlist name", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (renameTarget != null) {
+            LibraryStore.renameUserPlaylist(context, renameTarget.id, clean)
+            Toast.makeText(context, "Renamed to \"$clean\"", Toast.LENGTH_SHORT).show()
+            onDone(renameTarget.copy(name = clean))
+            return
+        }
+        busy = true
+        scope.launch {
+            try {
+                val created = resolveAndCreatePlaylist(context, clean, payload, resolvedSongs)
+                onDone(created)
+            } finally {
+                busy = false
+            }
+        }
+    }
+
+    Column(Modifier.fillMaxWidth()) {
+        // iOS-native compact nav bar row inside the popover
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = backLabel,
+                color = colors.secondaryLabel,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable(enabled = !busy, onClick = onBack)
+                    .padding(horizontal = 6.dp, vertical = 4.dp),
+            )
+            Text(
+                text = if (renameTarget != null) "Rename" else "New Playlist",
+                color = colors.label,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(1f).padding(horizontal = 6.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            if (busy || loading) {
+                CircularProgressIndicator(
+                    color = accent,
+                    strokeWidth = 1.8.dp,
+                    modifier = Modifier.padding(end = 6.dp).size(15.dp),
+                )
+            } else {
+                val canSave = nameInput.isNotBlank()
+                Text(
+                    text = if (renameTarget != null) "Save" else "Create",
+                    color = if (canSave) LibraryCrimsonAccent else colors.secondaryLabel.copy(alpha = 0.45f),
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable(enabled = canSave, onClick = ::submit)
+                        .padding(horizontal = 6.dp, vertical = 4.dp),
+                )
+            }
+        }
+
+        IosMenuSeparator(colors)
+
+        // Compact grouped iOS preview avatar + name input
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            PlaylistCollageAvatar(
+                artworkUrls = previewArts,
+                size = 44.dp,
+                cornerRadius = 10.dp,
+            )
+            Spacer(Modifier.width(10.dp))
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(40.dp)
+                    .clip(RoundedCornerShape(11.dp))
+                    .background(Color.White.copy(alpha = 0.09f))
+                    .border(0.6.dp, Color.White.copy(alpha = 0.16f), RoundedCornerShape(11.dp))
+                    .padding(horizontal = 11.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+                    if (nameInput.isEmpty()) {
+                        Text(
+                            text = "Playlist Name",
+                            color = colors.secondaryLabel,
+                            fontSize = 15.sp,
+                        )
+                    }
+                    BasicTextField(
+                        value = nameInput,
+                        onValueChange = { nameInput = it },
+                        singleLine = true,
+                        cursorBrush = SolidColor(LibraryCrimsonAccent),
+                        textStyle = TextStyle(
+                            color = colors.label,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Normal,
+                        ),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = { submit() }),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(focusRequester),
+                    )
+                }
+                if (nameInput.isNotEmpty()) {
+                    IconButton(
+                        onClick = { nameInput = "" },
+                        modifier = Modifier.size(22.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Close,
+                            contentDescription = "Clear",
+                            tint = colors.secondaryLabel,
+                            modifier = Modifier.size(14.dp),
+                        )
+                    }
+                }
+            }
+        }
+
+        Text(
+            text = when {
+                renameTarget != null -> "Updates playlist title across Library."
+                payload != null -> "Playlist avatar builds from added songs."
+                else -> "Creates an empty playlist in Library."
+            },
+            color = colors.secondaryLabel,
+            fontSize = 12.sp,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+        )
+    }
+}
+
+/**
+ * In-place playlist picker view styled directly inside Search's AppleFrostedPopupOverlay.
+ */
