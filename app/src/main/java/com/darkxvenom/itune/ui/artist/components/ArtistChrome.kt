@@ -166,6 +166,7 @@ fun FrostedTopBar(
     artworkPageChrome: Boolean = true,
     backButtonHazeState: HazeState? = null,
     onBack: (() -> Unit)? = null,
+    centerContent: @Composable () -> Unit = {},
     actions: @Composable () -> Unit = {},
 ) {
     val reduceDynamicBlur = LocalReduceDynamicBlur.current
@@ -187,26 +188,23 @@ fun FrostedTopBar(
                 } else Modifier,
             ),
     ) {
-        Box(
+        val edge = if (useFloatingChrome) BAR_GUTTER else 4.dp
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .windowInsetsPadding(stableStatusBarInsets())
-                .height(TopBarContentHeight),
+                .height(TopBarContentHeight)
+                .padding(horizontal = edge),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             if (onBack != null) {
                 if (useFloatingChrome) {
                     ArtworkPageBackButton(
                         onClick = onBack,
                         hazeState = backButtonHazeState,
-                        modifier = Modifier
-                            .align(Alignment.CenterStart)
-                            .padding(start = BAR_GUTTER),
                     )
                 } else {
-                    IconButton(
-                        onClick = onBack,
-                        modifier = Modifier.align(Alignment.CenterStart).padding(start = 4.dp),
-                    ) {
+                    IconButton(onClick = onBack) {
                         Icon(
                             SfIcons.ArrowBack,
                             contentDescription = stringResource(R.string.back),
@@ -215,13 +213,15 @@ fun FrostedTopBar(
                     }
                 }
             }
-            val edge = if (useFloatingChrome) BAR_GUTTER else 4.dp
-            Row(
+            Box(
                 modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = edge),
-                verticalAlignment = Alignment.CenterVertically,
+                    .weight(1f)
+                    .padding(horizontal = 8.dp),
+                contentAlignment = Alignment.Center,
             ) {
+                centerContent()
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 if (useFloatingChrome) {
                     ArtworkPageActions(hazeState = backButtonHazeState, content = actions)
                 } else {
