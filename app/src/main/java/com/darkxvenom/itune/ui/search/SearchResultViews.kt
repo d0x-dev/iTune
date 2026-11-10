@@ -393,79 +393,64 @@ internal fun AppleSearchMorePopup(
                     onDismiss()
                 },
                 headerActions = {
-                    HeaderCircleActionButton(
-                        iconRes = R.drawable.ic_menu_share,
-                        contentDescription = "Share",
-                        onClick = {
-                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                            val intent = Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(Intent.EXTRA_TEXT, "$safeTitle\n$safeShareUrl")
-                            }
-                            context.startActivity(Intent.createChooser(intent, "Share"))
-                            closeSmoothly()
-                        }
-                    )
-                    HeaderCircleActionButton(
-                        iconRes = R.drawable.ic_menu_copy_link,
-                        contentDescription = "Copy link",
-                        onClick = {
-                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                            val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                            cm?.setPrimaryClip(ClipData.newPlainText("Link", safeShareUrl))
-                            Toast.makeText(context, "Link copied", Toast.LENGTH_SHORT).show()
-                            closeSmoothly()
-                        }
-                    )
-                    if (target is SearchMoreTarget.Song) {
-                        val isFav = MusicPlayerState.isFavorite(target.track.id)
+                    if (popupStep == PopupPlaylistStep.MENU) {
                         HeaderCircleActionButton(
-                            iconRes = if (isFav) R.drawable.ic_star_filled else R.drawable.ic_star_outline,
-                            contentDescription = if (isFav) "Favorited" else "Favorite",
-                            highlighted = isFav,
+                            iconRes = R.drawable.ic_menu_share,
+                            contentDescription = "Share",
                             onClick = {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                MusicPlayerState.toggleFavorite(target.track.id)
+                                val intent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_TEXT, "$safeTitle\n$safeShareUrl")
+                                }
+                                context.startActivity(Intent.createChooser(intent, "Share"))
+                                closeSmoothly()
                             }
                         )
-                    }
-                }
-            ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    when (target) {
-                        is SearchMoreTarget.Song -> {
+                        HeaderCircleActionButton(
+                            iconRes = R.drawable.ic_menu_copy_link,
+                            contentDescription = "Copy link",
+                            onClick = {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                                cm?.setPrimaryClip(ClipData.newPlainText("Link", safeShareUrl))
+                                Toast.makeText(context, "Link copied", Toast.LENGTH_SHORT).show()
+                                closeSmoothly()
+                            }
+                        )
+                        if (target is SearchMoreTarget.Song) {
                             val isFav = MusicPlayerState.isFavorite(target.track.id)
-                            MorePopupVectorOptionRow(
-                                icon = Icons.Rounded.PlayArrow,
-                                title = "Play Next",
+                            HeaderCircleActionButton(
+                                iconRes = if (isFav) R.drawable.ic_star_filled else R.drawable.ic_star_outline,
+                                contentDescription = if (isFav) "Favorited" else "Favorite",
+                                highlighted = isFav,
                                 onClick = {
                                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    MusicPlayerState.playNext(target.track)
-                                    Toast.makeText(context, "Playing next", Toast.LENGTH_SHORT).show()
-                                    closeSmoothly()
+                                    MusicPlayerState.toggleFavorite(target.track)
                                 }
                             )
-                            PopupMenuDivider()
-                            MorePopupVectorOptionRow(
-                                icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
-                                title = "Add to Queue",
-                                onClick = {
+                        }
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .size(33.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.14f))
+                                .clickable {
                                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    MusicPlayerState.addToQueue(listOf(target.track))
-                                    Toast.makeText(context, "Added to queue", Toast.LENGTH_SHORT).show()
-                                    closeSmoothly()
-                                }
-                            )
-                            PopupMenuDivider()
-                            MorePopupVectorOptionRow(
-                                icon = if (isFav) Icons.Rounded.Star else Icons.Rounded.StarBorder,
-                                title = if (isFav) "Remove from Favorites" else "Favorite",
-                                iconTint = if (isFav) Color(0xFFFA2D48) else Color.White.copy(alpha = 0.92f),
-                                onClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    MusicPlayerState.toggleFavorite(target.track.id)
-                                    closeSmoothly()
-                                }
+                                    popupStep = if (popupStep == PopupPlaylistStep.CREATE_PLAYLIST) {
+                                        PopupPlaylistStep.ADD_TO_PLAYLIST
+                                    } else {
+                                        PopupPlaylistStep.MENU
+                                    }
+                                },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                contentDescription = "Back",
+                                tint = Color.White,
+                                modifier = Modifier.size(18.dp),
                             )
                         }
 
