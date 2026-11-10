@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import coil.compose.AsyncImage
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -27,6 +28,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -51,10 +53,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.darkxvenom.itune.R
+import com.darkxvenom.itune.backend.NewReleaseAlbum
+import com.darkxvenom.itune.backend.ReleaseType
+import com.darkxvenom.itune.data.library.LibraryStore
+import com.darkxvenom.itune.data.library.NewReleasesRepository
+import com.darkxvenom.itune.data.library.SavedCollectionEntry
+import com.darkxvenom.itune.data.model.CARD_ART_PX
 import com.darkxvenom.itune.data.model.LibraryMenuItem
 import com.darkxvenom.itune.data.model.LibraryPinItem
 import com.darkxvenom.itune.data.model.LibraryRecentAlbum
+import com.darkxvenom.itune.data.model.artworkAt
 import com.darkxvenom.itune.data.repository.MusicRepository
+import com.darkxvenom.itune.ui.artist.components.CoverPlaceholder
+import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
+import com.darkxvenom.itune.ui.artist.components.ShimmerBox
+import com.darkxvenom.itune.ui.artist.icons.SfIcons
 import com.darkxvenom.itune.ui.components.AppleMemojiAvatar
 import com.darkxvenom.itune.ui.components.TopSpringLoadingBar
 import com.darkxvenom.itune.ui.components.rememberSpringOverscrollState
@@ -68,20 +83,36 @@ import kotlinx.coroutines.delay
 fun LibraryScreen(
     modifier: Modifier = Modifier,
     onPinClick: (LibraryPinItem) -> Unit = {},
+    onFavoriteArtistClick: (SavedCollectionEntry) -> Unit = {},
     onMenuItemClick: (LibraryMenuItem) -> Unit = {},
     onRecentAlbumClick: (LibraryRecentAlbum) -> Unit = {},
+    onRecentlyAddedClick: () -> Unit = {},
+    onNewReleaseClick: (NewReleaseAlbum) -> Unit = {},
     onProfileClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val listState = rememberLazyListState()
     val overscrollState = rememberSpringOverscrollState()
     var isRefreshing by remember { mutableStateOf(false) }
+    val likedArtists by LibraryStore.likedArtists.collectAsStateWithLifecycle()
+    val topArtists = remember(likedArtists) { likedArtists.take(6) }
+    val newReleases by NewReleasesRepository.releases.collectAsStateWithLifecycle()
+    val releasesLoading by NewReleasesRepository.isLoading.collectAsStateWithLifecycle()
+    val recentlyAddedReleases = remember(newReleases) {
+        val albumsOnly = newReleases.filter { it.releaseType == ReleaseType.ALBUM }
+        (albumsOnly + newReleases).distinctBy { it.browseId }.take(6)
+    }
+
+    LaunchedEffect(Unit) {
+        NewReleasesRepository.ensureLoaded()
+    }
 
     // ONLY trigger loading when pulling down from the very top of the list (item 0)
     // Never trigger at the bottom/end of the screen
     LaunchedEffect(overscrollState.offset.value) {
         if (listState.firstVisibleItemIndex == 0 && overscrollState.offset.value > 25f && !isRefreshing) {
             isRefreshing = true
+            NewReleasesRepository.refresh()
         }
     }
 
