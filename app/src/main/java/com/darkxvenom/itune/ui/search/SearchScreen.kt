@@ -403,116 +403,41 @@ fun SearchScreen(
                     )
                 )
         )
-    }
-}
 
-/**
- * Apple Music styled search result item with high quality thumbnail,
- * red playing title highlight, animated equalizer, and formatted metadata.
- */
-@Composable
-private fun SearchResultItem(
-    track: MusicTrack,
-    isCurrent: Boolean,
-    isPlaying: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick)
-            .padding(vertical = 6.dp, horizontal = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Thumbnail with rounded corners and playing indicator
-        Box(
-            modifier = Modifier
-                .size(54.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color(0xFF2C2C2E))
-        ) {
-            val context = LocalContext.current
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl)
-                    .memoryCacheKey("${track.id}_search_thumb_54")
-                    .crossfade(200)
-                    .build(),
-                contentDescription = track.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-
-            if (isCurrent) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.55f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AnimatedEqualizer(
-                        isPlaying = isPlaying,
-                        color = Color.White,
-                        size = 24.dp
+        AppleSearchMorePopup(
+            request = moreRequest,
+            onOpenDetail = ::openCollectionDetail,
+            onPlayCollection = { browseId, title, _, thumb ->
+                coroutineScope.launch {
+                    val loaded = MusicBackend.loadCollectionTracks(
+                        browseId = browseId,
+                        fallbackArtist = title,
+                        fallbackThumbnailUrl = thumb
                     )
+                    if (loaded.isNotEmpty()) {
+                        MusicPlayerState.play(loaded.first(), loaded)
+                    } else {
+                        Toast.makeText(context, "No tracks found", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-        }
-
-        Spacer(modifier = Modifier.width(14.dp))
-
-        // Title and artist
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = track.title,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 15.sp
-                ),
-                color = if (isCurrent) Color(0xFFFA2D48) else AppleTextPrimary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            Spacer(modifier = Modifier.height(3.dp))
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Apple Music styled "Music" badge
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = Color(0xFF2C2C2E),
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                        .padding(horizontal = 5.dp, vertical = 1.5.dp)
-                ) {
-                    Text(
-                        text = "Music",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 9.sp
-                        ),
-                        color = AppleTextSecondary
+            },
+            onQueueCollection = { browseId, title, _, thumb ->
+                coroutineScope.launch {
+                    val loaded = MusicBackend.loadCollectionTracks(
+                        browseId = browseId,
+                        fallbackArtist = title,
+                        fallbackThumbnailUrl = thumb
                     )
+                    if (loaded.isNotEmpty()) {
+                        MusicPlayerState.addToQueue(loaded)
+                        Toast.makeText(context, "Added ${loaded.size} tracks to queue", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "No tracks found", Toast.LENGTH_SHORT).show()
+                    }
                 }
-
-                Spacer(modifier = Modifier.width(6.dp))
-
-                Text(
-                    text = track.artists + if (track.durationSec > 0) " • ${formatMusicDuration(track.durationSec)}" else "",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
-                    color = AppleTextSecondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
+            },
+            onDismiss = { moreRequest = null }
+        )
     }
 }
 
