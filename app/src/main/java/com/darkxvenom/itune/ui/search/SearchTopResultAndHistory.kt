@@ -498,3 +498,115 @@ internal fun TopResultHeroCard(
     }
 }
 
+@Composable
+private fun TopResultSubtitleRow(
+    item: TopResultItem,
+    isSaved: Boolean
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
+    ) {
+        if (item !is TopResultItem.Artist && isSaved) {
+            Icon(
+                imageVector = Icons.Rounded.CheckCircle,
+                contentDescription = "Saved",
+                tint = Color.White.copy(alpha = 0.85f),
+                modifier = Modifier.size(14.dp)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+        }
+
+        val isExplicit = when (item) {
+            is TopResultItem.Song -> item.track.isExplicit
+            is TopResultItem.Album -> item.album.isExplicit
+            is TopResultItem.Playlist -> item.playlist.isExplicit
+            is TopResultItem.Artist -> false
+        }
+        if (isExplicit) {
+            ExplicitBadge(color = Color.White.copy(alpha = 0.82f))
+            Spacer(modifier = Modifier.width(6.dp))
+        }
+
+        val metadataText = when (item) {
+            is TopResultItem.Artist -> item.artist.subscribers?.takeIf { it.isNotBlank() } ?: "Artist"
+            is TopResultItem.Song -> {
+                val artists = item.track.artists.ifBlank { "Music" }
+                "Song • $artists"
+            }
+            is TopResultItem.Album -> {
+                val author = item.album.author.ifBlank { "Album" }
+                if (author.equals("Album", ignoreCase = true)) "Album" else "Album • $author"
+            }
+            is TopResultItem.Playlist -> {
+                val author = item.playlist.author.ifBlank { "Playlist" }
+                if (author.equals("Playlist", ignoreCase = true)) "Playlist" else "Playlist • $author"
+            }
+        }
+
+        Text(
+            text = metadataText,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Normal,
+            color = Color.White.copy(alpha = 0.78f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+private fun TopResultActionPill(
+    label: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    filledWhite: Boolean,
+    isLoading: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val bgColor = if (filledWhite) Color.White else Color.Black.copy(alpha = 0.28f)
+    val contentColor = if (filledWhite) Color.Black else Color.White
+    val border = if (filledWhite) null else BorderStroke(0.9.dp, Color.White.copy(alpha = 0.24f))
+
+    Surface(
+        shape = CircleShape,
+        color = bgColor,
+        border = border,
+        modifier = modifier
+            .height(40.dp)
+            .clip(CircleShape)
+            .clickable(enabled = !isLoading, onClick = onClick)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    strokeWidth = 2.dp,
+                    color = contentColor
+                )
+            } else {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = label,
+                    tint = contentColor,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = label,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = contentColor,
+                maxLines = 1
+            )
+        }
+    }
+}
+
