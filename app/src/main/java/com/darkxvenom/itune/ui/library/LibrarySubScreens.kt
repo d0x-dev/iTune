@@ -1051,3 +1051,274 @@ private fun LibraryArtistGlassRow(
     }
 }
 
+@Composable
+fun UserPlaylistDetailScreen(
+    playlistId: String?,
+    controller: LibraryHostController,
+    hasMiniPlayer: Boolean,
+    onBack: () -> Unit,
+    onExploreClick: () -> Unit,
+) {
+    val userPlaylists by LibraryStore.userPlaylists.collectAsStateWithLifecycle()
+    val playlist = remember(userPlaylists, playlistId) {
+        userPlaylists.firstOrNull { it.id == playlistId }
+    }
+    val rawMeta = playlist?.songs.orEmpty()
+    val sort = controller.songSort
+    val sortedSongs = remember(rawMeta, sort) {
+        sortLibrarySongs(rawMeta, sort).map { it.toSong() }
+    }
+    val listState = controller.listStates.getOrPut(LibraryDestination.USER_PLAYLIST) { LazyListState() }
+    val isScrolled by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 380
+        }
+    }
+    val currentSong = MusicPlayerState.currentTrack?.toArtistSong()
+    val isPlaying = MusicPlayerState.isPlaying
+    val glassActive = isGlassSupported()
+    val contentPadding = PaddingValues(
+        top = topBarContentPadding(),
+        bottom = if (hasMiniPlayer) 210.dp else 140.dp,
+    )
+
+    if (playlist == null) {
+        LibraryFrostedScreenScaffold(
+            controller = controller,
+            artworkUrls = emptyList(),
+            scrolledTitle = "Playlist",
+            isScrolled = false,
+            hasMiniPlayer = hasMiniPlayer,
+            amoledDark = true,
+            onBack = onBack,
+        ) { pad ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(pad),
+                contentAlignment = Alignment.Center,
+            ) {
+                LibraryGlassEmptyCard(
+                    icon = Icons.AutoMirrored.Rounded.QueueMusic,
+                    title = "Playlist Removed",
+                    subtitle = "This playlist is no longer available.",
+                    actionLabel = "Back to Playlists",
+                    onAction = onBack,
+                )
+            }
+        }
+        return
+    }
+
+    val playlistPage = remember(playlist, sortedSongs) {
+        DetailPage(
+            browseId = playlist.id,
+            title = playlist.name,
+            subtitle = "Playlist",
+            thumbnailUrl = playlist.leadArtwork,
+            collageArtworkUrls = playlist.artworkUrls,
+            songs = UiState.Success(sortedSongs),
+            type = BrowseType.PLAYLIST,
+            library = LibraryState(playlistId = playlist.id, saved = true),
+        )
+    }
+
+    ITubeArtistTheme(darkTheme = true) {
+        val detailPalette = rememberArtworkPalette(imageUrl = playlist.leadArtwork)
+        val pageColor = detailPalette.background
+
+        CompositionLocalProvider(
+            LocalAppBackdrop provides controller.appBackdrop,
+            LocalLiquidGlassEnabled provides glassActive,
+            LocalReduceDynamicBlur provides false,
+        ) {
+            Box(Modifier.fillMaxSize()) {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .snapshotBackdropSource(controller.pageBackdrop, floor = pageColor)
+                        .hazeSource(state = controller.hazeState),
+                ) {
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .background(pageColor)
+                            .layerBackdrop(controller.appBackdrop),
+                    )
+                    ITubeDetailScreen(
+                        page = playlistPage,
+                        currentSong = currentSong,
+                        isPlaying = isPlaying,
+                        onSongClick = { queue, index -> controller.playSongs(queue, index) },
+                        onSongLongPress = { song -> controller.openSongMenu(song) },
+                        onSongSwipe = { song ->
+                            MusicPlayerState.playNext(song.toMusicTrack())
+                            controller.showToast("Playing \"${song.title}\" next")
+                        },
+                        onShuffle = { queue -> controller.playSongs(queue, 0, shuffle = true) },
+                        onSectionItemClick = {},
+                        onArtistClick = { artistId, artistName ->
+                            controller.openDetail(
+                                browseId = artistId,
+                                title = artistName,
+                                subtitle = "Artist",
+                                thumbnailUrl = null,
+                                type = BrowseType.ARTIST,
+                            )
+                        },
+                        contentPadding = contentPadding,
+                        listState = listState,
+                        searching = controller.searchOpen,
+                        onSearchingChange = { open ->
+                            controller.searchOpen = open
+                            if (!open) controller.searchQuery = ""
+                        },
+                        onToggleLibrary = {
+                            controller.openTopMenu(
+                                LibraryTopMenuRequest(
+                                    destination = LibraryDestination.USER_PLAYLIST,
+                                    songs = sortedSongs,
+                                    stationLabel = playlist.name,
+                                    showSort = rawMeta.isNotEmpty(),
+                                    userPlaylist = playlist,
+                                ),
+                            )
+                        },
+                        emptyContent = {
+                            Box(Modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
+                                LibraryGlassEmptyCard(
+                                    icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
+                                    title = "Empty Playlist",
+                                    subtitle = "Open \u22EE on any song in Search, Artist pages, Album pages, or Library and tap Add to Playlist to populate this playlist.",
+                                    actionLabel = "Add Songs from Search",
+                                    onAction = onExploreClick,
+                                )
+                            }
+                        },
+                    )
+                }
+
+                TopFadeBlur(
+                    hazeState = controller.hazeState,
+                    pageColor = pageColor,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
+
+                FrostedTopBar(
+                    transparentBackdrop = true,
+                    artworkPageChrome = true,
+                    backButtonHazeState = controller.hazeState,
+                    onBack = onBack,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    centerContent = {
+                        AnimatedVisibility(
+                            visible = isScrolled,
+                            enter = fadeIn(tween(180)),
+                            exit = fadeOut(tween(180)),
+                        ) {
+                            FrostedTopBarTitlePill(hazeState = controller.hazeState) {
+                                Text(
+                                    text = playlist.name,
+                                    color = Color.White,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
+                    },
+                    actions = {
+                        LibraryTopBarActionButtons(
+                            controller = controller,
+                            showSort = rawMeta.isNotEmpty(),
+                            onMoreClick = {
+                                controller.openTopMenu(
+                                    LibraryTopMenuRequest(
+                                        destination = LibraryDestination.USER_PLAYLIST,
+                                        songs = sortedSongs,
+                                        stationLabel = playlist.name,
+                                        showSort = rawMeta.isNotEmpty(),
+                                        userPlaylist = playlist,
+                                    ),
+                                )
+                            },
+                        )
+                    },
+                )
+
+                BottomFadeScrim(
+                    withMiniPlayer = hasMiniPlayer,
+                    pageColor = pageColor,
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun UserPlaylistGlassCard(
+    playlist: UserPlaylist,
+    onClick: () -> Unit,
+    onMenuClick: () -> Unit,
+) {
+    LibraryGlassCardContainer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .longPressMenuClickable(
+                onClick = onClick,
+                onLongClick = onMenuClick,
+            ),
+        cornerRadius = 20.dp,
+    ) {
+        Column(Modifier.fillMaxWidth().padding(10.dp)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f),
+            ) {
+                PlaylistCollageAvatar(
+                    artworkUrls = playlist.artworkUrls,
+                    size = null,
+                    cornerRadius = 14.dp,
+                    modifier = Modifier.fillMaxSize(),
+                )
+                IconButton(
+                    onClick = onMenuClick,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(6.dp)
+                        .size(30.dp)
+                        .clip(CircleShape)
+                        .background(Color(0x88101015))
+                        .menuAnchor(),
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.MoreVert,
+                        contentDescription = stringResource(R.string.more),
+                        tint = Color.White,
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(10.dp))
+            Text(
+                text = playlist.name,
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = if (playlist.songs.size == 1) "1 song" else "${playlist.songs.size} songs",
+                color = Color.White.copy(alpha = 0.62f),
+                fontSize = 12.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
