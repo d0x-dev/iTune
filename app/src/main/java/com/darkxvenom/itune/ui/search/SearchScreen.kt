@@ -297,63 +297,99 @@ fun SearchScreen(
         modifier = modifier
             .fillMaxSize()
             .background(AppleOledBlack)
-
-        modifier = modifier
-            .fillMaxSize()
-            .background(AppleOledBlack)
     ) {
-        // Unified Persistent Grid preserving SearchBar keyboard focus across empty -> typed transitions
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            state = gridState,
-            modifier = Modifier
-                .fillMaxSize()
-                .springOverscroll(),
-            contentPadding = PaddingValues(top = 8.dp, bottom = 180.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(0.dp)
-        ) {
-            item(span = { GridItemSpan(2) }, key = "search_header") {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .statusBarsPadding()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Stationary Search Header ensures BasicTextField never drops focus across Explore/History/Suggestions/Results
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(AppleOledBlack)
+                    .statusBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                AnimatedVisibility(
+                    visible = uiMode == SearchUiMode.EXPLORE,
+                    enter = fadeIn(tween(180)) + expandVertically(tween(200)),
+                    exit = fadeOut(tween(140)) + shrinkVertically(tween(180))
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Search",
-                            color = AppleTextPrimary,
-                            fontSize = 34.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = (-0.5).sp
-                        )
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Search",
+                                color = AppleTextPrimary,
+                                fontSize = 34.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = (-0.5).sp
+                            )
 
-                        AppleMemojiAvatar(
-                            size = 38.dp,
-                            onClick = onProfileClick
-                        )
+                            AppleMemojiAvatar(
+                                size = 38.dp,
+                                onClick = onProfileClick
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
                     }
+                }
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     AppleSearchBar(
-                        query = searchQuery,
-                        onQueryChange = {
-                            searchQuery = it
+                        value = searchInput,
+                        onValueChange = { next ->
+                            searchInput = next
+                            if (!isEditing) isEditing = true
+                        },
+                        focusRequester = searchFocusRequester,
+                        onFocused = { focused ->
+                            if (focused && !isEditing) {
+                                isEditing = true
+                            }
+                        },
+                        onSubmit = { submitSearch(searchQuery) },
+                        onClearClick = {
+                            searchInput = TextFieldValue("")
+                            isEditing = true
+                            searchFocusRequester.requestFocus()
+                            keyboardController?.show()
                         },
                         onMicClick = {
                             Toast.makeText(context, "Voice Search listening...", Toast.LENGTH_SHORT).show()
-                        }
+                        },
+                        modifier = Modifier.weight(1f)
                     )
+
+                    AnimatedVisibility(visible = uiMode != SearchUiMode.EXPLORE) {
+                        Text(
+                            text = "Cancel",
+                            color = Color(0xFFFA2D48),
+                            fontSize = 15.5.sp,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier
+                                .padding(start = 10.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable { exitSearchToExplore() }
+                                .padding(horizontal = 4.dp, vertical = 6.dp)
+                        )
+                    }
                 }
             }
 
-            if (searchQuery.isBlank()) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                state = gridState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .springOverscroll(),
+                contentPadding = PaddingValues(top = 2.dp, bottom = 180.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            LazyVerticalGrid(
                 itemsIndexed(
                     items = MusicRepository.searchCategories,
                     key = { _, category -> category.id }
