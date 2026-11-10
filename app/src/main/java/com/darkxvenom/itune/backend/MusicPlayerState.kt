@@ -28,6 +28,8 @@ import coil.imageLoader
 import coil.request.ImageRequest
 import coil.size.Size
 import com.darkxvenom.itune.backend.lyrics.LyricsHelper
+import com.darkxvenom.itune.data.artist.ArtistStateStore
+import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.model.PendingArtistNav
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -151,6 +153,12 @@ object MusicPlayerState : Player.Listener {
         val saved = prefs.getStringSet("favorite_track_ids", emptySet()) ?: emptySet()
         favoriteIds.clear()
         favoriteIds.addAll(saved)
+        LibraryStore.syncLegacyIds(
+            context = appContext,
+            favoriteTrackIds = saved,
+            subscribedArtistIds = ArtistStateStore.subscribedArtists.value,
+            savedReleaseIds = ArtistStateStore.savedReleases.value,
+        )
 
         // Configure app-wide Coil ImageLoader using Net.client with smart 404 retries
         try {
