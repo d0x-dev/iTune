@@ -44,3 +44,37 @@ object SearchHistoryStore {
                 if (size >= MAX_HISTORY_ITEMS) break
             }
         }
+        persist(updated)
+    }
+
+    fun removeQuery(context: Context, query: String) {
+        ensureInit(context)
+        val updated = _history.value.filterNot { it.equals(query, ignoreCase = true) }
+        persist(updated)
+    }
+
+    fun clearAll(context: Context) {
+        ensureInit(context)
+        persist(emptyList())
+    }
+
+    private fun persist(queries: List<String>) {
+        _history.value = queries
+        val array = JSONArray()
+        queries.forEach { array.put(it) }
+        prefs?.edit()?.putString(KEY_QUERIES, array.toString())?.apply()
+    }
+
+    private fun parseQueries(raw: String?): List<String> {
+        if (raw.isNullOrBlank()) return emptyList()
+        return runCatching {
+            val array = JSONArray(raw)
+            buildList {
+                for (i in 0 until array.length()) {
+                    val value = array.optString(i).trim()
+                    if (value.isNotEmpty()) add(value)
+                }
+            }
+        }.getOrDefault(emptyList())
+    }
+}
