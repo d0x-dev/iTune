@@ -252,23 +252,24 @@ object MusicBackend {
     suspend fun resolveAudioStreamUrl(videoId: String): String? = resolveAudioStream(videoId)
 
     private fun postInnerTubeSearch(query: String, params: String? = null): JSONObject {
+        val body = JSONObject().put("query", query)
+        if (params != null) body.put("params", params)
+        return postInnerTube(SEARCH_URL, body)
+    }
+
+    private fun postInnerTube(url: String, body: JSONObject): JSONObject {
         val clientObj = JSONObject()
             .put("clientName", "WEB_REMIX")
             .put("clientVersion", "1.20240101.01.00")
             .put("hl", "en")
             .put("gl", "US")
 
-        val body = JSONObject()
-            .put("query", query)
+        val payload = JSONObject(body.toString())
             .put("context", JSONObject().put("client", clientObj))
 
-        if (params != null) {
-            body.put("params", params)
-        }
-
         val request = Request.Builder()
-            .url(SEARCH_URL)
-            .post(body.toString().toRequestBody(JSON_TYPE))
+            .url(url)
+            .post(payload.toString().toRequestBody(JSON_TYPE))
             .header("Origin", "https://music.youtube.com")
             .header("Referer", "https://music.youtube.com/")
             .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
