@@ -202,3 +202,141 @@ fun AppleNewReleasesScreen(
                             Text(
                                 text = summaryLine,
                                 color = Color.White.copy(alpha = 0.62f),
+                                fontSize = 13.5.sp,
+                            )
+                        }
+
+                        LibraryFilterBar(
+                            visible = controller.searchOpen,
+                            query = controller.searchQuery,
+                            onQueryChange = { controller.searchQuery = it },
+                            onClose = controller::toggleSearch,
+                            autoFocus = controller.focusSearchNext,
+                            onFocused = { controller.focusSearchNext = false },
+                            placeholder = "Filter albums, singles & EPs...",
+                        )
+                    }
+                }
+
+                if (isLoading && releases.isEmpty()) {
+                    item(span = { GridItemSpan(2) }, key = "nr_skeleton") {
+                        NewReleasesSkeletonGrid()
+                    }
+                } else if (releases.isEmpty()) {
+                    item(span = { GridItemSpan(2) }, key = "nr_error_empty") {
+                        Spacer(Modifier.height(8.dp))
+                        LibraryGlassEmptyCard(
+                            icon = Icons.Rounded.Album,
+                            title = "Couldn't Load New Releases",
+                            subtitle = errorMessage ?: "Check your internet connection and tap Retry to fetch the latest albums and singles.",
+                            accent = LibraryCrimsonAccent,
+                            actionLabel = "Retry",
+                            onAction = { NewReleasesRepository.refresh() },
+                        )
+                    }
+                } else {
+                    if (selectedFilter == NewReleaseFilter.ALL && searchQuery.isEmpty() && spotlightList.isNotEmpty()) {
+                        item(span = { GridItemSpan(2) }, key = "nr_spotlight_header") {
+                            NewReleaseSectionHeaderRow(
+                                title = "Featured Releases",
+                                count = spotlightList.size,
+                            )
+                        }
+                        item(span = { GridItemSpan(2) }, key = "nr_spotlight_row") {
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                                contentPadding = PaddingValues(end = 4.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                items(spotlightList, key = { "spot_${it.browseId}" }) { item ->
+                                    AppleSpotlightReleaseCard(
+                                        release = item,
+                                        onClick = { openReleaseDetail(item) },
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    item(span = { GridItemSpan(2) }, key = "nr_filter_bar") {
+                        AppleNewReleaseSegmentedBar(
+                            selected = selectedFilter,
+                            onSelect = { selectedFilter = it },
+                        )
+                    }
+
+                    if (filteredReleases.isEmpty()) {
+                        item(span = { GridItemSpan(2) }, key = "nr_search_empty") {
+                            LibraryGlassEmptyCard(
+                                icon = ITubeIcons.Search,
+                                title = "No Matching Releases",
+                                subtitle = "No new releases matched \"$searchQuery\".",
+                                accent = LibraryCrimsonAccent,
+                                actionLabel = "Clear Filter",
+                                onAction = { controller.searchQuery = "" },
+                            )
+                        }
+                    } else {
+                        val showAlbums = selectedFilter == NewReleaseFilter.ALL || selectedFilter == NewReleaseFilter.ALBUMS
+                        val showSingles = selectedFilter == NewReleaseFilter.ALL || selectedFilter == NewReleaseFilter.SINGLES
+                        val showEps = selectedFilter == NewReleaseFilter.ALL || selectedFilter == NewReleaseFilter.EPS
+
+                        if (showAlbums && albumsList.isNotEmpty()) {
+                            item(span = { GridItemSpan(2) }, key = "nr_hdr_albums") {
+                                NewReleaseSectionHeaderRow(title = "Albums", count = albumsList.size)
+                            }
+                            items(albumsList, key = { "alb_${it.browseId}" }) { item ->
+                                AppleReleaseGridCard(
+                                    release = item,
+                                    onClick = { openReleaseDetail(item) },
+                                )
+                            }
+                        } else if (selectedFilter == NewReleaseFilter.ALBUMS) {
+                            item(span = { GridItemSpan(2) }, key = "nr_empty_albums") {
+                                FilterCategoryEmptyNotice(label = "albums")
+                            }
+                        }
+
+                        if (showSingles && singlesList.isNotEmpty()) {
+                            item(span = { GridItemSpan(2) }, key = "nr_hdr_singles") {
+                                NewReleaseSectionHeaderRow(title = "Singles", count = singlesList.size)
+                            }
+                            items(singlesList, key = { "sng_${it.browseId}" }) { item ->
+                                AppleReleaseGridCard(
+                                    release = item,
+                                    onClick = { openReleaseDetail(item) },
+                                )
+                            }
+                        } else if (selectedFilter == NewReleaseFilter.SINGLES) {
+                            item(span = { GridItemSpan(2) }, key = "nr_empty_singles") {
+                                FilterCategoryEmptyNotice(label = "singles")
+                            }
+                        }
+
+                        if (showEps && epsList.isNotEmpty()) {
+                            item(span = { GridItemSpan(2) }, key = "nr_hdr_eps") {
+                                NewReleaseSectionHeaderRow(title = "EPs", count = epsList.size)
+                            }
+                            items(epsList, key = { "ep_${it.browseId}" }) { item ->
+                                AppleReleaseGridCard(
+                                    release = item,
+                                    onClick = { openReleaseDetail(item) },
+                                )
+                            }
+                        } else if (selectedFilter == NewReleaseFilter.EPS) {
+                            item(span = { GridItemSpan(2) }, key = "nr_empty_eps") {
+                                FilterCategoryEmptyNotice(label = "EPs")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        TopSpringLoadingBar(
+            isVisible = isLoading,
+            modifier = Modifier.align(Alignment.TopCenter),
+        )
+    }
+}
+
