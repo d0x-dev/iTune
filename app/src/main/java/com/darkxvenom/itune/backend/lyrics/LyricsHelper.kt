@@ -147,43 +147,80 @@ object KuGouLyricsProvider : LyricsProvider {
 
     override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
         runCatching {
-            val query = URLEncoder.encode("$title - $artist".trim(), StandardCharsets.UTF_8.name())
-            val searchUrl = "https://mobileservice.kugou.com/api/v3/search/song?version=9108&plat=0&pagesize=5&showtype=0&keyword=$query"
+            searchCandidates(title = title, artist = artist, limit = 1).firstOrNull()?.syncedLyrics
+                ?: throw IllegalStateException("No candidates on KuGou")
+        }
+    }
 
+    suspend fun searchCandidates(title: String, artist: String, limit: Int = 4): List<LyricsSearchResult> = withContext(Dispatchers.IO) {
+        val cleanTitle = title.trim()
+        val cleanArtist = artist.trim()
+        val rawKeyword = listOf(cleanTitle, cleanArtist).filter { it.isNotBlank() }.joinToString(" - ")
+        if (rawKeyword.isBlank()) return@withContext emptyList()
+
+        runCatching {
+            val query = URLEncoder.encode(rawKeyword, StandardCharsets.UTF_8.name())
+            val searchUrl = "https://mobileservice.kugou.com/api/v3/search/song?version=9108&plat=0&pagesize=5&showtype=0&keyword=$query"
             val searchReq = Request.Builder().url(searchUrl).header("User-Agent", "KuGou/1.0").build()
-            val hash = Net.client.newCall(searchReq).execute().use { response ->
-                val body = response.body?.string().orEmpty()
-                val json = JSONObject(body)
-                val info = json.optJSONObject("data")?.optJSONArray("info")
-                info?.optJSONObject(0)?.optString("hash") ?: throw IllegalStateException("Song not found on KuGou")
-            }
+            val songObj = Net.client.newCall(searchReq).execute().use { response ->
+                val json = JSONObject(response.body?.string().orEmpty())
+                json.optJSONObject("data")?.optJSONArray("info")?.optJSONObject(0)
+            } ?: return@runCatching emptyList()
+
+            val hash = songObj.optNonNullString("hash").takeIf { it.isNotBlank() } ?: return@runCatching emptyList()
+            val songTitle = songObj.optNonNullString("songname").ifBlank { cleanTitle }
+            val singerName = songObj.optNonNullString("singername").ifBlank { cleanArtist }
+            val dur = songObj.optInt("duration", 0).coerceAtLeast(0)
 
             val lyricsSearchUrl = "https://lyrics.kugou.com/search?ver=1&man=yes&client=pc&hash=$hash"
             val lyricsReq = Request.Builder().url(lyricsSearchUrl).header("User-Agent", "KuGou/1.0").build()
-            val (candidateId, accessKey) = Net.client.newCall(lyricsReq).execute().use { response ->
-                val body = response.body?.string().orEmpty()
-                val json = JSONObject(body)
-                val candidate = json.optJSONArray("candidates")?.optJSONObject(0)
-                    ?: throw IllegalStateException("No candidates on KuGou")
-                Pair(candidate.optString("id"), candidate.optString("accesskey"))
-            }
+            val candidates = Net.client.newCall(lyricsReq).execute().use { response ->
+                JSONObject(response.body?.string().orEmpty()).optJSONArray("candidates")
+            } ?: return@runCatching emptyList()
 
-            val downloadUrl = "https://lyrics.kugou.com/download?ver=1&client=pc&id=$candidateId&accesskey=$accessKey"
-            val downloadReq = Request.Builder().url(downloadUrl).header("User-Agent", "KuGou/1.0").build()
-            Net.client.newCall(downloadReq).execute().use { response ->
-                val body = response.body?.string().orEmpty()
-                val json = JSONObject(body)
-                val base64Content = json.optString("content")
-                if (base64Content.isBlank()) throw IllegalStateException("Empty content from KuGou")
-                String(Base64.decode(base64Content, Base64.DEFAULT), StandardCharsets.UTF_8)
+            val results = mutableListOf<LyricsSearchResult>()
+            val cap = candidates.length().coerceAtMost(limit)
+            for (i in 0 until cap) {
+                val cand = candidates.optJSONObject(i) ?: continue
+                val candId = cand.optNonNullString("id")
+                val accessKey = cand.optNonNullString("accesskey")
+                if (candId.isBlank() || accessKey.isBlank()) continue
+
+                val dlUrl = "https://lyrics.kugou.com/download?ver=1&client=pc&fmt=lrc&id=$candId&accesskey=$accessKey"
+                val dlReq = Request.Builder().url(dlUrl).header("User-Agent", "KuGou/1.0").build()
+                val lrcText = runCatching {
+                    Net.client.newCall(dlReq).execute().use { resp ->
+                        val base64Content = JSONObject(resp.body?.string().orEmpty()).optNonNullString("content")
+                        if (base64Content.isBlank()) "" else String(Base64.decode(base64Content, Base64.DEFAULT), StandardCharsets.UTF_8)
+                    }
+                }.getOrDefault("")
+                if (isReadableLrcText(lrcText)) {
+                    results.add(
+                        LyricsSearchResult(
+                            provider = name,
+                            trackName = cand.optNonNullString("song").ifBlank { songTitle },
+                            artistName = cand.optNonNullString("singer").ifBlank { singerName },
+                            durationSec = (cand.optInt("duration", dur * 1000) / 1000).coerceAtLeast(0),
+                            syncedLyrics = lrcText,
+                            plainLyrics = null
+                        )
+                    )
+                }
             }
-        }
+            results
+        }.getOrDefault(emptyList())
+    }
+
+    private fun isReadableLrcText(raw: String): Boolean {
+        if (raw.isBlank() || raw.startsWith("krc1")) return false
+        val badChars = raw.count { it == '\uFFFD' || (it.code < 32 && it != '\n' && it != '\r' && it != '\t') }
+        return badChars <= 2
     }
 }
 
 object LyricsHelper {
     private const val TAG = "LyricsHelper"
-    private val memoryCache = ConcurrentHashMap<String, List<LyricsLine>>()
+    private val memoryCache = ConcurrentHashMap<String, LoadedLyrics>()
     private val providers = listOf(
         LrcLibLyricsProvider,
         KuGouLyricsProvider
