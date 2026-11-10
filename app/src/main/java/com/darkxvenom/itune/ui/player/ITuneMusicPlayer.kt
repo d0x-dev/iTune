@@ -687,7 +687,7 @@ fun ITuneMusicPlayer(
                 .background(Color.White.copy(alpha = curStarBgAlpha))
                 .clickable {
                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                    MusicPlayerState.toggleFavorite(track.id)
+                    MusicPlayerState.toggleFavorite(track)
                 },
             contentAlignment = Alignment.Center
         ) {
