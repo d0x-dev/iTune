@@ -483,8 +483,7 @@ internal fun AppleFrostedPopupOverlay(
                         )
                     }
 
-                    // Track Summary Header (Avatar + Title + Artist + Favorite Star)
-                    val isFavorite = MusicPlayerState.isFavorite(track.id)
+                    // Header Summary (Artwork + Single-Line Fading Marquee Title/Subtitle + Action Buttons)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -494,7 +493,7 @@ internal fun AppleFrostedPopupOverlay(
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(72.dp)
+                                .size(66.dp)
                                 .clip(RoundedCornerShape(14.dp))
                                 .background(Color.White.copy(alpha = 0.08f))
                                 .border(0.75.dp, Color.White.copy(alpha = 0.16f), RoundedCornerShape(14.dp))
@@ -504,70 +503,51 @@ internal fun AppleFrostedPopupOverlay(
                                     .data(artUrl)
                                     .size(Size.ORIGINAL)
                                     .build(),
-                                contentDescription = track.title,
+                                contentDescription = title,
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
 
-                        Spacer(modifier = Modifier.width(16.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
 
                         Column(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.Center
                         ) {
-                            Text(
-                                text = track.title,
+                            PopupMarqueeFadeText(
+                                text = title,
                                 style = TextStyle(
                                     fontFamily = SFProDisplay,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 17.sp,
-                                    lineHeight = 21.sp,
+                                    fontSize = 16.sp,
+                                    lineHeight = 20.sp,
                                     letterSpacing = (-0.25).sp
                                 ),
-                                color = Color.White,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
+                                color = Color.White
                             )
-                            Spacer(modifier = Modifier.height(3.dp))
-                            Text(
-                                text = track.artists,
-                                style = TextStyle(
-                                    fontFamily = SFProDisplay,
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = 14.5.sp,
-                                    lineHeight = 18.sp
-                                ),
-                                color = Color.White.copy(alpha = 0.66f),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
+                            if (subtitle.isNotBlank()) {
+                                Spacer(modifier = Modifier.height(3.dp))
+                                PopupMarqueeFadeText(
+                                    text = subtitle,
+                                    style = TextStyle(
+                                        fontFamily = SFProDisplay,
+                                        fontWeight = FontWeight.Normal,
+                                        fontSize = 14.sp,
+                                        lineHeight = 17.sp
+                                    ),
+                                    color = Color.White.copy(alpha = 0.66f)
+                                )
+                            }
                         }
 
-                        Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
 
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = if (isFavorite) 0.24f else 0.14f))
-                                .clickable {
-                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    MusicPlayerState.toggleFavorite(track.id)
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Image(
-                                painter = painterResource(
-                                    if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_outline
-                                ),
-                                contentDescription = if (isFavorite) "Favorited" else "Favorite",
-                                colorFilter = ColorFilter.tint(
-                                    if (isFavorite) Color.White else Color.White.copy(alpha = 0.90f)
-                                ),
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(7.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = headerActions
+                        )
                     }
 
                     // Inner Dark Translucent Container holding menu options / sub-pages
