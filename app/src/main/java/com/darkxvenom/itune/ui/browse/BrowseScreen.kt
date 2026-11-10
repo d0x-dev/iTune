@@ -154,19 +154,17 @@ fun BrowseScreen(
                         selectedSegment = selectedSegment,
                         onSegmentSelected = { segment ->
                             selectedSegment = segment
-                            Toast.makeText(context, "${segment.title} view selected", Toast.LENGTH_SHORT).show()
                         }
                     )
                 }
             }
 
-            // 2-Column Curated 3D Artwork Category Cards
-            items(MusicRepository.browseCategories, key = { it.id }) { item ->
+            // 2-Column AirBeats Moods & Moments Cards with Pre-set 3D Artwork Images
+            items(categories, key = { it.id }) { item ->
                 BrowseCategoryCardItem(
                     item = item,
                     onClick = {
                         onCategoryClick(item)
-                        Toast.makeText(context, "Exploring ${item.title}", Toast.LENGTH_SHORT).show()
                     }
                 )
             }
