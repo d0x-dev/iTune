@@ -443,18 +443,30 @@ fun SearchScreen(
 
 @Composable
 fun AppleSearchBar(
-    query: String,
-    onQueryChange: (String) -> Unit,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    focusRequester: FocusRequester,
+    onFocused: (Boolean) -> Unit,
+    onSubmit: () -> Unit,
+    onClearClick: () -> Unit,
     onMicClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     Box(
         modifier = modifier
-            .fillMaxWidth()
             .height(46.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(Color(0xFF1C1C1E))
             .border(0.75.dp, Color(0x33FFFFFF), RoundedCornerShape(12.dp))
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                focusRequester.requestFocus()
+                keyboardController?.show()
+                onFocused(true)
+            }
             .padding(horizontal = 12.dp),
         contentAlignment = Alignment.CenterStart
     ) {
@@ -475,33 +487,40 @@ fun AppleSearchBar(
                 modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.CenterStart
             ) {
-                if (query.isEmpty()) {
+                if (value.text.isEmpty()) {
                     Text(
                         text = "Artists, Songs, Lyrics & More",
                         color = AppleTextSecondary,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal,
-                        letterSpacing = (-0.2).sp
+                        letterSpacing = (-0.2).sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
                 BasicTextField(
-                    value = query,
-                    onValueChange = onQueryChange,
+                    value = value,
+                    onValueChange = onValueChange,
                     singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    keyboardActions = KeyboardActions(onSearch = { onSubmit() }),
                     textStyle = TextStyle(
                         color = Color.White,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal
                     ),
-                    cursorBrush = SolidColor(Color.White),
-                    modifier = Modifier.fillMaxWidth()
+                    cursorBrush = SolidColor(Color(0xFFFA2D48)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester)
+                        .onFocusChanged { state -> onFocused(state.isFocused) }
                 )
             }
 
-            if (query.isNotEmpty()) {
+            if (value.text.isNotEmpty()) {
                 IconButton(
-                    onClick = { onQueryChange("") },
+                    onClick = onClearClick,
                     modifier = Modifier.size(28.dp)
                 ) {
                     Icon(
