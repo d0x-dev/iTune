@@ -980,6 +980,7 @@ fun ArtistScreenOverlayPopups(
     val glassActive = isGlassSupported()
     val favoriteIdsSnapshot = MusicPlayerState.favoriteIds
     val subscribedArtists by ArtistStateStore.subscribedArtists.collectAsStateWithLifecycle()
+    val savedReleases by ArtistStateStore.savedReleases.collectAsStateWithLifecycle()
 
     val pageMenuUp =
         (controller.songActions != null && controller.songMenuOrigin == null) ||
@@ -1004,69 +1005,77 @@ fun ArtistScreenOverlayPopups(
             val songMenuBody: @Composable (Song) -> Unit = { song ->
                 val isLiked = favoriteIdsSnapshot.contains(song.videoId)
                 val isDownloading = controller.downloadingIds[song.videoId] == true
-                ArtistSongActionsMenu(
-                    song = song,
-                    likeStatus = if (isLiked) LikeStatus.LIKE else LikeStatus.INDIFFERENT,
-                    downloading = isDownloading,
-                    downloaded = false,
-                    onToggleLike = {
-                        MusicPlayerState.toggleFavorite(song.videoId)
-                        controller.clearMenus()
-                    },
-                    onStartRadio = {
-                        controller.clearMenus()
-                        controller.startRadioForSong(song)
-                    },
-                    onPlayNext = {
-                        controller.clearMenus()
-                        MusicPlayerState.playNext(song.toMusicTrack())
-                        Toast.makeText(
-                            controller.context,
-                            "Playing \"${song.title}\" next",
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    },
-                    onAddToQueue = {
-                        controller.clearMenus()
-                        MusicPlayerState.addToQueue(listOf(song.toMusicTrack()))
-                        Toast.makeText(
-                            controller.context,
-                            "Added \"${song.title}\" to queue",
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    },
-                    onDownload = {
-                        controller.clearMenus()
-                        controller.downloadSong(song)
-                    },
-                    onOpenAlbum = { albumId, albumTitle ->
-                        controller.clearMenus()
-                        controller.openDetail(
-                            browseId = albumId,
-                            title = albumTitle ?: song.title,
-                            subtitle = song.artist,
-                            thumbnailUrl = song.thumbnailUrl,
-                            type = BrowseType.ALBUM,
-                        )
-                    },
-                    onOpenArtist = { artistId, artistName ->
-                        controller.clearMenus()
-                        controller.openDetail(
-                            browseId = artistId,
-                            title = artistName ?: song.artist,
-                            subtitle = "Artist",
-                            thumbnailUrl = null,
-                            type = BrowseType.ARTIST,
-                        )
-                    },
-                    onShare = {
-                        controller.clearMenus()
-                        controller.shareUrl(
-                            song.title,
-                            "https://music.youtube.com/watch?v=${song.videoId}",
-                        )
-                    },
-                )
+                val songPayload = remember(song) { PendingPlaylistPayload.fromSong(song) }
+                IosInMenuPlaylistHost(
+                    menuKey = song.videoId,
+                    payload = songPayload,
+                    onCloseMenu = { controller.clearMenus() },
+                ) { onOpenAddToPlaylist, _, _ ->
+                    ArtistSongActionsMenu(
+                        song = song,
+                        likeStatus = if (isLiked) LikeStatus.LIKE else LikeStatus.INDIFFERENT,
+                        downloading = isDownloading,
+                        downloaded = false,
+                        onToggleLike = {
+                            MusicPlayerState.toggleFavorite(song.toMusicTrack())
+                            controller.clearMenus()
+                        },
+                        onStartRadio = {
+                            controller.clearMenus()
+                            controller.startRadioForSong(song)
+                        },
+                        onPlayNext = {
+                            controller.clearMenus()
+                            MusicPlayerState.playNext(song.toMusicTrack())
+                            Toast.makeText(
+                                controller.context,
+                                "Playing \"${song.title}\" next",
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                        },
+                        onAddToQueue = {
+                            controller.clearMenus()
+                            MusicPlayerState.addToQueue(listOf(song.toMusicTrack()))
+                            Toast.makeText(
+                                controller.context,
+                                "Added \"${song.title}\" to queue",
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                        },
+                        onAddToPlaylist = onOpenAddToPlaylist,
+                        onDownload = {
+                            controller.clearMenus()
+                            controller.downloadSong(song)
+                        },
+                        onOpenAlbum = { albumId, albumTitle ->
+                            controller.clearMenus()
+                            controller.openDetail(
+                                browseId = albumId,
+                                title = albumTitle ?: song.title,
+                                subtitle = song.artist,
+                                thumbnailUrl = song.thumbnailUrl,
+                                type = BrowseType.ALBUM,
+                            )
+                        },
+                        onOpenArtist = { artistId, artistName ->
+                            controller.clearMenus()
+                            controller.openDetail(
+                                browseId = artistId,
+                                title = artistName ?: song.artist,
+                                subtitle = "Artist",
+                                thumbnailUrl = null,
+                                type = BrowseType.ARTIST,
+                            )
+                        },
+                        onShare = {
+                            controller.clearMenus()
+                            controller.shareUrl(
+                                song.title,
+                                "https://music.youtube.com/watch?v=${song.videoId}",
+                            )
+                        },
+                    )
+                }
             }
 
             val browseMenuBody: @Composable (BrowseTarget) -> Unit = { target ->
