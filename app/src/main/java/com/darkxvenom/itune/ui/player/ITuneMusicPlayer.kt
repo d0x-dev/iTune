@@ -444,8 +444,8 @@ fun ITuneMusicPlayer(
         val targetTitleTopPx = with(density) { (statusBarTopDp + 11.dp).toPx() }
         val startTitleLeftPx = with(density) { 24.dp.toPx() }
         val targetTitleLeftPx = with(density) { 70.dp.toPx() }
-        val startTitleEndPx = with(density) { 24.dp.toPx() }
-        val targetTitleEndPx = with(density) { 54.dp.toPx() }
+        val startTitleEndPx = with(density) { 70.dp.toPx() }
+        val targetTitleEndPx = with(density) { 62.dp.toPx() }
 
         val curTitleTopPx = lerpFloat(startTitleTopPx, targetTitleTopPx, panelProgress)
         val curTitleLeftPx = lerpFloat(startTitleLeftPx, targetTitleLeftPx, panelProgress)
@@ -512,6 +512,41 @@ fun ITuneMusicPlayer(
             }
         }
 
+        // ── 5c. Continuous Morphing More Button ──
+        // Initially positioned at the end of the Title & Artist row in player mode,
+        // glides smoothly upward into the top-right header corner when Queue or Lyrics opens.
+        val startMoreTopPx = startTitleTopPx + with(density) { 6.dp.toPx() }
+        val targetMoreTopPx = with(density) { (statusBarTopDp + 6.dp).toPx() }
+        val startMoreLeftPx = with(density) { (maxWidth - 24.dp - 36.dp).toPx() }
+        val targetMoreLeftPx = with(density) { (maxWidth - 12.dp - 44.dp).toPx() }
+
+        val curMoreTopPx = lerpFloat(startMoreTopPx, targetMoreTopPx, panelProgress)
+        val curMoreLeftPx = lerpFloat(startMoreLeftPx, targetMoreLeftPx, panelProgress)
+        val curMoreSizeDp = lerpDp(36.dp, 44.dp, progressClamped)
+        val curMoreIconSizeDp = lerpDp(22.dp, 28.dp, progressClamped)
+        val curMoreBgAlpha = lerpFloat(0.14f, 0f, progressClamped)
+
+        Box(
+            modifier = Modifier
+                .zIndex(37f)
+                .offset { IntOffset(curMoreLeftPx.roundToInt(), curMoreTopPx.roundToInt()) }
+                .size(curMoreSizeDp)
+                .clip(CircleShape)
+                .background(Color.White.copy(alpha = curMoreBgAlpha))
+                .clickable {
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    onLyricsInteraction()
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.more_horiz),
+                contentDescription = "More Options",
+                colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
+                modifier = Modifier.size(curMoreIconSizeDp)
+            )
+        }
+
         // ── 6. Top Navigation Bar ──
         Box(
             modifier = Modifier
@@ -567,21 +602,6 @@ fun ITuneMusicPlayer(
                             MusicPlayerState.lyricsOpen = false
                             MusicPlayerState.queueOpen = false
                         }
-                )
-            }
-
-            // Top More Menu Button
-            IconButton(
-                onClick = { onLyricsInteraction() },
-                modifier = Modifier
-                    .size(44.dp)
-                    .align(Alignment.CenterEnd)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.more_horiz),
-                    contentDescription = "More Options",
-                    colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
-                    modifier = Modifier.size(28.dp)
                 )
             }
         }
