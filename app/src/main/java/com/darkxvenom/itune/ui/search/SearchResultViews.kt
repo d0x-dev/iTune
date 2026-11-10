@@ -453,41 +453,163 @@ internal fun AppleSearchMorePopup(
                                 modifier = Modifier.size(18.dp),
                             )
                         }
-
-                        is SearchMoreTarget.Artist -> {
-                            MorePopupVectorOptionRow(
-                                icon = Icons.Rounded.PlayArrow,
-                                title = "Play Top Songs",
-                                onClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    closeSmoothly()
-                                    onPlayCollection(
-                                        target.artist.id,
-                                        target.artist.name,
-                                        target.artist.subscribers ?: "Artist",
-                                        target.artist.thumbnailUrl
-                                    )
-                                }
-                            )
-                            PopupMenuDivider()
-                            MorePopupVectorOptionRow(
-                                icon = Icons.AutoMirrored.Rounded.QueueMusic,
-                                title = "Open Artist",
-                                onClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    closeSmoothly()
-                                    onOpenDetail(
-                                        SearchDetailState(
-                                            browseId = target.artist.id,
-                                            title = target.artist.name,
-                                            subtitle = target.artist.subscribers ?: "Artist",
-                                            thumbnailUrl = target.artist.thumbnailUrl,
-                                            initialType = BrowseType.ARTIST
-                                        )
-                                    )
-                                }
-                            )
+                        if (popupStep == PopupPlaylistStep.ADD_TO_PLAYLIST) {
+                            Box(
+                                modifier = Modifier
+                                    .size(33.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFFA2D48).copy(alpha = 0.28f))
+                                    .clickable {
+                                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                        popupStep = PopupPlaylistStep.CREATE_PLAYLIST
+                                    },
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Add,
+                                    contentDescription = "New Playlist",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(19.dp),
+                                )
+                            }
                         }
+                    }
+                }
+            ) {
+                AnimatedContent(
+                    targetState = popupStep,
+                    transitionSpec = {
+                        val forward = targetState.ordinal > initialState.ordinal
+                        val dir = if (forward) 1 else -1
+                        (fadeIn(tween(180)) + slideInHorizontally(tween(220)) { dir * it / 5 }) togetherWith
+                            (fadeOut(tween(140)) + slideOutHorizontally(tween(180)) { -dir * it / 5 })
+                    },
+                    label = "search_popup_playlist_step",
+                ) { activeStep ->
+                    when (activeStep) {
+                        PopupPlaylistStep.ADD_TO_PLAYLIST -> {
+                            playlistPayload?.let { payload ->
+                                AppleSheetAddToPlaylistContent(
+                                    payload = payload,
+                                    onCreateNewClick = { popupStep = PopupPlaylistStep.CREATE_PLAYLIST },
+                                    onCompleted = { closeSmoothly() },
+                                )
+                            }
+                        }
+                        PopupPlaylistStep.CREATE_PLAYLIST -> {
+                            playlistPayload?.let { payload ->
+                                AppleSheetCreatePlaylistContent(
+                                    payload = payload,
+                                    onCompleted = { closeSmoothly() },
+                                )
+                            }
+                        }
+                        else -> {
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                when (target) {
+                                    is SearchMoreTarget.Song -> {
+                                        val isFav = MusicPlayerState.isFavorite(target.track.id)
+                                        MorePopupVectorOptionRow(
+                                            icon = Icons.Rounded.PlayArrow,
+                                            title = "Play Next",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                MusicPlayerState.playNext(target.track)
+                                                Toast.makeText(context, "Playing next", Toast.LENGTH_SHORT).show()
+                                                closeSmoothly()
+                                            }
+                                        )
+                                        PopupMenuDivider()
+                                        MorePopupVectorOptionRow(
+                                            icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
+                                            title = "Add to Queue",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                MusicPlayerState.addToQueue(listOf(target.track))
+                                                Toast.makeText(context, "Added to queue", Toast.LENGTH_SHORT).show()
+                                                closeSmoothly()
+                                            }
+                                        )
+                                        PopupMenuDivider()
+                                        MorePopupVectorOptionRow(
+                                            icon = Icons.AutoMirrored.Rounded.QueueMusic,
+                                            title = "Add to Playlist",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                popupStep = PopupPlaylistStep.ADD_TO_PLAYLIST
+                                            }
+                                        )
+                                        PopupMenuDivider()
+                                        MorePopupVectorOptionRow(
+                                            icon = if (isFav) Icons.Rounded.Star else Icons.Rounded.StarBorder,
+                                            title = if (isFav) "Remove from Favorites" else "Favorite",
+                                            iconTint = if (isFav) Color(0xFFFA2D48) else Color.White.copy(alpha = 0.92f),
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                MusicPlayerState.toggleFavorite(target.track)
+                                                closeSmoothly()
+                                            }
+                                        )
+                                    }
+
+                                    is SearchMoreTarget.Artist -> {
+                                        MorePopupVectorOptionRow(
+                                            icon = Icons.Rounded.PlayArrow,
+                                            title = "Play Top Songs",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                closeSmoothly()
+                                                onPlayCollection(
+                                                    target.artist.id,
+                                                    target.artist.name,
+                                                    target.artist.subscribers ?: "Artist",
+                                                    target.artist.thumbnailUrl
+                                                )
+                                            }
+                                        )
+                                        PopupMenuDivider()
+                                        MorePopupVectorOptionRow(
+                                            icon = Icons.AutoMirrored.Rounded.QueueMusic,
+                                            title = "Open Artist",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                closeSmoothly()
+                                                onOpenDetail(
+                                                    SearchDetailState(
+                                                        browseId = target.artist.id,
+                                                        title = target.artist.name,
+                                                        subtitle = target.artist.subscribers ?: "Artist",
+                                                        thumbnailUrl = target.artist.thumbnailUrl,
+                                                        initialType = BrowseType.ARTIST
+                                                    )
+                                                )
+                                            }
+                                        )
+                                        PopupMenuDivider()
+                                        val subscribedArtists by ArtistStateStore.subscribedArtists.collectAsState()
+                                        val isSub = target.artist.id in subscribedArtists
+                                        MorePopupVectorOptionRow(
+                                            icon = if (isSub) Icons.Rounded.Star else Icons.Rounded.StarBorder,
+                                            title = if (isSub) "Remove from Favorite Artists" else "Add to Favorite Artists",
+                                            iconTint = if (isSub) Color(0xFFFA2D48) else Color.White.copy(alpha = 0.92f),
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                ArtistStateStore.toggleSubscription(
+                                                    context = context,
+                                                    browseId = target.artist.id,
+                                                    title = target.artist.name,
+                                                    subtitle = target.artist.subscribers ?: "Artist",
+                                                    thumbnailUrl = target.artist.thumbnailUrl,
+                                                )
+                                                Toast.makeText(
+                                                    context,
+                                                    if (isSub) "Removed from Artists" else "Added to Artists",
+                                                    Toast.LENGTH_SHORT,
+                                                ).show()
+                                                closeSmoothly()
+                                            }
+                                        )
+                                    }
 
                         is SearchMoreTarget.Collection -> {
                             MorePopupVectorOptionRow(
