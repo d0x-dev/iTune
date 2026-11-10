@@ -837,3 +837,76 @@ internal fun SearchResultsSkeletonBlock(
 }
 
 /**
+ * Apple Browse-style segmented selector placed below Top Result (`All`, `Songs`, `Artists`, `Albums`, `Playlists`).
+ */
+@Composable
+internal fun SearchResultFilterBar(
+    selectedFilter: SearchResultFilter,
+    onSelect: (SearchResultFilter) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .height(36.dp)
+            .clip(RoundedCornerShape(9.dp))
+            .background(Color(0xFF1C1C1E))
+            .padding(2.5.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            SearchResultFilter.entries.forEach { option ->
+                val isSelected = option == selectedFilter
+
+                val bgColor by animateColorAsState(
+                    targetValue = if (isSelected) Color(0xFF38383A) else Color.Transparent,
+                    animationSpec = tween(durationMillis = 160),
+                    label = "SearchFilterBgColor"
+                )
+
+                val textColor by animateColorAsState(
+                    targetValue = if (isSelected) Color.White else AppleTextSecondary,
+                    animationSpec = tween(durationMillis = 160),
+                    label = "SearchFilterTextColor"
+                )
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(7.dp))
+                        .background(bgColor)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { onSelect(option) },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = option.label,
+                        color = textColor,
+                        fontSize = 13.sp,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                        letterSpacing = (-0.2).sp,
+                        maxLines = 1,
+                        softWrap = false
+                    )
+                }
+            }
+        }
+    }
+}
+
+private fun Color.clampLuminance(maxLum: Float): Color {
+    val lum = ColorUtils.calculateLuminance(this.toArgb()).toFloat()
+    return if (lum > maxLum && lum > 0.001f) {
+        val factor = (1f - (maxLum / lum)).coerceIn(0.20f, 0.72f)
+        lerp(this, Color(0xFF0E0E11), factor)
+    } else {
+        this
+    }
+}
