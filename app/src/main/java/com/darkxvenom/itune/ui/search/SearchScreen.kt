@@ -540,34 +540,46 @@ fun SearchCategoryCardItem(
             .aspectRatio(1.765f)
             .clip(RoundedCornerShape(14.dp))
             .background(category.backgroundColor)
+            .border(0.6.dp, Color.White.copy(alpha = 0.14f), RoundedCornerShape(14.dp))
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) { onClick() }
     ) {
-        if (category.imageUrl != null) {
+        CategoryCardArtwork(
+            type = category.type,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        if (!category.imageUrl.isNullOrBlank()) {
             AsyncImage(
                 model = category.imageUrl,
                 contentDescription = category.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
-        } else {
-            CategoryCardArtwork(
-                type = category.type,
-                modifier = Modifier.fillMaxSize()
-            )
-
-            Text(
-                text = category.title,
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = (-0.3).sp,
+            Box(
                 modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 12.dp, bottom = 12.dp)
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            0.00f to Color.Black.copy(alpha = 0.08f),
+                            0.42f to category.backgroundColor.copy(alpha = 0.24f),
+                            1.00f to Color.Black.copy(alpha = 0.78f),
+                        )
+                    )
             )
         }
+
+        Text(
+            text = category.title,
+            color = Color.White,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = (-0.3).sp,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 12.dp, bottom = 10.dp, end = 12.dp)
+        )
     }
 }
