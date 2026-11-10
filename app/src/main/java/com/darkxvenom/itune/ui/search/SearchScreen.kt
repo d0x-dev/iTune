@@ -156,27 +156,92 @@ fun SearchScreen(
             initialType = state.initialType,
         )
     }
-    fun openCollectionDetail(state: SearchDetailState) {
+
+    fun submitSearch(rawQuery: String, recordHistory: Boolean = true) {
+        val clean = rawQuery.trim()
+        if (clean.isEmpty()) return
+
+        searchInput = TextFieldValue(clean, selection = TextRange(clean.length))
+        submittedQuery = clean
+        isEditing = false
         focusManager.clearFocus(force = true)
         keyboardController?.hide()
-        MusicPlayerState.pendingArtistNav = PendingArtistNav(
-            browseId = state.browseId,
-            name = state.title,
-            subtitle = state.subtitle,
-            thumbnailUrl = state.thumbnailUrl,
-            initialType = state.initialType,
-        )
+
+        if (recordHistory) {
+            SearchHistoryStore.addQuery(context, clean)
+        }
+
+        activeSearchJob?.cancel()
+        searchResults = UnifiedSearchResults()
+        selectedFilter = SearchResultFilter.ALL
+        isSearching = true
+
+        lateinit var launched: Job
+        launched = coroutineScope.launch {
+            gridState.scrollToItem(0)
+            try {
+                val results = MusicBackend.searchAllCategories(clean)
+                if (activeSearchJob == launched) {
+                    searchResults = results
+                }
+            } catch (_: Exception) {
+                if (activeSearchJob == launched) {
+                    searchResults = UnifiedSearchResults()
+                }
+            } finally {
+                if (activeSearchJob == launched) {
+                    isSearching = false
+                }
+            }
+        }
+        activeSearchJob = launched
+    }
+
+    fun exitSearchToExplore() {
+        activeSearchJob?.cancel()
+        isSearching = false
+        isEditing = false
+        submittedQuery = ""
+        searchInput = TextFieldValue("")
+        searchResults = UnifiedSearchResults()
+        selectedFilter = SearchResultFilter.ALL
+        remoteSuggestions = emptyList()
+        focusManager.clearFocus(force = true)
+        keyboardController?.hide()
+    }
+
+    fun fillQueryForEditing(text: String) {
+        searchInput = TextFieldValue(text, selection = TextRange(text.length))
+        isEditing = true
+        searchFocusRequester.requestFocus()
+        keyboardController?.show()
+    }
+
+    BackHandler(enabled = uiMode != SearchUiMode.EXPLORE) {
+        when {
+            isEditing && submittedQuery.isNotBlank() -> {
+                searchInput = TextFieldValue(
+                    submittedQuery,
+                    selection = TextRange(submittedQuery.length)
+                )
+                isEditing = false
+                focusManager.clearFocus(force = true)
+                keyboardController?.hide()
+            }
+            else -> exitSearchToExplore()
+        }
     }
 
     LaunchedEffect(MusicPlayerState.pendingArtistSearch) {
         val artistQuery = MusicPlayerState.pendingArtistSearch
         if (!artistQuery.isNullOrBlank()) {
-            searchQuery = artistQuery
             MusicPlayerState.pendingArtistSearch = null
+            submitSearch(artistQuery)
         }
     }
 
-    // Live unified search (Songs, Artists, Albums, Playlists) debounced by 350ms
+    // Fast, smooth suggestions fetched only while typing in editing mode
+
     LaunchedEffect(searchQuery) {
         val trimmed = searchQuery.trim()
         if (trimmed.isEmpty()) {
