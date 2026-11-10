@@ -84,6 +84,72 @@ object MusicBackend {
         tracks.distinctBy { it.id }
     }
 
+    /** Searches Songs, Artists, Albums, and Playlists in parallel for unified search results. */
+    suspend fun searchAllCategories(query: String): UnifiedSearchResults = withContext(Dispatchers.IO) {
+        coroutineScope {
+            val songsJob = async { searchMusic(query) }
+            val artistsJob = async {
+                runCatching {
+                    collectRenderers(postInnerTubeSearch(query, ARTIST_PARAMS), ::parseArtistItem)
+                        .distinctBy { it.id }
+                }.getOrDefault(emptyList())
+            }
+            val albumsJob = async {
+                runCatching {
+                    collectRenderers(postInnerTubeSearch(query, ALBUM_PARAMS)) { obj ->
+                        parsePlaylistOrAlbumItem(obj, isAlbum = true)
+                    }.distinctBy { it.id }
+                }.getOrDefault(emptyList())
+            }
+            val featuredPlaylistsJob = async {
+                runCatching {
+                    collectRenderers(postInnerTubeSearch(query, FEATURED_PLAYLIST_PARAMS)) { obj ->
+                        parsePlaylistOrAlbumItem(obj, isAlbum = false)
+                    }
+                }.getOrDefault(emptyList())
+            }
+            val communityPlaylistsJob = async {
+                runCatching {
+                    collectRenderers(postInnerTubeSearch(query, PLAYLIST_PARAMS)) { obj ->
+                        parsePlaylistOrAlbumItem(obj, isAlbum = false)
+                    }
+                }.getOrDefault(emptyList())
+            }
+
+            val mergedPlaylists = (featuredPlaylistsJob.await() + communityPlaylistsJob.await())
+                .distinctBy { it.id }
+
+            UnifiedSearchResults(
+                songs = songsJob.await(),
+                artists = artistsJob.await(),
+                albums = albumsJob.await(),
+                playlists = mergedPlaylists
+            )
+        }
+    }
+
+    /** Loads playable tracks for an Artist (`UC...`), Album (`MPREb...`), or Playlist (`VL...`) browseId. */
+    suspend fun loadCollectionTracks(
+        browseId: String,
+        fallbackArtist: String = "",
+        fallbackThumbnailUrl: String? = null
+    ): List<MusicTrack> = withContext(Dispatchers.IO) {
+        runCatching {
+            val body = JSONObject().put("browseId", browseId)
+            val root = postInnerTube(BROWSE_URL, body)
+            collectRenderers(root) { obj ->
+                parseTrackItem(
+                    itemObj = obj,
+                    fallbackArtist = fallbackArtist,
+                    fallbackThumbnailUrl = fallbackThumbnailUrl
+                )
+            }.distinctBy { it.id }
+        }.getOrElse { e ->
+            Log.e(TAG, "Browse failed for '$browseId': ${e.message}")
+            emptyList()
+        }
+    }
+
     suspend fun getOrLoadStreamInfo(videoId: String): StreamInfo = withContext(Dispatchers.IO) {
         val now = System.currentTimeMillis()
         streamCache[videoId]?.let { cached ->
