@@ -54,14 +54,28 @@ object ArtistStateStore {
 
     fun isSubscribed(browseId: String): Boolean = browseId in _subscribedArtists.value
 
-    fun toggleSubscription(context: Context, browseId: String): Boolean {
+    fun toggleSubscription(
+        context: Context,
+        browseId: String,
+        title: String = "",
+        subtitle: String = "Artist",
+        thumbnailUrl: String? = null,
+    ): Boolean {
         ensureInit(context)
         val current = _subscribedArtists.value.toMutableSet()
         val nowSubscribed = if (browseId in current) {
             current.remove(browseId)
+            LibraryStore.removeArtist(context, browseId)
             false
         } else {
             current.add(browseId)
+            LibraryStore.saveArtist(
+                context = context,
+                browseId = browseId,
+                title = title,
+                subtitle = subtitle,
+                thumbnailUrl = thumbnailUrl,
+            )
             true
         }
         _subscribedArtists.value = current
