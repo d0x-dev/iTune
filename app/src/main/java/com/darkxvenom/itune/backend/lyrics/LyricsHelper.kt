@@ -6,6 +6,8 @@ import com.darkxvenom.itune.backend.LyricsLine
 import com.darkxvenom.itune.backend.Net
 import com.darkxvenom.itune.backend.WordTiming
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import okhttp3.Request
 import org.json.JSONArray
@@ -15,6 +17,29 @@ import java.nio.charset.StandardCharsets
 import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Pattern
 import kotlin.math.abs
+
+data class LyricsSearchResult(
+    val provider: String,
+    val trackName: String,
+    val artistName: String,
+    val durationSec: Int,
+    val syncedLyrics: String?,
+    val plainLyrics: String?,
+) {
+    val isSynced: Boolean get() = !syncedLyrics.isNullOrBlank()
+    val rawText: String get() = syncedLyrics?.takeIf { it.isNotBlank() } ?: plainLyrics.orEmpty()
+    val preview: String
+        get() = rawText.lines()
+            .map { it.replace(Regex("^\\[\\d{1,3}:\\d{2}(?:\\.\\d{1,3})?\\]\\s*"), "").trim() }
+            .filter { it.isNotBlank() }
+            .take(2)
+            .joinToString(" · ")
+}
+
+data class LoadedLyrics(
+    val lines: List<LyricsLine>,
+    val rawText: String,
+)
 
 interface LyricsProvider {
     val name: String
@@ -26,42 +51,93 @@ object LrcLibLyricsProvider : LyricsProvider {
 
     override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
         runCatching {
-            val encTitle = URLEncoder.encode(title.trim(), StandardCharsets.UTF_8.name())
-            val encArtist = URLEncoder.encode(artist.trim(), StandardCharsets.UTF_8.name())
-            val url = "https://lrclib.net/api/search?track_name=$encTitle&artist_name=$encArtist"
+            val matches = searchMatches(title = title, artist = artist)
+            var bestSynced: String? = null
+            var bestPlain: String? = null
+            var minDiff = Int.MAX_VALUE
 
-            val req = Request.Builder()
-                .url(url)
-                .header("User-Agent", "iTune/1.0")
-                .header("Accept", "application/json")
-                .build()
-
-            Net.client.newCall(req).execute().use { response ->
-                if (!response.isSuccessful) throw IllegalStateException("LrcLib error: ${response.code}")
-                val text = response.body?.string().orEmpty()
-                val array = JSONArray(text)
-                var bestLyrics: String? = null
-                var minDiff = Int.MAX_VALUE
-
-                for (i in 0 until array.length()) {
-                    val obj = array.optJSONObject(i) ?: continue
-                    val synced = obj.optString("syncedLyrics")
-                    if (synced.isNotBlank()) {
-                        val dur = obj.optInt("duration", -1)
-                        if (durationSec > 0 && dur > 0) {
-                            val diff = abs(dur - durationSec)
-                            if (diff < minDiff) {
-                                minDiff = diff
-                                bestLyrics = synced
-                            }
-                        } else if (bestLyrics == null) {
-                            bestLyrics = synced
+            for (item in matches) {
+                val synced = item.syncedLyrics
+                if (!synced.isNullOrBlank()) {
+                    if (durationSec > 0 && item.durationSec > 0) {
+                        val diff = abs(item.durationSec - durationSec)
+                        if (diff < minDiff) {
+                            minDiff = diff
+                            bestSynced = synced
                         }
+                    } else if (bestSynced == null) {
+                        bestSynced = synced
                     }
+                } else if (bestPlain == null && !item.plainLyrics.isNullOrBlank()) {
+                    bestPlain = item.plainLyrics
                 }
-
-                bestLyrics ?: throw IllegalStateException("No synced lyrics on LrcLib")
             }
+
+            bestSynced ?: bestPlain ?: throw IllegalStateException("No lyrics found on LrcLib")
+        }
+    }
+
+    suspend fun searchMatches(title: String, artist: String): List<LyricsSearchResult> = withContext(Dispatchers.IO) {
+        val cleanTitle = title.trim()
+        val cleanArtist = artist.trim()
+        if (cleanTitle.isBlank() && cleanArtist.isBlank()) return@withContext emptyList()
+
+        val primaryUrl = buildString {
+            append("https://lrclib.net/api/search?track_name=")
+            append(URLEncoder.encode(cleanTitle, StandardCharsets.UTF_8.name()))
+            if (cleanArtist.isNotBlank()) {
+                append("&artist_name=")
+                append(URLEncoder.encode(cleanArtist, StandardCharsets.UTF_8.name()))
+            }
+        }
+        val firstBatch = runCatching { queryEndpoint(primaryUrl) }.getOrDefault(emptyList())
+        if (firstBatch.isNotEmpty()) return@withContext firstBatch
+
+        val fallbackQuery = listOf(cleanTitle, cleanArtist).filter { it.isNotBlank() }.joinToString(" ")
+        val fallbackUrl = "https://lrclib.net/api/search?q=${URLEncoder.encode(fallbackQuery, StandardCharsets.UTF_8.name())}"
+        val secondBatch = runCatching { queryEndpoint(fallbackUrl) }.getOrDefault(emptyList())
+        if (secondBatch.isNotEmpty()) return@withContext secondBatch
+
+        // Strip common remix/version tags like "(Lofi)" or "[Slowed]" when looking up original lyrics
+        val strippedTitle = cleanTitle
+            .replace(Regex("\\s*[(\\[].*?[)\\]]"), "")
+            .substringBefore("|")
+            .trim()
+        if (strippedTitle.isNotBlank() && strippedTitle != cleanTitle) {
+            val cleanUrl = "https://lrclib.net/api/search?q=${URLEncoder.encode(strippedTitle, StandardCharsets.UTF_8.name())}"
+            return@withContext runCatching { queryEndpoint(cleanUrl) }.getOrDefault(emptyList())
+        }
+        emptyList()
+    }
+
+    private fun queryEndpoint(url: String): List<LyricsSearchResult> {
+        val req = Request.Builder()
+            .url(url)
+            .header("User-Agent", "iTune/1.0")
+            .header("Accept", "application/json")
+            .build()
+
+        Net.client.newCall(req).execute().use { response ->
+            if (!response.isSuccessful) throw IllegalStateException("LrcLib error: ${response.code}")
+            val array = JSONArray(response.body?.string().orEmpty())
+            val out = mutableListOf<LyricsSearchResult>()
+            for (i in 0 until array.length()) {
+                val obj = array.optJSONObject(i) ?: continue
+                val synced = obj.optNonNullString("syncedLyrics").ifBlank { null }
+                val plain = obj.optNonNullString("plainLyrics").ifBlank { null }
+                if (synced == null && plain == null) continue
+                out.add(
+                    LyricsSearchResult(
+                        provider = name,
+                        trackName = obj.optNonNullString("trackName"),
+                        artistName = obj.optNonNullString("artistName"),
+                        durationSec = obj.optInt("duration", 0).coerceAtLeast(0),
+                        syncedLyrics = synced,
+                        plainLyrics = plain
+                    )
+                )
+            }
+            return out
         }
     }
 }
