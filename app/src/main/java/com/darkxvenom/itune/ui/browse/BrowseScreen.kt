@@ -1,6 +1,5 @@
 package com.darkxvenom.itune.ui.browse
 
-import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -45,10 +44,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.darkxvenom.itune.data.library.BrowseMoodsRepository
 import com.darkxvenom.itune.data.model.BrowseCategoryItem
 import com.darkxvenom.itune.data.model.BrowseSegment
-import com.darkxvenom.itune.data.repository.MusicRepository
 import com.darkxvenom.itune.ui.components.AppleMemojiAvatar
 import com.darkxvenom.itune.ui.components.TopSpringLoadingBar
 import com.darkxvenom.itune.ui.components.rememberSpringOverscrollState
@@ -69,11 +69,18 @@ fun BrowseScreen(
     val overscrollState = rememberSpringOverscrollState()
     var isRefreshing by remember { mutableStateOf(false) }
     var selectedSegment by remember { mutableStateOf(BrowseSegment.CATALOG) }
+    val categories by BrowseMoodsRepository.categories.collectAsStateWithLifecycle()
+    val moodsSyncing by BrowseMoodsRepository.isRefreshing.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        BrowseMoodsRepository.ensureLoaded()
+    }
 
     // ONLY trigger loading when pulling down from the very top of the grid
     LaunchedEffect(overscrollState.offset.value) {
         if (gridState.firstVisibleItemIndex == 0 && overscrollState.offset.value > 25f && !isRefreshing) {
             isRefreshing = true
+            BrowseMoodsRepository.refresh()
         }
     }
 
@@ -187,7 +194,7 @@ fun BrowseScreen(
 
         // Sleek Left-to-Right Animated Loading Line: ONLY visible when at the top
         TopSpringLoadingBar(
-            isVisible = isRefreshing && gridState.firstVisibleItemIndex == 0,
+            isVisible = (isRefreshing || moodsSyncing) && gridState.firstVisibleItemIndex == 0,
             modifier = Modifier.align(Alignment.TopCenter)
         )
     }
