@@ -171,3 +171,202 @@ fun LibraryScreenOverlayContent(
     }
 }
 
+@Composable
+fun LibraryPlaylistsScreen(
+    controller: LibraryHostController,
+    hasMiniPlayer: Boolean,
+    onBack: () -> Unit,
+    onExploreClick: () -> Unit,
+) {
+    val userPlaylists by LibraryStore.userPlaylists.collectAsStateWithLifecycle()
+    val playlists by LibraryStore.savedPlaylists.collectAsStateWithLifecycle()
+    val likedSongs by LibraryStore.likedSongs.collectAsStateWithLifecycle()
+    val query = controller.searchQuery
+
+    val filteredUserPlaylists = remember(userPlaylists, query) {
+        if (query.isBlank()) userPlaylists else userPlaylists.filter {
+            it.name.contains(query, ignoreCase = true)
+        }
+    }
+    val filteredPlaylists = remember(playlists, query) {
+        if (query.isBlank()) playlists else playlists.filter {
+            it.title.contains(query, ignoreCase = true) ||
+                it.subtitle.contains(query, ignoreCase = true)
+        }
+    }
+    val likedSongsList = remember(likedSongs) { likedSongs.map { it.toSong() } }
+    val gridState = controller.gridStates.getOrPut(LibraryDestination.PLAYLISTS) { LazyGridState() }
+    val isScrolled by remember {
+        derivedStateOf {
+            gridState.firstVisibleItemIndex > 0 || gridState.firstVisibleItemScrollOffset > 120
+        }
+    }
+    val totalCount = userPlaylists.size + playlists.size
+
+    LibraryFrostedScreenScaffold(
+        controller = controller,
+        artworkUrls = emptyList(),
+        scrolledTitle = "Playlists",
+        isScrolled = isScrolled,
+        hasMiniPlayer = hasMiniPlayer,
+        fallbackAccent = LibraryCrimsonAccent,
+        amoledDark = true,
+        onBack = onBack,
+        topBarActions = {
+            LibraryTopBarActionButtons(
+                controller = controller,
+                showSort = false,
+                onMoreClick = {
+                    controller.openTopMenu(
+                        LibraryTopMenuRequest(
+                            destination = LibraryDestination.PLAYLISTS,
+                            songs = likedSongsList,
+                            stationLabel = "Playlists",
+                            showSort = false,
+                        ),
+                    )
+                },
+            )
+        },
+    ) { contentPadding ->
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            state = gridState,
+            contentPadding = PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
+                top = contentPadding.calculateTopPadding() + 8.dp,
+                bottom = contentPadding.calculateBottomPadding(),
+            ),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            item(span = { GridItemSpan(2) }, key = "playlists_header") {
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            LibraryScreenTitleHeader(
+                                title = "Playlists",
+                                countText = if (totalCount == 1) "1 Playlist" else "$totalCount Playlists",
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .lightweightLiquidGlass(
+                                    shape = CircleShape,
+                                    fallbackColor = Color(0xCC141418),
+                                )
+                                .border(0.8.dp, Color.White.copy(alpha = 0.20f), CircleShape)
+                                .menuAnchor()
+                                .clickable { controller.openCreatePlaylistPopover() }
+                                .padding(horizontal = 14.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Add,
+                                contentDescription = "Create Playlist",
+                                tint = LibraryCrimsonAccent,
+                                modifier = Modifier.size(18.dp),
+                            )
+                            Spacer(Modifier.width(5.dp))
+                            Text(
+                                text = "New",
+                                color = Color.White,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                        }
+                    }
+                    LibraryFilterBar(
+                        visible = controller.searchOpen,
+                        query = query,
+                        onQueryChange = { controller.searchQuery = it },
+                        onClose = controller::toggleSearch,
+                        autoFocus = controller.focusSearchNext,
+                        onFocused = { controller.focusSearchNext = false },
+                        placeholder = "Filter playlists...",
+                    )
+                }
+            }
+
+            if (filteredUserPlaylists.isNotEmpty()) {
+                item(span = { GridItemSpan(2) }, key = "playlists_custom_label") {
+                    Text(
+                        text = "Your Playlists",
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 6.dp),
+                    )
+                }
+                items(filteredUserPlaylists, key = { it.id }) { playlist ->
+                    UserPlaylistGlassCard(
+                        playlist = playlist,
+                        onClick = { controller.openUserPlaylist(playlist.id) },
+                        onMenuClick = { controller.openUserPlaylistMenu(playlist) },
+                    )
+                }
+            }
+
+            if (filteredPlaylists.isNotEmpty()) {
+                item(span = { GridItemSpan(2) }, key = "playlists_section_label") {
+                    Text(
+                        text = "Added Playlists",
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 6.dp),
+                    )
+                }
+
+                items(filteredPlaylists, key = { it.browseId }) { entry ->
+                    LibraryCollectionGlassCard(
+                        entry = entry,
+                        placeholderIcon = Icons.AutoMirrored.Rounded.QueueMusic,
+                        onClick = {
+                            controller.openDetail(
+                                browseId = entry.browseId,
+                                title = entry.title,
+                                subtitle = entry.subtitle,
+                                thumbnailUrl = entry.thumbnailUrl,
+                                type = entry.type,
+                            )
+                        },
+                        onMenuClick = { controller.openCollectionMenu(entry) },
+                    )
+                }
+            }
+
+            if (userPlaylists.isEmpty() && playlists.isEmpty()) {
+                item(span = { GridItemSpan(2) }, key = "playlists_empty") {
+                    Spacer(Modifier.height(6.dp))
+                    LibraryGlassEmptyCard(
+                        icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
+                        title = "No Playlists Yet",
+                        subtitle = "Tap + New or the top-right ⋯ menu to create a custom playlist, or save playlists from Search.",
+                        actionLabel = "Create Playlist",
+                        actionModifier = Modifier.menuAnchor(),
+                        onAction = { controller.openCreatePlaylistPopover() },
+                    )
+                }
+            } else if (filteredUserPlaylists.isEmpty() && filteredPlaylists.isEmpty()) {
+                item(span = { GridItemSpan(2) }, key = "playlists_no_match") {
+                    LibraryGlassEmptyCard(
+                        icon = ITubeIcons.Search,
+                        title = "No Playlists Found",
+                        subtitle = "No playlists matched \"$query\".",
+                        actionLabel = "Clear Filter",
+                        onAction = { controller.searchQuery = "" },
+                    )
+                }
+            }
+        }
+    }
+}
+
