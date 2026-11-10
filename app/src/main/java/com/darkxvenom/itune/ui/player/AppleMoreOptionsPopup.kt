@@ -798,6 +798,37 @@ fun AppleMoreOptionsPopup(
                                     )
                                 }
 
+                                MorePopupPage.LYRICS_MENU -> {
+                                    MorePopupLyricsMenuSection(
+                                        onBack = { activePage = MorePopupPage.MAIN },
+                                        onOpenSearch = { activePage = MorePopupPage.LYRICS_SEARCH },
+                                        onOpenEdit = { activePage = MorePopupPage.LYRICS_EDIT },
+                                        onOpenOffset = { activePage = MorePopupPage.LYRICS_OFFSET }
+                                    )
+                                }
+
+                                MorePopupPage.LYRICS_SEARCH -> {
+                                    MorePopupLyricsSearchSection(
+                                        track = track,
+                                        onBack = { activePage = MorePopupPage.LYRICS_MENU },
+                                        onLyricsSelected = { onDismiss() }
+                                    )
+                                }
+
+                                MorePopupPage.LYRICS_EDIT -> {
+                                    MorePopupLyricsEditSection(
+                                        track = track,
+                                        onBack = { activePage = MorePopupPage.LYRICS_MENU },
+                                        onSaved = { onDismiss() }
+                                    )
+                                }
+
+                                MorePopupPage.LYRICS_OFFSET -> {
+                                    MorePopupLyricsOffsetSection(
+                                        onBack = { activePage = MorePopupPage.LYRICS_MENU }
+                                    )
+                                }
+
                                 MorePopupPage.DETAILS -> {
                                     MorePopupDetailsSection(
                                         track = track,
@@ -813,19 +844,39 @@ fun AppleMoreOptionsPopup(
                                 }
                             }
                         }
-                    }
-                }
-            }
-        }
     }
 }
 
 @Composable
-private fun MorePopupOptionRow(
+internal fun HeaderCircleActionButton(
     @DrawableRes iconRes: Int,
+    contentDescription: String,
+    highlighted: Boolean = false,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .size(33.dp)
+            .clip(CircleShape)
+            .background(Color.White.copy(alpha = if (highlighted) 0.24f else 0.14f))
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = contentDescription,
+            colorFilter = ColorFilter.tint(Color.White.copy(alpha = if (highlighted) 1f else 0.90f)),
+            modifier = Modifier.size(18.dp)
+        )
+    }
+}
+
+@Composable
+private fun MorePopupRowFrame(
     title: String,
     trailingBadge: String? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    leadingIcon: @Composable () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -835,12 +886,7 @@ private fun MorePopupOptionRow(
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(id = iconRes),
-            contentDescription = title,
-            colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
-            modifier = Modifier.size(21.dp)
-        )
+        leadingIcon()
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = title,
@@ -872,7 +918,42 @@ private fun MorePopupOptionRow(
 }
 
 @Composable
-private fun PopupMenuDivider() {
+internal fun MorePopupOptionRow(
+    @DrawableRes iconRes: Int,
+    title: String,
+    trailingBadge: String? = null,
+    onClick: () -> Unit
+) {
+    MorePopupRowFrame(title = title, trailingBadge = trailingBadge, onClick = onClick) {
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = title,
+            colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
+            modifier = Modifier.size(21.dp)
+        )
+    }
+}
+
+@Composable
+internal fun MorePopupVectorOptionRow(
+    icon: ImageVector,
+    title: String,
+    iconTint: Color = Color.White.copy(alpha = 0.92f),
+    trailingBadge: String? = null,
+    onClick: () -> Unit
+) {
+    MorePopupRowFrame(title = title, trailingBadge = trailingBadge, onClick = onClick) {
+        Icon(
+            imageVector = icon,
+            contentDescription = title,
+            tint = iconTint,
+            modifier = Modifier.size(21.dp)
+        )
+    }
+}
+
+@Composable
+internal fun PopupMenuDivider() {
     HorizontalDivider(
         thickness = 0.5.dp,
         color = Color.White.copy(alpha = 0.12f)
@@ -880,7 +961,7 @@ private fun PopupMenuDivider() {
 }
 
 @Composable
-private fun PopupSubPageHeader(
+internal fun PopupSubPageHeader(
     title: String,
     trailingBadge: String? = null,
     onBack: () -> Unit
