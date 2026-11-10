@@ -405,8 +405,19 @@ fun HomeScreen(
                     onMenuItemClick = { item ->
                         libraryHostController.openMenu(item.id)
                     },
-                    onRecentAlbumClick = { album ->
-                        Toast.makeText(context, "Recent: ${album.title} by ${album.artist}", Toast.LENGTH_SHORT).show()
+                    onRecentlyAddedClick = {
+                        libraryHostController.openDestination(
+                            com.darkxvenom.itune.data.library.LibraryDestination.NEW_RELEASES,
+                        )
+                    },
+                    onNewReleaseClick = { release ->
+                        libraryHostController.openDetail(
+                            browseId = release.browseId,
+                            title = release.title,
+                            subtitle = release.subtitleLine,
+                            thumbnailUrl = release.thumbnailUrl,
+                            type = BrowseType.ALBUM,
+                        )
                     },
                     onProfileClick = {
                         showAvatarDialog = true
