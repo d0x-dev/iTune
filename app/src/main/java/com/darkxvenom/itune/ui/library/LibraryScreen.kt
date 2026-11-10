@@ -249,16 +249,34 @@ fun LibraryScreen(
                 Spacer(modifier = Modifier.height(30.dp))
             }
 
-            // "Recently Added" Section Header
+            // "Recently Added" Section Header with trailing arrow -> opens full-screen Apple New Releases
             item(key = "recently_added_header") {
-                Text(
-                    text = "Recently Added",
-                    color = AppleTextPrimary,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = (-0.4).sp,
-                    modifier = Modifier.padding(bottom = 14.dp)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { onRecentlyAddedClick() }
+                        .padding(bottom = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Recently Added",
+                        color = AppleTextPrimary,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = (-0.4).sp,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Icon(
+                        imageVector = Icons.Default.ChevronRight,
+                        contentDescription = "See all New Releases",
+                        tint = Color(0x99FFFFFF),
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
             }
 
             // Recently Added 2-Column Grid
