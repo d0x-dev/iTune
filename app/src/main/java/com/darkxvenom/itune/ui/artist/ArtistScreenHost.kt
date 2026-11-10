@@ -589,16 +589,36 @@ class ArtistHostController internal constructor(
     }
 
     fun toggleArtistSubscription(browseId: String) {
-        val subscribed = ArtistStateStore.toggleSubscription(context, browseId)
-        replacePage(browseId) { page ->
-            page.copy(subscription = SubscriptionState(browseId, subscribed))
+        val page = detailStack.lastOrNull { it.browseId == browseId }
+        val artThumb = AppleArtistArtRepository.cached(browseId)?.heroUrl ?: page?.thumbnailUrl
+        val artistSub = page?.monthlyListenerCount
+            ?: page?.subscriberCountText
+            ?: page?.subtitle?.ifBlank { "Artist" }
+            ?: "Artist"
+        val subscribed = ArtistStateStore.toggleSubscription(
+            context = context,
+            browseId = browseId,
+            title = page?.title ?: "",
+            subtitle = artistSub,
+            thumbnailUrl = artThumb,
+        )
+        replacePage(browseId) { existing ->
+            existing.copy(subscription = SubscriptionState(browseId, subscribed))
         }
     }
 
     fun toggleReleaseSaved(browseId: String) {
-        val saved = ArtistStateStore.toggleReleaseSaved(context, browseId)
-        replacePage(browseId) { page ->
-            page.copy(library = LibraryState(browseId, saved))
+        val page = detailStack.lastOrNull { it.browseId == browseId }
+        val saved = ArtistStateStore.toggleReleaseSaved(
+            context = context,
+            browseId = browseId,
+            title = page?.title ?: "",
+            subtitle = page?.subtitle ?: "",
+            thumbnailUrl = page?.thumbnailUrl,
+            type = page?.type ?: BrowseType.OTHER,
+        )
+        replacePage(browseId) { existing ->
+            existing.copy(library = LibraryState(browseId, saved))
         }
     }
 
