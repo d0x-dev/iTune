@@ -107,7 +107,7 @@ val SFProDisplay = FontFamily(
 private const val MANUAL_SCROLL_TIMEOUT_MS = 3000L
 private val HEAD_LYRICS_ENTRY = AirBeatsLyricsEntry(time = 0L, text = "")
 
-// BitChord-inspired handover curve, row stagger wave, progressive opacity, and lightweight blur falloff
+// iTube-inspired handover curve, row stagger wave, progressive opacity, and lightweight blur falloff
 private val LYRIC_EASING = CubicBezierEasing(0.41f, 0f, 0.12f, 0.99f)
 private const val LYRIC_SETTLE_MS = 400
 private const val SCROLL_LEAD_MIN_MS = 350L
