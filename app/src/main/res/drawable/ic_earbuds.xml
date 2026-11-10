@@ -1,0 +1,84 @@
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="48dp"
+    android:viewportWidth="320"
+    android:viewportHeight="240">
+
+    <!-- Main left earbud -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="
+            M160,78
+            C145,49 122,35 96,40
+            C65,45 51,68 52,101
+            C28,94 12,113 12,143
+            C12,172 30,195 55,195
+            C72,195 85,184 94,167
+            L94,222
+            Q94,231 103,231
+            L112,231
+            Q121,231 121,222
+            L121,155
+            C139,149 151,136 160,119
+            Z"/>
+
+    <!-- Main right earbud -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="
+            M160,78
+            C175,49 198,35 224,40
+            C255,45 269,68 268,101
+            C292,94 308,113 308,143
+            C308,172 290,195 265,195
+            C248,195 235,184 226,167
+            L226,222
+            Q226,231 217,231
+            L208,231
+            Q199,231 199,222
+            L199,155
+            C181,149 169,136 160,119
+            Z"/>
+
+    <!-- Left inner speaker opening -->
+    <path
+        android:fillColor="#202020"
+        android:pathData="
+            M34,125
+            C34,111 42,102 53,102
+            C64,102 72,112 72,126
+            C72,140 64,150 53,150
+            C42,150 34,140 34,125 Z"/>
+
+    <!-- Right inner speaker opening -->
+    <path
+        android:fillColor="#202020"
+        android:pathData="
+            M286,125
+            C286,111 278,102 267,102
+            C256,102 248,112 248,126
+            C248,140 256,150 267,150
+            C278,150 286,140 286,125 Z"/>
+
+    <!-- Left microphone detail -->
+    <path
+        android:fillColor="#202020"
+        android:pathData="
+            M131,67
+            L149,53
+            Q154,50 153,57
+            L145,72
+            Q140,77 135,73 Z"/>
+
+    <!-- Right microphone detail -->
+    <path
+        android:fillColor="#202020"
+        android:pathData="
+            M189,67
+            L171,53
+            Q166,50 167,57
+            L175,72
+            Q180,77 185,73 Z"/>
+
+</vector>

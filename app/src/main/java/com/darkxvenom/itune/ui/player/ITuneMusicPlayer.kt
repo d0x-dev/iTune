@@ -7,8 +7,11 @@ import android.content.IntentFilter
 import android.media.AudioManager
 import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -17,7 +20,10 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -444,8 +450,8 @@ fun ITuneMusicPlayer(
         val targetTitleTopPx = with(density) { (statusBarTopDp + 11.dp).toPx() }
         val startTitleLeftPx = with(density) { 24.dp.toPx() }
         val targetTitleLeftPx = with(density) { 70.dp.toPx() }
-        val startTitleEndPx = with(density) { 70.dp.toPx() }
-        val targetTitleEndPx = with(density) { 62.dp.toPx() }
+        val startTitleEndPx = with(density) { 114.dp.toPx() }
+        val targetTitleEndPx = with(density) { 112.dp.toPx() }
 
         val curTitleTopPx = lerpFloat(startTitleTopPx, targetTitleTopPx, panelProgress)
         val curTitleLeftPx = lerpFloat(startTitleLeftPx, targetTitleLeftPx, panelProgress)
@@ -512,13 +518,54 @@ fun ITuneMusicPlayer(
             }
         }
 
-        // ── 5c. Continuous Morphing More Button ──
-        // Initially positioned at the end of the Title & Artist row in player mode,
+        val isFavorite = MusicPlayerState.isFavorite(track.id)
+
+        // ── 5c. Continuous Morphing Star (Favorite / Like) Button ──
+        // Initially positioned beside the 3-dot button at the end of the Title & Artist row in player mode,
+        // glides smoothly upward into the top header next to the 3-dot button when Queue or Lyrics opens.
+        val startStarTopPx = startTitleTopPx + with(density) { 6.dp.toPx() }
+        val targetStarTopPx = with(density) { (statusBarTopDp + 6.dp).toPx() }
+        val startStarLeftPx = with(density) { (maxWidth - 104.dp).toPx() }
+        val targetStarLeftPx = with(density) { (maxWidth - 104.dp).toPx() }
+
+        val curStarTopPx = lerpFloat(startStarTopPx, targetStarTopPx, panelProgress)
+        val curStarLeftPx = lerpFloat(startStarLeftPx, targetStarLeftPx, panelProgress)
+        val curStarSizeDp = lerpDp(36.dp, 44.dp, progressClamped)
+        val curStarIconSizeDp = lerpDp(20.dp, 24.dp, progressClamped)
+        val curStarBgAlpha = lerpFloat(if (isFavorite) 0.22f else 0.14f, 0f, progressClamped)
+
+        Box(
+            modifier = Modifier
+                .zIndex(37f)
+                .offset { IntOffset(curStarLeftPx.roundToInt(), curStarTopPx.roundToInt()) }
+                .size(curStarSizeDp)
+                .clip(CircleShape)
+                .background(Color.White.copy(alpha = curStarBgAlpha))
+                .clickable {
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    MusicPlayerState.toggleFavorite(track.id)
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(
+                    if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_outline
+                ),
+                contentDescription = if (isFavorite) "Favorited" else "Favorite",
+                colorFilter = ColorFilter.tint(
+                    if (isFavorite) Color.White else Color.White.copy(alpha = 0.90f)
+                ),
+                modifier = Modifier.size(curStarIconSizeDp)
+            )
+        }
+
+        // ── 5d. Continuous Morphing More Button ──
+        // Initially positioned at the far right end of the Title & Artist row in player mode,
         // glides smoothly upward into the top-right header corner when Queue or Lyrics opens.
         val startMoreTopPx = startTitleTopPx + with(density) { 6.dp.toPx() }
         val targetMoreTopPx = with(density) { (statusBarTopDp + 6.dp).toPx() }
-        val startMoreLeftPx = with(density) { (maxWidth - 24.dp - 36.dp).toPx() }
-        val targetMoreLeftPx = with(density) { (maxWidth - 12.dp - 44.dp).toPx() }
+        val startMoreLeftPx = with(density) { (maxWidth - 60.dp).toPx() }
+        val targetMoreLeftPx = with(density) { (maxWidth - 56.dp).toPx() }
 
         val curMoreTopPx = lerpFloat(startMoreTopPx, targetMoreTopPx, panelProgress)
         val curMoreLeftPx = lerpFloat(startMoreLeftPx, targetMoreLeftPx, panelProgress)
@@ -593,7 +640,7 @@ fun ITuneMusicPlayer(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(44.dp)
-                        .padding(start = 60.dp, end = 52.dp)
+                        .padding(start = 60.dp, end = 110.dp)
                         .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
@@ -836,59 +883,90 @@ fun ITuneMusicPlayer(
                     )
                 }
 
-                // 2. Center: Shuffle & Repeat Capsule (Only shown when queue or lyrics is open, else empty space)
-                AnimatedVisibility(
-                    visible = isPanelOpen,
-                    enter = fadeIn(tween(200)),
-                    exit = fadeOut(tween(150))
+                // 2. Center: Shuffle & Repeat Capsule (When panel open) OR Earbuds Icon (When player is in main mode)
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(20.dp),
-                        color = Color.White.copy(alpha = 0.18f),
-                        modifier = Modifier.height(38.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(2.dp)
-                        ) {
-                            // Shuffle
-                            IconButton(
-                                onClick = {
-                                    onLyricsInteraction()
-                                    MusicPlayerState.toggleShuffle()
-                                },
-                                modifier = Modifier.size(36.dp)
+                    AnimatedContent(
+                        targetState = isPanelOpen,
+                        transitionSpec = {
+                            fadeIn(tween(200, easing = LinearOutSlowInEasing)) +
+                                scaleIn(initialScale = 0.92f, animationSpec = tween(200, easing = LinearOutSlowInEasing)) togetherWith
+                                fadeOut(tween(160, easing = FastOutLinearInEasing)) +
+                                scaleOut(targetScale = 0.92f, animationSpec = tween(160, easing = FastOutLinearInEasing))
+                        },
+                        label = "centerControlsTransition"
+                    ) { panelOpen ->
+                        if (panelOpen) {
+                            Surface(
+                                shape = RoundedCornerShape(20.dp),
+                                color = Color.White.copy(alpha = 0.18f),
+                                modifier = Modifier.height(38.dp)
                             ) {
-                                Icon(
-                                    painter = painterResource(
-                                        if (MusicPlayerState.shuffleEnabled) R.drawable.shuffle_on else R.drawable.shuffle
-                                    ),
-                                    contentDescription = "Shuffle",
-                                    tint = if (MusicPlayerState.shuffleEnabled) Color.White else Color.White.copy(alpha = 0.45f),
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                                ) {
+                                    // Shuffle
+                                    IconButton(
+                                        onClick = {
+                                            onLyricsInteraction()
+                                            MusicPlayerState.toggleShuffle()
+                                        },
+                                        modifier = Modifier.size(36.dp)
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(
+                                                if (MusicPlayerState.shuffleEnabled) R.drawable.shuffle_on else R.drawable.shuffle
+                                            ),
+                                            contentDescription = "Shuffle",
+                                            tint = if (MusicPlayerState.shuffleEnabled) Color.White else Color.White.copy(alpha = 0.45f),
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
 
-                            // Repeat
-                            IconButton(
-                                onClick = {
-                                    onLyricsInteraction()
-                                    MusicPlayerState.toggleRepeat()
-                                },
-                                modifier = Modifier.size(36.dp)
+                                    // Repeat
+                                    IconButton(
+                                        onClick = {
+                                            onLyricsInteraction()
+                                            MusicPlayerState.toggleRepeat()
+                                        },
+                                        modifier = Modifier.size(36.dp)
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(
+                                                when (MusicPlayerState.repeatMode) {
+                                                    Player.REPEAT_MODE_ONE -> R.drawable.repeat_one_on
+                                                    Player.REPEAT_MODE_ALL -> R.drawable.repeat_on
+                                                    else -> R.drawable.repeat
+                                                }
+                                            ),
+                                            contentDescription = "Repeat",
+                                            tint = if (MusicPlayerState.repeatMode != Player.REPEAT_MODE_OFF) Color.White else Color.White.copy(alpha = 0.45f),
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            // Earbuds icon in between queue and lyrics when player is in normal mode
+                            Box(
+                                modifier = Modifier
+                                    .size(46.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(alpha = 0.12f))
+                                    .clickable {
+                                        onLyricsInteraction()
+                                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                    },
+                                contentAlignment = Alignment.Center
                             ) {
-                                Icon(
-                                    painter = painterResource(
-                                        when (MusicPlayerState.repeatMode) {
-                                            Player.REPEAT_MODE_ONE -> R.drawable.repeat_one_on
-                                            Player.REPEAT_MODE_ALL -> R.drawable.repeat_on
-                                            else -> R.drawable.repeat
-                                        }
-                                    ),
-                                    contentDescription = "Repeat",
-                                    tint = if (MusicPlayerState.repeatMode != Player.REPEAT_MODE_OFF) Color.White else Color.White.copy(alpha = 0.45f),
-                                    modifier = Modifier.size(20.dp)
+                                Image(
+                                    painter = painterResource(R.drawable.ic_earbuds),
+                                    contentDescription = "Audio Output",
+                                    modifier = Modifier.size(width = 28.dp, height = 21.dp)
                                 )
                             }
                         }

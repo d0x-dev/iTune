@@ -2,6 +2,7 @@ package com.darkxvenom.itune.ui.home
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -22,6 +23,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,6 +53,7 @@ import com.darkxvenom.itune.ui.components.springOverscroll
 import com.darkxvenom.itune.ui.library.LibraryScreen
 import com.darkxvenom.itune.ui.player.ITuneMusicPlayer
 import com.darkxvenom.itune.ui.player.SheetMorph
+import com.darkxvenom.itune.ui.player.miniPlayerGestures
 import com.darkxvenom.itune.ui.player.rememberSheetMorph
 import com.darkxvenom.itune.ui.player.sheetMorphDrag
 import com.darkxvenom.itune.ui.search.SearchScreen
@@ -71,6 +74,7 @@ fun HomeScreen(
     val context = LocalContext.current
     val listState = rememberLazyListState()
     val overscrollState = rememberSpringOverscrollState()
+    val coroutineScope = rememberCoroutineScope()
 
     var currentScreen by remember { mutableStateOf(AppScreen.HOME) }
     var selectedTab by remember { mutableStateOf(NavTab.HOME) }
@@ -366,8 +370,27 @@ fun HomeScreen(
         ) {
             val realTrack = MusicPlayerState.currentTrack
             if (realTrack != null) {
+                val miniPlayerDismissY = remember { Animatable(0f) }
+                val density = LocalDensity.current
+                val dismissThresholdPx = with(density) { 45.dp.toPx() }
+                val dismissTargetPx = with(density) { 160.dp.toPx() }
+
                 FloatingMiniPlayer(
-                    modifier = Modifier.sheetMorphDrag(sheetMorph),
+                    modifier = Modifier
+                        .graphicsLayer {
+                            translationY = miniPlayerDismissY.value
+                            alpha = (1f - (miniPlayerDismissY.value / dismissTargetPx)).coerceIn(0f, 1f)
+                        }
+                        .miniPlayerGestures(
+                            morph = sheetMorph,
+                            dismissOffset = miniPlayerDismissY,
+                            scope = coroutineScope,
+                            dismissThresholdPx = dismissThresholdPx,
+                            dismissTargetPx = dismissTargetPx,
+                            onDismiss = {
+                                MusicPlayerState.close()
+                            }
+                        ),
                     currentTrack = currentTrack,
                     realTrack = realTrack,
                     isPlaying = MusicPlayerState.isPlaying,

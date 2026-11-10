@@ -98,11 +98,33 @@ object MusicPlayerState : Player.Listener {
     var lyricsLoading by mutableStateOf(false)
         private set
 
+    val favoriteIds = mutableStateListOf<String>()
+
+    fun isFavorite(trackId: String): Boolean = favoriteIds.contains(trackId)
+
+    fun toggleFavorite(trackId: String) {
+        if (favoriteIds.contains(trackId)) {
+            favoriteIds.remove(trackId)
+        } else {
+            favoriteIds.add(trackId)
+        }
+        val ctx = appContext ?: return
+        ctx.getSharedPreferences("itune_favorites", Context.MODE_PRIVATE)
+            .edit()
+            .putStringSet("favorite_track_ids", favoriteIds.toSet())
+            .apply()
+    }
+
     fun init(context: Context) {
         if (exoPlayer != null) return
         val appContext = context.applicationContext
         this.appContext = appContext
         MusicBackend.init(appContext)
+
+        val prefs = appContext.getSharedPreferences("itune_favorites", Context.MODE_PRIVATE)
+        val saved = prefs.getStringSet("favorite_track_ids", emptySet()) ?: emptySet()
+        favoriteIds.clear()
+        favoriteIds.addAll(saved)
 
         val httpDataSourceFactory = OkHttpDataSource.Factory(Net.client)
             .setUserAgent(Net.USER_AGENT)
