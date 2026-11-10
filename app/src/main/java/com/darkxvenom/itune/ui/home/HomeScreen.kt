@@ -471,7 +471,11 @@ fun HomeScreen(
         }
 
         // Apple Dark Mode Gradient Scrim for Floating Bottom Controls
-        if (!artistHostController.isOpen) {
+        if (
+            !artistHostController.isOpen &&
+            !(currentScreen == AppScreen.LIBRARY && libraryHostController.isOpen) &&
+            !(currentScreen == AppScreen.BROWSE && activeMoodCategory != null)
+        ) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -583,7 +587,14 @@ fun HomeScreen(
                 },
                 isSearchActive = currentScreen == AppScreen.SEARCH && !artistHostController.isOpen,
                 onTabSelected = { tab ->
+                    val wasLibraryRootTap =
+                        tab == NavTab.LIBRARY &&
+                            currentScreen == AppScreen.LIBRARY &&
+                            !artistHostController.isOpen
                     artistHostController.clearAll()
+                    if (wasLibraryRootTap) {
+                        libraryHostController.clearAll()
+                    }
                     selectedTab = tab
                     currentScreen = when (tab) {
                         NavTab.NEW -> AppScreen.BROWSE
@@ -609,6 +620,9 @@ fun HomeScreen(
 
         // iTube Frosted Popups (HeldContextMenu & IosMenuPopover) over bottom bars
         ArtistScreenOverlayPopups(controller = artistHostController)
+        if (!artistHostController.isOpen) {
+            LibraryScreenOverlayPopups(controller = libraryHostController)
+        }
 
         // Apple iOS-styled Avatar Selection Modal Dialog
         if (showAvatarDialog) {
