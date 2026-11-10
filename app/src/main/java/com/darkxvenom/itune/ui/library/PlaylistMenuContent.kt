@@ -740,3 +740,113 @@ fun IosCreatePlaylistMenuView(
 /**
  * In-place playlist picker view styled directly inside Search's AppleFrostedPopupOverlay.
  */
+@Composable
+fun AppleSheetAddToPlaylistContent(
+    payload: PendingPlaylistPayload,
+    onCreateNewClick: () -> Unit,
+    onCompleted: () -> Unit,
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(Unit) { LibraryStore.ensureInit(context) }
+    val userPlaylists by LibraryStore.userPlaylists.collectAsStateWithLifecycle()
+    val (resolvedSongs, loading) = rememberResolvedPayloadSongs(payload)
+    var busy by remember(payload) { mutableStateOf(false) }
+    val singleId = resolvedSongs.singleOrNull()?.id
+
+    Column(Modifier.fillMaxWidth()) {
+        if (loading || busy) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                CircularProgressIndicator(
+                    color = LibraryCrimsonAccent,
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(16.dp),
+                )
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    text = if (busy) "Adding to playlist..." else "Preparing tracks...",
+                    color = Color.White.copy(alpha = 0.72f),
+                    fontSize = 14.sp,
+                )
+            }
+            PopupMenuDivider()
+        }
+
+        if (userPlaylists.isNotEmpty()) {
+            Text(
+                text = "YOUR PLAYLISTS",
+                color = Color.White.copy(alpha = 0.50f),
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.8.sp,
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 4.dp),
+            )
+            userPlaylists.forEachIndexed { index, pl ->
+                val alreadyIn = singleId != null && pl.songs.any { it.id == singleId }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .alpha(if (busy) 0.5f else 1f)
+                        .clickable(enabled = !busy) {
+                            busy = true
+                            scope.launch {
+                                try {
+                                    resolveAndAddToPlaylist(context, pl, payload, resolvedSongs)
+                                    onCompleted()
+                                } finally {
+                                    busy = false
+                                }
+                            }
+                        }
+                        .padding(horizontal = 20.dp, vertical = 11.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    PlaylistCollageAvatar(
+                        artworkUrls = pl.artworkUrls,
+                        size = 42.dp,
+                        cornerRadius = 10.dp,
+                    )
+                    Spacer(Modifier.width(14.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            text = pl.name,
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        Text(
+                            text = if (pl.songs.size == 1) "1 song" else "${pl.songs.size} songs",
+                            color = Color.White.copy(alpha = 0.62f),
+                            fontSize = 12.sp,
+                        )
+                    }
+                    Icon(
+                        imageVector = if (alreadyIn) Icons.Rounded.Check else Icons.Rounded.Add,
+                        contentDescription = null,
+                        tint = if (alreadyIn) LibraryCrimsonAccent else Color.White.copy(alpha = 0.78f),
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+                PopupMenuDivider()
+            }
+        }
+
+        MorePopupVectorOptionRow(
+            icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
+            title = "Create New Playlist",
+            iconTint = LibraryCrimsonAccent,
+            onClick = { if (!busy) onCreateNewClick() },
+        )
+    }
+}
+
+/**
+ * In-place "Create New Playlist" name form styled natively inside Search's AppleFrostedPopupOverlay.
+ */
