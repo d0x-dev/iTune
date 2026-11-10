@@ -824,3 +824,112 @@ fun LibraryFrostedScreenScaffold(
     }
 }
 
+@Composable
+fun LibraryTopBarActionButtons(
+    controller: LibraryHostController,
+    showSort: Boolean,
+    onMoreClick: () -> Unit,
+) {
+    IconButton(onClick = controller::toggleSearch) {
+        Icon(
+            imageVector = ITubeIcons.Search,
+            contentDescription = "Search",
+            tint = if (controller.searchOpen) LibraryCrimsonAccent else Color.White,
+            modifier = Modifier.size(21.dp),
+        )
+    }
+    if (showSort) {
+        IconButton(
+            onClick = controller::openSortMenu,
+            modifier = Modifier.menuAnchor(),
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.Sort,
+                contentDescription = "Sort",
+                tint = Color.White,
+                modifier = Modifier.size(21.dp),
+            )
+        }
+    }
+    IconButton(
+        onClick = onMoreClick,
+        modifier = Modifier.menuAnchor(),
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.MoreHoriz,
+            contentDescription = stringResource(R.string.more),
+            tint = Color.White,
+            modifier = Modifier.size(22.dp),
+        )
+    }
+}
+
+@Composable
+fun LibraryGlassPillButton(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    filled: Boolean = false,
+    accentTint: Color? = null,
+    height: Dp = 50.dp,
+    enabled: Boolean = true,
+) {
+    val haptics = rememberHaptics()
+    val glassActive = LocalLiquidGlassEnabled.current && isGlassSupported()
+    val contentColor = if (filled) Color.Black else Color.White
+
+    Row(
+        modifier = modifier
+            .height(height)
+            .alpha(if (enabled) 1f else 0.42f)
+            .clip(CircleShape)
+            .then(
+                if (filled) {
+                    Modifier.background(Color.White)
+                } else if (glassActive) {
+                    Modifier
+                        .liquidGlass(
+                            shape = CircleShape,
+                            surfaceTint = accentTint?.copy(alpha = 0.24f),
+                        )
+                        .background(
+                            color = accentTint?.copy(alpha = 0.14f) ?: Color.White.copy(alpha = 0.08f),
+                            shape = CircleShape,
+                        )
+                        .border(0.8.dp, Color.White.copy(alpha = 0.20f), CircleShape)
+                } else {
+                    Modifier
+                        .lightweightLiquidGlass(
+                            shape = CircleShape,
+                            fallbackColor = accentTint?.copy(alpha = 0.24f) ?: Color(0x33FFFFFF),
+                        )
+                        .border(0.8.dp, Color.White.copy(alpha = 0.18f), CircleShape)
+                },
+            )
+            .clickable(enabled = enabled) {
+                haptics.play(Haptic.Resume)
+                onClick()
+            }
+            .padding(horizontal = 18.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = if (!filled && accentTint != null) accentTint else contentColor,
+            modifier = Modifier.size(18.dp),
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(
+            text = label,
+            color = contentColor,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
