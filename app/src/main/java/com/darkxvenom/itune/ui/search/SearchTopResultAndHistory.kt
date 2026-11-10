@@ -610,3 +610,139 @@ private fun TopResultActionPill(
     }
 }
 
+@Composable
+internal fun SearchHistoryHeaderRow(
+    hasHistory: Boolean,
+    onClearAll: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "Recent Searches",
+            fontSize = 15.5.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.White.copy(alpha = 0.90f)
+        )
+        if (hasHistory) {
+            Text(
+                text = "Clear",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = AppleMusicRed,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable(onClick = onClearAll)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            )
+        }
+    }
+}
+
+@Composable
+internal fun SearchQuerySuggestionRow(
+    text: String,
+    highlightQuery: String,
+    isHistory: Boolean,
+    onSelect: () -> Unit,
+    onFillQuery: () -> Unit,
+    onRemoveHistory: (() -> Unit)? = null,
+    showBottomDivider: Boolean = true,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onSelect)
+                .padding(start = 16.dp, end = 8.dp, top = 11.dp, bottom = 11.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = if (isHistory) Icons.Rounded.History else Icons.Rounded.Search,
+                contentDescription = null,
+                tint = if (isHistory) Color.White.copy(alpha = 0.65f) else Color(0xFF8E8E93),
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(14.dp))
+
+            val annotated = remember(text, highlightQuery) {
+                buildAnnotatedString {
+                    val needle = highlightQuery.trim()
+                    if (needle.isEmpty()) {
+                        withStyle(SpanStyle(color = Color.White, fontWeight = FontWeight.Normal)) {
+                            append(text)
+                        }
+                    } else {
+                        val matchIdx = text.indexOf(needle, ignoreCase = true)
+                        if (matchIdx >= 0) {
+                            withStyle(SpanStyle(color = Color.White.copy(alpha = 0.72f))) {
+                                append(text.substring(0, matchIdx))
+                            }
+                            withStyle(SpanStyle(color = Color.White, fontWeight = FontWeight.SemiBold)) {
+                                append(text.substring(matchIdx, matchIdx + needle.length))
+                            }
+                            withStyle(SpanStyle(color = Color.White.copy(alpha = 0.78f))) {
+                                append(text.substring(matchIdx + needle.length))
+                            }
+                        } else {
+                            withStyle(SpanStyle(color = Color.White)) {
+                                append(text)
+                            }
+                        }
+                    }
+                }
+            }
+
+            Text(
+                text = annotated,
+                fontSize = 15.5.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
+
+            IconButton(
+                onClick = onFillQuery,
+                modifier = Modifier.size(34.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.NorthWest,
+                    contentDescription = "Fill search query",
+                    tint = Color(0xFF8E8E93),
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+
+            if (onRemoveHistory != null) {
+                IconButton(
+                    onClick = onRemoveHistory,
+                    modifier = Modifier.size(34.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = "Remove from history",
+                        tint = Color(0xFF8E8E93),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+        }
+        if (showBottomDivider) {
+            HorizontalDivider(
+                modifier = Modifier.padding(start = 50.dp, end = 16.dp),
+                thickness = 0.5.dp,
+                color = Color.White.copy(alpha = 0.08f)
+            )
+        }
+    }
+}
+
+/**
+ * Real-time skeleton below TopSpringLoadingBar shown while a submitted search query is loading.
+ */
