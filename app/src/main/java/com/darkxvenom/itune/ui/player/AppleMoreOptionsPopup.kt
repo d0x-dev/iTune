@@ -657,7 +657,7 @@ fun AppleMoreOptionsPopup(
                 highlighted = isFavorite,
                 onClick = {
                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                    MusicPlayerState.toggleFavorite(track.id)
+                    MusicPlayerState.toggleFavorite(track)
                 }
             )
         }
