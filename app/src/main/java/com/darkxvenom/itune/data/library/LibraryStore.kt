@@ -287,3 +287,92 @@ object LibraryStore {
         }
     }
 
+    fun saveLikedSong(context: Context, track: MusicTrack) {
+        ensureInit(context)
+        val entry = SavedSongMetadata.fromTrack(track)
+        synchronized(this) {
+            val current = _likedSongs.value.filterNot { it.id == track.id }
+            val updated = listOf(entry) + current
+            _likedSongs.value = updated
+            persistSongs(KEY_LIKED_SONGS, updated)
+        }
+    }
+
+    fun removeLikedSong(context: Context, trackId: String) {
+        ensureInit(context)
+        synchronized(this) {
+            val updated = _likedSongs.value.filterNot { it.id == trackId }
+            _likedSongs.value = updated
+            persistSongs(KEY_LIKED_SONGS, updated)
+        }
+    }
+
+    fun recordRecentSong(context: Context, track: MusicTrack) {
+        ensureInit(context)
+        val entry = SavedSongMetadata.fromTrack(track)
+        synchronized(this) {
+            val current = _recentSongs.value.filterNot { it.id == track.id }
+            val updated = (listOf(entry) + current).take(MAX_RECENT_SONGS)
+            _recentSongs.value = updated
+            persistSongs(KEY_RECENT_SONGS, updated)
+        }
+    }
+
+    fun saveArtist(
+        context: Context,
+        browseId: String,
+        title: String,
+        subtitle: String = "Artist",
+        thumbnailUrl: String? = null,
+    ) {
+        ensureInit(context)
+        if (browseId.isBlank()) return
+        val entry = SavedCollectionEntry(
+            browseId = browseId,
+            title = title.ifBlank { "Artist" },
+            subtitle = subtitle.ifBlank { "Artist" },
+            thumbnailUrl = thumbnailUrl,
+            type = BrowseType.ARTIST,
+        )
+        synchronized(this) {
+            val current = _likedArtists.value.filterNot { it.browseId == browseId }
+            val updated = listOf(entry) + current
+            _likedArtists.value = updated
+            persistCollections(KEY_ARTISTS, updated)
+        }
+        if (thumbnailUrl.isNullOrBlank()) hydrateArtist(context, browseId)
+    }
+
+    fun updateArtistMetadataIfSaved(
+        context: Context,
+        browseId: String,
+        title: String,
+        subtitle: String,
+        thumbnailUrl: String?,
+    ) {
+        ensureInit(context)
+        synchronized(this) {
+            val idx = _likedArtists.value.indexOfFirst { it.browseId == browseId }
+            if (idx < 0) return
+            val existing = _likedArtists.value[idx]
+            val updatedItem = existing.copy(
+                title = title.ifBlank { existing.title },
+                subtitle = subtitle.ifBlank { existing.subtitle },
+                thumbnailUrl = thumbnailUrl ?: existing.thumbnailUrl,
+            )
+            if (updatedItem == existing) return
+            val next = _likedArtists.value.toMutableList().apply { set(idx, updatedItem) }
+            _likedArtists.value = next
+            persistCollections(KEY_ARTISTS, next)
+        }
+    }
+
+    fun removeArtist(context: Context, browseId: String) {
+        ensureInit(context)
+        synchronized(this) {
+            val updated = _likedArtists.value.filterNot { it.browseId == browseId }
+            _likedArtists.value = updated
+            persistCollections(KEY_ARTISTS, updated)
+        }
+    }
+
