@@ -434,3 +434,86 @@ private fun NewReleaseSectionHeaderRow(
     }
 }
 
+@Composable
+private fun AppleSpotlightReleaseCard(
+    release: NewReleaseAlbum,
+    onClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .width(196.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick,
+            ),
+    ) {
+        Box(
+            modifier = Modifier
+                .size(196.dp)
+                .clip(RoundedCornerShape(14.dp))
+                .background(Color(0xFF1C1C1E))
+                .border(0.6.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(14.dp)),
+        ) {
+            AsyncImage(
+                model = release.thumbnailUrl?.artworkAt(CARD_ART_PX),
+                contentDescription = release.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            0.0f to Color.Transparent,
+                            0.65f to Color.Transparent,
+                            1.0f to Color.Black.copy(alpha = 0.45f),
+                        ),
+                    ),
+            )
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(8.dp)
+                    .clip(CircleShape)
+                    .background(Color.Black.copy(alpha = 0.56f))
+                    .border(0.5.dp, Color.White.copy(alpha = 0.18f), CircleShape)
+                    .padding(horizontal = 8.dp, vertical = 3.dp),
+            ) {
+                Text(
+                    text = release.releaseType.label.uppercase(),
+                    color = Color.White.copy(alpha = 0.92f),
+                    fontSize = 9.5.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.4.sp,
+                )
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = release.title,
+                color = Color.White,
+                fontSize = 14.5.sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            if (release.isExplicit) {
+                Spacer(Modifier.width(5.dp))
+                ExplicitBadge(color = Color.White.copy(alpha = 0.65f))
+            }
+        }
+        Spacer(Modifier.height(2.dp))
+        Text(
+            text = release.subtitleLine,
+            color = Color.White.copy(alpha = 0.62f),
+            fontSize = 12.5.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
