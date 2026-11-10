@@ -405,3 +405,149 @@ fun IosInMenuPlaylistHost(
  * In-place Apple-styled iOS popover step for selecting a pre-created playlist first
  * or switching to New Playlist inside the exact same IosMenuPopover / HeldContextMenu.
  */
+@Composable
+fun IosAddToPlaylistMenuView(
+    payload: PendingPlaylistPayload,
+    onBack: () -> Unit,
+    onCreateNewClick: () -> Unit,
+    onCompleted: () -> Unit,
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val colors = iosMenuColors()
+    val accent = MaterialTheme.colorScheme.primary
+    LaunchedEffect(Unit) { LibraryStore.ensureInit(context) }
+    val userPlaylists by LibraryStore.userPlaylists.collectAsStateWithLifecycle()
+    val (resolvedSongs, loading) = rememberResolvedPayloadSongs(payload)
+    var busy by remember(payload) { mutableStateOf(false) }
+    val singleId = resolvedSongs.singleOrNull()?.id
+
+    BackHandler(onBack = onBack)
+
+    Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+        // Compact iOS Menu Header with < Back
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable(onClick = onBack)
+                    .padding(horizontal = 6.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = SfIcons.ArrowBack,
+                    contentDescription = "Back",
+                    tint = accent,
+                    modifier = Modifier.size(16.dp),
+                )
+                Spacer(Modifier.width(3.dp))
+                Text(
+                    text = "Back",
+                    color = accent,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium,
+                )
+            }
+            Spacer(Modifier.width(6.dp))
+            Text(
+                text = "Add to Playlist",
+                color = colors.label,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
+            )
+            if (loading || busy) {
+                CircularProgressIndicator(
+                    color = accent,
+                    strokeWidth = 1.8.dp,
+                    modifier = Modifier.size(15.dp),
+                )
+            }
+        }
+
+        IosMenuSeparator(colors)
+
+        // Pre-created Playlists FIRST!
+        if (userPlaylists.isNotEmpty()) {
+            userPlaylists.forEach { pl ->
+                val alreadyIn = singleId != null && pl.songs.any { it.id == singleId }
+                val interaction = remember { MutableInteractionSource() }
+                val pressed by interaction.collectIsPressedAsState()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(if (pressed) colors.pressed else Color.Transparent)
+                        .clickable(
+                            interactionSource = interaction,
+                            indication = null,
+                            enabled = !busy,
+                        ) {
+                            busy = true
+                            scope.launch {
+                                try {
+                                    resolveAndAddToPlaylist(context, pl, payload, resolvedSongs)
+                                    onCompleted()
+                                } finally {
+                                    busy = false
+                                }
+                            }
+                        }
+                        .padding(horizontal = 10.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    PlaylistCollageAvatar(
+                        artworkUrls = pl.artworkUrls,
+                        size = 38.dp,
+                        cornerRadius = 9.dp,
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            text = pl.name,
+                            color = colors.label,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Normal,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        Text(
+                            text = if (pl.songs.size == 1) "1 song" else "${pl.songs.size} songs",
+                            color = colors.secondaryLabel,
+                            fontSize = 12.sp,
+                            maxLines = 1,
+                        )
+                    }
+                    Icon(
+                        imageVector = if (alreadyIn) SfIcons.Check else Icons.Rounded.Add,
+                        contentDescription = null,
+                        tint = if (alreadyIn) accent else colors.secondaryLabel,
+                        modifier = Modifier.size(18.dp),
+                    )
+                }
+            }
+            IosMenuSeparator(colors)
+        }
+
+        // Create New Playlist option inside the exact same popover
+        IosMenuRow(
+            label = "New Playlist...",
+            icon = SfIcons.AddToPlaylist,
+            iconTint = LibraryCrimsonAccent,
+            onClick = { if (!busy) onCreateNewClick() },
+        )
+    }
+}
+
+/**
+ * In-place Apple-styled iOS popover step for naming & creating a new playlist
+ * (empty or initialized with pending tracks so its avatar builds from added song thumbnails).
+ */
