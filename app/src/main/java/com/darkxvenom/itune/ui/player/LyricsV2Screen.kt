@@ -243,18 +243,19 @@ internal fun AirBeatsLyricsV2Content(
         listOf(HEAD_LYRICS_ENTRY) + mapped
     }
 
-    val isSynced = remember(entriesWithWords) { entriesWithWords.size > 1 }
+    val isSynced = remember(entriesWithWords) { entriesWithWords.any { it.time > 0L } }
 
     var currentPositionMs by remember { mutableLongStateOf(0L) }
     var currentLineIndex by remember { mutableIntStateOf(0) }
     var scrollFocusIndex by remember { mutableIntStateOf(0) }
 
-    // 60fps frame loop: word glow follows exact playhead; scroll target leads by adaptive 350-500ms while playing
+    // 60fps frame loop: word glow follows playhead + per-track offset; scroll target leads adaptively while playing
     LaunchedEffect(entriesWithWords, isSynced) {
         if (!isSynced || entriesWithWords.isEmpty()) return@LaunchedEffect
         while (isActive) {
             val sliderPos = sliderPositionProvider()
-            val pos = sliderPos ?: MusicPlayerState.positionMs
+            val pos = ((sliderPos ?: MusicPlayerState.positionMs) + MusicPlayerState.lyricsOffsetMs)
+                .coerceAtLeast(0L)
 
             currentPositionMs = pos
             currentLineIndex = findCurrentLineIndex(entriesWithWords, pos)
@@ -305,7 +306,7 @@ internal fun AirBeatsLyricsV2Content(
         }
     }
 
-    // Top-anchored staggered curve auto-scroll matching BitChord's exact handover
+    // Top-anchored staggered curve auto-scroll matching iTube's exact handover
     LaunchedEffect(scrollFocusIndex, isManualScrolling, entriesWithWords) {
         if (isManualScrolling || !isSynced) return@LaunchedEffect
         if (scrollFocusIndex < 0 || scrollFocusIndex >= entriesWithWords.size) return@LaunchedEffect
