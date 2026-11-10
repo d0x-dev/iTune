@@ -85,14 +85,30 @@ object ArtistStateStore {
 
     fun isReleaseSaved(browseId: String): Boolean = browseId in _savedReleases.value
 
-    fun toggleReleaseSaved(context: Context, browseId: String): Boolean {
+    fun toggleReleaseSaved(
+        context: Context,
+        browseId: String,
+        title: String = "",
+        subtitle: String = "",
+        thumbnailUrl: String? = null,
+        type: BrowseType = BrowseType.OTHER,
+    ): Boolean {
         ensureInit(context)
         val current = _savedReleases.value.toMutableSet()
         val nowSaved = if (browseId in current) {
             current.remove(browseId)
+            LibraryStore.removeRelease(context, browseId)
             false
         } else {
             current.add(browseId)
+            LibraryStore.saveRelease(
+                context = context,
+                browseId = browseId,
+                title = title,
+                subtitle = subtitle,
+                thumbnailUrl = thumbnailUrl,
+                type = type,
+            )
             true
         }
         _savedReleases.value = current
