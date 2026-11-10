@@ -458,7 +458,9 @@ object MusicBackend {
             author = subtitle.ifBlank { if (isAlbum) "Album" else "Playlist" },
             thumbnailUrl = thumbUrl,
             isAlbum = isAlbum,
-            watchPlaylistId = watchPlaylistId
+            watchPlaylistId = watchPlaylistId,
+            isExplicit = responsive.opt("badges").hasExplicitBadge() ||
+                responsive.opt("subtitleBadges").hasExplicitBadge()
         )
     }
 
@@ -521,7 +523,9 @@ object MusicBackend {
                 album = album,
                 albumId = albumId,
                 thumbnailUrl = thumbUrl,
-                durationSec = durationSec
+                durationSec = durationSec,
+                isExplicit = responsive.opt("badges").hasExplicitBadge() ||
+                    responsive.opt("subtitleBadges").hasExplicitBadge()
             )
         }
 
@@ -557,7 +561,8 @@ object MusicBackend {
                 title = title.ifBlank { "Unknown Title" },
                 artists = artists.ifBlank { "Various Artists" },
                 artistId = artistId,
-                thumbnailUrl = thumbUrl
+                thumbnailUrl = thumbUrl,
+                isExplicit = twoRow.opt("subtitleBadges").hasExplicitBadge()
             )
         }
 
