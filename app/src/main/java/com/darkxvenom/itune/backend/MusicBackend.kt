@@ -235,6 +235,75 @@ object MusicBackend {
         }.getOrDefault(emptyList())
     }
 
+    private fun parseNewReleaseTwoRowItem(twoRow: JSONObject): NewReleaseAlbum? {
+        val browseEndpoint = twoRow.optJSONObject("navigationEndpoint")?.optJSONObject("browseEndpoint")
+        val browseId = browseEndpoint?.optString("browseId")?.takeIf { it.isNotBlank() } ?: return null
+
+        val title = buildRunsText(twoRow.optJSONObject("title")?.optJSONArray("runs")).ifBlank { return null }
+
+        val playlistId = twoRow.optJSONObject("thumbnailOverlay")
+            ?.optJSONObject("musicItemThumbnailOverlayRenderer")
+            ?.optJSONObject("content")
+            ?.optJSONObject("musicPlayButtonRenderer")
+            ?.optJSONObject("playNavigationEndpoint")
+            ?.optJSONObject("watchPlaylistEndpoint")
+            ?.optString("playlistId")
+            ?.takeIf { it.isNotBlank() }
+
+        val subtitleRuns = twoRow.optJSONObject("subtitle")?.optJSONArray("runs")
+        val segments = extractSegmentedRuns(subtitleRuns)
+        val firstSegText = segments.firstOrNull()?.first.orEmpty()
+        val lowerFirst = firstSegText.trim().lowercase()
+        val startsWithReleaseType = lowerFirst in setOf("album", "albums", "single", "singles", "ep", "eps")
+
+        val releaseType = if (startsWithReleaseType) {
+            ReleaseType.fromLabel(firstSegText)
+        } else {
+            val hasSingle = segments.any { it.first.equals("Single", ignoreCase = true) }
+            val hasEp = segments.any { it.first.equals("EP", ignoreCase = true) }
+            when {
+                hasSingle -> ReleaseType.SINGLE
+                hasEp -> ReleaseType.EP
+                else -> ReleaseType.ALBUM
+            }
+        }
+
+        val yearRegex = Regex("\\d{4}")
+        val year = segments.asReversed().firstNotNullOfOrNull { seg ->
+            if (yearRegex.matches(seg.first.trim())) seg.first.trim().toIntOrNull() else null
+        }
+
+        val artistSegment = when {
+            startsWithReleaseType -> segments.getOrNull(1)
+            else -> segments.firstOrNull { !yearRegex.matches(it.first.trim()) }
+        }
+        val artist = artistSegment?.first?.takeIf { it.isNotBlank() } ?: releaseType.label
+        val artistId = artistSegment?.second
+
+        val thumbUrl = twoRow.optJSONObject("thumbnailRenderer")
+            ?.optJSONObject("musicThumbnailRenderer")
+            ?.optJSONObject("thumbnail")
+            ?.optJSONArray("thumbnails")
+            ?.let { thumbs -> thumbs.optJSONObject(thumbs.length() - 1)?.optString("url") }
+            ?.takeIf { it.isNotBlank() }
+            ?.highQualityThumbnail()
+
+        return NewReleaseAlbum(
+            browseId = browseId,
+            playlistId = playlistId,
+            title = title,
+            artist = artist,
+            artistId = artistId,
+            year = year,
+            releaseType = releaseType,
+            thumbnailUrl = thumbUrl,
+            isExplicit = twoRow.opt("subtitleBadges").hasExplicitBadge()
+        )
+    }
+
+    /**
+     * Fetches AirBeats "Moods & moments" navigation items from `FEmusic_moods_and_genres`.
+     */
     suspend fun getOrLoadStreamInfo(videoId: String): StreamInfo = withContext(Dispatchers.IO) {
         val now = System.currentTimeMillis()
         streamCache[videoId]?.let { cached ->
