@@ -517,3 +517,113 @@ private fun AppleSpotlightReleaseCard(
     }
 }
 
+@Composable
+private fun AppleReleaseGridCard(
+    release: NewReleaseAlbum,
+    onClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick,
+            ),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color(0xFF1C1C1E))
+                .border(0.5.dp, Color.White.copy(alpha = 0.10f), RoundedCornerShape(12.dp)),
+        ) {
+            AsyncImage(
+                model = release.thumbnailUrl?.artworkAt(CARD_ART_PX),
+                contentDescription = release.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
+        Spacer(Modifier.height(7.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = release.title,
+                color = Color.White,
+                fontSize = 14.5.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = (-0.2).sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            if (release.isExplicit) {
+                Spacer(Modifier.width(5.dp))
+                ExplicitBadge(color = Color.White.copy(alpha = 0.65f))
+            }
+        }
+        Spacer(Modifier.height(2.dp))
+        Text(
+            text = release.subtitleLine,
+            color = Color.White.copy(alpha = 0.62f),
+            fontSize = 12.5.sp,
+            letterSpacing = (-0.1).sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Composable
+private fun FilterCategoryEmptyNotice(label: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 36.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = "No new $label available right now",
+            color = AppleTextSecondary,
+            fontSize = 14.5.sp,
+        )
+    }
+}
+
+@Composable
+private fun NewReleasesSkeletonGrid() {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            repeat(2) {
+                Column(Modifier.width(196.dp)) {
+                    ShimmerBox(Modifier.size(196.dp), RoundedCornerShape(14.dp))
+                    Spacer(Modifier.height(8.dp))
+                    ShimmerBox(Modifier.fillMaxWidth(0.75f).height(14.dp), RoundedCornerShape(5.dp))
+                    Spacer(Modifier.height(5.dp))
+                    ShimmerBox(Modifier.fillMaxWidth(0.55f).height(11.dp), RoundedCornerShape(5.dp))
+                }
+            }
+        }
+        ShimmerBox(Modifier.fillMaxWidth().height(36.dp), RoundedCornerShape(9.dp))
+        repeat(2) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                repeat(2) {
+                    Column(Modifier.weight(1f)) {
+                        ShimmerBox(Modifier.fillMaxWidth().aspectRatio(1f), RoundedCornerShape(12.dp))
+                        Spacer(Modifier.height(8.dp))
+                        ShimmerBox(Modifier.fillMaxWidth(0.72f).height(14.dp), RoundedCornerShape(5.dp))
+                        Spacer(Modifier.height(5.dp))
+                        ShimmerBox(Modifier.fillMaxWidth(0.52f).height(11.dp), RoundedCornerShape(5.dp))
+                    }
+                }
+            }
+        }
+    }
+}
