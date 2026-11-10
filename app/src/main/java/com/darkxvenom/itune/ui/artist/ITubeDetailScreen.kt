@@ -177,6 +177,7 @@ import com.darkxvenom.itune.ui.artist.icons.ITubeIcons
 import com.darkxvenom.itune.ui.artist.theme.ArtworkPalette
 import com.darkxvenom.itune.ui.artist.theme.ITubeArtistTheme
 import com.darkxvenom.itune.ui.artist.theme.rememberArtworkPalette
+import com.darkxvenom.itune.ui.library.PlaylistCollageAvatar
 import kotlinx.coroutines.delay
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -279,6 +280,7 @@ fun ITubeDetailScreen(
     fullBleedArtwork: Boolean = false,
     downloadedIds: Set<String> = emptySet(),
     onAddSuggested: (Song) -> Unit = {},
+    emptyContent: (@Composable () -> Unit)? = null,
 ) {
     val rawSongs = (page.songs as? UiState.Success)?.data.orEmpty()
     val songs = remember(rawSongs, songSort) { rawSongs.sortedForDetail(songSort) }
@@ -547,7 +549,11 @@ fun ITubeDetailScreen(
                         } else {
                             val numbered = page.type == BrowseType.ALBUM
                             val isCurrentRow = playingRowMatcher(matches.map { it.value }, currentSong)
-                            if (matches.isEmpty() && state.data.isNotEmpty()) {
+                            if (state.data.isEmpty() && emptyContent != null) {
+                                item(key = "empty-playlist-content") {
+                                    emptyContent()
+                                }
+                            } else if (matches.isEmpty() && state.data.isNotEmpty()) {
                                 item(key = "no-matches") {
                                     MessageState(stringResource(R.string.nothing_matches, query))
                                 }
