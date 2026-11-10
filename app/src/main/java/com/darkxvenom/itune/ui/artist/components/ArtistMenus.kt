@@ -239,6 +239,15 @@ fun ArtistBrowseActionsMenu(
             onAddToQueue?.let {
                 ActionRow(SfIcons.PlayLast, stringResource(R.string.add_to_queue), onClick = it)
             }
+            if (savedInLibrary != null && onToggleLibrary != null) {
+                ActionRow(
+                    icon = if (savedInLibrary) SfIcons.Check else SfIcons.AddToPlaylist,
+                    label = stringResource(
+                        if (savedInLibrary) R.string.remove_from_library else R.string.add_to_library,
+                    ),
+                    onClick = onToggleLibrary,
+                )
+            }
             onDownloadAll?.let {
                 ActionRow(SfIcons.Download, stringResource(R.string.download_all), onClick = it)
             }
