@@ -1380,3 +1380,130 @@ private fun MorePopupSleepTimerSection(
         }
     }
 }
+
+/** Single-line header text that gently fades edges into the blurred popup card and smoothly scrolls when overflowing. */
+@Composable
+internal fun PopupMarqueeFadeText(
+    text: String,
+    style: TextStyle,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    val textMeasurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+        val maxPx = constraints.maxWidth
+        val textLayout = remember(text, style, maxPx) {
+            textMeasurer.measure(
+                text = text,
+                style = style,
+                maxLines = 1,
+                softWrap = false
+            )
+        }
+        val singleWidthPx = textLayout.size.width.toFloat()
+        val overflows = maxPx > 0 && singleWidthPx > maxPx
+
+        if (!overflows) {
+            Text(
+                text = text,
+                style = style,
+                color = color,
+                maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Clip
+            )
+        } else {
+            val gapPx = with(density) { 32.dp.toPx() }
+            val cyclePx = singleWidthPx + gapPx
+            val speedPxPerSec = with(density) { 28.dp.toPx() }.coerceAtLeast(1f)
+            val scrollOffset = remember(text, singleWidthPx, maxPx) { Animatable(0f) }
+
+            LaunchedEffect(text, singleWidthPx, maxPx) {
+                scrollOffset.snapTo(0f)
+                while (true) {
+                    delay(1200L)
+                    val durationMs = ((cyclePx / speedPxPerSec) * 1000f).toInt().coerceAtLeast(1200)
+                    scrollOffset.animateTo(
+                        targetValue = cyclePx,
+                        animationSpec = tween(durationMillis = durationMs, easing = LinearEasing)
+                    )
+                    scrollOffset.snapTo(0f)
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clipToBounds()
+                    .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+                    .drawWithContent {
+                        drawContent()
+                        val w = size.width
+                        if (w > 1f) {
+                            val curOffset = scrollOffset.value
+                            // Keep opening characters sharp at rest; fade left edge softly only during active travel
+                            val leftFadeProgress = when {
+                                curOffset <= 2f -> 0f
+                                curOffset >= cyclePx - 12.dp.toPx() ->
+                                    ((cyclePx - curOffset) / 12.dp.toPx()).coerceIn(0f, 1f)
+                                else -> (curOffset / 10.dp.toPx()).coerceIn(0f, 1f)
+                            }
+                            val leftFadeFrac = ((12.dp.toPx() * leftFadeProgress) / w).coerceIn(0f, 0.22f)
+                            val rightFadeFrac = (20.dp.toPx() / w).coerceIn(0.02f, 0.28f)
+                            val rightStart = (1f - rightFadeFrac).coerceAtLeast(leftFadeFrac + 0.05f)
+                            val stops = buildList {
+                                if (leftFadeFrac > 0.004f) {
+                                    add(0f to Color.Transparent)
+                                    add(leftFadeFrac to Color.Black)
+                                } else {
+                                    add(0f to Color.Black)
+                                }
+                                add(rightStart to Color.Black)
+                                add(1f to Color.Transparent)
+                            }.toTypedArray()
+                            drawRect(
+                                brush = Brush.horizontalGradient(colorStops = stops),
+                                blendMode = BlendMode.DstIn
+                            )
+                        }
+                    }
+            ) {
+                val tx = -scrollOffset.value
+                Layout(
+                    content = {
+                        Text(
+                            text = text,
+                            style = style,
+                            color = color,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Visible,
+                            modifier = Modifier.graphicsLayer { translationX = tx }
+                        )
+                        Text(
+                            text = text,
+                            style = style,
+                            color = color,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Visible,
+                            modifier = Modifier.graphicsLayer { translationX = tx + cyclePx }
+                        )
+                    }
+                ) { measurables, constraints ->
+                    val unbounded = constraints.copy(minWidth = 0, maxWidth = Constraints.Infinity)
+                    val first = measurables[0].measure(unbounded)
+                    val second = measurables[1].measure(unbounded)
+                    val layoutW = constraints.maxWidth.coerceAtLeast(1)
+                    val layoutH = maxOf(first.height, second.height)
+                    layout(layoutW, layoutH) {
+                        first.placeRelative(0, 0)
+                        second.placeRelative(0, 0)
+                    }
+                }
+            }
+        }
+    }
+}
