@@ -304,6 +304,56 @@ object MusicBackend {
     /**
      * Fetches AirBeats "Moods & moments" navigation items from `FEmusic_moods_and_genres`.
      */
+    suspend fun fetchMoodsAndMoments(): List<MoodAndMomentRef> = withContext(Dispatchers.IO) {
+        runCatching {
+            val root = postInnerTube(BROWSE_URL, JSONObject().put("browseId", BROWSE_MOODS_AND_GENRES))
+            val sections = root.optJSONObject("contents")
+                ?.optJSONObject("singleColumnBrowseResultsRenderer")
+                ?.optJSONArray("tabs")
+                ?.optJSONObject(0)
+                ?.optJSONObject("tabRenderer")
+                ?.optJSONObject("content")
+                ?.optJSONObject("sectionListRenderer")
+                ?.optJSONArray("contents") ?: return@runCatching emptyList()
+
+            var matchedMoodItems = emptyList<MoodAndMomentRef>()
+            for (i in 0 until sections.length()) {
+                val grid = sections.optJSONObject(i)?.optJSONObject("gridRenderer") ?: continue
+                val sectionTitle = buildRunsText(
+                    grid.optJSONObject("header")
+                        ?.optJSONObject("gridHeaderRenderer")
+                        ?.optJSONObject("title")
+                        ?.optJSONArray("runs")
+                )
+                val items = grid.optJSONArray("items") ?: continue
+                val parsed = buildList {
+                    for (j in 0 until items.length()) {
+                        val btn = items.optJSONObject(j)
+                            ?.optJSONObject("musicNavigationButtonRenderer") ?: continue
+                        val label = buildRunsText(btn.optJSONObject("buttonText")?.optJSONArray("runs"))
+                        val endpoint = btn.optJSONObject("clickCommand")?.optJSONObject("browseEndpoint")
+                        val bId = endpoint?.optString("browseId")?.takeIf { it.isNotBlank() } ?: continue
+                        val params = endpoint.optString("params").takeIf { it.isNotBlank() }
+                        if (label.isNotBlank()) {
+                            add(MoodAndMomentRef(title = label, browseId = bId, params = params))
+                        }
+                    }
+                }
+                if (sectionTitle.contains("mood", ignoreCase = true) && parsed.isNotEmpty()) {
+                    return@runCatching parsed
+                }
+                if (matchedMoodItems.isEmpty() && parsed.isNotEmpty()) {
+                    matchedMoodItems = parsed
+                }
+            }
+            matchedMoodItems
+        }.getOrDefault(emptyList())
+    }
+
+    /**
+     * Fetches full category browse content (carousels, grids, playlists, albums, songs)
+     * for any tapped AirBeats Moods & Moments item (`FEmusic_moods_and_genres_category`).
+     */
     suspend fun getOrLoadStreamInfo(videoId: String): StreamInfo = withContext(Dispatchers.IO) {
         val now = System.currentTimeMillis()
         streamCache[videoId]?.let { cached ->
