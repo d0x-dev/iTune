@@ -294,3 +294,207 @@ private fun containsWholeToken(haystack: String, token: String): Boolean {
  * or Song/Album/Playlist layout (rounded square cover, saved/Explicit + type metadata, 3-dot menu, Play + Save pills).
  * Each Top Result card derives its vibrant gradient theme dynamically from the artwork thumbnail.
  */
+@Composable
+internal fun TopResultHeroCard(
+    item: TopResultItem,
+    isCurrentSong: Boolean,
+    isPlaying: Boolean,
+    isSaved: Boolean,
+    busyAction: TopResultBusyAction?,
+    onCardClick: () -> Unit,
+    onArtistShuffleClick: () -> Unit,
+    onArtistMixClick: () -> Unit,
+    onPlayClick: () -> Unit,
+    onSaveToggleClick: () -> Unit,
+    onMoreClick: (anchorCenterWindow: Offset) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val highResUrl = remember(item.thumbnailUrl) {
+        item.thumbnailUrl?.highQualityThumbnail() ?: item.thumbnailUrl
+    }
+    val palette = rememberArtworkPalette(imageUrl = highResUrl, dark = true)
+
+    // Blend vibrant thumbnail accent into elevated/wash tones so every artwork gets a distinct colorful card
+    val topLeftColor = lerp(palette.elevated, palette.accent, 0.36f).clampLuminance(maxLum = 0.19f)
+    val midColor = lerp(palette.wash, palette.accent, 0.22f).clampLuminance(maxLum = 0.14f)
+    val bottomRightColor = lerp(palette.background, palette.wash, 0.58f).clampLuminance(maxLum = 0.10f)
+    val cardGradient = Brush.linearGradient(
+        colors = listOf(topLeftColor, midColor, bottomRightColor),
+        start = Offset.Zero,
+        end = Offset(950f, 520f)
+    )
+    val cardRimBrush = Brush.linearGradient(
+        colors = listOf(
+            palette.accent.copy(alpha = 0.50f),
+            Color.White.copy(alpha = 0.14f)
+        )
+    )
+    var moreBtnCenter by remember { mutableStateOf(Offset.Zero) }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(cardGradient)
+            .drawBehind {
+                drawRect(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            palette.accent.copy(alpha = 0.28f),
+                            palette.accent.copy(alpha = 0.08f),
+                            Color.Transparent
+                        ),
+                        center = Offset(size.width * 0.14f, size.height * 0.25f),
+                        radius = size.width * 0.72f
+                    )
+                )
+            }
+            .border(width = 0.9.dp, brush = cardRimBrush, shape = RoundedCornerShape(16.dp))
+            .clickable(onClick = onCardClick)
+            .padding(14.dp)
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val artShape = if (item is TopResultItem.Artist) CircleShape else RoundedCornerShape(9.dp)
+                Box(
+                    modifier = Modifier
+                        .size(62.dp)
+                        .clip(artShape)
+                        .background(Color.Black.copy(alpha = 0.28f))
+                ) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(highResUrl)
+                            .memoryCacheKey("top_result_${item.stableKey}")
+                            .crossfade(180)
+                            .build(),
+                        contentDescription = item.title,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    if (isCurrentSong) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.45f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            AnimatedEqualizer(
+                                isPlaying = isPlaying,
+                                color = Color.White,
+                                size = 22.dp
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(14.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = item.title,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    TopResultSubtitleRow(item = item, isSaved = isSaved)
+                }
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                when (item) {
+                    is TopResultItem.Artist -> {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                            contentDescription = "Open artist",
+                            tint = Color.White.copy(alpha = 0.90f),
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    else -> {
+                        IconButton(
+                            onClick = { onMoreClick(moreBtnCenter) },
+                            modifier = Modifier
+                                .size(38.dp)
+                                .onGloballyPositioned { coords ->
+                                    if (coords.isAttached) {
+                                        val pos = coords.positionInWindow()
+                                        moreBtnCenter = Offset(
+                                            x = pos.x + coords.size.width / 2f,
+                                            y = pos.y + coords.size.height / 2f
+                                        )
+                                    }
+                                }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "More options",
+                                tint = Color.White.copy(alpha = 0.90f),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                when (item) {
+                    is TopResultItem.Artist -> {
+                        // Primary solid white Shuffle pill
+                        TopResultActionPill(
+                            label = "Shuffle",
+                            icon = Icons.Rounded.Shuffle,
+                            filledWhite = true,
+                            isLoading = busyAction == TopResultBusyAction.ARTIST_SHUFFLE,
+                            onClick = onArtistShuffleClick,
+                            modifier = Modifier.weight(1f)
+                        )
+                        // Secondary translucent glass Mix pill
+                        TopResultActionPill(
+                            label = "Mix",
+                            icon = Icons.Rounded.Sensors,
+                            filledWhite = false,
+                            isLoading = busyAction == TopResultBusyAction.ARTIST_MIX,
+                            onClick = onArtistMixClick,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    else -> {
+                        // Primary solid white Play pill
+                        TopResultActionPill(
+                            label = "Play",
+                            icon = Icons.Rounded.PlayArrow,
+                            filledWhite = true,
+                            isLoading = false,
+                            onClick = onPlayClick,
+                            modifier = Modifier.weight(1f)
+                        )
+                        // Secondary translucent glass Save / Saved pill
+                        TopResultActionPill(
+                            label = if (isSaved) "Saved" else "Save",
+                            icon = if (isSaved) Icons.Rounded.Check else Icons.AutoMirrored.Rounded.PlaylistAdd,
+                            filledWhite = false,
+                            isLoading = false,
+                            onClick = onSaveToggleClick,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
