@@ -118,6 +118,12 @@ fun HomeScreen(
         }
     }
 
+    LaunchedEffect(MusicPlayerState.pendingArtistSearch) {
+        if (!MusicPlayerState.pendingArtistSearch.isNullOrBlank()) {
+            currentScreen = AppScreen.SEARCH
+        }
+    }
+
     // ONLY trigger loading when pulling down from the very top of the list (item 0)
     LaunchedEffect(overscrollState.offset.value) {
         if (listState.firstVisibleItemIndex == 0 && overscrollState.offset.value > 25f && !isRefreshing) {

@@ -91,6 +91,14 @@ fun SearchScreen(
     var searchResults by remember { mutableStateOf<List<MusicTrack>>(emptyList()) }
     var isSearching by remember { mutableStateOf(false) }
 
+    LaunchedEffect(MusicPlayerState.pendingArtistSearch) {
+        val artistQuery = MusicPlayerState.pendingArtistSearch
+        if (!artistQuery.isNullOrBlank()) {
+            searchQuery = artistQuery
+            MusicPlayerState.pendingArtistSearch = null
+        }
+    }
+
     // Live search query debounced by 350ms to match iTube backend search
     LaunchedEffect(searchQuery) {
         val trimmed = searchQuery.trim()

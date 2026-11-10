@@ -1,0 +1,904 @@
+package com.darkxvenom.itune.ui.player
+
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.view.HapticFeedbackConstants
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.size.Size
+import com.darkxvenom.itune.R
+import com.darkxvenom.itune.backend.MusicPlayerState
+import com.darkxvenom.itune.backend.MusicTrack
+import com.darkxvenom.itune.backend.formatMusicDuration
+import kotlinx.coroutines.launch
+import kotlin.math.PI
+import kotlin.math.sin
+
+private enum class MorePopupPage {
+    MAIN,
+    DETAILS,
+    SLEEP_TIMER
+}
+
+private fun lerpFloatPopup(start: Float, stop: Float, fraction: Float): Float {
+    val f = fraction.coerceIn(0f, 1f)
+    return start + (stop - start) * f
+}
+
+private fun lerpDpPopup(start: Dp, stop: Dp, fraction: Float): Dp =
+    (start.value + (stop.value - start.value) * fraction.coerceIn(0f, 1f)).coerceAtLeast(0f).dp
+
+/**
+ * Apple Music styled floating More Options card anchored with a fluid water-drop bloom
+ * & ripple wave originating from the 3-dot button, tinted dynamically with a blurred copy
+ * of the active track's artwork.
+ */
+@Composable
+fun AppleMoreOptionsPopup(
+    visible: Boolean,
+    track: MusicTrack,
+    artUrl: String?,
+    anchorCenterXPx: Float,
+    anchorCenterYPx: Float,
+    isPanelOpen: Boolean,
+    statusBarTopDp: Dp,
+    titleRowTopDp: Dp,
+    maxHeightDp: Dp,
+    rootCoordsProvider: () -> LayoutCoordinates?,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val view = LocalView.current
+    val density = LocalDensity.current
+    val scope = rememberCoroutineScope()
+
+    var shouldRender by remember { mutableStateOf(false) }
+    var activePage by remember { mutableStateOf(MorePopupPage.MAIN) }
+    var dragDismissOffsetPx by remember { mutableFloatStateOf(0f) }
+
+    val openProgress = remember { Animatable(0f) }
+    val rippleProgress = remember { Animatable(0f) }
+    val liquidFlowProgress = remember { Animatable(0f) }
+
+    var cardCenterXPx by remember { mutableFloatStateOf(0f) }
+    var cardCenterYPx by remember { mutableFloatStateOf(0f) }
+
+    LaunchedEffect(visible) {
+        if (visible) {
+            activePage = MorePopupPage.MAIN
+            dragDismissOffsetPx = 0f
+            shouldRender = true
+            launch {
+                rippleProgress.snapTo(0f)
+                rippleProgress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(
+                        durationMillis = 680,
+                        easing = CubicBezierEasing(0.14f, 0.86f, 0.28f, 1f)
+                    )
+                )
+            }
+            launch {
+                liquidFlowProgress.snapTo(0f)
+                liquidFlowProgress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(
+                        durationMillis = 560,
+                        easing = FastOutSlowInEasing
+                    )
+                )
+            }
+            openProgress.animateTo(
+                targetValue = 1f,
+                animationSpec = spring(
+                    dampingRatio = 0.72f,
+                    stiffness = 200f
+                )
+            )
+        } else if (shouldRender) {
+            launch {
+                liquidFlowProgress.animateTo(0f, tween(220))
+            }
+            openProgress.animateTo(
+                targetValue = 0f,
+                animationSpec = tween(
+                    durationMillis = 280,
+                    easing = FastOutSlowInEasing
+                )
+            )
+            shouldRender = false
+            dragDismissOffsetPx = 0f
+        }
+    }
+
+    BackHandler(enabled = visible) {
+        if (activePage != MorePopupPage.MAIN) {
+            activePage = MorePopupPage.MAIN
+        } else {
+            onDismiss()
+        }
+    }
+
+    if (!shouldRender) return
+
+    val p = openProgress.value
+    val pClamped = p.coerceIn(0f, 1f)
+    val rippleP = rippleProgress.value.coerceIn(0f, 1f)
+    val flowP = liquidFlowProgress.value.coerceIn(0f, 1f)
+
+    // Subtle fluid droplet stretch during bloom (elongates slightly along flow path before settling)
+    val stretchFactor = (sin(pClamped * PI).toFloat() * 0.055f).coerceAtLeast(0f)
+    val cardScaleX = (lerpFloatPopup(0.08f, 1f, p) + (p - pClamped) * 0.6f) * (1f - stretchFactor * 0.35f)
+    val cardScaleY = (lerpFloatPopup(0.08f, 1f, p) + (p - pClamped) * 0.6f) * (1f + stretchFactor)
+    val cardAlpha = (pClamped / 0.18f).coerceIn(0f, 1f) * (1f - (dragDismissOffsetPx / 420f).coerceIn(0f, 0.45f))
+    val cornerDp = lerpDpPopup(84.dp, 28.dp, pClamped)
+    val cardShape = RoundedCornerShape(cornerDp)
+
+    val cardAnchorDx = if (cardCenterXPx > 0f) (anchorCenterXPx - cardCenterXPx) * (1f - pClamped) else 0f
+    val cardAnchorDy = if (cardCenterYPx > 0f) (anchorCenterYPx - cardCenterYPx) * (1f - pClamped) else 0f
+
+    val bottomClearanceDp = if (isPanelOpen) {
+        0.dp
+    } else {
+        (maxHeightDp - titleRowTopDp + 16.dp).coerceIn(180.dp, maxHeightDp - statusBarTopDp - 140.dp)
+    }
+
+    Box(
+        modifier = modifier.fillMaxSize()
+    ) {
+        // 1. Soft Dimming Backdrop Scrim (tapping outside dismisses cleanly)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.46f * pClamped))
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
+                    onDismiss()
+                }
+        )
+
+        // 2. Water-Drop Concentric Flow Ripples radiating from the 3-dot button center
+        if (rippleP > 0.001f && rippleP < 0.999f) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val origin = Offset(anchorCenterXPx, anchorCenterYPx)
+                val maxRadius1 = 290.dp.toPx()
+                val r1 = 16.dp.toPx() + (maxRadius1 - 16.dp.toPx()) * rippleP
+                val a1 = (1f - rippleP) * (1f - rippleP) * 0.46f
+
+                drawCircle(
+                    color = Color.White.copy(alpha = a1 * 0.25f),
+                    radius = r1 * 0.55f,
+                    center = origin
+                )
+                drawCircle(
+                    color = Color.White.copy(alpha = a1),
+                    radius = r1,
+                    center = origin,
+                    style = Stroke(width = (3.2f * (1f - rippleP) + 0.6f).dp.toPx())
+                )
+
+                val wave2P = ((rippleP - 0.16f) / 0.84f).coerceIn(0f, 1f)
+                if (wave2P > 0f) {
+                    val maxRadius2 = 210.dp.toPx()
+                    val r2 = 12.dp.toPx() + (maxRadius2 - 12.dp.toPx()) * wave2P
+                    val a2 = (1f - wave2P) * (1f - wave2P) * 0.36f
+                    drawCircle(
+                        color = Color.White.copy(alpha = a2),
+                        radius = r2,
+                        center = origin,
+                        style = Stroke(width = (2.4f * (1f - wave2P) + 0.5f).dp.toPx())
+                    )
+                }
+            }
+        }
+
+        // 3. Un-transformed Positioning Wrapper (keeps onGloballyPositioned stable during zoom animation)
+        val placementModifier = if (isPanelOpen) {
+            Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = statusBarTopDp + 82.dp, start = 16.dp, end = 16.dp, bottom = 24.dp)
+        } else {
+            Modifier
+                .align(Alignment.BottomCenter)
+                .padding(top = statusBarTopDp + 16.dp, start = 16.dp, end = 16.dp, bottom = bottomClearanceDp)
+        }
+
+        Box(
+            modifier = placementModifier
+                .fillMaxWidth()
+                .onGloballyPositioned { coords ->
+                    val root = rootCoordsProvider()
+                    if (root != null && root.isAttached && coords.isAttached) {
+                        val pos = root.localPositionOf(coords, Offset.Zero)
+                        cardCenterXPx = pos.x + coords.size.width / 2f
+                        cardCenterYPx = pos.y + coords.size.height / 2f
+                    }
+                }
+        ) {
+            // 4. Liquid Frosted Popup Card
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer {
+                        translationX = cardAnchorDx
+                        translationY = cardAnchorDy + dragDismissOffsetPx
+                        scaleX = cardScaleX.coerceAtLeast(0.01f)
+                        scaleY = cardScaleY.coerceAtLeast(0.01f)
+                        alpha = cardAlpha
+                    }
+                    .shadow(
+                        elevation = (24.dp * pClamped).coerceAtLeast(0.dp),
+                        shape = cardShape,
+                        ambientColor = Color.Black,
+                        spotColor = Color.Black
+                    )
+                    .clip(cardShape)
+                    .pointerInput(visible) {
+                        detectVerticalDragGestures(
+                            onDragEnd = {
+                                if (dragDismissOffsetPx > 110f) {
+                                    onDismiss()
+                                } else {
+                                    scope.launch {
+                                        val startDrag = dragDismissOffsetPx
+                                        androidx.compose.animation.core.animate(
+                                            initialValue = startDrag,
+                                            targetValue = 0f,
+                                            animationSpec = spring(dampingRatio = 0.75f, stiffness = 400f)
+                                        ) { v, _ -> dragDismissOffsetPx = v }
+                                    }
+                                }
+                            },
+                            onDragCancel = { dragDismissOffsetPx = 0f },
+                            onVerticalDrag = { change, dragAmount ->
+                                change.consume()
+                                val next = dragDismissOffsetPx + dragAmount
+                                dragDismissOffsetPx = if (next < 0f) next * 0.25f else next
+                            }
+                        )
+                    }
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { /* consume taps inside card */ }
+            ) {
+                // Background Layer: Heavily blurred current track artwork matching player avatar color
+                if (!artUrl.isNullOrBlank()) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(artUrl)
+                            .size(Size.ORIGINAL)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .matchParentSize()
+                            .blur(64.dp)
+                            .graphicsLayer {
+                                scaleX = 1.45f
+                                scaleY = 1.45f
+                                alpha = 0.94f
+                            }
+                    )
+                }
+
+                // Translucent Apple Frosted Glass Tint Overlay preserving dynamic album hues
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF28262A).copy(alpha = 0.46f),
+                                    Color(0xFF1C1B1E).copy(alpha = 0.56f),
+                                    Color(0xFF141316).copy(alpha = 0.62f)
+                                )
+                            )
+                        )
+                        .background(
+                            Brush.verticalGradient(
+                                colorStops = arrayOf(
+                                    0f to Color.White.copy(alpha = 0.11f),
+                                    0.35f to Color.White.copy(alpha = 0.03f),
+                                    1f to Color.Transparent
+                                )
+                            )
+                        )
+                        // Caustic water-flow light wave traveling across glass during droplet bloom
+                        .drawWithContent {
+                            drawContent()
+                            if (flowP > 0.01f && flowP < 0.99f) {
+                                val waveFade = sin(flowP * PI).toFloat() * 0.18f
+                                val cx = size.width * (1f - flowP * 0.85f)
+                                val cy = size.height * (if (isPanelOpen) flowP else 1f - flowP)
+                                drawCircle(
+                                    brush = Brush.radialGradient(
+                                        colors = listOf(
+                                            Color.White.copy(alpha = waveFade),
+                                            Color.Transparent
+                                        ),
+                                        center = Offset(cx, cy),
+                                        radius = size.maxDimension * 0.65f
+                                    ),
+                                    radius = size.maxDimension * 0.65f,
+                                    center = Offset(cx, cy)
+                                )
+                            }
+                        }
+                        .border(
+                            width = 1.dp,
+                            brush = Brush.verticalGradient(
+                                listOf(
+                                    Color.White.copy(alpha = 0.24f),
+                                    Color.White.copy(alpha = 0.09f)
+                                )
+                            ),
+                            shape = cardShape
+                        )
+                )
+
+                // Card Foreground Content
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    // Top Grabber Handle Pill
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp, bottom = 10.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(width = 36.dp, height = 4.dp)
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(Color.White.copy(alpha = 0.44f))
+                        )
+                    }
+
+                    // Track Summary Header (Avatar + Title + Artist)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(72.dp)
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(Color.White.copy(alpha = 0.08f))
+                                .border(0.75.dp, Color.White.copy(alpha = 0.16f), RoundedCornerShape(14.dp))
+                        ) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(artUrl)
+                                    .size(Size.ORIGINAL)
+                                    .build(),
+                                contentDescription = track.title,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = track.title,
+                                style = TextStyle(
+                                    fontFamily = SFProDisplay,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 17.sp,
+                                    lineHeight = 21.sp,
+                                    letterSpacing = (-0.25).sp
+                                ),
+                                color = Color.White,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Spacer(modifier = Modifier.height(3.dp))
+                            Text(
+                                text = track.artists,
+                                style = TextStyle(
+                                    fontFamily = SFProDisplay,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 14.5.sp,
+                                    lineHeight = 18.sp
+                                ),
+                                color = Color.White.copy(alpha = 0.66f),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+
+                    // Inner Dark Translucent Container holding menu options / sub-pages
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 14.dp, end = 14.dp, bottom = 14.dp)
+                            .clip(RoundedCornerShape(18.dp))
+                            .background(Color.Black.copy(alpha = 0.24f))
+                            .border(0.5.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(18.dp))
+                    ) {
+                        AnimatedContent(
+                            targetState = activePage,
+                            transitionSpec = {
+                                if (targetState == MorePopupPage.MAIN) {
+                                    (slideInHorizontally(tween(240)) { -it / 4 } + fadeIn(tween(200))) togetherWith
+                                        (slideOutHorizontally(tween(200)) { it / 4 } + fadeOut(tween(160)))
+                                } else {
+                                    (slideInHorizontally(tween(240)) { it / 4 } + fadeIn(tween(200))) togetherWith
+                                        (slideOutHorizontally(tween(200)) { -it / 4 } + fadeOut(tween(160)))
+                                }
+                            },
+                            label = "morePopupSubPage"
+                        ) { page ->
+                            when (page) {
+                                MorePopupPage.MAIN -> {
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        MorePopupOptionRow(
+                                            iconRes = R.drawable.ic_menu_download,
+                                            title = "Download",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                MusicPlayerState.downloadTrack(track)
+                                                onDismiss()
+                                            }
+                                        )
+                                        PopupMenuDivider()
+
+                                        MorePopupOptionRow(
+                                            iconRes = R.drawable.ic_menu_details,
+                                            title = "Details",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                activePage = MorePopupPage.DETAILS
+                                            }
+                                        )
+                                        PopupMenuDivider()
+
+                                        MorePopupOptionRow(
+                                            iconRes = R.drawable.ic_menu_artist,
+                                            title = "Go to artist",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                val primaryArtist = track.artists.substringBefore(",").trim()
+                                                    .ifBlank { track.artists }
+                                                onDismiss()
+                                                MusicPlayerState.lyricsOpen = false
+                                                MusicPlayerState.queueOpen = false
+                                                MusicPlayerState.expanded = false
+                                                MusicPlayerState.pendingArtistSearch = primaryArtist
+                                            }
+                                        )
+                                        PopupMenuDivider()
+
+                                        MorePopupOptionRow(
+                                            iconRes = R.drawable.ic_menu_share,
+                                            title = "Share",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                val link = "https://music.youtube.com/watch?v=${track.id}"
+                                                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                                    type = "text/plain"
+                                                    putExtra(
+                                                        Intent.EXTRA_TEXT,
+                                                        "Listen to ${track.title} by ${track.artists}\n$link"
+                                                    )
+                                                }
+                                                context.startActivity(
+                                                    Intent.createChooser(shareIntent, "Share Song")
+                                                )
+                                                onDismiss()
+                                            }
+                                        )
+                                        PopupMenuDivider()
+
+                                        MorePopupOptionRow(
+                                            iconRes = R.drawable.ic_menu_copy_link,
+                                            title = "Copy link",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                val link = "https://music.youtube.com/watch?v=${track.id}"
+                                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                                                clipboard?.setPrimaryClip(ClipData.newPlainText("Track Link", link))
+                                                Toast.makeText(context, "Link copied", Toast.LENGTH_SHORT).show()
+                                                onDismiss()
+                                            }
+                                        )
+                                        PopupMenuDivider()
+
+                                        val timerBadge = when {
+                                            MusicPlayerState.sleepTimerEndOfTrack -> "End of song"
+                                            MusicPlayerState.sleepTimerRemainingMs > 0L -> {
+                                                val mins = ((MusicPlayerState.sleepTimerRemainingMs + 59_999L) / 60_000L)
+                                                "${mins}m"
+                                            }
+                                            else -> null
+                                        }
+                                        MorePopupOptionRow(
+                                            iconRes = R.drawable.ic_menu_sleep_timer,
+                                            title = "Sleep Timer",
+                                            trailingBadge = timerBadge,
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                activePage = MorePopupPage.SLEEP_TIMER
+                                            }
+                                        )
+                                    }
+                                }
+
+                                MorePopupPage.DETAILS -> {
+                                    MorePopupDetailsSection(
+                                        track = track,
+                                        onBack = { activePage = MorePopupPage.MAIN }
+                                    )
+                                }
+
+                                MorePopupPage.SLEEP_TIMER -> {
+                                    MorePopupSleepTimerSection(
+                                        onBack = { activePage = MorePopupPage.MAIN },
+                                        onSelectDone = { onDismiss() }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MorePopupOptionRow(
+    @DrawableRes iconRes: Int,
+    title: String,
+    trailingBadge: String? = null,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = title,
+            colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
+            modifier = Modifier.size(21.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = title,
+            style = TextStyle(
+                fontFamily = SFProDisplay,
+                fontWeight = FontWeight.Medium,
+                fontSize = 15.5.sp,
+                letterSpacing = (-0.15).sp
+            ),
+            color = Color.White.copy(alpha = 0.94f),
+            modifier = Modifier.weight(1f)
+        )
+        if (!trailingBadge.isNullOrBlank()) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50))
+                    .background(Color.White.copy(alpha = 0.16f))
+                    .padding(horizontal = 9.dp, vertical = 3.dp)
+            ) {
+                Text(
+                    text = trailingBadge,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PopupMenuDivider() {
+    HorizontalDivider(
+        thickness = 0.5.dp,
+        color = Color.White.copy(alpha = 0.12f)
+    )
+}
+
+@Composable
+private fun MorePopupDetailsSection(
+    track: MusicTrack,
+    onBack: () -> Unit
+) {
+    val durText = formatMusicDuration(
+        if (MusicPlayerState.durationMs > 0) MusicPlayerState.durationMs / 1000L else track.durationSec
+    ).ifBlank { "Live / Unknown" }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(46.dp)
+                .padding(horizontal = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBack, modifier = Modifier.size(36.dp)) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.White,
+                    modifier = Modifier.size(19.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "Track Details",
+                fontFamily = SFProDisplay,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.5.sp,
+                color = Color.White
+            )
+        }
+        PopupMenuDivider()
+        DetailInfoRow(label = "Title", value = track.title)
+        PopupMenuDivider()
+        DetailInfoRow(label = "Artist", value = track.artists)
+        if (!track.album.isNullOrBlank()) {
+            PopupMenuDivider()
+            DetailInfoRow(label = "Album", value = track.album)
+        }
+        PopupMenuDivider()
+        DetailInfoRow(label = "Duration", value = durText)
+        PopupMenuDivider()
+        DetailInfoRow(label = "Quality", value = "iMusic · 128k AAC")
+        PopupMenuDivider()
+        DetailInfoRow(label = "Track ID", value = track.id)
+    }
+}
+
+@Composable
+private fun DetailInfoRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 11.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            fontFamily = SFProDisplay,
+            fontSize = 13.5.sp,
+            color = Color.White.copy(alpha = 0.56f)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Text(
+            text = value,
+            fontFamily = SFProDisplay,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color.White.copy(alpha = 0.94f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+private fun MorePopupSleepTimerSection(
+    onBack: () -> Unit,
+    onSelectDone: () -> Unit
+) {
+    val context = LocalContext.current
+    val durations = listOf(10, 15, 30, 45, 60)
+    val isActive = MusicPlayerState.sleepTimerRemainingMs > 0L || MusicPlayerState.sleepTimerEndOfTrack
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(46.dp)
+                .padding(horizontal = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBack, modifier = Modifier.size(36.dp)) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.White,
+                    modifier = Modifier.size(19.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "Sleep Timer",
+                fontFamily = SFProDisplay,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.5.sp,
+                color = Color.White
+            )
+        }
+        PopupMenuDivider()
+
+        durations.forEach { mins ->
+            val selected = !MusicPlayerState.sleepTimerEndOfTrack &&
+                MusicPlayerState.sleepTimerRemainingMs in ((mins - 1) * 60_000L + 1L)..(mins * 60_000L)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(44.dp)
+                    .clickable {
+                        MusicPlayerState.setSleepTimer(mins)
+                        Toast.makeText(context, "Sleep timer set for $mins min", Toast.LENGTH_SHORT).show()
+                        onSelectDone()
+                    }
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = if (mins == 60) "1 hour" else "$mins minutes",
+                    fontFamily = SFProDisplay,
+                    fontSize = 15.sp,
+                    color = Color.White.copy(alpha = 0.92f)
+                )
+                if (selected) {
+                    Icon(
+                        imageVector = Icons.Rounded.Check,
+                        contentDescription = null,
+                        tint = Color(0xFFFA2D48),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+            PopupMenuDivider()
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(44.dp)
+                .clickable {
+                    MusicPlayerState.setSleepTimerEndOfTrack()
+                    Toast.makeText(context, "Playback will stop after current track", Toast.LENGTH_SHORT).show()
+                    onSelectDone()
+                }
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "End of current track",
+                fontFamily = SFProDisplay,
+                fontSize = 15.sp,
+                color = Color.White.copy(alpha = 0.92f)
+            )
+            if (MusicPlayerState.sleepTimerEndOfTrack) {
+                Icon(
+                    imageVector = Icons.Rounded.Check,
+                    contentDescription = null,
+                    tint = Color(0xFFFA2D48),
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+
+        if (isActive) {
+            PopupMenuDivider()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(44.dp)
+                    .clickable {
+                        MusicPlayerState.cancelSleepTimer()
+                        Toast.makeText(context, "Sleep timer turned off", Toast.LENGTH_SHORT).show()
+                        onSelectDone()
+                    }
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Turn Off Timer",
+                    fontFamily = SFProDisplay,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 15.sp,
+                    color = Color(0xFFFA2D48)
+                )
+            }
+        }
+    }
+}

@@ -222,9 +222,16 @@ fun ITuneMusicPlayer(
 
     var isSeeking by remember { mutableStateOf(false) }
     var seekPosition by remember { mutableLongStateOf(0L) }
+    var isMoreMenuOpen by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isLyricsOpen, lastLyricsInteractionTime, areLyricsControlsVisible, isSeeking) {
-        if (isLyricsOpen && areLyricsControlsVisible && !isSeeking) {
+    LaunchedEffect(sp) {
+        if (sp < 0.85f && isMoreMenuOpen) {
+            isMoreMenuOpen = false
+        }
+    }
+
+    LaunchedEffect(isLyricsOpen, lastLyricsInteractionTime, areLyricsControlsVisible, isSeeking, isMoreMenuOpen) {
+        if (isLyricsOpen && areLyricsControlsVisible && !isSeeking && !isMoreMenuOpen) {
             delay(2000L)
             areLyricsControlsVisible = false
         }
@@ -719,7 +726,9 @@ fun ITuneMusicPlayer(
                 .background(Color.White.copy(alpha = curMoreBgAlpha))
                 .clickable {
                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                    onLyricsInteraction()
+                    lastLyricsInteractionTime = System.currentTimeMillis()
+                    areLyricsControlsVisible = true
+                    isMoreMenuOpen = !isMoreMenuOpen
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -1128,6 +1137,29 @@ fun ITuneMusicPlayer(
                 }
             }
         }
+
+        // ── 8. Apple-Styled Floating More Options Popup (Water-Drop Flow Origin from 3-Dot Button) ──
+        val moreAnchorXPx = curMoreLeftPx + with(density) { (curMoreSizeDp / 2).toPx() }
+        val moreAnchorYPx = curMoreTopPx + fullElementsTransY + with(density) { (curMoreSizeDp / 2).toPx() }
+        val restingTitleRowTopDp = with(density) { startTitleTopPx.toDp() }
+
+        AppleMoreOptionsPopup(
+            visible = isMoreMenuOpen,
+            track = track,
+            artUrl = currentArtUrl,
+            anchorCenterXPx = moreAnchorXPx,
+            anchorCenterYPx = moreAnchorYPx,
+            isPanelOpen = isPanelOpen,
+            statusBarTopDp = statusBarTopDp,
+            titleRowTopDp = restingTitleRowTopDp,
+            maxHeightDp = maxHeight,
+            rootCoordsProvider = { rootBoxCoords },
+            onDismiss = {
+                lastLyricsInteractionTime = System.currentTimeMillis()
+                isMoreMenuOpen = false
+            },
+            modifier = Modifier.zIndex(80f)
+        )
     }
 }
 

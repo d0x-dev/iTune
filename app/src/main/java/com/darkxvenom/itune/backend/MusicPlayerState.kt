@@ -1,10 +1,13 @@
 package com.darkxvenom.itune.backend
 
+import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -50,6 +53,7 @@ object MusicPlayerState : Player.Listener {
     private var progressJob: Job? = null
     private var loadJob: Job? = null
     private var lyricsJob: Job? = null
+    private var sleepTimerJob: Job? = null
     private var resolvingStream = false
 
     // ── Observable UI States ──
@@ -94,6 +98,13 @@ object MusicPlayerState : Player.Listener {
     var expanded by mutableStateOf(false)
     var queueOpen by mutableStateOf(false)
     var lyricsOpen by mutableStateOf(false)
+
+    // Sleep Timer & Navigation Intents
+    var sleepTimerRemainingMs by mutableLongStateOf(0L)
+        private set
+    var sleepTimerEndOfTrack by mutableStateOf(false)
+        private set
+    var pendingArtistSearch by mutableStateOf<String?>(null)
 
     var lyrics by mutableStateOf<List<LyricsLine>>(emptyList())
         private set
@@ -438,6 +449,65 @@ object MusicPlayerState : Player.Listener {
         }
     }
 
+    fun setSleepTimer(minutes: Int) {
+        sleepTimerJob?.cancel()
+        sleepTimerEndOfTrack = false
+        if (minutes <= 0) {
+            sleepTimerRemainingMs = 0L
+            return
+        }
+        sleepTimerRemainingMs = minutes * 60_000L
+        sleepTimerJob = scope.launch {
+            while (isActive && sleepTimerRemainingMs > 0L) {
+                delay(1000L)
+                sleepTimerRemainingMs = (sleepTimerRemainingMs - 1000L).coerceAtLeast(0L)
+            }
+            if (isActive) {
+                exoPlayer?.pause()
+                sleepTimerRemainingMs = 0L
+            }
+        }
+    }
+
+    fun setSleepTimerEndOfTrack() {
+        sleepTimerJob?.cancel()
+        sleepTimerRemainingMs = 0L
+        sleepTimerEndOfTrack = true
+    }
+
+    fun cancelSleepTimer() {
+        sleepTimerJob?.cancel()
+        sleepTimerRemainingMs = 0L
+        sleepTimerEndOfTrack = false
+    }
+
+    fun downloadTrack(track: MusicTrack) {
+        val ctx = appContext ?: return
+        Toast.makeText(ctx, "Downloading ${track.title}...", Toast.LENGTH_SHORT).show()
+        scope.launch {
+            try {
+                val streamUrl = MusicBackend.resolveAudioStreamUrl(track.id)
+                if (streamUrl.isNullOrBlank()) {
+                    Toast.makeText(ctx, "Download unavailable for ${track.title}", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+                val safeName = "${track.title} - ${track.artists}".replace(Regex("[\\\\/:*?\"<>|]"), "_").take(80)
+                val dm = ctx.getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager
+                if (dm != null) {
+                    val req = DownloadManager.Request(Uri.parse(streamUrl))
+                        .setTitle(track.title)
+                        .setDescription(track.artists)
+                        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                        .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "$safeName.m4a")
+                    dm.enqueue(req)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Download error: ${e.message}", e)
+                Toast.makeText(ctx, "Could not start download", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     override fun onPlaybackStateChanged(playbackState: Int) {
         when (playbackState) {
             Player.STATE_BUFFERING -> {
@@ -448,7 +518,13 @@ object MusicPlayerState : Player.Listener {
                 durationMs = exoPlayer?.duration?.coerceAtLeast(0L) ?: 0L
             }
             Player.STATE_ENDED -> {
-                skipNext()
+                if (sleepTimerEndOfTrack) {
+                    sleepTimerEndOfTrack = false
+                    exoPlayer?.pause()
+                    exoPlayer?.seekTo(0L)
+                } else {
+                    skipNext()
+                }
             }
             Player.STATE_IDLE -> {
                 isLoading = false
@@ -466,6 +542,7 @@ object MusicPlayerState : Player.Listener {
         progressJob?.cancel()
         loadJob?.cancel()
         lyricsJob?.cancel()
+        sleepTimerJob?.cancel()
         exoPlayer?.release()
         exoPlayer = null
     }
