@@ -405,23 +405,33 @@ fun HomeScreen(
             }
         }
 
+        // iTube Artist / Album / Playlist Detail Screen Overlay (preserves Home/Search/Player beneath)
+        if (artistHostController.isOpen) {
+            ArtistScreenOverlayContent(
+                controller = artistHostController,
+                hasMiniPlayer = MusicPlayerState.currentTrack != null,
+            )
+        }
+
         // Apple Dark Mode Gradient Scrim for Floating Bottom Controls
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .height(180.dp)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Transparent,
-                            AppleOledBlack.copy(alpha = 0.70f),
-                            AppleOledBlack.copy(alpha = 0.94f),
-                            AppleOledBlack
+        if (!artistHostController.isOpen) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(180.dp)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                AppleOledBlack.copy(alpha = 0.70f),
+                                AppleOledBlack.copy(alpha = 0.94f),
+                                AppleOledBlack
+                            )
                         )
                     )
-                )
-        )
+            )
+        }
 
         // Floating Bottom Controls: Mini-Player (ONLY shown when a song is playing) + Navigation Dock
         Column(
