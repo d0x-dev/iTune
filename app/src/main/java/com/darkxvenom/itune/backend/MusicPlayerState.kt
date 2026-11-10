@@ -351,6 +351,7 @@ object MusicPlayerState : Player.Listener {
             else -> 0L
         }
         currentTrack = track
+        appContext?.let { LibraryStore.recordRecentSong(it, track) }
 
         // Fetch synchronized lyrics unless already loaded for this restored track
         if (!sameTrack || (lyrics.isEmpty() && !lyricsLoading)) {
