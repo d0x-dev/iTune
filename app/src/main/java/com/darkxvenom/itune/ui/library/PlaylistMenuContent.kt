@@ -332,3 +332,76 @@ private suspend fun resolveAndCreatePlaylist(
  * Coordinates in-place Apple iOS sub-menu transitions inside any IosMenuPopover or HeldContextMenu
  * without closing the current popup or spawning a separate modal dialog.
  */
+@Composable
+fun IosInMenuPlaylistHost(
+    menuKey: Any?,
+    initialStep: PopupPlaylistStep = PopupPlaylistStep.MENU,
+    payload: PendingPlaylistPayload? = null,
+    renameTarget: UserPlaylist? = null,
+    onCloseMenu: () -> Unit,
+    mainMenuContent: @Composable (
+        onOpenAddToPlaylist: () -> Unit,
+        onOpenCreateEmpty: () -> Unit,
+        onOpenRename: () -> Unit,
+    ) -> Unit,
+) {
+    var step by remember(menuKey, initialStep) { mutableStateOf(initialStep) }
+
+    AnimatedContent(
+        targetState = step,
+        transitionSpec = {
+            val forward = targetState.ordinal > initialState.ordinal
+            val dir = if (forward) 1 else -1
+            (fadeIn(tween(180)) + slideInHorizontally(tween(220)) { dir * it / 5 }) togetherWith
+                (fadeOut(tween(140)) + slideOutHorizontally(tween(180)) { -dir * it / 5 })
+        },
+        label = "ios_in_menu_playlist_step",
+    ) { activeStep ->
+        when (activeStep) {
+            PopupPlaylistStep.MENU -> mainMenuContent(
+                { step = PopupPlaylistStep.ADD_TO_PLAYLIST },
+                { step = PopupPlaylistStep.CREATE_PLAYLIST },
+                { step = PopupPlaylistStep.RENAME_PLAYLIST },
+            )
+            PopupPlaylistStep.ADD_TO_PLAYLIST -> {
+                val activePayload = payload
+                if (activePayload == null) {
+                    step = PopupPlaylistStep.MENU
+                } else {
+                    IosAddToPlaylistMenuView(
+                        payload = activePayload,
+                        onBack = { step = PopupPlaylistStep.MENU },
+                        onCreateNewClick = { step = PopupPlaylistStep.CREATE_PLAYLIST },
+                        onCompleted = onCloseMenu,
+                    )
+                }
+            }
+            PopupPlaylistStep.CREATE_PLAYLIST -> IosCreatePlaylistMenuView(
+                payload = payload,
+                backLabel = if (initialStep == PopupPlaylistStep.CREATE_PLAYLIST) "Cancel" else "Back",
+                onBack = {
+                    if (initialStep == PopupPlaylistStep.CREATE_PLAYLIST) {
+                        onCloseMenu()
+                    } else {
+                        step = if (payload != null) PopupPlaylistStep.ADD_TO_PLAYLIST else PopupPlaylistStep.MENU
+                    }
+                },
+                onDone = { onCloseMenu() },
+            )
+            PopupPlaylistStep.RENAME_PLAYLIST -> IosCreatePlaylistMenuView(
+                renameTarget = renameTarget,
+                backLabel = if (initialStep == PopupPlaylistStep.RENAME_PLAYLIST) "Cancel" else "Back",
+                onBack = {
+                    if (initialStep == PopupPlaylistStep.RENAME_PLAYLIST) onCloseMenu()
+                    else step = PopupPlaylistStep.MENU
+                },
+                onDone = { onCloseMenu() },
+            )
+        }
+    }
+}
+
+/**
+ * In-place Apple-styled iOS popover step for selecting a pre-created playlist first
+ * or switching to New Playlist inside the exact same IosMenuPopover / HeldContextMenu.
+ */
