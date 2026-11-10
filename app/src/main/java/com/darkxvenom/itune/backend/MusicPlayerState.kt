@@ -28,6 +28,7 @@ import coil.imageLoader
 import coil.request.ImageRequest
 import coil.size.Size
 import com.darkxvenom.itune.backend.lyrics.LyricsHelper
+import com.darkxvenom.itune.data.model.PendingArtistNav
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -104,6 +105,7 @@ object MusicPlayerState : Player.Listener {
     var sleepTimerEndOfTrack by mutableStateOf(false)
         private set
     var pendingArtistSearch by mutableStateOf<String?>(null)
+    var pendingArtistNav by mutableStateOf<PendingArtistNav?>(null)
 
     var lyrics by mutableStateOf<List<LyricsLine>>(emptyList())
         private set
