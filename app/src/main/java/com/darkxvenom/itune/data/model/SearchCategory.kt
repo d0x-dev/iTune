@@ -14,7 +14,21 @@ enum class SearchCategoryType {
     LATIN,
     RNB,
     CLASSICAL,
-    CHILL
+    CHILL,
+    COMMUNITY,
+    ENERGIZE,
+    FEEL_GOOD,
+    FOCUS,
+    GAMING,
+    PARTY,
+    ROMANCE,
+    SAD,
+    SLEEP,
+    WORKOUT,
+    AFRICAN,
+    ARABIC,
+    BENGALI,
+    BOLLYWOOD
 }
 
 data class SearchCategory(
