@@ -25,17 +25,24 @@ import java.util.concurrent.ConcurrentHashMap
 object MusicBackend {
     private const val TAG = "MusicBackend"
     private const val SEARCH_URL = "https://music.youtube.com/youtubei/v1/search?prettyPrint=false"
+    private const val SUGGESTIONS_URL = "https://music.youtube.com/youtubei/v1/music/get_search_suggestions?prettyPrint=false"
     private const val BROWSE_URL = "https://music.youtube.com/youtubei/v1/browse?prettyPrint=false"
+    private const val BROWSE_NEW_RELEASES_ALBUMS = "FEmusic_new_releases_albums"
+    private const val BROWSE_EXPLORE = "FEmusic_explore"
+    private const val BROWSE_MOODS_AND_GENRES = "FEmusic_moods_and_genres"
     private const val SONG_PARAMS = "EgWKAQIIAWoSEAQQAxAFEAkQChAVEA4QERAQ"
     private const val ARTIST_PARAMS = "EgWKAQIgAWoSEAQQAxAFEAkQChAVEA4QERAQ"
     private const val ALBUM_PARAMS = "EgWKAQIYAWoSEAQQAxAFEAkQChAVEA4QERAQ"
     private const val PLAYLIST_PARAMS = "EgeKAQQoAEABahIQBBADEAUQCRAKEBUQDhAREBA="
     private const val FEATURED_PLAYLIST_PARAMS = "EgeKAQQoADgBahIQBBADEAUQCRAKEBUQDhAREBA="
     private const val STREAM_CACHE_TTL_MS = 20L * 60_000L
+    private const val MAX_SUGGESTION_CACHE = 120
     private val JSON_TYPE = "application/json; charset=utf-8".toMediaType()
 
     private data class CachedStreamInfo(val info: StreamInfo, val fetchedAtMs: Long)
     private val streamCache = ConcurrentHashMap<String, CachedStreamInfo>()
+    private val suggestionCache = ConcurrentHashMap<String, List<String>>()
+    private val moodCategoryCache = ConcurrentHashMap<String, MoodCategoryPage>()
 
     private var initialized = false
 
