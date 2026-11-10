@@ -203,6 +203,7 @@ data class DetailPage(
     val subscription: SubscriptionState? = null,
     val radio: WatchTarget? = null,
     val shuffle: WatchTarget? = null,
+    val collageArtworkUrls: List<String> = emptyList(),
 )
 
 data class LibraryState(
@@ -227,6 +228,7 @@ data class ArtistPage(
     val subscription: SubscriptionState? = null,
     val radio: WatchTarget? = null,
     val shuffle: WatchTarget? = null,
+    val collageArtworkUrls: List<String> = emptyList(),
 )
 
 data class BrowseTarget(
