@@ -1,13 +1,10 @@
 package com.darkxvenom.itune.backend
 
-import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -479,33 +476,6 @@ object MusicPlayerState : Player.Listener {
         sleepTimerJob?.cancel()
         sleepTimerRemainingMs = 0L
         sleepTimerEndOfTrack = false
-    }
-
-    fun downloadTrack(track: MusicTrack) {
-        val ctx = appContext ?: return
-        Toast.makeText(ctx, "Downloading ${track.title}...", Toast.LENGTH_SHORT).show()
-        scope.launch {
-            try {
-                val streamUrl = MusicBackend.resolveAudioStreamUrl(track.id)
-                if (streamUrl.isNullOrBlank()) {
-                    Toast.makeText(ctx, "Download unavailable for ${track.title}", Toast.LENGTH_SHORT).show()
-                    return@launch
-                }
-                val safeName = "${track.title} - ${track.artists}".replace(Regex("[\\\\/:*?\"<>|]"), "_").take(80)
-                val dm = ctx.getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager
-                if (dm != null) {
-                    val req = DownloadManager.Request(Uri.parse(streamUrl))
-                        .setTitle(track.title)
-                        .setDescription(track.artists)
-                        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                        .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "$safeName.m4a")
-                    dm.enqueue(req)
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Download error: ${e.message}", e)
-                Toast.makeText(ctx, "Could not start download", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {

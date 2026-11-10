@@ -1,6 +1,7 @@
 package com.darkxvenom.itune.backend
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,12 +18,17 @@ import org.schabi.newpipe.extractor.stream.AudioTrackType
 import org.schabi.newpipe.extractor.stream.DeliveryMethod
 import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
+import java.util.concurrent.ConcurrentHashMap
 
 object MusicBackend {
     private const val TAG = "MusicBackend"
     private const val SEARCH_URL = "https://music.youtube.com/youtubei/v1/search?prettyPrint=false"
     private const val SONG_PARAMS = "EgWKAQIIAWoKEAkQBRAKEAMQBA%3D%3D"
+    private const val STREAM_CACHE_TTL_MS = 20L * 60_000L
     private val JSON_TYPE = "application/json; charset=utf-8".toMediaType()
+
+    private data class CachedStreamInfo(val info: StreamInfo, val fetchedAtMs: Long)
+    private val streamCache = ConcurrentHashMap<String, CachedStreamInfo>()
 
     private var initialized = false
 
@@ -77,10 +83,81 @@ object MusicBackend {
         tracks.distinctBy { it.id }
     }
 
+    suspend fun getOrLoadStreamInfo(videoId: String): StreamInfo = withContext(Dispatchers.IO) {
+        val now = System.currentTimeMillis()
+        streamCache[videoId]?.let { cached ->
+            if (now - cached.fetchedAtMs < STREAM_CACHE_TTL_MS) {
+                return@withContext cached.info
+            }
+        }
+        val url = "https://www.youtube.com/watch?v=$videoId"
+        val info = StreamInfo.getInfo(ServiceList.YouTube, url)
+        streamCache[videoId] = CachedStreamInfo(info, now)
+        info
+    }
+
+    suspend fun extractAudioQualities(videoId: String): List<AudioDownloadOption> = withContext(Dispatchers.IO) {
+        val info = getOrLoadStreamInfo(videoId)
+        val durationSec = info.duration.takeIf { it > 0 } ?: 0L
+        val audios = info.audioStreams
+            .orEmpty()
+            .filter {
+                it.isUrl &&
+                    it.deliveryMethod == DeliveryMethod.PROGRESSIVE_HTTP &&
+                    it.audioTrackType != AudioTrackType.DUBBED &&
+                    it.averageBitrate > 0
+            }
+            .sortedByDescending { it.averageBitrate }
+
+        // Strictly prefer pure M4A audio containers (matching iTube & Android Music compatibility)
+        // so tracks never download as .webm video files.
+        val m4aAudios = audios.filter { it.format == MediaFormat.M4A }
+        val finalAudios = if (m4aAudios.isNotEmpty()) m4aAudios else audios
+
+        val seenKeys = HashSet<String>()
+        val result = mutableListOf<AudioDownloadOption>()
+
+        for (audio in finalAudios) {
+            val isM4a = audio.format == MediaFormat.M4A
+            val needsOggRemux = !isM4a && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+            val formatTag = if (isM4a) "M4A" else "OGG"
+            val ext = if (isM4a) "m4a" else "ogg"
+            val mime = if (isM4a) "audio/mp4" else "audio/ogg"
+            val kbps = audio.averageBitrate
+            if (!seenKeys.add("${formatTag}_$kbps")) continue
+
+            val sizeStr = if (durationSec > 0) {
+                AudioDownloader.formatBytes((kbps.toLong() * 1000L * durationSec) / 8L)
+            } else null
+
+            val titleLabel = when {
+                kbps >= 220 -> "Master Quality Audio"
+                kbps >= 120 -> "High Quality Audio"
+                kbps >= 80 -> "Standard Audio"
+                else -> "Data Saver Audio"
+            }
+
+            result.add(
+                AudioDownloadOption(
+                    bitrateKbps = kbps,
+                    label = titleLabel,
+                    formatTag = formatTag,
+                    formatLabel = "$formatTag · $kbps kbps",
+                    extension = ext,
+                    mimeType = mime,
+                    approxSize = sizeStr,
+                    streamUrl = audio.content,
+                    isHighQuality = kbps >= 120,
+                    needsOggRemux = needsOggRemux
+                )
+            )
+        }
+        result
+    }
+
     suspend fun resolveAudioStream(videoId: String): String? = withContext(Dispatchers.IO) {
         try {
-            val url = "https://www.youtube.com/watch?v=$videoId"
-            val info = StreamInfo.getInfo(ServiceList.YouTube, url)
+            val info = getOrLoadStreamInfo(videoId)
 
             val audioStreams = info.audioStreams
             if (audioStreams.isNullOrEmpty()) {

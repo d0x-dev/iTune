@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.darkxvenom.itune.backend.AudioDownloader
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.data.repository.AvatarManager
 import com.darkxvenom.itune.ui.home.HomeScreen
@@ -20,6 +21,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         AvatarManager.init(this)
         MusicPlayerState.init(this)
+        AudioDownloader.ensureChannel(this)
         enableEdgeToEdge()
         setContent {
             ITuneTheme {

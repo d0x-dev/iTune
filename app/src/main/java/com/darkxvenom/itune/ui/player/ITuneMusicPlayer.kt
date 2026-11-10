@@ -972,28 +972,31 @@ fun ITuneMusicPlayer(
                 )
             }
 
-            Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(14.dp))
 
             // ── Volume Slider (iOS Capsule Style) ──
             IosVolumeSlider(
                 modifier = Modifier.padding(horizontal = 4.dp)
             )
 
-            Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(12.dp))
 
-            // ── Bottom Action Controls (Lyrics on Left, Shuffle/Repeat Capsule in Center when panel open, Queue on Right) ──
+            // ── Bottom Action Controls (Compact, closer together, lifted slightly above home bar like iOS Apple Music) ──
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 34.dp)
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // 1. Left down corner: Lyrics Button
+                // 1. Left: Lyrics Button
                 Box(
                     modifier = Modifier
-                        .size(46.dp)
-                        .clip(CircleShape)
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(
-                            if (isLyricsOpen) Color.White.copy(alpha = 0.35f) else Color.White.copy(alpha = 0.12f)
+                            if (isLyricsOpen) Color.White.copy(alpha = 0.22f) else Color.Transparent
                         )
                         .clickable {
                             onLyricsInteraction()
@@ -1010,15 +1013,15 @@ fun ITuneMusicPlayer(
                         painter = painterResource(R.drawable.lyrics),
                         contentDescription = "Lyrics",
                         colorFilter = ColorFilter.tint(
-                            if (isLyricsOpen) Color.White else Color.White.copy(alpha = 0.90f)
+                            if (isLyricsOpen) Color.White else Color.White.copy(alpha = 0.72f)
                         ),
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(21.dp)
                     )
                 }
 
-                // 2. Center: Shuffle & Repeat Capsule (When panel open) OR Earbuds Icon (When player is in main mode)
+                // 2. Center: Shuffle & Repeat Capsule (When panel open) OR Airbuds PNG (When player in main mode)
                 Box(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.width(86.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     AnimatedContent(
@@ -1033,9 +1036,9 @@ fun ITuneMusicPlayer(
                     ) { panelOpen ->
                         if (panelOpen) {
                             Surface(
-                                shape = RoundedCornerShape(20.dp),
+                                shape = RoundedCornerShape(18.dp),
                                 color = Color.White.copy(alpha = 0.18f),
-                                modifier = Modifier.height(38.dp)
+                                modifier = Modifier.height(34.dp)
                             ) {
                                 Row(
                                     modifier = Modifier.padding(horizontal = 4.dp),
@@ -1048,7 +1051,7 @@ fun ITuneMusicPlayer(
                                             onLyricsInteraction()
                                             MusicPlayerState.toggleShuffle()
                                         },
-                                        modifier = Modifier.size(36.dp)
+                                        modifier = Modifier.size(32.dp)
                                     ) {
                                         Icon(
                                             painter = painterResource(
@@ -1056,7 +1059,7 @@ fun ITuneMusicPlayer(
                                             ),
                                             contentDescription = "Shuffle",
                                             tint = if (MusicPlayerState.shuffleEnabled) Color.White else Color.White.copy(alpha = 0.45f),
-                                            modifier = Modifier.size(20.dp)
+                                            modifier = Modifier.size(18.dp)
                                         )
                                     }
 
@@ -1066,7 +1069,7 @@ fun ITuneMusicPlayer(
                                             onLyricsInteraction()
                                             MusicPlayerState.toggleRepeat()
                                         },
-                                        modifier = Modifier.size(36.dp)
+                                        modifier = Modifier.size(32.dp)
                                     ) {
                                         Icon(
                                             painter = painterResource(
@@ -1078,18 +1081,17 @@ fun ITuneMusicPlayer(
                                             ),
                                             contentDescription = "Repeat",
                                             tint = if (MusicPlayerState.repeatMode != Player.REPEAT_MODE_OFF) Color.White else Color.White.copy(alpha = 0.45f),
-                                            modifier = Modifier.size(20.dp)
+                                            modifier = Modifier.size(18.dp)
                                         )
                                     }
                                 }
                             }
                         } else {
-                            // Earbuds icon in between queue and lyrics when player is in normal mode
+                            // Earbuds PNG in middle between Lyrics and Queue
                             Box(
                                 modifier = Modifier
-                                    .size(46.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.White.copy(alpha = 0.12f))
+                                    .size(36.dp)
+                                    .clip(RoundedCornerShape(10.dp))
                                     .clickable {
                                         onLyricsInteraction()
                                         view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
@@ -1100,20 +1102,20 @@ fun ITuneMusicPlayer(
                                     painter = painterResource(R.drawable.airbuds),
                                     contentDescription = "Audio Output",
                                     contentScale = ContentScale.Fit,
-                                    modifier = Modifier.size(24.dp)
+                                    modifier = Modifier.size(22.dp)
                                 )
                             }
                         }
                     }
                 }
 
-                // 3. Right down corner: Queue Button (Replaces previous radio icon)
+                // 3. Right: Queue Button
                 Box(
                     modifier = Modifier
-                        .size(46.dp)
-                        .clip(CircleShape)
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(
-                            if (isQueueOpen) Color.White.copy(alpha = 0.35f) else Color.White.copy(alpha = 0.12f)
+                            if (isQueueOpen) Color.White.copy(alpha = 0.22f) else Color.Transparent
                         )
                         .clickable {
                             onLyricsInteraction()
@@ -1130,9 +1132,9 @@ fun ITuneMusicPlayer(
                         painter = painterResource(R.drawable.queue_music),
                         contentDescription = "Queue",
                         colorFilter = ColorFilter.tint(
-                            if (isQueueOpen) Color.White else Color.White.copy(alpha = 0.90f)
+                            if (isQueueOpen) Color.White else Color.White.copy(alpha = 0.72f)
                         ),
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(21.dp)
                     )
                 }
             }

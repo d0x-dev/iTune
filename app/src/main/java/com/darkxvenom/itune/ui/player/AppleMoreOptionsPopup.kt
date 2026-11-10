@@ -1,12 +1,17 @@
 package com.darkxvenom.itune.ui.player
 
+import android.Manifest
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.view.HapticFeedbackConstants
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
@@ -44,6 +49,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Headphones
+import androidx.compose.material.icons.rounded.MusicNote
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -52,6 +60,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -82,19 +91,25 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Size
 import com.darkxvenom.itune.R
+import com.darkxvenom.itune.backend.AudioDownloadOption
+import com.darkxvenom.itune.backend.AudioDownloader
+import com.darkxvenom.itune.backend.MusicBackend
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.formatMusicDuration
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.sin
 
 private enum class MorePopupPage {
     MAIN,
+    DOWNLOAD,
     DETAILS,
     SLEEP_TIMER
 }
@@ -531,8 +546,7 @@ fun AppleMoreOptionsPopup(
                                             title = "Download",
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                                MusicPlayerState.downloadTrack(track)
-                                                onDismiss()
+                                                activePage = MorePopupPage.DOWNLOAD
                                             }
                                         )
                                         PopupMenuDivider()
@@ -618,6 +632,14 @@ fun AppleMoreOptionsPopup(
                                     }
                                 }
 
+                                MorePopupPage.DOWNLOAD -> {
+                                    MorePopupDownloadSection(
+                                        track = track,
+                                        onBack = { activePage = MorePopupPage.MAIN },
+                                        onDownloadStarted = { onDismiss() }
+                                    )
+                                }
+
                                 MorePopupPage.DETAILS -> {
                                     MorePopupDetailsSection(
                                         track = track,
@@ -700,6 +722,269 @@ private fun PopupMenuDivider() {
 }
 
 @Composable
+private fun PopupSubPageHeader(
+    title: String,
+    trailingBadge: String? = null,
+    onBack: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(46.dp)
+            .padding(start = 6.dp, end = 14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = onBack, modifier = Modifier.size(36.dp)) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.White,
+                modifier = Modifier.size(19.dp)
+            )
+        }
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = title,
+            fontFamily = SFProDisplay,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 15.5.sp,
+            color = Color.White,
+            modifier = Modifier.weight(1f)
+        )
+        if (!trailingBadge.isNullOrBlank()) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50))
+                    .background(Color.White.copy(alpha = 0.14f))
+                    .padding(horizontal = 9.dp, vertical = 3.dp)
+            ) {
+                Text(
+                    text = trailingBadge,
+                    fontFamily = SFProDisplay,
+                    fontSize = 11.5.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White.copy(alpha = 0.88f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MorePopupDownloadSection(
+    track: MusicTrack,
+    onBack: () -> Unit,
+    onDownloadStarted: () -> Unit
+) {
+    val context = LocalContext.current
+    val view = LocalView.current
+
+    var qualities by remember(track.id) { mutableStateOf<List<AudioDownloadOption>?>(null) }
+    var isLoading by remember(track.id) { mutableStateOf(true) }
+    var loadError by remember(track.id) { mutableStateOf<String?>(null) }
+    var reloadNonce by remember { mutableIntStateOf(0) }
+    var pendingOption by remember { mutableStateOf<AudioDownloadOption?>(null) }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        val opt = pendingOption
+        pendingOption = null
+        if (opt != null) {
+            AudioDownloader.download(context, track, opt)
+            Toast.makeText(
+                context,
+                if (granted) "Download started · Check notification" else "Download started (allow notifications to view progress)",
+                Toast.LENGTH_SHORT
+            ).show()
+            onDownloadStarted()
+        }
+    }
+
+    fun triggerDownload(option: AudioDownloadOption) {
+        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            pendingOption = option
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            AudioDownloader.download(context, track, option)
+            Toast.makeText(context, "Download started · Check notification", Toast.LENGTH_SHORT).show()
+            onDownloadStarted()
+        }
+    }
+
+    LaunchedEffect(track.id, reloadNonce) {
+        isLoading = true
+        loadError = null
+        try {
+            val extracted = MusicBackend.extractAudioQualities(track.id)
+            qualities = extracted
+            if (extracted.isEmpty()) {
+                loadError = "No downloadable audio streams available"
+            }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (e: Exception) {
+            loadError = e.message?.takeIf { it.isNotBlank() } ?: "Could not load audio qualities"
+        } finally {
+            isLoading = false
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        PopupSubPageHeader(
+            title = "Download Audio",
+            trailingBadge = "Audio Only",
+            onBack = onBack
+        )
+        PopupMenuDivider()
+
+        when {
+            isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 36.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            strokeWidth = 2.5.dp,
+                            modifier = Modifier.size(26.dp)
+                        )
+                        Text(
+                            text = "Fetching audio qualities…",
+                            fontFamily = SFProDisplay,
+                            fontSize = 13.sp,
+                            color = Color.White.copy(alpha = 0.68f)
+                        )
+                    }
+                }
+            }
+
+            qualities.isNullOrEmpty() -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        text = loadError ?: "No audio qualities found",
+                        fontFamily = SFProDisplay,
+                        fontSize = 13.5.sp,
+                        color = Color.White.copy(alpha = 0.72f)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .background(Color.White.copy(alpha = 0.16f))
+                            .clickable { reloadNonce++ }
+                            .padding(horizontal = 16.dp, vertical = 7.dp)
+                    ) {
+                        Text(
+                            text = "Retry",
+                            fontFamily = SFProDisplay,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+
+            else -> {
+                qualities.orEmpty().forEachIndexed { idx, opt ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { triggerDownload(opt) }
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(
+                                    if (opt.isHighQuality) Color(0xFFFA2D48).copy(alpha = 0.22f)
+                                    else Color.White.copy(alpha = 0.12f)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = if (opt.isHighQuality) Icons.Rounded.Headphones else Icons.Rounded.MusicNote,
+                                contentDescription = null,
+                                tint = if (opt.isHighQuality) Color(0xFFFF6477) else Color.White.copy(alpha = 0.90f),
+                                modifier = Modifier.size(19.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(13.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Text(
+                                    text = opt.label,
+                                    fontFamily = SFProDisplay,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 15.sp,
+                                    color = Color.White.copy(alpha = 0.96f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                if (opt.isHighQuality) {
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(Color.White.copy(alpha = 0.18f))
+                                            .padding(horizontal = 5.dp, vertical = 1.dp)
+                                    ) {
+                                        Text(
+                                            text = "HQ",
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        )
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "${opt.formatLabel}${opt.approxSize?.let { " · ~$it" } ?: ""}",
+                                fontFamily = SFProDisplay,
+                                fontSize = 12.5.sp,
+                                color = Color.White.copy(alpha = 0.62f)
+                            )
+                        }
+
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_menu_download),
+                            contentDescription = "Download ${opt.label}",
+                            colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.85f)),
+                            modifier = Modifier.size(19.dp)
+                        )
+                    }
+                    if (idx < qualities.orEmpty().lastIndex) {
+                        PopupMenuDivider()
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun MorePopupDetailsSection(
     track: MusicTrack,
     onBack: () -> Unit
@@ -709,30 +994,7 @@ private fun MorePopupDetailsSection(
     ).ifBlank { "Live / Unknown" }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(46.dp)
-                .padding(horizontal = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onBack, modifier = Modifier.size(36.dp)) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.White,
-                    modifier = Modifier.size(19.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = "Track Details",
-                fontFamily = SFProDisplay,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 15.5.sp,
-                color = Color.White
-            )
-        }
+        PopupSubPageHeader(title = "Track Details", onBack = onBack)
         PopupMenuDivider()
         DetailInfoRow(label = "Title", value = track.title)
         PopupMenuDivider()
@@ -788,30 +1050,7 @@ private fun MorePopupSleepTimerSection(
     val isActive = MusicPlayerState.sleepTimerRemainingMs > 0L || MusicPlayerState.sleepTimerEndOfTrack
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(46.dp)
-                .padding(horizontal = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onBack, modifier = Modifier.size(36.dp)) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.White,
-                    modifier = Modifier.size(19.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = "Sleep Timer",
-                fontFamily = SFProDisplay,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 15.5.sp,
-                color = Color.White
-            )
-        }
+        PopupSubPageHeader(title = "Sleep Timer", onBack = onBack)
         PopupMenuDivider()
 
         durations.forEach { mins ->
