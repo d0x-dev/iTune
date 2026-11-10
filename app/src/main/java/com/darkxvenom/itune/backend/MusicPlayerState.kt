@@ -108,8 +108,19 @@ object MusicPlayerState : Player.Listener {
     var lyrics by mutableStateOf<List<LyricsLine>>(emptyList())
         private set
 
+    var rawLyricsText by mutableStateOf("")
+        private set
+
+    var lyricsOffsetMs by mutableLongStateOf(0L)
+        private set
+
+    var hasCustomLyricsOverride by mutableStateOf(false)
+        private set
+
     var lyricsLoading by mutableStateOf(false)
         private set
+
+    private val LYRICS_OVERRIDE_PREFS = "itune_lyrics_overrides"
 
     val favoriteIds = mutableStateListOf<String>()
 
@@ -376,7 +387,28 @@ object MusicPlayerState : Player.Listener {
     private fun fetchLyricsForCurrentTrack(track: MusicTrack) {
         lyricsJob?.cancel()
         lyrics = emptyList()
+        rawLyricsText = ""
+        hasCustomLyricsOverride = false
         lyricsLoading = true
+
+        val prefs = appContext?.getSharedPreferences(LYRICS_OVERRIDE_PREFS, Context.MODE_PRIVATE)
+        lyricsOffsetMs = (prefs?.getLong("offset_${track.id}", 0L) ?: 0L).coerceIn(-5000L, 5000L)
+        val rawPref = prefs?.getString("custom_${track.id}", null)
+        val savedCustomRaw = rawPref?.takeIf { it.isNotBlank() && !it.trim().equals("null", ignoreCase = true) }
+        if (rawPref != null && savedCustomRaw == null) {
+            prefs.edit().remove("custom_${track.id}").apply()
+        }
+
+        if (savedCustomRaw != null) {
+            val parsedCustom = LyricsHelper.parseLyricsText(savedCustomRaw)
+            lyrics = parsedCustom
+            rawLyricsText = savedCustomRaw
+            hasCustomLyricsOverride = true
+            lyricsLoading = false
+            LyricsHelper.updateMemoryCache(track.id, savedCustomRaw, parsedCustom)
+            return
+        }
+
         lyricsJob = scope.launch {
             try {
                 val list = LyricsHelper.loadLyrics(
