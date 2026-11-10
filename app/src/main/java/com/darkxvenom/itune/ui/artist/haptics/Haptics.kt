@@ -103,11 +103,13 @@ private class HapticDevice private constructor(
         val effect = synchronized(compiled) {
             compiled.getOrPut(haptic) { compile(rhythmOf(haptic)) }
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            TouchVibration.send(vibrator, effect)
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator.vibrate(effect, LEGACY_ATTRIBUTES)
+        runCatching {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                TouchVibration.send(vibrator, effect)
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(effect, LEGACY_ATTRIBUTES)
+            }
         }
     }
 
