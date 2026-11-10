@@ -29,3 +29,29 @@ object NewReleasesRepository {
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
     fun ensureLoaded() {
+        if (_releases.value.isNotEmpty() || fetchJob?.isActive == true) return
+        refresh()
+    }
+
+    fun refresh() {
+        if (fetchJob?.isActive == true) return
+        fetchJob = scope.launch {
+            _isLoading.value = true
+            _errorMessage.value = null
+            try {
+                val fetched = MusicBackend.fetchNewReleaseAlbums()
+                if (fetched.isNotEmpty()) {
+                    _releases.value = fetched
+                } else if (_releases.value.isEmpty()) {
+                    _errorMessage.value = "Couldn't load new releases"
+                }
+            } catch (e: Exception) {
+                if (_releases.value.isEmpty()) {
+                    _errorMessage.value = e.message ?: "Couldn't load new releases"
+                }
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+}
