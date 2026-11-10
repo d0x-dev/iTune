@@ -43,11 +43,14 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
+import com.darkxvenom.itune.data.model.BrowseCategoryItem
+import com.darkxvenom.itune.data.model.BrowseType
 import com.darkxvenom.itune.data.model.Track
 import com.darkxvenom.itune.data.repository.MusicRepository
 import com.darkxvenom.itune.ui.artist.ArtistScreenOverlayContent
 import com.darkxvenom.itune.ui.artist.ArtistScreenOverlayPopups
 import com.darkxvenom.itune.ui.artist.rememberArtistHostController
+import com.darkxvenom.itune.ui.browse.AppleMoodCategoryScreen
 import com.darkxvenom.itune.ui.browse.BrowseScreen
 import com.darkxvenom.itune.ui.components.AvatarSelectionDialog
 import com.darkxvenom.itune.ui.components.CuratedPlaylistsSection
@@ -62,6 +65,9 @@ import com.darkxvenom.itune.ui.components.TopSpringLoadingBar
 import com.darkxvenom.itune.ui.components.rememberSpringOverscrollState
 import com.darkxvenom.itune.ui.components.springOverscroll
 import com.darkxvenom.itune.ui.library.LibraryScreen
+import com.darkxvenom.itune.ui.library.LibraryScreenOverlayContent
+import com.darkxvenom.itune.ui.library.LibraryScreenOverlayPopups
+import com.darkxvenom.itune.ui.library.rememberLibraryHostController
 import com.darkxvenom.itune.ui.player.ITuneMusicPlayer
 import com.darkxvenom.itune.ui.player.SheetMorph
 import com.darkxvenom.itune.ui.player.miniPlayerGestures
@@ -121,6 +127,8 @@ fun HomeScreen(
     var hasVisitedLibrary by remember { mutableStateOf(false) }
     var hasVisitedSearch by remember { mutableStateOf(false) }
     val artistHostController = rememberArtistHostController()
+    val libraryHostController = rememberLibraryHostController()
+    var activeMoodCategory by remember { mutableStateOf<BrowseCategoryItem?>(null) }
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
