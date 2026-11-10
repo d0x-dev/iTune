@@ -216,3 +216,93 @@ fun Modifier.miniPlayerGestures(
         }
     )
 }
+
+/**
+ * Unified 1:1 tip-of-finger gesture system for the morphing player sheet:
+ * - When in Mini Player (progress <= 0.001f):
+ *   - Dragging UP expands sheet toward Full Player
+ *   - Dragging DOWN moves dismissOffset to dismiss & stop song
+ * - When in Full Player / transitioning (0f < progress <= 1f):
+ *   - Dragging DOWN collapses sheet toward Mini Player
+ *   - Dragging UP expands toward Full Player
+ *   - Releases settle cleanly via spring physics
+ */
+fun Modifier.unifiedSheetGestures(
+    morph: SheetMorph,
+    dismissOffset: Animatable<Float, *>,
+    scope: CoroutineScope,
+    dismissThresholdPx: Float,
+    dismissTargetPx: Float,
+    onDismiss: () -> Unit,
+    canDragSheet: () -> Boolean = { true }
+): Modifier = this.pointerInput(morph) {
+    val velocityTracker = VelocityTracker()
+    detectVerticalDragGestures(
+        onDragStart = {
+            velocityTracker.resetTracking()
+        },
+        onVerticalDrag = { change, dragAmount ->
+            if (!canDragSheet()) return@detectVerticalDragGestures
+            velocityTracker.addPointerInputChange(change)
+            val p = morph.progress.value
+            if (p <= 0.001f) {
+                // Mini Player State
+                if (dragAmount > 0f) {
+                    // Dragging DOWN -> dismiss
+                    val newDismiss = dismissOffset.value + dragAmount
+                    scope.launch(start = CoroutineStart.UNDISPATCHED) {
+                        dismissOffset.snapTo(newDismiss)
+                    }
+                } else if (dragAmount < 0f) {
+                    // Dragging UP -> expand sheet
+                    if (dismissOffset.value > 0.001f) {
+                        val newDismiss = (dismissOffset.value + dragAmount).coerceAtLeast(0f)
+                        scope.launch(start = CoroutineStart.UNDISPATCHED) {
+                            dismissOffset.snapTo(newDismiss)
+                        }
+                    } else {
+                        morph.dragBy(dragAmount)
+                    }
+                }
+            } else {
+                // Expanded or In-between State
+                morph.dragBy(dragAmount)
+            }
+            change.consume()
+        },
+        onDragCancel = {
+            velocityTracker.resetTracking()
+            if (dismissOffset.value > 0f) {
+                scope.launch {
+                    dismissOffset.animateTo(0f, spring(dampingRatio = 0.85f, stiffness = 600f))
+                }
+            }
+            morph.settle(0f)
+        },
+        onDragEnd = {
+            if (!canDragSheet()) return@detectVerticalDragGestures
+            val velocityY = velocityTracker.calculateVelocity().y
+            velocityTracker.resetTracking()
+            if (dismissOffset.value > 0.001f) {
+                val shouldDismiss = velocityY > 350f || dismissOffset.value > dismissThresholdPx
+                scope.launch {
+                    if (shouldDismiss) {
+                        dismissOffset.animateTo(
+                            targetValue = dismissTargetPx,
+                            animationSpec = tween(durationMillis = 180, easing = FastOutLinearInEasing)
+                        )
+                        onDismiss()
+                        dismissOffset.snapTo(0f)
+                    } else {
+                        dismissOffset.animateTo(
+                            targetValue = 0f,
+                            animationSpec = spring(dampingRatio = 0.85f, stiffness = 600f)
+                        )
+                    }
+                }
+            } else {
+                morph.settle(velocityY)
+            }
+        }
+    )
+}

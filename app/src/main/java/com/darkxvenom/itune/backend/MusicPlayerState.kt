@@ -186,14 +186,13 @@ object MusicPlayerState : Player.Listener {
         // Automatically fetch synchronized lyrics for current song
         fetchLyricsForCurrentTrack(track)
 
-        // Pre-warm thumbnail in Coil cache
+        // Pre-warm thumbnail in Coil cache with ultra-high quality
         appContext?.let { ctx ->
             val thumb = track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl
             if (!thumb.isNullOrBlank()) {
                 val preReq = ImageRequest.Builder(ctx)
                     .data(thumb)
-                    .allowHardware(false)
-                    .size(160)
+                    .crossfade(200)
                     .build()
                 ctx.imageLoader.enqueue(preReq)
             }
@@ -234,7 +233,7 @@ object MusicPlayerState : Player.Listener {
                                 .setTitle(track.title)
                                 .setArtist(track.artists)
                                 .setAlbumTitle(track.album)
-                                .setArtworkUri(track.thumbnailUrl?.let(Uri::parse))
+                                .setArtworkUri((track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl)?.let(Uri::parse))
                                 .build()
                         )
                         .build()

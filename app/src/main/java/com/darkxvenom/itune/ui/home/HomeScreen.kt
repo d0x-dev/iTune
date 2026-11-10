@@ -58,7 +58,28 @@ import com.darkxvenom.itune.ui.player.rememberSheetMorph
 import com.darkxvenom.itune.ui.player.sheetMorphDrag
 import com.darkxvenom.itune.ui.search.SearchScreen
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.runtime.mutableFloatStateOf
 import kotlinx.coroutines.delay
+import kotlin.math.roundToInt
+
+private fun lerpDp(start: Dp, stop: Dp, fraction: Float): Dp =
+    (start.value + (stop.value - start.value) * fraction.coerceIn(0f, 1f)).coerceAtLeast(0f).dp
+
+private fun lerpFloat(start: Float, stop: Float, fraction: Float): Float {
+    val f = fraction.coerceIn(0f, 1f)
+    return start + (stop - start) * f
+}
 
 enum class AppScreen {
     HOME,
@@ -124,13 +145,20 @@ fun HomeScreen(
         label = "TopShadeAlpha"
     )
 
+    var rootBoxCoords by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    var miniPlayerSlotTopPx by remember { mutableFloatStateOf(0f) }
+
     BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
-            .background(AppleOledBlack)
+            .background(com.darkxvenom.itune.ui.theme.AppleOledBlack)
+            .onGloballyPositioned { rootBoxCoords = it }
     ) {
         val density = LocalDensity.current
-        val screenHeightPx = with(density) { maxHeight.toPx() }
+        val screenWidthDp = maxWidth
+        val screenHeightDp = maxHeight
+        val screenWidthPx = with(density) { screenWidthDp.toPx() }
+        val screenHeightPx = with(density) { screenHeightDp.toPx() }
 
         val sheetMorph = rememberSheetMorph { expanded ->
             MusicPlayerState.expanded = expanded
@@ -377,6 +405,17 @@ fun HomeScreen(
 
                 FloatingMiniPlayer(
                     modifier = Modifier
+                        .onGloballyPositioned { coords ->
+                            if (coords.isAttached) {
+                                val root = rootBoxCoords
+                                if (root != null && root.isAttached) {
+                                    val pos = root.localPositionOf(coords, Offset.Zero)
+                                    if (pos.y > 0f) {
+                                        miniPlayerSlotTopPx = pos.y
+                                    }
+                                }
+                            }
+                        }
                         .graphicsLayer {
                             translationY = miniPlayerDismissY.value
                             alpha = (1f - (miniPlayerDismissY.value / dismissTargetPx)).coerceIn(0f, 1f)
@@ -394,6 +433,7 @@ fun HomeScreen(
                     currentTrack = currentTrack,
                     realTrack = realTrack,
                     isPlaying = MusicPlayerState.isPlaying,
+                    showEmptyPlaceholder = sheetMorph.progress.value > 0.001f,
                     onPlayPauseClick = {
                         MusicPlayerState.togglePlayPause()
                     },
@@ -445,28 +485,60 @@ fun HomeScreen(
             )
         }
 
-        // ── Full Player Sheet with 1:1 Tip-of-Finger Gesture Tracking and Spring Physics (Copied from iTube) ──
+        // ── Full Player Sheet with Continuous Morphing Bounds & 1:1 Tip-of-Finger Physics ──
         val realTrack = MusicPlayerState.currentTrack
         if (realTrack != null) {
-            BackHandler(enabled = (MusicPlayerState.expanded || sheetMorph.progress.value > 0.05f) && !MusicPlayerState.lyricsOpen && !MusicPlayerState.queueOpen) {
-                MusicPlayerState.expanded = false
+            BackHandler(enabled = MusicPlayerState.expanded || sheetMorph.progress.value > 0.05f) {
+                if (MusicPlayerState.queueOpen) {
+                    MusicPlayerState.queueOpen = false
+                } else if (MusicPlayerState.lyricsOpen) {
+                    MusicPlayerState.lyricsOpen = false
+                } else {
+                    MusicPlayerState.expanded = false
+                }
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        val p = sheetMorph.progress.value
-                        translationY = (1f - p) * screenHeightPx
-                        alpha = if (p <= 0.001f) 0f else 1f
+            val p = sheetMorph.progress.value.coerceIn(0f, 1f)
+            if (p > 0.001f) {
+                val fallbackMiniTopPx = screenHeightPx - with(density) { (88.dp + 6.dp + 58.dp).toPx() }
+                val targetMiniTopPx = if (miniPlayerSlotTopPx > 0f) miniPlayerSlotTopPx else fallbackMiniTopPx
+
+                val curTopPx = lerpFloat(targetMiniTopPx, 0f, p)
+                val curLeftPx = lerpFloat(with(density) { 14.dp.toPx() }, 0f, p)
+                val curWidthPx = lerpFloat(with(density) { (screenWidthDp - 28.dp).toPx() }, screenWidthPx, p)
+                val curHeightPx = lerpFloat(with(density) { 58.dp.toPx() }, screenHeightPx, p)
+                val curRadiusDp = lerpDp(16.dp, 0.dp, p).coerceAtLeast(0.dp)
+                val curShadowDp = lerpDp(16.dp, 0.dp, p).coerceAtLeast(0.dp)
+
+                Box(
+                    modifier = Modifier
+                        .offset { IntOffset(curLeftPx.roundToInt(), curTopPx.roundToInt()) }
+                        .size(
+                            width = with(density) { curWidthPx.toDp() },
+                            height = with(density) { curHeightPx.toDp() }
+                        )
+                        .shadow(
+                            elevation = curShadowDp,
+                            shape = RoundedCornerShape(curRadiusDp),
+                            ambientColor = Color.Black,
+                            spotColor = Color.Black
+                        )
+                        .clip(RoundedCornerShape(curRadiusDp))
+                        .background(Color.Black)
+                        .sheetMorphDrag(sheetMorph)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .requiredSize(width = screenWidthDp, height = screenHeightDp)
+                    ) {
+                        ITuneMusicPlayer(
+                            sheetProgress = p,
+                            onCollapse = {
+                                MusicPlayerState.expanded = false
+                            }
+                        )
                     }
-                    .sheetMorphDrag(sheetMorph)
-            ) {
-                ITuneMusicPlayer(
-                    onCollapse = {
-                        MusicPlayerState.expanded = false
-                    }
-                )
+                }
             }
         }
     }

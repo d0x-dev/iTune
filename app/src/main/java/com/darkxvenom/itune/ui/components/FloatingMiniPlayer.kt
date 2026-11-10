@@ -33,11 +33,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.highQualityThumbnail
 import com.darkxvenom.itune.data.model.Track
@@ -54,6 +56,7 @@ fun FloatingMiniPlayer(
     onNextClick: () -> Unit,
     onClick: () -> Unit,
     realTrack: MusicTrack? = null,
+    showEmptyPlaceholder: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -76,8 +79,17 @@ fun FloatingMiniPlayer(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Thumbnail / Music Note icon
-            if (realTrack != null && !realTrack.thumbnailUrl.isNullOrBlank()) {
+            // Thumbnail / Music Note icon or Empty Placeholder Slot
+            if (showEmptyPlaceholder) {
+                // Empty space at avatar in miniplayer until the morphing avatar arrives
+                Box(
+                    modifier = Modifier
+                        .size(38.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color.White.copy(alpha = 0.06f))
+                        .border(0.75.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(6.dp))
+                )
+            } else if (realTrack != null && !realTrack.thumbnailUrl.isNullOrBlank()) {
                 Box(
                     modifier = Modifier
                         .size(38.dp)
@@ -116,60 +128,65 @@ fun FloatingMiniPlayer(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            // Track info
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = realTrack?.title ?: currentTrack?.title ?: "Not Playing",
-                    color = AppleTextPrimary,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                if (realTrack != null || currentTrack != null) {
+            if (!showEmptyPlaceholder) {
+                // Track info
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
                     Text(
-                        text = realTrack?.artists ?: currentTrack?.artist.orEmpty(),
-                        color = AppleTextSecondary,
-                        fontSize = 12.sp,
+                        text = realTrack?.title ?: currentTrack?.title ?: "Not Playing",
+                        color = AppleTextPrimary,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
+                    if (realTrack != null || currentTrack != null) {
+                        Text(
+                            text = realTrack?.artists ?: currentTrack?.artist.orEmpty(),
+                            color = AppleTextSecondary,
+                            fontSize = 12.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
-            }
 
-            // Controls
-            IconButton(
-                onClick = onPlayPauseClick,
-                modifier = Modifier.size(36.dp)
-            ) {
-                AnimatedContent(
-                    targetState = isPlaying,
-                    transitionSpec = { fadeIn() togetherWith fadeOut() },
-                    label = "PlayPause"
-                ) { playing ->
+                // Controls
+                IconButton(
+                    onClick = onPlayPauseClick,
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    AnimatedContent(
+                        targetState = isPlaying,
+                        transitionSpec = { fadeIn() togetherWith fadeOut() },
+                        label = "PlayPause"
+                    ) { playing ->
+                        Icon(
+                            imageVector = if (playing) Icons.Default.Pause else Icons.Default.PlayArrow,
+                            contentDescription = if (playing) "Pause" else "Play",
+                            tint = AppleTextPrimary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(2.dp))
+
+                IconButton(
+                    onClick = onNextClick,
+                    modifier = Modifier.size(36.dp)
+                ) {
                     Icon(
-                        imageVector = if (playing) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        contentDescription = if (playing) "Pause" else "Play",
+                        imageVector = Icons.Default.FastForward,
+                        contentDescription = "Next Track",
                         tint = AppleTextPrimary,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(22.dp)
                     )
                 }
-            }
-
-            Spacer(modifier = Modifier.width(2.dp))
-
-            IconButton(
-                onClick = onNextClick,
-                modifier = Modifier.size(36.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.FastForward,
-                    contentDescription = "Next Track",
-                    tint = AppleTextPrimary,
-                    modifier = Modifier.size(22.dp)
-                )
+            } else {
+                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.width(74.dp))
             }
         }
     }

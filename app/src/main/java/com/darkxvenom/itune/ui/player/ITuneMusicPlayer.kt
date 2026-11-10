@@ -67,6 +67,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FastForward
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.automirrored.rounded.VolumeDown
 import androidx.compose.material.icons.automirrored.rounded.VolumeOff
 import androidx.compose.material.icons.automirrored.rounded.VolumeUp
@@ -133,13 +136,15 @@ import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
 private fun lerpDp(start: Dp, stop: Dp, fraction: Float): Dp =
-    start + (stop - start) * fraction
+    (start.value + (stop.value - start.value) * fraction.coerceIn(0f, 1f)).coerceAtLeast(0f).dp
 
 private fun lerpSp(start: TextUnit, stop: TextUnit, fraction: Float): TextUnit =
-    (start.value + (stop.value - start.value) * fraction).sp
+    (start.value + (stop.value - start.value) * fraction.coerceIn(0f, 1f)).coerceAtLeast(1f).sp
 
-private fun lerpFloat(start: Float, stop: Float, fraction: Float): Float =
-    start + (stop - start) * fraction
+private fun lerpFloat(start: Float, stop: Float, fraction: Float): Float {
+    val f = fraction.coerceIn(0f, 1f)
+    return start + (stop - start) * f
+}
 
 private fun formatTime(ms: Long): String {
     val totalSec = (ms / 1000).coerceAtLeast(0)
@@ -158,10 +163,12 @@ private fun formatTime(ms: Long): String {
  */
 @Composable
 fun ITuneMusicPlayer(
+    sheetProgress: Float = 1f,
     onCollapse: () -> Unit = { MusicPlayerState.expanded = false },
     modifier: Modifier = Modifier
 ) {
     val track = MusicPlayerState.currentTrack ?: return
+    val sp = sheetProgress.coerceIn(0f, 1f)
     val context = LocalContext.current
     val view = LocalView.current
     val density = LocalDensity.current
@@ -186,6 +193,7 @@ fun ITuneMusicPlayer(
 
     var rootBoxCoords by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var playerTitleVisualTopPx by remember { mutableFloatStateOf(0f) }
+    var playerControlsVisualTopPx by remember { mutableFloatStateOf(0f) }
 
     var areLyricsControlsVisible by remember { mutableStateOf(true) }
     var lastLyricsInteractionTime by remember { mutableLongStateOf(0L) }
@@ -245,15 +253,6 @@ fun ITuneMusicPlayer(
         label = "contentBottomPadding"
     )
 
-    BackHandler(enabled = MusicPlayerState.expanded) {
-        if (isQueueOpen) {
-            MusicPlayerState.queueOpen = false
-        } else if (isLyricsOpen) {
-            MusicPlayerState.lyricsOpen = false
-        } else {
-            onCollapse()
-        }
-    }
 
     val safeDuration = if (duration > 0) duration else (track.durationSec * 1000L).coerceAtLeast(1L)
     val displayPos = if (isSeeking) seekPosition else position.coerceIn(0L, safeDuration)
@@ -278,11 +277,7 @@ fun ITuneMusicPlayer(
 
         key(track.id) {
             AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl)
-                    .allowHardware(false)
-                    .size(160)
-                    .build(),
+                model = track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -385,11 +380,23 @@ fun ITuneMusicPlayer(
         // in top left corner when lyrics or queue opens!
         // Given zIndex(35f) to ensure taps on the avatar directly collapse the panel.
         val progressClamped = panelProgress.coerceIn(0f, 1f)
-        val artTop = lerpDp(0.dp, statusBarTopDp + 6.dp, panelProgress)
-        val artStart = lerpDp(0.dp, 16.dp, panelProgress)
-        val artWidth = lerpDp(maxWidth, 44.dp, panelProgress).coerceAtLeast(1.dp)
-        val artHeight = lerpDp(fullBleedHeight, 44.dp, panelProgress).coerceAtLeast(1.dp)
-        val artRadius = lerpDp(0.dp, 10.dp, progressClamped).coerceAtLeast(0.dp)
+        val fullArtStart = lerpDp(0.dp, 16.dp, panelProgress)
+        val fullArtTop = lerpDp(0.dp, statusBarTopDp + 6.dp, panelProgress)
+        val fullArtWidth = lerpDp(maxWidth, 44.dp, panelProgress).coerceAtLeast(1.dp)
+        val fullArtHeight = lerpDp(fullBleedHeight, 44.dp, panelProgress).coerceAtLeast(1.dp)
+        val fullArtRadius = lerpDp(0.dp, 10.dp, progressClamped).coerceAtLeast(0.dp)
+
+        val miniArtStart = 10.dp
+        val miniArtTop = 10.dp
+        val miniArtWidth = 38.dp
+        val miniArtHeight = 38.dp
+        val miniArtRadius = 6.dp
+
+        val artStart = lerpDp(miniArtStart, fullArtStart, sp)
+        val artTop = lerpDp(miniArtTop, fullArtTop, sp)
+        val artWidth = lerpDp(miniArtWidth, fullArtWidth, sp)
+        val artHeight = lerpDp(miniArtHeight, fullArtHeight, sp)
+        val artRadius = lerpDp(miniArtRadius, fullArtRadius, sp).coerceAtLeast(0.dp)
 
         Box(
             modifier = Modifier
@@ -444,25 +451,32 @@ fun ITuneMusicPlayer(
         }
 
         // ── 5b. Continuous Morphing Title & Artist ──
-        // Glides seamlessly from resting player position above the wavy seekbar up into the header
-        // alongside the morphing artwork thumbnail avatar, with authentic physics-based spring.
+        // Seamlessly morphs between Mini Player position/size and Full Player resting position/size,
+        // and glides into the top header when Queue or Lyrics opens.
         val defaultPlayerTitleTopDp = maxHeight - 340.dp - navBottomDp
         val startTitleTopPx = if (playerTitleVisualTopPx > 0f) playerTitleVisualTopPx else with(density) { defaultPlayerTitleTopDp.toPx() }
-        val targetTitleTopPx = with(density) { (statusBarTopDp + 11.dp).toPx() }
-        val startTitleLeftPx = with(density) { 24.dp.toPx() }
-        val targetTitleLeftPx = with(density) { 70.dp.toPx() }
-        val startTitleEndPx = with(density) { 114.dp.toPx() }
-        val targetTitleEndPx = with(density) { 112.dp.toPx() }
 
-        val curTitleTopPx = lerpFloat(startTitleTopPx, targetTitleTopPx, panelProgress)
-        val curTitleLeftPx = lerpFloat(startTitleLeftPx, targetTitleLeftPx, panelProgress)
-        val curTitleEndPx = lerpFloat(startTitleEndPx, targetTitleEndPx, panelProgress)
+        val fullTitleStartPx = lerpFloat(with(density) { 24.dp.toPx() }, with(density) { 70.dp.toPx() }, panelProgress)
+        val fullTitleTopPx = lerpFloat(startTitleTopPx, with(density) { (statusBarTopDp + 11.dp).toPx() }, panelProgress)
+        val fullTitleEndPx = lerpFloat(with(density) { 114.dp.toPx() }, with(density) { 112.dp.toPx() }, panelProgress)
+        val fullTitleFontSize = lerpSp(24.sp, 15.sp, progressClamped)
+        val fullArtistFontSize = lerpSp(15.sp, 12.5.sp, progressClamped)
 
-        val curTitleFontSize = lerpSp(24.sp, 15.sp, progressClamped)
-        val curTitleLineHeight = lerpSp(28.sp, 18.sp, progressClamped)
-        val curArtistFontSize = lerpSp(15.sp, 12.5.sp, progressClamped)
-        val curArtistLineHeight = lerpSp(19.sp, 15.sp, progressClamped)
-        val curArtistAlpha = lerpFloat(0.72f, 0.65f, progressClamped).coerceIn(0f, 1f)
+        val miniTitleStartPx = with(density) { 58.dp.toPx() }
+        val miniTitleTopPx = with(density) { 10.dp.toPx() }
+        val miniTitleEndPx = with(density) { 86.dp.toPx() }
+        val miniTitleFontSize = 14.sp
+        val miniArtistFontSize = 12.sp
+
+        val curTitleTopPx = lerpFloat(miniTitleTopPx, fullTitleTopPx, sp)
+        val curTitleLeftPx = lerpFloat(miniTitleStartPx, fullTitleStartPx, sp)
+        val curTitleEndPx = lerpFloat(miniTitleEndPx, fullTitleEndPx, sp)
+
+        val curTitleFontSize = lerpSp(miniTitleFontSize, fullTitleFontSize, sp)
+        val curTitleLineHeight = lerpSp(18.sp, 28.sp, sp)
+        val curArtistFontSize = lerpSp(miniArtistFontSize, fullArtistFontSize, sp)
+        val curArtistLineHeight = lerpSp(15.sp, 19.sp, sp)
+        val curArtistAlpha = lerpFloat(0.65f, 0.72f, sp).coerceIn(0f, 1f)
         val curTitleWidthDp = with(density) { (maxWidth.toPx() - curTitleLeftPx - curTitleEndPx).coerceAtLeast(0f).toDp() }
 
         Box(
@@ -470,7 +484,7 @@ fun ITuneMusicPlayer(
                 .zIndex(36f)
                 .offset { IntOffset(curTitleLeftPx.roundToInt(), curTitleTopPx.roundToInt()) }
                 .width(curTitleWidthDp)
-                .height(48.dp)
+                .height(if (sp < 0.5f) 38.dp else 48.dp)
                 .then(
                     if (panelProgress > 0.80f) {
                         Modifier.clickable(
@@ -502,7 +516,7 @@ fun ITuneMusicPlayer(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.basicMarquee()
                 )
-                Spacer(Modifier.height(lerpDp(3.dp, 1.dp, panelProgress)))
+                Spacer(Modifier.height(lerpDp(1.dp, 3.dp, sp)))
                 Text(
                     text = track.artists,
                     style = TextStyle(
@@ -519,10 +533,96 @@ fun ITuneMusicPlayer(
             }
         }
 
+        // ── 5c. Continuous Morphing Play/Pause & Next Buttons ──
+        // Smoothly glides and scales between top-right mini player position and center full player playback row
+        val panelControlsTransY = if (isPanelOpen) controlsTranslationY else 0f
+        val panelControlsAlpha = if (isPanelOpen) controlsAlpha else 1f
+
+        val fallbackPlayTopPx = with(density) { (maxHeight - 210.dp - navBottomDp).toPx() }
+        val fullPlayTopPx = if (playerControlsVisualTopPx > 0f) playerControlsVisualTopPx else fallbackPlayTopPx
+
+        val miniPlayLeftPx = with(density) { (maxWidth - 84.dp).toPx() }
+        val miniPlayTopPx = with(density) { 11.dp.toPx() }
+        val fullPlayLeftPx = with(density) { (maxWidth / 2 - 36.dp).toPx() }
+
+        val miniNextLeftPx = with(density) { (maxWidth - 44.dp).toPx() }
+        val miniNextTopPx = with(density) { 11.dp.toPx() }
+        val fullNextLeftPx = with(density) { (maxWidth / 2 + 55.dp).toPx() }
+        val fullNextTopPx = fullPlayTopPx + with(density) { 9.dp.toPx() }
+
+        val curPlayLeftPx = lerpFloat(miniPlayLeftPx, fullPlayLeftPx, sp)
+        val curPlayTopPx = lerpFloat(miniPlayTopPx, fullPlayTopPx + panelControlsTransY, sp)
+        val curPlaySizeDp = lerpDp(36.dp, 72.dp, sp)
+        val curPlayIconSizeDp = lerpDp(24.dp, 48.dp, sp)
+
+        val curNextLeftPx = lerpFloat(miniNextLeftPx, fullNextLeftPx, sp)
+        val curNextTopPx = lerpFloat(miniNextTopPx, fullNextTopPx + panelControlsTransY, sp)
+        val curNextSizeDp = lerpDp(36.dp, 54.dp, sp)
+        val curNextIconSizeDp = lerpDp(22.dp, 38.dp, sp)
+
+        // Morphing Play/Pause Button
+        Box(
+            modifier = Modifier
+                .zIndex(40f)
+                .offset { IntOffset(curPlayLeftPx.roundToInt(), curPlayTopPx.roundToInt()) }
+                .size(curPlaySizeDp)
+                .graphicsLayer { alpha = panelControlsAlpha }
+                .clip(CircleShape)
+                .clickable {
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    onLyricsInteraction()
+                    MusicPlayerState.togglePlayPause()
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            if (isLoading && !isPlaying && sp > 0.4f) {
+                CircularProgressIndicator(
+                    color = Color.White,
+                    strokeWidth = 3.dp,
+                    modifier = Modifier.size(curPlayIconSizeDp * 0.9f)
+                )
+            } else {
+                Image(
+                    painter = painterResource(
+                        if (isPlaying) R.drawable.pause else R.drawable.play
+                    ),
+                    contentDescription = if (isPlaying) "Pause" else "Play",
+                    colorFilter = ColorFilter.tint(Color.White),
+                    modifier = Modifier.size(curPlayIconSizeDp)
+                )
+            }
+        }
+
+        // Morphing Next Button
+        Box(
+            modifier = Modifier
+                .zIndex(40f)
+                .offset { IntOffset(curNextLeftPx.roundToInt(), curNextTopPx.roundToInt()) }
+                .size(curNextSizeDp)
+                .graphicsLayer { alpha = panelControlsAlpha }
+                .clip(CircleShape)
+                .clickable {
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    onLyricsInteraction()
+                    MusicPlayerState.skipNext()
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.skip_next),
+                contentDescription = "Next",
+                colorFilter = ColorFilter.tint(Color.White),
+                modifier = Modifier.size(curNextIconSizeDp)
+            )
+        }
+
+        val fullElementsAlpha = ((sp - 0.22f) / 0.78f).coerceIn(0f, 1f)
+        val fullElementsTransY = (1f - sp) * with(density) { 50.dp.toPx() }
+
         val isFavorite = MusicPlayerState.isFavorite(track.id)
 
-        // ── 5c. Continuous Morphing Star (Favorite / Like) Button ──
-        // Initially positioned beside the 3-dot button at the end of the Title & Artist row in player mode,
+        // ── 5d. Continuous Morphing Star (Favorite / Like) Button ──
+        // Initially positioned beside the 3-dot button at the end of the Title & Artist row in player mode (matching Apple Music),
         // glides smoothly upward into the top header next to the 3-dot button when Queue or Lyrics opens.
         val startStarTopPx = startTitleTopPx + with(density) { 6.dp.toPx() }
         val targetStarTopPx = with(density) { (statusBarTopDp + 6.dp).toPx() }
@@ -533,13 +633,14 @@ fun ITuneMusicPlayer(
         val curStarLeftPx = lerpFloat(startStarLeftPx, targetStarLeftPx, panelProgress)
         val curStarSizeDp = lerpDp(36.dp, 44.dp, progressClamped)
         val curStarIconSizeDp = lerpDp(20.dp, 24.dp, progressClamped)
-        val curStarBgAlpha = lerpFloat(if (isFavorite) 0.22f else 0.14f, 0f, progressClamped)
+        val curStarBgAlpha = lerpFloat(if (isFavorite) 0.22f else 0.16f, 0.12f, progressClamped)
 
         Box(
             modifier = Modifier
                 .zIndex(37f)
-                .offset { IntOffset(curStarLeftPx.roundToInt(), curStarTopPx.roundToInt()) }
+                .offset { IntOffset(curStarLeftPx.roundToInt(), (curStarTopPx + fullElementsTransY).roundToInt()) }
                 .size(curStarSizeDp)
+                .graphicsLayer { alpha = fullElementsAlpha }
                 .clip(CircleShape)
                 .background(Color.White.copy(alpha = curStarBgAlpha))
                 .clickable {
@@ -560,8 +661,8 @@ fun ITuneMusicPlayer(
             )
         }
 
-        // ── 5d. Continuous Morphing More Button ──
-        // Initially positioned at the far right end of the Title & Artist row in player mode,
+        // ── 5e. Continuous Morphing More Button ──
+        // Initially positioned at the far right end of the Title & Artist row in player mode (matching Apple Music),
         // glides smoothly upward into the top-right header corner when Queue or Lyrics opens.
         val startMoreTopPx = startTitleTopPx + with(density) { 6.dp.toPx() }
         val targetMoreTopPx = with(density) { (statusBarTopDp + 6.dp).toPx() }
@@ -572,13 +673,14 @@ fun ITuneMusicPlayer(
         val curMoreLeftPx = lerpFloat(startMoreLeftPx, targetMoreLeftPx, panelProgress)
         val curMoreSizeDp = lerpDp(36.dp, 44.dp, progressClamped)
         val curMoreIconSizeDp = lerpDp(22.dp, 28.dp, progressClamped)
-        val curMoreBgAlpha = lerpFloat(0.14f, 0f, progressClamped)
+        val curMoreBgAlpha = lerpFloat(0.16f, 0.12f, progressClamped)
 
         Box(
             modifier = Modifier
                 .zIndex(37f)
-                .offset { IntOffset(curMoreLeftPx.roundToInt(), curMoreTopPx.roundToInt()) }
+                .offset { IntOffset(curMoreLeftPx.roundToInt(), (curMoreTopPx + fullElementsTransY).roundToInt()) }
                 .size(curMoreSizeDp)
+                .graphicsLayer { alpha = fullElementsAlpha }
                 .clip(CircleShape)
                 .background(Color.White.copy(alpha = curMoreBgAlpha))
                 .clickable {
@@ -674,7 +776,7 @@ fun ITuneMusicPlayer(
                 .padding(bottom = 18.dp)
                 .graphicsLayer {
                     translationY = controlsTranslationY
-                    alpha = controlsAlpha
+                    alpha = controlsAlpha * fullElementsAlpha
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -687,7 +789,7 @@ fun ITuneMusicPlayer(
                         val root = rootBoxCoords
                         if (root != null && root.isAttached && coords.isAttached) {
                             val pos = root.localPositionOf(coords, Offset.Zero)
-                            val visualTop = pos.y - with(density) { 48.dp.toPx() }
+                            val visualTop = pos.y
                             if (visualTop > 0f) {
                                 playerTitleVisualTopPx = visualTop
                             }
@@ -776,7 +878,17 @@ fun ITuneMusicPlayer(
 
             // ── Main 3 Playback Controls (Previous, Play/Pause, Next) ONLY ──
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { coords ->
+                        val root = rootBoxCoords
+                        if (root != null && root.isAttached && coords.isAttached) {
+                            val pos = root.localPositionOf(coords, Offset.Zero)
+                            if (pos.y > 0f) {
+                                playerControlsVisualTopPx = pos.y
+                            }
+                        }
+                    },
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -786,7 +898,9 @@ fun ITuneMusicPlayer(
                         onLyricsInteraction()
                         MusicPlayerState.skipPrevious()
                     },
-                    modifier = Modifier.size(54.dp)
+                    modifier = Modifier
+                        .size(54.dp)
+                        .graphicsLayer { alpha = fullElementsAlpha }
                 ) {
                     Image(
                         painter = painterResource(R.drawable.skip_previous),
@@ -796,50 +910,11 @@ fun ITuneMusicPlayer(
                     )
                 }
 
-                // Play / Pause
-                Box(
-                    modifier = Modifier
-                        .size(72.dp)
-                        .clip(CircleShape)
-                        .clickable {
-                            onLyricsInteraction()
-                            MusicPlayerState.togglePlayPause()
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (isLoading && !isPlaying) {
-                        CircularProgressIndicator(
-                            color = Color.White,
-                            strokeWidth = 3.dp,
-                            modifier = Modifier.size(44.dp)
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(
-                                if (isPlaying) R.drawable.pause else R.drawable.play
-                            ),
-                            contentDescription = if (isPlaying) "Pause" else "Play",
-                            colorFilter = ColorFilter.tint(Color.White),
-                            modifier = Modifier.size(48.dp)
-                        )
-                    }
-                }
+                // Layout Placeholder for Morphing Play / Pause
+                Spacer(modifier = Modifier.size(72.dp))
 
-                // Next
-                IconButton(
-                    onClick = {
-                        onLyricsInteraction()
-                        MusicPlayerState.skipNext()
-                    },
-                    modifier = Modifier.size(54.dp)
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.skip_next),
-                        contentDescription = "Next",
-                        colorFilter = ColorFilter.tint(Color.White),
-                        modifier = Modifier.size(38.dp)
-                    )
-                }
+                // Layout Placeholder for Morphing Next
+                Spacer(modifier = Modifier.size(54.dp))
             }
 
             Spacer(Modifier.height(18.dp))
@@ -967,9 +1042,10 @@ fun ITuneMusicPlayer(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Image(
-                                    painter = painterResource(R.drawable.ic_earbuds),
+                                    painter = painterResource(R.drawable.airbuds),
                                     contentDescription = "Audio Output",
-                                    modifier = Modifier.size(width = 28.dp, height = 21.dp)
+                                    contentScale = ContentScale.Fit,
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
                         }

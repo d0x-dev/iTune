@@ -53,22 +53,23 @@ data class WordTiming(
     val text: String,
 )
 
-/** Upgrades YouTube and Google CDN album artwork to high resolution (544px / 720p). */
+/** Upgrades YouTube and Google CDN album artwork to ultra high resolution (8K / 4K / Original uncompressed master upload). */
 fun String.highQualityThumbnail(): String {
     var url = this
     if (url.contains("googleusercontent.com") || url.contains("ggpht.com")) {
-        url = if (url.contains(Regex("=w\\d+-h\\d+"))) {
-            url.replace(Regex("=w\\d+-h\\d+"), "=w544-h544")
-        } else if (url.contains(Regex("=s\\d+"))) {
-            url.replace(Regex("=s\\d+"), "=s544")
+        // Strip any existing sizing / formatting parameter after the last '=' and request '=s0' (raw master resolution, up to 4K/8K original upload)
+        url = if (url.contains("=")) {
+            url.substringBeforeLast("=") + "=s0"
         } else {
-            "$url=w544-h544"
+            "$url=s0"
         }
-    }
-    // YouTube video thumbnail upgrade
-    if (url.contains("i.ytimg.com/vi/")) {
-        if (url.contains("/default.jpg") || url.contains("/mqdefault.jpg") || url.contains("/hqdefault.jpg")) {
-            url = url.replace(Regex("/(default|mqdefault|hqdefault)\\.jpg"), "/hq720.jpg")
+    } else if (url.contains("i.ytimg.com/vi/")) {
+        // Strip query parameters like ?sqp=... that constrain size and crop
+        val cleanUrl = url.substringBefore("?")
+        url = if (cleanUrl.contains(Regex("/(default|mqdefault|hqdefault|sddefault|hq720)\\.jpg"))) {
+            cleanUrl.replace(Regex("/(default|mqdefault|hqdefault|sddefault|hq720)\\.jpg"), "/maxresdefault.jpg")
+        } else {
+            cleanUrl
         }
     }
     return url
