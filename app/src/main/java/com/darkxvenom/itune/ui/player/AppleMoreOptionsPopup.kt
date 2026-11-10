@@ -559,10 +559,118 @@ internal fun AppleFrostedPopupOverlay(
                             .background(Color.Black.copy(alpha = 0.24f))
                             .border(0.5.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(18.dp))
                     ) {
+                        menuContent()
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AppleMoreOptionsPopup(
+    visible: Boolean,
+    track: MusicTrack,
+    artUrl: String?,
+    anchorCenterXPx: Float,
+    anchorCenterYPx: Float,
+    isPanelOpen: Boolean,
+    statusBarTopDp: Dp,
+    titleRowTopDp: Dp,
+    maxHeightDp: Dp,
+    rootCoordsProvider: () -> LayoutCoordinates?,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val view = LocalView.current
+    var activePage by remember { mutableStateOf(MorePopupPage.MAIN) }
+
+    LaunchedEffect(visible) {
+        if (visible) activePage = MorePopupPage.MAIN
+    }
+
+    val bottomClearanceDp = if (isPanelOpen) {
+        0.dp
+    } else {
+        (maxHeightDp - titleRowTopDp + 16.dp).coerceIn(180.dp, maxHeightDp - statusBarTopDp - 140.dp)
+    }
+
+    AppleFrostedPopupOverlay(
+        visible = visible,
+        title = track.title,
+        subtitle = track.artists,
+        artUrl = artUrl,
+        anchorCenterXPx = anchorCenterXPx,
+        anchorCenterYPx = anchorCenterYPx,
+        maxHeightDp = maxHeightDp,
+        statusBarTopDp = statusBarTopDp,
+        rootCoordsProvider = rootCoordsProvider,
+        onDismiss = onDismiss,
+        onBack = {
+            when (activePage) {
+                MorePopupPage.LYRICS_SEARCH,
+                MorePopupPage.LYRICS_EDIT,
+                MorePopupPage.LYRICS_OFFSET -> activePage = MorePopupPage.LYRICS_MENU
+                MorePopupPage.MAIN -> onDismiss()
+                else -> activePage = MorePopupPage.MAIN
+            }
+        },
+        isTopAnchored = isPanelOpen,
+        bottomClearanceDp = bottomClearanceDp,
+        hasInputFocusPage = activePage == MorePopupPage.LYRICS_SEARCH || activePage == MorePopupPage.LYRICS_EDIT,
+        modifier = modifier,
+        headerActions = {
+            val isFavorite = MusicPlayerState.isFavorite(track.id)
+            HeaderCircleActionButton(
+                iconRes = R.drawable.ic_menu_share,
+                contentDescription = "Share",
+                onClick = {
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    val link = "https://music.youtube.com/watch?v=${track.id}"
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(
+                            Intent.EXTRA_TEXT,
+                            "Listen to ${track.title} by ${track.artists}\n$link"
+                        )
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, "Share Song"))
+                    onDismiss()
+                }
+            )
+            HeaderCircleActionButton(
+                iconRes = R.drawable.ic_menu_copy_link,
+                contentDescription = "Copy link",
+                onClick = {
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    val link = "https://music.youtube.com/watch?v=${track.id}"
+                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                    clipboard?.setPrimaryClip(ClipData.newPlainText("Track Link", link))
+                    Toast.makeText(context, "Link copied", Toast.LENGTH_SHORT).show()
+                    onDismiss()
+                }
+            )
+            HeaderCircleActionButton(
+                iconRes = if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_outline,
+                contentDescription = if (isFavorite) "Favorited" else "Favorite",
+                highlighted = isFavorite,
+                onClick = {
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    MusicPlayerState.toggleFavorite(track.id)
+                }
+            )
+        }
+    ) {
                         AnimatedContent(
                             targetState = activePage,
                             transitionSpec = {
-                                if (targetState == MorePopupPage.MAIN) {
+                                val navigatingBack = targetState == MorePopupPage.MAIN ||
+                                    (targetState == MorePopupPage.LYRICS_MENU &&
+                                        (initialState == MorePopupPage.LYRICS_SEARCH ||
+                                            initialState == MorePopupPage.LYRICS_EDIT ||
+                                            initialState == MorePopupPage.LYRICS_OFFSET))
+                                if (navigatingBack) {
                                     (slideInHorizontally(tween(240)) { -it / 4 } + fadeIn(tween(200))) togetherWith
                                         (slideOutHorizontally(tween(200)) { it / 4 } + fadeOut(tween(160)))
                                 } else {
@@ -581,6 +689,22 @@ internal fun AppleFrostedPopupOverlay(
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 activePage = MorePopupPage.DOWNLOAD
+                                            }
+                                        )
+                                        PopupMenuDivider()
+
+                                        val lyricsBadge = when {
+                                            MusicPlayerState.lyricsOffsetMs != 0L -> formatLyricsOffsetLabel(MusicPlayerState.lyricsOffsetMs)
+                                            MusicPlayerState.hasCustomLyricsOverride -> "Custom"
+                                            else -> null
+                                        }
+                                        MorePopupOptionRow(
+                                            iconRes = R.drawable.ic_menu_lyrics,
+                                            title = "Lyrics",
+                                            trailingBadge = lyricsBadge,
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                activePage = MorePopupPage.LYRICS_MENU
                                             }
                                         )
                                         PopupMenuDivider()
