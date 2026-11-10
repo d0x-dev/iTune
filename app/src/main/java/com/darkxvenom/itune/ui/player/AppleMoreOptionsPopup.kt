@@ -148,27 +148,30 @@ private fun lerpDpPopup(start: Dp, stop: Dp, fraction: Float): Dp =
  */
 /** Shared Apple frosted liquid glass popup overlay with water-drop spring bloom, ripples, blurred art backdrop, marquee header, and drag-dismiss. */
 @Composable
-fun AppleMoreOptionsPopup(
+internal fun AppleFrostedPopupOverlay(
     visible: Boolean,
-    track: MusicTrack,
+    title: String,
+    subtitle: String,
     artUrl: String?,
     anchorCenterXPx: Float,
     anchorCenterYPx: Float,
-    isPanelOpen: Boolean,
-    statusBarTopDp: Dp,
-    titleRowTopDp: Dp,
     maxHeightDp: Dp,
+    statusBarTopDp: Dp,
     rootCoordsProvider: () -> LayoutCoordinates?,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    onBack: () -> Unit = onDismiss,
+    isTopAnchored: Boolean = false,
+    bottomClearanceDp: Dp? = null,
+    hasInputFocusPage: Boolean = false,
+    onExited: () -> Unit = {},
+    headerActions: @Composable RowScope.() -> Unit,
+    modifier: Modifier = Modifier,
+    menuContent: @Composable () -> Unit
 ) {
     val context = LocalContext.current
-    val view = LocalView.current
-    val density = LocalDensity.current
     val scope = rememberCoroutineScope()
 
     var shouldRender by remember { mutableStateOf(false) }
-    var activePage by remember { mutableStateOf(MorePopupPage.MAIN) }
     var dragDismissOffsetPx by remember { mutableFloatStateOf(0f) }
 
     val openProgress = remember { Animatable(0f) }
@@ -180,7 +183,6 @@ fun AppleMoreOptionsPopup(
 
     LaunchedEffect(visible) {
         if (visible) {
-            activePage = MorePopupPage.MAIN
             dragDismissOffsetPx = 0f
             shouldRender = true
             launch {
@@ -223,16 +225,11 @@ fun AppleMoreOptionsPopup(
             )
             shouldRender = false
             dragDismissOffsetPx = 0f
+            onExited()
         }
     }
 
-    BackHandler(enabled = visible) {
-        if (activePage != MorePopupPage.MAIN) {
-            activePage = MorePopupPage.MAIN
-        } else {
-            onDismiss()
-        }
-    }
+    BackHandler(enabled = visible, onBack = onBack)
 
     if (!shouldRender) return
 
@@ -249,14 +246,8 @@ fun AppleMoreOptionsPopup(
     val cornerDp = lerpDpPopup(84.dp, 28.dp, pClamped)
     val cardShape = RoundedCornerShape(cornerDp)
 
-    val cardAnchorDx = if (cardCenterXPx > 0f) (anchorCenterXPx - cardCenterXPx) * (1f - pClamped) else 0f
-    val cardAnchorDy = if (cardCenterYPx > 0f) (anchorCenterYPx - cardCenterYPx) * (1f - pClamped) else 0f
-
-    val bottomClearanceDp = if (isPanelOpen) {
-        0.dp
-    } else {
-        (maxHeightDp - titleRowTopDp + 16.dp).coerceIn(180.dp, maxHeightDp - statusBarTopDp - 140.dp)
-    }
+    val cardAnchorDx = if (cardCenterXPx > 0f && anchorCenterXPx > 0f) (anchorCenterXPx - cardCenterXPx) * (1f - pClamped) else 0f
+    val cardAnchorDy = if (cardCenterYPx > 0f && anchorCenterYPx > 0f) (anchorCenterYPx - cardCenterYPx) * (1f - pClamped) else 0f
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -275,7 +266,7 @@ fun AppleMoreOptionsPopup(
         )
 
         // 2. Water-Drop Concentric Flow Ripples radiating from the 3-dot button center
-        if (rippleP > 0.001f && rippleP < 0.999f) {
+        if (rippleP > 0.001f && rippleP < 0.999f && anchorCenterXPx > 0f && anchorCenterYPx > 0f) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val origin = Offset(anchorCenterXPx, anchorCenterYPx)
                 val maxRadius1 = 290.dp.toPx()
@@ -310,14 +301,30 @@ fun AppleMoreOptionsPopup(
         }
 
         // 3. Un-transformed Positioning Wrapper (keeps onGloballyPositioned stable during zoom animation)
-        val placementModifier = if (isPanelOpen) {
-            Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = statusBarTopDp + 82.dp, start = 16.dp, end = 16.dp, bottom = 24.dp)
-        } else {
-            Modifier
-                .align(Alignment.BottomCenter)
-                .padding(top = statusBarTopDp + 16.dp, start = 16.dp, end = 16.dp, bottom = bottomClearanceDp)
+        val placementModifier = when {
+            isTopAnchored -> {
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .then(if (hasInputFocusPage) Modifier.imePadding() else Modifier)
+                    .padding(top = statusBarTopDp + 98.dp, start = 16.dp, end = 16.dp, bottom = 20.dp)
+            }
+            bottomClearanceDp != null -> {
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .then(if (hasInputFocusPage) Modifier.imePadding() else Modifier)
+                    .padding(
+                        top = statusBarTopDp + 16.dp,
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = if (hasInputFocusPage) 20.dp else bottomClearanceDp
+                    )
+            }
+            else -> {
+                Modifier
+                    .align(Alignment.Center)
+                    .then(if (hasInputFocusPage) Modifier.imePadding() else Modifier)
+                    .padding(top = statusBarTopDp + 16.dp, start = 16.dp, end = 16.dp, bottom = 24.dp)
+            }
         }
 
         Box(
@@ -379,7 +386,7 @@ fun AppleMoreOptionsPopup(
                         interactionSource = remember { MutableInteractionSource() }
                     ) { /* consume taps inside card */ }
             ) {
-                // Background Layer: Heavily blurred current track artwork matching player avatar color
+                // Background Layer: Heavily blurred current track artwork matching card color
                 if (!artUrl.isNullOrBlank()) {
                     AsyncImage(
                         model = ImageRequest.Builder(context)
@@ -427,7 +434,7 @@ fun AppleMoreOptionsPopup(
                             if (flowP > 0.01f && flowP < 0.99f) {
                                 val waveFade = sin(flowP * PI).toFloat() * 0.18f
                                 val cx = size.width * (1f - flowP * 0.85f)
-                                val cy = size.height * (if (isPanelOpen) flowP else 1f - flowP)
+                                val cy = size.height * (if (isTopAnchored) flowP else 1f - flowP)
                                 drawCircle(
                                     brush = Brush.radialGradient(
                                         colors = listOf(
@@ -458,6 +465,7 @@ fun AppleMoreOptionsPopup(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .heightIn(max = (maxHeightDp - statusBarTopDp - 110.dp).coerceAtLeast(280.dp))
                         .verticalScroll(rememberScrollState())
                 ) {
                     // Top Grabber Handle Pill
