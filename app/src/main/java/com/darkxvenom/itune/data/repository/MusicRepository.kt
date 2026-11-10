@@ -231,36 +231,80 @@ object MusicRepository {
         ),
         SearchCategory(
             id = "c8",
-            title = "Rock",
-            type = SearchCategoryType.ROCK,
-            backgroundColor = Color(0xFFDC4E33),
-            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_rock.png"
+            title = "Romance",
+            type = SearchCategoryType.ROMANCE,
+            backgroundColor = Color(0xFF9E422D),
+            imageUrl = "https://images.unsplash.com/photo-1518199266791-5375a83190b7?$UNSPLASH_SUFFIX"
         ),
         SearchCategory(
             id = "c9",
-            title = "Latin",
-            type = SearchCategoryType.LATIN,
-            backgroundColor = Color(0xFFD83375),
-            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_latin.png"
+            title = "Sad",
+            type = SearchCategoryType.SAD,
+            backgroundColor = Color(0xFF535D5C),
+            imageUrl = "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?$UNSPLASH_SUFFIX"
         ),
         SearchCategory(
             id = "c10",
-            title = "R&B",
-            type = SearchCategoryType.RNB,
-            backgroundColor = Color(0xFF826FE3),
-            imageUrl = "$GITHUB_IMAGE_BASE_URL/card_rnb.png"
+            title = "Sleep",
+            type = SearchCategoryType.SLEEP,
+            backgroundColor = Color(0xFF4C3A7A),
+            imageUrl = "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?$UNSPLASH_SUFFIX"
         ),
         SearchCategory(
             id = "c11",
-            title = "Classical",
-            type = SearchCategoryType.CLASSICAL,
-            backgroundColor = Color(0xFF28559A)
+            title = "Workout",
+            type = SearchCategoryType.WORKOUT,
+            backgroundColor = Color(0xFFA35728),
+            imageUrl = "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?$UNSPLASH_SUFFIX"
         ),
         SearchCategory(
             id = "c12",
-            title = "Chill",
-            type = SearchCategoryType.CHILL,
-            backgroundColor = Color(0xFF2E7D7A)
+            title = "African",
+            type = SearchCategoryType.AFRICAN,
+            backgroundColor = Color(0xFF10722C),
+            imageUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?$UNSPLASH_SUFFIX"
+        ),
+        SearchCategory(
+            id = "c13",
+            title = "Arabic",
+            type = SearchCategoryType.ARABIC,
+            backgroundColor = Color(0xFF984617),
+            imageUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?$UNSPLASH_SUFFIX"
+        ),
+        SearchCategory(
+            id = "c14",
+            title = "Bengali",
+            type = SearchCategoryType.BENGALI,
+            backgroundColor = Color(0xFF837E43),
+            imageUrl = "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?$UNSPLASH_SUFFIX"
+        ),
+        SearchCategory(
+            id = "c15",
+            title = "Pop",
+            type = SearchCategoryType.POP,
+            backgroundColor = Color(0xFFAD3869),
+            imageUrl = "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?$UNSPLASH_SUFFIX"
+        ),
+        SearchCategory(
+            id = "c16",
+            title = "Rock",
+            type = SearchCategoryType.ROCK,
+            backgroundColor = Color(0xFF8F2929),
+            imageUrl = "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?$UNSPLASH_SUFFIX"
+        ),
+        SearchCategory(
+            id = "c17",
+            title = "Hip-Hop",
+            type = SearchCategoryType.HIP_HOP,
+            backgroundColor = Color(0xFFBA5A20),
+            imageUrl = "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?$UNSPLASH_SUFFIX"
+        ),
+        SearchCategory(
+            id = "c18",
+            title = "Bollywood",
+            type = SearchCategoryType.BOLLYWOOD,
+            backgroundColor = Color(0xFF8B2F57),
+            imageUrl = "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?$UNSPLASH_SUFFIX"
         )
     )
 
