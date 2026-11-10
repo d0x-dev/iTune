@@ -727,3 +727,100 @@ fun LibraryAtmosphericBackdrop(
     }
 }
 
+@Composable
+fun LibraryFrostedScreenScaffold(
+    controller: LibraryHostController,
+    artworkUrls: List<String?>,
+    scrolledTitle: String,
+    isScrolled: Boolean,
+    hasMiniPlayer: Boolean,
+    fallbackAccent: Color = LibraryCrimsonAccent,
+    amoledDark: Boolean = false,
+    onBack: () -> Unit,
+    topBarActions: @Composable () -> Unit = {},
+    content: @Composable (PaddingValues) -> Unit,
+) {
+    val glassActive = isGlassSupported()
+    val pageFloor = if (amoledDark) Color.Black else LibraryGlassBaseBg
+    val contentPadding = PaddingValues(
+        top = topBarContentPadding(),
+        bottom = if (hasMiniPlayer) 210.dp else 140.dp,
+    )
+
+    ITubeArtistTheme(darkTheme = true) {
+        CompositionLocalProvider(
+            LocalAppBackdrop provides controller.appBackdrop,
+            LocalLiquidGlassEnabled provides glassActive,
+            LocalReduceDynamicBlur provides false,
+        ) {
+            Box(Modifier.fillMaxSize()) {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .snapshotBackdropSource(controller.pageBackdrop, floor = pageFloor)
+                        .hazeSource(state = controller.hazeState),
+                ) {
+                    // Only the background layer is recorded into appBackdrop so no liquidGlass
+                    // child inside content() can ever form a self-referential RenderNode cycle.
+                    if (amoledDark) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black)
+                                .layerBackdrop(controller.appBackdrop),
+                        )
+                    } else {
+                        LibraryAtmosphericBackdrop(
+                            artworkUrls = artworkUrls,
+                            fallbackAccent = fallbackAccent,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .layerBackdrop(controller.appBackdrop),
+                        )
+                    }
+                    content(contentPadding)
+                }
+
+                TopFadeBlur(
+                    hazeState = controller.hazeState,
+                    pageColor = pageFloor,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
+
+                FrostedTopBar(
+                    transparentBackdrop = true,
+                    artworkPageChrome = true,
+                    backButtonHazeState = controller.hazeState,
+                    onBack = onBack,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    centerContent = {
+                        AnimatedVisibility(
+                            visible = isScrolled,
+                            enter = fadeIn(tween(180)),
+                            exit = fadeOut(tween(180)),
+                        ) {
+                            FrostedTopBarTitlePill(hazeState = controller.hazeState) {
+                                Text(
+                                    text = scrolledTitle,
+                                    color = Color.White,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
+                    },
+                    actions = topBarActions,
+                )
+
+                BottomFadeScrim(
+                    withMiniPlayer = hasMiniPlayer,
+                    pageColor = pageFloor,
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                )
+            }
+        }
+    }
+}
+
