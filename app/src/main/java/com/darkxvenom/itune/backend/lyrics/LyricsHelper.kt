@@ -226,12 +226,12 @@ object LyricsHelper {
         KuGouLyricsProvider
     )
 
-    suspend fun loadLyrics(
+    suspend fun loadLyricsWithRaw(
         songId: String,
         title: String,
         artist: String,
         durationSec: Int = 0
-    ): List<LyricsLine> = withContext(Dispatchers.IO) {
+    ): LoadedLyrics = withContext(Dispatchers.IO) {
         memoryCache[songId]?.let { return@withContext it }
 
         var rawLrc: String? = null
@@ -248,15 +248,59 @@ object LyricsHelper {
         }
 
         val parsed = if (!rawLrc.isNullOrBlank()) {
-            parseLrc(rawLrc)
+            parseLyricsText(rawLrc)
         } else {
             emptyList()
         }
 
+        val loaded = LoadedLyrics(lines = parsed, rawText = rawLrc.orEmpty())
         if (parsed.isNotEmpty()) {
-            memoryCache[songId] = parsed
+            memoryCache[songId] = loaded
         }
-        parsed
+        loaded
+    }
+
+    suspend fun loadLyrics(
+        songId: String,
+        title: String,
+        artist: String,
+        durationSec: Int = 0
+    ): List<LyricsLine> = loadLyricsWithRaw(songId, title, artist, durationSec).lines
+
+    /** Queries LrcLib and KuGou in parallel and returns candidates sorted with synced & closest duration first. */
+    suspend fun searchAllLyrics(
+        title: String,
+        artist: String,
+        durationSec: Int = 0
+    ): List<LyricsSearchResult> = withContext(Dispatchers.IO) {
+        coroutineScope {
+            val lrcLibDeferred = async { LrcLibLyricsProvider.searchMatches(title, artist) }
+            val kugouDeferred = async { KuGouLyricsProvider.searchCandidates(title, artist, limit = 4) }
+
+            val combined = lrcLibDeferred.await() + kugouDeferred.await()
+            combined
+                .filter { it.rawText.isNotBlank() }
+                .distinctBy { "${it.provider}_${it.rawText.take(120)}" }
+                .sortedWith(
+                    compareByDescending<LyricsSearchResult> { it.isSynced }
+                        .thenBy {
+                            if (durationSec > 0 && it.durationSec > 0) abs(it.durationSec - durationSec)
+                            else Int.MAX_VALUE / 2
+                        }
+                )
+        }
+    }
+
+    fun updateMemoryCache(songId: String, rawText: String, lines: List<LyricsLine>) {
+        if (lines.isNotEmpty()) {
+            memoryCache[songId] = LoadedLyrics(lines = lines, rawText = rawText)
+        } else {
+            memoryCache.remove(songId)
+        }
+    }
+
+    fun invalidateMemoryCache(songId: String) {
+        memoryCache.remove(songId)
     }
 
     private fun unescapeHtml(text: String): String {
@@ -282,9 +326,38 @@ object LyricsHelper {
         }
     }
 
+    /** Parses LRC (`[mm:ss.xx]`) when timestamps exist, falling back cleanly to plain lines for manual edits/plain matches. */
+    fun parseLyricsText(rawText: String): List<LyricsLine> {
+        val clean = rawText.trim()
+        if (clean.isBlank() || clean.equals("null", ignoreCase = true)) return emptyList()
+
+        val synced = parseLrc(clean)
+        if (synced.isNotEmpty()) return synced
+
+        return clean.lines()
+            .map { unescapeHtml(it.trim()) }
+            .filter { it.isNotBlank() && !it.equals("null", ignoreCase = true) }
+            .map { LyricsLine(timeMs = 0L, text = it) }
+    }
+
+    fun formatToEditableText(lines: List<LyricsLine>): String {
+        if (lines.isEmpty()) return ""
+        val synced = lines.any { it.timeMs > 0L }
+        return lines.joinToString("\n") { line ->
+            if (synced && line.timeMs >= 0L) {
+                val mins = line.timeMs / 60_000L
+                val secs = (line.timeMs % 60_000L) / 1000L
+                val centis = (line.timeMs % 1000L) / 10L
+                "[%02d:%02d.%02d] %s".format(mins, secs, centis, line.text)
+            } else {
+                line.text
+            }
+        }
+    }
+
     fun parseLrc(lrcText: String): List<LyricsLine> {
         val lines = mutableListOf<LyricsLine>()
-        val linePattern = Pattern.compile("\\[(\\d{2}):(\\d{2})(?:\\.(\\d{2,3}))?\\](.*)")
+        val linePattern = Pattern.compile("\\[(\\d{1,3}):(\\d{2})(?:\\.(\\d{1,3}))?\\](.*)")
 
         for (line in lrcText.lines()) {
             val trimmed = line.trim()
@@ -296,6 +369,7 @@ object LyricsHelper {
                 val msStr = matcher.group(3)
                 val ms = when {
                     msStr == null -> 0L
+                    msStr.length == 1 -> msStr.toLong() * 100
                     msStr.length == 2 -> msStr.toLong() * 10
                     else -> msStr.take(3).toLong()
                 }
@@ -333,3 +407,7 @@ object LyricsHelper {
         return enriched
     }
 }
+
+/** Avoids Android `org.json.JSONObject.optString` returning `"null"` for JSON `null` fields. */
+private fun JSONObject.optNonNullString(key: String): String =
+    if (isNull(key)) "" else optString(key, "").trim()
