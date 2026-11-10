@@ -126,3 +126,126 @@ data class PendingPlaylistPayload(
  * 3 = 2 top + 1 wide bottom collage
  * 4+ = 2x2 mosaic collage
  */
+@Composable
+fun PlaylistCollageAvatar(
+    artworkUrls: List<String>,
+    modifier: Modifier = Modifier,
+    size: Dp? = 56.dp,
+    cornerRadius: Dp = 14.dp,
+) {
+    val cleanUrls = remember(artworkUrls) {
+        artworkUrls.filter { it.isNotBlank() }.distinct().take(4)
+    }
+    val shape = RoundedCornerShape(cornerRadius)
+    val artPx = if ((size ?: 160.dp) >= 140.dp) CARD_ART_PX else ROW_ART_PX
+    val iconSize = (size ?: 140.dp) * 0.44f
+
+    Box(
+        modifier = modifier
+            .then(if (size != null) Modifier.size(size) else Modifier)
+            .clip(shape)
+            .background(
+                Brush.linearGradient(
+                    listOf(
+                        Color(0xFF3E1023),
+                        Color(0xFF1A1423),
+                        Color(0xFF101016),
+                    ),
+                ),
+            )
+            .border(0.75.dp, Color.White.copy(alpha = 0.20f), shape),
+        contentAlignment = Alignment.Center,
+    ) {
+        when (cleanUrls.size) {
+            0 -> {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.QueueMusic,
+                    contentDescription = null,
+                    tint = Color.White.copy(alpha = 0.72f),
+                    modifier = Modifier.size(iconSize),
+                )
+            }
+            1 -> {
+                AsyncImage(
+                    model = cleanUrls[0].artworkAt(artPx),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+            2 -> {
+                Row(Modifier.fillMaxSize()) {
+                    AsyncImage(
+                        model = cleanUrls[0].artworkAt(artPx),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                    )
+                    AsyncImage(
+                        model = cleanUrls[1].artworkAt(artPx),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                    )
+                }
+            }
+            3 -> {
+                Column(Modifier.fillMaxSize()) {
+                    Row(Modifier.weight(1f).fillMaxWidth()) {
+                        AsyncImage(
+                            model = cleanUrls[0].artworkAt(artPx),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                        )
+                        AsyncImage(
+                            model = cleanUrls[1].artworkAt(artPx),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                        )
+                    }
+                    AsyncImage(
+                        model = cleanUrls[2].artworkAt(artPx),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.weight(1f).fillMaxWidth(),
+                    )
+                }
+            }
+            else -> {
+                Column(Modifier.fillMaxSize()) {
+                    Row(Modifier.weight(1f).fillMaxWidth()) {
+                        AsyncImage(
+                            model = cleanUrls[0].artworkAt(artPx),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                        )
+                        AsyncImage(
+                            model = cleanUrls[1].artworkAt(artPx),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                        )
+                    }
+                    Row(Modifier.weight(1f).fillMaxWidth()) {
+                        AsyncImage(
+                            model = cleanUrls[2].artworkAt(artPx),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                        )
+                        AsyncImage(
+                            model = cleanUrls[3].artworkAt(artPx),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
