@@ -234,6 +234,23 @@ fun FrostedTopBar(
 }
 
 @Composable
+fun FrostedTopBarTitlePill(
+    hazeState: HazeState?,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .height(TOP_CONTROL_SIZE)
+            .then(artworkPageSurface(shape = CircleShape, hazeState = hazeState))
+            .padding(horizontal = 16.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        content()
+    }
+}
+
+@Composable
 private fun ArtworkPageBackButton(
     onClick: () -> Unit,
     hazeState: HazeState?,
