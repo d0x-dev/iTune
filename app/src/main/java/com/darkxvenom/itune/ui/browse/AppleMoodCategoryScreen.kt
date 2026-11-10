@@ -727,3 +727,109 @@ private fun MoodGridArtworkCard(
     }
 }
 
+@Composable
+private fun MoodSongRow(
+    item: MoodCategoryItem,
+    isCurrent: Boolean,
+    isPlaying: Boolean,
+    showDivider: Boolean,
+    onClick: () -> Unit,
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 7.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color(0xFF1C1C1E)),
+            ) {
+                AsyncImage(
+                    model = item.thumbnailUrl?.artworkAt(CARD_ART_PX) ?: item.thumbnailUrl,
+                    contentDescription = item.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
+                if (isCurrent) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.52f)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        AnimatedEqualizer(isPlaying = isPlaying, color = Color.White, size = 20.dp)
+                    }
+                }
+            }
+            Spacer(Modifier.width(14.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = item.title,
+                    color = if (isCurrent) LibraryCrimsonAccent else Color.White,
+                    fontSize = 15.5.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                if (item.subtitle.isNotBlank()) {
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        text = item.subtitle,
+                        color = Color(0xFF8E8E93),
+                        fontSize = 13.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+        }
+        if (showDivider) {
+            HorizontalDivider(
+                modifier = Modifier.padding(start = 78.dp, end = 16.dp),
+                thickness = 0.5.dp,
+                color = Color.White.copy(alpha = 0.11f),
+            )
+        }
+    }
+}
+
+@Composable
+private fun MoodCategoryLoadingSkeleton() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(22.dp),
+    ) {
+        repeat(2) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Box(Modifier.padding(horizontal = 16.dp)) {
+                    ShimmerBox(Modifier.width(160.dp).height(18.dp), RoundedCornerShape(6.dp))
+                }
+                Spacer(Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    repeat(2) {
+                        Column(Modifier.width(154.dp)) {
+                            ShimmerBox(Modifier.size(154.dp), RoundedCornerShape(12.dp))
+                            Spacer(Modifier.height(8.dp))
+                            ShimmerBox(Modifier.width(116.dp).height(14.dp), RoundedCornerShape(5.dp))
+                            Spacer(Modifier.height(4.dp))
+                            ShimmerBox(Modifier.width(84.dp).height(11.dp), RoundedCornerShape(5.dp))
+                        }
+                    }
+                }
+            }
+        }
+        repeat(3) { idx -> SongRowSkeleton(index = idx) }
+    }
+}
