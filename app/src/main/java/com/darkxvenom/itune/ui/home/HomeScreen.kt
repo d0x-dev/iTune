@@ -356,12 +356,26 @@ fun HomeScreen(
             ) {
                 BrowseScreen(
                     onCategoryClick = { item ->
-                        Toast.makeText(context, "Opening ${item.title}", Toast.LENGTH_SHORT).show()
+                        activeMoodCategory = item
                     },
                     onProfileClick = {
                         showAvatarDialog = true
                     }
                 )
+                activeMoodCategory?.let { category ->
+                    BackHandler(
+                        enabled = currentScreen == AppScreen.BROWSE &&
+                            !artistHostController.isOpen &&
+                            !MusicPlayerState.expanded,
+                    ) {
+                        activeMoodCategory = null
+                    }
+                    AppleMoodCategoryScreen(
+                        category = category,
+                        hasMiniPlayer = MusicPlayerState.currentTrack != null,
+                        onBack = { activeMoodCategory = null },
+                    )
+                }
             }
         }
 
