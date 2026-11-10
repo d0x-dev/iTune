@@ -45,6 +45,9 @@ import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.data.model.Track
 import com.darkxvenom.itune.data.repository.MusicRepository
+import com.darkxvenom.itune.ui.artist.ArtistScreenOverlayContent
+import com.darkxvenom.itune.ui.artist.ArtistScreenOverlayPopups
+import com.darkxvenom.itune.ui.artist.rememberArtistHostController
 import com.darkxvenom.itune.ui.browse.BrowseScreen
 import com.darkxvenom.itune.ui.components.AvatarSelectionDialog
 import com.darkxvenom.itune.ui.components.CuratedPlaylistsSection
@@ -117,6 +120,7 @@ fun HomeScreen(
     var hasVisitedBrowse by remember { mutableStateOf(false) }
     var hasVisitedLibrary by remember { mutableStateOf(false) }
     var hasVisitedSearch by remember { mutableStateOf(false) }
+    val artistHostController = rememberArtistHostController()
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -143,6 +147,12 @@ fun HomeScreen(
         if (!MusicPlayerState.pendingArtistSearch.isNullOrBlank()) {
             currentScreen = AppScreen.SEARCH
         }
+    }
+
+    LaunchedEffect(MusicPlayerState.pendingArtistNav) {
+        val nav = MusicPlayerState.pendingArtistNav ?: return@LaunchedEffect
+        MusicPlayerState.pendingArtistNav = null
+        artistHostController.openFromNav(nav)
     }
 
     // ONLY trigger loading when pulling down from the very top of the list (item 0)
