@@ -39,6 +39,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -124,6 +128,9 @@ import kotlin.math.roundToInt
 private fun lerpDp(start: Dp, stop: Dp, fraction: Float): Dp =
     start + (stop - start) * fraction
 
+private fun lerpSp(start: TextUnit, stop: TextUnit, fraction: Float): TextUnit =
+    (start.value + (stop.value - start.value) * fraction).sp
+
 private fun lerpFloat(start: Float, stop: Float, fraction: Float): Float =
     start + (stop - start) * fraction
 
@@ -163,9 +170,15 @@ fun ITuneMusicPlayer(
 
     val panelProgress by animateFloatAsState(
         targetValue = if (isPanelOpen) 1f else 0f,
-        animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing),
+        animationSpec = spring(
+            dampingRatio = 0.86f,
+            stiffness = Spring.StiffnessMediumLow
+        ),
         label = "panelProgress"
     )
+
+    var rootBoxCoords by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    var playerTitleVisualTopPx by remember { mutableFloatStateOf(0f) }
 
     var areLyricsControlsVisible by remember { mutableStateOf(true) }
     var lastLyricsInteractionTime by remember { mutableLongStateOf(0L) }
@@ -209,7 +222,7 @@ fun ITuneMusicPlayer(
 
     val controlsTranslationY by animateFloatAsState(
         targetValue = if (!isLyricsOpen || areLyricsControlsVisible) 0f else with(density) { 340.dp.toPx() },
-        animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing),
+        animationSpec = spring(dampingRatio = 0.86f, stiffness = Spring.StiffnessMediumLow),
         label = "lyricsControlsTranslationY"
     )
 
@@ -221,7 +234,7 @@ fun ITuneMusicPlayer(
 
     val contentBottomPadding by animateDpAsState(
         targetValue = if (!areLyricsControlsVisible && isLyricsOpen) 24.dp else 295.dp,
-        animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing),
+        animationSpec = spring(dampingRatio = 0.86f, stiffness = Spring.StiffnessMediumLow),
         label = "contentBottomPadding"
     )
 
@@ -243,8 +256,10 @@ fun ITuneMusicPlayer(
         modifier = modifier
             .fillMaxSize()
             .background(Color.Black)
+            .onGloballyPositioned { rootBoxCoords = it }
     ) {
         val statusBarTopDp = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        val navBottomDp = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
         val fullBleedHeight = maxHeight * 0.56f
 
         // ── 1. Fullscreen Ambient Blurred Artwork Layer ──
@@ -362,11 +377,12 @@ fun ITuneMusicPlayer(
         // Full bleed across top in music mode, smoothly shrinks into 44dp rounded corner thumbnail
         // in top left corner when lyrics or queue opens!
         // Given zIndex(35f) to ensure taps on the avatar directly collapse the panel.
+        val progressClamped = panelProgress.coerceIn(0f, 1f)
         val artTop = lerpDp(0.dp, statusBarTopDp + 6.dp, panelProgress)
         val artStart = lerpDp(0.dp, 16.dp, panelProgress)
-        val artWidth = lerpDp(maxWidth, 44.dp, panelProgress)
-        val artHeight = lerpDp(fullBleedHeight, 44.dp, panelProgress)
-        val artRadius = lerpDp(0.dp, 10.dp, panelProgress)
+        val artWidth = lerpDp(maxWidth, 44.dp, panelProgress).coerceAtLeast(1.dp)
+        val artHeight = lerpDp(fullBleedHeight, 44.dp, panelProgress).coerceAtLeast(1.dp)
+        val artRadius = lerpDp(0.dp, 10.dp, progressClamped).coerceAtLeast(0.dp)
 
         Box(
             modifier = Modifier
@@ -377,7 +393,7 @@ fun ITuneMusicPlayer(
                 .then(
                     if (panelProgress > 0.85f) {
                         Modifier
-                            .border(1.dp, Color.White.copy(alpha = 0.22f * panelProgress), RoundedCornerShape(artRadius))
+                            .border(1.dp, Color.White.copy(alpha = (0.22f * panelProgress).coerceIn(0f, 1f)), RoundedCornerShape(artRadius))
                             .clickable {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                 MusicPlayerState.lyricsOpen = false
@@ -416,6 +432,82 @@ fun ITuneMusicPlayer(
                                 drawRect(brush = mask, blendMode = BlendMode.DstIn)
                             }
                         }
+                )
+            }
+        }
+
+        // ── 5b. Continuous Morphing Title & Artist ──
+        // Glides seamlessly from resting player position above the wavy seekbar up into the header
+        // alongside the morphing artwork thumbnail avatar, with authentic physics-based spring.
+        val defaultPlayerTitleTopDp = maxHeight - 340.dp - navBottomDp
+        val startTitleTopPx = if (playerTitleVisualTopPx > 0f) playerTitleVisualTopPx else with(density) { defaultPlayerTitleTopDp.toPx() }
+        val targetTitleTopPx = with(density) { (statusBarTopDp + 11.dp).toPx() }
+        val startTitleLeftPx = with(density) { 24.dp.toPx() }
+        val targetTitleLeftPx = with(density) { 70.dp.toPx() }
+        val startTitleEndPx = with(density) { 24.dp.toPx() }
+        val targetTitleEndPx = with(density) { 54.dp.toPx() }
+
+        val curTitleTopPx = lerpFloat(startTitleTopPx, targetTitleTopPx, panelProgress)
+        val curTitleLeftPx = lerpFloat(startTitleLeftPx, targetTitleLeftPx, panelProgress)
+        val curTitleEndPx = lerpFloat(startTitleEndPx, targetTitleEndPx, panelProgress)
+
+        val curTitleFontSize = lerpSp(24.sp, 15.sp, progressClamped)
+        val curTitleLineHeight = lerpSp(28.sp, 18.sp, progressClamped)
+        val curArtistFontSize = lerpSp(15.sp, 12.5.sp, progressClamped)
+        val curArtistLineHeight = lerpSp(19.sp, 15.sp, progressClamped)
+        val curArtistAlpha = lerpFloat(0.72f, 0.65f, progressClamped).coerceIn(0f, 1f)
+        val curTitleWidthDp = with(density) { (maxWidth.toPx() - curTitleLeftPx - curTitleEndPx).coerceAtLeast(0f).toDp() }
+
+        Box(
+            modifier = Modifier
+                .zIndex(36f)
+                .offset { IntOffset(curTitleLeftPx.roundToInt(), curTitleTopPx.roundToInt()) }
+                .width(curTitleWidthDp)
+                .height(48.dp)
+                .then(
+                    if (panelProgress > 0.80f) {
+                        Modifier.clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            MusicPlayerState.lyricsOpen = false
+                            MusicPlayerState.queueOpen = false
+                        }
+                    } else Modifier
+                )
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = track.title,
+                    style = TextStyle(
+                        fontFamily = SFProDisplay,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = curTitleFontSize,
+                        lineHeight = curTitleLineHeight,
+                        letterSpacing = lerpSp((-0.2).sp, (-0.3).sp, panelProgress)
+                    ),
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.basicMarquee()
+                )
+                Spacer(Modifier.height(lerpDp(3.dp, 1.dp, panelProgress)))
+                Text(
+                    text = track.artists,
+                    style = TextStyle(
+                        fontFamily = SFProDisplay,
+                        fontWeight = if (panelProgress > 0.5f) FontWeight.W500 else FontWeight.SemiBold,
+                        fontSize = curArtistFontSize,
+                        lineHeight = curArtistLineHeight
+                    ),
+                    color = Color.White.copy(alpha = curArtistAlpha),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.basicMarquee()
                 )
             }
         }
@@ -460,14 +552,13 @@ fun ITuneMusicPlayer(
                 )
             }
 
-            // Lyrics / Queue Mode Header Title & Artist (Placed right next to morphing avatar thumbnail)
-            // Also clickable to collapse back to the main full artwork player!
-            if (panelProgress > 0.01f) {
-                Column(
+            // Full Header Tap Target to collapse back to main player in Queue or Lyrics mode
+            if (panelProgress > 0.8f) {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 70.dp, end = 52.dp)
-                        .align(Alignment.CenterStart)
+                        .height(44.dp)
+                        .padding(start = 60.dp, end = 52.dp)
                         .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
@@ -476,41 +567,7 @@ fun ITuneMusicPlayer(
                             MusicPlayerState.lyricsOpen = false
                             MusicPlayerState.queueOpen = false
                         }
-                        .graphicsLayer {
-                            alpha = panelProgress
-                            translationX = (1f - panelProgress) * 20.dp.toPx()
-                        },
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = track.title,
-                        style = TextStyle(
-                            fontFamily = SFProDisplay,
-                            fontWeight = FontWeight.W700,
-                            fontSize = 15.sp,
-                            lineHeight = 18.sp,
-                            letterSpacing = (-0.3).sp
-                        ),
-                        color = Color.White,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.basicMarquee()
-                    )
-                    Spacer(Modifier.height(1.dp))
-                    Text(
-                        text = track.artists,
-                        style = TextStyle(
-                            fontFamily = SFProDisplay,
-                            fontWeight = FontWeight.W500,
-                            fontSize = 12.5.sp,
-                            lineHeight = 15.sp
-                        ),
-                        color = Color.White.copy(alpha = 0.72f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.basicMarquee()
-                    )
-                }
+                )
             }
 
             // Top More Menu Button
@@ -553,49 +610,22 @@ fun ITuneMusicPlayer(
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Title and Artist Row (slides down smoothly in lyrics mode)
+            // Anchor placeholder for the morphing Title & Artist
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(44.dp)
-                    .graphicsLayer {
-                        alpha = (1f - panelProgress * 2f).coerceIn(0f, 1f)
-                    }
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(unbounded = true)
-                        .padding(end = 4.dp)
-                        .align(Alignment.TopStart)
-                        .graphicsLayer {
-                            translationY = -48.dp.toPx()
+                    .onGloballyPositioned { coords ->
+                        val root = rootBoxCoords
+                        if (root != null && root.isAttached && coords.isAttached) {
+                            val pos = root.localPositionOf(coords, Offset.Zero)
+                            val visualTop = pos.y - with(density) { 48.dp.toPx() }
+                            if (visualTop > 0f) {
+                                playerTitleVisualTopPx = visualTop
+                            }
                         }
-                ) {
-                    Text(
-                        text = track.title,
-                        style = MaterialTheme.typography.headlineMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp,
-                            lineHeight = 28.sp,
-                            letterSpacing = (-0.2).sp
-                        ),
-                        color = Color.White,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.basicMarquee()
-                    )
-                    Spacer(Modifier.height(2.dp))
-                    Text(
-                        text = track.artists,
-                        style = MaterialTheme.typography.titleMedium.copy(fontSize = 15.sp),
-                        color = Color.White.copy(alpha = 0.72f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.basicMarquee()
-                    )
-                }
-            }
+                    }
+            )
 
             Spacer(Modifier.height(18.dp))
 

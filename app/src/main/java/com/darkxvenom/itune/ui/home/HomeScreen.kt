@@ -425,7 +425,7 @@ fun HomeScreen(
         // ── Full Player Sheet with 1:1 Tip-of-Finger Gesture Tracking and Spring Physics (Copied from iTube) ──
         val realTrack = MusicPlayerState.currentTrack
         if (realTrack != null) {
-            BackHandler(enabled = MusicPlayerState.expanded || sheetMorph.progress.value > 0.05f) {
+            BackHandler(enabled = (MusicPlayerState.expanded || sheetMorph.progress.value > 0.05f) && !MusicPlayerState.lyricsOpen && !MusicPlayerState.queueOpen) {
                 MusicPlayerState.expanded = false
             }
 
