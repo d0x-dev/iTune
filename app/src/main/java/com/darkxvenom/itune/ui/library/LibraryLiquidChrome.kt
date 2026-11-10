@@ -1135,3 +1135,442 @@ fun LibraryGlassEmptyCard(
     }
 }
 
+@Composable
+fun LibraryScreenOverlayPopups(
+    controller: LibraryHostController,
+) {
+    if (!controller.isOpen && !controller.hasAnyPopupOpen()) return
+    val glassActive = isGlassSupported()
+    val favoriteIds = MusicPlayerState.favoriteIds
+
+    val pageMenuUp =
+        (controller.songActions != null && controller.songMenuOrigin == null) ||
+            (controller.collectionActions != null && controller.collectionMenuOrigin == null) ||
+            (controller.userPlaylistActions != null && controller.userPlaylistMenuOrigin == null) ||
+            controller.topMenuRequest != null ||
+            controller.sortMenuRequest != null
+
+    LaunchedEffect(pageMenuUp) {
+        if (pageMenuUp && glassActive) {
+            controller.pageBackdrop.capture()
+        } else {
+            delay(260L)
+            controller.pageBackdrop.release()
+        }
+    }
+
+    ITubeArtistTheme(darkTheme = true) {
+        CompositionLocalProvider(
+            LocalAppBackdrop provides controller.appBackdrop,
+            LocalLiquidGlassEnabled provides glassActive,
+            LocalReduceDynamicBlur provides false,
+        ) {
+            val songMenuBody: @Composable (Song) -> Unit = { song ->
+                val isLiked = favoriteIds.contains(song.videoId)
+                val isDownloading = controller.downloadingIds[song.videoId] == true
+                val songPayload = remember(song) { PendingPlaylistPayload.fromSong(song) }
+                IosInMenuPlaylistHost(
+                    menuKey = song.videoId,
+                    payload = songPayload,
+                    onCloseMenu = { controller.clearMenus() },
+                ) { onOpenAddToPlaylist, _, _ ->
+                    ArtistSongActionsMenu(
+                        song = song,
+                        likeStatus = if (isLiked) LikeStatus.LIKE else LikeStatus.INDIFFERENT,
+                        downloading = isDownloading,
+                        downloaded = false,
+                        onToggleLike = {
+                            MusicPlayerState.toggleFavorite(song.toMusicTrack())
+                            controller.clearMenus()
+                        },
+                        onStartRadio = {
+                            controller.clearMenus()
+                            controller.startRadioForSong(song)
+                        },
+                        onPlayNext = {
+                            controller.clearMenus()
+                            MusicPlayerState.playNext(song.toMusicTrack())
+                            controller.showToast("Playing \"${song.title}\" next")
+                        },
+                        onAddToQueue = {
+                            controller.clearMenus()
+                            MusicPlayerState.addToQueue(listOf(song.toMusicTrack()))
+                            controller.showToast("Added \"${song.title}\" to queue")
+                        },
+                        onAddToPlaylist = onOpenAddToPlaylist,
+                        onRemoveFromPlaylist = if (
+                            controller.currentDestination == LibraryDestination.USER_PLAYLIST &&
+                            controller.activeUserPlaylistId != null
+                        ) {
+                            {
+                                val pid = controller.activeUserPlaylistId
+                                controller.clearMenus()
+                                if (pid != null) {
+                                    LibraryStore.removeSongFromUserPlaylist(controller.context, pid, song.videoId)
+                                    controller.showToast("Removed \"${song.title}\" from playlist")
+                                }
+                            }
+                        } else {
+                            null
+                        },
+                        onDownload = {
+                            controller.clearMenus()
+                            controller.downloadSong(song)
+                        },
+                        onOpenAlbum = { albumId, albumTitle ->
+                            controller.openDetail(
+                                browseId = albumId,
+                                title = albumTitle ?: song.title,
+                                subtitle = song.artist,
+                                thumbnailUrl = song.thumbnailUrl,
+                                type = BrowseType.ALBUM,
+                            )
+                        },
+                        onOpenArtist = { artistId, artistName ->
+                            controller.openDetail(
+                                browseId = artistId,
+                                title = artistName ?: song.artist,
+                                subtitle = "Artist",
+                                thumbnailUrl = null,
+                                type = BrowseType.ARTIST,
+                            )
+                        },
+                        onShare = {
+                            controller.clearMenus()
+                            controller.shareUrl(song.title, "https://music.youtube.com/watch?v=${song.videoId}")
+                        },
+                    )
+                }
+            }
+
+            val collectionMenuBody: @Composable (SavedCollectionEntry) -> Unit = { entry ->
+                LibraryCollectionActionsMenu(
+                    entry = entry,
+                    onPlay = {
+                        controller.clearMenus()
+                        controller.withCollectionSongs(entry) { list ->
+                            controller.playSongs(list, 0)
+                        }
+                    },
+                    onShuffle = {
+                        controller.clearMenus()
+                        controller.withCollectionSongs(entry) { list ->
+                            controller.playSongs(list, 0, shuffle = true)
+                        }
+                    },
+                    onStartRadio = if (entry.type == BrowseType.ARTIST) {
+                        {
+                            controller.clearMenus()
+                            controller.startRadioForArtist(entry)
+                        }
+                    } else null,
+                    onPlayNext = {
+                        controller.clearMenus()
+                        controller.withCollectionSongs(entry) { list ->
+                            list.asReversed().forEach { MusicPlayerState.playNext(it.toMusicTrack()) }
+                            controller.showToast("Playing ${entry.title} next")
+                        }
+                    },
+                    onAddToQueue = {
+                        controller.clearMenus()
+                        controller.withCollectionSongs(entry) { list ->
+                            MusicPlayerState.addToQueue(list.map { it.toMusicTrack() })
+                            controller.showToast("Added ${entry.title} to queue")
+                        }
+                    },
+                    onDownloadAll = {
+                        controller.clearMenus()
+                        controller.withCollectionSongs(entry) { list ->
+                            controller.downloadSongs(list)
+                        }
+                    },
+                    onOpen = {
+                        controller.openDetail(
+                            browseId = entry.browseId,
+                            title = entry.title,
+                            subtitle = entry.subtitle,
+                            thumbnailUrl = entry.thumbnailUrl,
+                            type = entry.type,
+                        )
+                    },
+                    onRemove = {
+                        controller.clearMenus()
+                        controller.removeCollection(entry)
+                    },
+                    onShare = {
+                        controller.clearMenus()
+                        val url = when (entry.type) {
+                            BrowseType.ARTIST -> "https://music.youtube.com/channel/${entry.browseId}"
+                            BrowseType.PLAYLIST -> "https://music.youtube.com/playlist?list=${entry.browseId.removePrefix("VL")}"
+                            else -> "https://music.youtube.com/browse/${entry.browseId}"
+                        }
+                        controller.shareUrl(entry.title, url)
+                    },
+                )
+            }
+
+            HeldContextMenu(
+                item = controller.songActions,
+                held = controller.songMenuOrigin,
+                hazeState = controller.hazeState,
+                onDismiss = { controller.songActions = null },
+                onPreviewClick = { song ->
+                    song.albumId?.let { id ->
+                        controller.openDetail(
+                            browseId = id,
+                            title = song.albumName ?: song.title,
+                            subtitle = song.artist,
+                            thumbnailUrl = song.thumbnailUrl,
+                            type = BrowseType.ALBUM,
+                        )
+                    }
+                },
+            ) { song ->
+                songMenuBody(song)
+            }
+
+            IosMenuPopover(
+                item = controller.songActions?.takeIf { controller.songMenuOrigin == null },
+                anchor = controller.songMenuAnchor,
+                onDismiss = { controller.songActions = null },
+                backdrop = controller.pageBackdrop,
+                hazeState = controller.hazeState,
+            ) { song ->
+                songMenuBody(song)
+            }
+
+            HeldContextMenu(
+                item = controller.collectionActions,
+                held = controller.collectionMenuOrigin,
+                hazeState = controller.hazeState,
+                onDismiss = { controller.collectionActions = null },
+                onPreviewClick = { entry ->
+                    controller.openDetail(
+                        browseId = entry.browseId,
+                        title = entry.title,
+                        subtitle = entry.subtitle,
+                        thumbnailUrl = entry.thumbnailUrl,
+                        type = entry.type,
+                    )
+                },
+            ) { entry ->
+                collectionMenuBody(entry)
+            }
+
+            IosMenuPopover(
+                item = controller.collectionActions?.takeIf { controller.collectionMenuOrigin == null },
+                anchor = controller.collectionMenuAnchor,
+                onDismiss = { controller.collectionActions = null },
+                backdrop = controller.pageBackdrop,
+                hazeState = controller.hazeState,
+            ) { entry ->
+                collectionMenuBody(entry)
+            }
+
+            val userPlaylistMenuBody: @Composable (UserPlaylist) -> Unit = { pl ->
+                val plSongs = remember(pl.songs) { pl.songs.map { it.toSong() } }
+                IosInMenuPlaylistHost(
+                    menuKey = pl.id,
+                    renameTarget = pl,
+                    onCloseMenu = { controller.clearMenus() },
+                ) { _, _, onOpenRename ->
+                    LibraryUserPlaylistActionsMenu(
+                        playlist = pl,
+                        hasSongs = plSongs.isNotEmpty(),
+                        onPlay = {
+                            controller.clearMenus()
+                            controller.playSongs(plSongs, 0)
+                        },
+                        onShuffle = {
+                            controller.clearMenus()
+                            controller.playSongs(plSongs, 0, shuffle = true)
+                        },
+                        onStartRadio = {
+                            controller.clearMenus()
+                            controller.startRadioFromSongs(plSongs, pl.name)
+                        },
+                        onAddToQueue = {
+                            controller.clearMenus()
+                            MusicPlayerState.addToQueue(pl.songs.map { it.toMusicTrack() })
+                            controller.showToast("Added ${pl.name} to queue")
+                        },
+                        onOpen = {
+                            controller.clearMenus()
+                            controller.openUserPlaylist(pl.id)
+                        },
+                        onRename = onOpenRename,
+                        onDelete = {
+                            controller.clearMenus()
+                            LibraryStore.deleteUserPlaylist(controller.context, pl.id)
+                            controller.showToast("Deleted \"${pl.name}\"")
+                        },
+                    )
+                }
+            }
+
+            HeldContextMenu(
+                item = controller.userPlaylistActions,
+                held = controller.userPlaylistMenuOrigin,
+                hazeState = controller.hazeState,
+                onDismiss = { controller.userPlaylistActions = null },
+                onPreviewClick = { pl ->
+                    controller.clearMenus()
+                    controller.openUserPlaylist(pl.id)
+                },
+            ) { pl ->
+                userPlaylistMenuBody(pl)
+            }
+
+            IosMenuPopover(
+                item = controller.userPlaylistActions?.takeIf { controller.userPlaylistMenuOrigin == null },
+                anchor = controller.userPlaylistMenuAnchor,
+                onDismiss = { controller.userPlaylistActions = null },
+                backdrop = controller.pageBackdrop,
+                hazeState = controller.hazeState,
+            ) { pl ->
+                userPlaylistMenuBody(pl)
+            }
+
+            IosMenuPopover(
+                item = controller.topMenuRequest,
+                anchor = controller.topMenuAnchor,
+                onDismiss = { controller.topMenuRequest = null },
+                backdrop = controller.pageBackdrop,
+                hazeState = controller.hazeState,
+            ) { req ->
+                IosInMenuPlaylistHost(
+                    menuKey = req,
+                    initialStep = req.initialStep,
+                    renameTarget = req.userPlaylist,
+                    onCloseMenu = { controller.clearMenus() },
+                ) { _, onOpenCreateEmpty, onOpenRename ->
+                    Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+                        if (req.destination == LibraryDestination.PLAYLISTS) {
+                            IosMenuRow(
+                                label = "Create Playlist",
+                                description = "Create empty or add songs",
+                                icon = SfIcons.AddToPlaylist,
+                                iconTint = LibraryCrimsonAccent,
+                                onClick = onOpenCreateEmpty,
+                            )
+                            IosMenuSeparator()
+                        }
+                        if (req.songs.isNotEmpty()) {
+                            IosMenuQuickActions {
+                                IosMenuQuickAction(
+                                    icon = SfIcons.Play,
+                                    label = stringResource(R.string.play),
+                                    onClick = {
+                                        controller.clearMenus()
+                                        controller.playSongs(req.songs, 0)
+                                    },
+                                )
+                                IosMenuQuickAction(
+                                    icon = SfIcons.Shuffle,
+                                    label = stringResource(R.string.shuffle),
+                                    onClick = {
+                                        controller.clearMenus()
+                                        controller.playSongs(req.songs, 0, shuffle = true)
+                                    },
+                                )
+                                IosMenuQuickAction(
+                                    icon = SfIcons.Radio,
+                                    label = "Radio",
+                                    tint = LibraryCrimsonAccent,
+                                    onClick = {
+                                        controller.clearMenus()
+                                        controller.startRadioFromSongs(req.songs, req.stationLabel)
+                                    },
+                                )
+                            }
+                            IosMenuSeparator()
+                            IosMenuRow(
+                                label = stringResource(R.string.start_radio),
+                                description = "${req.stationLabel} station",
+                                icon = SfIcons.Radio,
+                                iconTint = LibraryCrimsonAccent,
+                                onClick = {
+                                    controller.clearMenus()
+                                    controller.startRadioFromSongs(req.songs, req.stationLabel)
+                                },
+                            )
+                            IosMenuRow(
+                                label = stringResource(R.string.download_all),
+                                icon = SfIcons.Download,
+                                onClick = {
+                                    controller.clearMenus()
+                                    controller.downloadSongs(req.songs)
+                                },
+                            )
+                            IosMenuSeparator()
+                        }
+                        IosMenuRow(
+                            label = "Search",
+                            icon = ITubeIcons.Search,
+                            onClick = {
+                                controller.clearMenus()
+                                if (!controller.searchOpen) controller.toggleSearch()
+                            },
+                        )
+                        if (req.showSort) {
+                            IosMenuRow(
+                                label = "Sort: ${controller.songSort.label}",
+                                icon = Icons.AutoMirrored.Rounded.Sort,
+                                onClick = {
+                                    val next = when (controller.songSort) {
+                                        LibrarySongSort.RECENT -> LibrarySongSort.TITLE_ASC
+                                        LibrarySongSort.TITLE_ASC -> LibrarySongSort.ARTIST_ASC
+                                        LibrarySongSort.ARTIST_ASC -> LibrarySongSort.RECENT
+                                    }
+                                    controller.songSort = next
+                                    controller.clearMenus()
+                                },
+                            )
+                        }
+                        req.userPlaylist?.let { pl ->
+                            IosMenuSeparator()
+                            IosMenuRow(
+                                label = "Rename Playlist",
+                                icon = Icons.Rounded.Edit,
+                                onClick = onOpenRename,
+                            )
+                            IosMenuRow(
+                                label = "Delete Playlist",
+                                icon = SfIcons.Trash,
+                                iconTint = LibraryCrimsonAccent,
+                                onClick = {
+                                    controller.clearMenus()
+                                    LibraryStore.deleteUserPlaylist(controller.context, pl.id)
+                                    controller.pop()
+                                    controller.showToast("Deleted \"${pl.name}\"")
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+
+            IosMenuPopover(
+                item = controller.sortMenuRequest,
+                anchor = controller.sortMenuAnchor,
+                onDismiss = { controller.sortMenuRequest = null },
+                backdrop = controller.pageBackdrop,
+                hazeState = controller.hazeState,
+            ) { req ->
+                Column(Modifier.fillMaxWidth()) {
+                    LibrarySongSort.entries.forEach { option ->
+                        IosMenuRow(
+                            label = option.label,
+                            icon = if (option == req.currentSort) SfIcons.Check else null,
+                            onClick = {
+                                controller.songSort = option
+                                controller.clearMenus()
+                            },
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
