@@ -414,3 +414,175 @@ fun AppleMoodCategoryScreen(
                                 Spacer(Modifier.height(22.dp))
                                 LibraryGlassEmptyCard(
                                     icon = Icons.Rounded.MusicNote,
+                                    title = "Couldn't Load $displayTitle",
+                                    subtitle = errorMessage ?: "Tap Retry to load playlists and highlights for $displayTitle.",
+                                    accent = LibraryCrimsonAccent,
+                                    actionLabel = "Retry",
+                                    onAction = { refreshNonce++ },
+                                )
+                            }
+                        } else if (filteredSections.isEmpty()) {
+                            item(key = "mood_filter_empty") {
+                                Spacer(Modifier.height(22.dp))
+                                LibraryGlassEmptyCard(
+                                    icon = ITubeIcons.Search,
+                                    title = "No Matches in $displayTitle",
+                                    subtitle = "Nothing matched \"$query\".",
+                                    accent = LibraryCrimsonAccent,
+                                    actionLabel = "Clear Filter",
+                                    onAction = { searchQuery = "" },
+                                )
+                            }
+                        } else {
+                            val singleCollectionGrid = filteredSections.size == 1 &&
+                                filteredSections.first().items.none { it.type == MoodCategoryItemType.SONG }
+
+                            filteredSections.forEachIndexed { secIdx, section ->
+                                item(key = "mood_sec_${secIdx}_${section.title}") {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 24.dp),
+                                    ) {
+                                        MoodSectionHeaderRow(
+                                            title = section.title,
+                                            count = section.items.size,
+                                        )
+                                        Spacer(Modifier.height(12.dp))
+
+                                        val hasOnlySongs = section.items.all { it.type == MoodCategoryItemType.SONG }
+                                        when {
+                                            hasOnlySongs -> {
+                                                Column(modifier = Modifier.fillMaxWidth()) {
+                                                    section.items.forEachIndexed { idx, songItem ->
+                                                        MoodSongRow(
+                                                            item = songItem,
+                                                            isCurrent = MusicPlayerState.currentTrack?.id == songItem.videoId,
+                                                            isPlaying = MusicPlayerState.isPlaying,
+                                                            showDivider = idx < section.items.lastIndex,
+                                                            onClick = { openMoodItem(songItem, section.items) },
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                            section.isGrid || singleCollectionGrid -> {
+                                                Column(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(horizontal = 16.dp),
+                                                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                                                ) {
+                                                    section.items.chunked(2).forEach { rowItems ->
+                                                        Row(
+                                                            modifier = Modifier.fillMaxWidth(),
+                                                            horizontalArrangement = Arrangement.spacedBy(14.dp),
+                                                        ) {
+                                                            rowItems.forEach { entry ->
+                                                                MoodGridArtworkCard(
+                                                                    item = entry,
+                                                                    onClick = { openMoodItem(entry, section.items) },
+                                                                    modifier = Modifier.weight(1f),
+                                                                )
+                                                            }
+                                                            if (rowItems.size == 1) {
+                                                                Spacer(Modifier.weight(1f))
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            else -> {
+                                                LazyRow(
+                                                    contentPadding = PaddingValues(horizontal = 16.dp),
+                                                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                ) {
+                                                    items(
+                                                        items = section.items,
+                                                        key = { "${secIdx}_${it.id}" },
+                                                    ) { entry ->
+                                                        MoodCarouselCard(
+                                                            item = entry,
+                                                            onClick = { openMoodItem(entry, section.items) },
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                TopFadeBlur(
+                    hazeState = hazeState,
+                    pageColor = AppleOledBlack,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
+
+                FrostedTopBar(
+                    transparentBackdrop = true,
+                    artworkPageChrome = true,
+                    backButtonHazeState = hazeState,
+                    onBack = onBack,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    centerContent = {
+                        AnimatedVisibility(
+                            visible = isScrolled,
+                            enter = fadeIn(tween(180)),
+                            exit = fadeOut(tween(180)),
+                        ) {
+                            FrostedTopBarTitlePill(hazeState = hazeState) {
+                                Text(
+                                    text = displayTitle,
+                                    color = Color.White,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                searchOpen = !searchOpen
+                                if (searchOpen) focusSearchNext = true else searchQuery = ""
+                            },
+                        ) {
+                            Icon(
+                                imageVector = ITubeIcons.Search,
+                                contentDescription = "Filter",
+                                tint = if (searchOpen) LibraryCrimsonAccent else Color.White,
+                                modifier = Modifier.size(21.dp),
+                            )
+                        }
+                        IconButton(onClick = { refreshNonce++ }) {
+                            Icon(
+                                imageVector = Icons.Rounded.Refresh,
+                                contentDescription = "Refresh",
+                                tint = Color.White,
+                                modifier = Modifier.size(21.dp),
+                            )
+                        }
+                    },
+                )
+
+                TopSpringLoadingBar(
+                    isVisible = isLoading,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
+
+                BottomFadeScrim(
+                    withMiniPlayer = hasMiniPlayer,
+                    pageColor = AppleOledBlack,
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                )
+            }
+        }
+    }
+}
+
