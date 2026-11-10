@@ -177,51 +177,36 @@ fun LibraryScreen(
                 }
             }
 
-            // Top 6 Album Tiles: 3 Columns x 2 Rows
-            item(key = "library_pins_grid") {
-                val pins = MusicRepository.libraryPins
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
-                ) {
-                    // Row 1: First 3 pins
-                    Row(
+            // Favorite Artists (max 6): 3 Columns x up to 2 Rows in the same rounded-square tile UI
+            if (topArtists.isNotEmpty()) {
+                item(key = "library_pins_grid") {
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        verticalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
-                        pins.take(3).forEach { pin ->
-                            LibraryPinCard(
-                                pin = pin,
-                                onClick = {
-                                    onPinClick(pin)
-                                    Toast.makeText(context, "Opening ${pin.title}", Toast.LENGTH_SHORT).show()
-                                },
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                    }
-
-                    // Row 2: Next 3 pins
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        pins.drop(3).take(3).forEach { pin ->
-                            LibraryPinCard(
-                                pin = pin,
-                                onClick = {
-                                    onPinClick(pin)
-                                    Toast.makeText(context, "Opening ${pin.title}", Toast.LENGTH_SHORT).show()
-                                },
-                                modifier = Modifier.weight(1f)
-                            )
+                        topArtists.chunked(3).forEach { rowArtists ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                rowArtists.forEach { artist ->
+                                    LibraryFavoriteArtistCard(
+                                        artist = artist,
+                                        onClick = { onFavoriteArtistClick(artist) },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                                repeat(3 - rowArtists.size) {
+                                    Spacer(modifier = Modifier.weight(1f))
+                                }
+                            }
                         }
                     }
                 }
-            }
 
-            item(key = "spacer_menu") {
-                Spacer(modifier = Modifier.height(26.dp))
+                item(key = "spacer_menu") {
+                    Spacer(modifier = Modifier.height(26.dp))
+                }
             }
 
             // Navigation Menu List: Playlists, Artists, Albums, Songs
@@ -326,8 +311,8 @@ fun LibraryScreen(
 }
 
 @Composable
-private fun LibraryPinCard(
-    pin: LibraryPinItem,
+private fun LibraryFavoriteArtistCard(
+    artist: SavedCollectionEntry,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -339,21 +324,34 @@ private fun LibraryPinCard(
             ) { onClick() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AsyncImage(
-            model = pin.imageUrl,
-            contentDescription = pin.title,
-            contentScale = ContentScale.Crop,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(9.dp))
                 .background(Color(0xFF1C1C1E))
-        )
+        ) {
+            if (artist.thumbnailUrl.isNullOrBlank()) {
+                CoverPlaceholder(
+                    icon = Icons.Rounded.Person,
+                    base = Color(0xFF1C1C1E),
+                    tint = Color.White.copy(alpha = 0.72f),
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                AsyncImage(
+                    model = artist.thumbnailUrl.artworkAt(CARD_ART_PX),
+                    contentDescription = artist.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = pin.title,
+            text = artist.title,
             color = AppleTextPrimary,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
