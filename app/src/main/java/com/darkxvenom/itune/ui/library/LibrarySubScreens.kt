@@ -493,3 +493,159 @@ fun LibraryArtistsScreen(
     }
 }
 
+@Composable
+fun LibraryAlbumsScreen(
+    controller: LibraryHostController,
+    hasMiniPlayer: Boolean,
+    onBack: () -> Unit,
+    onExploreClick: () -> Unit,
+) {
+    val albums by LibraryStore.savedAlbums.collectAsStateWithLifecycle()
+    val query = controller.searchQuery
+
+    val filteredAlbums = remember(albums, query) {
+        if (query.isBlank()) albums else albums.filter {
+            it.title.contains(query, ignoreCase = true) ||
+                it.subtitle.contains(query, ignoreCase = true)
+        }
+    }
+    val gridState = controller.gridStates.getOrPut(LibraryDestination.ALBUMS) { LazyGridState() }
+    val isScrolled by remember {
+        derivedStateOf {
+            gridState.firstVisibleItemIndex > 0 || gridState.firstVisibleItemScrollOffset > 120
+        }
+    }
+
+    LibraryFrostedScreenScaffold(
+        controller = controller,
+        artworkUrls = emptyList(),
+        scrolledTitle = "Albums",
+        isScrolled = isScrolled,
+        hasMiniPlayer = hasMiniPlayer,
+        fallbackAccent = Color(0xFFFF6D42),
+        amoledDark = true,
+        onBack = onBack,
+        topBarActions = {
+            LibraryTopBarActionButtons(
+                controller = controller,
+                showSort = false,
+                onMoreClick = {
+                    controller.openTopMenu(
+                        LibraryTopMenuRequest(
+                            destination = LibraryDestination.ALBUMS,
+                            songs = emptyList(),
+                            stationLabel = "Albums",
+                            showSort = false,
+                        ),
+                    )
+                },
+            )
+        },
+    ) { contentPadding ->
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            state = gridState,
+            contentPadding = PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
+                top = contentPadding.calculateTopPadding() + 8.dp,
+                bottom = contentPadding.calculateBottomPadding(),
+            ),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            item(span = { GridItemSpan(2) }, key = "albums_header") {
+                Column {
+                    LibraryScreenTitleHeader(
+                        title = "Albums",
+                        countText = if (albums.size == 1) "1 Added Album" else "${albums.size} Added Albums",
+                    )
+                    LibraryFilterBar(
+                        visible = controller.searchOpen,
+                        query = query,
+                        onQueryChange = { controller.searchQuery = it },
+                        onClose = controller::toggleSearch,
+                        autoFocus = controller.focusSearchNext,
+                        onFocused = { controller.focusSearchNext = false },
+                        placeholder = "Filter albums...",
+                    )
+                    if (filteredAlbums.isNotEmpty()) {
+                        Spacer(Modifier.height(10.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            LibraryGlassPillButton(
+                                icon = ITubeIcons.Play,
+                                label = "Play Top Album",
+                                onClick = {
+                                    val first = filteredAlbums.first()
+                                    controller.withCollectionSongs(first) { list ->
+                                        controller.playSongs(list, 0)
+                                    }
+                                },
+                                filled = true,
+                                height = 44.dp,
+                                modifier = Modifier.weight(1f),
+                            )
+                            LibraryGlassPillButton(
+                                icon = ITubeIcons.Shuffle,
+                                label = "Shuffle Pick",
+                                onClick = {
+                                    val pick = filteredAlbums.random()
+                                    controller.withCollectionSongs(pick) { list ->
+                                        controller.playSongs(list, 0, shuffle = true)
+                                    }
+                                },
+                                filled = false,
+                                height = 44.dp,
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                    }
+                }
+            }
+
+            if (albums.isEmpty()) {
+                item(span = { GridItemSpan(2) }, key = "albums_empty") {
+                    Spacer(Modifier.height(10.dp))
+                    LibraryGlassEmptyCard(
+                        icon = Icons.Rounded.Album,
+                        title = "No Added Albums Yet",
+                        subtitle = "Save any album from Search or an Artist page with Add to Library and browse them in blurred Liquid Glass.",
+                        accent = Color(0xFFFF6D42),
+                        actionLabel = "Browse Albums",
+                        onAction = onExploreClick,
+                    )
+                }
+            } else if (filteredAlbums.isEmpty()) {
+                item(span = { GridItemSpan(2) }, key = "albums_no_match") {
+                    LibraryGlassEmptyCard(
+                        icon = ITubeIcons.Search,
+                        title = "No Albums Found",
+                        subtitle = "No added albums matched \"$query\".",
+                        accent = Color(0xFFFF6D42),
+                        actionLabel = "Clear Filter",
+                        onAction = { controller.searchQuery = "" },
+                    )
+                }
+            } else {
+                items(filteredAlbums, key = { it.browseId }) { entry ->
+                    LibraryCollectionGlassCard(
+                        entry = entry,
+                        placeholderIcon = Icons.Rounded.Album,
+                        onClick = {
+                            controller.openDetail(
+                                browseId = entry.browseId,
+                                title = entry.title,
+                                subtitle = entry.subtitle,
+                                thumbnailUrl = entry.thumbnailUrl,
+                                type = BrowseType.ALBUM,
+                            )
+                        },
+                        onMenuClick = { controller.openCollectionMenu(entry) },
+                    )
+                }
+            }
+        }
+    }
+}
+
