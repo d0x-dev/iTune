@@ -749,24 +749,34 @@ private fun ReleaseHeader(
                 Modifier
                     .size(sleeveSize)
                     .shadow(SLEEVE_SHADOW, SLEEVE_SHAPE)
+                    .clip(SLEEVE_SHAPE)
                     .background(palette.elevated)
                     .thumbnailBorder(SLEEVE_SHAPE),
             ) {
-                if (page.thumbnailUrl == null || artFailed) {
-                    CoverPlaceholder(
-                        icon = page.placeholderIcon(),
-                        base = palette.elevated,
-                        tint = palette.onBackgroundVariant,
+                if (page.collageArtworkUrls.size >= 2) {
+                    PlaylistCollageAvatar(
+                        artworkUrls = page.collageArtworkUrls,
+                        size = null,
+                        cornerRadius = 12.dp,
+                        modifier = Modifier.matchParentSize(),
+                    )
+                } else {
+                    if (page.thumbnailUrl == null || artFailed) {
+                        CoverPlaceholder(
+                            icon = page.placeholderIcon(),
+                            base = palette.elevated,
+                            tint = palette.onBackgroundVariant,
+                            modifier = Modifier.matchParentSize(),
+                        )
+                    }
+                    AsyncImage(
+                        model = page.thumbnailUrl.artworkAt(HEADER_ART_PX),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        onState = { artFailed = it is AsyncImagePainter.State.Error },
                         modifier = Modifier.matchParentSize(),
                     )
                 }
-                AsyncImage(
-                    model = page.thumbnailUrl.artworkAt(HEADER_ART_PX),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    onState = { artFailed = it is AsyncImagePainter.State.Error },
-                    modifier = Modifier.matchParentSize(),
-                )
                 canvas?.let { clip ->
                     CanvasArtworkPlayer(
                         canvas = clip,
