@@ -218,6 +218,8 @@ fun ArtistSongActionsMenu(
 @Composable
 fun ArtistBrowseActionsMenu(
     target: BrowseTarget,
+    savedInLibrary: Boolean? = null,
+    onToggleLibrary: (() -> Unit)? = null,
     onPlayNext: (() -> Unit)? = null,
     onAddToQueue: (() -> Unit)? = null,
     onPlay: (() -> Unit)? = null,
