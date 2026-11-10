@@ -1396,7 +1396,7 @@ private fun InPlayerQueueContent(
  * of the iOS volume slider (capsule track with 50% rounded corners).
  */
 @Composable
-private fun IosCapsuleSeekSlider(
+internal fun IosCapsuleSeekSlider(
     value: Float,
     valueRange: ClosedFloatingPointRange<Float>,
     isSeeking: Boolean,
