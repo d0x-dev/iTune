@@ -1081,6 +1081,26 @@ fun ArtistScreenOverlayPopups(
             val browseMenuBody: @Composable (BrowseTarget) -> Unit = { target ->
                 ArtistBrowseActionsMenu(
                     target = target,
+                    savedInLibrary = if (target.type != BrowseType.ARTIST) {
+                        target.browseId in savedReleases
+                    } else {
+                        null
+                    },
+                    onToggleLibrary = if (target.type != BrowseType.ARTIST) {
+                        {
+                            controller.clearMenus()
+                            ArtistStateStore.toggleReleaseSaved(
+                                context = controller.context,
+                                browseId = target.browseId,
+                                title = target.title,
+                                subtitle = target.subtitle,
+                                thumbnailUrl = target.thumbnailUrl,
+                                type = target.type,
+                            )
+                        }
+                    } else {
+                        null
+                    },
                     onPlay = {
                         controller.clearMenus()
                         controller.withBrowseSongs(target) { list ->
