@@ -730,42 +730,12 @@ fun AppleMoreOptionsPopup(
                                                 MusicPlayerState.lyricsOpen = false
                                                 MusicPlayerState.queueOpen = false
                                                 MusicPlayerState.expanded = false
-                                                MusicPlayerState.pendingArtistSearch = primaryArtist
-                                            }
-                                        )
-                                        PopupMenuDivider()
-
-                                        MorePopupOptionRow(
-                                            iconRes = R.drawable.ic_menu_share,
-                                            title = "Share",
-                                            onClick = {
-                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                                val link = "https://music.youtube.com/watch?v=${track.id}"
-                                                val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                                    type = "text/plain"
-                                                    putExtra(
-                                                        Intent.EXTRA_TEXT,
-                                                        "Listen to ${track.title} by ${track.artists}\n$link"
-                                                    )
-                                                }
-                                                context.startActivity(
-                                                    Intent.createChooser(shareIntent, "Share Song")
+                                                MusicPlayerState.pendingArtistNav = PendingArtistNav(
+                                                    browseId = track.artistId,
+                                                    name = primaryArtist,
+                                                    thumbnailUrl = track.thumbnailUrl?.ifBlank { null },
+                                                    initialType = BrowseType.ARTIST,
                                                 )
-                                                onDismiss()
-                                            }
-                                        )
-                                        PopupMenuDivider()
-
-                                        MorePopupOptionRow(
-                                            iconRes = R.drawable.ic_menu_copy_link,
-                                            title = "Copy link",
-                                            onClick = {
-                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                                val link = "https://music.youtube.com/watch?v=${track.id}"
-                                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                                                clipboard?.setPrimaryClip(ClipData.newPlainText("Track Link", link))
-                                                Toast.makeText(context, "Link copied", Toast.LENGTH_SHORT).show()
-                                                onDismiss()
                                             }
                                         )
                                         PopupMenuDivider()
