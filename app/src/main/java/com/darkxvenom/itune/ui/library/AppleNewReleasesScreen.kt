@@ -1,0 +1,204 @@
+package com.darkxvenom.itune.ui.library
+
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Album
+import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import com.darkxvenom.itune.backend.NewReleaseAlbum
+import com.darkxvenom.itune.backend.ReleaseType
+import com.darkxvenom.itune.data.library.LibraryDestination
+import com.darkxvenom.itune.data.library.NewReleasesRepository
+import com.darkxvenom.itune.data.model.BrowseType
+import com.darkxvenom.itune.data.model.CARD_ART_PX
+import com.darkxvenom.itune.data.model.artworkAt
+import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
+import com.darkxvenom.itune.ui.artist.components.ShimmerBox
+import com.darkxvenom.itune.ui.artist.icons.ITubeIcons
+import com.darkxvenom.itune.ui.components.TopSpringLoadingBar
+import com.darkxvenom.itune.ui.theme.AppleTextSecondary
+
+private enum class NewReleaseFilter(val label: String) {
+    ALL("All"),
+    ALBUMS("Albums"),
+    SINGLES("Singles"),
+    EPS("EPs"),
+}
+
+/**
+ * Full-screen Apple-styled destination showcasing AirBeats' New Releases catalog
+ * (Spotlight carousel + Albums, Singles, and EPs sections) with direct Album/Single navigation.
+ */
+@Composable
+fun AppleNewReleasesScreen(
+    controller: LibraryHostController,
+    hasMiniPlayer: Boolean,
+    onBack: () -> Unit,
+) {
+    val releases by NewReleasesRepository.releases.collectAsStateWithLifecycle()
+    val isLoading by NewReleasesRepository.isLoading.collectAsStateWithLifecycle()
+    val errorMessage by NewReleasesRepository.errorMessage.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        NewReleasesRepository.ensureLoaded()
+    }
+
+    var selectedFilter by remember { mutableStateOf(NewReleaseFilter.ALL) }
+    val searchQuery = controller.searchQuery.trim()
+
+    val filteredReleases = remember(releases, searchQuery) {
+        if (searchQuery.isEmpty()) releases
+        else releases.filter {
+            it.title.contains(searchQuery, ignoreCase = true) ||
+                it.artist.contains(searchQuery, ignoreCase = true)
+        }
+    }
+
+    val albumsList = remember(filteredReleases) {
+        filteredReleases.filter { it.releaseType == ReleaseType.ALBUM }
+    }
+    val singlesList = remember(filteredReleases) {
+        filteredReleases.filter { it.releaseType == ReleaseType.SINGLE }
+    }
+    val epsList = remember(filteredReleases) {
+        filteredReleases.filter { it.releaseType == ReleaseType.EP }
+    }
+    val spotlightList = remember(filteredReleases) {
+        filteredReleases.take(8)
+    }
+
+    val gridState = controller.gridStates.getOrPut(LibraryDestination.NEW_RELEASES) { LazyGridState() }
+    val isScrolled by remember {
+        derivedStateOf {
+            gridState.firstVisibleItemIndex > 0 || gridState.firstVisibleItemScrollOffset > 120
+        }
+    }
+
+    fun openReleaseDetail(release: NewReleaseAlbum) {
+        controller.openDetail(
+            browseId = release.browseId,
+            title = release.title,
+            subtitle = release.subtitleLine,
+            thumbnailUrl = release.thumbnailUrl,
+            type = BrowseType.ALBUM,
+        )
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        LibraryFrostedScreenScaffold(
+            controller = controller,
+            artworkUrls = emptyList(),
+            scrolledTitle = "New Releases",
+            isScrolled = isScrolled,
+            hasMiniPlayer = hasMiniPlayer,
+            fallbackAccent = LibraryCrimsonAccent,
+            amoledDark = true,
+            onBack = onBack,
+            topBarActions = {
+                IconButton(onClick = controller::toggleSearch) {
+                    Icon(
+                        imageVector = ITubeIcons.Search,
+                        contentDescription = "Search New Releases",
+                        tint = if (controller.searchOpen) LibraryCrimsonAccent else Color.White,
+                        modifier = Modifier.size(21.dp),
+                    )
+                }
+                IconButton(onClick = { NewReleasesRepository.refresh() }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Refresh,
+                        contentDescription = "Refresh New Releases",
+                        tint = Color.White,
+                        modifier = Modifier.size(21.dp),
+                    )
+                }
+            },
+        ) { contentPadding ->
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                state = gridState,
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = contentPadding.calculateTopPadding() + 8.dp,
+                    bottom = contentPadding.calculateBottomPadding(),
+                ),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                item(span = { GridItemSpan(2) }, key = "nr_header") {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        val summaryLine = if (releases.isEmpty()) {
+                            "Fresh Albums, Singles & EPs"
+                        } else {
+                            buildList {
+                                if (albumsList.isNotEmpty()) add("${albumsList.size} Albums")
+                                if (singlesList.isNotEmpty()) add("${singlesList.size} Singles")
+                                if (epsList.isNotEmpty()) add("${epsList.size} EPs")
+                            }.joinToString(" • ").ifBlank { "${releases.size} Releases" }
+                        }
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 2.dp, vertical = 4.dp),
+                        ) {
+                            Text(
+                                text = "New Releases",
+                                color = Color.White,
+                                fontSize = 32.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = (-0.6).sp,
+                            )
+                            Spacer(Modifier.height(2.dp))
+                            Text(
+                                text = summaryLine,
+                                color = Color.White.copy(alpha = 0.62f),
