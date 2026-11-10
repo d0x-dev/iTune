@@ -389,201 +389,91 @@ fun SearchScreen(
                     .springOverscroll(),
                 contentPadding = PaddingValues(top = 2.dp, bottom = 180.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-            LazyVerticalGrid(
-                itemsIndexed(
-                    items = MusicRepository.searchCategories,
-                    key = { _, category -> category.id }
-                ) { index, category ->
-                    val horizontalPad = if (index % 2 == 0) {
-                        PaddingValues(start = 16.dp, top = if (index < 2) 6.dp else 0.dp, bottom = 12.dp)
-                    } else {
-                        PaddingValues(end = 16.dp, top = if (index < 2) 6.dp else 0.dp, bottom = 12.dp)
-                    }
-                    SearchCategoryCardItem(
-                        category = category,
-                        modifier = Modifier.padding(horizontalPad),
-                        onClick = {
-                            onCategoryClick(category)
-                            searchQuery = category.title
-                        }
-                    )
-                }
-            } else {
-                if (isSearching && searchResults.isEmpty) {
-                    item(span = { GridItemSpan(2) }, key = "search_loading") {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 48.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                CircularProgressIndicator(
-                                    color = Color(0xFFFA2D48),
-                                    strokeWidth = 2.5.dp,
-                                    modifier = Modifier.size(36.dp)
+                verticalArrangement = Arrangement.spacedBy(0.dp)
+            ) {
+                when (uiMode) {
+                    SearchUiMode.EXPLORE -> {
+                        item(span = { GridItemSpan(2) }, key = "explore_categories_header") {
+                            Text(
+                                text = "Explore Categories",
+                                color = AppleTextPrimary,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = (-0.3).sp,
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    top = 6.dp,
+                                    bottom = 10.dp
                                 )
-                                Spacer(modifier = Modifier.height(14.dp))
-                                Text(
-                                    text = "Searching YouTube Music...",
-                                    color = AppleTextSecondary,
-                                    fontSize = 14.sp
+                            )
+                        }
+                        itemsIndexed(
+                            items = MusicRepository.searchCategories,
+                            key = { _, category -> category.id }
+                        ) { index, category ->
+                            val horizontalPad = if (index % 2 == 0) {
+                                PaddingValues(start = 16.dp, bottom = 12.dp)
+                            } else {
+                                PaddingValues(end = 16.dp, bottom = 12.dp)
+                            }
+                            SearchCategoryCardItem(
+                                category = category,
+                                modifier = Modifier.padding(horizontalPad),
+                                onClick = {
+                                    onCategoryClick(category)
+                                    submitSearch(category.title)
+                                }
+                            )
+                        }
+                    }
+
+                    SearchUiMode.HISTORY -> {
+                        item(span = { GridItemSpan(2) }, key = "history_header") {
+                            SearchHistoryHeaderRow(
+                                hasHistory = searchHistory.isNotEmpty(),
+                                onClearAll = { SearchHistoryStore.clearAll(context) }
+                            )
+                        }
+                        if (searchHistory.isEmpty()) {
+                            item(span = { GridItemSpan(2) }, key = "history_empty") {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 24.dp, vertical = 48.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "Search songs, artists, albums, or playlists",
+                                        color = AppleTextSecondary,
+                                        fontSize = 14.5.sp
+                                    )
+                                }
+                            }
+                        } else {
+                            itemsIndexed(
+                                items = searchHistory,
+                                key = { _, q -> "history_${q.lowercase()}" },
+                                span = { _, _ -> GridItemSpan(2) }
+                            ) { idx, queryItem ->
+                                SearchQuerySuggestionRow(
+                                    text = queryItem,
+                                    highlightQuery = "",
+                                    isHistory = true,
+                                    showBottomDivider = idx < searchHistory.lastIndex,
+                                    onSelect = { submitSearch(queryItem) },
+                                    onFillQuery = { fillQueryForEditing(queryItem) },
+                                    onRemoveHistory = {
+                                        SearchHistoryStore.removeQuery(context, queryItem)
+                                    }
                                 )
                             }
                         }
                     }
-                } else if (!isSearching && searchResults.isEmpty) {
-                    item(span = { GridItemSpan(2) }, key = "search_empty") {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 48.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "No results found for \"$searchQuery\"",
-                                color = AppleTextSecondary,
-                                fontSize = 15.sp
-                            )
-                        }
-                    }
-                } else {
-                    val songsList = searchResults.songs.take(8)
-                    val artistsList = searchResults.artists.take(6)
-                    val albumsList = searchResults.albums.take(6)
-                    val playlistsList = searchResults.playlists.take(6)
 
-                    if (songsList.isNotEmpty()) {
-                        item(span = { GridItemSpan(2) }, key = "header_songs") {
-                            SearchSectionHeader(title = "Songs")
-                        }
-                        itemsIndexed(
-                            items = songsList,
-                            key = { idx, t -> "song_${t.id}_$idx" },
-                            span = { _, _ -> GridItemSpan(2) }
-                        ) { _, track ->
-                            SearchUnifiedRow(
-                                title = track.title,
-                                subtitle = track.artists,
-                                thumbnailUrl = track.thumbnailUrl,
-                                cacheKey = "${track.id}_search_song_48",
-                                isCurrent = MusicPlayerState.currentTrack?.id == track.id,
-                                isPlaying = MusicPlayerState.isPlaying,
-                                onClick = {
-                                    focusManager.clearFocus(force = true)
-                                    keyboardController?.hide()
-                                    MusicPlayerState.play(track, songsList)
-                                },
-                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Song(track), pos) }
-                            )
-                        }
-                    }
-
-                    if (artistsList.isNotEmpty()) {
-                        item(span = { GridItemSpan(2) }, key = "header_artists") {
-                            SearchSectionHeader(title = "Artists")
-                        }
-                        itemsIndexed(
-                            items = artistsList,
-                            key = { idx, a -> "artist_${a.id}_$idx" },
-                            span = { _, _ -> GridItemSpan(2) }
-                        ) { _, artist ->
-                            SearchUnifiedRow(
-                                title = artist.name,
-                                subtitle = artist.subscribers ?: "Artist",
-                                thumbnailUrl = artist.thumbnailUrl,
-                                cacheKey = "${artist.id}_search_artist_48",
-                                onClick = {
-                                    openCollectionDetail(
-                                        SearchDetailState(
-                                            browseId = artist.id,
-                                            title = artist.name,
-                                            subtitle = artist.subscribers ?: "Artist",
-                                            thumbnailUrl = artist.thumbnailUrl,
-                                            initialType = BrowseType.ARTIST
-                                        )
-                                    )
-                                },
-                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Artist(artist), pos) }
-                            )
-                        }
-                    }
-
-                    if (albumsList.isNotEmpty()) {
-                        item(span = { GridItemSpan(2) }, key = "header_albums") {
-                            SearchSectionHeader(title = "Albums")
-                        }
-                        itemsIndexed(
-                            items = albumsList,
-                            key = { idx, a -> "album_${a.id}_$idx" },
-                            span = { _, _ -> GridItemSpan(2) }
-                        ) { _, album ->
-                            SearchUnifiedRow(
-                                title = album.title,
-                                subtitle = album.author,
-                                thumbnailUrl = album.thumbnailUrl,
-                                cacheKey = "${album.id}_search_album_48",
-                                onClick = {
-                                    openCollectionDetail(
-                                        SearchDetailState(
-                                            browseId = album.id,
-                                            title = album.title,
-                                            subtitle = album.author,
-                                            thumbnailUrl = album.thumbnailUrl,
-                                            initialType = BrowseType.ALBUM
-                                        )
-                                    )
-                                },
-                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Collection(album), pos) }
-                            )
-                        }
-                    }
-
-                    if (playlistsList.isNotEmpty()) {
-                        item(span = { GridItemSpan(2) }, key = "header_playlists") {
-                            SearchSectionHeader(title = "Playlists")
-                        }
-                        itemsIndexed(
-                            items = playlistsList,
-                            key = { idx, p -> "playlist_${p.id}_$idx" },
-                            span = { _, _ -> GridItemSpan(2) }
-                        ) { idx, playlist ->
-                            SearchUnifiedRow(
-                                title = playlist.title,
-                                subtitle = playlist.author,
-                                thumbnailUrl = playlist.thumbnailUrl,
-                                cacheKey = "${playlist.id}_search_playlist_48",
-                                showBottomDivider = idx < playlistsList.lastIndex,
-                                onClick = {
-                                    openCollectionDetail(
-                                        SearchDetailState(
-                                            browseId = playlist.id,
-                                            title = playlist.title,
-                                            subtitle = playlist.author,
-                                            thumbnailUrl = playlist.thumbnailUrl,
-                                            initialType = BrowseType.PLAYLIST
-                                        )
-                                    )
-                                },
-                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Collection(playlist), pos) }
-                            )
-                        }
-                    }
-                }
+                else -> Unit
             }
         }
-
-        // Top subtle gradient shade on scroll for status bar transparency
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(110.dp)
-                .graphicsLayer { alpha = topShadeAlpha }
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            AppleOledBlack,
-                            AppleOledBlack.copy(alpha = 0.94f),
                             AppleOledBlack.copy(alpha = 0.65f),
                             AppleOledBlack.copy(alpha = 0.25f),
                             Color.Transparent
