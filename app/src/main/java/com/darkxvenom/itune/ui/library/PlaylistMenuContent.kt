@@ -850,3 +850,131 @@ fun AppleSheetAddToPlaylistContent(
 /**
  * In-place "Create New Playlist" name form styled natively inside Search's AppleFrostedPopupOverlay.
  */
+@Composable
+fun AppleSheetCreatePlaylistContent(
+    payload: PendingPlaylistPayload,
+    onCompleted: () -> Unit,
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val (resolvedSongs, loading) = rememberResolvedPayloadSongs(payload)
+    var nameInput by remember(payload) { mutableStateOf("") }
+    var busy by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    fun submit() {
+        if (busy) return
+        val clean = nameInput.trim()
+        if (clean.isBlank()) {
+            Toast.makeText(context, "Enter a playlist name", Toast.LENGTH_SHORT).show()
+            return
+        }
+        busy = true
+        scope.launch {
+            try {
+                resolveAndCreatePlaylist(context, clean, payload, resolvedSongs)
+                onCompleted()
+            } finally {
+                busy = false
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 14.dp),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .clip(RoundedCornerShape(14.dp))
+                .background(Color.White.copy(alpha = 0.11f))
+                .border(0.75.dp, Color.White.copy(alpha = 0.20f), RoundedCornerShape(14.dp))
+                .padding(horizontal = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+                if (nameInput.isEmpty()) {
+                    Text(
+                        text = "Playlist Name",
+                        color = Color.White.copy(alpha = 0.45f),
+                        fontSize = 16.sp,
+                    )
+                }
+                BasicTextField(
+                    value = nameInput,
+                    onValueChange = { nameInput = it },
+                    singleLine = true,
+                    cursorBrush = SolidColor(LibraryCrimsonAccent),
+                    textStyle = TextStyle(
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { submit() }),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
+                )
+            }
+            if (nameInput.isNotEmpty()) {
+                IconButton(
+                    onClick = { nameInput = "" },
+                    modifier = Modifier.size(24.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = "Clear",
+                        tint = Color.White.copy(alpha = 0.72f),
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(10.dp))
+
+        Text(
+            text = if (loading) "Preparing tracks..." else "Avatar updates from added song thumbnails.",
+            color = Color.White.copy(alpha = 0.58f),
+            fontSize = 12.sp,
+        )
+
+        Spacer(Modifier.height(14.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(46.dp)
+                .clip(CircleShape)
+                .background(
+                    if (nameInput.isNotBlank() && !busy) Color.White
+                    else Color.White.copy(alpha = 0.30f),
+                )
+                .clickable(enabled = nameInput.isNotBlank() && !busy, onClick = ::submit),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (busy) {
+                CircularProgressIndicator(
+                    color = Color.Black,
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(18.dp),
+                )
+            } else {
+                Text(
+                    text = "Create & Add",
+                    color = Color.Black,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
+    }
+}
