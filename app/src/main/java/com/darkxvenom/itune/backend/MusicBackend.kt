@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
@@ -23,7 +25,12 @@ import java.util.concurrent.ConcurrentHashMap
 object MusicBackend {
     private const val TAG = "MusicBackend"
     private const val SEARCH_URL = "https://music.youtube.com/youtubei/v1/search?prettyPrint=false"
-    private const val SONG_PARAMS = "EgWKAQIIAWoKEAkQBRAKEAMQBA%3D%3D"
+    private const val BROWSE_URL = "https://music.youtube.com/youtubei/v1/browse?prettyPrint=false"
+    private const val SONG_PARAMS = "EgWKAQIIAWoSEAQQAxAFEAkQChAVEA4QERAQ"
+    private const val ARTIST_PARAMS = "EgWKAQIgAWoSEAQQAxAFEAkQChAVEA4QERAQ"
+    private const val ALBUM_PARAMS = "EgWKAQIYAWoSEAQQAxAFEAkQChAVEA4QERAQ"
+    private const val PLAYLIST_PARAMS = "EgeKAQQoAEABahIQBBADEAUQCRAKEBUQDhAREBA="
+    private const val FEATURED_PLAYLIST_PARAMS = "EgeKAQQoADgBahIQBBADEAUQCRAKEBUQDhAREBA="
     private const val STREAM_CACHE_TTL_MS = 20L * 60_000L
     private val JSON_TYPE = "application/json; charset=utf-8".toMediaType()
 
@@ -45,18 +52,12 @@ object MusicBackend {
     }
 
     suspend fun searchMusic(query: String): List<MusicTrack> = withContext(Dispatchers.IO) {
-        val tracks = mutableListOf<MusicTrack>()
-        try {
-            val root = postInnerTubeSearch(query, SONG_PARAMS)
-            root.walk { key, itemObj ->
-                if (key == "musicResponsiveListItemRenderer") {
-                    val wrapper = JSONObject().put("musicResponsiveListItemRenderer", itemObj)
-                    parseTrackItem(wrapper)?.let { tracks.add(it) }
-                }
-            }
-        } catch (e: Exception) {
+        val tracks = runCatching {
+            collectRenderers(postInnerTubeSearch(query, SONG_PARAMS), ::parseTrackItem)
+        }.getOrElse { e ->
             Log.e(TAG, "Search failed for '$query': ${e.message}")
-        }
+            emptyList()
+        }.toMutableList()
 
         if (tracks.isEmpty()) {
             try {
