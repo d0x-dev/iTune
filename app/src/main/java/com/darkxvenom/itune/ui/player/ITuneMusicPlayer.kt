@@ -11,6 +11,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -696,28 +697,30 @@ fun ITuneMusicPlayer(
 
             Spacer(Modifier.height(18.dp))
 
-            // Wavy Seek Bar (AirBeats Expressive Squiggly Slider)
-            WavySlider(
+            // iOS Capsule Seek Bar (Exact same UI as Volume Slider, no waves)
+            IosCapsuleSeekSlider(
                 value = displayPos.toFloat(),
-                onValueChange = {
+                valueRange = 0f..safeDuration.toFloat(),
+                isSeeking = isSeeking,
+                onSeekStart = { targetVal ->
                     onLyricsInteraction()
                     isSeeking = true
-                    seekPosition = it.toLong().coerceIn(0L, safeDuration)
+                    seekPosition = targetVal.toLong().coerceIn(0L, safeDuration)
                 },
-                onValueChangeFinished = {
+                onSeekChange = { targetVal ->
+                    seekPosition = targetVal.toLong().coerceIn(0L, safeDuration)
+                },
+                onSeekEnd = { targetVal ->
                     onLyricsInteraction()
-                    MusicPlayerState.seekTo(seekPosition)
+                    val targetPos = targetVal.toLong().coerceIn(0L, safeDuration)
+                    seekPosition = targetPos
+                    MusicPlayerState.seekTo(targetPos)
                     isSeeking = false
                 },
-                valueRange = 0f..safeDuration.toFloat(),
-                isPlaying = isPlaying,
-                activeTrackColor = Color.White,
-                inactiveTrackColor = Color.White.copy(alpha = 0.25f),
-                thumbColor = Color.White,
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(6.dp))
 
             // Time & Audio Quality Tag Row
             Row(
@@ -1275,6 +1278,107 @@ private fun InPlayerQueueContent(
                     }
                 }
             }
+        }
+    }
+}
+
+/**
+ * iOS-style non-wavy capsule seek bar matching the exact visual style and geometry
+ * of the iOS volume slider (capsule track with 50% rounded corners).
+ */
+@Composable
+private fun IosCapsuleSeekSlider(
+    value: Float,
+    valueRange: ClosedFloatingPointRange<Float>,
+    isSeeking: Boolean,
+    onSeekStart: (Float) -> Unit,
+    onSeekChange: (Float) -> Unit,
+    onSeekEnd: (Float) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val duration = (valueRange.endInclusive - valueRange.start).coerceAtLeast(1f)
+    var dragVal by remember { mutableFloatStateOf(value) }
+
+    val displayFraction = if (isSeeking) {
+        ((dragVal - valueRange.start) / duration).coerceIn(0f, 1f)
+    } else {
+        ((value - valueRange.start) / duration).coerceIn(0f, 1f)
+    }
+
+    val animatedFraction by animateFloatAsState(
+        targetValue = displayFraction,
+        animationSpec = if (isSeeking) snap() else tween(durationMillis = 250, easing = LinearEasing),
+        label = "seekSliderFraction"
+    )
+
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(28.dp)
+            .pointerInput(duration) {
+                detectTapGestures { offset ->
+                    val w = size.width.toFloat()
+                    if (w > 0f) {
+                        val fraction = (offset.x / w).coerceIn(0f, 1f)
+                        val targetVal = valueRange.start + fraction * duration
+                        dragVal = targetVal
+                        onSeekStart(targetVal)
+                        onSeekEnd(targetVal)
+                    }
+                }
+            }
+            .pointerInput(duration) {
+                detectHorizontalDragGestures(
+                    onDragStart = { offset ->
+                        val w = size.width.toFloat()
+                        if (w > 0f) {
+                            val fraction = (offset.x / w).coerceIn(0f, 1f)
+                            val targetVal = valueRange.start + fraction * duration
+                            dragVal = targetVal
+                            onSeekStart(targetVal)
+                        }
+                    },
+                    onDragEnd = {
+                        onSeekEnd(dragVal)
+                    },
+                    onDragCancel = {
+                        onSeekEnd(dragVal)
+                    },
+                    onHorizontalDrag = { change, _ ->
+                        change.consume()
+                        val w = size.width.toFloat()
+                        if (w > 0f) {
+                            val fraction = (change.position.x / w).coerceIn(0f, 1f)
+                            val targetVal = valueRange.start + fraction * duration
+                            dragVal = targetVal
+                            onSeekChange(targetVal)
+                        }
+                    }
+                )
+            },
+        contentAlignment = Alignment.CenterStart
+    ) {
+        val trackHeight = 7.5.dp
+        val trackShape = RoundedCornerShape(percent = 50)
+
+        // Inactive background capsule track
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(trackHeight)
+                .clip(trackShape)
+                .background(Color.White.copy(alpha = 0.22f))
+        )
+
+        // Active progress capsule track
+        if (animatedFraction > 0.001f) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(animatedFraction)
+                    .height(trackHeight)
+                    .clip(trackShape)
+                    .background(Color.White.copy(alpha = 0.85f))
+            )
         }
     }
 }
