@@ -746,3 +746,94 @@ internal fun SearchQuerySuggestionRow(
 /**
  * Real-time skeleton below TopSpringLoadingBar shown while a submitted search query is loading.
  */
+@Composable
+internal fun SearchResultsSkeletonBlock(
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        // Section header skeleton ("Top Result")
+        Box(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)) {
+            ShimmerBox(
+                modifier = Modifier
+                    .width(96.dp)
+                    .height(16.dp),
+                shape = RoundedCornerShape(6.dp)
+            )
+        }
+
+        // Colorful Top Result card skeleton
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color(0xFF17171A))
+                .border(0.8.dp, Color.White.copy(alpha = 0.09f), RoundedCornerShape(16.dp))
+                .padding(14.dp)
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ShimmerBox(
+                        modifier = Modifier.size(62.dp),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    Spacer(modifier = Modifier.width(14.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        ShimmerBox(
+                            modifier = Modifier
+                                .fillMaxWidth(0.56f)
+                                .height(18.dp),
+                            shape = RoundedCornerShape(6.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        ShimmerBox(
+                            modifier = Modifier
+                                .fillMaxWidth(0.42f)
+                                .height(13.dp),
+                            shape = RoundedCornerShape(5.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(14.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    ShimmerBox(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(40.dp),
+                        shape = CircleShape
+                    )
+                    ShimmerBox(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(40.dp),
+                        shape = CircleShape
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Songs section skeleton
+        Box(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 6.dp)) {
+            ShimmerBox(
+                modifier = Modifier
+                    .width(68.dp)
+                    .height(16.dp),
+                shape = RoundedCornerShape(6.dp)
+            )
+        }
+
+        repeat(6) { idx ->
+            SongRowSkeleton(index = idx)
+        }
+    }
+}
+
+/**
