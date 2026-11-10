@@ -39,6 +39,7 @@ data class MusicPlaylistRef(
     val trackCount: Int = 0,
     val year: String? = null,
     val watchPlaylistId: String? = null,
+    val isExplicit: Boolean = false,
 )
 
 @Immutable
