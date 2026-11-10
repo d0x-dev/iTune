@@ -1,10 +1,12 @@
 package com.darkxvenom.itune.ui.home
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,24 +29,18 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import com.darkxvenom.itune.backend.MusicPlayerState
-import com.darkxvenom.itune.ui.player.ITuneMusicPlayer
+import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.data.model.Track
 import com.darkxvenom.itune.data.repository.MusicRepository
 import com.darkxvenom.itune.ui.browse.BrowseScreen
 import com.darkxvenom.itune.ui.components.AvatarSelectionDialog
 import com.darkxvenom.itune.ui.components.CuratedPlaylistsSection
 import com.darkxvenom.itune.ui.components.FeaturedHeroCarousel
-import com.darkxvenom.itune.ui.components.FloatingNavBar
 import com.darkxvenom.itune.ui.components.FloatingMiniPlayer
+import com.darkxvenom.itune.ui.components.FloatingNavBar
 import com.darkxvenom.itune.ui.components.LatestSongsSection
 import com.darkxvenom.itune.ui.components.NavTab
 import com.darkxvenom.itune.ui.components.RadioStationsSection
@@ -52,6 +49,10 @@ import com.darkxvenom.itune.ui.components.TopSpringLoadingBar
 import com.darkxvenom.itune.ui.components.rememberSpringOverscrollState
 import com.darkxvenom.itune.ui.components.springOverscroll
 import com.darkxvenom.itune.ui.library.LibraryScreen
+import com.darkxvenom.itune.ui.player.ITuneMusicPlayer
+import com.darkxvenom.itune.ui.player.SheetMorph
+import com.darkxvenom.itune.ui.player.rememberSheetMorph
+import com.darkxvenom.itune.ui.player.sheetMorphDrag
 import com.darkxvenom.itune.ui.search.SearchScreen
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import kotlinx.coroutines.delay
@@ -119,11 +120,26 @@ fun HomeScreen(
         label = "TopShadeAlpha"
     )
 
-    Box(
+    BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
             .background(AppleOledBlack)
     ) {
+        val density = LocalDensity.current
+        val screenHeightPx = with(density) { maxHeight.toPx() }
+
+        val sheetMorph = rememberSheetMorph { expanded ->
+            MusicPlayerState.expanded = expanded
+        }
+
+        SideEffect {
+            sheetMorph.travel = screenHeightPx
+        }
+
+        // Sync MusicPlayerState.expanded with sheetMorph
+        LaunchedEffect(MusicPlayerState.expanded) {
+            sheetMorph.animateTo(MusicPlayerState.expanded)
+        }
         // SCREEN 1: HOME SCREEN (Retained in GPU layer, 0ms switch time)
         Box(
             modifier = Modifier
@@ -174,6 +190,14 @@ fun HomeScreen(
                         onTrackClick = { track ->
                             currentTrack = track
                             isPlaying = true
+                            MusicPlayerState.play(
+                                MusicTrack(
+                                    id = track.id,
+                                    title = track.title,
+                                    artists = track.artist,
+                                    durationSec = 210L
+                                )
+                            )
                             Toast.makeText(context, "Now playing: ${track.title}", Toast.LENGTH_SHORT).show()
                         },
                         onTrackMenuClick = { track ->
@@ -330,55 +354,36 @@ fun HomeScreen(
                 )
         )
 
-        // Floating Bottom Controls: Mini-Player + Navigation Dock & Search
+        // Floating Bottom Controls: Mini-Player (ONLY shown when a song is playing) + Navigation Dock
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
+                .graphicsLayer {
+                    val p = sheetMorph.progress.value
+                    translationY = p * 160.dp.toPx()
+                    alpha = (1f - p * 2.5f).coerceIn(0f, 1f)
+                }
         ) {
             val realTrack = MusicPlayerState.currentTrack
-            FloatingMiniPlayer(
-                currentTrack = currentTrack,
-                realTrack = realTrack,
-                isPlaying = if (realTrack != null) MusicPlayerState.isPlaying else isPlaying,
-                onPlayPauseClick = {
-                    if (realTrack != null) {
+            if (realTrack != null) {
+                FloatingMiniPlayer(
+                    modifier = Modifier.sheetMorphDrag(sheetMorph),
+                    currentTrack = currentTrack,
+                    realTrack = realTrack,
+                    isPlaying = MusicPlayerState.isPlaying,
+                    onPlayPauseClick = {
                         MusicPlayerState.togglePlayPause()
-                    } else if (currentTrack == null && MusicRepository.latestSongColumns.isNotEmpty()) {
-                        currentTrack = MusicRepository.latestSongColumns[0][0]
-                        isPlaying = true
-                    } else {
-                        isPlaying = !isPlaying
-                    }
-                },
-                onNextClick = {
-                    if (realTrack != null) {
+                    },
+                    onNextClick = {
                         MusicPlayerState.skipNext()
-                    } else {
-                        val allTracks = MusicRepository.latestSongColumns.flatten()
-                        val currentIndex = allTracks.indexOf(currentTrack)
-                        val nextTrack = if (currentIndex != -1 && currentIndex + 1 < allTracks.size) {
-                            allTracks[currentIndex + 1]
-                        } else {
-                            allTracks.firstOrNull()
-                        }
-                        currentTrack = nextTrack
-                        isPlaying = true
-                    }
-                },
-                onClick = {
-                    if (realTrack != null) {
+                    },
+                    onClick = {
                         MusicPlayerState.expanded = true
-                    } else {
-                        Toast.makeText(
-                            context,
-                            currentTrack?.let { "Now Playing: ${it.title} • ${it.artist}" } ?: "Select a track to play",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
-                }
-            )
+                )
 
-            Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(6.dp))
+            }
 
             FloatingNavBar(
                 selectedTab = when (currentScreen) {
@@ -417,21 +422,29 @@ fun HomeScreen(
             )
         }
 
-        // Apple Music Full-Screen Player overlay copied from iTube
-        AnimatedVisibility(
-            visible = MusicPlayerState.expanded && MusicPlayerState.currentTrack != null,
-            enter = slideInVertically(
-                initialOffsetY = { it },
-                animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = 0.85f)
-            ) + fadeIn(tween(250)),
-            exit = slideOutVertically(
-                targetOffsetY = { it },
-                animationSpec = tween(durationMillis = 280)
-            ) + fadeOut(tween(250))
-        ) {
-            ITuneMusicPlayer(
-                onCollapse = { MusicPlayerState.expanded = false }
-            )
+        // ── Full Player Sheet with 1:1 Tip-of-Finger Gesture Tracking and Spring Physics (Copied from iTube) ──
+        val realTrack = MusicPlayerState.currentTrack
+        if (realTrack != null) {
+            BackHandler(enabled = MusicPlayerState.expanded || sheetMorph.progress.value > 0.05f) {
+                MusicPlayerState.expanded = false
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        val p = sheetMorph.progress.value
+                        translationY = (1f - p) * screenHeightPx
+                        alpha = if (p <= 0.001f) 0f else 1f
+                    }
+                    .sheetMorphDrag(sheetMorph)
+            ) {
+                ITuneMusicPlayer(
+                    onCollapse = {
+                        MusicPlayerState.expanded = false
+                    }
+                )
+            }
         }
     }
 }

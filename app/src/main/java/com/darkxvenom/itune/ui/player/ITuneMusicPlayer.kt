@@ -243,24 +243,6 @@ fun ITuneMusicPlayer(
         modifier = modifier
             .fillMaxSize()
             .background(Color.Black)
-            .pointerInput(Unit) {
-                awaitEachGesture {
-                    val down = awaitFirstDown(requireUnconsumed = false)
-                    var downTime = System.currentTimeMillis()
-                    var heldFast = false
-                    try {
-                        withTimeout(250) {
-                            waitForUpOrCancellation()
-                        }
-                    } catch (_: PointerEventTimeoutCancellationException) {
-                        heldFast = MusicPlayerState.startFastHold()
-                    }
-                    if (heldFast) {
-                        waitForUpOrCancellation()
-                        MusicPlayerState.endFastHold()
-                    }
-                }
-            }
     ) {
         val statusBarTopDp = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
         val fullBleedHeight = maxHeight * 0.56f
@@ -446,6 +428,19 @@ fun ITuneMusicPlayer(
                 .statusBarsPadding()
                 .padding(horizontal = 12.dp, vertical = 6.dp)
         ) {
+            // iOS Pull Handle Pill (Visible in full player mode)
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 2.dp)
+                    .size(width = 38.dp, height = 4.5.dp)
+                    .clip(RoundedCornerShape(2.5.dp))
+                    .background(Color.White.copy(alpha = 0.32f))
+                    .graphicsLayer {
+                        alpha = (1f - panelProgress * 2.5f).coerceIn(0f, 1f)
+                    }
+            )
+
             // Normal Collapse Chevron (fades out in lyrics or queue mode)
             IconButton(
                 onClick = onCollapse,
@@ -756,89 +751,126 @@ fun ITuneMusicPlayer(
 
             Spacer(Modifier.height(18.dp))
 
-            // ── Bottom Action Controls (Queue, Lyrics, AirPlay) ──
+            // ── Bottom Action Controls (Lyrics on Left, Shuffle/Repeat Capsule in Center when panel open, Queue on Right) ──
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(14.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Queue Button
-                    Box(
-                        modifier = Modifier
-                            .size(46.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (isQueueOpen) Color.White.copy(alpha = 0.35f) else Color.White.copy(alpha = 0.12f)
-                            )
-                            .clickable {
-                                onLyricsInteraction()
-                                if (isQueueOpen) {
-                                    MusicPlayerState.queueOpen = false
-                                } else {
-                                    MusicPlayerState.lyricsOpen = false
-                                    MusicPlayerState.queueOpen = true
-                                }
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.queue_music),
-                            contentDescription = "Queue",
-                            colorFilter = ColorFilter.tint(
-                                if (isQueueOpen) Color.White else Color.White.copy(alpha = 0.90f)
-                            ),
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-
-                    // Lyrics Button
-                    Box(
-                        modifier = Modifier
-                            .size(46.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (isLyricsOpen) Color.White.copy(alpha = 0.35f) else Color.White.copy(alpha = 0.12f)
-                            )
-                            .clickable {
-                                onLyricsInteraction()
-                                if (isLyricsOpen) {
-                                    MusicPlayerState.lyricsOpen = false
-                                } else {
-                                    MusicPlayerState.queueOpen = false
-                                    MusicPlayerState.lyricsOpen = true
-                                }
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.lyrics),
-                            contentDescription = "Lyrics",
-                            colorFilter = ColorFilter.tint(
-                                if (isLyricsOpen) Color.White else Color.White.copy(alpha = 0.90f)
-                            ),
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-
-                // AirPlay / Speaker Output Icon Button
+                // 1. Left down corner: Lyrics Button
                 Box(
                     modifier = Modifier
                         .size(46.dp)
                         .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.12f))
-                        .clickable { onLyricsInteraction() },
+                        .background(
+                            if (isLyricsOpen) Color.White.copy(alpha = 0.35f) else Color.White.copy(alpha = 0.12f)
+                        )
+                        .clickable {
+                            onLyricsInteraction()
+                            if (isLyricsOpen) {
+                                MusicPlayerState.lyricsOpen = false
+                            } else {
+                                MusicPlayerState.queueOpen = false
+                                MusicPlayerState.lyricsOpen = true
+                            }
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.ic_nav_radio),
-                        contentDescription = "Audio Output",
-                        colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.90f)),
-                        modifier = Modifier.size(22.dp)
+                        painter = painterResource(R.drawable.lyrics),
+                        contentDescription = "Lyrics",
+                        colorFilter = ColorFilter.tint(
+                            if (isLyricsOpen) Color.White else Color.White.copy(alpha = 0.90f)
+                        ),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                // 2. Center: Shuffle & Repeat Capsule (Only shown when queue or lyrics is open, else empty space)
+                AnimatedVisibility(
+                    visible = isPanelOpen,
+                    enter = fadeIn(tween(200)),
+                    exit = fadeOut(tween(150))
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(20.dp),
+                        color = Color.White.copy(alpha = 0.18f),
+                        modifier = Modifier.height(38.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            // Shuffle
+                            IconButton(
+                                onClick = {
+                                    onLyricsInteraction()
+                                    MusicPlayerState.toggleShuffle()
+                                },
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(
+                                        if (MusicPlayerState.shuffleEnabled) R.drawable.shuffle_on else R.drawable.shuffle
+                                    ),
+                                    contentDescription = "Shuffle",
+                                    tint = if (MusicPlayerState.shuffleEnabled) Color.White else Color.White.copy(alpha = 0.45f),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+
+                            // Repeat
+                            IconButton(
+                                onClick = {
+                                    onLyricsInteraction()
+                                    MusicPlayerState.toggleRepeat()
+                                },
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(
+                                        when (MusicPlayerState.repeatMode) {
+                                            Player.REPEAT_MODE_ONE -> R.drawable.repeat_one_on
+                                            Player.REPEAT_MODE_ALL -> R.drawable.repeat_on
+                                            else -> R.drawable.repeat
+                                        }
+                                    ),
+                                    contentDescription = "Repeat",
+                                    tint = if (MusicPlayerState.repeatMode != Player.REPEAT_MODE_OFF) Color.White else Color.White.copy(alpha = 0.45f),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // 3. Right down corner: Queue Button (Replaces previous radio icon)
+                Box(
+                    modifier = Modifier
+                        .size(46.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (isQueueOpen) Color.White.copy(alpha = 0.35f) else Color.White.copy(alpha = 0.12f)
+                        )
+                        .clickable {
+                            onLyricsInteraction()
+                            if (isQueueOpen) {
+                                MusicPlayerState.queueOpen = false
+                            } else {
+                                MusicPlayerState.lyricsOpen = false
+                                MusicPlayerState.queueOpen = true
+                            }
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.queue_music),
+                        contentDescription = "Queue",
+                        colorFilter = ColorFilter.tint(
+                            if (isQueueOpen) Color.White else Color.White.copy(alpha = 0.90f)
+                        ),
+                        modifier = Modifier.size(24.dp)
                     )
                 }
             }
@@ -888,13 +920,12 @@ private fun InPlayerQueueContent(
         contentPadding = PaddingValues(start = 22.dp, end = 22.dp, top = 8.dp, bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        // "Queue" Title Row with Shuffle & Repeat Capsule
+        // "Queue" Title Row
         item(key = "header_queue") {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -907,59 +938,6 @@ private fun InPlayerQueueContent(
                     ),
                     color = Color.White
                 )
-
-                // Capsule Pill (Shuffle & Repeat)
-                Surface(
-                    shape = RoundedCornerShape(20.dp),
-                    color = Color.White.copy(alpha = 0.16f),
-                    modifier = Modifier.height(38.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
-                        // Shuffle
-                        IconButton(
-                            onClick = {
-                                onUserInteraction()
-                                MusicPlayerState.toggleShuffle()
-                            },
-                            modifier = Modifier.size(36.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(
-                                    if (MusicPlayerState.shuffleEnabled) R.drawable.shuffle_on else R.drawable.shuffle
-                                ),
-                                contentDescription = "Shuffle",
-                                tint = if (MusicPlayerState.shuffleEnabled) Color.White else Color.White.copy(alpha = 0.45f),
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-
-                        // Repeat
-                        IconButton(
-                            onClick = {
-                                onUserInteraction()
-                                MusicPlayerState.toggleRepeat()
-                            },
-                            modifier = Modifier.size(36.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(
-                                    when (MusicPlayerState.repeatMode) {
-                                        Player.REPEAT_MODE_ONE -> R.drawable.repeat_one_on
-                                        Player.REPEAT_MODE_ALL -> R.drawable.repeat_on
-                                        else -> R.drawable.repeat
-                                    }
-                                ),
-                                contentDescription = "Repeat",
-                                tint = if (MusicPlayerState.repeatMode != Player.REPEAT_MODE_OFF) Color.White else Color.White.copy(alpha = 0.45f),
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                    }
-                }
             }
         }
 
