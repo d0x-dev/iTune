@@ -53,7 +53,6 @@ data class UnifiedSearchResults(
         get() = songs.isEmpty() && artists.isEmpty() && albums.isEmpty() && playlists.isEmpty()
 }
 
-
 enum class ReleaseType(val label: String) {
     ALBUM("Album"),
     SINGLE("Single"),
@@ -89,6 +88,45 @@ data class NewReleaseAlbum(
             }
         }
 }
+
+@Immutable
+data class MoodAndMomentRef(
+    val title: String,
+    val browseId: String,
+    val params: String? = null,
+)
+
+enum class MoodCategoryItemType {
+    PLAYLIST,
+    ALBUM,
+    ARTIST,
+    SONG
+}
+
+@Immutable
+data class MoodCategoryItem(
+    val id: String,
+    val title: String,
+    val subtitle: String = "",
+    val thumbnailUrl: String? = null,
+    val type: MoodCategoryItemType = MoodCategoryItemType.PLAYLIST,
+    val browseId: String? = null,
+    val videoId: String? = null,
+    val playlistId: String? = null,
+)
+
+@Immutable
+data class MoodCategorySection(
+    val title: String,
+    val items: List<MoodCategoryItem>,
+    val isGrid: Boolean = false,
+)
+
+@Immutable
+data class MoodCategoryPage(
+    val title: String,
+    val sections: List<MoodCategorySection>,
+)
 
 @Immutable
 data class LyricsLine(
