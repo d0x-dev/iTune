@@ -524,8 +524,9 @@ fun HomeScreen(
                     AppScreen.LIBRARY -> NavTab.LIBRARY
                     AppScreen.SEARCH -> null
                 },
-                isSearchActive = currentScreen == AppScreen.SEARCH,
+                isSearchActive = currentScreen == AppScreen.SEARCH && !artistHostController.isOpen,
                 onTabSelected = { tab ->
+                    artistHostController.clearAll()
                     selectedTab = tab
                     currentScreen = when (tab) {
                         NavTab.NEW -> AppScreen.BROWSE
@@ -534,7 +535,9 @@ fun HomeScreen(
                     }
                 },
                 onSearchClick = {
-                    currentScreen = if (currentScreen == AppScreen.SEARCH) {
+                    val wasArtistOpen = artistHostController.isOpen
+                    artistHostController.clearAll()
+                    currentScreen = if (currentScreen == AppScreen.SEARCH && !wasArtistOpen) {
                         when (selectedTab) {
                             NavTab.NEW -> AppScreen.BROWSE
                             NavTab.LIBRARY -> AppScreen.LIBRARY
@@ -546,6 +549,9 @@ fun HomeScreen(
                 }
             )
         }
+
+        // iTube Frosted Popups (HeldContextMenu & IosMenuPopover) over bottom bars
+        ArtistScreenOverlayPopups(controller = artistHostController)
 
         // Apple iOS-styled Avatar Selection Modal Dialog
         if (showAvatarDialog) {
