@@ -146,16 +146,31 @@ object MusicPlayerState : Player.Listener {
     }
 
     fun toggleFavorite(trackId: String) {
+        val known = currentTrack?.takeIf { it.id == trackId }
+            ?: queue.firstOrNull { it.id == trackId }
+        if (known != null) {
+            toggleFavorite(known)
+            return
+        }
+        val ctx = appContext
         if (favoriteIds.contains(trackId)) {
             favoriteIds.remove(trackId)
+            ctx?.let { LibraryStore.removeLikedSong(it, trackId) }
         } else {
             favoriteIds.add(trackId)
+            ctx?.let {
+                LibraryStore.syncLegacyIds(
+                    context = it,
+                    favoriteTrackIds = listOf(trackId),
+                    subscribedArtistIds = emptyList(),
+                    savedReleaseIds = emptyList(),
+                )
+            }
         }
-        val ctx = appContext ?: return
-        ctx.getSharedPreferences("itune_favorites", Context.MODE_PRIVATE)
-            .edit()
-            .putStringSet("favorite_track_ids", favoriteIds.toSet())
-            .apply()
+        ctx?.getSharedPreferences("itune_favorites", Context.MODE_PRIVATE)
+            ?.edit()
+            ?.putStringSet("favorite_track_ids", favoriteIds.toSet())
+            ?.apply()
     }
 
     fun init(context: Context) {
@@ -163,6 +178,8 @@ object MusicPlayerState : Player.Listener {
         val appContext = context.applicationContext
         this.appContext = appContext
         MusicBackend.init(appContext)
+        LibraryStore.ensureInit(appContext)
+        ArtistStateStore.ensureInit(appContext)
 
         val prefs = appContext.getSharedPreferences("itune_favorites", Context.MODE_PRIVATE)
         val saved = prefs.getStringSet("favorite_track_ids", emptySet()) ?: emptySet()
