@@ -288,3 +288,195 @@ class LibraryHostController internal constructor(
         }
     }
 
+    fun hasAnyPopupOpen(): Boolean =
+        songActions != null ||
+            collectionActions != null ||
+            userPlaylistActions != null ||
+            topMenuRequest != null ||
+            sortMenuRequest != null
+
+    fun clearMenus() {
+        songActions = null
+        songMenuOrigin = null
+        songMenuAnchor = null
+        collectionActions = null
+        collectionMenuOrigin = null
+        collectionMenuAnchor = null
+        userPlaylistActions = null
+        userPlaylistMenuOrigin = null
+        userPlaylistMenuAnchor = null
+        topMenuRequest = null
+        topMenuAnchor = null
+        sortMenuRequest = null
+        sortMenuAnchor = null
+    }
+
+    internal fun openUserPlaylistMenu(playlist: UserPlaylist) {
+        val origin = LongPressOrigin.consume()
+        val anchor = if (origin == null) MenuAnchor.consume() else null
+        clearMenus()
+        userPlaylistMenuOrigin = origin
+        userPlaylistMenuAnchor = anchor
+        userPlaylistActions = playlist
+    }
+
+    internal fun openSongMenu(song: Song) {
+        val origin = LongPressOrigin.consume()
+        val anchor = if (origin == null) MenuAnchor.consume() else null
+        clearMenus()
+        songMenuOrigin = origin
+        songMenuAnchor = anchor
+        songActions = song
+    }
+
+    internal fun openCollectionMenu(entry: SavedCollectionEntry) {
+        val origin = LongPressOrigin.consume()
+        val anchor = if (origin == null) MenuAnchor.consume() else null
+        clearMenus()
+        collectionMenuOrigin = origin
+        collectionMenuAnchor = anchor
+        collectionActions = entry
+    }
+
+    internal fun openTopMenu(request: LibraryTopMenuRequest) {
+        val anchor = MenuAnchor.consume()
+        clearMenus()
+        topMenuAnchor = anchor
+        topMenuRequest = request
+    }
+
+    internal fun openCreatePlaylistPopover() {
+        openTopMenu(
+            LibraryTopMenuRequest(
+                destination = LibraryDestination.PLAYLISTS,
+                songs = emptyList(),
+                stationLabel = "Playlists",
+                showSort = false,
+                initialStep = PopupPlaylistStep.CREATE_PLAYLIST,
+            ),
+        )
+    }
+
+    internal fun openSortMenu() {
+        val anchor = MenuAnchor.consume()
+        clearMenus()
+        sortMenuAnchor = anchor
+        sortMenuRequest = LibrarySortMenuRequest(songSort)
+    }
+
+    fun playSongs(songs: List<Song>, index: Int = 0, shuffle: Boolean = false) {
+        if (songs.isEmpty()) return
+        val tracks = songs.map { it.toMusicTrack() }
+        val queue = if (shuffle) tracks.shuffled() else tracks
+        val targetIdx = if (shuffle) 0 else index.coerceIn(queue.indices)
+        MusicPlayerState.play(
+            track = queue[targetIdx],
+            newQueue = queue,
+            expandPlayer = false,
+        )
+    }
+
+    fun startRadioFromSongs(songs: List<Song>, stationLabel: String) {
+        if (songs.isEmpty()) {
+            showToast("Add some songs first to start radio")
+            return
+        }
+        val activeId = MusicPlayerState.currentTrack?.id
+        val seed = songs.firstOrNull { it.videoId == activeId } ?: songs.random()
+        val seedTrack = seed.toMusicTrack()
+        val remaining = songs.filterNot { it.videoId == seed.videoId }.shuffled().take(8).map { it.toMusicTrack() }
+        MusicPlayerState.play(
+            track = seedTrack,
+            newQueue = listOf(seedTrack) + remaining,
+            expandPlayer = false,
+        )
+        showToast("Starting $stationLabel Radio...")
+        scope.launch {
+            val radioSongs = ArtistRepository.radio(seed.videoId, preferVideo = seed.isVideo)
+                .getOrNull()
+                .orEmpty()
+                .map { it.toMusicTrack() }
+                .filter { candidate -> candidate.id != seedTrack.id && remaining.none { it.id == candidate.id } }
+            if (radioSongs.isNotEmpty()) {
+                MusicPlayerState.addToQueue(radioSongs)
+            }
+        }
+    }
+
+    fun startRadioForSong(song: Song) {
+        val baseTrack = song.toMusicTrack()
+        MusicPlayerState.play(baseTrack, listOf(baseTrack), expandPlayer = false)
+        showToast("Starting ${song.title} Radio...")
+        scope.launch {
+            val radioSongs = ArtistRepository.radio(song.videoId, preferVideo = song.isVideo)
+                .getOrNull()
+                .orEmpty()
+                .map { it.toMusicTrack() }
+                .filter { it.id != baseTrack.id }
+            if (radioSongs.isNotEmpty()) {
+                MusicPlayerState.addToQueue(radioSongs)
+            }
+        }
+    }
+
+    fun startRadioForArtist(entry: SavedCollectionEntry) {
+        showToast("Starting ${entry.title} Radio...")
+        scope.launch {
+            val artistPage = ArtistRepository.artistPage(entry.browseId).getOrNull()
+            val radioTarget = artistPage?.radio
+            if (radioTarget != null) {
+                val queue = ArtistRepository.watchQueue(radioTarget).getOrNull().orEmpty().map { it.toMusicTrack() }
+                if (queue.isNotEmpty()) {
+                    MusicPlayerState.play(queue.first(), queue, expandPlayer = false)
+                    return@launch
+                }
+            }
+            val topSongs = artistPage?.songs.orEmpty()
+            if (topSongs.isNotEmpty()) {
+                startRadioFromSongs(topSongs, entry.title)
+            } else {
+                showToast("Couldn't start radio for ${entry.title}")
+            }
+        }
+    }
+
+    fun withCollectionSongs(entry: SavedCollectionEntry, action: (List<Song>) -> Unit) {
+        scope.launch {
+            val loaded = if (entry.type == BrowseType.ARTIST) {
+                ArtistRepository.artistPage(entry.browseId).getOrNull()?.songs.orEmpty()
+            } else {
+                ArtistRepository.allSongs(entry.browseId).getOrNull().orEmpty()
+            }
+            val stamped = loaded.map { song ->
+                song.copy(
+                    albumName = if (entry.type == BrowseType.ALBUM) song.albumName ?: entry.title else song.albumName,
+                    playbackSource = entry.title,
+                    playbackSourceType = PlaybackSourceType.BROWSE,
+                    playbackSourceId = entry.browseId,
+                )
+            }
+            if (stamped.isEmpty()) {
+                showToast("Couldn't load tracks for ${entry.title}")
+            } else {
+                action(stamped)
+            }
+        }
+    }
+
+    fun openDetail(
+        browseId: String,
+        title: String,
+        subtitle: String = "",
+        thumbnailUrl: String? = null,
+        type: BrowseType = BrowseType.OTHER,
+    ) {
+        clearMenus()
+        MusicPlayerState.pendingArtistNav = PendingArtistNav(
+            browseId = browseId,
+            name = title,
+            subtitle = subtitle,
+            thumbnailUrl = thumbnailUrl,
+            initialType = type,
+        )
+    }
+
