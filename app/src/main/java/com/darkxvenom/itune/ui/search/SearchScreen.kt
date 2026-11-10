@@ -150,25 +150,23 @@ fun SearchScreen(
             .fillMaxSize()
             .background(AppleOledBlack)
     ) {
-        // Main Grid with spring overscroll physics containing BOTH the Header and the Content
+        // Unified Persistent Grid preserving SearchBar keyboard focus across empty -> typed transitions
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             state = gridState,
             modifier = Modifier
                 .fillMaxSize()
                 .springOverscroll(),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 180.dp),
+            contentPadding = PaddingValues(top = 8.dp, bottom = 180.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            // Header: Large Title "Search" + Profile Avatar + Search Bar
-            // Attached inside grid so pulling/scrolling bounces the entire screen together
             item(span = { GridItemSpan(2) }, key = "search_header") {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(vertical = 8.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -191,10 +189,11 @@ fun SearchScreen(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Apple Music Search Input Field
                     AppleSearchBar(
                         query = searchQuery,
-                        onQueryChange = { searchQuery = it },
+                        onQueryChange = {
+                            searchQuery = it
+                        },
                         onMicClick = {
                             Toast.makeText(context, "Voice Search listening...", Toast.LENGTH_SHORT).show()
                         }
@@ -202,11 +201,19 @@ fun SearchScreen(
                 }
             }
 
-            // CONTENT: Categories when query is empty, live YouTube Music results when typed
             if (searchQuery.isBlank()) {
-                items(MusicRepository.searchCategories, key = { it.id }) { category ->
+                itemsIndexed(
+                    items = MusicRepository.searchCategories,
+                    key = { _, category -> category.id }
+                ) { index, category ->
+                    val horizontalPad = if (index % 2 == 0) {
+                        PaddingValues(start = 16.dp, top = if (index < 2) 6.dp else 0.dp, bottom = 12.dp)
+                    } else {
+                        PaddingValues(end = 16.dp, top = if (index < 2) 6.dp else 0.dp, bottom = 12.dp)
+                    }
                     SearchCategoryCardItem(
                         category = category,
+                        modifier = Modifier.padding(horizontalPad),
                         onClick = {
                             onCategoryClick(category)
                             searchQuery = category.title
@@ -214,7 +221,7 @@ fun SearchScreen(
                     )
                 }
             } else {
-                if (isSearching && searchResults.isEmpty()) {
+                if (isSearching && searchResults.isEmpty) {
                     item(span = { GridItemSpan(2) }, key = "search_loading") {
                         Box(
                             modifier = Modifier
@@ -237,7 +244,7 @@ fun SearchScreen(
                             }
                         }
                     }
-                } else if (!isSearching && searchResults.isEmpty()) {
+                } else if (!isSearching && searchResults.isEmpty) {
                     item(span = { GridItemSpan(2) }, key = "search_empty") {
                         Box(
                             modifier = Modifier
