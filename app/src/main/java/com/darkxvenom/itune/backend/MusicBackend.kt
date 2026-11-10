@@ -438,6 +438,84 @@ object MusicBackend {
         page
     }
 
+    private fun parseMoodContainerItems(arr: JSONArray?): List<MoodCategoryItem> {
+        if (arr == null) return emptyList()
+        val out = mutableListOf<MoodCategoryItem>()
+        val seenIds = HashSet<String>()
+        for (i in 0 until arr.length()) {
+            val wrapper = arr.optJSONObject(i) ?: continue
+            val item = wrapper.optJSONObject("musicTwoRowItemRenderer")?.let(::parseMoodTwoRowItem)
+                ?: wrapper.optJSONObject("musicResponsiveListItemRenderer")?.let { responsive ->
+                    parseTrackItem(JSONObject().put("musicResponsiveListItemRenderer", responsive))?.let { tr ->
+                        MoodCategoryItem(
+                            id = "song_${tr.id}",
+                            title = tr.title,
+                            subtitle = tr.artists,
+                            thumbnailUrl = tr.thumbnailUrl,
+                            type = MoodCategoryItemType.SONG,
+                            videoId = tr.id
+                        )
+                    }
+                }
+            if (item != null && seenIds.add(item.id)) {
+                out.add(item)
+            }
+        }
+        return out
+    }
+
+    private fun parseMoodTwoRowItem(twoRow: JSONObject): MoodCategoryItem? {
+        val nav = twoRow.optJSONObject("navigationEndpoint")
+        val browseId = nav?.optJSONObject("browseEndpoint")?.optString("browseId")?.takeIf { it.isNotBlank() }
+        val watchEndpoint = nav?.optJSONObject("watchEndpoint")
+        val videoId = watchEndpoint?.optString("videoId")?.takeIf { it.isNotBlank() }
+        val playlistId = twoRow.optJSONObject("thumbnailOverlay")
+            ?.optJSONObject("musicItemThumbnailOverlayRenderer")
+            ?.optJSONObject("content")
+            ?.optJSONObject("musicPlayButtonRenderer")
+            ?.optJSONObject("playNavigationEndpoint")
+            ?.optJSONObject("watchPlaylistEndpoint")
+            ?.optString("playlistId")
+            ?.takeIf { it.isNotBlank() }
+            ?: watchEndpoint?.optString("playlistId")?.takeIf { it.isNotBlank() }
+
+        val title = buildRunsText(twoRow.optJSONObject("title")?.optJSONArray("runs")).ifBlank { return null }
+        val subtitle = buildRunsText(twoRow.optJSONObject("subtitle")?.optJSONArray("runs"))
+        val thumbUrl = twoRow.optJSONObject("thumbnailRenderer")
+            ?.optJSONObject("musicThumbnailRenderer")
+            ?.optJSONObject("thumbnail")
+            ?.optJSONArray("thumbnails")
+            ?.let { thumbs -> thumbs.optJSONObject(thumbs.length() - 1)?.optString("url") }
+            ?.takeIf { it.isNotBlank() }
+            ?.highQualityThumbnail()
+
+        val itemType = when {
+            videoId != null && browseId == null -> MoodCategoryItemType.SONG
+            browseId?.startsWith("MPREb") == true -> MoodCategoryItemType.ALBUM
+            browseId?.startsWith("UC") == true -> MoodCategoryItemType.ARTIST
+            else -> MoodCategoryItemType.PLAYLIST
+        }
+        val stableId = browseId ?: videoId ?: return null
+
+        return MoodCategoryItem(
+            id = "${itemType.name}_$stableId",
+            title = title,
+            subtitle = subtitle.ifBlank {
+                when (itemType) {
+                    MoodCategoryItemType.PLAYLIST -> "Playlist"
+                    MoodCategoryItemType.ALBUM -> "Album"
+                    MoodCategoryItemType.ARTIST -> "Artist"
+                    MoodCategoryItemType.SONG -> "Song"
+                }
+            },
+            thumbnailUrl = thumbUrl,
+            type = itemType,
+            browseId = browseId,
+            videoId = videoId,
+            playlistId = playlistId
+        )
+    }
+
     suspend fun getOrLoadStreamInfo(videoId: String): StreamInfo = withContext(Dispatchers.IO) {
         val now = System.currentTimeMillis()
         streamCache[videoId]?.let { cached ->
