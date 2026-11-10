@@ -260,17 +260,126 @@ fun SearchScreen(
                         }
                     }
                 } else {
-                    items(searchResults, key = { it.id }, span = { GridItemSpan(2) }) { track ->
-                        SearchResultItem(
-                            track = track,
-                            isCurrent = MusicPlayerState.currentTrack?.id == track.id,
-                            isPlaying = MusicPlayerState.isPlaying,
-                            onClick = {
-                                focusManager.clearFocus(force = true)
-                                keyboardController?.hide()
-                                MusicPlayerState.play(track, searchResults)
-                            }
-                        )
+                    val songsList = searchResults.songs.take(8)
+                    val artistsList = searchResults.artists.take(6)
+                    val albumsList = searchResults.albums.take(6)
+                    val playlistsList = searchResults.playlists.take(6)
+
+                    if (songsList.isNotEmpty()) {
+                        item(span = { GridItemSpan(2) }, key = "header_songs") {
+                            SearchSectionHeader(title = "Songs")
+                        }
+                        itemsIndexed(
+                            items = songsList,
+                            key = { idx, t -> "song_${t.id}_$idx" },
+                            span = { _, _ -> GridItemSpan(2) }
+                        ) { _, track ->
+                            SearchUnifiedRow(
+                                title = track.title,
+                                subtitle = track.artists,
+                                thumbnailUrl = track.thumbnailUrl,
+                                cacheKey = "${track.id}_search_song_48",
+                                isCurrent = MusicPlayerState.currentTrack?.id == track.id,
+                                isPlaying = MusicPlayerState.isPlaying,
+                                onClick = {
+                                    focusManager.clearFocus(force = true)
+                                    keyboardController?.hide()
+                                    MusicPlayerState.play(track, songsList)
+                                },
+                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Song(track), pos) }
+                            )
+                        }
+                    }
+
+                    if (artistsList.isNotEmpty()) {
+                        item(span = { GridItemSpan(2) }, key = "header_artists") {
+                            SearchSectionHeader(title = "Artists")
+                        }
+                        itemsIndexed(
+                            items = artistsList,
+                            key = { idx, a -> "artist_${a.id}_$idx" },
+                            span = { _, _ -> GridItemSpan(2) }
+                        ) { _, artist ->
+                            SearchUnifiedRow(
+                                title = artist.name,
+                                subtitle = artist.subscribers ?: "Artist",
+                                thumbnailUrl = artist.thumbnailUrl,
+                                cacheKey = "${artist.id}_search_artist_48",
+                                onClick = {
+                                    openCollectionDetail(
+                                        SearchDetailState(
+                                            browseId = artist.id,
+                                            title = artist.name,
+                                            subtitle = artist.subscribers ?: "Artist",
+                                            thumbnailUrl = artist.thumbnailUrl,
+                                            initialType = BrowseType.ARTIST
+                                        )
+                                    )
+                                },
+                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Artist(artist), pos) }
+                            )
+                        }
+                    }
+
+                    if (albumsList.isNotEmpty()) {
+                        item(span = { GridItemSpan(2) }, key = "header_albums") {
+                            SearchSectionHeader(title = "Albums")
+                        }
+                        itemsIndexed(
+                            items = albumsList,
+                            key = { idx, a -> "album_${a.id}_$idx" },
+                            span = { _, _ -> GridItemSpan(2) }
+                        ) { _, album ->
+                            SearchUnifiedRow(
+                                title = album.title,
+                                subtitle = album.author,
+                                thumbnailUrl = album.thumbnailUrl,
+                                cacheKey = "${album.id}_search_album_48",
+                                onClick = {
+                                    openCollectionDetail(
+                                        SearchDetailState(
+                                            browseId = album.id,
+                                            title = album.title,
+                                            subtitle = album.author,
+                                            thumbnailUrl = album.thumbnailUrl,
+                                            initialType = BrowseType.ALBUM
+                                        )
+                                    )
+                                },
+                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Collection(album), pos) }
+                            )
+                        }
+                    }
+
+                    if (playlistsList.isNotEmpty()) {
+                        item(span = { GridItemSpan(2) }, key = "header_playlists") {
+                            SearchSectionHeader(title = "Playlists")
+                        }
+                        itemsIndexed(
+                            items = playlistsList,
+                            key = { idx, p -> "playlist_${p.id}_$idx" },
+                            span = { _, _ -> GridItemSpan(2) }
+                        ) { idx, playlist ->
+                            SearchUnifiedRow(
+                                title = playlist.title,
+                                subtitle = playlist.author,
+                                thumbnailUrl = playlist.thumbnailUrl,
+                                cacheKey = "${playlist.id}_search_playlist_48",
+                                showBottomDivider = idx < playlistsList.lastIndex,
+                                onClick = {
+                                    openCollectionDetail(
+                                        SearchDetailState(
+                                            browseId = playlist.id,
+                                            title = playlist.title,
+                                            subtitle = playlist.author,
+                                            thumbnailUrl = playlist.thumbnailUrl,
+                                            initialType = BrowseType.PLAYLIST
+                                        )
+                                    )
+                                },
+                                onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Collection(playlist), pos) }
+                            )
+                        }
                     }
                 }
             }
