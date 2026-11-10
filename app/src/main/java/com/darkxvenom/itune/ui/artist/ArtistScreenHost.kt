@@ -59,6 +59,10 @@ import com.darkxvenom.itune.data.artist.AppleArtistArtRepository
 import com.darkxvenom.itune.data.artist.ArtistRepository
 import com.darkxvenom.itune.data.artist.ArtistStateStore
 import com.darkxvenom.itune.data.artist.keyColors
+import com.darkxvenom.itune.data.library.LibraryStore
+import com.darkxvenom.itune.data.library.SavedSongMetadata
+import com.darkxvenom.itune.ui.library.IosInMenuPlaylistHost
+import com.darkxvenom.itune.ui.library.PendingPlaylistPayload
 import com.darkxvenom.itune.data.model.BrowseTarget
 import com.darkxvenom.itune.data.model.BrowseType
 import com.darkxvenom.itune.data.model.DetailPage
@@ -286,6 +290,20 @@ class ArtistHostController internal constructor(
                                 playbackSourceId = browseId,
                             )
                         }
+                        val resolvedTitle = page.name ?: title
+                        val resolvedThumb = AppleArtistArtRepository.cached(browseId)?.heroUrl
+                            ?: page.thumbnailUrl
+                            ?: thumbnailUrl
+                        val resolvedSub = page.monthlyListenerCount
+                            ?: page.subscriberCountText
+                            ?: subtitle.ifBlank { "Artist" }
+                        LibraryStore.updateArtistMetadataIfSaved(
+                            context = context,
+                            browseId = browseId,
+                            title = resolvedTitle,
+                            subtitle = resolvedSub,
+                            thumbnailUrl = resolvedThumb,
+                        )
                         replacePage(browseId) { existing ->
                             existing.copy(
                                 title = page.name ?: existing.title,
