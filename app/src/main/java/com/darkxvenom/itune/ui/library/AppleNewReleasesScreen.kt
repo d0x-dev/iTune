@@ -340,3 +340,97 @@ fun AppleNewReleasesScreen(
     }
 }
 
+@Composable
+private fun AppleNewReleaseSegmentedBar(
+    selected: NewReleaseFilter,
+    onSelect: (NewReleaseFilter) -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp)
+            .height(36.dp)
+            .clip(RoundedCornerShape(9.dp))
+            .background(Color(0xFF1C1C1E))
+            .padding(2.5.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            NewReleaseFilter.entries.forEach { option ->
+                val isSelected = option == selected
+                val bgColor by animateColorAsState(
+                    targetValue = if (isSelected) Color(0xFF38383A) else Color.Transparent,
+                    animationSpec = tween(durationMillis = 160),
+                    label = "NewReleaseSegBg",
+                )
+                val textColor by animateColorAsState(
+                    targetValue = if (isSelected) Color.White else AppleTextSecondary,
+                    animationSpec = tween(durationMillis = 160),
+                    label = "NewReleaseSegTxt",
+                )
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(7.dp))
+                        .background(bgColor)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ) { onSelect(option) },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = option.label,
+                        color = textColor,
+                        fontSize = 13.sp,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                        letterSpacing = (-0.2).sp,
+                        maxLines = 1,
+                        softWrap = false,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun NewReleaseSectionHeaderRow(
+    title: String,
+    count: Int,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = title,
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = (-0.3).sp,
+        )
+        Box(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(Color(0x18FFFFFF))
+                .padding(horizontal = 10.dp, vertical = 3.dp),
+        ) {
+            Text(
+                text = count.toString(),
+                color = Color.White.copy(alpha = 0.78f),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+    }
+}
+
