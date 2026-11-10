@@ -571,3 +571,159 @@ fun rememberLibraryHostController(): LibraryHostController {
     }
 }
 
+private fun Color.colorChroma(): Float =
+    maxOf(red, green, blue) - minOf(red, green, blue)
+
+/**
+ * Full-bleed blurred liquid glass backdrop dynamically tinted from the user's cover art.
+ */
+@Composable
+fun LibraryAtmosphericBackdrop(
+    artworkUrls: List<String?>,
+    fallbackAccent: Color = LibraryCrimsonAccent,
+    modifier: Modifier = Modifier,
+) {
+    val leadUrl = artworkUrls.firstOrNull { !it.isNullOrBlank() }
+    val secondaryUrl = artworkUrls.drop(1).firstOrNull { !it.isNullOrBlank() }
+    val palette = rememberArtworkPalette(imageUrl = leadUrl)
+    val secondaryPalette = rememberArtworkPalette(imageUrl = secondaryUrl)
+
+    val defaultVioletAura = Color(0xFF5A1678)
+    val targetAccent = if (leadUrl != null && palette.accent.colorChroma() >= 0.14f) {
+        palette.accent
+    } else if (leadUrl != null) {
+        lerp(palette.accent, fallbackAccent, 0.58f)
+    } else {
+        fallbackAccent
+    }
+    val targetViolet = if (secondaryUrl != null && secondaryPalette.accent.colorChroma() >= 0.22f) {
+        lerp(secondaryPalette.accent, defaultVioletAura, 0.48f)
+    } else {
+        defaultVioletAura
+    }
+    val targetWash = if (leadUrl != null && palette.wash.colorChroma() >= 0.12f) {
+        palette.wash
+    } else {
+        lerp(fallbackAccent, defaultVioletAura, 0.55f)
+    }
+
+    val animatedAccent by animateColorAsState(
+        targetValue = targetAccent,
+        animationSpec = tween(600),
+        label = "library_accent_glow",
+    )
+    val animatedViolet by animateColorAsState(
+        targetValue = targetViolet,
+        animationSpec = tween(600),
+        label = "library_violet_glow",
+    )
+    val animatedWash by animateColorAsState(
+        targetValue = targetWash,
+        animationSpec = tween(600),
+        label = "library_wash_glow",
+    )
+
+    Box(
+        modifier = modifier
+            .background(Color(0xFF0A040C))
+            .clip(RoundedCornerShape(0.dp)),
+    ) {
+        if (leadUrl != null) {
+            AsyncImage(
+                model = leadUrl.artworkAt(CARD_ART_PX),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        scaleX = 1.38f
+                        scaleY = 1.38f
+                    }
+                    .alpha(0.44f)
+                    .then(
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            Modifier.blur(90.dp, BlurredEdgeTreatment.Rectangle)
+                        } else {
+                            Modifier.alpha(0.50f)
+                        },
+                    ),
+            )
+        }
+        val secondaryArt = secondaryUrl ?: leadUrl
+        if (secondaryArt != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AsyncImage(
+                model = secondaryArt.artworkAt(CARD_ART_PX),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        scaleX = 1.56f
+                        scaleY = 1.56f
+                        translationX = size.width * 0.18f
+                        translationY = -size.height * 0.12f
+                    }
+                    .alpha(0.28f)
+                    .blur(104.dp, BlurredEdgeTreatment.Rectangle),
+            )
+        }
+
+        // Dynamic multi-zone liquid bokeh washes matching deep crimson-orange left & rich violet-plum right
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .drawWithContent {
+                    drawContent()
+                    drawRect(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                animatedAccent.copy(alpha = 0.60f),
+                                animatedAccent.copy(alpha = 0.24f),
+                                Color.Transparent,
+                            ),
+                            center = Offset(size.width * 0.10f, size.height * 0.12f),
+                            radius = size.maxDimension * 0.50f,
+                        ),
+                    )
+                    drawRect(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                animatedViolet.copy(alpha = 0.56f),
+                                animatedViolet.copy(alpha = 0.24f),
+                                Color.Transparent,
+                            ),
+                            center = Offset(size.width * 0.80f, size.height * 0.20f),
+                            radius = size.maxDimension * 0.66f,
+                        ),
+                    )
+                    drawRect(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                lerp(animatedAccent, Color(0xFF8A1858), 0.52f).copy(alpha = 0.40f),
+                                animatedWash.copy(alpha = 0.16f),
+                                Color.Transparent,
+                            ),
+                            center = Offset(size.width * 0.44f, size.height * 0.34f),
+                            radius = size.maxDimension * 0.56f,
+                        ),
+                    )
+                },
+        )
+
+        // Contrast-protecting velvet silk scrim keeping rich midnight framing + luminous mid bokeh
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        0.00f to Color.Black.copy(alpha = 0.34f),
+                        0.20f to Color(0xFF0A040C).copy(alpha = 0.18f),
+                        0.50f to Color(0xFF070409).copy(alpha = 0.48f),
+                        0.78f to Color(0xFF060508).copy(alpha = 0.88f),
+                        1.00f to LibraryGlassBaseBg,
+                    ),
+                ),
+        )
+    }
+}
+
