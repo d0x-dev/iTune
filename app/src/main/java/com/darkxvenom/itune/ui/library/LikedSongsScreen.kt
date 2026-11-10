@@ -274,3 +274,203 @@ fun LikedSongsScreen(
     }
 }
 
+@Composable
+private fun LikedSongsHeroSection(
+    artworkUrls: List<String>,
+    songCount: Int,
+    totalMinutes: Int,
+    sortLabel: String,
+    hasSongs: Boolean,
+    onSortClick: () -> Unit,
+    onPlay: () -> Unit,
+    onShuffle: () -> Unit,
+    onStartRadio: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 6.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        // Floating Frosted Liquid Glass Sleeve / Mosaic
+        Box(
+            modifier = Modifier
+                .size(204.dp)
+                .shadow(28.dp, RoundedCornerShape(26.dp), spotColor = LibraryCrimsonAccent.copy(alpha = 0.35f))
+                .clip(RoundedCornerShape(26.dp))
+                .background(
+                    Brush.linearGradient(
+                        listOf(
+                            Color(0xFF4C0D1E),
+                            Color(0xFF1B101C),
+                            Color(0xFF0E0E14),
+                        ),
+                    ),
+                )
+                .border(1.dp, Color.White.copy(alpha = 0.22f), RoundedCornerShape(26.dp)),
+        ) {
+            when {
+                artworkUrls.size >= 4 -> {
+                    Column(Modifier.fillMaxSize()) {
+                        Row(Modifier.weight(1f).fillMaxWidth()) {
+                            MosaicTile(artworkUrls[0], Modifier.weight(1f).fillMaxSize())
+                            MosaicTile(artworkUrls[1], Modifier.weight(1f).fillMaxSize())
+                        }
+                        Row(Modifier.weight(1f).fillMaxWidth()) {
+                            MosaicTile(artworkUrls[2], Modifier.weight(1f).fillMaxSize())
+                            MosaicTile(artworkUrls[3], Modifier.weight(1f).fillMaxSize())
+                        }
+                    }
+                }
+                artworkUrls.isNotEmpty() -> {
+                    AsyncImage(
+                        model = artworkUrls.first().artworkAt(HEADER_ART_PX),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+                else -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = SfIcons.StarFill,
+                            contentDescription = null,
+                            tint = LibraryCrimsonAccent,
+                            modifier = Modifier.size(74.dp),
+                        )
+                    }
+                }
+            }
+
+            // Frosted specular sheen + crimson star badge in corner
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            0f to Color.White.copy(alpha = 0.14f),
+                            0.35f to Color.Transparent,
+                            0.80f to Color.Transparent,
+                            1f to Color.Black.copy(alpha = 0.42f),
+                        ),
+                    ),
+            )
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(12.dp)
+                    .clip(CircleShape)
+                    .lightweightLiquidGlass(CircleShape, fallbackColor = Color(0xAA16161C))
+                    .border(0.8.dp, Color.White.copy(alpha = 0.25f), CircleShape)
+                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = SfIcons.StarFill,
+                    contentDescription = null,
+                    tint = LibraryCrimsonAccent,
+                    modifier = Modifier.size(14.dp),
+                )
+                Spacer(Modifier.width(5.dp))
+                Text(
+                    text = "FAVORITES",
+                    color = Color.White,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.8.sp,
+                )
+            }
+        }
+
+        Spacer(Modifier.height(18.dp))
+
+        Text(
+            text = "Liked Songs",
+            color = Color.White,
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = (-0.5).sp,
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        Spacer(Modifier.height(6.dp))
+
+        val countPart = if (songCount == 1) "1 Song" else "$songCount Songs"
+        val durationPart = if (totalMinutes > 0) " • $totalMinutes min" else ""
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = "$countPart$durationPart",
+                color = Color.White.copy(alpha = 0.72f),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+            )
+            if (songCount > 0) {
+                Text(
+                    text = " • $sortLabel",
+                    color = LibraryCrimsonAccent.copy(alpha = 0.92f),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .menuAnchor()
+                        .clickable { onSortClick() }
+                        .padding(horizontal = 4.dp, vertical = 2.dp),
+                )
+            }
+        }
+
+        Spacer(Modifier.height(18.dp))
+
+        // Liquid Glass Action Deck: Play, Shuffle & Start Radio
+        LibraryGlassCardContainer(
+            modifier = Modifier.fillMaxWidth(),
+            cornerRadius = 24.dp,
+            accentTint = LibraryCrimsonAccent,
+            useBackdropGlass = false,
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    LibraryGlassPillButton(
+                        icon = ITubeIcons.Play,
+                        label = stringResource(R.string.play),
+                        onClick = onPlay,
+                        filled = true,
+                        enabled = hasSongs,
+                        height = 48.dp,
+                        modifier = Modifier.weight(1f),
+                    )
+                    LibraryGlassPillButton(
+                        icon = ITubeIcons.Shuffle,
+                        label = stringResource(R.string.shuffle),
+                        onClick = onShuffle,
+                        filled = false,
+                        enabled = hasSongs,
+                        height = 48.dp,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+
+                StartRadioLiquidButton(
+                    enabled = hasSongs,
+                    onClick = onStartRadio,
+                )
+            }
+        }
+
+        Spacer(Modifier.height(10.dp))
+    }
+}
+
