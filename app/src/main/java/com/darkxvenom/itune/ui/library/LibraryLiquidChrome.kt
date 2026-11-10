@@ -480,3 +480,94 @@ class LibraryHostController internal constructor(
         )
     }
 
+    fun downloadSong(song: Song) {
+        if (downloadingIds[song.videoId] == true) return
+        downloadingIds[song.videoId] = true
+        showToast("Preparing download for ${song.title}...")
+        scope.launch {
+            try {
+                val options = withContext(Dispatchers.IO) {
+                    MusicBackend.extractAudioQualities(song.videoId)
+                }
+                val best = options.firstOrNull()
+                if (best != null) {
+                    AudioDownloader.download(context, song.toMusicTrack(), best)
+                    showToast("Downloading ${song.title}")
+                } else {
+                    showToast("No downloadable stream found")
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                showToast("Download failed: ${e.message ?: "Error"}")
+            } finally {
+                downloadingIds.remove(song.videoId)
+            }
+        }
+    }
+
+    fun downloadSongs(songs: List<Song>) {
+        if (songs.isEmpty()) {
+            showToast("Nothing to download")
+            return
+        }
+        showToast("Queuing ${songs.size} tracks for download...")
+        scope.launch {
+            songs.take(25).forEach { downloadSong(it) }
+        }
+    }
+
+    fun removeCollection(entry: SavedCollectionEntry) {
+        if (entry.type == BrowseType.ARTIST) {
+            ArtistStateStore.toggleSubscription(
+                context = context,
+                browseId = entry.browseId,
+                title = entry.title,
+                subtitle = entry.subtitle,
+                thumbnailUrl = entry.thumbnailUrl,
+            )
+            showToast("Removed ${entry.title} from Favorite Artists")
+        } else {
+            ArtistStateStore.toggleReleaseSaved(
+                context = context,
+                browseId = entry.browseId,
+                title = entry.title,
+                subtitle = entry.subtitle,
+                thumbnailUrl = entry.thumbnailUrl,
+                type = entry.type,
+            )
+            showToast("Removed ${entry.title} from Library")
+        }
+    }
+
+    fun shareUrl(title: String, url: String) {
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, url)
+        }
+        context.startActivity(Intent.createChooser(sendIntent, title))
+    }
+
+    fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+}
+
+@Composable
+fun rememberLibraryHostController(): LibraryHostController {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val pageBackdrop = rememberSnapshotBackdrop()
+    val appBackdrop = rememberLayerBackdrop()
+    val hazeState = remember { HazeState() }
+    return remember(context, pageBackdrop, appBackdrop, hazeState) {
+        LibraryHostController(
+            context = context.applicationContext,
+            scope = scope,
+            pageBackdrop = pageBackdrop,
+            appBackdrop = appBackdrop,
+            hazeState = hazeState,
+        )
+    }
+}
+
