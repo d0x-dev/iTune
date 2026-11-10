@@ -53,6 +53,43 @@ data class UnifiedSearchResults(
         get() = songs.isEmpty() && artists.isEmpty() && albums.isEmpty() && playlists.isEmpty()
 }
 
+
+enum class ReleaseType(val label: String) {
+    ALBUM("Album"),
+    SINGLE("Single"),
+    EP("EP");
+
+    companion object {
+        fun fromLabel(label: String?): ReleaseType = when (label?.trim()?.lowercase()) {
+            "single", "singles" -> SINGLE
+            "ep", "eps" -> EP
+            else -> ALBUM
+        }
+    }
+}
+
+@Immutable
+data class NewReleaseAlbum(
+    val browseId: String,
+    val playlistId: String? = null,
+    val title: String,
+    val artist: String,
+    val artistId: String? = null,
+    val year: Int? = null,
+    val releaseType: ReleaseType = ReleaseType.ALBUM,
+    val thumbnailUrl: String? = null,
+    val isExplicit: Boolean = false,
+) {
+    val subtitleLine: String
+        get() = buildString {
+            append(artist.ifBlank { releaseType.label })
+            if (year != null) {
+                append(" • ")
+                append(year)
+            }
+        }
+}
+
 @Immutable
 data class LyricsLine(
     val timeMs: Long,
