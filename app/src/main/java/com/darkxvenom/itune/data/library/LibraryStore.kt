@@ -565,3 +565,149 @@ object LibraryStore {
         hint == BrowseType.PLAYLIST -> BrowseType.PLAYLIST
         else -> BrowseType.ALBUM
     }
+
+    private fun songToJson(s: SavedSongMetadata): JSONObject = JSONObject().apply {
+        put("id", s.id)
+        put("title", s.title)
+        put("artists", s.artists)
+        put("artistId", s.artistId ?: JSONObject.NULL)
+        put("album", s.album ?: JSONObject.NULL)
+        put("albumId", s.albumId ?: JSONObject.NULL)
+        put("thumbnailUrl", s.thumbnailUrl)
+        put("durationSec", s.durationSec)
+        put("isVideo", s.isVideo)
+        put("addedAtMs", s.addedAtMs)
+    }
+
+    private fun jsonToSong(o: JSONObject): SavedSongMetadata? {
+        val id = o.optString("id").takeIf { it.isNotBlank() } ?: return null
+        return SavedSongMetadata(
+            id = id,
+            title = o.optString("title"),
+            artists = o.optString("artists"),
+            artistId = o.optNullableString("artistId"),
+            album = o.optNullableString("album"),
+            albumId = o.optNullableString("albumId"),
+            thumbnailUrl = o.optString("thumbnailUrl"),
+            durationSec = o.optLong("durationSec", 0L),
+            isVideo = o.optBoolean("isVideo", false),
+            addedAtMs = o.optLong("addedAtMs", System.currentTimeMillis()),
+        )
+    }
+
+    private fun persistSongs(key: String, items: List<SavedSongMetadata>) {
+        val arr = JSONArray()
+        items.forEach { arr.put(songToJson(it)) }
+        prefs?.edit()?.putString(key, arr.toString())?.apply()
+    }
+
+    private fun decodeSongs(raw: String?): List<SavedSongMetadata> {
+        if (raw.isNullOrBlank()) return emptyList()
+        return runCatching {
+            val arr = JSONArray(raw)
+            buildList {
+                for (i in 0 until arr.length()) {
+                    val o = arr.optJSONObject(i) ?: continue
+                    jsonToSong(o)?.let(::add)
+                }
+            }
+        }.getOrDefault(emptyList())
+    }
+
+    private fun persistUserPlaylists(items: List<UserPlaylist>) {
+        val arr = JSONArray()
+        items.forEach { pl ->
+            val songsArr = JSONArray()
+            pl.songs.forEach { songsArr.put(songToJson(it)) }
+            arr.put(
+                JSONObject().apply {
+                    put("id", pl.id)
+                    put("name", pl.name)
+                    put("songs", songsArr)
+                    put("createdAtMs", pl.createdAtMs)
+                    put("updatedAtMs", pl.updatedAtMs)
+                },
+            )
+        }
+        prefs?.edit()?.putString(KEY_USER_PLAYLISTS, arr.toString())?.apply()
+    }
+
+    private fun decodeUserPlaylists(raw: String?): List<UserPlaylist> {
+        if (raw.isNullOrBlank()) return emptyList()
+        return runCatching {
+            val arr = JSONArray(raw)
+            buildList {
+                for (i in 0 until arr.length()) {
+                    val o = arr.optJSONObject(i) ?: continue
+                    val id = o.optString("id").takeIf { it.isNotBlank() } ?: continue
+                    val name = o.optString("name").ifBlank { "Playlist" }
+                    val songsArr = o.optJSONArray("songs")
+                    val decodedSongs = buildList {
+                        if (songsArr != null) {
+                            for (j in 0 until songsArr.length()) {
+                                val sObj = songsArr.optJSONObject(j) ?: continue
+                                jsonToSong(sObj)?.let(::add)
+                            }
+                        }
+                    }
+                    add(
+                        UserPlaylist(
+                            id = id,
+                            name = name,
+                            songs = decodedSongs,
+                            createdAtMs = o.optLong("createdAtMs", System.currentTimeMillis()),
+                            updatedAtMs = o.optLong("updatedAtMs", System.currentTimeMillis()),
+                        ),
+                    )
+                }
+            }
+        }.getOrDefault(emptyList())
+    }
+
+    private fun persistCollections(key: String, items: List<SavedCollectionEntry>) {
+        val arr = JSONArray()
+        items.forEach { c ->
+            arr.put(
+                JSONObject().apply {
+                    put("browseId", c.browseId)
+                    put("title", c.title)
+                    put("subtitle", c.subtitle)
+                    put("thumbnailUrl", c.thumbnailUrl ?: JSONObject.NULL)
+                    put("type", c.type.name)
+                    put("addedAtMs", c.addedAtMs)
+                },
+            )
+        }
+        prefs?.edit()?.putString(key, arr.toString())?.apply()
+    }
+
+    private fun decodeCollections(raw: String?, fallbackType: BrowseType): List<SavedCollectionEntry> {
+        if (raw.isNullOrBlank()) return emptyList()
+        return runCatching {
+            val arr = JSONArray(raw)
+            buildList {
+                for (i in 0 until arr.length()) {
+                    val o = arr.optJSONObject(i) ?: continue
+                    val id = o.optString("browseId").takeIf { it.isNotBlank() } ?: continue
+                    val typeName = o.optString("type")
+                    val parsedType = runCatching { BrowseType.valueOf(typeName) }.getOrDefault(fallbackType)
+                    add(
+                        SavedCollectionEntry(
+                            browseId = id,
+                            title = o.optString("title"),
+                            subtitle = o.optString("subtitle"),
+                            thumbnailUrl = o.optNullableString("thumbnailUrl"),
+                            type = parsedType,
+                            addedAtMs = o.optLong("addedAtMs", System.currentTimeMillis()),
+                        ),
+                    )
+                }
+            }
+        }.getOrDefault(emptyList())
+    }
+
+    private fun JSONObject.optNullableString(key: String): String? {
+        if (isNull(key)) return null
+        return optString(key).takeIf { it.isNotBlank() && it != "null" }
+    }
+}
