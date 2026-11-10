@@ -411,19 +411,69 @@ object MusicPlayerState : Player.Listener {
 
         lyricsJob = scope.launch {
             try {
-                val list = LyricsHelper.loadLyrics(
+                val loaded = LyricsHelper.loadLyricsWithRaw(
                     songId = track.id,
                     title = track.title,
                     artist = track.artists,
                     durationSec = track.durationSec.toInt()
                 )
-                lyrics = list
-            } catch (e: Exception) {
-                lyrics = emptyList()
+                if (currentTrack?.id == track.id) {
+                    lyrics = loaded.lines
+                    rawLyricsText = loaded.rawText.ifBlank { LyricsHelper.formatToEditableText(loaded.lines) }
+                }
+            } catch (_: Exception) {
+                if (currentTrack?.id == track.id) {
+                    lyrics = emptyList()
+                    rawLyricsText = ""
+                }
             } finally {
-                lyricsLoading = false
+                if (currentTrack?.id == track.id) {
+                    lyricsLoading = false
+                }
             }
         }
+    }
+
+    /** Updates live lyrics sync offset in milliseconds (`-5000..5000`) without altering audio playback. */
+    fun setLyricsOffset(offsetMs: Long) {
+        val clamped = offsetMs.coerceIn(-5000L, 5000L)
+        lyricsOffsetMs = clamped
+        val trackId = currentTrack?.id ?: return
+        appContext?.getSharedPreferences(LYRICS_OVERRIDE_PREFS, Context.MODE_PRIVATE)
+            ?.edit()
+            ?.putLong("offset_$trackId", clamped)
+            ?.apply()
+    }
+
+    /** Saves user-selected or user-edited lyrics locally for [track] and updates the Lyrics screen immediately. */
+    fun applyCustomLyrics(track: MusicTrack, rawText: String) {
+        lyricsJob?.cancel()
+        val rawClean = rawText.trim()
+        val trimmed = if (rawClean.equals("null", ignoreCase = true)) "" else rawClean
+        val parsed = if (trimmed.isNotEmpty()) LyricsHelper.parseLyricsText(trimmed) else emptyList()
+        lyrics = parsed
+        rawLyricsText = trimmed
+        hasCustomLyricsOverride = trimmed.isNotEmpty()
+        lyricsLoading = false
+        LyricsHelper.updateMemoryCache(track.id, trimmed, parsed)
+        appContext?.getSharedPreferences(LYRICS_OVERRIDE_PREFS, Context.MODE_PRIVATE)
+            ?.edit()
+            ?.apply {
+                if (trimmed.isNotEmpty()) putString("custom_${track.id}", trimmed)
+                else remove("custom_${track.id}")
+            }
+            ?.apply()
+    }
+
+    /** Removes any manual lyrics override for [track] and reloads provider lyrics automatically. */
+    fun resetCustomLyrics(track: MusicTrack) {
+        hasCustomLyricsOverride = false
+        LyricsHelper.invalidateMemoryCache(track.id)
+        appContext?.getSharedPreferences(LYRICS_OVERRIDE_PREFS, Context.MODE_PRIVATE)
+            ?.edit()
+            ?.remove("custom_${track.id}")
+            ?.apply()
+        fetchLyricsForCurrentTrack(track)
     }
 
     fun refreshLyrics() {
@@ -550,6 +600,28 @@ object MusicPlayerState : Player.Listener {
         }
     }
 
+    /** Inserts [track] immediately after the current track (or starts playing it if queue is empty). */
+    fun playNext(track: MusicTrack) {
+        if (queue.isEmpty() || currentTrack == null) {
+            play(track, listOf(track))
+            return
+        }
+        val insertIndex = (queueIndex + 1).coerceIn(0, queue.size)
+        queue.add(insertIndex, track)
+        savePlaybackSession(sync = false)
+    }
+
+    /** Appends [tracks] to the end of the active playback queue (or starts playback if empty). */
+    fun addToQueue(tracks: List<MusicTrack>) {
+        if (tracks.isEmpty()) return
+        if (queue.isEmpty() || currentTrack == null) {
+            play(tracks.first(), tracks)
+            return
+        }
+        queue.addAll(tracks)
+        savePlaybackSession(sync = false)
+    }
+
     fun close() {
         loadJob?.cancel()
         lyricsJob?.cancel()
@@ -569,6 +641,9 @@ object MusicPlayerState : Player.Listener {
         queueOpen = false
         lyricsOpen = false
         lyrics = emptyList()
+        rawLyricsText = ""
+        lyricsOffsetMs = 0L
+        hasCustomLyricsOverride = false
         lyricsLoading = false
         appContext?.let { PlaybackSessionStore.clear(it) }
     }
