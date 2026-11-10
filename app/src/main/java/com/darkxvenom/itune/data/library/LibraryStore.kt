@@ -467,3 +467,101 @@ object LibraryStore {
         }
     }
 
+    fun syncLegacyIds(
+        context: Context,
+        favoriteTrackIds: Collection<String>,
+        subscribedArtistIds: Collection<String>,
+        savedReleaseIds: Collection<String>,
+        knownTracks: Map<String, MusicTrack> = emptyMap(),
+    ) {
+        ensureInit(context)
+        val existingSongIds = _likedSongs.value.mapTo(HashSet()) { it.id }
+        val recentById = _recentSongs.value.associateBy { it.id }
+        favoriteTrackIds.forEach { id ->
+            if (id in existingSongIds) return@forEach
+            val localKnown = knownTracks[id] ?: recentById[id]?.toMusicTrack()
+            if (localKnown != null) {
+                saveLikedSong(context, localKnown)
+            } else {
+                hydrateSong(context, id)
+            }
+        }
+
+        val existingArtistIds = _likedArtists.value.mapTo(HashSet()) { it.browseId }
+        subscribedArtistIds.forEach { id ->
+            if (id !in existingArtistIds) hydrateArtist(context, id)
+        }
+
+        val existingReleaseIds = HashSet<String>().apply {
+            _savedAlbums.value.forEach { add(it.browseId) }
+            _savedPlaylists.value.forEach { add(it.browseId) }
+        }
+        savedReleaseIds.forEach { id ->
+            if (id !in existingReleaseIds) {
+                hydrateRelease(context, id, resolveReleaseType(id, BrowseType.OTHER))
+            }
+        }
+    }
+
+    private fun hydrateSong(context: Context, videoId: String) {
+        if (!hydrating.add("song:$videoId")) return
+        scope.launch {
+            try {
+                val song = ArtistRepository.trackLinks(videoId).getOrNull() ?: return@launch
+                saveLikedSong(context, song.toMusicTrack())
+            } finally {
+                hydrating.remove("song:$videoId")
+            }
+        }
+    }
+
+    private fun hydrateArtist(context: Context, browseId: String) {
+        if (!hydrating.add("artist:$browseId")) return
+        scope.launch {
+            try {
+                val page = ArtistRepository.artistPage(browseId).getOrNull() ?: return@launch
+                val name = page.name ?: return@launch
+                val appleHero = AppleArtistArtRepository.cached(browseId)?.heroUrl
+                    ?: AppleArtistArtRepository.artFor(browseId, name) { page.songs.map { it.title } }?.heroUrl
+                val subtitle = page.subscriberCountText ?: page.monthlyListenerCount ?: "Artist"
+                saveArtist(
+                    context = context,
+                    browseId = browseId,
+                    title = name,
+                    subtitle = subtitle,
+                    thumbnailUrl = appleHero ?: page.thumbnailUrl,
+                )
+            } finally {
+                hydrating.remove("artist:$browseId")
+            }
+        }
+    }
+
+    private fun hydrateRelease(context: Context, browseId: String, hintType: BrowseType) {
+        if (!hydrating.add("release:$browseId")) return
+        scope.launch {
+            try {
+                val page = ArtistRepository.browseSongs(browseId).getOrNull() ?: return@launch
+                val title = page.header?.title?.takeIf { it.isNotBlank() } ?: return@launch
+                val subtitle = page.header?.subtitle.orEmpty()
+                val thumb = page.header?.thumbnailUrl ?: page.songs.firstOrNull()?.thumbnailUrl
+                saveRelease(
+                    context = context,
+                    browseId = browseId,
+                    title = title,
+                    subtitle = subtitle,
+                    thumbnailUrl = thumb,
+                    type = hintType,
+                )
+            } finally {
+                hydrating.remove("release:$browseId")
+            }
+        }
+    }
+
+    private fun resolveReleaseType(browseId: String, hint: BrowseType): BrowseType = when {
+        browseId.startsWith("VL") || browseId.startsWith("PL") || browseId.startsWith("RDCLAK") -> BrowseType.PLAYLIST
+        browseId.startsWith("MPRE") || browseId.startsWith("OLAK") -> BrowseType.ALBUM
+        hint == BrowseType.PLAYLIST -> BrowseType.PLAYLIST
+        else -> BrowseType.ALBUM
+    }
