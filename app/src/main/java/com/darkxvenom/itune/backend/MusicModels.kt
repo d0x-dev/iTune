@@ -14,6 +14,7 @@ data class MusicTrack(
     val durationSec: Long = 0,
     val liked: Boolean = false,
     val isVideo: Boolean = false,
+    val isExplicit: Boolean = false,
 ) {
     val duration: String
         get() = if (durationSec > 0) formatMusicDuration(durationSec) else ""
