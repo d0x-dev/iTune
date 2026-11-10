@@ -256,3 +256,161 @@ fun AppleMoodCategoryScreen(
         }
     }
 
+    ITubeArtistTheme(darkTheme = true) {
+        val artworkPalette = rememberArtworkPalette(imageUrl = category.imageUrl, dark = true)
+        val topGlowColor = artworkPalette.accent.copy(alpha = 0.22f)
+        val topPad = topBarContentPadding()
+        val bottomPad = if (hasMiniPlayer) 210.dp else 140.dp
+
+        CompositionLocalProvider(
+            LocalAppBackdrop provides appBackdrop,
+            LocalLiquidGlassEnabled provides glassActive,
+            LocalReduceDynamicBlur provides false,
+        ) {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(AppleOledBlack),
+            ) {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .snapshotBackdropSource(pageBackdrop, floor = AppleOledBlack)
+                        .hazeSource(state = hazeState),
+                ) {
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .background(AppleOledBlack)
+                            .layerBackdrop(appBackdrop),
+                    )
+
+                    // Subtle top radial tint extracted from the category's 3D sculpture artwork
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(320.dp)
+                            .background(
+                                Brush.radialGradient(
+                                    colors = listOf(topGlowColor, Color.Transparent),
+                                    center = Offset(240f, 160f),
+                                    radius = 860f,
+                                ),
+                            ),
+                    )
+
+                    LazyColumn(
+                        state = listState,
+                        contentPadding = PaddingValues(
+                            top = topPad + 8.dp,
+                            bottom = bottomPad,
+                        ),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .springOverscroll(),
+                    ) {
+                        item(key = "mood_hero") {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    AsyncImage(
+                                        model = category.imageUrl,
+                                        contentDescription = displayTitle,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .size(86.dp)
+                                            .clip(RoundedCornerShape(16.dp))
+                                            .background(Color(0xFF1C1C1E))
+                                            .border(
+                                                0.8.dp,
+                                                Color.White.copy(alpha = 0.16f),
+                                                RoundedCornerShape(16.dp),
+                                            ),
+                                    )
+                                    Spacer(Modifier.width(16.dp))
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = "MOODS & MOMENTS",
+                                            color = artworkPalette.accent,
+                                            fontSize = 11.5.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            letterSpacing = 0.8.sp,
+                                        )
+                                        Spacer(Modifier.height(3.dp))
+                                        Text(
+                                            text = displayTitle,
+                                            color = Color.White,
+                                            fontSize = 30.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            letterSpacing = (-0.6).sp,
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                        Spacer(Modifier.height(3.dp))
+                                        val sectionCount = page?.sections?.size ?: 0
+                                        Text(
+                                            text = if (sectionCount > 0) {
+                                                "$sectionCount curated collections"
+                                            } else {
+                                                "Curated playlists & highlights"
+                                            },
+                                            color = Color.White.copy(alpha = 0.62f),
+                                            fontSize = 13.sp,
+                                        )
+                                    }
+                                }
+
+                                LibraryFilterBar(
+                                    visible = searchOpen,
+                                    query = searchQuery,
+                                    onQueryChange = { searchQuery = it },
+                                    onClose = {
+                                        searchOpen = false
+                                        searchQuery = ""
+                                    },
+                                    autoFocus = focusSearchNext,
+                                    onFocused = { focusSearchNext = false },
+                                    placeholder = "Filter in $displayTitle...",
+                                )
+
+                                if (!page?.sections.isNullOrEmpty()) {
+                                    Spacer(Modifier.height(16.dp))
+                                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                        LibraryGlassPillButton(
+                                            icon = ITubeIcons.Play,
+                                            label = if (isPlayingMix) "Loading..." else "Play Mix",
+                                            onClick = { startMoodPlayback(shuffled = false) },
+                                            filled = true,
+                                            height = 44.dp,
+                                            enabled = !isPlayingMix,
+                                            modifier = Modifier.weight(1f),
+                                        )
+                                        LibraryGlassPillButton(
+                                            icon = ITubeIcons.Shuffle,
+                                            label = "Shuffle",
+                                            onClick = { startMoodPlayback(shuffled = true) },
+                                            filled = false,
+                                            height = 44.dp,
+                                            enabled = !isPlayingMix,
+                                            modifier = Modifier.weight(1f),
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        if (isLoading && page == null) {
+                            item(key = "mood_loading_skel") {
+                                MoodCategoryLoadingSkeleton()
+                            }
+                        } else if (page?.sections.isNullOrEmpty()) {
+                            item(key = "mood_empty_error") {
+                                Spacer(Modifier.height(22.dp))
+                                LibraryGlassEmptyCard(
+                                    icon = Icons.Rounded.MusicNote,
