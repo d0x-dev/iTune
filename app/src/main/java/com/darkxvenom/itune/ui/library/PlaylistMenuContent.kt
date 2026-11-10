@@ -249,3 +249,86 @@ fun PlaylistCollageAvatar(
     }
 }
 
+@Composable
+internal fun rememberResolvedPayloadSongs(payload: PendingPlaylistPayload?): Pair<List<SavedSongMetadata>, Boolean> {
+    var resolved by remember(payload) { mutableStateOf(payload?.staticSongs.orEmpty()) }
+    var loading by remember(payload) {
+        mutableStateOf(payload != null && payload.staticSongs.isEmpty() && payload.lazyLoader != null)
+    }
+
+    LaunchedEffect(payload) {
+        val loader = payload?.lazyLoader
+        if (payload == null || payload.staticSongs.isNotEmpty() || loader == null) {
+            loading = false
+            resolved = payload?.staticSongs.orEmpty()
+            return@LaunchedEffect
+        }
+        loading = true
+        try {
+            resolved = loader.invoke()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            resolved = emptyList()
+        } finally {
+            loading = false
+        }
+    }
+
+    return resolved to loading
+}
+
+private suspend fun resolveAndAddToPlaylist(
+    context: Context,
+    target: UserPlaylist,
+    payload: PendingPlaylistPayload,
+    preloadedSongs: List<SavedSongMetadata>,
+): Boolean {
+    val songs = if (preloadedSongs.isNotEmpty() || payload.lazyLoader == null) {
+        preloadedSongs
+    } else {
+        payload.lazyLoader.invoke()
+    }
+    if (songs.isEmpty()) {
+        Toast.makeText(context, "No tracks available to add", Toast.LENGTH_SHORT).show()
+        return false
+    }
+    val added = LibraryStore.addSongsToUserPlaylist(context, target.id, songs)
+    val msg = when {
+        added == 0 -> "Already in \"${target.name}\""
+        added == 1 -> "Added to \"${target.name}\""
+        else -> "Added $added songs to \"${target.name}\""
+    }
+    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+    return true
+}
+
+private suspend fun resolveAndCreatePlaylist(
+    context: Context,
+    name: String,
+    payload: PendingPlaylistPayload?,
+    preloadedSongs: List<SavedSongMetadata>,
+): UserPlaylist {
+    val songs = if (payload == null) {
+        emptyList()
+    } else if (preloadedSongs.isNotEmpty() || payload.lazyLoader == null) {
+        preloadedSongs
+    } else {
+        payload.lazyLoader.invoke()
+    }
+    val created = LibraryStore.createUserPlaylist(context, name, songs)
+    val msg = if (songs.isEmpty()) {
+        "Created \"${created.name}\""
+    } else if (songs.size == 1) {
+        "Created \"${created.name}\" & added track"
+    } else {
+        "Created \"${created.name}\" (${songs.size} songs)"
+    }
+    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+    return created
+}
+
+/**
+ * Coordinates in-place Apple iOS sub-menu transitions inside any IosMenuPopover or HeldContextMenu
+ * without closing the current popup or spawning a separate modal dialog.
+ */
