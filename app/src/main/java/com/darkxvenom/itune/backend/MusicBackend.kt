@@ -91,6 +91,37 @@ object MusicBackend {
         tracks.distinctBy { it.id }
     }
 
+    /** Fast search autocomplete suggestions via YouTube Music InnerTube with NewPipe fallback and memory cache. */
+    suspend fun searchSuggestions(query: String): List<String> = withContext(Dispatchers.IO) {
+        val trimmed = query.trim()
+        if (trimmed.isEmpty()) return@withContext emptyList()
+        val cacheKey = trimmed.lowercase()
+        suggestionCache[cacheKey]?.let { return@withContext it }
+
+        val innerTubeSuggestions = runCatching {
+            val root = postInnerTube(SUGGESTIONS_URL, JSONObject().put("input", trimmed))
+            extractMusicSuggestions(root)
+        }.getOrDefault(emptyList())
+
+        val resolved = if (innerTubeSuggestions.isNotEmpty()) {
+            innerTubeSuggestions
+        } else {
+            runCatching {
+                ServiceList.YouTube.suggestionExtractor.suggestionList(trimmed)
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+            }.getOrDefault(emptyList())
+        }.distinctBy { it.lowercase() }.take(10)
+
+        if (resolved.isNotEmpty()) {
+            if (suggestionCache.size >= MAX_SUGGESTION_CACHE) {
+                suggestionCache.clear()
+            }
+            suggestionCache[cacheKey] = resolved
+        }
+        resolved
+    }
+
     /** Searches Songs, Artists, Albums, and Playlists in parallel for unified search results. */
     suspend fun searchAllCategories(query: String): UnifiedSearchResults = withContext(Dispatchers.IO) {
         coroutineScope {
@@ -531,6 +562,54 @@ object MusicBackend {
         }
 
         return null
+    }
+
+    private fun extractMusicSuggestions(root: JSONObject): List<String> {
+        val out = mutableListOf<String>()
+        root.walk { key, obj ->
+            when (key) {
+                "searchSuggestionRenderer" -> {
+                    val navQuery = obj.optJSONObject("navigationEndpoint")
+                        ?.optJSONObject("searchEndpoint")
+                        ?.optString("query")
+                        ?.trim()
+                    val runsText = buildRunsText(obj.optJSONObject("suggestion")?.optJSONArray("runs"))
+                    val candidate = navQuery?.takeIf { it.isNotEmpty() } ?: runsText
+                    if (candidate.isNotBlank()) out.add(candidate)
+                }
+                "musicResponsiveListItemRenderer" -> {
+                    val title = obj.extractColumnText(0)
+                    if (title.isNotBlank()) out.add(title)
+                }
+            }
+        }
+        return out
+    }
+
+    private fun buildRunsText(runs: JSONArray?): String {
+        if (runs == null) return ""
+        return buildString {
+            for (i in 0 until runs.length()) {
+                append(runs.optJSONObject(i)?.optString("text").orEmpty())
+            }
+        }.trim()
+    }
+
+    private fun Any?.hasExplicitBadge(): Boolean = when (this) {
+        is String -> this == "MUSIC_EXPLICIT_BADGE"
+        is JSONArray -> (0 until length()).any { opt(it).hasExplicitBadge() }
+        is JSONObject -> {
+            val keys = keys()
+            var matched = false
+            while (keys.hasNext()) {
+                if (opt(keys.next()).hasExplicitBadge()) {
+                    matched = true
+                    break
+                }
+            }
+            matched
+        }
+        else -> false
     }
 }
 
