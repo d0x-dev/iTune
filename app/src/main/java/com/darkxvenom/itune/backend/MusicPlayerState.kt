@@ -130,6 +130,21 @@ object MusicPlayerState : Player.Listener {
 
     fun isFavorite(trackId: String): Boolean = favoriteIds.contains(trackId)
 
+    fun toggleFavorite(track: MusicTrack) {
+        val ctx = appContext
+        if (favoriteIds.contains(track.id)) {
+            favoriteIds.remove(track.id)
+            ctx?.let { LibraryStore.removeLikedSong(it, track.id) }
+        } else {
+            favoriteIds.add(track.id)
+            ctx?.let { LibraryStore.saveLikedSong(it, track) }
+        }
+        ctx?.getSharedPreferences("itune_favorites", Context.MODE_PRIVATE)
+            ?.edit()
+            ?.putStringSet("favorite_track_ids", favoriteIds.toSet())
+            ?.apply()
+    }
+
     fun toggleFavorite(trackId: String) {
         if (favoriteIds.contains(trackId)) {
             favoriteIds.remove(trackId)
