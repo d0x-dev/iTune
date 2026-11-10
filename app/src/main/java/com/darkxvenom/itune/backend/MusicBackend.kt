@@ -188,6 +188,53 @@ object MusicBackend {
         }
     }
 
+    /**
+     * Fetches AirBeats-equivalent YouTube Music New Releases (`FEmusic_new_releases_albums` with
+     * `FEmusic_explore` carousel fallback), preserving Albums, Singles, EPs, year, and explicit metadata.
+     */
+    suspend fun fetchNewReleaseAlbums(): List<NewReleaseAlbum> = withContext(Dispatchers.IO) {
+        val direct = runCatching {
+            val root = postInnerTube(BROWSE_URL, JSONObject().put("browseId", BROWSE_NEW_RELEASES_ALBUMS))
+            val out = mutableListOf<NewReleaseAlbum>()
+            root.walk { key, obj ->
+                if (key == "musicTwoRowItemRenderer") {
+                    parseNewReleaseTwoRowItem(obj)?.let(out::add)
+                }
+            }
+            out.distinctBy { it.browseId }
+        }.getOrDefault(emptyList())
+
+        if (direct.isNotEmpty()) return@withContext direct
+
+        runCatching {
+            val exploreRoot = postInnerTube(BROWSE_URL, JSONObject().put("browseId", BROWSE_EXPLORE))
+            val fallback = mutableListOf<NewReleaseAlbum>()
+            exploreRoot.walk { key, obj ->
+                if (key == "musicCarouselShelfRenderer") {
+                    val moreBrowseId = obj.optJSONObject("header")
+                        ?.optJSONObject("musicCarouselShelfBasicHeaderRenderer")
+                        ?.optJSONObject("moreContentButton")
+                        ?.optJSONObject("buttonRenderer")
+                        ?.optJSONObject("navigationEndpoint")
+                        ?.optJSONObject("browseEndpoint")
+                        ?.optString("browseId")
+                    if (moreBrowseId == BROWSE_NEW_RELEASES_ALBUMS) {
+                        val contents = obj.optJSONArray("contents")
+                        if (contents != null) {
+                            for (i in 0 until contents.length()) {
+                                contents.optJSONObject(i)
+                                    ?.optJSONObject("musicTwoRowItemRenderer")
+                                    ?.let(::parseNewReleaseTwoRowItem)
+                                    ?.let(fallback::add)
+                            }
+                        }
+                    }
+                }
+            }
+            fallback.distinctBy { it.browseId }
+        }.getOrDefault(emptyList())
+    }
+
     suspend fun getOrLoadStreamInfo(videoId: String): StreamInfo = withContext(Dispatchers.IO) {
         val now = System.currentTimeMillis()
         streamCache[videoId]?.let { cached ->
