@@ -132,3 +132,165 @@ internal data class SearchSuggestionRowModel(
  * Matches the user's written query across ALL four result categories (Artists, Songs, Albums, Playlists).
  * Exact spelling matches take absolute priority and return strictly ONE hero Top Result card.
  */
+internal fun pickTopResult(query: String, results: UnifiedSearchResults): TopResultItem? {
+    val qNorm = normalizeSearchText(query)
+    if (qNorm.isEmpty() || results.isEmpty) return null
+    val qStripped = stripPunctuation(qNorm)
+    val qTokens = qStripped.split(' ').filter { it.isNotEmpty() }
+
+    data class Scored(val item: TopResultItem, val score: Int)
+    val candidates = ArrayList<Scored>(
+        results.artists.size + results.songs.size + results.albums.size + results.playlists.size
+    )
+
+    fun scoreText(
+        primaryTitle: String,
+        secondaryText: String,
+        bucketPriority: Int,
+        index: Int
+    ): Int {
+        val normTitle = normalizeSearchText(primaryTitle)
+        if (normTitle.isEmpty()) return 0
+        val strippedTitle = stripPunctuation(normTitle)
+        val coreTitle = stripSuffixTags(normTitle)
+        val posPenalty = index.coerceAtMost(12) * 4
+
+        // 1. Exact spelling match with user query (highest priority across Songs, Artists, Albums, Playlists)
+        if (normTitle == qNorm) {
+            return 2200 + bucketPriority - posPenalty
+        }
+        // 2. Punctuation-normalized exact match (e.g. apostrophes / hyphens / diacritics spacing)
+        if (qStripped.isNotEmpty() && strippedTitle == qStripped) {
+            return 1900 + bucketPriority - posPenalty
+        }
+        // 3. Exact core title match ignoring parenthetical suffixes like "(Official Video)" or "- Single"
+        if (qStripped.isNotEmpty() && coreTitle == qStripped) {
+            return 1650 + bucketPriority - posPenalty
+        }
+        // 4. Whole-word prefix match
+        if (normTitle.startsWith("$qNorm ") || normTitle.startsWith(qNorm)) {
+            val lengthDiff = (normTitle.length - qNorm.length).coerceIn(0, 120)
+            return 1250 + bucketPriority - lengthDiff - posPenalty
+        }
+        // 5. Query tokens all match title (+ secondary artist/author context)
+        if (qTokens.isNotEmpty()) {
+            val combined = "$strippedTitle ${stripPunctuation(secondaryText)}".trim()
+            if (qTokens.all { token -> containsWholeToken(strippedTitle, token) }) {
+                val lengthDiff = (strippedTitle.length - qStripped.length).coerceIn(0, 140)
+                return 920 + bucketPriority - lengthDiff - posPenalty
+            }
+            if (qTokens.size >= 2 && qTokens.all { token -> containsWholeToken(combined, token) }) {
+                return 720 + bucketPriority - posPenalty
+            }
+            val matchedTokens = qTokens.count { token -> combined.contains(token) }
+            if (matchedTokens == qTokens.size) {
+                return 540 + bucketPriority - posPenalty
+            }
+        }
+        return 0
+    }
+
+    results.artists.forEachIndexed { idx, artist ->
+        val established = isEstablishedArtist(artist.subscribers)
+        val artistPriority = if (established) 34 else -60
+        val score = scoreText(
+            primaryTitle = artist.name,
+            secondaryText = "",
+            bucketPriority = artistPriority,
+            index = idx
+        )
+        if (score > 0) candidates.add(Scored(TopResultItem.Artist(artist), score))
+    }
+    results.songs.forEachIndexed { idx, track ->
+        val score = scoreText(
+            primaryTitle = track.title,
+            secondaryText = track.artists,
+            bucketPriority = 26,
+            index = idx
+        )
+        if (score > 0) candidates.add(Scored(TopResultItem.Song(track), score))
+    }
+    results.albums.forEachIndexed { idx, album ->
+        val score = scoreText(
+            primaryTitle = album.title,
+            secondaryText = album.author,
+            bucketPriority = 20,
+            index = idx
+        )
+        if (score > 0) candidates.add(Scored(TopResultItem.Album(album), score))
+    }
+    results.playlists.forEachIndexed { idx, playlist ->
+        val score = scoreText(
+            primaryTitle = playlist.title,
+            secondaryText = playlist.author,
+            bucketPriority = 14,
+            index = idx
+        )
+        if (score > 0) candidates.add(Scored(TopResultItem.Playlist(playlist), score))
+    }
+
+    val best = candidates.maxByOrNull { it.score }
+    if (best != null && best.score >= 500) {
+        return best.item
+    }
+    return results.songs.firstOrNull()?.let(TopResultItem::Song)
+        ?: results.artists.firstOrNull()?.let(TopResultItem::Artist)
+        ?: results.albums.firstOrNull()?.let(TopResultItem::Album)
+        ?: results.playlists.firstOrNull()?.let(TopResultItem::Playlist)
+}
+
+private val WHITESPACE_REGEX = Regex("\\s+")
+private val NON_WORD_REGEX = Regex("[^\\p{L}\\p{Nd}\\s]")
+private val PARENTHETICAL_SUFFIX_REGEX = Regex("\\s*[(\\[\\-–|].*$")
+private val SCALE_NUMBER_REGEX = Regex("([\\d.,]+)\\s*([KMB])?", RegexOption.IGNORE_CASE)
+
+/**
+ * Distinguishes real music artists ("9.49M monthly audience", "120K subscribers") from tiny
+ * unverified YouTube channels ("26 subscribers") that happen to share a hit song's exact name.
+ */
+private fun isEstablishedArtist(subscribers: String?): Boolean {
+    if (subscribers.isNullOrBlank()) return false
+    val lower = subscribers.lowercase()
+    if (lower.contains("monthly") || lower.contains("audience") || lower.contains("listener")) {
+        return true
+    }
+    val match = SCALE_NUMBER_REGEX.find(subscribers) ?: return false
+    val number = match.groupValues[1].replace(",", "").toDoubleOrNull() ?: return false
+    val suffix = match.groupValues[2].uppercase()
+    return when (suffix) {
+        "M", "B" -> true
+        "K" -> number >= 5.0
+        else -> number >= 5000.0
+    }
+}
+
+private fun normalizeSearchText(text: String): String =
+    text.trim().lowercase().replace(WHITESPACE_REGEX, " ")
+
+private fun stripPunctuation(text: String): String =
+    text.lowercase()
+        .replace(NON_WORD_REGEX, " ")
+        .trim()
+        .replace(WHITESPACE_REGEX, " ")
+
+private fun stripSuffixTags(normText: String): String =
+    stripPunctuation(normText.replace(PARENTHETICAL_SUFFIX_REGEX, ""))
+
+private fun containsWholeToken(haystack: String, token: String): Boolean {
+    if (token.isEmpty()) return false
+    var idx = haystack.indexOf(token)
+    while (idx >= 0) {
+        val beforeOk = idx == 0 || haystack[idx - 1] == ' '
+        val endIdx = idx + token.length
+        val afterOk = endIdx == haystack.length || haystack[endIdx] == ' '
+        if (beforeOk && afterOk) return true
+        idx = haystack.indexOf(token, idx + 1)
+    }
+    return false
+}
+
+/**
+ * Colorful hero Top Result card matching either the Artist layout (circular avatar, > arrow, Shuffle + Mix pills)
+ * or Song/Album/Playlist layout (rounded square cover, saved/Explicit + type metadata, 3-dot menu, Play + Save pills).
+ * Each Top Result card derives its vibrant gradient theme dynamically from the artwork thumbnail.
+ */
