@@ -241,23 +241,44 @@ fun SearchScreen(
     }
 
     // Fast, smooth suggestions fetched only while typing in editing mode
-
-    LaunchedEffect(searchQuery) {
+    LaunchedEffect(isEditing, searchQuery) {
         val trimmed = searchQuery.trim()
-        if (trimmed.isEmpty()) {
-            searchResults = UnifiedSearchResults()
-            isSearching = false
+        if (!isEditing || trimmed.isEmpty()) {
+            remoteSuggestions = emptyList()
             return@LaunchedEffect
         }
-        isSearching = true
-        delay(350)
-        try {
-            searchResults = MusicBackend.searchAllCategories(trimmed)
-        } catch (_: Exception) {
-            searchResults = UnifiedSearchResults()
-        } finally {
-            isSearching = false
+        delay(95)
+        remoteSuggestions = runCatching { MusicBackend.searchSuggestions(trimmed) }
+            .getOrDefault(emptyList())
+    }
+
+    val mergedSuggestions = remember(isEditing, searchQuery, searchHistory, remoteSuggestions) {
+        if (!isEditing || searchQuery.isBlank()) {
+            emptyList()
+        } else {
+            val trimmed = searchQuery.trim()
+            val seen = HashSet<String>()
+            buildList {
+                searchHistory
+                    .filter { it.contains(trimmed, ignoreCase = true) }
+                    .forEach { entry ->
+                        if (seen.add(entry.lowercase())) {
+                            add(SearchSuggestionRowModel(text = entry, isHistory = true))
+                        }
+                    }
+                remoteSuggestions.forEach { suggestion ->
+                    val s = suggestion.trim()
+                    if (s.isNotEmpty() && seen.add(s.lowercase())) {
+                        add(SearchSuggestionRowModel(text = s, isHistory = false))
+                    }
+                }
+            }.take(12)
         }
+    }
+
+    val topResult = remember(submittedQuery, searchResults) {
+        if (submittedQuery.isBlank() || searchResults.isEmpty) null
+        else pickTopResult(submittedQuery, searchResults)
     }
 
     val isScrolled by remember {
@@ -273,6 +294,10 @@ fun SearchScreen(
     )
 
     Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(AppleOledBlack)
+
         modifier = modifier
             .fillMaxSize()
             .background(AppleOledBlack)
