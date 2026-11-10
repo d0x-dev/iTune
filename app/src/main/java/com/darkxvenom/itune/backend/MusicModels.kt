@@ -37,7 +37,19 @@ data class MusicPlaylistRef(
     val isAlbum: Boolean = false,
     val trackCount: Int = 0,
     val year: String? = null,
+    val watchPlaylistId: String? = null,
 )
+
+@Immutable
+data class UnifiedSearchResults(
+    val songs: List<MusicTrack> = emptyList(),
+    val artists: List<MusicArtist> = emptyList(),
+    val albums: List<MusicPlaylistRef> = emptyList(),
+    val playlists: List<MusicPlaylistRef> = emptyList(),
+) {
+    val isEmpty: Boolean
+        get() = songs.isEmpty() && artists.isEmpty() && albums.isEmpty() && playlists.isEmpty()
+}
 
 @Immutable
 data class LyricsLine(
