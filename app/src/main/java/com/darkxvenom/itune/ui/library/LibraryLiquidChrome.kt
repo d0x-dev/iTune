@@ -1065,3 +1065,73 @@ fun LibraryGlassCardContainer(
     )
 }
 
+@Composable
+fun LibraryGlassEmptyCard(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    modifier: Modifier = Modifier,
+    accent: Color = LibraryCrimsonAccent,
+    actionLabel: String? = null,
+    actionModifier: Modifier = Modifier,
+    onAction: (() -> Unit)? = null,
+) {
+    LibraryGlassCardContainer(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
+        cornerRadius = 26.dp,
+        accentTint = accent,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(accent.copy(alpha = 0.18f))
+                    .border(1.dp, accent.copy(alpha = 0.35f), CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = accent,
+                    modifier = Modifier.size(30.dp),
+                )
+            }
+            Spacer(Modifier.height(16.dp))
+            Text(
+                text = title,
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = subtitle,
+                color = Color.White.copy(alpha = 0.68f),
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                textAlign = TextAlign.Center,
+            )
+            if (actionLabel != null && onAction != null) {
+                Spacer(Modifier.height(20.dp))
+                LibraryGlassPillButton(
+                    icon = ITubeIcons.Play,
+                    label = actionLabel,
+                    onClick = onAction,
+                    filled = true,
+                    height = 46.dp,
+                    modifier = actionModifier,
+                )
+            }
+        }
+    }
+}
+
