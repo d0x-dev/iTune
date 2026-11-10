@@ -393,8 +393,17 @@ fun HomeScreen(
                     onPinClick = { pin ->
                         Toast.makeText(context, "Library Pin: ${pin.title}", Toast.LENGTH_SHORT).show()
                     },
+                    onFavoriteArtistClick = { artist ->
+                        libraryHostController.openDetail(
+                            browseId = artist.browseId,
+                            title = artist.title,
+                            subtitle = artist.subtitle,
+                            thumbnailUrl = artist.thumbnailUrl,
+                            type = BrowseType.ARTIST,
+                        )
+                    },
                     onMenuItemClick = { item ->
-                        Toast.makeText(context, "Navigating to ${item.title}", Toast.LENGTH_SHORT).show()
+                        libraryHostController.openMenu(item.id)
                     },
                     onRecentAlbumClick = { album ->
                         Toast.makeText(context, "Recent: ${album.title} by ${album.artist}", Toast.LENGTH_SHORT).show()
