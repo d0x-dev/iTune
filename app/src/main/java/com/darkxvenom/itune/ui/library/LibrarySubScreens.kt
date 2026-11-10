@@ -841,3 +841,213 @@ fun LibrarySongsScreen(
     }
 }
 
+@Composable
+private fun LibraryScreenTitleHeader(
+    title: String,
+    countText: String,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp, vertical = 4.dp),
+    ) {
+        Text(
+            text = title,
+            color = Color.White,
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = (-0.6).sp,
+        )
+        Spacer(Modifier.height(2.dp))
+        Text(
+            text = countText,
+            color = Color.White.copy(alpha = 0.66f),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+        )
+    }
+}
+
+@Composable
+private fun LibraryCollectionGlassCard(
+    entry: SavedCollectionEntry,
+    placeholderIcon: ImageVector,
+    onClick: () -> Unit,
+    onMenuClick: () -> Unit,
+) {
+    LibraryGlassCardContainer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .longPressMenuClickable(
+                onClick = onClick,
+                onLongClick = onMenuClick,
+            ),
+        cornerRadius = 20.dp,
+    ) {
+        Column(Modifier.fillMaxWidth().padding(10.dp)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(14.dp))
+                    .border(0.7.dp, Color.White.copy(alpha = 0.14f), RoundedCornerShape(14.dp)),
+            ) {
+                if (entry.thumbnailUrl.isNullOrBlank()) {
+                    CoverPlaceholder(
+                        icon = placeholderIcon,
+                        base = Color(0xFF1E1E24),
+                        tint = Color.White.copy(alpha = 0.6f),
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                } else {
+                    AsyncImage(
+                        model = entry.thumbnailUrl.artworkAt(CARD_ART_PX),
+                        contentDescription = entry.title,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+                IconButton(
+                    onClick = onMenuClick,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(6.dp)
+                        .size(30.dp)
+                        .clip(CircleShape)
+                        .background(Color(0x88101015))
+                        .menuAnchor(),
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.MoreVert,
+                        contentDescription = stringResource(R.string.more),
+                        tint = Color.White,
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(10.dp))
+            Text(
+                text = entry.title,
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            val fallbackType = when (entry.type) {
+                BrowseType.PLAYLIST -> "Playlist"
+                BrowseType.ALBUM -> "Album"
+                BrowseType.ARTIST -> "Artist"
+                BrowseType.OTHER -> "Collection"
+            }
+            Text(
+                text = entry.subtitle.ifBlank { fallbackType },
+                color = Color.White.copy(alpha = 0.62f),
+                fontSize = 12.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+@Composable
+private fun LibraryArtistGlassRow(
+    entry: SavedCollectionEntry,
+    onClick: () -> Unit,
+    onMenuClick: () -> Unit,
+    onStartRadio: () -> Unit,
+) {
+    LibraryGlassCardContainer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .longPressMenuClickable(
+                onClick = onClick,
+                onLongClick = onMenuClick,
+            ),
+        cornerRadius = 22.dp,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(62.dp)
+                    .shadow(10.dp, CircleShape, spotColor = Color(0xFF9C6BFF).copy(alpha = 0.35f))
+                    .clip(CircleShape)
+                    .border(1.dp, Color.White.copy(alpha = 0.22f), CircleShape),
+            ) {
+                if (entry.thumbnailUrl.isNullOrBlank()) {
+                    CoverPlaceholder(
+                        icon = Icons.Rounded.Person,
+                        base = Color(0xFF1F1E28),
+                        tint = Color.White.copy(alpha = 0.7f),
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                } else {
+                    AsyncImage(
+                        model = entry.thumbnailUrl.artworkAt(ROW_ART_PX),
+                        contentDescription = entry.title,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+            }
+
+            Spacer(Modifier.width(14.dp))
+
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = entry.title,
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(Modifier.height(3.dp))
+                Text(
+                    text = entry.subtitle.ifBlank { "Favorite Artist" },
+                    color = Color.White.copy(alpha = 0.64f),
+                    fontSize = 13.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+
+            IconButton(
+                onClick = onStartRadio,
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .lightweightLiquidGlass(CircleShape, fallbackColor = Color(0x33FFFFFF)),
+            ) {
+                Icon(
+                    imageVector = SfIcons.Radio,
+                    contentDescription = stringResource(R.string.start_radio),
+                    tint = Color.White,
+                    modifier = Modifier.size(17.dp),
+                )
+            }
+
+            Spacer(Modifier.width(4.dp))
+
+            IconButton(
+                onClick = onMenuClick,
+                modifier = Modifier.menuAnchor(),
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.MoreVert,
+                    contentDescription = stringResource(R.string.more),
+                    tint = Color.White.copy(alpha = 0.78f),
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+        }
+    }
+}
+
