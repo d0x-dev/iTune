@@ -474,3 +474,82 @@ private fun LikedSongsHeroSection(
     }
 }
 
+@Composable
+private fun StartRadioLiquidButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    val haptics = rememberHaptics()
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .clip(CircleShape)
+            .liquidGlass(CircleShape, surfaceTint = LibraryCrimsonAccent.copy(alpha = 0.28f))
+            .background(
+                Brush.horizontalGradient(
+                    listOf(
+                        LibraryCrimsonAccent.copy(alpha = if (enabled) 0.26f else 0.10f),
+                        Color(0xFF8B2CF5).copy(alpha = if (enabled) 0.22f else 0.08f),
+                    ),
+                ),
+            )
+            .border(0.9.dp, Color.White.copy(alpha = if (enabled) 0.24f else 0.10f), CircleShape)
+            .clickable(enabled = enabled) {
+                haptics.play(Haptic.Resume)
+                onClick()
+            }
+            .padding(horizontal = 18.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        Icon(
+            imageVector = SfIcons.Radio,
+            contentDescription = null,
+            tint = if (enabled) LibraryCrimsonAccent else Color.White.copy(alpha = 0.42f),
+            modifier = Modifier.size(20.dp),
+        )
+        Spacer(Modifier.width(9.dp))
+        Text(
+            text = stringResource(R.string.start_radio),
+            color = if (enabled) Color.White else Color.White.copy(alpha = 0.42f),
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold,
+        )
+        Spacer(Modifier.width(8.dp))
+        Box(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(Color.White.copy(alpha = if (enabled) 0.14f else 0.06f))
+                .padding(horizontal = 8.dp, vertical = 3.dp),
+        ) {
+            Text(
+                text = "Station",
+                color = Color.White.copy(alpha = if (enabled) 0.84f else 0.35f),
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        }
+    }
+}
+
+@Composable
+private fun MosaicTile(url: String, modifier: Modifier) {
+    AsyncImage(
+        model = url.artworkAt(ROW_ART_PX),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = modifier
+            .aspectRatio(1f)
+            .border(0.4.dp, Color.White.copy(alpha = 0.10f)),
+    )
+}
+
+internal fun sortLibrarySongs(
+    songs: List<SavedSongMetadata>,
+    sort: LibrarySongSort,
+): List<SavedSongMetadata> = when (sort) {
+    LibrarySongSort.RECENT -> songs.sortedByDescending { it.addedAtMs }
+    LibrarySongSort.TITLE_ASC -> songs.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+    LibrarySongSort.ARTIST_ASC -> songs.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.artists })
+}
