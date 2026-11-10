@@ -8,6 +8,13 @@ import android.os.Build
 import android.view.HapticFeedbackConstants
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,11 +32,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
 import androidx.compose.material.icons.automirrored.rounded.QueueMusic
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarBorder
@@ -40,6 +51,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,8 +83,14 @@ import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicPlaylistRef
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.highQualityThumbnail
+import com.darkxvenom.itune.data.artist.ArtistStateStore
+import com.darkxvenom.itune.data.library.SavedSongMetadata
 import com.darkxvenom.itune.data.model.BrowseType
 import com.darkxvenom.itune.ui.components.AnimatedEqualizer
+import com.darkxvenom.itune.ui.library.AppleSheetAddToPlaylistContent
+import com.darkxvenom.itune.ui.library.AppleSheetCreatePlaylistContent
+import com.darkxvenom.itune.ui.library.PendingPlaylistPayload
+import com.darkxvenom.itune.ui.library.PopupPlaylistStep
 import com.darkxvenom.itune.ui.player.AppleFrostedPopupOverlay
 import com.darkxvenom.itune.ui.player.HeaderCircleActionButton
 import com.darkxvenom.itune.ui.player.MorePopupVectorOptionRow
@@ -290,6 +308,19 @@ internal fun AppleSearchMorePopup(
     val safeSubtitle = subtitle as String
     val artUrl = (thumbUrl as String?)?.highQualityThumbnail() ?: thumbUrl
     val safeShareUrl = shareUrl as String
+    var popupStep by remember(activeRequest) { mutableStateOf(PopupPlaylistStep.MENU) }
+    val playlistPayload: PendingPlaylistPayload? = remember(target, artUrl) {
+        if (target is SearchMoreTarget.Song) {
+            PendingPlaylistPayload(
+                title = target.track.title,
+                subtitle = target.track.artists,
+                artworkUrl = artUrl,
+                staticSongs = listOf(SavedSongMetadata.fromTrack(target.track)),
+            )
+        } else {
+            null
+        }
+    }
 
     Dialog(
         onDismissRequest = { closeSmoothly() },
@@ -309,6 +340,8 @@ internal fun AppleSearchMorePopup(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     win.clearFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
                 }
+                @Suppress("DEPRECATION")
+                win.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
             }
         }
 
@@ -330,18 +363,33 @@ internal fun AppleSearchMorePopup(
 
             AppleFrostedPopupOverlay(
                 visible = popupVisible,
-                title = safeTitle,
-                subtitle = safeSubtitle,
+                title = when (popupStep) {
+                    PopupPlaylistStep.ADD_TO_PLAYLIST -> "Add to Playlist"
+                    PopupPlaylistStep.CREATE_PLAYLIST -> "New Playlist"
+                    else -> safeTitle
+                },
+                subtitle = when (popupStep) {
+                    PopupPlaylistStep.ADD_TO_PLAYLIST, PopupPlaylistStep.CREATE_PLAYLIST -> safeTitle
+                    else -> safeSubtitle
+                },
                 artUrl = artUrl,
                 anchorCenterXPx = anchorLocalX,
                 anchorCenterYPx = anchorLocalY,
                 maxHeightDp = maxHeight,
                 statusBarTopDp = statusBarTopDp,
                 rootCoordsProvider = { dialogRootCoords },
+                hasInputFocusPage = popupStep == PopupPlaylistStep.CREATE_PLAYLIST,
                 onDismiss = { closeSmoothly() },
-                onBack = { closeSmoothly() },
+                onBack = {
+                    when (popupStep) {
+                        PopupPlaylistStep.CREATE_PLAYLIST -> popupStep = PopupPlaylistStep.ADD_TO_PLAYLIST
+                        PopupPlaylistStep.ADD_TO_PLAYLIST -> popupStep = PopupPlaylistStep.MENU
+                        else -> closeSmoothly()
+                    }
+                },
                 onExited = {
                     displayedRequest = null
+                    popupStep = PopupPlaylistStep.MENU
                     onDismiss()
                 },
                 headerActions = {
