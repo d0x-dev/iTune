@@ -343,6 +343,16 @@ class ArtistHostController internal constructor(
                                 playbackSourceId = browseId,
                             )
                         }
+                        val headerSub = songPage.header?.subtitle?.takeIf { it.isNotBlank() } ?: subtitle
+                        val headerThumb = songPage.header?.thumbnailUrl ?: thumbnailUrl
+                        LibraryStore.updateReleaseMetadataIfSaved(
+                            context = context,
+                            browseId = browseId,
+                            title = headerTitle,
+                            subtitle = headerSub,
+                            thumbnailUrl = headerThumb,
+                            type = resolvedType,
+                        )
                         replacePage(browseId) { existing ->
                             existing.copy(
                                 title = headerTitle,
