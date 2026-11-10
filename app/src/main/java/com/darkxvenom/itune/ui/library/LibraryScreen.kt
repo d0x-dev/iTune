@@ -279,30 +279,68 @@ fun LibraryScreen(
                 }
             }
 
-            // Recently Added 2-Column Grid
+            // Recently Added 2-Column Grid powered by AirBeats New Releases Albums
             item(key = "recently_added_grid") {
-                val albums = MusicRepository.libraryRecentAlbums
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    albums.chunked(2).forEach { rowAlbums ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(14.dp)
-                        ) {
-                            rowAlbums.forEach { album ->
-                                LibraryRecentAlbumCard(
-                                    album = album,
-                                    onClick = {
-                                        onRecentAlbumClick(album)
-                                        Toast.makeText(context, "Playing ${album.title}", Toast.LENGTH_SHORT).show()
-                                    },
-                                    modifier = Modifier.weight(1f)
-                                )
+                if (releasesLoading && recentlyAddedReleases.isEmpty()) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        repeat(2) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(14.dp)
+                            ) {
+                                repeat(2) {
+                                    LibraryRecentAlbumSkeleton(modifier = Modifier.weight(1f))
+                                }
                             }
-                            if (rowAlbums.size == 1) {
-                                Spacer(modifier = Modifier.weight(1f))
+                        }
+                    }
+                } else if (recentlyAddedReleases.isNotEmpty()) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        recentlyAddedReleases.chunked(2).forEach { rowAlbums ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(14.dp)
+                            ) {
+                                rowAlbums.forEach { release ->
+                                    LibraryNewReleaseCard(
+                                        release = release,
+                                        onClick = { onNewReleaseClick(release) },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                                if (rowAlbums.size == 1) {
+                                    Spacer(modifier = Modifier.weight(1f))
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    val fallbackAlbums = MusicRepository.libraryRecentAlbums
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        fallbackAlbums.chunked(2).forEach { rowAlbums ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(14.dp)
+                            ) {
+                                rowAlbums.forEach { album ->
+                                    LibraryRecentAlbumCard(
+                                        album = album,
+                                        onClick = { onRecentAlbumClick(album) },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                                if (rowAlbums.size == 1) {
+                                    Spacer(modifier = Modifier.weight(1f))
+                                }
                             }
                         }
                     }
@@ -432,6 +470,149 @@ private fun LibraryMenuRow(
             contentDescription = "Open",
             tint = Color(0x66FFFFFF),
             modifier = Modifier.size(19.dp)
+        )
+    }
+}
+
+@Composable
+private fun LibraryLikedSongsMenuRow(
+    count: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onClick() },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = SfIcons.StarFill,
+            contentDescription = "Liked Songs",
+            tint = LibraryCrimsonAccent,
+            modifier = Modifier.size(22.dp)
+        )
+
+        Spacer(modifier = Modifier.width(17.dp))
+
+        Text(
+            text = "Liked Songs",
+            color = AppleTextPrimary,
+            fontSize = 17.sp,
+            fontWeight = FontWeight.Normal,
+            letterSpacing = (-0.2).sp,
+            modifier = Modifier.weight(1f)
+        )
+
+        if (count > 0) {
+            Text(
+                text = count.toString(),
+                color = Color(0x99FFFFFF),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(end = 6.dp)
+            )
+        }
+
+        Icon(
+            imageVector = Icons.Default.ChevronRight,
+            contentDescription = "Open",
+            tint = Color(0x66FFFFFF),
+            modifier = Modifier.size(19.dp)
+        )
+    }
+}
+
+@Composable
+private fun LibraryNewReleaseCard(
+    release: NewReleaseAlbum,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onClick() }
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color(0xFF1C1C1E))
+                .border(0.5.dp, Color.White.copy(alpha = 0.09f), RoundedCornerShape(10.dp))
+        ) {
+            AsyncImage(
+                model = release.thumbnailUrl?.artworkAt(CARD_ART_PX),
+                contentDescription = release.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        Spacer(modifier = Modifier.height(7.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = release.title,
+                color = AppleTextPrimary,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = (-0.2).sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false)
+            )
+            if (release.isExplicit) {
+                Spacer(modifier = Modifier.width(5.dp))
+                ExplicitBadge(color = AppleTextSecondary)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(2.dp))
+
+        Text(
+            text = release.subtitleLine,
+            color = AppleTextSecondary,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Normal,
+            letterSpacing = (-0.1).sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+private fun LibraryRecentAlbumSkeleton(
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        ShimmerBox(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f),
+            shape = RoundedCornerShape(10.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        ShimmerBox(
+            modifier = Modifier
+                .fillMaxWidth(0.75f)
+                .height(14.dp),
+            shape = RoundedCornerShape(5.dp)
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+        ShimmerBox(
+            modifier = Modifier
+                .fillMaxWidth(0.55f)
+                .height(11.dp),
+            shape = RoundedCornerShape(5.dp)
         )
     }
 }
