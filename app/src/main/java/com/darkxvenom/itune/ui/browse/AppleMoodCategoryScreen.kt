@@ -586,3 +586,144 @@ fun AppleMoodCategoryScreen(
     }
 }
 
+@Composable
+private fun MoodSectionHeaderRow(
+    title: String,
+    count: Int,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = title,
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = (-0.3).sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
+        )
+        Spacer(Modifier.width(8.dp))
+        Box(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(Color(0x18FFFFFF))
+                .padding(horizontal = 9.dp, vertical = 3.dp),
+        ) {
+            Text(
+                text = count.toString(),
+                color = Color.White.copy(alpha = 0.72f),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+    }
+}
+
+@Composable
+private fun MoodCarouselCard(
+    item: MoodCategoryItem,
+    onClick: () -> Unit,
+) {
+    val shape = if (item.type == MoodCategoryItemType.ARTIST) CircleShape else RoundedCornerShape(12.dp)
+    Column(
+        modifier = Modifier
+            .width(154.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick,
+            ),
+    ) {
+        Box(
+            modifier = Modifier
+                .size(154.dp)
+                .clip(shape)
+                .background(Color(0xFF1C1C1E))
+                .border(0.5.dp, Color.White.copy(alpha = 0.11f), shape),
+        ) {
+            AsyncImage(
+                model = item.thumbnailUrl?.artworkAt(CARD_ART_PX) ?: item.thumbnailUrl?.highQualityThumbnail(),
+                contentDescription = item.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = item.title,
+            color = Color.White,
+            fontSize = 14.5.sp,
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = (-0.2).sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (item.subtitle.isNotBlank()) {
+            Spacer(Modifier.height(2.dp))
+            Text(
+                text = item.subtitle,
+                color = Color.White.copy(alpha = 0.62f),
+                fontSize = 12.5.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+@Composable
+private fun MoodGridArtworkCard(
+    item: MoodCategoryItem,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = onClick,
+        ),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color(0xFF1C1C1E))
+                .border(0.5.dp, Color.White.copy(alpha = 0.11f), RoundedCornerShape(12.dp)),
+        ) {
+            AsyncImage(
+                model = item.thumbnailUrl?.artworkAt(CARD_ART_PX) ?: item.thumbnailUrl?.highQualityThumbnail(),
+                contentDescription = item.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
+        Spacer(Modifier.height(7.dp))
+        Text(
+            text = item.title,
+            color = Color.White,
+            fontSize = 14.5.sp,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (item.subtitle.isNotBlank()) {
+            Spacer(Modifier.height(2.dp))
+            Text(
+                text = item.subtitle,
+                color = Color.White.copy(alpha = 0.62f),
+                fontSize = 12.5.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
