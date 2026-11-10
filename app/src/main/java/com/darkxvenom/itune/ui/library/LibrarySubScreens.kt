@@ -370,3 +370,126 @@ fun LibraryPlaylistsScreen(
     }
 }
 
+@Composable
+fun LibraryArtistsScreen(
+    controller: LibraryHostController,
+    hasMiniPlayer: Boolean,
+    onBack: () -> Unit,
+    onExploreClick: () -> Unit,
+) {
+    val artists by LibraryStore.likedArtists.collectAsStateWithLifecycle()
+    val query = controller.searchQuery
+
+    val filteredArtists = remember(artists, query) {
+        if (query.isBlank()) artists else artists.filter {
+            it.title.contains(query, ignoreCase = true) ||
+                it.subtitle.contains(query, ignoreCase = true)
+        }
+    }
+    val listState = controller.listStates.getOrPut(LibraryDestination.ARTISTS) { LazyListState() }
+    val isScrolled by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 120
+        }
+    }
+
+    LibraryFrostedScreenScaffold(
+        controller = controller,
+        artworkUrls = emptyList(),
+        scrolledTitle = "Artists",
+        isScrolled = isScrolled,
+        hasMiniPlayer = hasMiniPlayer,
+        fallbackAccent = Color(0xFF9C6BFF),
+        amoledDark = true,
+        onBack = onBack,
+        topBarActions = {
+            LibraryTopBarActionButtons(
+                controller = controller,
+                showSort = false,
+                onMoreClick = {
+                    controller.openTopMenu(
+                        LibraryTopMenuRequest(
+                            destination = LibraryDestination.ARTISTS,
+                            songs = emptyList(),
+                            stationLabel = "Artists",
+                            showSort = false,
+                        ),
+                    )
+                },
+            )
+        },
+    ) { contentPadding ->
+        LazyColumn(
+            state = listState,
+            contentPadding = PaddingValues(
+                top = contentPadding.calculateTopPadding() + 8.dp,
+                bottom = contentPadding.calculateBottomPadding(),
+            ),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+        ) {
+            item(key = "artists_header") {
+                Column {
+                    LibraryScreenTitleHeader(
+                        title = "Artists",
+                        countText = if (artists.size == 1) "1 Favorite Artist" else "${artists.size} Favorite Artists",
+                    )
+                    LibraryFilterBar(
+                        visible = controller.searchOpen,
+                        query = query,
+                        onQueryChange = { controller.searchQuery = it },
+                        onClose = controller::toggleSearch,
+                        autoFocus = controller.focusSearchNext,
+                        onFocused = { controller.focusSearchNext = false },
+                        placeholder = "Filter favorite artists...",
+                    )
+                }
+            }
+
+            if (artists.isEmpty()) {
+                item(key = "artists_empty") {
+                    Spacer(Modifier.height(10.dp))
+                    LibraryGlassEmptyCard(
+                        icon = Icons.Rounded.Person,
+                        title = "No Favorite Artists Yet",
+                        subtitle = "Subscribe or star any artist from Search or an Artist page to build your frosted artist roster.",
+                        accent = Color(0xFF9C6BFF),
+                        actionLabel = "Explore Artists",
+                        onAction = onExploreClick,
+                    )
+                }
+            } else if (filteredArtists.isEmpty()) {
+                item(key = "artists_no_match") {
+                    LibraryGlassEmptyCard(
+                        icon = ITubeIcons.Search,
+                        title = "No Artists Found",
+                        subtitle = "No favorite artists matched \"$query\".",
+                        accent = Color(0xFF9C6BFF),
+                        actionLabel = "Clear Filter",
+                        onAction = { controller.searchQuery = "" },
+                    )
+                }
+            } else {
+                items(filteredArtists, key = { it.browseId }) { entry ->
+                    LibraryArtistGlassRow(
+                        entry = entry,
+                        onClick = {
+                            controller.openDetail(
+                                browseId = entry.browseId,
+                                title = entry.title,
+                                subtitle = entry.subtitle,
+                                thumbnailUrl = entry.thumbnailUrl,
+                                type = BrowseType.ARTIST,
+                            )
+                        },
+                        onMenuClick = { controller.openCollectionMenu(entry) },
+                        onStartRadio = { controller.startRadioForArtist(entry) },
+                    )
+                }
+            }
+        }
+    }
+}
+
