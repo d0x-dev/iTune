@@ -2,6 +2,8 @@ package com.darkxvenom.itune.data.artist
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.darkxvenom.itune.data.library.LibraryStore
+import com.darkxvenom.itune.data.model.BrowseType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,6 +41,13 @@ object ArtistStateStore {
             _signatureApiEnabled.value = p.getBoolean(KEY_SIG_ENABLED, false)
             _signatureApiUrl.value = ArtistSignatureRepository.normalizeBaseUrl(
                 p.getString(KEY_SIG_URL, "").orEmpty(),
+            )
+            LibraryStore.ensureInit(context)
+            LibraryStore.syncLegacyIds(
+                context = context,
+                favoriteTrackIds = emptyList(),
+                subscribedArtistIds = _subscribedArtists.value,
+                savedReleaseIds = _savedReleases.value,
             )
         }
     }
