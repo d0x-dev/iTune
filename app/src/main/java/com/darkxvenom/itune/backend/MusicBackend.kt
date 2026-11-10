@@ -438,13 +438,7 @@ object MusicBackend {
             if (videoId.isNullOrBlank()) return null
 
             val flexColumns = responsive.optJSONArray("flexColumns")
-            val title = flexColumns?.optJSONObject(0)
-                ?.optJSONObject("musicResponsiveListItemFlexColumnRenderer")
-                ?.optJSONObject("text")
-                ?.optJSONArray("runs")
-                ?.optJSONObject(0)
-                ?.optString("text").orEmpty()
-
+            val title = responsive.extractColumnText(0)
             val subRuns = flexColumns?.optJSONObject(1)
                 ?.optJSONObject("musicResponsiveListItemFlexColumnRenderer")
                 ?.optJSONObject("text")
@@ -456,37 +450,30 @@ object MusicBackend {
             var albumId: String? = null
             var durationSec = 0L
 
-            if (subRuns != null && subRuns.length() > 0) {
-                val nonDelimiterRuns = mutableListOf<Pair<String, String?>>()
-                for (r in 0 until subRuns.length()) {
-                    val runObj = subRuns.optJSONObject(r)
-                    val t = runObj?.optString("text").orEmpty().trim()
-                    val bId = runObj?.optJSONObject("navigationEndpoint")?.optJSONObject("browseEndpoint")?.optString("browseId")
-                    if (t.isNotEmpty() && t != "•" && t != "·") {
-                        if (t.contains(":") && t.matches(Regex("\\d+:\\d+(:\\d+)?"))) {
-                            durationSec = parseTimeString(t)
-                        } else {
-                            nonDelimiterRuns.add(t to bId)
-                        }
-                    }
-                }
-                if (nonDelimiterRuns.isNotEmpty()) {
-                    artists = nonDelimiterRuns[0].first
-                    artistId = nonDelimiterRuns[0].second
-                    if (nonDelimiterRuns.size > 1) {
-                        album = nonDelimiterRuns[1].first
-                        albumId = nonDelimiterRuns[1].second
-                    }
+            val metaParts = mutableListOf<Pair<String, String?>>()
+            for ((segText, segId) in extractSegmentedRuns(subRuns)) {
+                when {
+                    segText.matches(Regex("\\d+:\\d+(:\\d+)?")) -> durationSec = parseTimeString(segText)
+                    segText.equals("Song", ignoreCase = true) || segText.equals("Video", ignoreCase = true) -> Unit
+                    segText.endsWith("plays", ignoreCase = true) || segText.endsWith("views", ignoreCase = true) -> Unit
+                    else -> metaParts.add(segText to segId)
                 }
             }
+            if (metaParts.isNotEmpty()) {
+                artists = metaParts[0].first
+                artistId = metaParts[0].second
+                if (metaParts.size > 1) {
+                    album = metaParts[1].first
+                    albumId = metaParts[1].second
+                }
+            }
+            if (artists.isBlank() && fallbackArtist.isNotBlank()) {
+                artists = fallbackArtist
+            }
 
-            val thumbUrl = responsive.optJSONObject("thumbnail")
-                ?.optJSONObject("musicThumbnailRenderer")
-                ?.optJSONObject("thumbnail")
-                ?.optJSONArray("thumbnails")
-                ?.let { thumbs ->
-                    thumbs.optJSONObject(thumbs.length() - 1)?.optString("url")
-                }?.highQualityThumbnail()
+            val thumbUrl = JSONObject().put("thumbnail", responsive.optJSONObject("thumbnail"))
+                .extractBestThumbnail()
+                ?: fallbackThumbnailUrl
 
             return MusicTrack(
                 id = videoId,
@@ -505,23 +492,27 @@ object MusicBackend {
             val videoId = watchEndpoint?.optString("videoId")
             if (videoId.isNullOrBlank()) return null
 
-            val title = twoRow.optJSONObject("title")
-                ?.optJSONArray("runs")
-                ?.optJSONObject(0)
-                ?.optString("text").orEmpty()
+            val titleRuns = twoRow.optJSONObject("title")?.optJSONArray("runs")
+            val title = buildString {
+                if (titleRuns != null) {
+                    for (i in 0 until titleRuns.length()) {
+                        append(titleRuns.optJSONObject(i)?.optString("text").orEmpty())
+                    }
+                }
+            }.trim()
 
             val subtitleRuns = twoRow.optJSONObject("subtitle")?.optJSONArray("runs")
-            val artists = subtitleRuns?.optJSONObject(0)?.optString("text").orEmpty()
-            val artistId = subtitleRuns?.optJSONObject(0)?.optJSONObject("navigationEndpoint")
-                ?.optJSONObject("browseEndpoint")?.optString("browseId")
+            val firstSeg = extractSegmentedRuns(subtitleRuns).firstOrNull()
+            val artists = firstSeg?.first.orEmpty().ifBlank { fallbackArtist }
+            val artistId = firstSeg?.second
 
             val thumbUrl = twoRow.optJSONObject("thumbnailRenderer")
                 ?.optJSONObject("musicThumbnailRenderer")
                 ?.optJSONObject("thumbnail")
                 ?.optJSONArray("thumbnails")
-                ?.let { thumbs ->
-                    thumbs.optJSONObject(thumbs.length() - 1)?.optString("url")
-                }?.highQualityThumbnail()
+                ?.let { thumbs -> thumbs.optJSONObject(thumbs.length() - 1)?.optString("url") }
+                ?.highQualityThumbnail()
+                ?: fallbackThumbnailUrl
 
             return MusicTrack(
                 id = videoId,
