@@ -1,8 +1,14 @@
 package com.darkxvenom.itune.ui.search
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,16 +34,18 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +55,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -56,26 +66,42 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.darkxvenom.itune.backend.MusicBackend
 import com.darkxvenom.itune.backend.MusicPlayerState
-import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.UnifiedSearchResults
+import com.darkxvenom.itune.data.artist.ArtistRepository
+import com.darkxvenom.itune.data.artist.ArtistStateStore
+import com.darkxvenom.itune.data.library.SearchHistoryStore
 import com.darkxvenom.itune.data.model.BrowseType
 import com.darkxvenom.itune.data.model.PendingArtistNav
 import com.darkxvenom.itune.data.model.SearchCategory
+import com.darkxvenom.itune.data.model.toMusicTrack
 import com.darkxvenom.itune.data.repository.MusicRepository
 import com.darkxvenom.itune.ui.components.AppleMemojiAvatar
+import com.darkxvenom.itune.ui.components.TopSpringLoadingBar
 import com.darkxvenom.itune.ui.components.springOverscroll
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.AppleTextPrimary
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+private enum class SearchUiMode {
+    EXPLORE,
+    HISTORY,
+    SUGGESTIONS,
+    RESULTS
+}
 
 @Composable
 fun SearchScreen(
@@ -88,12 +114,48 @@ fun SearchScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val coroutineScope = rememberCoroutineScope()
     val gridState = rememberLazyGridState()
+    val searchFocusRequester = remember { FocusRequester() }
 
-    var searchQuery by remember { mutableStateOf("") }
+    LaunchedEffect(Unit) {
+        SearchHistoryStore.ensureInit(context)
+        ArtistStateStore.ensureInit(context)
+    }
+
+    var searchInput by remember { mutableStateOf(TextFieldValue("")) }
+    val searchQuery = searchInput.text
+    var submittedQuery by remember { mutableStateOf("") }
+    var isEditing by remember { mutableStateOf(false) }
+
     var searchResults by remember { mutableStateOf(UnifiedSearchResults()) }
     var isSearching by remember { mutableStateOf(false) }
+    var selectedFilter by remember { mutableStateOf(SearchResultFilter.ALL) }
+    var remoteSuggestions by remember { mutableStateOf<List<String>>(emptyList()) }
+    var activeSearchJob by remember { mutableStateOf<Job?>(null) }
+    var activeArtistActionJob by remember { mutableStateOf<Job?>(null) }
+    var topResultBusyAction by remember { mutableStateOf<TopResultBusyAction?>(null) }
     var moreRequest by remember { mutableStateOf<SearchMoreRequest?>(null) }
 
+    val searchHistory by SearchHistoryStore.history.collectAsState()
+    val savedReleases by ArtistStateStore.savedReleases.collectAsState()
+
+    val uiMode = when {
+        isEditing && searchQuery.isBlank() -> SearchUiMode.HISTORY
+        isEditing && searchQuery.isNotBlank() -> SearchUiMode.SUGGESTIONS
+        submittedQuery.isNotBlank() -> SearchUiMode.RESULTS
+        else -> SearchUiMode.EXPLORE
+    }
+
+    fun openCollectionDetail(state: SearchDetailState) {
+        focusManager.clearFocus(force = true)
+        keyboardController?.hide()
+        MusicPlayerState.pendingArtistNav = PendingArtistNav(
+            browseId = state.browseId,
+            name = state.title,
+            subtitle = state.subtitle,
+            thumbnailUrl = state.thumbnailUrl,
+            initialType = state.initialType,
+        )
+    }
     fun openCollectionDetail(state: SearchDetailState) {
         focusManager.clearFocus(force = true)
         keyboardController?.hide()
@@ -440,6 +502,17 @@ fun SearchScreen(
         )
     }
 }
+
+@Composable
+fun AppleSearchBar(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onMicClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
 
 @Composable
 fun AppleSearchBar(
