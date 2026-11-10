@@ -1574,3 +1574,151 @@ fun LibraryScreenOverlayPopups(
     }
 }
 
+@Composable
+private fun LibraryCollectionActionsMenu(
+    entry: SavedCollectionEntry,
+    onPlay: () -> Unit,
+    onShuffle: () -> Unit,
+    onStartRadio: (() -> Unit)?,
+    onPlayNext: () -> Unit,
+    onAddToQueue: () -> Unit,
+    onDownloadAll: () -> Unit,
+    onOpen: () -> Unit,
+    onRemove: () -> Unit,
+    onShare: () -> Unit,
+) {
+    CompositionLocalProvider(LocalActionRowStyle provides ActionRowStyle.Menu) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+            IosMenuQuickActions {
+                IosMenuQuickAction(
+                    icon = SfIcons.Play,
+                    label = stringResource(R.string.play),
+                    onClick = onPlay,
+                )
+                IosMenuQuickAction(
+                    icon = SfIcons.Shuffle,
+                    label = stringResource(R.string.shuffle),
+                    onClick = onShuffle,
+                )
+                IosMenuQuickAction(
+                    icon = SfIcons.Share,
+                    label = stringResource(R.string.share),
+                    onClick = onShare,
+                )
+            }
+            IosMenuSeparator()
+            if (onStartRadio != null) {
+                ActionRow(
+                    icon = SfIcons.Radio,
+                    label = stringResource(R.string.start_radio),
+                    description = entry.title,
+                    tint = LibraryCrimsonAccent,
+                    onClick = onStartRadio,
+                )
+            }
+            ActionRow(
+                icon = SfIcons.PlayNext,
+                label = stringResource(R.string.play_next),
+                onClick = onPlayNext,
+            )
+            ActionRow(
+                icon = SfIcons.PlayLast,
+                label = stringResource(R.string.add_to_queue),
+                onClick = onAddToQueue,
+            )
+            ActionRow(
+                icon = SfIcons.Download,
+                label = stringResource(R.string.download_all),
+                onClick = onDownloadAll,
+            )
+            IosMenuSeparator()
+            ActionRow(
+                icon = SfIcons.Open,
+                label = when (entry.type) {
+                    BrowseType.ARTIST -> stringResource(R.string.open_artist)
+                    BrowseType.PLAYLIST -> stringResource(R.string.open_playlist)
+                    else -> stringResource(R.string.open_album)
+                },
+                onClick = onOpen,
+            )
+            ActionRow(
+                icon = SfIcons.Trash,
+                label = if (entry.type == BrowseType.ARTIST) {
+                    "Remove from Favorite Artists"
+                } else {
+                    stringResource(R.string.remove_from_library)
+                },
+                tint = LibraryCrimsonAccent,
+                onClick = onRemove,
+            )
+        }
+    }
+}
+
+@Composable
+private fun LibraryUserPlaylistActionsMenu(
+    playlist: UserPlaylist,
+    hasSongs: Boolean,
+    onPlay: () -> Unit,
+    onShuffle: () -> Unit,
+    onStartRadio: () -> Unit,
+    onAddToQueue: () -> Unit,
+    onOpen: () -> Unit,
+    onRename: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    CompositionLocalProvider(LocalActionRowStyle provides ActionRowStyle.Menu) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+            if (hasSongs) {
+                IosMenuQuickActions {
+                    IosMenuQuickAction(
+                        icon = SfIcons.Play,
+                        label = stringResource(R.string.play),
+                        onClick = onPlay,
+                    )
+                    IosMenuQuickAction(
+                        icon = SfIcons.Shuffle,
+                        label = stringResource(R.string.shuffle),
+                        onClick = onShuffle,
+                    )
+                    IosMenuQuickAction(
+                        icon = SfIcons.Radio,
+                        label = "Radio",
+                        tint = LibraryCrimsonAccent,
+                        onClick = onStartRadio,
+                    )
+                }
+                IosMenuSeparator()
+                ActionRow(
+                    icon = SfIcons.Radio,
+                    label = stringResource(R.string.start_radio),
+                    description = playlist.name,
+                    tint = LibraryCrimsonAccent,
+                    onClick = onStartRadio,
+                )
+                ActionRow(
+                    icon = SfIcons.PlayLast,
+                    label = stringResource(R.string.add_to_queue),
+                    onClick = onAddToQueue,
+                )
+                IosMenuSeparator()
+            }
+            ActionRow(
+                icon = SfIcons.Open,
+                label = stringResource(R.string.open_playlist),
+                onClick = onOpen,
+            )
+            ActionRow(
+                icon = Icons.Rounded.Edit,
+                label = "Rename Playlist",
+                onClick = onRename,
+            )
+            ActionRow(
+                icon = SfIcons.Trash,
+                label = "Delete Playlist",
+                tint = LibraryCrimsonAccent,
+                onClick = onDelete,
+            )
+        }
+    }
+}
