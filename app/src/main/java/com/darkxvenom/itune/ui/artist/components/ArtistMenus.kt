@@ -70,6 +70,8 @@ fun ArtistSongActionsMenu(
     onStartRadio: () -> Unit,
     onPlayNext: () -> Unit,
     onAddToQueue: () -> Unit,
+    onAddToPlaylist: (() -> Unit)? = null,
+    onRemoveFromPlaylist: (() -> Unit)? = null,
     onDownload: () -> Unit,
     onOpenAlbum: (String, String?) -> Unit,
     onOpenArtist: (String, String?) -> Unit,
@@ -142,6 +144,22 @@ fun ArtistSongActionsMenu(
                 accent = palette.accent,
                 onClick = onAddToQueue,
             )
+            onAddToPlaylist?.let {
+                ActionRow(
+                    icon = SfIcons.AddToPlaylist,
+                    label = stringResource(R.string.add_to_playlist),
+                    accent = palette.accent,
+                    onClick = it,
+                )
+            }
+            onRemoveFromPlaylist?.let {
+                ActionRow(
+                    icon = SfIcons.Trash,
+                    label = "Remove from Playlist",
+                    tint = Color(0xFFFF2D55),
+                    onClick = it,
+                )
+            }
             ActionRow(
                 icon = if (downloaded) SfIcons.Downloaded else SfIcons.Download,
                 label = stringResource(R.string.download),
