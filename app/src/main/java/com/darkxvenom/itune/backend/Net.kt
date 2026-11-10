@@ -18,6 +18,30 @@ object Net {
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .connectionPool(okhttp3.ConnectionPool(8, 5, TimeUnit.MINUTES))
+            .addInterceptor { chain ->
+                val request = chain.request()
+                val response = chain.proceed(request)
+                if (!response.isSuccessful && response.code == 404) {
+                    val urlStr = request.url.toString()
+                    if (request.url.host.contains("ytimg.com") && urlStr.contains("/maxresdefault.jpg")) {
+                        response.close()
+                        val hq720Url = urlStr.replace("/maxresdefault.jpg", "/hq720.jpg")
+                        val hq720Req = request.newBuilder().url(hq720Url).build()
+                        val hq720Resp = chain.proceed(hq720Req)
+                        if (hq720Resp.isSuccessful) {
+                            return@addInterceptor hq720Resp
+                        }
+                        hq720Resp.close()
+                        val hqReq = request.newBuilder().url(urlStr.replace("/maxresdefault.jpg", "/hqdefault.jpg")).build()
+                        return@addInterceptor chain.proceed(hqReq)
+                    } else if (urlStr.contains("googleusercontent.com") && urlStr.contains("=w1440-h1440-l90-rj")) {
+                        response.close()
+                        val fallbackReq = request.newBuilder().url(urlStr.substringBeforeLast("=")).build()
+                        return@addInterceptor chain.proceed(fallbackReq)
+                    }
+                }
+                response
+            }
             .build()
     }
 

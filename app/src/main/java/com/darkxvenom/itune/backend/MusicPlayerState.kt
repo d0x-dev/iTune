@@ -22,6 +22,8 @@ import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import coil.Coil
+import coil.ImageLoader
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.size.Size
@@ -127,6 +129,15 @@ object MusicPlayerState : Player.Listener {
         favoriteIds.clear()
         favoriteIds.addAll(saved)
 
+        // Configure app-wide Coil ImageLoader using Net.client with smart 404 retries
+        try {
+            val customLoader = ImageLoader.Builder(appContext)
+                .okHttpClient { Net.client }
+                .crossfade(true)
+                .build()
+            Coil.setImageLoader(customLoader)
+        } catch (_: Exception) {}
+
         val httpDataSourceFactory = OkHttpDataSource.Factory(Net.client)
             .setUserAgent(Net.USER_AGENT)
         val dataSourceFactory = DefaultDataSource.Factory(appContext, httpDataSourceFactory)
@@ -218,16 +229,20 @@ object MusicPlayerState : Player.Listener {
                     }
                 }
 
-                // Pre-warm the next queued track in original master quality
-                val nextInQueue = queue.getOrNull(queueIndex + 1)
-                val nextThumb = nextInQueue?.thumbnailUrl?.highQualityThumbnail() ?: nextInQueue?.thumbnailUrl
-                if (appContext != null && !nextThumb.isNullOrBlank()) {
-                    val nextPreReq = ImageRequest.Builder(appContext!!)
-                        .data(nextThumb)
-                        .size(Size.ORIGINAL)
-                        .crossfade(200)
-                        .build()
-                    appContext!!.imageLoader.enqueue(nextPreReq)
+                // Pre-warm the next 3 queued tracks in original master quality
+                if (appContext != null) {
+                    for (step in 1..3) {
+                        val nextInQueue = queue.getOrNull(queueIndex + step) ?: continue
+                        val nextThumb = nextInQueue.thumbnailUrl?.highQualityThumbnail() ?: nextInQueue.thumbnailUrl
+                        if (!nextThumb.isNullOrBlank()) {
+                            val nextPreReq = ImageRequest.Builder(appContext!!)
+                                .data(nextThumb)
+                                .size(Size.ORIGINAL)
+                                .crossfade(200)
+                                .build()
+                            appContext!!.imageLoader.enqueue(nextPreReq)
+                        }
+                    }
                 }
 
                 val streamUrl = MusicBackend.resolveAudioStreamUrl(track.id)
