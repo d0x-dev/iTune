@@ -203,6 +203,7 @@ fun HomeScreen(
             AppScreen.BROWSE -> hasVisitedBrowse = true
             AppScreen.LIBRARY -> hasVisitedLibrary = true
             AppScreen.SEARCH -> hasVisitedSearch = true
+            AppScreen.RADIO -> hasVisitedRadio = true
             AppScreen.HOME -> Unit
         }
     }
