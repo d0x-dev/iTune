@@ -1117,25 +1117,54 @@ fun ITuneMusicPlayer(
                                 }
                             )
                         } else {
-                            // Crisp vector Airbuds centered between Lyrics and Queue
-                            Box(
-                                modifier = Modifier
-                                    .size(44.dp)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .clickable {
-                                        onLyricsInteraction()
-                                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Image(
-                                    painter = painterResource(R.drawable.ic_airbuds),
-                                    contentDescription = "Audio Output",
-                                    colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
-                                    contentScale = ContentScale.Fit,
-                                    modifier = Modifier.size(35.dp)
-                                )
-                            }
+                            val participantCount = ishareSession?.let { room ->
+                                room.participantList.size.coerceAtLeast(room.participants).coerceAtLeast(1)
+                            } ?: 0
+                            AirbudsIShareSplitCapsule(
+                                outputIconRes = audioOutputState.capsuleIconRes,
+                                isOutputPopupOpen = isAudioOutputPopupOpen,
+                                ishareActive = ishareSession != null,
+                                participantCount = participantCount,
+                                isPopupOpen = isISharePopupOpen,
+                                onAirbudsClick = {
+                                    lastLyricsInteractionTime = System.currentTimeMillis()
+                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                    isMoreMenuOpen = false
+                                    isISharePopupOpen = false
+                                    isAudioEnginePopupOpen = false
+                                    isAudioOutputPopupOpen = !isAudioOutputPopupOpen
+                                },
+                                onAirbudsPositioned = { coords ->
+                                    val root = rootBoxCoords
+                                    if (root != null && root.isAttached && coords.isAttached) {
+                                        val center = root.localPositionOf(
+                                            coords,
+                                            Offset(coords.size.width / 2f, coords.size.height / 2f),
+                                        )
+                                        airbudsAnchorXPx = center.x
+                                        airbudsAnchorYPx = center.y
+                                    }
+                                },
+                                onIShareClick = {
+                                    lastLyricsInteractionTime = System.currentTimeMillis()
+                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                    isMoreMenuOpen = false
+                                    isAudioOutputPopupOpen = false
+                                    isAudioEnginePopupOpen = false
+                                    isISharePopupOpen = !isISharePopupOpen
+                                },
+                                onISharePositioned = { coords ->
+                                    val root = rootBoxCoords
+                                    if (root != null && root.isAttached && coords.isAttached) {
+                                        val center = root.localPositionOf(
+                                            coords,
+                                            Offset(coords.size.width / 2f, coords.size.height / 2f)
+                                        )
+                                        ishareAnchorXPx = center.x
+                                        ishareAnchorYPx = center.y
+                                    }
+                                }
+                            )
                         }
                     }
                 }
