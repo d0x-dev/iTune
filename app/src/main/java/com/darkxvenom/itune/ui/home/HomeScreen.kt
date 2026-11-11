@@ -846,6 +846,7 @@ fun HomeScreen(
                 selectedTab = when (currentScreen) {
                     AppScreen.HOME -> selectedTab
                     AppScreen.BROWSE -> NavTab.NEW
+                    AppScreen.RADIO -> NavTab.RADIO
                     AppScreen.LIBRARY -> NavTab.LIBRARY
                     AppScreen.SEARCH -> null
                 },
