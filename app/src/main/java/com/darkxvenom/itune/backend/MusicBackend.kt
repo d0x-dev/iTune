@@ -45,6 +45,7 @@ object MusicBackend {
     private val streamCache = ConcurrentHashMap<String, CachedStreamInfo>()
     private val suggestionCache = ConcurrentHashMap<String, List<String>>()
     private val moodCategoryCache = ConcurrentHashMap<String, MoodCategoryPage>()
+    private val explorePlaylistsCache = ConcurrentHashMap<String, List<MusicPlaylistRef>>()
 
     private var initialized = false
 
