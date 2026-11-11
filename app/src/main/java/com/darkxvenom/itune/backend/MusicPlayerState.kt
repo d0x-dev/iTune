@@ -218,7 +218,28 @@ object MusicPlayerState : Player.Listener {
             .setUserAgent(Net.USER_AGENT)
         val dataSourceFactory = DefaultDataSource.Factory(appContext, httpDataSourceFactory)
 
-        exoPlayer = ExoPlayer.Builder(appContext)
+        val dualProc = SimultaneousAudioProcessor(appContext)
+        simultaneousProcessor = dualProc
+        val renderersFactory = object : DefaultRenderersFactory(appContext) {
+            override fun buildAudioSink(
+                context: Context,
+                enableFloatOutput: Boolean,
+                enableAudioTrackPlaybackParams: Boolean,
+            ): AudioSink = DefaultAudioSink.Builder(context)
+                .setEnableFloatOutput(enableFloatOutput)
+                .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
+                .setAudioProcessors(
+                    arrayOf(
+                        AudioEngineManager.djProcessor,
+                        AudioEngineManager.spatialProcessor,
+                        AudioEngineManager.eightDProcessor,
+                        dualProc,
+                    ),
+                )
+                .build()
+        }
+
+        exoPlayer = ExoPlayer.Builder(appContext, renderersFactory)
             .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
             .setLooper(Looper.getMainLooper())
             .setAudioAttributes(
