@@ -51,7 +51,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
+import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.data.library.BrowseMoodsRepository
+import com.darkxvenom.itune.data.library.ContentLocaleCatalog
+import com.darkxvenom.itune.data.library.NewReleasesRepository
+import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.model.BrowseCategoryItem
 import com.darkxvenom.itune.data.model.BrowseSegment
 import com.darkxvenom.itune.ui.components.AppleMemojiAvatar
