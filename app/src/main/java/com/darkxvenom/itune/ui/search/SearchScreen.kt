@@ -139,6 +139,24 @@ fun SearchScreen(
 
     val searchHistory by SearchHistoryStore.history.collectAsState()
     val savedReleases by ArtistStateStore.savedReleases.collectAsState()
+    val settingsState by SettingsStore.state.collectAsState()
+    val hideExplicit = settingsState.hideExplicitContent
+    val localeSignature = remember(settingsState.contentLanguage, settingsState.contentCountry) {
+        SettingsStore.localeSignature()
+    }
+    var lastSearchLocale by remember { mutableStateOf(localeSignature) }
+
+    val visibleResults = remember(searchResults, hideExplicit) {
+        if (!hideExplicit) {
+            searchResults
+        } else {
+            searchResults.copy(
+                songs = ContentLocaleCatalog.filterVisible(searchResults.songs, hideExplicit) { it.isExplicit },
+                albums = ContentLocaleCatalog.filterVisible(searchResults.albums, hideExplicit) { it.isExplicit },
+                playlists = ContentLocaleCatalog.filterVisible(searchResults.playlists, hideExplicit) { it.isExplicit },
+            )
+        }
+    }
 
     val uiMode = when {
         isEditing && searchQuery.isBlank() -> SearchUiMode.HISTORY
