@@ -392,8 +392,26 @@ fun HomeScreen(
 
                 // Live Radio Stations (Top 10: Favorites prioritized first, then unliked online stations)
                 item(key = "live_radio") {
+                    val homeRadioStations = remember(
+                        onlineRadioState.favoriteStations,
+                        onlineRadioState.stations,
+                    ) {
+                        buildHomeLiveRadioStations(
+                            favorites = onlineRadioState.favoriteStations,
+                            catalog = onlineRadioState.stations,
+                            limit = 10,
+                        )
+                    }
                     RadioStationsSection(
-                        stations = MusicRepository.radioStations,
+                        stations = homeRadioStations,
+                        favoriteIds = onlineRadioState.favoriteIds,
+                        currentStationUuid = onlineRadioState.currentStation?.uuid,
+                        liveMetadataTitle = onlineRadioState.liveMetadataTitle,
+                        isLoading = onlineRadioState.loadingCountries || onlineRadioState.loadingStations,
+                        onHeaderClick = {
+                            selectedTab = NavTab.RADIO
+                            currentScreen = AppScreen.RADIO
+                        },
                         onStationClick = { station ->
                             Toast.makeText(context, "Tuning into ${station.name}", Toast.LENGTH_SHORT).show()
                         }
