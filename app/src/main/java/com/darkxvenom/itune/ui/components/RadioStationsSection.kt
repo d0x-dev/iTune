@@ -71,7 +71,7 @@ fun RadioStationsSection(
                 .fillMaxWidth()
                 .clickable(onClick = onHeaderClick)
                 .padding(horizontal = 20.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = "Live Radio Stations",
