@@ -185,6 +185,7 @@ object MusicPlayerState : Player.Listener {
             ?.apply()
     }
 
+    @OptIn(UnstableApi::class)
     fun init(context: Context) {
         if (exoPlayer != null) return
         val appContext = context.applicationContext
