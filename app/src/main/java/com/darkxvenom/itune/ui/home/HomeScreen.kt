@@ -881,7 +881,7 @@ fun HomeScreen(
                     showIShare = false
                     showSettings = false
                     artistHostController.clearAll()
-                    currentScreen = if (currentScreen == AppScreen.SEARCH && !wasArtistOpen) {
+                    currentScreen = if (currentScreen == AppScreen.SEARCH && !wasArtistOpen && !wasSettingsOpen) {
                         when (selectedTab) {
                             NavTab.NEW -> AppScreen.BROWSE
                             NavTab.LIBRARY -> AppScreen.LIBRARY
