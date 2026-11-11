@@ -601,7 +601,8 @@ object MusicBackend {
             type = itemType,
             browseId = browseId,
             videoId = videoId,
-            playlistId = playlistId
+            playlistId = playlistId,
+            isExplicit = twoRow.opt("subtitleBadges").hasExplicitBadge()
         )
     }
 
