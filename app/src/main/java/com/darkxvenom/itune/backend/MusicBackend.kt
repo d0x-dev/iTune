@@ -334,9 +334,10 @@ object MusicBackend {
                 ?.optJSONObject("tabRenderer")
                 ?.optJSONObject("content")
                 ?.optJSONObject("sectionListRenderer")
-                ?.optJSONArray("contents") ?: return@runCatching emptyList()
+                ?.optJSONArray("contents") ?: return@runCatching MoodsAndGenresCatalog()
 
-            var matchedMoodItems = emptyList<MoodAndMomentRef>()
+            var moodsList = emptyList<MoodAndMomentRef>()
+            var genresList = emptyList<MoodAndMomentRef>()
             for (i in 0 until sections.length()) {
                 val grid = sections.optJSONObject(i)?.optJSONObject("gridRenderer") ?: continue
                 val sectionTitle = buildRunsText(
