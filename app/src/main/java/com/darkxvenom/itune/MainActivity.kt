@@ -29,11 +29,13 @@ import com.darkxvenom.itune.island.DynamicIslandStore
 import com.darkxvenom.itune.ui.home.HomeScreen
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.ITuneTheme
+import com.darkxvenom.itune.ui.welcome.WelcomeScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AvatarManager.init(this)
+        SettingsStore.ensureInit(this)
         MusicPlayerState.init(this)
         AudioDownloader.ensureChannel(this)
         enableEdgeToEdge()
