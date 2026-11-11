@@ -360,15 +360,70 @@ object MusicBackend {
                         }
                     }
                 }
-                if (sectionTitle.contains("mood", ignoreCase = true) && parsed.isNotEmpty()) {
-                    return@runCatching parsed
+                if (parsed.isEmpty()) continue
+                if (sectionTitle.contains("mood", ignoreCase = true) || moodsList.isEmpty()) {
+                    if (moodsList.isEmpty() || sectionTitle.contains("mood", ignoreCase = true)) {
+                        if (moodsList.isNotEmpty() && genresList.isEmpty()) {
+                            genresList = moodsList
+                        }
+                        moodsList = parsed
+                        continue
+                    }
                 }
-                if (matchedMoodItems.isEmpty() && parsed.isNotEmpty()) {
-                    matchedMoodItems = parsed
+                if (genresList.isEmpty()) {
+                    genresList = parsed
                 }
             }
-            matchedMoodItems
-        }.getOrDefault(emptyList())
+            MoodsAndGenresCatalog(moods = moodsList, genres = genresList)
+        }.getOrDefault(MoodsAndGenresCatalog())
+    }
+
+    /**
+     * Fetches regional & language-tailored Featured / Charts Playlists from `FEmusic_explore`
+     * with search fallback tailored to the active Content Country and Content Language.
+     */
+    suspend fun fetchLocalizedExplorePlaylists(): List<MusicPlaylistRef> = withContext(Dispatchers.IO) {
+        val localeSig = SettingsStore.localeSignature()
+        val hideExplicit = SettingsStore.isHideExplicitEnabled()
+        val cached = explorePlaylistsCache[localeSig]
+        if (cached != null) {
+            return@withContext cached.filter { !hideExplicit || !it.isExplicit }
+        }
+
+        val collected = mutableListOf<MusicPlaylistRef>()
+        runCatching {
+            val root = postInnerTube(BROWSE_URL, JSONObject().put("browseId", BROWSE_EXPLORE))
+            root.walk { key, obj ->
+                if (key == "musicTwoRowItemRenderer") {
+                    val nav = obj.optJSONObject("navigationEndpoint")
+                    val browseId = nav?.optJSONObject("browseEndpoint")?.optString("browseId").orEmpty()
+                    if (browseId.startsWith("VL") || browseId.startsWith("OLAK") || browseId.startsWith("RDCLAK")) {
+                        val wrapper = JSONObject().put("musicTwoRowItemRenderer", obj)
+                        parsePlaylistOrAlbumItem(wrapper, isAlbum = false)?.let(collected::add)
+                    }
+                }
+            }
+        }
+
+        if (collected.size < 6) {
+            val countryName = ContentLocaleCatalog.countryLabel(SettingsStore.state.value.contentCountry)
+                .takeIf { it != "System Default" } ?: SettingsStore.effectiveGl()
+            val langName = ContentLocaleCatalog.languageLabel(SettingsStore.state.value.contentLanguage)
+                .takeIf { it != "System Default" }
+            val query = listOfNotNull(countryName, langName, "Top Hits").joinToString(" ")
+            runCatching {
+                val searched = collectRenderers(postInnerTubeSearch(query, FEATURED_PLAYLIST_PARAMS)) { obj ->
+                    parsePlaylistOrAlbumItem(obj, isAlbum = false)
+                }
+                collected.addAll(searched)
+            }
+        }
+
+        val distinct = collected.distinctBy { it.id }
+        if (distinct.isNotEmpty()) {
+            explorePlaylistsCache[localeSig] = distinct
+        }
+        distinct.filter { !hideExplicit || !it.isExplicit }
     }
 
     /**
