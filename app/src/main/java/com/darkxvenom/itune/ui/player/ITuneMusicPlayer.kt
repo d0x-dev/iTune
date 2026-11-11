@@ -1586,6 +1586,7 @@ internal fun IosCapsuleSeekSlider(
     value: Float,
     valueRange: ClosedFloatingPointRange<Float>,
     isSeeking: Boolean,
+    enabled: Boolean = true,
     onSeekStart: (Float) -> Unit,
     onSeekChange: (Float) -> Unit,
     onSeekEnd: (Float) -> Unit,
@@ -1610,7 +1611,8 @@ internal fun IosCapsuleSeekSlider(
         modifier = modifier
             .fillMaxWidth()
             .height(28.dp)
-            .pointerInput(duration) {
+            .pointerInput(duration, enabled) {
+                if (!enabled) return@pointerInput
                 detectTapGestures { offset ->
                     val w = size.width.toFloat()
                     if (w > 0f) {
