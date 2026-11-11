@@ -719,8 +719,8 @@ object MusicBackend {
         val clientObj = JSONObject()
             .put("clientName", "WEB_REMIX")
             .put("clientVersion", "1.20240101.01.00")
-            .put("hl", "en")
-            .put("gl", "US")
+            .put("hl", hl)
+            .put("gl", gl)
 
         val payload = JSONObject(body.toString())
             .put("context", JSONObject().put("client", clientObj))
@@ -728,6 +728,7 @@ object MusicBackend {
         val request = Request.Builder()
             .url(url)
             .post(payload.toString().toRequestBody(JSON_TYPE))
+            .header("Accept-Language", "$hl,en-US;q=0.8,en;q=0.7")
             .header("Origin", "https://music.youtube.com")
             .header("Referer", "https://music.youtube.com/")
             .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
