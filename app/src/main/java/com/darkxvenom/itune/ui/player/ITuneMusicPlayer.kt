@@ -770,6 +770,9 @@ fun ITuneMusicPlayer(
                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                     lastLyricsInteractionTime = System.currentTimeMillis()
                     areLyricsControlsVisible = true
+                    isISharePopupOpen = false
+                    isAudioOutputPopupOpen = false
+                    isAudioEnginePopupOpen = false
                     isMoreMenuOpen = !isMoreMenuOpen
                 },
             contentAlignment = Alignment.Center
