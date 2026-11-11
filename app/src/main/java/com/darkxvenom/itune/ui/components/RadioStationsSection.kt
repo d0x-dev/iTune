@@ -284,11 +284,11 @@ private fun OnlineHomeRadioStationCard(
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = "Hosted by ${station.host}",
+            text = "Hosted by ${station.realHostedByLabel()}",
             color = AppleTextSecondary,
             fontSize = 12.sp,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
