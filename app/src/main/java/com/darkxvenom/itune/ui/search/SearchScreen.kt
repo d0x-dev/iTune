@@ -260,6 +260,15 @@ fun SearchScreen(
         }
     }
 
+    LaunchedEffect(localeSignature) {
+        if (localeSignature != lastSearchLocale) {
+            lastSearchLocale = localeSignature
+            if (submittedQuery.isNotBlank()) {
+                submitSearch(submittedQuery, recordHistory = false)
+            }
+        }
+    }
+
     // Fast, smooth suggestions fetched only while typing in editing mode
     LaunchedEffect(isEditing, searchQuery) {
         val trimmed = searchQuery.trim()
