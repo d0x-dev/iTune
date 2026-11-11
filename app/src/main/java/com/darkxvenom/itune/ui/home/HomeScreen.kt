@@ -655,6 +655,9 @@ fun HomeScreen(
         // Apple Dark Mode Gradient Scrim for Floating Bottom Controls
         if (
             !artistHostController.isOpen &&
+            !showSettings &&
+            !showIShare &&
+            !showDynamicIsland &&
             !(currentScreen == AppScreen.LIBRARY && libraryHostController.isOpen) &&
             !(currentScreen == AppScreen.BROWSE && activeMoodCategory != null)
         ) {
@@ -662,7 +665,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .height(180.dp)
+                    .height(if (hasMiniPlayer) 180.dp else 120.dp)
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(
