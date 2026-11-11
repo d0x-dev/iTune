@@ -138,6 +138,7 @@ import com.darkxvenom.itune.audio.AudioOutputManager
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.highQualityThumbnail
+import com.darkxvenom.itune.ishare.IShareSyncManager
 import com.darkxvenom.itune.ui.components.AnimatedEqualizer
 import com.darkxvenom.itune.ui.components.WavySlider
 import kotlinx.coroutines.delay
