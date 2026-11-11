@@ -49,6 +49,12 @@ object MusicBackend {
 
     private var initialized = false
 
+    fun clearLocalizedCaches() {
+        suggestionCache.clear()
+        moodCategoryCache.clear()
+        explorePlaylistsCache.clear()
+    }
+
     fun init(context: Context) {
         if (initialized) return
         try {
