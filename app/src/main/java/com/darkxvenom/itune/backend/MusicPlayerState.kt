@@ -256,6 +256,21 @@ object MusicPlayerState : Player.Listener {
                 volume = this@MusicPlayerState.volume
             }
 
+        AudioOutputManager.init(appContext, dualProc) { targetDevice ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                exoPlayer?.setPreferredAudioDevice(targetDevice)
+            }
+        }
+        AudioEngineManager.init(
+            context = appContext,
+            getSessionId = { exoPlayer?.audioSessionId ?: C.AUDIO_SESSION_ID_UNSET },
+            applyPlaybackParams = { params ->
+                if (!holdingFast) {
+                    exoPlayer?.playbackParameters = params
+                }
+            },
+        )
+
         restorePlaybackSession(appContext)
         startProgressLoop()
     }
