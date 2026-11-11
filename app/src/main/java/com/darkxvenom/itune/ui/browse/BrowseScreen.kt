@@ -481,6 +481,8 @@ private fun BrowseCategoryCardItem(
             fontSize = 13.5.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.2).sp,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
             style = androidx.compose.ui.text.TextStyle(
                 shadow = androidx.compose.ui.graphics.Shadow(
                     color = Color.Black.copy(alpha = 0.65f),
