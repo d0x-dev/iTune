@@ -193,11 +193,12 @@ fun AppleNewReleasesScreen(
                         val summaryLine = if (filteredReleases.isEmpty()) {
                             regionLabel
                         } else {
-                            buildList {
+                            val counts = buildList {
                                 if (albumsList.isNotEmpty()) add("${albumsList.size} Albums")
                                 if (singlesList.isNotEmpty()) add("${singlesList.size} Singles")
                                 if (epsList.isNotEmpty()) add("${epsList.size} EPs")
-                            }.joinToString(" • ").ifBlank { "${releases.size} Releases" }
+                            }.joinToString(" • ").ifBlank { "${filteredReleases.size} Releases" }
+                            "$regionLabel • $counts"
                         }
 
                         Column(
