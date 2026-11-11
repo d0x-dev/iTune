@@ -74,6 +74,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.darkxvenom.itune.data.auth.GoogleAuthStore
+import com.darkxvenom.itune.data.auth.PlaylistStorageTarget
+import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.library.SavedSongMetadata
 import com.darkxvenom.itune.data.library.UserPlaylist
@@ -293,7 +296,7 @@ private suspend fun resolveAndAddToPlaylist(
         Toast.makeText(context, "No tracks available to add", Toast.LENGTH_SHORT).show()
         return false
     }
-    val added = LibraryStore.addSongsToUserPlaylist(context, target.id, songs)
+    val added = YouTubeLibrarySyncManager.addSongsToPlaylist(context, target.id, songs)
     val msg = when {
         added == 0 -> "Already in \"${target.name}\""
         added == 1 -> "Added to \"${target.name}\""
@@ -306,6 +309,7 @@ private suspend fun resolveAndAddToPlaylist(
 private suspend fun resolveAndCreatePlaylist(
     context: Context,
     name: String,
+    target: PlaylistStorageTarget,
     payload: PendingPlaylistPayload?,
     preloadedSongs: List<SavedSongMetadata>,
 ): UserPlaylist {
@@ -316,13 +320,14 @@ private suspend fun resolveAndCreatePlaylist(
     } else {
         payload.lazyLoader.invoke()
     }
-    val created = LibraryStore.createUserPlaylist(context, name, songs)
+    val created = YouTubeLibrarySyncManager.createPlaylist(context, name, target, songs)
+    val where = if (created.isGoogleAccount) " on YouTube Music" else " locally"
     val msg = if (songs.isEmpty()) {
-        "Created \"${created.name}\""
+        "Created \"${created.name}\"$where"
     } else if (songs.size == 1) {
-        "Created \"${created.name}\" & added track"
+        "Created \"${created.name}\"$where & added track"
     } else {
-        "Created \"${created.name}\" (${songs.size} songs)"
+        "Created \"${created.name}\"$where (${songs.size} songs)"
     }
     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     return created
@@ -519,8 +524,12 @@ fun IosAddToPlaylistMenuView(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
+                        val meta = buildString {
+                            append(if (pl.songs.size == 1) "1 song" else "${pl.songs.size} songs")
+                            if (pl.isGoogleAccount) append(" • Google Account")
+                        }
                         Text(
-                            text = if (pl.songs.size == 1) "1 song" else "${pl.songs.size} songs",
+                            text = meta,
                             color = colors.secondaryLabel,
                             fontSize = 12.sp,
                             maxLines = 1,
@@ -565,13 +574,21 @@ fun IosCreatePlaylistMenuView(
     val accent = MaterialTheme.colorScheme.primary
     val (resolvedSongs, loading) = rememberResolvedPayloadSongs(payload)
 
+    val ytAccount by GoogleAuthStore.state.collectAsStateWithLifecycle()
     var nameInput by remember(renameTarget, payload) {
         mutableStateOf(renameTarget?.name.orEmpty())
+    }
+    var storageTarget by remember(renameTarget, ytAccount.isSignedIn) {
+        mutableStateOf(
+            if (ytAccount.isSignedIn) PlaylistStorageTarget.GOOGLE_ACCOUNT
+            else PlaylistStorageTarget.LOCAL,
+        )
     }
     var busy by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
+        GoogleAuthStore.ensureInit(context)
         focusRequester.requestFocus()
     }
 
@@ -594,7 +611,7 @@ fun IosCreatePlaylistMenuView(
             return
         }
         if (renameTarget != null) {
-            LibraryStore.renameUserPlaylist(context, renameTarget.id, clean)
+            YouTubeLibrarySyncManager.renamePlaylist(context, renameTarget.id, clean)
             Toast.makeText(context, "Renamed to \"$clean\"", Toast.LENGTH_SHORT).show()
             onDone(renameTarget.copy(name = clean))
             return
@@ -602,8 +619,12 @@ fun IosCreatePlaylistMenuView(
         busy = true
         scope.launch {
             try {
-                val created = resolveAndCreatePlaylist(context, clean, payload, resolvedSongs)
+                val created = resolveAndCreatePlaylist(context, clean, storageTarget, payload, resolvedSongs)
                 onDone(created)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                Toast.makeText(context, e.message ?: "Could not create playlist", Toast.LENGTH_SHORT).show()
             } finally {
                 busy = false
             }
@@ -724,16 +745,72 @@ fun IosCreatePlaylistMenuView(
             }
         }
 
+        if (renameTarget == null && ytAccount.isSignedIn) {
+            PlaylistTargetSelectorRow(
+                selected = storageTarget,
+                onSelect = { storageTarget = it },
+                labelColor = colors.label,
+                secondaryColor = colors.secondaryLabel,
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
+            )
+        }
+
         Text(
             text = when {
                 renameTarget != null -> "Updates playlist title across Library."
-                payload != null -> "Playlist avatar builds from added songs."
-                else -> "Creates an empty playlist in Library."
+                storageTarget == PlaylistStorageTarget.GOOGLE_ACCOUNT && ytAccount.isSignedIn ->
+                    "Creates on your Google / YouTube Music account and syncs in real time."
+                payload != null -> "Saves locally on this device."
+                else -> "Creates an empty local playlist in Library."
             },
             color = colors.secondaryLabel,
             fontSize = 12.sp,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
         )
+    }
+}
+
+@Composable
+private fun PlaylistTargetSelectorRow(
+    selected: PlaylistStorageTarget,
+    onSelect: (PlaylistStorageTarget) -> Unit,
+    labelColor: Color,
+    secondaryColor: Color,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(11.dp))
+            .background(Color.White.copy(alpha = 0.08f))
+            .padding(3.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        val options = listOf(
+            PlaylistStorageTarget.LOCAL to "Create Locally",
+            PlaylistStorageTarget.GOOGLE_ACCOUNT to "Google Account",
+        )
+        options.forEach { (option, title) ->
+            val isSelected = selected == option
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(if (isSelected) LibraryCrimsonAccent else Color.Transparent)
+                    .clickable { onSelect(option) }
+                    .padding(vertical = 7.dp, horizontal = 8.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = title,
+                    color = if (isSelected) Color.White else secondaryColor.takeIf { it != Color.Unspecified } ?: labelColor,
+                    fontSize = 12.5.sp,
+                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
     }
 }
 
@@ -821,8 +898,12 @@ fun AppleSheetAddToPlaylistContent(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
+                        val meta = buildString {
+                            append(if (pl.songs.size == 1) "1 song" else "${pl.songs.size} songs")
+                            if (pl.isGoogleAccount) append(" • Google Account")
+                        }
                         Text(
-                            text = if (pl.songs.size == 1) "1 song" else "${pl.songs.size} songs",
+                            text = meta,
                             color = Color.White.copy(alpha = 0.62f),
                             fontSize = 12.sp,
                         )
@@ -857,12 +938,20 @@ fun AppleSheetCreatePlaylistContent(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val ytAccount by GoogleAuthStore.state.collectAsStateWithLifecycle()
     val (resolvedSongs, loading) = rememberResolvedPayloadSongs(payload)
     var nameInput by remember(payload) { mutableStateOf("") }
+    var storageTarget by remember(ytAccount.isSignedIn) {
+        mutableStateOf(
+            if (ytAccount.isSignedIn) PlaylistStorageTarget.GOOGLE_ACCOUNT
+            else PlaylistStorageTarget.LOCAL,
+        )
+    }
     var busy by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
+        GoogleAuthStore.ensureInit(context)
         focusRequester.requestFocus()
     }
 
@@ -876,8 +965,12 @@ fun AppleSheetCreatePlaylistContent(
         busy = true
         scope.launch {
             try {
-                resolveAndCreatePlaylist(context, clean, payload, resolvedSongs)
+                resolveAndCreatePlaylist(context, clean, storageTarget, payload, resolvedSongs)
                 onCompleted()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                Toast.makeText(context, e.message ?: "Could not create playlist", Toast.LENGTH_SHORT).show()
             } finally {
                 busy = false
             }
@@ -941,8 +1034,23 @@ fun AppleSheetCreatePlaylistContent(
 
         Spacer(Modifier.height(10.dp))
 
+        if (ytAccount.isSignedIn) {
+            PlaylistTargetSelectorRow(
+                selected = storageTarget,
+                onSelect = { storageTarget = it },
+                labelColor = Color.White,
+                secondaryColor = Color.White.copy(alpha = 0.72f),
+            )
+            Spacer(Modifier.height(8.dp))
+        }
+
         Text(
-            text = if (loading) "Preparing tracks..." else "Avatar updates from added song thumbnails.",
+            text = when {
+                loading -> "Preparing tracks..."
+                storageTarget == PlaylistStorageTarget.GOOGLE_ACCOUNT && ytAccount.isSignedIn ->
+                    "Creates on your Google / YouTube Music account and syncs automatically."
+                else -> "Saves locally on this device."
+            },
             color = Color.White.copy(alpha = 0.58f),
             fontSize = 12.sp,
         )

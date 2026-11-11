@@ -99,6 +99,7 @@ import com.darkxvenom.itune.R
 import com.darkxvenom.itune.audio.AudioEngineManager
 import com.darkxvenom.itune.audio.AudioEngineUiState
 import com.darkxvenom.itune.audio.AudioOutputManager
+import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.SearchHistoryStore
 import com.darkxvenom.itune.data.library.SettingsStore
@@ -262,6 +263,11 @@ fun AppleSettingsScreen(
     val dynamicIslandConfig by DynamicIslandStore.state.collectAsStateWithLifecycle()
     val audioEngineState by AudioEngineManager.state.collectAsStateWithLifecycle()
     val audioOutputState by AudioOutputManager.state.collectAsStateWithLifecycle()
+    val ytAccountState by GoogleAuthStore.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        GoogleAuthStore.ensureInit(context)
+    }
 
     val appBackdrop = rememberLayerBackdrop()
     val pageBackdrop = rememberSnapshotBackdrop()
@@ -275,14 +281,19 @@ fun AppleSettingsScreen(
 
     var activePicker by remember { mutableStateOf<SettingsEntry.Picker?>(null) }
     var activeAudioEffectPage by remember { mutableStateOf<EnginePopupPage?>(null) }
+    var showProfileAccount by remember { mutableStateOf(false) }
     var showNameDialog by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
 
-    BackHandler(enabled = activeAudioEffectPage != null && activePicker == null && !showNameDialog && !showAboutDialog) {
+    BackHandler(enabled = showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
+        showProfileAccount = false
+    }
+
+    BackHandler(enabled = activeAudioEffectPage != null && !showProfileAccount && activePicker == null && !showNameDialog && !showAboutDialog) {
         activeAudioEffectPage = null
     }
 
-    BackHandler(enabled = searchOpen && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
+    BackHandler(enabled = searchOpen && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
         searchOpen = false
         searchQuery = ""
     }
@@ -440,13 +451,19 @@ fun AppleSettingsScreen(
 
                         if (showAccountCard) {
                             item(key = "settings_account_card") {
+                                val resolvedSubtitle = if (ytAccountState.isSignedIn) {
+                                    val idText = ytAccountState.accountEmail.ifBlank { ytAccountState.accountName }
+                                    if (idText.isNotBlank()) "YouTube Music • $idText" else "YouTube Music Connected"
+                                } else {
+                                    state.accountSubtitle
+                                }
                                 SettingsAccountCard(
                                     displayName = state.displayName,
-                                    subtitle = state.accountSubtitle,
+                                    subtitle = resolvedSubtitle,
                                     useBackdropGlass = glassActive,
                                     onClick = {
                                         haptics.play(Haptic.Tap)
-                                        onAccountClick()
+                                        showProfileAccount = true
                                     },
                                     modifier = Modifier.padding(horizontal = 16.dp),
                                 )
@@ -584,6 +601,18 @@ fun AppleSettingsScreen(
                             onBack = { activeAudioEffectPage = null },
                         )
                     }
+                }
+
+                AnimatedVisibility(
+                    visible = showProfileAccount,
+                    enter = fadeIn(tween(200)) + slideInHorizontally(tween(260)) { it / 8 },
+                    exit = fadeOut(tween(180)) + slideOutHorizontally(tween(220)) { it / 8 },
+                ) {
+                    SettingsProfileAccountScreen(
+                        hasMiniPlayer = hasMiniPlayer,
+                        onBack = { showProfileAccount = false },
+                        onOpenAvatarPopup = onAccountClick,
+                    )
                 }
             }
         }

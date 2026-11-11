@@ -3,6 +3,8 @@ package com.darkxvenom.itune.ui.welcome
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
@@ -18,10 +20,14 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -91,8 +97,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import com.darkxvenom.itune.R
+import com.darkxvenom.itune.data.auth.WebSessionMode
 import com.darkxvenom.itune.ui.artist.haptics.Haptic
 import com.darkxvenom.itune.ui.artist.haptics.rememberHaptics
+import com.darkxvenom.itune.ui.auth.GoogleLoginScreen
 import com.darkxvenom.itune.ui.player.SFProDisplay
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -194,11 +202,17 @@ internal val WelcomeAmbientKeyframes = listOf(
 )
 
 internal const val WELCOME_HEADLINE_TEXT = "Welcome to iTune"
+internal const val WELCOME_GOOGLE_TEXT = "Continue with your Google account to get your personalised feed."
 internal const val WELCOME_CURSOR_INITIAL_CUE_MS = 700L
 internal const val WELCOME_CURSOR_SETTLE_MS = 280L
 internal const val WELCOME_TEXT_HOLD_HIDDEN_MS = 5_500L
 internal const val WELCOME_CURSOR_REAPPEAR_CUE_MS = 750L
 internal const val WELCOME_CLEARED_PAUSE_MS = 520L
+
+private enum class WelcomeStep {
+    NAME,
+    GOOGLE_CONNECT,
+}
 
 /**
  * Computes realistic keystroke timing for typing `"Welcome to iTune"`, adding natural
@@ -271,6 +285,8 @@ fun WelcomeScreen(
     var isFocused by remember { mutableStateOf(false) }
     var showEmptyHint by remember { mutableStateOf(false) }
     var enteredScreen by remember { mutableStateOf(false) }
+    var currentStep by remember { mutableStateOf(WelcomeStep.NAME) }
+    var showGoogleLogin by remember { mutableStateOf(false) }
     val shakeOffsetPx = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
@@ -355,7 +371,7 @@ fun WelcomeScreen(
         if (cleaned.isNotEmpty()) {
             haptics.play(Haptic.Select)
             keyboardController?.hide()
-            onContinue(cleaned)
+            currentStep = WelcomeStep.GOOGLE_CONNECT
         } else {
             showEmptyHint = true
             haptics.play(Haptic.Tick)
@@ -368,6 +384,10 @@ fun WelcomeScreen(
                 }
             }
         }
+    }
+
+    BackHandler(enabled = currentStep == WelcomeStep.GOOGLE_CONNECT && !showGoogleLogin) {
+        currentStep = WelcomeStep.NAME
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -409,7 +429,7 @@ fun WelcomeScreen(
             }
         }
 
-        // Bottom-Anchored Left-Aligned Welcome Headline, Underline Name Field & Crimson Continue Pill
+        // Animated 2-step onboarding: Step 1 (Name) slides left while Step 2 (Google Connect) slides in from right
         AnimatedVisibility(
             visible = enteredScreen,
             enter = fadeIn(tween(750)) + slideInVertically(tween(750, easing = FastOutSlowInEasing)) { it / 6 },
@@ -419,104 +439,208 @@ fun WelcomeScreen(
                 .imePadding()
                 .navigationBarsPadding(),
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 32.dp)
-                    .padding(top = 64.dp, bottom = 30.dp),
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.Start,
-            ) {
-                WelcomeTypingHeadline(
-                    textColor = headlineColor,
-                    cursorColor = headlineCursorColor,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-
-                Spacer(modifier = Modifier.height(26.dp))
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .offset { IntOffset(shakeOffsetPx.value.roundToInt(), 0) },
-                ) {
-                    BasicTextField(
-                        value = nameText,
-                        onValueChange = { updated ->
-                            nameText = updated
-                            if (showEmptyHint && updated.isNotBlank()) {
-                                showEmptyHint = false
-                            }
-                        },
-                        singleLine = true,
-                        textStyle = TextStyle(
-                            color = inputTextColor,
-                            fontFamily = WelcomeSFPro,
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Medium,
-                        ),
-                        cursorBrush = SolidColor(WelcomeCrimson),
-                        keyboardOptions = KeyboardOptions(
-                            capitalization = KeyboardCapitalization.Words,
-                            imeAction = ImeAction.Done,
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = { submitName() },
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .focusRequester(focusRequester)
-                            .onFocusChanged { focusState -> isFocused = focusState.isFocused }
-                            .padding(vertical = 8.dp),
-                        decorationBox = { innerTextField ->
-                            Box(
+            AnimatedContent(
+                targetState = currentStep,
+                transitionSpec = {
+                    val forward = targetState.ordinal > initialState.ordinal
+                    val slideIn = slideInHorizontally(
+                        animationSpec = tween(durationMillis = 420, easing = FastOutSlowInEasing),
+                    ) { if (forward) it else -it } + fadeIn(tween(340))
+                    val slideOut = slideOutHorizontally(
+                        animationSpec = tween(durationMillis = 420, easing = FastOutSlowInEasing),
+                    ) { if (forward) -it else it } + fadeOut(tween(240))
+                    slideIn togetherWith slideOut
+                },
+                label = "welcomeStepSlide",
+                modifier = Modifier.fillMaxSize(),
+            ) { step ->
+                when (step) {
+                    WelcomeStep.NAME -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 32.dp)
+                                .padding(top = 64.dp, bottom = 30.dp),
+                            verticalArrangement = Arrangement.Bottom,
+                            horizontalAlignment = Alignment.Start,
+                        ) {
+                            WelcomeTypingHeadline(
+                                targetText = WELCOME_HEADLINE_TEXT,
+                                textColor = headlineColor,
+                                cursorColor = headlineCursorColor,
                                 modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.CenterStart,
+                            )
+
+                            Spacer(modifier = Modifier.height(26.dp))
+
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .offset { IntOffset(shakeOffsetPx.value.roundToInt(), 0) },
                             ) {
-                                if (nameText.isEmpty()) {
-                                    Text(
-                                        text = "Your Name",
-                                        color = placeholderColor,
+                                BasicTextField(
+                                    value = nameText,
+                                    onValueChange = { updated ->
+                                        nameText = updated
+                                        if (showEmptyHint && updated.isNotBlank()) {
+                                            showEmptyHint = false
+                                        }
+                                    },
+                                    singleLine = true,
+                                    textStyle = TextStyle(
+                                        color = inputTextColor,
                                         fontFamily = WelcomeSFPro,
-                                        fontSize = 15.5.sp,
-                                        fontWeight = FontWeight.Normal,
+                                        fontSize = 17.sp,
+                                        fontWeight = FontWeight.Medium,
+                                    ),
+                                    cursorBrush = SolidColor(WelcomeCrimson),
+                                    keyboardOptions = KeyboardOptions(
+                                        capitalization = KeyboardCapitalization.Words,
+                                        imeAction = ImeAction.Done,
+                                    ),
+                                    keyboardActions = KeyboardActions(
+                                        onDone = { submitName() },
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .focusRequester(focusRequester)
+                                        .onFocusChanged { focusState -> isFocused = focusState.isFocused }
+                                        .padding(vertical = 8.dp),
+                                    decorationBox = { innerTextField ->
+                                        Box(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            contentAlignment = Alignment.CenterStart,
+                                        ) {
+                                            if (nameText.isEmpty()) {
+                                                Text(
+                                                    text = "Your Name",
+                                                    color = placeholderColor,
+                                                    fontFamily = WelcomeSFPro,
+                                                    fontSize = 15.5.sp,
+                                                    fontWeight = FontWeight.Normal,
+                                                )
+                                            }
+                                            innerTextField()
+                                        }
+                                    },
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(underlineThickness)
+                                        .background(underlineColor),
+                                )
+
+                                AnimatedVisibility(
+                                    visible = showEmptyHint,
+                                    enter = fadeIn(tween(180)),
+                                    exit = fadeOut(tween(180)),
+                                ) {
+                                    Text(
+                                        text = "Enter your name to personalize iTune",
+                                        color = WelcomeCrimson,
+                                        fontFamily = WelcomeSFPro,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        modifier = Modifier.padding(top = 8.dp),
                                     )
                                 }
-                                innerTextField()
                             }
-                        },
-                    )
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(underlineThickness)
-                            .background(underlineColor),
-                    )
+                            Spacer(modifier = Modifier.height(24.dp))
 
-                    AnimatedVisibility(
-                        visible = showEmptyHint,
-                        enter = fadeIn(tween(180)),
-                        exit = fadeOut(tween(180)),
-                    ) {
-                        Text(
-                            text = "Enter your name to personalize iTune",
-                            color = WelcomeCrimson,
-                            fontFamily = WelcomeSFPro,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(top = 8.dp),
-                        )
+                            WelcomeContinueButton(
+                                onClick = submitName,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
+                    }
+
+                    WelcomeStep.GOOGLE_CONNECT -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 32.dp)
+                                .padding(top = 74.dp, bottom = 30.dp),
+                            verticalArrangement = Arrangement.Top,
+                            horizontalAlignment = Alignment.Start,
+                        ) {
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            // Google XML icon positioned at top directly below header ic_itune_waves XML icon
+                            Box(
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .shadow(
+                                        elevation = 10.dp,
+                                        shape = CircleShape,
+                                        ambientColor = Color.Black.copy(alpha = 0.25f),
+                                        spotColor = Color.Black.copy(alpha = 0.25f),
+                                    )
+                                    .clip(CircleShape)
+                                    .background(Color.White),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.ic_google_logo),
+                                    contentDescription = "Google",
+                                    modifier = Modifier.size(30.dp),
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(26.dp))
+
+                            WelcomeTypingHeadline(
+                                targetText = WELCOME_GOOGLE_TEXT,
+                                textColor = headlineColor,
+                                cursorColor = headlineCursorColor,
+                                fontSize = 27.sp,
+                                lineHeight = 35.sp,
+                                maxLines = 4,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(min = 148.dp),
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            WelcomeGoogleContinueButton(
+                                onClick = {
+                                    haptics.play(Haptic.Select)
+                                    showGoogleLogin = true
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+
+                            Spacer(modifier = Modifier.height(14.dp))
+
+                            WelcomeSkipSignInButton(
+                                isLightBackground = inkFactor > 0.5f,
+                                onClick = {
+                                    haptics.play(Haptic.Tap)
+                                    val cleaned = nameText.trim().ifBlank { "Listener" }
+                                    onContinue(cleaned)
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
                     }
                 }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                WelcomeContinueButton(
-                    onClick = submitName,
-                    modifier = Modifier.fillMaxWidth(),
-                )
             }
+        }
+
+        if (showGoogleLogin) {
+            GoogleLoginScreen(
+                mode = WebSessionMode.SIGN_IN,
+                onSignedIn = {
+                    showGoogleLogin = false
+                    val cleaned = nameText.trim().ifBlank { "Listener" }
+                    onContinue(cleaned)
+                },
+                onClose = { showGoogleLogin = false },
+                modifier = Modifier.fillMaxSize(),
+            )
         }
     }
 }
@@ -667,6 +791,120 @@ private fun WelcomeContinueButton(
 }
 
 @Composable
+private fun WelcomeGoogleContinueButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) 0.97f else 1.0f,
+        animationSpec = spring(dampingRatio = 0.7f, stiffness = 420f),
+        label = "welcomeGoogleScale",
+    )
+
+    Box(
+        modifier = modifier
+            .height(54.dp)
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .shadow(
+                elevation = 14.dp,
+                shape = CircleShape,
+                ambientColor = WelcomeCrimson.copy(alpha = 0.35f),
+                spotColor = WelcomeCrimson.copy(alpha = 0.35f),
+            )
+            .clip(CircleShape)
+            .background(
+                Brush.horizontalGradient(
+                    colors = listOf(Color(0xFFFA2446), WelcomeCrimsonDeep),
+                ),
+            )
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick,
+            )
+            .padding(horizontal = 20.dp),
+    ) {
+        Row(
+            modifier = Modifier.align(Alignment.Center),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
+                    .clip(CircleShape)
+                    .background(Color.White),
+                contentAlignment = Alignment.Center,
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_google_logo),
+                    contentDescription = "Google",
+                    modifier = Modifier.size(17.dp),
+                )
+            }
+            Spacer(modifier = Modifier.size(11.dp))
+            Text(
+                text = "Continue with Google",
+                color = Color.White,
+                fontFamily = SFProDisplay,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+    }
+}
+
+@Composable
+private fun WelcomeSkipSignInButton(
+    isLightBackground: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) 0.97f else 1.0f,
+        animationSpec = spring(dampingRatio = 0.7f, stiffness = 420f),
+        label = "welcomeSkipScale",
+    )
+    val bgColor = if (isLightBackground) Color(0x14000000) else Color.White.copy(alpha = 0.12f)
+    val borderColor = if (isLightBackground) Color(0x22000000) else Color.White.copy(alpha = 0.22f)
+    val textColor = if (isLightBackground) WelcomeDarkInk else Color.White
+
+    Box(
+        modifier = modifier
+            .height(50.dp)
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .clip(CircleShape)
+            .background(bgColor)
+            .border(0.8.dp, borderColor, CircleShape)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick,
+            )
+            .padding(horizontal = 20.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = "Skip Sign In",
+            color = textColor,
+            fontFamily = SFProDisplay,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold,
+        )
+    }
+}
+
+@Composable
 private fun WelcomeSystemBarsSync(isLightBackground: Boolean) {
     val view = LocalView.current
     val activity = remember(view) { view.context.findWelcomeActivity() }
@@ -703,16 +941,20 @@ private tailrec fun Context.findWelcomeActivity(): Activity? = when (this) {
  */
 @Composable
 private fun WelcomeTypingHeadline(
+    targetText: String,
     textColor: Color,
     cursorColor: Color,
     modifier: Modifier = Modifier,
+    fontSize: androidx.compose.ui.unit.TextUnit = 31.sp,
+    lineHeight: androidx.compose.ui.unit.TextUnit = 38.sp,
+    maxLines: Int = 1,
 ) {
-    var charCount by remember { mutableIntStateOf(0) }
-    var cursorActive by remember { mutableStateOf(true) }
-    var isActivelyStroking by remember { mutableStateOf(false) }
-    var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
+    var charCount by remember(targetText) { mutableIntStateOf(0) }
+    var cursorActive by remember(targetText) { mutableStateOf(true) }
+    var isActivelyStroking by remember(targetText) { mutableStateOf(false) }
+    var textLayoutResult by remember(targetText) { mutableStateOf<TextLayoutResult?>(null) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(targetText) {
         while (true) {
             cursorActive = true
             isActivelyStroking = false
@@ -720,8 +962,8 @@ private fun WelcomeTypingHeadline(
             delay(WELCOME_CURSOR_INITIAL_CUE_MS)
 
             isActivelyStroking = true
-            for (i in 0 until WELCOME_HEADLINE_TEXT.length) {
-                delay(welcomeTypingKeystrokeDelayMs(WELCOME_HEADLINE_TEXT, i))
+            for (i in 0 until targetText.length) {
+                delay(welcomeTypingKeystrokeDelayMs(targetText, i))
                 charCount = i + 1
             }
             isActivelyStroking = false
@@ -734,9 +976,9 @@ private fun WelcomeTypingHeadline(
             delay(WELCOME_CURSOR_REAPPEAR_CUE_MS)
 
             isActivelyStroking = true
-            for (deleted in 0 until WELCOME_HEADLINE_TEXT.length) {
+            for (deleted in 0 until targetText.length) {
                 delay(welcomeBackspaceDelayMs(deleted))
-                charCount = (WELCOME_HEADLINE_TEXT.length - 1 - deleted).coerceAtLeast(0)
+                charCount = (targetText.length - 1 - deleted).coerceAtLeast(0)
             }
             isActivelyStroking = false
 
@@ -760,21 +1002,22 @@ private fun WelcomeTypingHeadline(
         label = "cursorVisibilityAlpha",
     )
 
-    val visibleText = WELCOME_HEADLINE_TEXT.take(charCount)
+    val visibleText = targetText.take(charCount)
 
     Box(
         modifier = modifier.heightIn(min = 44.dp),
-        contentAlignment = Alignment.CenterStart,
+        contentAlignment = if (maxLines > 1) Alignment.TopStart else Alignment.CenterStart,
     ) {
         Text(
             text = visibleText,
             color = textColor,
             fontFamily = SFProDisplay,
-            fontSize = 31.sp,
+            fontSize = fontSize,
+            lineHeight = lineHeight,
             fontWeight = FontWeight.W800,
             letterSpacing = (-0.6).sp,
-            maxLines = 1,
-            softWrap = false,
+            maxLines = maxLines,
+            softWrap = maxLines > 1,
             onTextLayout = { textLayoutResult = it },
             modifier = Modifier.drawWithContent {
                 drawContent()
@@ -784,19 +1027,28 @@ private fun WelcomeTypingHeadline(
                 if (effectiveAlpha > 0.01f) {
                     val caretWidth = 2.6.dp.toPx()
                     val caretGap = 3.dp.toPx()
+                    val layout = textLayoutResult
+                    val lastLine = ((layout?.lineCount ?: 1) - 1).coerceAtLeast(0)
                     val caretX = if (visibleText.isEmpty()) {
                         1.dp.toPx()
+                    } else if (layout != null && layout.lineCount > 0) {
+                        layout.getLineRight(lastLine) + caretGap
                     } else {
-                        val layout = textLayoutResult
-                        val rightEdge = if (layout != null && layout.lineCount > 0) {
-                            layout.getLineRight(layout.lineCount - 1)
-                        } else {
-                            size.width
-                        }
-                        rightEdge + caretGap
+                        size.width + caretGap
                     }
-                    val caretHeight = minOf(29.dp.toPx(), size.height * 0.78f)
-                    val caretTop = (size.height - caretHeight) / 2f + 1.dp.toPx()
+                    val lineTop = if (layout != null && layout.lineCount > 0 && visibleText.isNotEmpty()) {
+                        layout.getLineTop(lastLine)
+                    } else {
+                        0f
+                    }
+                    val lineBottom = if (layout != null && layout.lineCount > 0 && visibleText.isNotEmpty()) {
+                        layout.getLineBottom(lastLine)
+                    } else {
+                        lineHeight.toPx()
+                    }
+                    val lineH = (lineBottom - lineTop).coerceAtLeast(24.dp.toPx())
+                    val caretHeight = minOf(28.dp.toPx(), lineH * 0.78f)
+                    val caretTop = lineTop + (lineH - caretHeight) / 2f
                     drawRoundRect(
                         color = cursorColor.copy(alpha = effectiveAlpha),
                         topLeft = Offset(caretX, caretTop),

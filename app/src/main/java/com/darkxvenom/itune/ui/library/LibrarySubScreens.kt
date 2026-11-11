@@ -49,6 +49,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -60,6 +61,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -69,6 +72,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.backend.MusicPlayerState
+import com.darkxvenom.itune.data.auth.GoogleAuthStore
+import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.library.LibraryDestination
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.library.SavedCollectionEntry
@@ -85,6 +90,7 @@ import com.darkxvenom.itune.data.model.toMusicTrack
 import com.darkxvenom.itune.ui.artist.ITubeDetailScreen
 import com.darkxvenom.itune.ui.artist.components.BottomFadeScrim
 import com.darkxvenom.itune.ui.artist.components.CoverPlaceholder
+import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
 import com.darkxvenom.itune.ui.artist.components.FrostedTopBar
 import com.darkxvenom.itune.ui.artist.components.FrostedTopBarTitlePill
 import com.darkxvenom.itune.ui.artist.components.LocalAppBackdrop
@@ -656,17 +662,29 @@ fun LibrarySongsScreen(
     onBack: () -> Unit,
     onExploreClick: () -> Unit,
 ) {
+    val context = LocalContext.current
     val likedMeta by LibraryStore.likedSongs.collectAsStateWithLifecycle()
     val recentMeta by LibraryStore.recentSongs.collectAsStateWithLifecycle()
+    val ytmHistoryMeta by LibraryStore.ytmHistorySongs.collectAsStateWithLifecycle()
+    val ytAccount by GoogleAuthStore.state.collectAsStateWithLifecycle()
     val favoriteIds = MusicPlayerState.favoriteIds
     val query = controller.searchQuery
     val sort = controller.songSort
 
-    val mergedMeta = remember(likedMeta, recentMeta) {
+    LaunchedEffect(ytAccount.isSignedIn) {
+        if (ytAccount.isSignedIn) {
+            runCatching { YouTubeLibrarySyncManager.syncHistory(context) }
+        }
+    }
+
+    val mergedMeta = remember(ytmHistoryMeta, recentMeta, likedMeta, ytAccount.isSignedIn) {
         val seen = LinkedHashSet<String>()
         buildList {
-            likedMeta.forEach { if (seen.add(it.id)) add(it) }
+            if (ytAccount.isSignedIn) {
+                ytmHistoryMeta.forEach { if (seen.add(it.id)) add(it) }
+            }
             recentMeta.forEach { if (seen.add(it.id)) add(it) }
+            likedMeta.forEach { if (seen.add(it.id)) add(it) }
         }
     }
     val allSongs = remember(mergedMeta, sort) {
@@ -728,7 +746,11 @@ fun LibrarySongsScreen(
                 Column(Modifier.padding(horizontal = 16.dp)) {
                     LibraryScreenTitleHeader(
                         title = "Songs",
-                        countText = "${allSongs.size} Library Tracks",
+                        countText = if (ytAccount.isSignedIn) {
+                            "${allSongs.size} Tracks • YouTube Music History"
+                        } else {
+                            "${allSongs.size} Library Tracks"
+                        },
                     )
                     LibraryFilterBar(
                         visible = controller.searchOpen,
@@ -927,14 +949,23 @@ private fun LibraryCollectionGlassCard(
             }
 
             Spacer(Modifier.height(10.dp))
-            Text(
-                text = entry.title,
-                color = Color.White,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (entry.isExplicit) {
+                    ExplicitBadge(
+                        color = Color.White.copy(alpha = 0.78f),
+                        modifier = Modifier.padding(end = 5.dp),
+                    )
+                }
+                Text(
+                    text = entry.title,
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+            }
             val fallbackType = when (entry.type) {
                 BrowseType.PLAYLIST -> "Playlist"
                 BrowseType.ALBUM -> "Album"
@@ -1284,6 +1315,23 @@ private fun UserPlaylistGlassCard(
                     cornerRadius = 14.dp,
                     modifier = Modifier.fillMaxSize(),
                 )
+                if (playlist.isGoogleAccount) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(6.dp)
+                            .size(22.dp)
+                            .clip(CircleShape)
+                            .background(Color.White),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        androidx.compose.foundation.Image(
+                            painter = painterResource(R.drawable.ic_google_logo),
+                            contentDescription = "Google Account Playlist",
+                            modifier = Modifier.size(14.dp),
+                        )
+                    }
+                }
                 IconButton(
                     onClick = onMenuClick,
                     modifier = Modifier
@@ -1304,16 +1352,30 @@ private fun UserPlaylistGlassCard(
             }
 
             Spacer(Modifier.height(10.dp))
+            val hasExplicit = remember(playlist.songs) { playlist.songs.any { it.isExplicit } }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (hasExplicit) {
+                    ExplicitBadge(
+                        color = Color.White.copy(alpha = 0.78f),
+                        modifier = Modifier.padding(end = 5.dp),
+                    )
+                }
+                Text(
+                    text = playlist.name,
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+            }
+            val subText = buildString {
+                append(if (playlist.songs.size == 1) "1 song" else "${playlist.songs.size} songs")
+                if (playlist.isGoogleAccount) append(" • Google")
+            }
             Text(
-                text = playlist.name,
-                color = Color.White,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = if (playlist.songs.size == 1) "1 song" else "${playlist.songs.size} songs",
+                text = subText,
                 color = Color.White.copy(alpha = 0.62f),
                 fontSize = 12.sp,
                 maxLines = 1,

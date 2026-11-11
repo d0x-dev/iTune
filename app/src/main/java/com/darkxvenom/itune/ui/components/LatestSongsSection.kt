@@ -29,11 +29,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.darkxvenom.itune.backend.MusicTrack
+import com.darkxvenom.itune.backend.highQualityThumbnail
 import com.darkxvenom.itune.data.model.Track
+import com.darkxvenom.itune.ui.artist.components.ExplicitBadge as VectorExplicitBadge
 import com.darkxvenom.itune.ui.theme.AppleDivider
 import com.darkxvenom.itune.ui.theme.AppleExplicitBadge
 import com.darkxvenom.itune.ui.theme.AppleTextPrimary
@@ -43,9 +48,13 @@ import com.darkxvenom.itune.ui.theme.AppleTextSecondary
 fun LatestSongsSection(
     songColumns: List<List<Track>>,
     modifier: Modifier = Modifier,
+    personalizedTracks: List<MusicTrack> = emptyList(),
+    sectionTitle: String = "Latest Songs",
     onSeeAllClick: () -> Unit = {},
     onTrackClick: (Track) -> Unit = {},
-    onTrackMenuClick: (Track) -> Unit = {}
+    onTrackMenuClick: (Track) -> Unit = {},
+    onPersonalizedTrackClick: (MusicTrack) -> Unit = {},
+    onPersonalizedTrackMenuClick: (MusicTrack) -> Unit = {},
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         // Section Header with Chevron >
@@ -57,7 +66,7 @@ fun LatestSongsSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Latest Songs",
+                text = sectionTitle,
                 color = AppleTextPrimary,
                 fontSize = 21.sp,
                 fontWeight = FontWeight.Bold,
@@ -66,7 +75,7 @@ fun LatestSongsSection(
             Spacer(modifier = Modifier.width(4.dp))
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = "See all latest songs",
+                contentDescription = "See all songs",
                 tint = AppleTextSecondary,
                 modifier = Modifier.size(20.dp)
             )
@@ -74,19 +83,116 @@ fun LatestSongsSection(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        // Horizontal Paging of 4-track Columns
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(songColumns) { columnTracks ->
-                SongColumn(
-                    tracks = columnTracks,
-                    onTrackClick = onTrackClick,
-                    onTrackMenuClick = onTrackMenuClick
+        if (personalizedTracks.isNotEmpty()) {
+            val liveColumns = personalizedTracks.chunked(4)
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(liveColumns) { columnTracks ->
+                    Column(modifier = Modifier.width(310.dp)) {
+                        columnTracks.forEachIndexed { index, track ->
+                            LiveSongRowItem(
+                                track = track,
+                                onClick = { onPersonalizedTrackClick(track) },
+                                onMenuClick = { onPersonalizedTrackMenuClick(track) }
+                            )
+                            if (index < columnTracks.size - 1) {
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(start = 60.dp),
+                                    thickness = 0.5.dp,
+                                    color = AppleDivider
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            // Horizontal Paging of 4-track Columns
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(songColumns) { columnTracks ->
+                    SongColumn(
+                        tracks = columnTracks,
+                        onTrackClick = onTrackClick,
+                        onTrackMenuClick = onTrackMenuClick
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LiveSongRowItem(
+    track: MusicTrack,
+    onClick: () -> Unit,
+    onMenuClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl,
+            contentDescription = track.title,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color(0xFF1C1C1E))
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (track.isExplicit) {
+                    VectorExplicitBadge(
+                        color = AppleTextSecondary,
+                        modifier = Modifier.padding(end = 6.dp)
+                    )
+                }
+                Text(
+                    text = track.title,
+                    color = AppleTextPrimary,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false)
                 )
             }
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = track.artists,
+                color = AppleTextSecondary,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Normal,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        IconButton(
+            onClick = onMenuClick,
+            modifier = Modifier.size(36.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.MoreHoriz,
+                contentDescription = "Options for ${track.title}",
+                tint = AppleTextSecondary,
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }

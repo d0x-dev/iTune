@@ -94,6 +94,7 @@ import com.darkxvenom.itune.backend.MusicBackend
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.data.artist.ArtistRepository
 import com.darkxvenom.itune.data.artist.ArtistStateStore
+import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.library.LibraryDestination
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.library.SavedCollectionEntry
@@ -535,6 +536,8 @@ class LibraryHostController internal constructor(
                 subtitle = entry.subtitle,
                 thumbnailUrl = entry.thumbnailUrl,
                 type = entry.type,
+                isExplicit = entry.isExplicit,
+                playlistId = entry.playlistId,
             )
             showToast("Removed ${entry.title} from Library")
         }
@@ -1206,7 +1209,7 @@ fun LibraryScreenOverlayPopups(
                                 val pid = controller.activeUserPlaylistId
                                 controller.clearMenus()
                                 if (pid != null) {
-                                    LibraryStore.removeSongFromUserPlaylist(controller.context, pid, song.videoId)
+                                    YouTubeLibrarySyncManager.removeSongFromPlaylist(controller.context, pid, song.videoId)
                                     controller.showToast("Removed \"${song.title}\" from playlist")
                                 }
                             }
@@ -1401,7 +1404,7 @@ fun LibraryScreenOverlayPopups(
                         onRename = onOpenRename,
                         onDelete = {
                             controller.clearMenus()
-                            LibraryStore.deleteUserPlaylist(controller.context, pl.id)
+                            YouTubeLibrarySyncManager.deletePlaylist(controller.context, pl.id)
                             controller.showToast("Deleted \"${pl.name}\"")
                         },
                     )
@@ -1540,7 +1543,7 @@ fun LibraryScreenOverlayPopups(
                                 iconTint = LibraryCrimsonAccent,
                                 onClick = {
                                     controller.clearMenus()
-                                    LibraryStore.deleteUserPlaylist(controller.context, pl.id)
+                                    YouTubeLibrarySyncManager.deletePlaylist(controller.context, pl.id)
                                     controller.pop()
                                     controller.showToast("Deleted \"${pl.name}\"")
                                 },

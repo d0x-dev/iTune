@@ -810,6 +810,7 @@ fun SearchScreen(
                                         cacheKey = "${track.id}_search_song_48",
                                         isCurrent = MusicPlayerState.currentTrack?.id == track.id,
                                         isPlaying = MusicPlayerState.isPlaying,
+                                        isExplicit = track.isExplicit,
                                         showBottomDivider = selectedFilter == SearchResultFilter.ALL || idx < songsList.lastIndex,
                                         onClick = {
                                             focusManager.clearFocus(force = true)
@@ -896,6 +897,7 @@ fun SearchScreen(
                                         subtitle = album.author,
                                         thumbnailUrl = album.thumbnailUrl,
                                         cacheKey = "${album.id}_search_album_48",
+                                        isExplicit = album.isExplicit,
                                         showBottomDivider = selectedFilter == SearchResultFilter.ALL || idx < albumsList.lastIndex,
                                         onClick = {
                                             openCollectionDetail(
@@ -942,6 +944,7 @@ fun SearchScreen(
                                         subtitle = playlist.author,
                                         thumbnailUrl = playlist.thumbnailUrl,
                                         cacheKey = "${playlist.id}_search_playlist_48",
+                                        isExplicit = playlist.isExplicit,
                                         showBottomDivider = idx < playlistsList.lastIndex,
                                         onClick = {
                                             openCollectionDetail(

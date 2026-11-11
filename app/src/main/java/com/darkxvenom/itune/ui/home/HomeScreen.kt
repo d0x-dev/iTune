@@ -49,9 +49,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
+import com.darkxvenom.itune.data.auth.GoogleAuthStore
+import com.darkxvenom.itune.data.auth.WebSessionMode
+import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
+import com.darkxvenom.itune.ui.auth.GoogleLoginScreen
+import com.darkxvenom.itune.ui.settings.ContinueWithGoogleRedCard
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.library.NewReleasesRepository
+import com.darkxvenom.itune.data.library.PersonalizedHomeRepository
 import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.model.BrowseCategoryItem
 import com.darkxvenom.itune.data.model.BrowseType
@@ -137,12 +143,32 @@ fun HomeScreen(
         SettingsStore.localeSignature()
     }
     val featuredPlaylists by NewReleasesRepository.featuredPlaylists.collectAsStateWithLifecycle()
-    LaunchedEffect(localeSignature) {
+    val personalizedQuickPicks by PersonalizedHomeRepository.quickPickTracks.collectAsStateWithLifecycle()
+    val personalizedPlaylists by PersonalizedHomeRepository.recommendedPlaylists.collectAsStateWithLifecycle()
+    val ytAccountState by GoogleAuthStore.state.collectAsStateWithLifecycle()
+    LaunchedEffect(localeSignature, ytAccountState.isSignedIn) {
         NewReleasesRepository.ensureLoaded()
+        if (ytAccountState.isSignedIn) {
+            PersonalizedHomeRepository.refreshIfSignedIn()
+        }
     }
-    val homePlaylists = remember(featuredPlaylists, settingsState.hideExplicitContent) {
+    val visibleQuickPicks = remember(personalizedQuickPicks, settingsState.hideExplicitContent) {
+        ContentLocaleCatalog.filterVisible(
+            personalizedQuickPicks,
+            settingsState.hideExplicitContent,
+        ) { it.isExplicit }
+    }
+    val allHomePlaylistRefs = remember(personalizedPlaylists, featuredPlaylists, ytAccountState.isSignedIn) {
+        val merged = if (ytAccountState.isSignedIn && personalizedPlaylists.isNotEmpty()) {
+            (personalizedPlaylists + featuredPlaylists).distinctBy { it.id }
+        } else {
+            featuredPlaylists
+        }
+        merged
+    }
+    val homePlaylists = remember(allHomePlaylistRefs, settingsState.hideExplicitContent) {
         val visible = ContentLocaleCatalog.filterVisible(
-            featuredPlaylists,
+            allHomePlaylistRefs,
             settingsState.hideExplicitContent,
         ) { it.isExplicit }
         if (visible.isEmpty()) {
@@ -154,7 +180,7 @@ fun HomeScreen(
                     id = ref.id,
                     title = ref.title,
                     curator = ref.author.ifBlank { "Apple Music" },
-                    description = ref.year ?: if (ref.trackCount > 0) "${ref.trackCount} tracks" else "Regional Featured",
+                    description = ref.year ?: if (ref.trackCount > 0) "${ref.trackCount} tracks" else "Recommended",
                     gradientColors = gradients[index % gradients.size],
                 )
             }
@@ -173,6 +199,7 @@ fun HomeScreen(
     var showIShare by remember { mutableStateOf(false) }
     var showDynamicIsland by remember { mutableStateOf(false) }
     var showAvatarDialog by remember { mutableStateOf(false) }
+    var showHomeGoogleLogin by remember { mutableStateOf(false) }
 
     // Retain visited screens in memory so navigation is 100% instantaneous with zero GC or layout stutter
     var hasVisitedBrowse by remember { mutableStateOf(false) }
@@ -224,6 +251,10 @@ fun HomeScreen(
     LaunchedEffect(overscrollState.offset.value) {
         if (listState.firstVisibleItemIndex == 0 && overscrollState.offset.value > 25f && !isRefreshing) {
             isRefreshing = true
+            NewReleasesRepository.refresh()
+            if (ytAccountState.isSignedIn) {
+                YouTubeLibrarySyncManager.launchFullSync(context)
+            }
         }
     }
 
@@ -320,6 +351,18 @@ fun HomeScreen(
                     )
                 }
 
+                // Red Continue with Google card shown at top below TopHeaderBar when signed out; hides once logged in
+                if (!ytAccountState.isSignedIn) {
+                    item(key = "home_google_connect_card") {
+                        ContinueWithGoogleRedCard(
+                            title = "Continue with Google",
+                            subtitle = "Sign in to sync YouTube Music playlists, likes, artists & history",
+                            onClick = { showHomeGoogleLogin = true },
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                        )
+                    }
+                }
+
                 // Featured Hero Carousel (Today's Hits / New Album)
                 item(key = "featured_hero") {
                     FeaturedHeroCarousel(
@@ -339,8 +382,18 @@ fun HomeScreen(
                 item(key = "latest_songs") {
                     LatestSongsSection(
                         songColumns = MusicRepository.latestSongColumns,
+                        personalizedTracks = if (ytAccountState.isSignedIn) visibleQuickPicks else emptyList(),
+                        sectionTitle = if (ytAccountState.isSignedIn && visibleQuickPicks.isNotEmpty()) {
+                            "Picked for You"
+                        } else {
+                            "Latest Songs"
+                        },
                         onSeeAllClick = {
-                            Toast.makeText(context, "Browsing all latest songs", Toast.LENGTH_SHORT).show()
+                            if (ytAccountState.isSignedIn && visibleQuickPicks.isNotEmpty()) {
+                                MusicPlayerState.play(visibleQuickPicks.first(), visibleQuickPicks)
+                            } else {
+                                Toast.makeText(context, "Browsing all latest songs", Toast.LENGTH_SHORT).show()
+                            }
                         },
                         onTrackClick = { track ->
                             currentTrack = track
@@ -350,13 +403,21 @@ fun HomeScreen(
                                     id = track.id,
                                     title = track.title,
                                     artists = track.artist,
-                                    durationSec = 210L
+                                    durationSec = 210L,
+                                    isExplicit = track.isExplicit,
                                 )
                             )
                             Toast.makeText(context, "Now playing: ${track.title}", Toast.LENGTH_SHORT).show()
                         },
                         onTrackMenuClick = { track ->
                             Toast.makeText(context, "Options for ${track.title}", Toast.LENGTH_SHORT).show()
+                        },
+                        onPersonalizedTrackClick = { liveTrack ->
+                            MusicPlayerState.play(liveTrack, visibleQuickPicks)
+                        },
+                        onPersonalizedTrackMenuClick = { liveTrack ->
+                            MusicPlayerState.playNext(liveTrack)
+                            Toast.makeText(context, "Playing \"${liveTrack.title}\" next", Toast.LENGTH_SHORT).show()
                         }
                     )
                 }
@@ -365,12 +426,12 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(28.dp))
                 }
 
-                // Curated Playlists (Spatial Audio & Essentials)
+                // Curated Playlists (Spatial Audio & Essentials / Personalized Mixes)
                 item(key = "curated_playlists") {
                     CuratedPlaylistsSection(
                         playlists = homePlaylists,
                         onPlaylistClick = { playlist ->
-                            val liveRef = featuredPlaylists.firstOrNull { it.id == playlist.id }
+                            val liveRef = allHomePlaylistRefs.firstOrNull { it.id == playlist.id }
                             if (liveRef != null) {
                                 MusicPlayerState.pendingArtistNav = PendingArtistNav(
                                     browseId = liveRef.id,
@@ -658,6 +719,7 @@ fun HomeScreen(
             !showSettings &&
             !showIShare &&
             !showDynamicIsland &&
+            !showHomeGoogleLogin &&
             !(currentScreen == AppScreen.LIBRARY && libraryHostController.isOpen) &&
             !(currentScreen == AppScreen.BROWSE && activeMoodCategory != null)
         ) {
@@ -1013,6 +1075,23 @@ fun HomeScreen(
                     }
                 }
             }
+        }
+
+        AnimatedVisibility(
+            visible = showHomeGoogleLogin,
+            enter = fadeIn(tween(200)) + slideInHorizontally(tween(260)) { it / 6 },
+            exit = fadeOut(tween(180)) + slideOutHorizontally(tween(220)) { it / 6 },
+        ) {
+            GoogleLoginScreen(
+                mode = WebSessionMode.SIGN_IN,
+                initialCookie = null,
+                onSignedIn = {
+                    showHomeGoogleLogin = false
+                    Toast.makeText(context, "Google account connected", Toast.LENGTH_SHORT).show()
+                },
+                onClose = { showHomeGoogleLogin = false },
+                modifier = Modifier.fillMaxSize(),
+            )
         }
     }
 }

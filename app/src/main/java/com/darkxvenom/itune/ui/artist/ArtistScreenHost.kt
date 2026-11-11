@@ -313,10 +313,12 @@ class ArtistHostController internal constructor(
                                 description = page.description ?: existing.description,
                                 subscriberCountText = page.subscriberCountText,
                                 monthlyListenerCount = page.monthlyListenerCount,
-                                subscription = page.subscription ?: SubscriptionState(
+                                subscription = (page.subscription ?: SubscriptionState(
                                     channelId = browseId,
-                                    subscribed = ArtistStateStore.isSubscribed(browseId),
-                                ),
+                                    subscribed = false,
+                                )).let { sub ->
+                                    sub.copy(subscribed = sub.subscribed || ArtistStateStore.isSubscribed(browseId))
+                                },
                                 radio = page.radio,
                                 shuffle = page.shuffle,
                             )
@@ -362,10 +364,12 @@ class ArtistHostController internal constructor(
                                 continuation = songPage.continuation,
                                 suggestedSongs = songPage.suggested,
                                 description = songPage.description ?: existing.description,
-                                library = songPage.library ?: LibraryState(
+                                library = (songPage.library ?: LibraryState(
                                     playlistId = browseId,
-                                    saved = ArtistStateStore.isReleaseSaved(browseId),
-                                ),
+                                    saved = false,
+                                )).let { lib ->
+                                    lib.copy(saved = lib.saved || ArtistStateStore.isReleaseSaved(browseId))
+                                },
                             )
                         }
                         var nextToken = songPage.continuation
@@ -609,6 +613,7 @@ class ArtistHostController internal constructor(
 
     fun toggleReleaseSaved(browseId: String) {
         val page = detailStack.lastOrNull { it.browseId == browseId }
+        val isExplicit = (page?.songs as? UiState.Success)?.data?.any { it.isExplicit == true } == true
         val saved = ArtistStateStore.toggleReleaseSaved(
             context = context,
             browseId = browseId,
@@ -616,9 +621,12 @@ class ArtistHostController internal constructor(
             subtitle = page?.subtitle ?: "",
             thumbnailUrl = page?.thumbnailUrl,
             type = page?.type ?: BrowseType.OTHER,
+            isExplicit = isExplicit,
+            playlistId = page?.library?.playlistId,
         )
         replacePage(browseId) { existing ->
-            existing.copy(library = LibraryState(browseId, saved))
+            val updatedLib = existing.library?.copy(saved = saved) ?: LibraryState(browseId, saved)
+            existing.copy(library = updatedLib)
         }
     }
 

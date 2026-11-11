@@ -57,6 +57,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.backend.NewReleaseAlbum
 import com.darkxvenom.itune.backend.ReleaseType
+import com.darkxvenom.itune.data.auth.GoogleAuthStore
+import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.library.NewReleasesRepository
@@ -122,6 +124,9 @@ fun LibraryScreen(
         if (listState.firstVisibleItemIndex == 0 && overscrollState.offset.value > 25f && !isRefreshing) {
             isRefreshing = true
             NewReleasesRepository.refresh()
+            if (GoogleAuthStore.isSignedIn) {
+                YouTubeLibrarySyncManager.launchFullSync(context)
+            }
         }
     }
 

@@ -86,6 +86,7 @@ import com.darkxvenom.itune.backend.highQualityThumbnail
 import com.darkxvenom.itune.data.artist.ArtistStateStore
 import com.darkxvenom.itune.data.library.SavedSongMetadata
 import com.darkxvenom.itune.data.model.BrowseType
+import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
 import com.darkxvenom.itune.ui.components.AnimatedEqualizer
 import com.darkxvenom.itune.ui.library.AppleSheetAddToPlaylistContent
 import com.darkxvenom.itune.ui.library.AppleSheetCreatePlaylistContent
@@ -146,6 +147,7 @@ internal fun SearchUnifiedRow(
     onMoreClick: (anchorCenterWindow: Offset) -> Unit,
     isCurrent: Boolean = false,
     isPlaying: Boolean = false,
+    isExplicit: Boolean = false,
     showBottomDivider: Boolean = true,
     modifier: Modifier = Modifier
 ) {
@@ -194,14 +196,23 @@ internal fun SearchUnifiedRow(
             Spacer(modifier = Modifier.width(14.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    fontSize = 15.5.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = if (isCurrent) Color(0xFFFA2D48) else AppleTextPrimary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (isExplicit) {
+                        ExplicitBadge(
+                            color = if (isCurrent) Color(0xFFFA2D48) else Color(0xFF9E9EA6),
+                            modifier = Modifier.padding(end = 6.dp)
+                        )
+                    }
+                    Text(
+                        text = title,
+                        fontSize = 15.5.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = if (isCurrent) Color(0xFFFA2D48) else AppleTextPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
+                }
                 if (subtitle.isNotBlank()) {
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
@@ -657,6 +668,8 @@ internal fun AppleSearchMorePopup(
                                                     subtitle = target.item.author,
                                                     thumbnailUrl = target.item.thumbnailUrl,
                                                     type = if (target.item.isAlbum) BrowseType.ALBUM else BrowseType.PLAYLIST,
+                                                    isExplicit = target.item.isExplicit,
+                                                    playlistId = target.item.watchPlaylistId,
                                                 )
                                                 Toast.makeText(
                                                     context,

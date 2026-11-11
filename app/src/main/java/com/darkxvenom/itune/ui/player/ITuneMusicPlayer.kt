@@ -139,6 +139,7 @@ import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.highQualityThumbnail
 import com.darkxvenom.itune.ishare.IShareSyncManager
+import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
 import com.darkxvenom.itune.ui.components.AnimatedEqualizer
 import com.darkxvenom.itune.ui.components.WavySlider
 import kotlinx.coroutines.delay
@@ -580,20 +581,33 @@ fun ITuneMusicPlayer(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = track.title,
-                    style = TextStyle(
-                        fontFamily = SFProDisplay,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = curTitleFontSize,
-                        lineHeight = curTitleLineHeight,
-                        letterSpacing = lerpSp((-0.2).sp, (-0.3).sp, panelProgress)
-                    ),
-                    color = Color.White,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.basicMarquee()
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    if (track.isExplicit) {
+                        ExplicitBadge(
+                            color = Color.White.copy(alpha = 0.80f),
+                            modifier = Modifier.padding(end = 6.dp)
+                        )
+                    }
+                    Text(
+                        text = track.title,
+                        style = TextStyle(
+                            fontFamily = SFProDisplay,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = curTitleFontSize,
+                            lineHeight = curTitleLineHeight,
+                            letterSpacing = lerpSp((-0.2).sp, (-0.3).sp, panelProgress)
+                        ),
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .weight(1f, fill = false)
+                            .basicMarquee()
+                    )
+                }
                 Spacer(Modifier.height(lerpDp(lerpDp(1.dp, 3.dp, sp), 2.dp, panelProgress)))
                 Text(
                     text = track.artists,
@@ -1401,19 +1415,28 @@ private fun InPlayerQueueContent(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = currentTrack.title,
-                        style = TextStyle(
-                            fontFamily = SFProDisplay,
-                            fontWeight = FontWeight.W700,
-                            fontSize = 15.sp,
-                            lineHeight = 18.sp,
-                            letterSpacing = (-0.3).sp
-                        ),
-                        color = Color.White,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (currentTrack.isExplicit) {
+                            ExplicitBadge(
+                                color = Color.White.copy(alpha = 0.80f),
+                                modifier = Modifier.padding(end = 5.dp)
+                            )
+                        }
+                        Text(
+                            text = currentTrack.title,
+                            style = TextStyle(
+                                fontFamily = SFProDisplay,
+                                fontWeight = FontWeight.W700,
+                                fontSize = 15.sp,
+                                lineHeight = 18.sp,
+                                letterSpacing = (-0.3).sp
+                            ),
+                            color = Color.White,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false)
+                        )
+                    }
                     Spacer(Modifier.height(2.dp))
                     Text(
                         text = currentTrack.artists,
@@ -1530,19 +1553,28 @@ private fun InPlayerQueueContent(
                         modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text(
-                            text = item.title,
-                            style = TextStyle(
-                                fontFamily = SFProDisplay,
-                                fontWeight = FontWeight.W600,
-                                fontSize = 15.sp,
-                                lineHeight = 18.sp,
-                                letterSpacing = (-0.3).sp
-                            ),
-                            color = Color.White,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (item.isExplicit) {
+                                ExplicitBadge(
+                                    color = Color.White.copy(alpha = 0.78f),
+                                    modifier = Modifier.padding(end = 5.dp)
+                                )
+                            }
+                            Text(
+                                text = item.title,
+                                style = TextStyle(
+                                    fontFamily = SFProDisplay,
+                                    fontWeight = FontWeight.W600,
+                                    fontSize = 15.sp,
+                                    lineHeight = 18.sp,
+                                    letterSpacing = (-0.3).sp
+                                ),
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f, fill = false)
+                            )
+                        }
                         Spacer(Modifier.height(2.dp))
                         Text(
                             text = item.artists,
