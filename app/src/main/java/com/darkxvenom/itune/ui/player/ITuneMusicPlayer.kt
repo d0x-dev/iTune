@@ -1624,7 +1624,8 @@ internal fun IosCapsuleSeekSlider(
                     }
                 }
             }
-            .pointerInput(duration) {
+            .pointerInput(duration, enabled) {
+                if (!enabled) return@pointerInput
                 detectHorizontalDragGestures(
                     onDragStart = { offset ->
                         val w = size.width.toFloat()
