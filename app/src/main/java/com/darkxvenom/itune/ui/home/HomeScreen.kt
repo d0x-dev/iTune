@@ -390,7 +390,7 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(28.dp))
                 }
 
-                // Live Radio Stations
+                // Live Radio Stations (Top 10: Favorites prioritized first, then unliked online stations)
                 item(key = "live_radio") {
                     RadioStationsSection(
                         stations = MusicRepository.radioStations,
