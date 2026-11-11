@@ -250,12 +250,14 @@ fun BrowseScreen(
                 }
             }
 
-            // 2-Column AirBeats Moods & Moments Cards with Pre-set 3D Artwork Images
-            items(categories, key = { it.id }) { item ->
-                BrowseCategoryCardItem(
-                    item = item,
-                    onClick = {
-                        onCategoryClick(item)
+            when (selectedSegment) {
+                BrowseSegment.CATALOG -> {
+                    // Localized Moods & Moments cards
+                    items(categories, key = { "mood_${it.id}" }) { item ->
+                        BrowseCategoryCardItem(
+                            item = item,
+                            onClick = { onCategoryClick(item) },
+                        )
                     }
                 )
             }
