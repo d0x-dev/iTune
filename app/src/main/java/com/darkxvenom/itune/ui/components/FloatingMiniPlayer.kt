@@ -126,15 +126,15 @@ fun FloatingMiniPlayer(
             } else if (currentTrack != null) {
                 AlbumArtwork(
                     type = currentTrack.coverType,
-                    size = 38.dp,
-                    cornerRadius = 6.dp
+                    size = 36.dp,
+                    cornerRadius = 10.dp
                 )
             } else {
                 Box(
                     modifier = Modifier
-                        .size(38.dp)
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(Color(0xFF2C2C2E)),
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color.White.copy(alpha = 0.10f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
