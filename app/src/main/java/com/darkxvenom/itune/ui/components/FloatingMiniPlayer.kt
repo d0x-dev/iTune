@@ -75,7 +75,7 @@ fun FloatingMiniPlayer(
                 ambientColor = Color.Black,
                 spotColor = Color.Black
             )
-            .clip(RoundedCornerShape(16.dp))
+            .clip(CircleShape)
             .background(AppleGlassMiniPlayer)
             .border(0.75.dp, AppleGlassBorder, RoundedCornerShape(16.dp))
             .clickable { onClick() }
