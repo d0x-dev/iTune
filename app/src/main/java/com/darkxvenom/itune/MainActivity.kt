@@ -43,12 +43,32 @@ class MainActivity : ComponentActivity() {
         AudioDownloader.ensureChannel(this)
         enableEdgeToEdge()
         setContent {
+            val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
             ITuneTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = AppleOledBlack
                 ) {
-                    HomeScreen()
+                    AnimatedContent(
+                        targetState = settingsState.welcomeCompleted,
+                        transitionSpec = {
+                            (fadeIn(tween(580)) + scaleIn(initialScale = 0.96f, animationSpec = tween(580)))
+                                .togetherWith(fadeOut(tween(460)) + scaleOut(targetScale = 1.05f, animationSpec = tween(460)))
+                        },
+                        label = "welcomeToHomeTransition",
+                    ) { completed ->
+                        if (completed) {
+                            HomeScreen()
+                        } else {
+                            WelcomeScreen(
+                                initialName = "",
+                                onContinue = { enteredName ->
+                                    SettingsStore.completeWelcome(this@MainActivity, enteredName)
+                                    IShareSyncManager.setDisplayName(enteredName)
+                                },
+                            )
+                        }
+                    }
                 }
             }
         }
