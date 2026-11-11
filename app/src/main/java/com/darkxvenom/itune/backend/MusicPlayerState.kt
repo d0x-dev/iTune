@@ -754,6 +754,7 @@ object MusicPlayerState : Player.Listener {
         }
         queue.addAll(tracks)
         savePlaybackSession(sync = false)
+        if (!isApplyingRemoteSync) IShareSyncManager.onLocalPlaybackEvent()
     }
 
     fun close() {
@@ -796,6 +797,12 @@ object MusicPlayerState : Player.Listener {
         exoPlayer?.setPlaybackSpeed(preHoldSpeed)
     }
 
+    @OptIn(UnstableApi::class)
+    override fun onAudioSessionIdChanged(audioSessionId: Int) {
+        AudioEngineManager.attachAudioSession(audioSessionId, isPlaying)
+    }
+
+    @OptIn(UnstableApi::class)
     override fun onIsPlayingChanged(isPlaying: Boolean) {
         this.isPlaying = isPlaying
         if (isPlaying) {
