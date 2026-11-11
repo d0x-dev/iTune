@@ -91,21 +91,113 @@ fun RadioStationsSection(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            items(stations, key = { it.id }) { station ->
-                RadioStationCard(station = station, onClick = { onStationClick(station) })
+        when {
+            isLoading && stations.isEmpty() -> {
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    items(3) {
+                        Column(modifier = Modifier.width(220.dp)) {
+                            ShimmerBox(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(120.dp)
+                                    .clip(RoundedCornerShape(14.dp)),
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            ShimmerBox(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.72f)
+                                    .height(12.dp)
+                                    .clip(RoundedCornerShape(6.dp)),
+                            )
+                        }
+                    }
+                }
+            }
+
+            stations.isEmpty() -> {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color(0xFF1C1C1E))
+                        .border(0.75.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(14.dp))
+                        .clickable(onClick = onHeaderClick)
+                        .padding(horizontal = 16.dp, vertical = 18.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Browse Live Online Radio",
+                            color = AppleTextPrimary,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "Tap to select Country & City FM broadcasts",
+                            color = AppleTextSecondary,
+                            fontSize = 12.5.sp,
+                        )
+                    }
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = AppleTextSecondary,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+            }
+
+            else -> {
+                val rowListState = rememberLazyListState()
+                val firstUuid = stations.firstOrNull()?.uuid
+                LaunchedEffect(firstUuid) {
+                    if (rowListState.firstVisibleItemIndex > 0 || rowListState.firstVisibleItemScrollOffset > 0) {
+                        rowListState.scrollToItem(0)
+                    }
+                }
+                LazyRow(
+                    state = rowListState,
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    itemsIndexed(
+                        items = stations,
+                        key = { _, st -> "home_radio_${st.uuid}" },
+                        contentType = { _, _ -> "home_radio_card" },
+                    ) { index, station ->
+                        val gradient = HOME_RADIO_GRADIENTS[index % HOME_RADIO_GRADIENTS.size]
+                        val isCurrent = station.uuid == currentStationUuid
+                        val showSubtitle = station.liveShowOrTagsLabel(
+                            liveMetadataTitle = if (isCurrent) liveMetadataTitle else null,
+                        )
+                        OnlineHomeRadioStationCard(
+                            station = station,
+                            gradient = gradient,
+                            showSubtitle = showSubtitle,
+                            isFavorite = favoriteIds.contains(station.uuid),
+                            onClick = { onStationClick(station) },
+                        )
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun RadioStationCard(
-    station: RadioStation,
+private fun OnlineHomeRadioStationCard(
+    station: OnlineRadioStation,
+    gradient: List<Color>,
+    showSubtitle: String,
+    isFavorite: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
