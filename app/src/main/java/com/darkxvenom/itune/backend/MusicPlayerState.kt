@@ -60,6 +60,7 @@ object MusicPlayerState : Player.Listener {
 
     private var exoPlayer: ExoPlayer? = null
     private var appContext: Context? = null
+    private var simultaneousProcessor: SimultaneousAudioProcessor? = null
     private var progressJob: Job? = null
     private var loadJob: Job? = null
     private var lyricsJob: Job? = null
@@ -67,6 +68,7 @@ object MusicPlayerState : Player.Listener {
     private var resolvingStream = false
     private var restoredPendingStream = false
     private var lastPersistedAtMs = 0L
+    private var isApplyingRemoteSync = false
 
     // ── Observable UI States ──
     var currentTrack by mutableStateOf<MusicTrack?>(null)
