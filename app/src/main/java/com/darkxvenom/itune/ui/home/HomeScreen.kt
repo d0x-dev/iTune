@@ -413,8 +413,12 @@ fun HomeScreen(
                             currentScreen = AppScreen.RADIO
                         },
                         onStationClick = { station ->
-                            Toast.makeText(context, "Tuning into ${station.name}", Toast.LENGTH_SHORT).show()
-                        }
+                            OnlineRadioController.playStation(
+                                station = station,
+                                queue = homeRadioStations,
+                                expandPlayer = true,
+                            )
+                        },
                     )
                 }
 
