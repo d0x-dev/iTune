@@ -679,7 +679,7 @@ fun HomeScreen(
             )
         }
 
-        // Floating Bottom Controls: Mini-Player (ONLY shown when a song is playing) + Navigation Dock
+        // Floating Bottom Controls: Separate FM Radio Mini-Player OR Music Mini-Player + Navigation Dock
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
