@@ -34,7 +34,8 @@ object BrowseMoodsRepository {
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
     fun ensureLoaded() {
-        if (syncedFromNetwork || fetchJob?.isActive == true) return
+        val curSig = SettingsStore.localeSignature()
+        if (syncedLocaleSignature == curSig || fetchJob?.isActive == true) return
         refresh()
     }
 
