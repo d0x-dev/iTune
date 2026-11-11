@@ -102,7 +102,7 @@ fun FloatingMiniPlayer(
                         .size(36.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .background(Color.White.copy(alpha = 0.06f))
-                        .border(0.75.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(6.dp))
+                        .border(0.75.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(10.dp))
                 )
             } else if (realTrack != null && !realTrack.thumbnailUrl.isNullOrBlank()) {
                 Box(
