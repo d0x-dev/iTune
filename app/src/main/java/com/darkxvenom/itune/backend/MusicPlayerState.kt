@@ -597,6 +597,7 @@ object MusicPlayerState : Player.Listener {
                 player.play()
             }
         }
+        if (!isApplyingRemoteSync) IShareSyncManager.onLocalPlaybackEvent()
     }
 
     fun hasNextTrack(): Boolean {
@@ -658,6 +659,7 @@ object MusicPlayerState : Player.Listener {
             exoPlayer?.seekTo(safePos)
         }
         savePlaybackSession(sync = false)
+        if (!isApplyingRemoteSync) IShareSyncManager.onLocalPlaybackEvent()
     }
 
     fun adjustVolume(vol: Float) {
