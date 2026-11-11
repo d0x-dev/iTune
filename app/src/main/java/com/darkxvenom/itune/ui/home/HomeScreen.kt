@@ -123,7 +123,8 @@ enum class AppScreen {
     HOME,
     SEARCH,
     LIBRARY,
-    BROWSE
+    BROWSE,
+    RADIO,
 }
 
 @Composable
