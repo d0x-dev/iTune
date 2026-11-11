@@ -161,6 +161,7 @@ fun FloatingNavBar(
         modifier = modifier
             .fillMaxWidth()
             .navigationBarsPadding()
+            .padding(bottom = 4.dp)
             .height(containerHeight)
             .padding(horizontal = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
