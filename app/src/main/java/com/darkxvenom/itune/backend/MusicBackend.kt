@@ -436,7 +436,9 @@ object MusicBackend {
         fallbackTitle: String = "",
         forceRefresh: Boolean = false,
     ): MoodCategoryPage = withContext(Dispatchers.IO) {
-        val cacheKey = "$browseId|${params.orEmpty()}"
+        val localeSig = SettingsStore.localeSignature()
+        val hideExplicit = SettingsStore.isHideExplicitEnabled()
+        val cacheKey = "$localeSig|$browseId|${params.orEmpty()}"
         if (!forceRefresh) {
             moodCategoryCache[cacheKey]?.let { return@withContext it }
         }
