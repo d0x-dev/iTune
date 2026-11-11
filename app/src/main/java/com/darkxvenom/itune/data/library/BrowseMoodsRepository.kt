@@ -21,7 +21,8 @@ import kotlinx.coroutines.launch
 object BrowseMoodsRepository {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var fetchJob: Job? = null
-    private var syncedFromNetwork = false
+    @Volatile
+    private var syncedLocaleSignature: String? = null
 
     private val _categories = MutableStateFlow(MusicRepository.browseCategories)
     val categories: StateFlow<List<BrowseCategoryItem>> = _categories.asStateFlow()
