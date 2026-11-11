@@ -119,6 +119,7 @@ data class MoodCategoryItem(
     val browseId: String? = null,
     val videoId: String? = null,
     val playlistId: String? = null,
+    val isExplicit: Boolean = false,
 )
 
 @Immutable
