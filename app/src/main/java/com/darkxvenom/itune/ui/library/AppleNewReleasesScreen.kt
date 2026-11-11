@@ -85,11 +85,15 @@ fun AppleNewReleasesScreen(
     hasMiniPlayer: Boolean,
     onBack: () -> Unit,
 ) {
+    val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
+    val localeSignature = remember(settingsState.contentLanguage, settingsState.contentCountry) {
+        SettingsStore.localeSignature()
+    }
     val releases by NewReleasesRepository.releases.collectAsStateWithLifecycle()
     val isLoading by NewReleasesRepository.isLoading.collectAsStateWithLifecycle()
     val errorMessage by NewReleasesRepository.errorMessage.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(localeSignature) {
         NewReleasesRepository.ensureLoaded()
     }
 
