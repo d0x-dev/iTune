@@ -79,7 +79,8 @@ import kotlin.math.abs
 fun BrowseScreen(
     modifier: Modifier = Modifier,
     onCategoryClick: (BrowseCategoryItem) -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    onOpenContentSettings: () -> Unit = onProfileClick,
 ) {
     val context = LocalContext.current
     val gridState = rememberLazyGridState()
