@@ -805,6 +805,7 @@ object MusicPlayerState : Player.Listener {
     @OptIn(UnstableApi::class)
     override fun onIsPlayingChanged(isPlaying: Boolean) {
         this.isPlaying = isPlaying
+        AudioEngineManager.updatePlayingState(isPlaying)
         if (isPlaying) {
             isLoading = false
         } else if (!restoredPendingStream && !resolvingStream) {
