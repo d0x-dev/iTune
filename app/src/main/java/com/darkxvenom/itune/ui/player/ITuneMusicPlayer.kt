@@ -2024,58 +2024,33 @@ private fun ShuffleRepeatSplitCapsule(
         else -> R.drawable.repeat
     }
 
-    // Offscreen compositing lets BlendMode.Clear punch an exact transparent break through both fill and glass border.
-    Box(
-        modifier = modifier
-            .width(96.dp)
-            .height(34.dp)
-            .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-            .drawWithContent {
-                drawContent()
-                val gapPx = 1.5.dp.toPx()
-                drawRect(
-                    color = Color.Transparent,
-                    topLeft = Offset((size.width - gapPx) / 2f, 0f),
-                    size = androidx.compose.ui.geometry.Size(gapPx, size.height),
-                    blendMode = BlendMode.Clear
-                )
-            }
-            .clip(CircleShape)
-            .border(
-                width = 0.6.dp,
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = 0.24f),
-                        Color.White.copy(alpha = 0.10f)
-                    )
-                ),
-                shape = CircleShape
-            )
+    AppleSplitCapsuleFrame(
+        capsuleWidth = 96.dp,
+        capsuleHeight = 34.dp,
+        modifier = modifier,
     ) {
-        Row(modifier = Modifier.fillMaxSize()) {
-            SplitCapsuleSegment(
-                iconRes = if (shuffleEnabled) R.drawable.shuffle_on else R.drawable.shuffle,
-                contentDescription = "Shuffle",
-                active = shuffleEnabled,
-                opticalOffsetStart = 2.dp,
-                opticalOffsetEnd = 0.dp,
-                onClick = onToggleShuffle,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-            )
-            SplitCapsuleSegment(
-                iconRes = repeatIcon,
-                contentDescription = "Repeat",
-                active = repeatMode != Player.REPEAT_MODE_OFF,
-                opticalOffsetStart = 0.dp,
-                opticalOffsetEnd = 2.dp,
-                onClick = onToggleRepeat,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-            )
-        }
+        SplitCapsuleSegment(
+            iconRes = if (shuffleEnabled) R.drawable.shuffle_on else R.drawable.shuffle,
+            contentDescription = "Shuffle",
+            active = shuffleEnabled,
+            opticalOffsetStart = 2.dp,
+            opticalOffsetEnd = 0.dp,
+            onClick = onToggleShuffle,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        )
+        SplitCapsuleSegment(
+            iconRes = repeatIcon,
+            contentDescription = "Repeat",
+            active = repeatMode != Player.REPEAT_MODE_OFF,
+            opticalOffsetStart = 0.dp,
+            opticalOffsetEnd = 2.dp,
+            onClick = onToggleRepeat,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        )
     }
 }
 
