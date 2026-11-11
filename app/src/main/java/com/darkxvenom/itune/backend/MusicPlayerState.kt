@@ -468,6 +468,7 @@ object MusicPlayerState : Player.Listener {
                     player.playWhenReady = autoPlay
                     if (autoPlay) player.play() else player.pause()
                     resolvingStream = false
+                    if (!isApplyingRemoteSync) IShareSyncManager.onLocalPlaybackEvent()
                 }
             } catch (e: Exception) {
                 if (e is kotlinx.coroutines.CancellationException) throw e
