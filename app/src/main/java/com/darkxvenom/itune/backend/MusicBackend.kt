@@ -172,7 +172,7 @@ object MusicBackend {
             UnifiedSearchResults(
                 songs = songsJob.await(),
                 artists = artistsJob.await(),
-                albums = albumsJob.await(),
+                albums = albumsJob.await().filter { !hideExplicit || !it.isExplicit },
                 playlists = mergedPlaylists
             )
         }
