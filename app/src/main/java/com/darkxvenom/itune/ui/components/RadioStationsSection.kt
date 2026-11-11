@@ -78,14 +78,14 @@ fun RadioStationsSection(
                 color = AppleTextPrimary,
                 fontSize = 21.sp,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = (-0.3).sp
+                letterSpacing = (-0.3).sp,
             )
             Spacer(modifier = Modifier.width(4.dp))
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
                 tint = AppleTextSecondary,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
         }
 
