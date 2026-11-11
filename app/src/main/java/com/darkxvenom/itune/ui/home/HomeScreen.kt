@@ -286,6 +286,14 @@ fun HomeScreen(
         LaunchedEffect(MusicPlayerState.expanded) {
             sheetMorph.animateTo(MusicPlayerState.expanded)
         }
+        LaunchedEffect(onlineRadioState.playerExpanded) {
+            radioSheetMorph.animateTo(onlineRadioState.playerExpanded)
+        }
+        LaunchedEffect(onlineRadioState.hasActiveSession) {
+            if (!onlineRadioState.hasActiveSession) {
+                radioSheetMorph.progress.snapTo(0f)
+            }
+        }
         // SCREEN 1: HOME SCREEN (Retained in GPU layer, 0ms switch time)
         Box(
             modifier = Modifier
