@@ -218,11 +218,11 @@ private fun OnlineHomeRadioStationCard(
             if (isFavorite) {
                 Box(
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xCC000000))
-                        .padding(horizontal = 8.dp, vertical = 3.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .align(Alignment.TopStart)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color(0x66000000))
+                        .padding(horizontal = 7.dp, vertical = 3.dp),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Icon(
                         imageVector = Icons.Default.GraphicEq,
