@@ -267,7 +267,9 @@ private fun OnlineHomeRadioStationCard(
                     color = Color.White,
                     fontSize = 17.5.sp,
                     fontWeight = FontWeight.Bold,
-                    letterSpacing = (-0.4).sp
+                    letterSpacing = (-0.4).sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = station.showName,
