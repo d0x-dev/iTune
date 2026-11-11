@@ -61,6 +61,7 @@ import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.library.NewReleasesRepository
 import com.darkxvenom.itune.data.library.SavedCollectionEntry
+import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.model.CARD_ART_PX
 import com.darkxvenom.itune.data.model.LibraryMenuItem
 import com.darkxvenom.itune.data.model.LibraryPinItem
