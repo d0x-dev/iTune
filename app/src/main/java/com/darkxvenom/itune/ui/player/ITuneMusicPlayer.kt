@@ -1891,6 +1891,123 @@ fun FastHoldPill(
 }
 
 /**
+ * Shared Apple frosted glass capsule split cleanly down the center by an offscreen BlendMode.Clear slit.
+ */
+@Composable
+private fun AppleSplitCapsuleFrame(
+    capsuleWidth: Dp,
+    capsuleHeight: Dp = 36.dp,
+    modifier: Modifier = Modifier,
+    content: @Composable androidx.compose.foundation.layout.RowScope.() -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .width(capsuleWidth)
+            .height(capsuleHeight)
+            .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+            .drawWithContent {
+                drawContent()
+                val gapPx = 1.5.dp.toPx()
+                drawRect(
+                    color = Color.Transparent,
+                    topLeft = Offset((size.width - gapPx) / 2f, 0f),
+                    size = androidx.compose.ui.geometry.Size(gapPx, size.height),
+                    blendMode = BlendMode.Clear
+                )
+            }
+            .clip(CircleShape)
+            .border(
+                width = 0.6.dp,
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.24f),
+                        Color.White.copy(alpha = 0.10f)
+                    )
+                ),
+                shape = CircleShape
+            )
+    ) {
+        Row(modifier = Modifier.fillMaxSize(), content = content)
+    }
+}
+
+/**
+ * Apple Music Airbuds + iShare split liquid-glass capsule centered at the bottom of the full player.
+ * Shows only the crisp iShare icon when inactive, or icon + connected count ("1", "2", "3", ...) when live.
+ */
+@Composable
+private fun AirbudsIShareSplitCapsule(
+    @DrawableRes outputIconRes: Int,
+    isOutputPopupOpen: Boolean,
+    ishareActive: Boolean,
+    participantCount: Int,
+    isPopupOpen: Boolean,
+    onAirbudsClick: () -> Unit,
+    onAirbudsPositioned: (LayoutCoordinates) -> Unit,
+    onIShareClick: () -> Unit,
+    onISharePositioned: (LayoutCoordinates) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val capsuleWidth by animateDpAsState(
+        targetValue = if (ishareActive) 122.dp else 104.dp,
+        animationSpec = spring(dampingRatio = 0.85f, stiffness = 360f),
+        label = "ishareCapsuleWidth",
+    )
+    AppleSplitCapsuleFrame(
+        capsuleWidth = capsuleWidth,
+        capsuleHeight = 36.dp,
+        modifier = modifier,
+    ) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .onGloballyPositioned(onAirbudsPositioned)
+                .background(Color.White.copy(alpha = if (isOutputPopupOpen) 0.28f else 0.18f))
+                .clickable(onClick = onAirbudsClick)
+                .padding(start = 2.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Image(
+                painter = painterResource(outputIconRes),
+                contentDescription = "Audio Output",
+                colorFilter = ColorFilter.tint(Color.White.copy(alpha = if (isOutputPopupOpen) 1f else 0.92f)),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.size(if (outputIconRes == R.drawable.ic_airbuds) 27.dp else 21.dp),
+            )
+        }
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .onGloballyPositioned(onISharePositioned)
+                .background(Color.White.copy(alpha = if (ishareActive || isPopupOpen) 0.28f else 0.18f))
+                .clickable(onClick = onIShareClick)
+                .padding(end = 2.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_ishare),
+                contentDescription = "iShare",
+                colorFilter = ColorFilter.tint(Color.White.copy(alpha = if (ishareActive || isPopupOpen) 1f else 0.88f)),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.size(21.dp),
+            )
+            if (ishareActive && participantCount > 0) {
+                Spacer(Modifier.width(4.dp))
+                Text(
+                    text = participantCount.toString(),
+                    color = Color.White,
+                    fontSize = 13.5.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
+    }
+}
+
+/**
  * Apple-styled frosted Shuffle / Repeat pill split cleanly down the center by a vertical break.
  */
 @Composable
