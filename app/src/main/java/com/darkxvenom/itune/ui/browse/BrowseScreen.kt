@@ -107,8 +107,22 @@ fun BrowseScreen(
     val categories by BrowseMoodsRepository.categories.collectAsStateWithLifecycle()
     val genres by BrowseMoodsRepository.genres.collectAsStateWithLifecycle()
     val moodsSyncing by BrowseMoodsRepository.isRefreshing.collectAsStateWithLifecycle()
+    val releases by NewReleasesRepository.releases.collectAsStateWithLifecycle()
+    val featuredPlaylists by NewReleasesRepository.featuredPlaylists.collectAsStateWithLifecycle()
+    val releasesLoading by NewReleasesRepository.isLoading.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
+    val visiblePlaylists = remember(featuredPlaylists, settingsState.hideExplicitContent) {
+        ContentLocaleCatalog.filterVisible(featuredPlaylists, settingsState.hideExplicitContent) {
+            it.isExplicit
+        }
+    }
+    val visibleReleases = remember(releases, settingsState.hideExplicitContent) {
+        ContentLocaleCatalog.filterVisible(releases, settingsState.hideExplicitContent) {
+            it.isExplicit
+        }
+    }
+
+    LaunchedEffect(localeSignature) {
         BrowseMoodsRepository.ensureLoaded()
     }
 
