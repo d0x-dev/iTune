@@ -272,11 +272,11 @@ private fun OnlineHomeRadioStationCard(
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = station.showName,
+                    text = showSubtitle,
                     color = Color.White.copy(alpha = 0.85f),
                     fontSize = 12.sp,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }
