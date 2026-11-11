@@ -1675,7 +1675,7 @@ internal fun IosCapsuleSeekSlider(
                     .fillMaxWidth(animatedFraction)
                     .height(trackHeight)
                     .clip(trackShape)
-                    .background(Color.White.copy(alpha = 0.85f))
+                    .background(Color.White.copy(alpha = if (enabled) 0.85f else 0.45f))
             )
         }
     }
