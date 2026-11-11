@@ -884,6 +884,7 @@ fun HomeScreen(
                     currentScreen = if (currentScreen == AppScreen.SEARCH && !wasArtistOpen && !wasSettingsOpen) {
                         when (selectedTab) {
                             NavTab.NEW -> AppScreen.BROWSE
+                            NavTab.RADIO -> AppScreen.RADIO
                             NavTab.LIBRARY -> AppScreen.LIBRARY
                             else -> AppScreen.HOME
                         }
