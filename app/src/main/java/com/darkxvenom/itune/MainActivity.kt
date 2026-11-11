@@ -74,8 +74,25 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        DynamicIslandForegroundTracker.setForeground(true)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        DynamicIslandForegroundTracker.setForeground(true)
+        DynamicIslandStore.syncServiceState(this)
+    }
+
     override fun onStop() {
         super.onStop()
+        DynamicIslandForegroundTracker.setForeground(false)
         MusicPlayerState.savePlaybackSession(sync = true)
     }
 
