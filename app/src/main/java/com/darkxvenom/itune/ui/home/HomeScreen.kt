@@ -249,6 +249,13 @@ fun HomeScreen(
 
     var rootBoxCoords by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var miniPlayerSlotTopPx by remember { mutableFloatStateOf(0f) }
+    var radioMiniPlayerSlotTopPx by remember { mutableFloatStateOf(0f) }
+
+    val showRadioMiniPlayer = onlineRadioState.hasActiveSession && (
+        onlineRadioState.isPlaying ||
+            onlineRadioState.isBuffering ||
+            (!MusicPlayerState.isPlaying && (currentScreen == AppScreen.RADIO || MusicPlayerState.currentTrack == null))
+        )
 
     BoxWithConstraints(
         modifier = modifier
@@ -256,6 +263,7 @@ fun HomeScreen(
             .background(com.darkxvenom.itune.ui.theme.AppleOledBlack)
             .onGloballyPositioned { rootBoxCoords = it }
     ) {
+        val hasMiniPlayer = showRadioMiniPlayer || MusicPlayerState.currentTrack != null
         val density = LocalDensity.current
         val screenWidthDp = maxWidth
         val screenHeightDp = maxHeight
