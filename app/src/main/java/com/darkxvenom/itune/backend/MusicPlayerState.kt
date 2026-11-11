@@ -382,6 +382,7 @@ object MusicPlayerState : Player.Listener {
         expandPlayer: Boolean = true,
         autoPlay: Boolean = true,
     ) {
+        com.darkxvenom.itune.radio.OnlineRadioController.pauseIfPlaying()
         if (expandPlayer) expanded = true
         loadJob?.cancel()
 
