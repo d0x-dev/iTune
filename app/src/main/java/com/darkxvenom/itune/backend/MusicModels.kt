@@ -96,6 +96,12 @@ data class MoodAndMomentRef(
     val params: String? = null,
 )
 
+@Immutable
+data class MoodsAndGenresCatalog(
+    val moods: List<MoodAndMomentRef> = emptyList(),
+    val genres: List<MoodAndMomentRef> = emptyList(),
+)
+
 enum class MoodCategoryItemType {
     PLAYLIST,
     ALBUM,
