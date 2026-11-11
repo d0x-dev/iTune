@@ -305,9 +305,9 @@ fun SearchScreen(
         }
     }
 
-    val topResult = remember(submittedQuery, searchResults) {
-        if (submittedQuery.isBlank() || searchResults.isEmpty) null
-        else pickTopResult(submittedQuery, searchResults)
+    val topResult = remember(submittedQuery, visibleResults) {
+        if (submittedQuery.isBlank() || visibleResults.isEmpty) null
+        else pickTopResult(submittedQuery, visibleResults)
     }
 
     val isScrolled by remember {
