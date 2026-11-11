@@ -700,7 +700,36 @@ object MusicPlayerState : Player.Listener {
                 }
             } else {
                 savePlaybackSession(sync = false)
+                if (!isApplyingRemoteSync) IShareSyncManager.onLocalPlaybackEvent()
             }
+        }
+    }
+
+    /** Removes an upcoming item relative to [queueIndex] or matching [songId]. */
+    fun removeUpcomingFromIShare(upcomingIndex: Int, songId: String?) {
+        val matchIdx = if (!songId.isNullOrBlank()) {
+            val upcomingMatch = ((queueIndex + 1).coerceAtLeast(0) until queue.size)
+                .firstOrNull { queue[it].id == songId }
+            upcomingMatch ?: queue.indexOfFirst { it.id == songId }
+        } else if (upcomingIndex >= 0) {
+            val candidate = queueIndex + 1 + upcomingIndex
+            if (candidate in queue.indices) candidate else upcomingIndex.takeIf { it in queue.indices } ?: -1
+        } else -1
+        if (matchIdx in queue.indices) {
+            removeFromQueue(matchIdx)
+        }
+    }
+
+    /** Moves an upcoming queue track cleanly (0-based relative to current track + 1). */
+    fun moveUpcomingTrack(fromUpcoming: Int, toUpcoming: Int) {
+        val base = (queueIndex + 1).coerceAtLeast(0)
+        val fromIdx = base + fromUpcoming
+        val toIdx = base + toUpcoming
+        if (fromIdx in base until queue.size && toIdx in base until queue.size && fromIdx != toIdx) {
+            val item = queue.removeAt(fromIdx)
+            queue.add(toIdx, item)
+            savePlaybackSession(sync = false)
+            if (!isApplyingRemoteSync) IShareSyncManager.onLocalPlaybackEvent()
         }
     }
 
