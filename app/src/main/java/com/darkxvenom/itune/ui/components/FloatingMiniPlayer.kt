@@ -77,7 +77,15 @@ fun FloatingMiniPlayer(
             )
             .clip(CircleShape)
             .background(AppleGlassMiniPlayer)
-            .border(0.75.dp, AppleGlassBorder, RoundedCornerShape(16.dp))
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.06f),
+                        Color.Transparent
+                    )
+                )
+            )
+            .border(0.75.dp, AppleGlassBorder, CircleShape)
             .clickable { onClick() }
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
