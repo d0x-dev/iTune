@@ -27,6 +27,9 @@ object NewReleasesRepository {
     private val _releases = MutableStateFlow<List<NewReleaseAlbum>>(emptyList())
     val releases: StateFlow<List<NewReleaseAlbum>> = _releases.asStateFlow()
 
+    private val _featuredPlaylists = MutableStateFlow<List<MusicPlaylistRef>>(emptyList())
+    val featuredPlaylists: StateFlow<List<MusicPlaylistRef>> = _featuredPlaylists.asStateFlow()
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
