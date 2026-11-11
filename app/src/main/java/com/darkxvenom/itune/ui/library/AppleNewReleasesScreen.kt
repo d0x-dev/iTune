@@ -55,6 +55,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.darkxvenom.itune.backend.NewReleaseAlbum
 import com.darkxvenom.itune.backend.ReleaseType
+import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.LibraryDestination
 import com.darkxvenom.itune.data.library.NewReleasesRepository
 import com.darkxvenom.itune.data.model.BrowseType
