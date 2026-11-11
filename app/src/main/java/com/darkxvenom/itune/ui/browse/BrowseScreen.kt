@@ -441,6 +441,17 @@ private fun BrowseCategoryCardItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val accentPair = remember(item.id) {
+        val palettes = listOf(
+            Color(0xFF2B2440) to Color(0xFF1A1626),
+            Color(0xFF3E1F2A) to Color(0xFF1F1217),
+            Color(0xFF19323C) to Color(0xFF121C22),
+            Color(0xFF33291A) to Color(0xFF1B1610),
+            Color(0xFF1D3326) to Color(0xFF111C16),
+        )
+        palettes[abs(item.id.hashCode()) % palettes.size]
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
