@@ -14,8 +14,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /**
- * Syncs AirBeats' 12 live "Moods & moments" items (`FEmusic_moods_and_genres`) onto the
- * existing 12 pre-configured artwork images from [MusicRepository.browseCategories].
+ * Syncs live "Moods & moments" and regional "Genres" (`FEmusic_moods_and_genres`)
+ * for the active Content Language (`hl`) and Content Country (`gl`), refreshing automatically
+ * whenever the user changes locale preferences in Settings.
  */
 object BrowseMoodsRepository {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
