@@ -413,6 +413,24 @@ object MusicPlayerState : Player.Listener {
         // Pre-warm thumbnail in Coil cache with ultra-high quality
         appContext?.let { ctx -> prewarmTrackThumbnail(ctx, track) }
 
+        if (newQueue != null && newQueue !== queue) {
+            val snapshot = newQueue.toList()
+            queue.clear()
+            queue.addAll(snapshot)
+            val idx = queue.indexOfFirst { it.id == track.id }
+            queueIndex = if (idx >= 0) idx else 0
+        } else {
+            val idx = queue.indexOfFirst { it.id == track.id }
+            if (idx >= 0) {
+                queueIndex = idx
+            } else {
+                queue.add(track)
+                queueIndex = queue.lastIndex
+            }
+        }
+        savePlaybackSession(sync = false)
+        if (!isApplyingRemoteSync) IShareSyncManager.onLocalPlaybackEvent()
+
         loadJob = scope.launch {
             try {
                 if (newQueue != null && newQueue !== queue) {
