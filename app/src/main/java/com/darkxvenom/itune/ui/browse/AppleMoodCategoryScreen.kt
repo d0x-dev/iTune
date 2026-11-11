@@ -67,6 +67,8 @@ import com.darkxvenom.itune.backend.MoodCategoryItem
 import com.darkxvenom.itune.backend.MoodCategoryItemType
 import com.darkxvenom.itune.backend.MoodCategoryPage
 import com.darkxvenom.itune.backend.highQualityThumbnail
+import com.darkxvenom.itune.data.library.ContentLocaleCatalog
+import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.model.BrowseCategoryItem
 import com.darkxvenom.itune.data.model.BrowseType
 import com.darkxvenom.itune.data.model.CARD_ART_PX
