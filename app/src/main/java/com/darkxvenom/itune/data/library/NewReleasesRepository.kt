@@ -14,8 +14,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /**
- * Shared live repository for AirBeats New Releases (`FEmusic_new_releases_albums`),
- * shared between Library "Recently Added" and the full-screen Apple New Releases destination.
+ * Shared live repository for regional New Releases (`FEmusic_new_releases_albums`) and
+ * localized Explore Playlists, driven by active Content Language (`hl`), Content Country (`gl`),
+ * and Hide Explicit Content preference.
  */
 object NewReleasesRepository {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
