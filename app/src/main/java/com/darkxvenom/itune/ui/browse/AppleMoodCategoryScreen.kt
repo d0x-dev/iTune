@@ -159,8 +159,14 @@ fun AppleMoodCategoryScreen(
     }
 
     val query = searchQuery.trim()
-    val filteredSections = remember(page, query) {
-        val sections = page?.sections.orEmpty()
+    val filteredSections = remember(page, query, settingsState.hideExplicitContent) {
+        val sections = page?.sections.orEmpty().mapNotNull { sec ->
+            val explicitFiltered = ContentLocaleCatalog.filterVisible(
+                sec.items,
+                settingsState.hideExplicitContent,
+            ) { it.isExplicit }
+            if (explicitFiltered.isEmpty()) null else sec.copy(items = explicitFiltered)
+        }
         if (query.isEmpty()) sections
         else sections.mapNotNull { sec ->
             val matching = sec.items.filter {
