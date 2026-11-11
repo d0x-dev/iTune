@@ -33,6 +33,7 @@ class Haptics internal constructor(context: Context) {
     private val app = context.applicationContext
 
     fun play(haptic: Haptic) {
+        if (!SettingsStore.isHapticsEnabled()) return
         HapticDevice.of(app)?.play(haptic)
     }
 }
