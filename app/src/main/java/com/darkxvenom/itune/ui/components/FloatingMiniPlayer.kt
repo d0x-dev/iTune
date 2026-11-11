@@ -161,11 +161,11 @@ fun FloatingMiniPlayer(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    if (realTrack != null || currentTrack != null) {
+                    if (hasActiveTrack) {
                         Text(
                             text = realTrack?.artists ?: currentTrack?.artist.orEmpty(),
                             color = AppleTextSecondary,
-                            fontSize = 12.sp,
+                            fontSize = 11.5.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
