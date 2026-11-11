@@ -850,7 +850,7 @@ fun HomeScreen(
                     AppScreen.LIBRARY -> NavTab.LIBRARY
                     AppScreen.SEARCH -> null
                 },
-                isSearchActive = currentScreen == AppScreen.SEARCH && !artistHostController.isOpen,
+                isSearchActive = currentScreen == AppScreen.SEARCH && !artistHostController.isOpen && !showSettings && !showIShare && !showDynamicIsland,
                 onTabSelected = { tab ->
                     val wasLibraryRootTap =
                         tab == NavTab.LIBRARY &&
