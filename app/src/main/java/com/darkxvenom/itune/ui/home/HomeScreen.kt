@@ -313,8 +313,9 @@ fun HomeScreen(
                 // Top Bar with ic_itune_waves and Apple Memoji Avatar
                 item(key = "top_header") {
                     TopHeaderBar(
+                        displayName = settingsState.displayName,
                         onProfileClick = {
-                            showAvatarDialog = true
+                            showSettings = true
                         }
                     )
                 }
