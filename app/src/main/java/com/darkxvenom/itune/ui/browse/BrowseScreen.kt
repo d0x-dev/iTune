@@ -491,7 +491,114 @@ private fun BrowseCategoryCardItem(
             ),
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(start = 12.dp, bottom = 9.dp)
+                .padding(start = 12.dp, end = 10.dp, bottom = 9.dp)
+        )
+    }
+}
+
+@Composable
+private fun BrowseMediaGridCard(
+    title: String,
+    subtitle: String,
+    badge: String?,
+    imageUrl: String?,
+    cacheKey: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(Color(0xFF1C1C1E))
+            .border(
+                width = 0.5.dp,
+                color = Color.White.copy(alpha = 0.08f),
+                shape = RoundedCornerShape(14.dp),
+            )
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick,
+            )
+            .padding(bottom = 10.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .clip(RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp))
+                .background(Color(0xFF2C2C2E)),
+        ) {
+            if (!imageUrl.isNullOrBlank()) {
+                val sizedUrl = imageUrl.artworkAt(CARD_ART_PX)
+                AsyncImage(
+                    model = remember(sizedUrl, cacheKey) {
+                        ImageRequest.Builder(context)
+                            .data(sizedUrl)
+                            .memoryCacheKey(cacheKey)
+                            .diskCacheKey(cacheKey)
+                            .diskCachePolicy(CachePolicy.ENABLED)
+                            .crossfade(180)
+                            .build()
+                    },
+                    contentDescription = title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+            if (!badge.isNullOrBlank()) {
+                Text(
+                    text = badge,
+                    color = Color.White,
+                    fontSize = 10.5.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(8.dp)
+                        .clip(RoundedCornerShape(999.dp))
+                        .background(Color.Black.copy(alpha = 0.62f))
+                        .padding(horizontal = 8.dp, vertical = 3.dp),
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = title,
+            color = AppleTextPrimary,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(horizontal = 10.dp),
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = subtitle,
+            color = AppleTextSecondary,
+            fontSize = 12.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(horizontal = 10.dp),
+        )
+    }
+}
+
+@Composable
+private fun BrowseEmptySectionMessage(text: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 56.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = text,
+            color = AppleTextSecondary,
+            fontSize = 14.5.sp,
+            fontWeight = FontWeight.Medium,
         )
     }
 }
