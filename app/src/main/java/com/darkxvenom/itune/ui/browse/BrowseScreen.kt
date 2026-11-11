@@ -124,6 +124,7 @@ fun BrowseScreen(
 
     LaunchedEffect(localeSignature) {
         BrowseMoodsRepository.ensureLoaded()
+        NewReleasesRepository.ensureLoaded()
     }
 
     // ONLY trigger loading when pulling down from the very top of the grid
