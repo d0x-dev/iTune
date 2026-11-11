@@ -204,14 +204,14 @@ private fun OnlineHomeRadioStationCard(
     Column(
         modifier = modifier
             .width(220.dp)
-            .clickable { onClick() }
+            .clickable(onClick = onClick),
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp)
                 .clip(RoundedCornerShape(14.dp))
-                .background(Brush.horizontalGradient(colors = station.backgroundGradient))
+                .background(Brush.horizontalGradient(colors = gradient))
                 .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(14.dp))
                 .padding(14.dp)
         ) {
