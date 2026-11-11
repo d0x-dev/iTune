@@ -470,8 +470,11 @@ fun HomeScreen(
                         activeMoodCategory = item
                     },
                     onProfileClick = {
-                        showAvatarDialog = true
-                    }
+                        showSettings = true
+                    },
+                    onOpenContentSettings = {
+                        showSettings = true
+                    },
                 )
                 activeMoodCategory?.let { category ->
                     BackHandler(
