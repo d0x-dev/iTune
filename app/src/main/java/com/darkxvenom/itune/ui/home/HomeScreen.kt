@@ -855,7 +855,13 @@ fun HomeScreen(
                     val wasLibraryRootTap =
                         tab == NavTab.LIBRARY &&
                             currentScreen == AppScreen.LIBRARY &&
-                            !artistHostController.isOpen
+                            !artistHostController.isOpen &&
+                            !showSettings &&
+                            !showIShare &&
+                            !showDynamicIsland
+                    showDynamicIsland = false
+                    showIShare = false
+                    showSettings = false
                     artistHostController.clearAll()
                     if (wasLibraryRootTap) {
                         libraryHostController.clearAll()
