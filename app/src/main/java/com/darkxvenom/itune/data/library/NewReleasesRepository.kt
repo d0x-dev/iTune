@@ -37,7 +37,10 @@ object NewReleasesRepository {
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
     fun ensureLoaded() {
-        if (_releases.value.isNotEmpty() || fetchJob?.isActive == true) return
+        val curSig = SettingsStore.localeSignature()
+        if ((syncedLocaleSignature == curSig && _releases.value.isNotEmpty()) || fetchJob?.isActive == true) {
+            return
+        }
         refresh()
     }
 
