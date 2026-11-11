@@ -570,7 +570,25 @@ fun HomeScreen(
                 SearchScreen(
                     onCategoryClick = {},
                     onProfileClick = {
-                        showAvatarDialog = true
+                        showSettings = true
+                    }
+                )
+            }
+        }
+
+        // SCREEN 5: ONLINE FM RADIO SCREEN (Retained)
+        if (hasVisitedRadio || currentScreen == AppScreen.RADIO) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        alpha = if (currentScreen == AppScreen.RADIO) 1f else 0f
+                        translationY = if (currentScreen == AppScreen.RADIO) 0f else 99999f
+                    }
+            ) {
+                OnlineRadioScreen(
+                    onProfileClick = {
+                        showSettings = true
                     }
                 )
             }
