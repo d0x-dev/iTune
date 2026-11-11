@@ -869,12 +869,17 @@ fun HomeScreen(
                     selectedTab = tab
                     currentScreen = when (tab) {
                         NavTab.NEW -> AppScreen.BROWSE
+                        NavTab.RADIO -> AppScreen.RADIO
                         NavTab.LIBRARY -> AppScreen.LIBRARY
                         else -> AppScreen.HOME
                     }
                 },
                 onSearchClick = {
                     val wasArtistOpen = artistHostController.isOpen
+                    val wasSettingsOpen = showSettings || showIShare || showDynamicIsland
+                    showDynamicIsland = false
+                    showIShare = false
+                    showSettings = false
                     artistHostController.clearAll()
                     currentScreen = if (currentScreen == AppScreen.SEARCH && !wasArtistOpen) {
                         when (selectedTab) {
