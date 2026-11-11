@@ -370,7 +370,18 @@ fun HomeScreen(
                     CuratedPlaylistsSection(
                         playlists = homePlaylists,
                         onPlaylistClick = { playlist ->
-                            Toast.makeText(context, "Playlist: ${playlist.title}", Toast.LENGTH_SHORT).show()
+                            val liveRef = featuredPlaylists.firstOrNull { it.id == playlist.id }
+                            if (liveRef != null) {
+                                MusicPlayerState.pendingArtistNav = PendingArtistNav(
+                                    browseId = liveRef.id,
+                                    name = liveRef.title,
+                                    subtitle = liveRef.author.ifBlank { "Featured Playlist" },
+                                    thumbnailUrl = liveRef.thumbnailUrl,
+                                    initialType = BrowseType.PLAYLIST,
+                                )
+                            } else {
+                                Toast.makeText(context, "Playlist: ${playlist.title}", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     )
                 }
