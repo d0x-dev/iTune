@@ -1685,7 +1685,7 @@ internal fun IosCapsuleSeekSlider(
  * iOS-style volume slider with min/max speaker icons and capsule track drag.
  */
 @Composable
-private fun IosVolumeSlider(
+internal fun IosVolumeSlider(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
