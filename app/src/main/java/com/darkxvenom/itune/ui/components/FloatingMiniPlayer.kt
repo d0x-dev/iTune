@@ -141,7 +141,7 @@ fun FloatingMiniPlayer(
                         imageVector = Icons.Default.MusicNote,
                         contentDescription = "No song playing",
                         tint = AppleTextSecondary,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(19.dp)
                     )
                 }
             }
