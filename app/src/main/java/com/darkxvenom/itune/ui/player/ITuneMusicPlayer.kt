@@ -1210,6 +1210,87 @@ fun ITuneMusicPlayer(
             },
             modifier = Modifier.zIndex(80f)
         )
+
+        // ── 9. Apple SharePlay-Styled iShare Liquid Glass Popup (Water-Drop Origin from iShare Capsule) ──
+        AppleISharePopup(
+            visible = isISharePopupOpen,
+            track = track,
+            artUrl = currentArtUrl,
+            anchorCenterXPx = if (ishareAnchorXPx > 0f) {
+                ishareAnchorXPx
+            } else {
+                with(density) { (maxWidth / 2f + 24.dp).toPx() }
+            },
+            anchorCenterYPx = if (ishareAnchorYPx > 0f) {
+                ishareAnchorYPx
+            } else {
+                with(density) { (maxHeight - 52.dp - navBottomDp).toPx() }
+            },
+            statusBarTopDp = statusBarTopDp,
+            navBottomDp = navBottomDp,
+            maxHeightDp = maxHeight,
+            rootCoordsProvider = { rootBoxCoords },
+            onDismiss = {
+                lastLyricsInteractionTime = System.currentTimeMillis()
+                isISharePopupOpen = false
+            },
+            onOpenFullIShare = {
+                isISharePopupOpen = false
+                onOpenIShare()
+            },
+            modifier = Modifier.zIndex(81f)
+        )
+
+        // ── 10. Apple Audio Output Devices Liquid Glass Popup (Water-Drop Origin from Buds/Headphone Capsule) ──
+        AppleAudioOutputPopup(
+            visible = isAudioOutputPopupOpen,
+            artUrl = currentArtUrl,
+            anchorCenterXPx = if (airbudsAnchorXPx > 0f) {
+                airbudsAnchorXPx
+            } else {
+                with(density) { (maxWidth / 2f - 24.dp).toPx() }
+            },
+            anchorCenterYPx = if (airbudsAnchorYPx > 0f) {
+                airbudsAnchorYPx
+            } else {
+                with(density) { (maxHeight - 52.dp - navBottomDp).toPx() }
+            },
+            statusBarTopDp = statusBarTopDp,
+            navBottomDp = navBottomDp,
+            maxHeightDp = maxHeight,
+            rootCoordsProvider = { rootBoxCoords },
+            onDismiss = {
+                lastLyricsInteractionTime = System.currentTimeMillis()
+                isAudioOutputPopupOpen = false
+            },
+            modifier = Modifier.zIndex(82f)
+        )
+
+        // ── 11. Apple Audio Engine & FX Liquid Glass Popup (Water-Drop Origin from iMusic/Dolby/8D Pill) ──
+        AppleAudioEnginePopup(
+            visible = isAudioEnginePopupOpen,
+            track = track,
+            artUrl = currentArtUrl,
+            anchorCenterXPx = if (enginePillAnchorXPx > 0f) {
+                enginePillAnchorXPx
+            } else {
+                with(density) { (maxWidth / 2f).toPx() }
+            },
+            anchorCenterYPx = if (enginePillAnchorYPx > 0f) {
+                enginePillAnchorYPx
+            } else {
+                with(density) { (maxHeight - 250.dp).toPx() }
+            },
+            statusBarTopDp = statusBarTopDp,
+            navBottomDp = navBottomDp,
+            maxHeightDp = maxHeight,
+            rootCoordsProvider = { rootBoxCoords },
+            onDismiss = {
+                lastLyricsInteractionTime = System.currentTimeMillis()
+                isAudioEnginePopupOpen = false
+            },
+            modifier = Modifier.zIndex(83f)
+        )
     }
 }
 
