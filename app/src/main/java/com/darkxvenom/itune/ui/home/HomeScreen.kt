@@ -178,6 +178,8 @@ fun HomeScreen(
     var hasVisitedBrowse by remember { mutableStateOf(false) }
     var hasVisitedLibrary by remember { mutableStateOf(false) }
     var hasVisitedSearch by remember { mutableStateOf(false) }
+    var hasVisitedRadio by remember { mutableStateOf(false) }
+    val onlineRadioState by OnlineRadioController.state.collectAsStateWithLifecycle()
     val artistHostController = rememberArtistHostController()
     val libraryHostController = rememberLibraryHostController()
     var activeMoodCategory by remember { mutableStateOf<BrowseCategoryItem?>(null) }
