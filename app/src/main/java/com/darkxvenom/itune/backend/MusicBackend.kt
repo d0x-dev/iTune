@@ -167,6 +167,7 @@ object MusicBackend {
             val hideExplicit = SettingsStore.isHideExplicitEnabled()
             val mergedPlaylists = (featuredPlaylistsJob.await() + communityPlaylistsJob.await())
                 .distinctBy { it.id }
+                .filter { !hideExplicit || !it.isExplicit }
 
             UnifiedSearchResults(
                 songs = songsJob.await(),
