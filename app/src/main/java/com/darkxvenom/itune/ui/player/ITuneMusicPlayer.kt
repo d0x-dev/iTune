@@ -1088,7 +1088,7 @@ fun ITuneMusicPlayer(
 
                 // 2. Center: Shuffle & Repeat Split Capsule (When panel open) OR Apple Airbuds & iShare Split Capsule (When player in main mode)
                 Box(
-                    modifier = Modifier.width(96.dp),
+                    modifier = Modifier.widthIn(min = 104.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     AnimatedContent(
