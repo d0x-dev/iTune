@@ -82,6 +82,7 @@ import com.darkxvenom.itune.data.artist.ArtistRepository
 import com.darkxvenom.itune.data.artist.ArtistStateStore
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.SearchHistoryStore
+import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.model.BrowseType
 import com.darkxvenom.itune.data.model.PendingArtistNav
 import com.darkxvenom.itune.data.model.SearchCategory
