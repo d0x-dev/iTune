@@ -225,19 +225,36 @@ private fun OnlineHomeRadioStationCard(
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
-                        imageVector = Icons.Default.GraphicEq,
-                        contentDescription = "Live",
-                        tint = AppleMusicRed,
-                        modifier = Modifier.size(12.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "LIVE",
-                        color = Color.White,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold
+                        imageVector = Icons.Rounded.Star,
+                        contentDescription = "Favorite Radio",
+                        tint = Color.White,
+                        modifier = Modifier.size(12.dp),
                     )
                 }
+            }
+
+            // LIVE badge pill
+            Row(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xCC000000))
+                    .padding(horizontal = 8.dp, vertical = 3.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.GraphicEq,
+                    contentDescription = "Live",
+                    tint = AppleMusicRed,
+                    modifier = Modifier.size(12.dp),
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "LIVE",
+                    color = Color.White,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                )
             }
 
             Column(
