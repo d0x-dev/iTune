@@ -923,7 +923,7 @@ fun HomeScreen(
 
             val p = sheetMorph.progress.value.coerceIn(0f, 1f)
             if (p > 0.001f) {
-                val fallbackMiniTopPx = screenHeightPx - with(density) { (88.dp + 6.dp + 58.dp).toPx() }
+                val fallbackMiniTopPx = screenHeightPx - with(density) { (66.dp + 2.dp + 54.dp).toPx() }
                 val targetMiniTopPx = if (miniPlayerSlotTopPx > 0f) miniPlayerSlotTopPx else fallbackMiniTopPx
 
                 val curTopPx = lerpFloat(targetMiniTopPx, 0f, p)
