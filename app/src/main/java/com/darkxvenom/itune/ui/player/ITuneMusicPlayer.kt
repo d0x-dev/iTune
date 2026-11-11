@@ -939,28 +939,50 @@ fun ITuneMusicPlayer(
                             }
                         }
                         .clip(RoundedCornerShape(14.dp))
-                        .background(Color.White.copy(alpha = 0.12f))
-                        .clickable { onLyricsInteraction() }
+                        .background(Color.White.copy(alpha = if (isAudioEnginePopupOpen || !pillBadge.isBrandedITune) 0.18f else 0.12f))
+                        .clickable {
+                            lastLyricsInteractionTime = System.currentTimeMillis()
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            isMoreMenuOpen = false
+                            isISharePopupOpen = false
+                            isAudioOutputPopupOpen = false
+                            isAudioEnginePopupOpen = !isAudioEnginePopupOpen
+                        }
                         .padding(horizontal = 12.dp, vertical = 5.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.graphic_eq),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.85f)),
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Text(
-                            text = buildAnnotatedString {
-                                withStyle(SpanStyle(color = Color(0xFFFF1744))) { append("i") }
-                                withStyle(SpanStyle(color = Color.White)) { append("Music • 128k") }
-                            },
-                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium)
-                        )
+                    AnimatedContent(
+                        targetState = pillBadge,
+                        transitionSpec = { fadeIn(tween(180)) togetherWith fadeOut(tween(140)) },
+                        label = "audioEnginePillContent",
+                    ) { badge ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(badge.iconRes),
+                                contentDescription = badge.text,
+                                colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            if (badge.isBrandedITune) {
+                                Text(
+                                    text = buildAnnotatedString {
+                                        withStyle(SpanStyle(color = Color(0xFFFF1744))) { append("i") }
+                                        withStyle(SpanStyle(color = Color.White)) { append("Music • 128k") }
+                                    },
+                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium)
+                                )
+                            } else {
+                                Text(
+                                    text = badge.text,
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
+                                )
+                            }
+                        }
                     }
                 }
 
