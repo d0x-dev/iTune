@@ -547,7 +547,7 @@ fun HomeScreen(
                     }
                     LibraryScreenOverlayContent(
                         controller = libraryHostController,
-                        hasMiniPlayer = MusicPlayerState.currentTrack != null,
+                        hasMiniPlayer = hasMiniPlayer,
                         onExploreClick = {
                             libraryHostController.clearAll()
                             currentScreen = AppScreen.SEARCH
