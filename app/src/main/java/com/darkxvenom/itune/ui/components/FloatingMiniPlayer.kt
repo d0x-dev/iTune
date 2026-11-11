@@ -195,6 +195,7 @@ fun FloatingMiniPlayer(
 
                 IconButton(
                     onClick = onNextClick,
+                    enabled = hasActiveTrack,
                     modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
