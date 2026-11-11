@@ -273,6 +273,9 @@ fun HomeScreen(
         val sheetMorph = rememberSheetMorph { expanded ->
             MusicPlayerState.expanded = expanded
         }
+        val radioSheetMorph = rememberSheetMorph { expanded ->
+            OnlineRadioController.setPlayerExpanded(expanded)
+        }
 
         SideEffect {
             sheetMorph.travel = screenHeightPx
