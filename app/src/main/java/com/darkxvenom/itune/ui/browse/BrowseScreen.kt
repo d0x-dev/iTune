@@ -132,6 +132,7 @@ fun BrowseScreen(
         if (gridState.firstVisibleItemIndex == 0 && overscrollState.offset.value > 25f && !isRefreshing) {
             isRefreshing = true
             BrowseMoodsRepository.refresh()
+            NewReleasesRepository.refresh()
         }
     }
 
@@ -198,9 +199,48 @@ fun BrowseScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
-                    // Apple Segmented Control: Catalog | Playlists | Instruments
+                    // Active Content Country / Language / Explicit badge pill
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(999.dp))
+                            .background(Color(0xFF1C1C1E))
+                            .border(
+                                width = 0.6.dp,
+                                color = Color.White.copy(alpha = 0.10f),
+                                shape = RoundedCornerShape(999.dp),
+                            )
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                            ) { onOpenContentSettings() }
+                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (settingsState.hideExplicitContent) Color(0xFF34C759)
+                                    else AppleMusicRed,
+                                ),
+                        )
+                        Spacer(modifier = Modifier.width(7.dp))
+                        Text(
+                            text = regionSummary,
+                            color = Color.White.copy(alpha = 0.86f),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Apple Segmented Control: Moods | Playlists | Newly Added
                     BrowseSegmentedControl(
                         selectedSegment = selectedSegment,
                         onSegmentSelected = { segment ->
