@@ -174,6 +174,7 @@ private fun formatTime(ms: Long): String {
 fun ITuneMusicPlayer(
     sheetProgress: Float = 1f,
     onCollapse: () -> Unit = { MusicPlayerState.expanded = false },
+    onOpenIShare: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val track = MusicPlayerState.currentTrack ?: return
