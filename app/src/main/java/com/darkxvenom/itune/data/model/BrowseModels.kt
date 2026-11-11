@@ -12,7 +12,7 @@ data class BrowseCategoryItem(
 )
 
 enum class BrowseSegment(val title: String) {
-    CATALOG("Catalog"),
+    CATALOG("Moods"),
     PLAYLISTS("Playlists"),
-    INSTRUMENTS("Instruments")
+    INSTRUMENTS("Newly Added")
 }
