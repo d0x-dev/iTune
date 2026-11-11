@@ -20,7 +20,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.darkxvenom.itune.backend.AudioDownloader
 import com.darkxvenom.itune.backend.MusicPlayerState
+import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.repository.AvatarManager
+import com.darkxvenom.itune.radio.OnlineRadioController
+import com.darkxvenom.itune.ishare.IShareSyncManager
+import com.darkxvenom.itune.island.DynamicIslandForegroundTracker
+import com.darkxvenom.itune.island.DynamicIslandStore
 import com.darkxvenom.itune.ui.home.HomeScreen
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.ITuneTheme
