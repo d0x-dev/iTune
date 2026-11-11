@@ -97,8 +97,10 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
+        DynamicIslandForegroundTracker.setForeground(false)
         MusicPlayerState.savePlaybackSession(sync = true)
         super.onDestroy()
+        OnlineRadioController.release()
         MusicPlayerState.release()
     }
 }
