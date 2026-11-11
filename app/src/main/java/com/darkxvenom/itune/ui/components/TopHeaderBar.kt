@@ -33,6 +33,7 @@ import com.darkxvenom.itune.ui.theme.AppleTextPrimary
 @Composable
 fun TopHeaderBar(
     modifier: Modifier = Modifier,
+    displayName: String = "",
     onProfileClick: () -> Unit = {}
 ) {
     Row(
