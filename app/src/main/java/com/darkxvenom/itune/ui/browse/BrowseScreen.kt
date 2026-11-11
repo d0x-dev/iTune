@@ -60,6 +60,10 @@ import com.darkxvenom.itune.data.library.NewReleasesRepository
 import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.model.BrowseCategoryItem
 import com.darkxvenom.itune.data.model.BrowseSegment
+import com.darkxvenom.itune.data.model.BrowseType
+import com.darkxvenom.itune.data.model.CARD_ART_PX
+import com.darkxvenom.itune.data.model.PendingArtistNav
+import com.darkxvenom.itune.data.model.artworkAt
 import com.darkxvenom.itune.ui.components.AppleMemojiAvatar
 import com.darkxvenom.itune.ui.components.TopSpringLoadingBar
 import com.darkxvenom.itune.ui.components.rememberSpringOverscrollState
