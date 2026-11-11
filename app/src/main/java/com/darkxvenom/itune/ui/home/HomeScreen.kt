@@ -775,6 +775,11 @@ fun HomeScreen(
                 val maxSwipeDistancePx = with(density) { 145.dp.toPx() }
                 val swipeFraction = (abs(miniPlayerSwipeX.value) / maxSwipeDistancePx).coerceIn(0f, 1f)
 
+                LaunchedEffect(realTrack.id) {
+                    miniPlayerDismissY.snapTo(0f)
+                    miniPlayerSwipeX.snapTo(0f)
+                }
+
                 FloatingMiniPlayer(
                     modifier = Modifier
                         .onGloballyPositioned { coords ->
@@ -834,7 +839,7 @@ fun HomeScreen(
                     }
                 )
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(2.dp))
             }
 
             FloatingNavBar(
