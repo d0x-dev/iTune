@@ -107,8 +107,8 @@ fun FloatingMiniPlayer(
             } else if (realTrack != null && !realTrack.thumbnailUrl.isNullOrBlank()) {
                 Box(
                     modifier = Modifier
-                        .size(38.dp)
-                        .clip(RoundedCornerShape(6.dp))
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(Color(0xFF2C2C2E))
                 ) {
                     val context = LocalContext.current
