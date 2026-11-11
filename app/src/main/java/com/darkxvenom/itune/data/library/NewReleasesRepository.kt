@@ -21,6 +21,8 @@ import kotlinx.coroutines.launch
 object NewReleasesRepository {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var fetchJob: Job? = null
+    @Volatile
+    private var syncedLocaleSignature: String? = null
 
     private val _releases = MutableStateFlow<List<NewReleaseAlbum>>(emptyList())
     val releases: StateFlow<List<NewReleaseAlbum>> = _releases.asStateFlow()
