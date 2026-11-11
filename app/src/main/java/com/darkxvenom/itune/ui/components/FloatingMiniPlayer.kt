@@ -62,6 +62,8 @@ fun FloatingMiniPlayer(
     showEmptyPlaceholder: Boolean = false,
     modifier: Modifier = Modifier
 ) {
+    val hasActiveTrack = realTrack != null || currentTrack != null
+
     Box(
         modifier = modifier
             .fillMaxWidth()
