@@ -433,23 +433,6 @@ object MusicPlayerState : Player.Listener {
 
         loadJob = scope.launch {
             try {
-                if (newQueue != null && newQueue !== queue) {
-                    val snapshot = newQueue.toList()
-                    queue.clear()
-                    queue.addAll(snapshot)
-                    val idx = queue.indexOfFirst { it.id == track.id }
-                    queueIndex = if (idx >= 0) idx else 0
-                } else {
-                    val idx = queue.indexOfFirst { it.id == track.id }
-                    if (idx >= 0) {
-                        queueIndex = idx
-                    } else {
-                        queue.add(track)
-                        queueIndex = queue.lastIndex
-                    }
-                }
-                savePlaybackSession(sync = false)
-
                 // Pre-warm the next 3 queued tracks in original master quality
                 if (appContext != null) {
                     for (step in 1..3) {
@@ -482,8 +465,8 @@ object MusicPlayerState : Player.Listener {
                     player.setMediaItem(mediaItem, safeStartMs)
                     player.prepare()
                     player.setPlaybackSpeed(if (holdingFast) 2f else playbackSpeed)
-                    player.playWhenReady = true
-                    player.play()
+                    player.playWhenReady = autoPlay
+                    if (autoPlay) player.play() else player.pause()
                     resolvingStream = false
                 }
             } catch (e: Exception) {
