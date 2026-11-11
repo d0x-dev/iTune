@@ -486,7 +486,7 @@ fun HomeScreen(
                     }
                     AppleMoodCategoryScreen(
                         category = category,
-                        hasMiniPlayer = MusicPlayerState.currentTrack != null,
+                        hasMiniPlayer = hasMiniPlayer,
                         onBack = { activeMoodCategory = null },
                     )
                 }
@@ -534,7 +534,7 @@ fun HomeScreen(
                         )
                     },
                     onProfileClick = {
-                        showAvatarDialog = true
+                        showSettings = true
                     }
                 )
                 if (libraryHostController.isOpen) {
