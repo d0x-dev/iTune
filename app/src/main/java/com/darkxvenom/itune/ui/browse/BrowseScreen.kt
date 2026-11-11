@@ -68,10 +68,12 @@ import com.darkxvenom.itune.ui.components.AppleMemojiAvatar
 import com.darkxvenom.itune.ui.components.TopSpringLoadingBar
 import com.darkxvenom.itune.ui.components.rememberSpringOverscrollState
 import com.darkxvenom.itune.ui.components.springOverscroll
+import com.darkxvenom.itune.ui.theme.AppleMusicRed
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.AppleTextPrimary
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
 import kotlinx.coroutines.delay
+import kotlin.math.abs
 
 @Composable
 fun BrowseScreen(
