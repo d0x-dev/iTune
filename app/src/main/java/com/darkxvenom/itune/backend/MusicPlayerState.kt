@@ -742,6 +742,7 @@ object MusicPlayerState : Player.Listener {
         val insertIndex = (queueIndex + 1).coerceIn(0, queue.size)
         queue.add(insertIndex, track)
         savePlaybackSession(sync = false)
+        if (!isApplyingRemoteSync) IShareSyncManager.onLocalPlaybackEvent()
     }
 
     /** Appends [tracks] to the end of the active playback queue (or starts playback if empty). */
