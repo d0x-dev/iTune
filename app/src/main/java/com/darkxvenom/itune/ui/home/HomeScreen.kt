@@ -92,6 +92,8 @@ import com.darkxvenom.itune.ui.player.AppleRadioPlayerOverlay
 import com.darkxvenom.itune.ui.player.FloatingRadioMiniPlayer
 import com.darkxvenom.itune.ui.radio.OnlineRadioScreen
 import com.darkxvenom.itune.ui.search.SearchScreen
+import com.darkxvenom.itune.ui.settings.AppleSettingsScreen
+import com.darkxvenom.itune.ui.settings.DynamicIslandScreen
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.requiredSize
