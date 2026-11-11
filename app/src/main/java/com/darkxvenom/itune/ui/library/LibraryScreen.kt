@@ -98,14 +98,21 @@ fun LibraryScreen(
     var isRefreshing by remember { mutableStateOf(false) }
     val likedArtists by LibraryStore.likedArtists.collectAsStateWithLifecycle()
     val topArtists = remember(likedArtists) { likedArtists.take(6) }
+    val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
+    val localeSignature = remember(settingsState.contentLanguage, settingsState.contentCountry) {
+        SettingsStore.localeSignature()
+    }
     val newReleases by NewReleasesRepository.releases.collectAsStateWithLifecycle()
     val releasesLoading by NewReleasesRepository.isLoading.collectAsStateWithLifecycle()
-    val recentlyAddedReleases = remember(newReleases) {
-        val albumsOnly = newReleases.filter { it.releaseType == ReleaseType.ALBUM }
-        (albumsOnly + newReleases).distinctBy { it.browseId }.take(6)
+    val recentlyAddedReleases = remember(newReleases, settingsState.hideExplicitContent) {
+        val visible = ContentLocaleCatalog.filterVisible(newReleases, settingsState.hideExplicitContent) {
+            it.isExplicit
+        }
+        val albumsOnly = visible.filter { it.releaseType == ReleaseType.ALBUM }
+        (albumsOnly + visible).distinctBy { it.browseId }.take(6)
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(localeSignature) {
         NewReleasesRepository.ensureLoaded()
     }
 
