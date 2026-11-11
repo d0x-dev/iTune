@@ -279,6 +279,7 @@ fun HomeScreen(
 
         SideEffect {
             sheetMorph.travel = screenHeightPx
+            radioSheetMorph.travel = screenHeightPx
         }
 
         // Sync MusicPlayerState.expanded with sheetMorph
