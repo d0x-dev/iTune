@@ -80,6 +80,7 @@ import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.UnifiedSearchResults
 import com.darkxvenom.itune.data.artist.ArtistRepository
 import com.darkxvenom.itune.data.artist.ArtistStateStore
+import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.SearchHistoryStore
 import com.darkxvenom.itune.data.model.BrowseType
 import com.darkxvenom.itune.data.model.PendingArtistNav
