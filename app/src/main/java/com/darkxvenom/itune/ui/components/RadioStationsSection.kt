@@ -213,11 +213,10 @@ private fun OnlineHomeRadioStationCard(
                 .clip(RoundedCornerShape(14.dp))
                 .background(Brush.horizontalGradient(colors = gradient))
                 .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(14.dp))
-                .padding(14.dp)
+                .padding(14.dp),
         ) {
-            if (station.isLive) {
-                // LIVE badge pill
-                Row(
+            if (isFavorite) {
+                Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .clip(RoundedCornerShape(12.dp))
