@@ -33,6 +33,9 @@ import coil.ImageLoader
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.size.Size
+import com.darkxvenom.itune.audio.AudioEngineManager
+import com.darkxvenom.itune.audio.AudioOutputManager
+import com.darkxvenom.itune.audio.SimultaneousAudioProcessor
 import com.darkxvenom.itune.backend.lyrics.LyricsHelper
 import com.darkxvenom.itune.data.artist.ArtistStateStore
 import com.darkxvenom.itune.data.library.LibraryStore
