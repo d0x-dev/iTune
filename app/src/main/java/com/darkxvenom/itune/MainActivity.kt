@@ -37,6 +37,9 @@ class MainActivity : ComponentActivity() {
         AvatarManager.init(this)
         SettingsStore.ensureInit(this)
         MusicPlayerState.init(this)
+        OnlineRadioController.ensureInit(this)
+        DynamicIslandStore.ensureInit(this)
+        DynamicIslandStore.syncServiceState(this)
         AudioDownloader.ensureChannel(this)
         enableEdgeToEdge()
         setContent {
