@@ -424,7 +424,7 @@ fun HomeScreen(
 
                 // Generous bottom spacing so bottom content scrolls above floating nav & mini player
                 item(key = "bottom_spacer") {
-                    Spacer(modifier = Modifier.height(190.dp))
+                    Spacer(modifier = Modifier.height(if (hasMiniPlayer) 190.dp else 130.dp))
                 }
             }
 
