@@ -531,7 +531,7 @@ fun SearchScreen(
                     }
 
                     SearchUiMode.RESULTS -> {
-                        if (isSearching && searchResults.isEmpty) {
+                        if (isSearching && visibleResults.isEmpty) {
                             item(span = { GridItemSpan(2) }, key = "search_results_skeleton") {
                                 SearchResultsSkeletonBlock()
                             }
