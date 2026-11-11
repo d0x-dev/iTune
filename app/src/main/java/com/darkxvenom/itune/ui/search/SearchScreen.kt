@@ -535,7 +535,7 @@ fun SearchScreen(
                             item(span = { GridItemSpan(2) }, key = "search_results_skeleton") {
                                 SearchResultsSkeletonBlock()
                             }
-                        } else if (!isSearching && searchResults.isEmpty) {
+                        } else if (!isSearching && visibleResults.isEmpty) {
                             item(span = { GridItemSpan(2) }, key = "search_empty") {
                                 Box(
                                     modifier = Modifier
@@ -556,10 +556,10 @@ fun SearchScreen(
                             val showAlbums = selectedFilter == SearchResultFilter.ALL || selectedFilter == SearchResultFilter.ALBUMS
                             val showPlaylists = selectedFilter == SearchResultFilter.ALL || selectedFilter == SearchResultFilter.PLAYLISTS
 
-                            val songsList = if (selectedFilter == SearchResultFilter.SONGS) searchResults.songs else searchResults.songs.take(8)
-                            val artistsList = if (selectedFilter == SearchResultFilter.ARTISTS) searchResults.artists else searchResults.artists.take(6)
-                            val albumsList = if (selectedFilter == SearchResultFilter.ALBUMS) searchResults.albums else searchResults.albums.take(6)
-                            val playlistsList = if (selectedFilter == SearchResultFilter.PLAYLISTS) searchResults.playlists else searchResults.playlists.take(6)
+                            val songsList = if (selectedFilter == SearchResultFilter.SONGS) visibleResults.songs else visibleResults.songs.take(8)
+                            val artistsList = if (selectedFilter == SearchResultFilter.ARTISTS) visibleResults.artists else visibleResults.artists.take(6)
+                            val albumsList = if (selectedFilter == SearchResultFilter.ALBUMS) visibleResults.albums else visibleResults.albums.take(6)
+                            val playlistsList = if (selectedFilter == SearchResultFilter.PLAYLISTS) visibleResults.playlists else visibleResults.playlists.take(6)
 
                             if (topResult != null) {
                                 item(span = { GridItemSpan(2) }, key = "header_top_result") {
