@@ -27,6 +27,9 @@ object BrowseMoodsRepository {
     private val _categories = MutableStateFlow(MusicRepository.browseCategories)
     val categories: StateFlow<List<BrowseCategoryItem>> = _categories.asStateFlow()
 
+    private val _genres = MutableStateFlow<List<BrowseCategoryItem>>(emptyList())
+    val genres: StateFlow<List<BrowseCategoryItem>> = _genres.asStateFlow()
+
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
