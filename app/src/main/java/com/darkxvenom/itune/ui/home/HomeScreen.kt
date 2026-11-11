@@ -132,6 +132,34 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
+    val localeSignature = remember(settingsState.contentLanguage, settingsState.contentCountry) {
+        SettingsStore.localeSignature()
+    }
+    val featuredPlaylists by NewReleasesRepository.featuredPlaylists.collectAsStateWithLifecycle()
+    LaunchedEffect(localeSignature) {
+        NewReleasesRepository.ensureLoaded()
+    }
+    val homePlaylists = remember(featuredPlaylists, settingsState.hideExplicitContent) {
+        val visible = ContentLocaleCatalog.filterVisible(
+            featuredPlaylists,
+            settingsState.hideExplicitContent,
+        ) { it.isExplicit }
+        if (visible.isEmpty()) {
+            MusicRepository.essentialPlaylists
+        } else {
+            val gradients = MusicRepository.essentialPlaylists.map { it.gradientColors }
+            visible.take(10).mapIndexed { index, ref ->
+                Playlist(
+                    id = ref.id,
+                    title = ref.title,
+                    curator = ref.author.ifBlank { "Apple Music" },
+                    description = ref.year ?: if (ref.trackCount > 0) "${ref.trackCount} tracks" else "Regional Featured",
+                    gradientColors = gradients[index % gradients.size],
+                )
+            }
+        }
+    }
     val listState = rememberLazyListState()
     val overscrollState = rememberSpringOverscrollState()
     val coroutineScope = rememberCoroutineScope()
@@ -141,6 +169,9 @@ fun HomeScreen(
     var currentTrack by remember { mutableStateOf<Track?>(null) }
     var isPlaying by remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) }
+    var showSettings by remember { mutableStateOf(false) }
+    var showIShare by remember { mutableStateOf(false) }
+    var showDynamicIsland by remember { mutableStateOf(false) }
     var showAvatarDialog by remember { mutableStateOf(false) }
 
     // Retain visited screens in memory so navigation is 100% instantaneous with zero GC or layout stutter
