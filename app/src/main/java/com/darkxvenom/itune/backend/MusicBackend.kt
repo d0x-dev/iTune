@@ -205,6 +205,7 @@ object MusicBackend {
      * `FEmusic_explore` carousel fallback), preserving Albums, Singles, EPs, year, and explicit metadata.
      */
     suspend fun fetchNewReleaseAlbums(): List<NewReleaseAlbum> = withContext(Dispatchers.IO) {
+        val hideExplicit = SettingsStore.isHideExplicitEnabled()
         val direct = runCatching {
             val root = postInnerTube(BROWSE_URL, JSONObject().put("browseId", BROWSE_NEW_RELEASES_ALBUMS))
             val out = mutableListOf<NewReleaseAlbum>()
