@@ -41,9 +41,26 @@ import com.darkxvenom.itune.ui.theme.AppleMusicRed
 import com.darkxvenom.itune.ui.theme.AppleTextPrimary
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
 
+private val HOME_RADIO_GRADIENTS: List<List<Color>> = listOf(
+    listOf(Color(0xFFFA2D48), Color(0xFF990D24)), // Apple Crimson
+    listOf(Color(0xFFFF9F0A), Color(0xFFA35F00)), // Warm Amber
+    listOf(Color(0xFF30D158), Color(0xFF15752E)), // Vibrant Emerald
+    listOf(Color(0xFF0A84FF), Color(0xFF0040A3)), // Deep Cobalt
+    listOf(Color(0xFFBF5AF2), Color(0xFF5E1B8E)), // Royal Violet
+    listOf(Color(0xFF32ADE6), Color(0xFF0C5F87)), // Sky Teal
+    listOf(Color(0xFFFF375F), Color(0xFF8E1130)), // Coral Rose
+    listOf(Color(0xFF5E5CE6), Color(0xFF2C2A8F)), // Rich Indigo
+    listOf(Color(0xFFFF6B00), Color(0xFF943400)), // Sunset Copper
+    listOf(Color(0xFF00C7BE), Color(0xFF0A635F)), // Aqua Mint
+)
+
 @Composable
 fun RadioStationsSection(
-    stations: List<RadioStation>,
+    stations: List<OnlineRadioStation>,
+    favoriteIds: Set<String>,
+    currentStationUuid: String?,
+    liveMetadataTitle: String?,
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
     onStationClick: (RadioStation) -> Unit = {}
 ) {
