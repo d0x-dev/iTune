@@ -808,8 +808,118 @@ object MusicPlayerState : Player.Listener {
         AudioEngineManager.updatePlayingState(isPlaying)
         if (isPlaying) {
             isLoading = false
-        } else if (!restoredPendingStream && !resolvingStream) {
-            savePlaybackSession(sync = false)
+            exoPlayer?.audioSessionId?.let { sid ->
+                AudioEngineManager.attachAudioSession(sid, true)
+            }
+            simultaneousProcessor?.onPlay()
+        } else {
+            simultaneousProcessor?.onPause()
+            if (!restoredPendingStream && !resolvingStream) {
+                savePlaybackSession(sync = false)
+            }
+        }
+        if (!isApplyingRemoteSync && !resolvingStream) {
+            IShareSyncManager.onLocalPlaybackEvent()
+        }
+    }
+
+    // ── iShare Remote Playback Synchronization Helpers ──
+
+    fun playSyncedFromIShare(
+        track: MusicTrack,
+        upcomingQueue: List<MusicTrack>,
+        positionMs: Long,
+        shouldPlay: Boolean,
+    ) {
+        isApplyingRemoteSync = true
+        try {
+            val fullQueue = listOf(track) + upcomingQueue.filterNot { it.id == track.id }
+            play(
+                track = track,
+                newQueue = fullQueue,
+                startPositionMs = positionMs.coerceAtLeast(0L),
+                expandPlayer = false,
+                autoPlay = shouldPlay,
+            )
+        } finally {
+            isApplyingRemoteSync = false
+        }
+    }
+
+    fun syncUpcomingQueueFromIShare(upcomingQueue: List<MusicTrack>) {
+        if (upcomingQueue.isEmpty()) return
+        val cur = currentTrack ?: return
+        val desiredIds = upcomingQueue.map { it.id }
+        val existingUpcomingIds = if (queueIndex in queue.indices) {
+            queue.drop(queueIndex + 1).map { it.id }
+        } else emptyList()
+        if (existingUpcomingIds == desiredIds) return
+
+        val keepPrefix = if (queueIndex in queue.indices) queue.take(queueIndex + 1) else listOf(cur)
+        queue.clear()
+        queue.addAll(keepPrefix)
+        queue.addAll(upcomingQueue)
+    }
+
+    fun setPlayPauseFromSync(shouldPlay: Boolean) {
+        val track = currentTrack ?: return
+        isApplyingRemoteSync = true
+        try {
+            if (restoredPendingStream) {
+                if (!resolvingStream) {
+                    play(
+                        track = track,
+                        startPositionMs = positionMs,
+                        expandPlayer = expanded,
+                        autoPlay = shouldPlay,
+                    )
+                }
+                return
+            }
+            exoPlayer?.let { player ->
+                if (shouldPlay && !player.playWhenReady) {
+                    player.playWhenReady = true
+                    player.play()
+                } else if (!shouldPlay && player.playWhenReady) {
+                    player.playWhenReady = false
+                    player.pause()
+                }
+            }
+        } finally {
+            isApplyingRemoteSync = false
+        }
+    }
+
+    fun seekFromSync(positionMs: Long) {
+        isApplyingRemoteSync = true
+        try {
+            val safePos = positionMs.coerceAtLeast(0L)
+            this.positionMs = safePos
+            if (!restoredPendingStream) exoPlayer?.seekTo(safePos)
+        } finally {
+            isApplyingRemoteSync = false
+        }
+    }
+
+    fun setRemotePlaybackSpeed(speed: Float) {
+        val clamped = speed.coerceIn(0.85f, 1.25f)
+        if (playbackSpeed != clamped && !holdingFast) {
+            playbackSpeed = clamped
+            exoPlayer?.setPlaybackSpeed(clamped)
+        }
+    }
+
+    fun playFromIShareIndexOrId(index: Int, songId: String?) {
+        if (queue.isEmpty()) return
+        val targetIdx = if (!songId.isNullOrBlank()) {
+            queue.indexOfFirst { it.id == songId }
+        } else if (index >= 0) {
+            val upcoming = queueIndex + 1 + index
+            if (upcoming in queue.indices) upcoming else index.takeIf { it in queue.indices } ?: -1
+        } else -1
+        if (targetIdx in queue.indices) {
+            queueIndex = targetIdx
+            play(queue[targetIdx], expandPlayer = expanded)
         }
     }
 
