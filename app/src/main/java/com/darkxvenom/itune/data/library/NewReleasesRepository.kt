@@ -61,6 +61,10 @@ object NewReleasesRepository {
                 } else if (_releases.value.isEmpty()) {
                     _errorMessage.value = "Couldn't load new releases"
                 }
+                if (fetchedPlaylists.isNotEmpty()) {
+                    _featuredPlaylists.value = fetchedPlaylists
+                    syncedLocaleSignature = targetSig
+                }
             } catch (e: Exception) {
                 if (_releases.value.isEmpty()) {
                     _errorMessage.value = e.message ?: "Couldn't load new releases"
