@@ -185,8 +185,13 @@ fun AppleNewReleasesScreen(
             ) {
                 item(span = { GridItemSpan(2) }, key = "nr_header") {
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        val summaryLine = if (releases.isEmpty()) {
-                            "Fresh Albums, Singles & EPs"
+                        val regionLabel = ContentLocaleCatalog.activeRegionSummary(
+                            storedCountry = settingsState.contentCountry,
+                            storedLanguage = settingsState.contentLanguage,
+                            hideExplicit = settingsState.hideExplicitContent,
+                        )
+                        val summaryLine = if (filteredReleases.isEmpty()) {
+                            regionLabel
                         } else {
                             buildList {
                                 if (albumsList.isNotEmpty()) add("${albumsList.size} Albums")
