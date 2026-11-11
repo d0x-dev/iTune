@@ -598,7 +598,57 @@ fun HomeScreen(
         if (artistHostController.isOpen) {
             ArtistScreenOverlayContent(
                 controller = artistHostController,
-                hasMiniPlayer = MusicPlayerState.currentTrack != null,
+                hasMiniPlayer = hasMiniPlayer,
+            )
+        }
+
+        // Apple iOS-styled Dark Liquid Glass Settings Screen Overlay
+        AnimatedVisibility(
+            visible = showSettings,
+            enter = fadeIn(tween(200)) + slideInHorizontally(tween(260)) { it / 8 },
+            exit = fadeOut(tween(180)) + slideOutHorizontally(tween(220)) { it / 8 },
+        ) {
+            BackHandler(
+                enabled = showSettings && !showIShare && !showDynamicIsland && !showAvatarDialog && !MusicPlayerState.expanded,
+            ) {
+                showSettings = false
+            }
+            AppleSettingsScreen(
+                hasMiniPlayer = hasMiniPlayer,
+                onBack = { showSettings = false },
+                onAccountClick = { showAvatarDialog = true },
+                onOpenIShare = { showIShare = true },
+                onOpenDynamicIsland = { showDynamicIsland = true },
+            )
+        }
+
+        // Apple iPhone SharePlay-styled Listen Together ("iShare") Screen Overlay
+        AnimatedVisibility(
+            visible = showIShare,
+            enter = fadeIn(tween(200)) + slideInHorizontally(tween(260)) { it / 8 },
+            exit = fadeOut(tween(180)) + slideOutHorizontally(tween(220)) { it / 8 },
+        ) {
+            BackHandler(enabled = showIShare && !showAvatarDialog && !MusicPlayerState.expanded) {
+                showIShare = false
+            }
+            IShareScreen(
+                hasMiniPlayer = hasMiniPlayer,
+                onBack = { showIShare = false },
+            )
+        }
+
+        // Dynamic Island Calibration & Water-Bubble Settings Overlay
+        AnimatedVisibility(
+            visible = showDynamicIsland,
+            enter = fadeIn(tween(200)) + slideInHorizontally(tween(260)) { it / 8 },
+            exit = fadeOut(tween(180)) + slideOutHorizontally(tween(220)) { it / 8 },
+        ) {
+            BackHandler(enabled = showDynamicIsland && !showAvatarDialog && !MusicPlayerState.expanded) {
+                showDynamicIsland = false
+            }
+            DynamicIslandScreen(
+                hasMiniPlayer = hasMiniPlayer,
+                onBack = { showDynamicIsland = false },
             )
         }
 
