@@ -923,7 +923,8 @@ fun ITuneMusicPlayer(
                     color = Color.White.copy(alpha = 0.75f)
                 )
 
-                // Center Audio Quality Badge Pill
+                // Center Dynamic Audio Engine & Quality Badge Pill (iMusic 128k / Dolby Atmos / 8D Audio / Bit-Perfect)
+                val pillBadge = audioEngineState.pillBadge
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(14.dp))
