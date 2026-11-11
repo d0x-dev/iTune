@@ -201,7 +201,7 @@ fun FloatingMiniPlayer(
                     Icon(
                         imageVector = Icons.Default.FastForward,
                         contentDescription = "Next Track",
-                        tint = AppleTextPrimary,
+                        tint = if (hasActiveTrack) AppleTextPrimary else Color.White.copy(alpha = 0.34f),
                         modifier = Modifier.size(22.dp)
                     )
                 }
