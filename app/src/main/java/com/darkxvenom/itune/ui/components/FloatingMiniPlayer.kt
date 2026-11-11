@@ -205,9 +205,11 @@ fun FloatingMiniPlayer(
                         modifier = Modifier.size(22.dp)
                     )
                 }
+
+                Spacer(modifier = Modifier.width(4.dp))
             } else {
                 Spacer(modifier = Modifier.weight(1f))
-                Spacer(modifier = Modifier.width(74.dp))
+                Spacer(modifier = Modifier.width(78.dp))
             }
         }
     }
