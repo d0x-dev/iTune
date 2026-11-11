@@ -199,7 +199,7 @@ private fun OnlineHomeRadioStationCard(
     showSubtitle: String,
     isFavorite: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
