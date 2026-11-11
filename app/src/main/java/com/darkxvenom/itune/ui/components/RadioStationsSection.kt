@@ -258,12 +258,14 @@ private fun OnlineHomeRadioStationCard(
             }
 
             Column(
-                modifier = Modifier.align(Alignment.BottomStart)
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(end = 6.dp),
             ) {
                 Text(
                     text = station.name,
                     color = Color.White,
-                    fontSize = 18.sp,
+                    fontSize = 17.5.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = (-0.4).sp
                 )
