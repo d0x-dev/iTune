@@ -87,7 +87,25 @@ fun BrowseScreen(
     val overscrollState = rememberSpringOverscrollState()
     var isRefreshing by remember { mutableStateOf(false) }
     var selectedSegment by remember { mutableStateOf(BrowseSegment.CATALOG) }
+
+    val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
+    val localeSignature = remember(settingsState.contentLanguage, settingsState.contentCountry) {
+        SettingsStore.localeSignature()
+    }
+    val regionSummary = remember(
+        settingsState.contentCountry,
+        settingsState.contentLanguage,
+        settingsState.hideExplicitContent,
+    ) {
+        ContentLocaleCatalog.activeRegionSummary(
+            storedCountry = settingsState.contentCountry,
+            storedLanguage = settingsState.contentLanguage,
+            hideExplicit = settingsState.hideExplicitContent,
+        )
+    }
+
     val categories by BrowseMoodsRepository.categories.collectAsStateWithLifecycle()
+    val genres by BrowseMoodsRepository.genres.collectAsStateWithLifecycle()
     val moodsSyncing by BrowseMoodsRepository.isRefreshing.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
