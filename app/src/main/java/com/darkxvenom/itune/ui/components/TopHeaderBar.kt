@@ -65,10 +65,38 @@ fun TopHeaderBar(
             )
         }
 
-        // Top Right: Apple-style profile icon
-        AppleMemojiAvatar(
-            size = 38.dp,
-            onClick = onProfileClick
-        )
+        // Top Right: Personalized name pill + Apple-style profile icon
+        val cleanName = displayName.trim()
+        if (cleanName.isNotEmpty()) {
+            Row(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(Color(0xFF141417))
+                    .border(0.6.dp, Color.White.copy(alpha = 0.14f), CircleShape)
+                    .clickable(onClick = onProfileClick)
+                    .padding(start = 12.dp, end = 3.dp, top = 3.dp, bottom = 3.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = cleanName,
+                    color = Color.White.copy(alpha = 0.92f),
+                    fontSize = 13.5.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.widthIn(max = 136.dp),
+                )
+                AppleMemojiAvatar(
+                    size = 32.dp,
+                    onClick = onProfileClick,
+                )
+            }
+        } else {
+            AppleMemojiAvatar(
+                size = 38.dp,
+                onClick = onProfileClick
+            )
+        }
     }
 }
