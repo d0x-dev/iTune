@@ -35,13 +35,13 @@ object ArtistInnertubeClient {
         }
 
     val currentLanguage: String
-        get() = LocaleTags.ytHl(currentLocaleTag)
+        get() = SettingsStore.effectiveHl()
 
     val currentRegion: String
-        get() = LocaleTags.ytGl(currentLocaleTag)
+        get() = SettingsStore.effectiveGl()
 
     private val searchRegion: String?
-        get() = LocaleTags.ytSearchGl(currentLocaleTag)
+        get() = currentRegion
 
     private val acceptLanguageHeader: String
         get() = LocaleTags.acceptLanguage(currentLocaleTag)
