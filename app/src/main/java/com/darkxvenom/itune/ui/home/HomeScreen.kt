@@ -189,6 +189,8 @@ fun HomeScreen(
     ) { /* Permission result handled silently on startup; Download popup re-checks before notifying */ }
 
     LaunchedEffect(Unit) {
+        OnlineRadioController.ensureInit(context)
+        OnlineRadioController.ensureCatalogLoaded()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
         ) {
