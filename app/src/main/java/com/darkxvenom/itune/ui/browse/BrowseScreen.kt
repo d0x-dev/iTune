@@ -457,18 +457,22 @@ private fun BrowseCategoryCardItem(
             .fillMaxWidth()
             .aspectRatio(1.448f)
             .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFF1E1E24))
+            .background(
+                Brush.linearGradient(listOf(accentPair.first, accentPair.second)),
+            )
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) { onClick() }
     ) {
-        AsyncImage(
-            model = item.imageUrl,
-            contentDescription = item.title,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
+        if (item.imageUrl.isNotBlank()) {
+            AsyncImage(
+                model = item.imageUrl,
+                contentDescription = item.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
 
         // Apple Classical category title in crisp San Francisco typography with soft shadow
         Text(
