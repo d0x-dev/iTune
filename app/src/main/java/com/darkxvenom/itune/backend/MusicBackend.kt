@@ -440,7 +440,9 @@ object MusicBackend {
         val hideExplicit = SettingsStore.isHideExplicitEnabled()
         val cacheKey = "$localeSig|$browseId|${params.orEmpty()}"
         if (!forceRefresh) {
-            moodCategoryCache[cacheKey]?.let { return@withContext it }
+            moodCategoryCache[cacheKey]?.let { cached ->
+                return@withContext if (hideExplicit) cached.filteredCleanOnly() else cached
+            }
         }
 
         val body = JSONObject().put("browseId", browseId)
