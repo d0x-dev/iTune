@@ -515,7 +515,15 @@ object MusicBackend {
         if (parsedSections.isNotEmpty()) {
             moodCategoryCache[cacheKey] = page
         }
-        page
+        if (hideExplicit) page.filteredCleanOnly() else page
+    }
+
+    private fun MoodCategoryPage.filteredCleanOnly(): MoodCategoryPage {
+        val cleanSections = sections.mapNotNull { sec ->
+            val items = sec.items.filter { !it.isExplicit }
+            if (items.isEmpty()) null else sec.copy(items = items)
+        }
+        return copy(sections = cleanSections)
     }
 
     private fun parseMoodContainerItems(arr: JSONArray?): List<MoodCategoryItem> {
