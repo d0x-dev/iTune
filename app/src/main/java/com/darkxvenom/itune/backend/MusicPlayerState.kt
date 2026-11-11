@@ -577,6 +577,10 @@ object MusicPlayerState : Player.Listener {
         currentTrack?.let(::fetchLyricsForCurrentTrack)
     }
 
+    fun pause() {
+        exoPlayer?.pause()
+    }
+
     fun togglePlayPause() {
         val track = currentTrack ?: return
         if (restoredPendingStream) {
