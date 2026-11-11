@@ -87,7 +87,8 @@ fun FloatingMiniPlayer(
             )
             .border(0.75.dp, AppleGlassBorder, CircleShape)
             .clickable { onClick() }
-            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .padding(start = 10.dp, end = 8.dp),
+        contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -98,8 +99,8 @@ fun FloatingMiniPlayer(
                 // Empty space at avatar in miniplayer until the morphing avatar arrives
                 Box(
                     modifier = Modifier
-                        .size(38.dp)
-                        .clip(RoundedCornerShape(6.dp))
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(Color.White.copy(alpha = 0.06f))
                         .border(0.75.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(6.dp))
                 )
