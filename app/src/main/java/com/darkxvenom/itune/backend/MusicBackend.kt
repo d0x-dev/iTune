@@ -714,6 +714,8 @@ object MusicBackend {
     }
 
     private fun postInnerTube(url: String, body: JSONObject): JSONObject {
+        val hl = SettingsStore.effectiveHl()
+        val gl = SettingsStore.effectiveGl()
         val clientObj = JSONObject()
             .put("clientName", "WEB_REMIX")
             .put("clientVersion", "1.20240101.01.00")
