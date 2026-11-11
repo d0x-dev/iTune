@@ -929,8 +929,8 @@ fun HomeScreen(
                 val curTopPx = lerpFloat(targetMiniTopPx, 0f, p)
                 val curLeftPx = lerpFloat(with(density) { 14.dp.toPx() }, 0f, p)
                 val curWidthPx = lerpFloat(with(density) { (screenWidthDp - 28.dp).toPx() }, screenWidthPx, p)
-                val curHeightPx = lerpFloat(with(density) { 58.dp.toPx() }, screenHeightPx, p)
-                val curRadiusDp = lerpDp(16.dp, 0.dp, p).coerceAtLeast(0.dp)
+                val curHeightPx = lerpFloat(with(density) { 54.dp.toPx() }, screenHeightPx, p)
+                val curRadiusDp = lerpDp(27.dp, 0.dp, p).coerceAtLeast(0.dp)
                 val curShadowDp = lerpDp(16.dp, 0.dp, p).coerceAtLeast(0.dp)
 
                 Box(
@@ -958,7 +958,57 @@ fun HomeScreen(
                             sheetProgress = p,
                             onCollapse = {
                                 MusicPlayerState.expanded = false
-                            }
+                            },
+                            onOpenIShare = {
+                                showSettings = false
+                                showIShare = true
+                                MusicPlayerState.expanded = false
+                            },
+                        )
+                    }
+                }
+            }
+        }
+
+        // Dedicated Separate Apple-Styled Online FM Radio Player with Continuous 1:1 Morphing
+        if (onlineRadioState.hasActiveSession && onlineRadioState.currentStation != null) {
+            val rp = radioSheetMorph.progress.value.coerceIn(0f, 1f)
+            if (rp > 0.001f) {
+                val fallbackMiniTopPx = screenHeightPx - with(density) { (66.dp + 2.dp + 54.dp).toPx() }
+                val targetMiniTopPx = if (radioMiniPlayerSlotTopPx > 0f) radioMiniPlayerSlotTopPx else fallbackMiniTopPx
+
+                val curTopPx = lerpFloat(targetMiniTopPx, 0f, rp)
+                val curLeftPx = lerpFloat(with(density) { 14.dp.toPx() }, 0f, rp)
+                val curWidthPx = lerpFloat(with(density) { (screenWidthDp - 28.dp).toPx() }, screenWidthPx, rp)
+                val curHeightPx = lerpFloat(with(density) { 54.dp.toPx() }, screenHeightPx, rp)
+                val curRadiusDp = lerpDp(27.dp, 0.dp, rp).coerceAtLeast(0.dp)
+                val curShadowDp = lerpDp(16.dp, 0.dp, rp).coerceAtLeast(0.dp)
+
+                Box(
+                    modifier = Modifier
+                        .offset { IntOffset(curLeftPx.roundToInt(), curTopPx.roundToInt()) }
+                        .size(
+                            width = with(density) { curWidthPx.toDp() },
+                            height = with(density) { curHeightPx.toDp() },
+                        )
+                        .shadow(
+                            elevation = curShadowDp,
+                            shape = RoundedCornerShape(curRadiusDp),
+                            ambientColor = Color.Black,
+                            spotColor = Color.Black,
+                        )
+                        .clip(RoundedCornerShape(curRadiusDp))
+                        .background(Color.Black)
+                        .sheetMorphDrag(radioSheetMorph),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .requiredSize(width = screenWidthDp, height = screenHeightDp),
+                    ) {
+                        AppleRadioPlayerOverlay(
+                            state = onlineRadioState,
+                            sheetProgress = rp,
+                            onCollapse = { OnlineRadioController.setPlayerExpanded(false) },
                         )
                     }
                 }
