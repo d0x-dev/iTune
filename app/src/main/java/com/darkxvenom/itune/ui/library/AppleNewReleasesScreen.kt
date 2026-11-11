@@ -100,9 +100,12 @@ fun AppleNewReleasesScreen(
     var selectedFilter by remember { mutableStateOf(NewReleaseFilter.ALL) }
     val searchQuery = controller.searchQuery.trim()
 
-    val filteredReleases = remember(releases, searchQuery) {
-        if (searchQuery.isEmpty()) releases
-        else releases.filter {
+    val filteredReleases = remember(releases, searchQuery, settingsState.hideExplicitContent) {
+        val visible = ContentLocaleCatalog.filterVisible(releases, settingsState.hideExplicitContent) {
+            it.isExplicit
+        }
+        if (searchQuery.isEmpty()) visible
+        else visible.filter {
             it.title.contains(searchQuery, ignoreCase = true) ||
                 it.artist.contains(searchQuery, ignoreCase = true)
         }
