@@ -231,10 +231,25 @@ fun ITuneMusicPlayer(
     var isSeeking by remember { mutableStateOf(false) }
     var seekPosition by remember { mutableLongStateOf(0L) }
     var isMoreMenuOpen by remember { mutableStateOf(false) }
+    var isISharePopupOpen by remember { mutableStateOf(false) }
+    var isAudioOutputPopupOpen by remember { mutableStateOf(false) }
+    var isAudioEnginePopupOpen by remember { mutableStateOf(false) }
+    var ishareAnchorXPx by remember { mutableFloatStateOf(0f) }
+    var ishareAnchorYPx by remember { mutableFloatStateOf(0f) }
+    var airbudsAnchorXPx by remember { mutableFloatStateOf(0f) }
+    var airbudsAnchorYPx by remember { mutableFloatStateOf(0f) }
+    var enginePillAnchorXPx by remember { mutableFloatStateOf(0f) }
+    var enginePillAnchorYPx by remember { mutableFloatStateOf(0f) }
+    val ishareSession by IShareSyncManager.session.collectAsStateWithLifecycle()
+    val audioOutputState by AudioOutputManager.state.collectAsStateWithLifecycle()
+    val audioEngineState by AudioEngineManager.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(sp) {
-        if (sp < 0.85f && isMoreMenuOpen) {
-            isMoreMenuOpen = false
+        if (sp < 0.85f) {
+            if (isMoreMenuOpen) isMoreMenuOpen = false
+            if (isISharePopupOpen) isISharePopupOpen = false
+            if (isAudioOutputPopupOpen) isAudioOutputPopupOpen = false
+            if (isAudioEnginePopupOpen) isAudioEnginePopupOpen = false
         }
     }
 
