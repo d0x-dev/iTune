@@ -690,7 +690,81 @@ fun HomeScreen(
                 }
         ) {
             val realTrack = MusicPlayerState.currentTrack
-            if (realTrack != null) {
+            if (showRadioMiniPlayer) {
+                val view = LocalView.current
+                val radioDismissY = remember { Animatable(0f) }
+                val radioSwipeX = remember { Animatable(0f) }
+                val radioDensity = LocalDensity.current
+                val radioDismissThresholdPx = with(radioDensity) { 45.dp.toPx() }
+                val radioDismissTargetPx = with(radioDensity) { 160.dp.toPx() }
+                val radioSwipeThresholdPx = with(radioDensity) { 64.dp.toPx() }
+                val radioMaxSwipePx = with(radioDensity) { 145.dp.toPx() }
+                val radioSwipeFraction = (abs(radioSwipeX.value) / radioMaxSwipePx).coerceIn(0f, 1f)
+
+                LaunchedEffect(onlineRadioState.currentStation?.uuid) {
+                    radioDismissY.snapTo(0f)
+                    radioSwipeX.snapTo(0f)
+                }
+
+                FloatingRadioMiniPlayer(
+                    modifier = Modifier
+                        .onGloballyPositioned { coords ->
+                            if (coords.isAttached) {
+                                val root = rootBoxCoords
+                                if (root != null && root.isAttached) {
+                                    val pos = root.localPositionOf(coords, Offset.Zero)
+                                    if (pos.y > 0f) {
+                                        radioMiniPlayerSlotTopPx = pos.y
+                                    }
+                                }
+                            }
+                        }
+                        .graphicsLayer {
+                            translationY = radioDismissY.value
+                            translationX = radioSwipeX.value
+                            alpha = (1f - (radioDismissY.value / radioDismissTargetPx)).coerceIn(0f, 1f) *
+                                (1f - radioSwipeFraction * 0.55f)
+                            scaleX = 1f - radioSwipeFraction * 0.03f
+                            scaleY = 1f - radioSwipeFraction * 0.03f
+                        }
+                        .miniPlayerGestures(
+                            morph = radioSheetMorph,
+                            dismissOffset = radioDismissY,
+                            swipeOffsetX = radioSwipeX,
+                            scope = coroutineScope,
+                            dismissThresholdPx = radioDismissThresholdPx,
+                            dismissTargetPx = radioDismissTargetPx,
+                            swipeThresholdPx = radioSwipeThresholdPx,
+                            maxSwipeDistancePx = radioMaxSwipePx,
+                            canSkipNext = {
+                                (onlineRadioState.stationQueue.ifEmpty { onlineRadioState.stations }).size > 1
+                            },
+                            canSkipPrevious = {
+                                (onlineRadioState.stationQueue.ifEmpty { onlineRadioState.stations }).size > 1
+                            },
+                            onDismiss = {
+                                OnlineRadioController.closeSession()
+                            },
+                            onSwipeNext = {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                OnlineRadioController.skipNextStation()
+                            },
+                            onSwipePrevious = {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                OnlineRadioController.skipPreviousStation()
+                            },
+                        ),
+                    state = onlineRadioState,
+                    showEmptyPlaceholder = radioSheetMorph.progress.value > 0.001f,
+                    onExpand = {
+                        MusicPlayerState.expanded = false
+                        OnlineRadioController.setPlayerExpanded(true)
+                    },
+                    onPlayPause = { OnlineRadioController.togglePlayPause() },
+                    onNextStation = { OnlineRadioController.skipNextStation() },
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+            } else if (realTrack != null) {
                 val view = LocalView.current
                 val miniPlayerDismissY = remember { Animatable(0f) }
                 val miniPlayerSwipeX = remember { Animatable(0f) }
