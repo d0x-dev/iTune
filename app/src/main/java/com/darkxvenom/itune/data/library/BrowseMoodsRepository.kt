@@ -56,10 +56,24 @@ object BrowseMoodsRepository {
                     syncedLocaleSignature = targetSig
                 }
             } catch (_: Exception) {
-                // Keep seeded defaults cleanly
+                // Keep seeded defaults cleanly when offline
             } finally {
                 _isRefreshing.value = false
             }
         }
+    }
+
+    private fun mergeWithSlotArtwork(
+        items: List<MoodAndMomentRef>,
+        slots: List<BrowseCategoryItem>,
+    ): List<BrowseCategoryItem> = items.take(slots.size).mapIndexed { idx, ref ->
+        val slot = slots[idx]
+        BrowseCategoryItem(
+            id = "${slot.id}_${ref.browseId}_${idx}",
+            title = ref.title,
+            imageUrl = slot.imageUrl,
+            browseId = ref.browseId,
+            params = ref.params,
+        )
     }
 }
