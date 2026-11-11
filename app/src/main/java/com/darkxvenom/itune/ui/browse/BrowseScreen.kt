@@ -259,7 +259,92 @@ fun BrowseScreen(
                             onClick = { onCategoryClick(item) },
                         )
                     }
-                )
+
+                    if (genres.isNotEmpty()) {
+                        item(span = { GridItemSpan(2) }, key = "genres_section_header") {
+                            Text(
+                                text = "Genres & Styles",
+                                color = AppleTextPrimary,
+                                fontSize = 19.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = (-0.3).sp,
+                                modifier = Modifier.padding(top = 12.dp, bottom = 2.dp),
+                            )
+                        }
+                        items(genres, key = { "genre_${it.id}" }) { genre ->
+                            BrowseCategoryCardItem(
+                                item = genre,
+                                onClick = { onCategoryClick(genre) },
+                            )
+                        }
+                    }
+                }
+
+                BrowseSegment.PLAYLISTS -> {
+                    if (visiblePlaylists.isEmpty()) {
+                        item(span = { GridItemSpan(2) }, key = "playlists_empty") {
+                            BrowseEmptySectionMessage(
+                                text = if (releasesLoading) {
+                                    "Loading regional playlists..."
+                                } else {
+                                    "No playlists available for this language & country"
+                                },
+                            )
+                        }
+                    } else {
+                        items(visiblePlaylists, key = { "pl_${it.id}" }) { playlist ->
+                            BrowseMediaGridCard(
+                                title = playlist.title,
+                                subtitle = playlist.author.ifBlank { "Featured Playlist" },
+                                badge = if (playlist.trackCount > 0) "${playlist.trackCount} tracks" else null,
+                                imageUrl = playlist.thumbnailUrl,
+                                cacheKey = "${playlist.id}_browse_pl",
+                                onClick = {
+                                    MusicPlayerState.pendingArtistNav = PendingArtistNav(
+                                        browseId = playlist.id,
+                                        name = playlist.title,
+                                        subtitle = playlist.author.ifBlank { "Playlist" },
+                                        thumbnailUrl = playlist.thumbnailUrl,
+                                        initialType = BrowseType.PLAYLIST,
+                                    )
+                                },
+                            )
+                        }
+                    }
+                }
+
+                BrowseSegment.INSTRUMENTS -> {
+                    if (visibleReleases.isEmpty()) {
+                        item(span = { GridItemSpan(2) }, key = "releases_empty") {
+                            BrowseEmptySectionMessage(
+                                text = if (releasesLoading) {
+                                    "Loading newly added releases..."
+                                } else {
+                                    "No new releases available for this language & country"
+                                },
+                            )
+                        }
+                    } else {
+                        items(visibleReleases, key = { "rel_${it.browseId}" }) { release ->
+                            BrowseMediaGridCard(
+                                title = release.title,
+                                subtitle = release.artist.ifBlank { release.releaseType.label },
+                                badge = release.year?.toString() ?: release.releaseType.label,
+                                imageUrl = release.thumbnailUrl,
+                                cacheKey = "${release.browseId}_browse_rel",
+                                onClick = {
+                                    MusicPlayerState.pendingArtistNav = PendingArtistNav(
+                                        browseId = release.browseId,
+                                        name = release.title,
+                                        subtitle = release.subtitleLine,
+                                        thumbnailUrl = release.thumbnailUrl,
+                                        initialType = BrowseType.ALBUM,
+                                    )
+                                },
+                            )
+                        }
+                    }
+                }
             }
         }
 
@@ -285,7 +370,7 @@ fun BrowseScreen(
 
         // Sleek Left-to-Right Animated Loading Line: ONLY visible when at the top
         TopSpringLoadingBar(
-            isVisible = (isRefreshing || moodsSyncing) && gridState.firstVisibleItemIndex == 0,
+            isVisible = (isRefreshing || moodsSyncing || releasesLoading) && gridState.firstVisibleItemIndex == 0,
             modifier = Modifier.align(Alignment.TopCenter)
         )
     }
