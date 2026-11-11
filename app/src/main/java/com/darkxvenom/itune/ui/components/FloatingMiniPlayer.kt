@@ -156,8 +156,8 @@ fun FloatingMiniPlayer(
                     Text(
                         text = realTrack?.title ?: currentTrack?.title ?: "Not Playing",
                         color = AppleTextPrimary,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
+                        fontSize = if (hasActiveTrack) 14.sp else 15.sp,
+                        fontWeight = if (hasActiveTrack) FontWeight.SemiBold else FontWeight.Medium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
