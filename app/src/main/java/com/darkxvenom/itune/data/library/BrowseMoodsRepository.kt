@@ -40,7 +40,8 @@ object BrowseMoodsRepository {
     }
 
     fun refresh() {
-        if (fetchJob?.isActive == true) return
+        val targetSig = SettingsStore.localeSignature()
+        fetchJob?.cancel()
         fetchJob = scope.launch {
             _isRefreshing.value = true
             try {
