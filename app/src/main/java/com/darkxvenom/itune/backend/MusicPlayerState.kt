@@ -273,6 +273,7 @@ object MusicPlayerState : Player.Listener {
 
         restorePlaybackSession(appContext)
         startProgressLoop()
+        IShareSyncManager.start(appContext)
     }
 
     private fun prewarmTrackThumbnail(ctx: Context, track: MusicTrack) {
@@ -378,7 +379,8 @@ object MusicPlayerState : Player.Listener {
         track: MusicTrack,
         newQueue: List<MusicTrack>? = null,
         startPositionMs: Long = 0L,
-        expandPlayer: Boolean = true
+        expandPlayer: Boolean = true,
+        autoPlay: Boolean = true,
     ) {
         if (expandPlayer) expanded = true
         loadJob?.cancel()
