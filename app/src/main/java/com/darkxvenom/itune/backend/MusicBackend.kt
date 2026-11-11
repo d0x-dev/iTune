@@ -97,7 +97,8 @@ object MusicBackend {
             }
         }
 
-        tracks.distinctBy { it.id }
+        val hideExplicit = SettingsStore.isHideExplicitEnabled()
+        tracks.distinctBy { it.id }.filter { !hideExplicit || !it.isExplicit }
     }
 
     /** Fast search autocomplete suggestions via YouTube Music InnerTube with NewPipe fallback and memory cache. */
