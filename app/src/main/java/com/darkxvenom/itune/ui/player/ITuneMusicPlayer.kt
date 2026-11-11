@@ -133,6 +133,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Size
 import com.darkxvenom.itune.R
+import com.darkxvenom.itune.audio.AudioEngineManager
+import com.darkxvenom.itune.audio.AudioOutputManager
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.highQualityThumbnail
