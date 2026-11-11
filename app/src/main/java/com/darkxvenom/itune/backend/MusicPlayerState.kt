@@ -593,6 +593,7 @@ object MusicPlayerState : Player.Listener {
             if (player.isPlaying) {
                 player.pause()
             } else {
+                com.darkxvenom.itune.radio.OnlineRadioController.pauseIfPlaying()
                 player.play()
             }
         }
