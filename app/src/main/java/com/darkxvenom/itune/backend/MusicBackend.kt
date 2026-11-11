@@ -164,6 +164,7 @@ object MusicBackend {
                 }.getOrDefault(emptyList())
             }
 
+            val hideExplicit = SettingsStore.isHideExplicitEnabled()
             val mergedPlaylists = (featuredPlaylistsJob.await() + communityPlaylistsJob.await())
                 .distinctBy { it.id }
 
