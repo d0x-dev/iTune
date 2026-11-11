@@ -985,11 +985,16 @@ object MusicPlayerState : Player.Listener {
         isLoading = false
     }
 
+    @OptIn(UnstableApi::class)
     fun release() {
         progressJob?.cancel()
         loadJob?.cancel()
         lyricsJob?.cancel()
         sleepTimerJob?.cancel()
+        AudioEngineManager.release()
+        AudioOutputManager.release()
+        simultaneousProcessor?.setEnabled(false)
+        simultaneousProcessor = null
         exoPlayer?.release()
         exoPlayer = null
     }
