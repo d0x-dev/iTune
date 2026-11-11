@@ -81,7 +81,7 @@ fun FloatingNavBar(
     modifier: Modifier = Modifier
 ) {
     val dockHeight = 58.dp
-    val containerHeight = 88.dp
+    val containerHeight = 66.dp
 
     val density = LocalDensity.current
     val coroutineScope = rememberCoroutineScope()
