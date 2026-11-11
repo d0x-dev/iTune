@@ -214,7 +214,7 @@ object MusicBackend {
                     parseNewReleaseTwoRowItem(obj)?.let(out::add)
                 }
             }
-            out.distinctBy { it.browseId }
+            out.distinctBy { it.browseId }.filter { !hideExplicit || !it.isExplicit }
         }.getOrDefault(emptyList())
 
         if (direct.isNotEmpty()) return@withContext direct
