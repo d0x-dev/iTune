@@ -40,6 +40,7 @@ import com.darkxvenom.itune.backend.lyrics.LyricsHelper
 import com.darkxvenom.itune.data.artist.ArtistStateStore
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.model.PendingArtistNav
+import com.darkxvenom.itune.ishare.IShareSyncManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
