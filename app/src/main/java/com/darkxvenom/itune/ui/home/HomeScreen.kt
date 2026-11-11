@@ -684,7 +684,7 @@ fun HomeScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .graphicsLayer {
-                    val p = sheetMorph.progress.value
+                    val p = maxOf(sheetMorph.progress.value, radioSheetMorph.progress.value)
                     translationY = p * 160.dp.toPx()
                     alpha = (1f - p * 2.5f).coerceIn(0f, 1f)
                 }
