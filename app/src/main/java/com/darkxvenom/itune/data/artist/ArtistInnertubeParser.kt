@@ -242,6 +242,7 @@ object ArtistInnertubeParser {
     fun parsePlaylistShelf(root: JSONObject): PlaylistShelfPage? {
         val scope: Any = root.o("continuationContents")
             ?: root.o("contents").o("twoColumnBrowseResultsRenderer").o("secondaryContents")
+            ?: root.o("contents").o("singleColumnBrowseResultsRenderer")
             ?: return null
         val playlistScope = scope.o("musicPlaylistShelfContinuation")
             ?: collectRenderers(scope, "musicPlaylistShelfRenderer").firstOrNull()
@@ -472,7 +473,7 @@ object ArtistInnertubeParser {
             albumId = credits.albumId,
             albumName = credits.albumName,
             isVideo = rowType == "video" || thumbnails.isNotSquare(),
-            isExplicit = renderer.opt("subtitleBadges").hasExplicitBadge(),
+            isExplicit = renderer.hasExplicitBadge(),
         )
     }
 
@@ -719,6 +720,7 @@ object ArtistInnertubeParser {
             return true
         }
         val header = collectRenderers(root, "musicResponsiveHeaderRenderer").firstOrNull()
+            ?: collectRenderers(root, "musicDetailHeaderRenderer").firstOrNull()
             ?: return null
         if (collectRenderers(header, "menuNavigationItemRenderer")
                 .any { it.o("icon").s("iconType") in OWNER_ICONS }

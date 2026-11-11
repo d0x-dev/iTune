@@ -40,6 +40,9 @@ data class UserPlaylist(
     val songs: List<SavedSongMetadata> = emptyList(),
     val createdAtMs: Long = System.currentTimeMillis(),
     val updatedAtMs: Long = System.currentTimeMillis(),
+    val isGoogleAccount: Boolean = false,
+    val ytPlaylistId: String? = null,
+    val isEditable: Boolean = true,
 ) {
     val artworkUrls: List<String>
         get() = songs.mapNotNull { it.thumbnailUrl.ifBlank { null } }.distinct().take(4)
@@ -60,6 +63,10 @@ data class SavedSongMetadata(
     val durationSec: Long = 0L,
     val isVideo: Boolean = false,
     val addedAtMs: Long = System.currentTimeMillis(),
+    val isExplicit: Boolean = false,
+    val setVideoId: String? = null,
+    val savedLocally: Boolean = true,
+    val isYtmSynced: Boolean = false,
 ) {
     fun toMusicTrack(): MusicTrack = MusicTrack(
         id = id,
@@ -72,6 +79,7 @@ data class SavedSongMetadata(
         durationSec = durationSec,
         liked = true,
         isVideo = isVideo,
+        isExplicit = isExplicit,
     )
 
     fun toSong(): Song {
@@ -98,11 +106,19 @@ data class SavedSongMetadata(
             albumId = albumId,
             albumName = album,
             isVideo = isVideo,
+            setVideoId = setVideoId,
+            isExplicit = isExplicit,
         )
     }
 
     companion object {
-        fun fromTrack(track: MusicTrack, addedAtMs: Long = System.currentTimeMillis()): SavedSongMetadata =
+        fun fromTrack(
+            track: MusicTrack,
+            addedAtMs: Long = System.currentTimeMillis(),
+            setVideoId: String? = null,
+            savedLocally: Boolean = true,
+            isYtmSynced: Boolean = false,
+        ): SavedSongMetadata =
             SavedSongMetadata(
                 id = track.id,
                 title = track.title,
@@ -114,9 +130,18 @@ data class SavedSongMetadata(
                 durationSec = track.durationSec,
                 isVideo = track.isVideo,
                 addedAtMs = addedAtMs,
+                isExplicit = track.isExplicit,
+                setVideoId = setVideoId,
+                savedLocally = savedLocally,
+                isYtmSynced = isYtmSynced,
             )
 
-        fun fromSong(song: Song, addedAtMs: Long = System.currentTimeMillis()): SavedSongMetadata =
+        fun fromSong(
+            song: Song,
+            addedAtMs: Long = System.currentTimeMillis(),
+            savedLocally: Boolean = true,
+            isYtmSynced: Boolean = false,
+        ): SavedSongMetadata =
             fromTrack(
                 MusicTrack(
                     id = song.videoId,
@@ -129,8 +154,12 @@ data class SavedSongMetadata(
                     durationSec = 0L,
                     liked = true,
                     isVideo = song.isVideo,
+                    isExplicit = song.isExplicit == true,
                 ),
                 addedAtMs = addedAtMs,
+                setVideoId = song.setVideoId,
+                savedLocally = savedLocally,
+                isYtmSynced = isYtmSynced,
             )
     }
 }
@@ -143,17 +172,22 @@ data class SavedCollectionEntry(
     val thumbnailUrl: String?,
     val type: BrowseType,
     val addedAtMs: Long = System.currentTimeMillis(),
+    val isExplicit: Boolean = false,
+    val isYtmSynced: Boolean = false,
+    val savedLocally: Boolean = true,
+    val playlistId: String? = null,
 )
 
 object LibraryStore {
     private const val PREFS_NAME = "itune_library_metadata"
     private const val KEY_LIKED_SONGS = "liked_songs_json"
     private const val KEY_RECENT_SONGS = "recent_songs_json"
+    private const val KEY_YTM_HISTORY = "ytm_history_songs_json"
     private const val KEY_ARTISTS = "liked_artists_json"
     private const val KEY_ALBUMS = "saved_albums_json"
     private const val KEY_PLAYLISTS = "saved_playlists_json"
     private const val KEY_USER_PLAYLISTS = "user_playlists_json"
-    private const val MAX_RECENT_SONGS = 60
+    private const val MAX_RECENT_SONGS = 120
 
     @Volatile
     private var prefs: SharedPreferences? = null
@@ -166,6 +200,9 @@ object LibraryStore {
 
     private val _recentSongs = MutableStateFlow<List<SavedSongMetadata>>(emptyList())
     val recentSongs: StateFlow<List<SavedSongMetadata>> = _recentSongs.asStateFlow()
+
+    private val _ytmHistorySongs = MutableStateFlow<List<SavedSongMetadata>>(emptyList())
+    val ytmHistorySongs: StateFlow<List<SavedSongMetadata>> = _ytmHistorySongs.asStateFlow()
 
     private val _likedArtists = MutableStateFlow<List<SavedCollectionEntry>>(emptyList())
     val likedArtists: StateFlow<List<SavedCollectionEntry>> = _likedArtists.asStateFlow()
@@ -187,6 +224,7 @@ object LibraryStore {
             prefs = p
             _likedSongs.value = decodeSongs(p.getString(KEY_LIKED_SONGS, null))
             _recentSongs.value = decodeSongs(p.getString(KEY_RECENT_SONGS, null))
+            _ytmHistorySongs.value = decodeSongs(p.getString(KEY_YTM_HISTORY, null))
             _likedArtists.value = decodeCollections(p.getString(KEY_ARTISTS, null), BrowseType.ARTIST)
             _savedAlbums.value = decodeCollections(p.getString(KEY_ALBUMS, null), BrowseType.ALBUM)
             _savedPlaylists.value = decodeCollections(p.getString(KEY_PLAYLISTS, null), BrowseType.PLAYLIST)
@@ -198,24 +236,60 @@ object LibraryStore {
         context: Context,
         name: String,
         initialSongs: List<SavedSongMetadata> = emptyList(),
+        isGoogleAccount: Boolean = false,
+        ytPlaylistId: String? = null,
     ): UserPlaylist {
         ensureInit(context)
         val cleanName = name.trim().ifBlank { "New Playlist" }
         val now = System.currentTimeMillis()
         val deduped = initialSongs.distinctBy { it.id }
+        val cleanYtId = ytPlaylistId?.removePrefix("VL")?.takeIf { it.isNotBlank() }
+        val resolvedId = if (isGoogleAccount && cleanYtId != null) {
+            "yt_$cleanYtId"
+        } else {
+            "up_${now}_${(1000..9999).random()}"
+        }
         val playlist = UserPlaylist(
-            id = "up_${now}_${(1000..9999).random()}",
+            id = resolvedId,
             name = cleanName,
             songs = deduped,
             createdAtMs = now,
             updatedAtMs = now,
+            isGoogleAccount = isGoogleAccount,
+            ytPlaylistId = cleanYtId,
+            isEditable = true,
         )
         synchronized(this) {
-            val updated = listOf(playlist) + _userPlaylists.value
+            val updated = listOf(playlist) + _userPlaylists.value.filterNot { it.id == playlist.id }
             _userPlaylists.value = updated
             persistUserPlaylists(updated)
         }
         return playlist
+    }
+
+    fun setSongSetVideoIds(
+        context: Context,
+        playlistId: String,
+        setVideoIds: Map<String, String>,
+    ) {
+        if (setVideoIds.isEmpty()) return
+        ensureInit(context)
+        synchronized(this) {
+            val next = _userPlaylists.value.map { pl ->
+                if (pl.id != playlistId && pl.ytPlaylistId != playlistId.removePrefix("VL")) {
+                    pl
+                } else {
+                    pl.copy(
+                        songs = pl.songs.map { s ->
+                            val newSetId = setVideoIds[s.id]
+                            if (newSetId != null) s.copy(setVideoId = newSetId) else s
+                        },
+                    )
+                }
+            }
+            _userPlaylists.value = next
+            persistUserPlaylists(next)
+        }
     }
 
     fun addSongsToUserPlaylist(
@@ -287,9 +361,19 @@ object LibraryStore {
         }
     }
 
-    fun saveLikedSong(context: Context, track: MusicTrack) {
+    fun saveLikedSong(
+        context: Context,
+        track: MusicTrack,
+        savedLocally: Boolean = true,
+        isYtmSynced: Boolean = false,
+    ) {
         ensureInit(context)
-        val entry = SavedSongMetadata.fromTrack(track)
+        val existing = _likedSongs.value.firstOrNull { it.id == track.id }
+        val entry = SavedSongMetadata.fromTrack(
+            track = track.copy(isExplicit = track.isExplicit || existing?.isExplicit == true),
+            savedLocally = savedLocally || existing?.savedLocally == true,
+            isYtmSynced = isYtmSynced || existing?.isYtmSynced == true,
+        )
         synchronized(this) {
             val current = _likedSongs.value.filterNot { it.id == track.id }
             val updated = listOf(entry) + current
@@ -324,15 +408,20 @@ object LibraryStore {
         title: String,
         subtitle: String = "Artist",
         thumbnailUrl: String? = null,
+        savedLocally: Boolean = true,
+        isYtmSynced: Boolean = false,
     ) {
         ensureInit(context)
         if (browseId.isBlank()) return
+        val existing = _likedArtists.value.firstOrNull { it.browseId == browseId }
         val entry = SavedCollectionEntry(
             browseId = browseId,
-            title = title.ifBlank { "Artist" },
-            subtitle = subtitle.ifBlank { "Artist" },
-            thumbnailUrl = thumbnailUrl,
+            title = title.ifBlank { existing?.title ?: "Artist" },
+            subtitle = subtitle.ifBlank { existing?.subtitle ?: "Artist" },
+            thumbnailUrl = thumbnailUrl ?: existing?.thumbnailUrl,
             type = BrowseType.ARTIST,
+            savedLocally = savedLocally || existing?.savedLocally == true,
+            isYtmSynced = isYtmSynced || existing?.isYtmSynced == true,
         )
         synchronized(this) {
             val current = _likedArtists.value.filterNot { it.browseId == browseId }
@@ -383,18 +472,27 @@ object LibraryStore {
         subtitle: String,
         thumbnailUrl: String?,
         type: BrowseType,
+        isExplicit: Boolean = false,
+        savedLocally: Boolean = true,
+        isYtmSynced: Boolean = false,
+        playlistId: String? = null,
     ) {
         ensureInit(context)
         if (browseId.isBlank()) return
         val resolvedType = resolveReleaseType(browseId, type)
+        val existing = (_savedAlbums.value + _savedPlaylists.value).firstOrNull { it.browseId == browseId }
         val entry = SavedCollectionEntry(
             browseId = browseId,
             title = title.ifBlank {
-                if (resolvedType == BrowseType.PLAYLIST) "Playlist" else "Album"
+                existing?.title ?: if (resolvedType == BrowseType.PLAYLIST) "Playlist" else "Album"
             },
-            subtitle = subtitle,
-            thumbnailUrl = thumbnailUrl,
+            subtitle = subtitle.ifBlank { existing?.subtitle.orEmpty() },
+            thumbnailUrl = thumbnailUrl ?: existing?.thumbnailUrl,
             type = resolvedType,
+            isExplicit = isExplicit || existing?.isExplicit == true,
+            savedLocally = savedLocally || existing?.savedLocally == true,
+            isYtmSynced = isYtmSynced || existing?.isYtmSynced == true,
+            playlistId = playlistId ?: existing?.playlistId,
         )
         synchronized(this) {
             if (resolvedType == BrowseType.PLAYLIST) {
@@ -577,6 +675,10 @@ object LibraryStore {
         put("durationSec", s.durationSec)
         put("isVideo", s.isVideo)
         put("addedAtMs", s.addedAtMs)
+        put("isExplicit", s.isExplicit)
+        put("setVideoId", s.setVideoId ?: JSONObject.NULL)
+        put("savedLocally", s.savedLocally)
+        put("isYtmSynced", s.isYtmSynced)
     }
 
     private fun jsonToSong(o: JSONObject): SavedSongMetadata? {
@@ -592,6 +694,10 @@ object LibraryStore {
             durationSec = o.optLong("durationSec", 0L),
             isVideo = o.optBoolean("isVideo", false),
             addedAtMs = o.optLong("addedAtMs", System.currentTimeMillis()),
+            isExplicit = o.optBoolean("isExplicit", false),
+            setVideoId = o.optNullableString("setVideoId"),
+            savedLocally = o.optBoolean("savedLocally", true),
+            isYtmSynced = o.optBoolean("isYtmSynced", false),
         )
     }
 
@@ -614,6 +720,185 @@ object LibraryStore {
         }.getOrDefault(emptyList())
     }
 
+    fun mergeRemoteLikedSongs(context: Context, remoteSongs: List<SavedSongMetadata>): Set<String> {
+        ensureInit(context)
+        val merged = synchronized(this) {
+            val localOnly = _likedSongs.value.filter { it.savedLocally }
+            val byId = linkedMapOf<String, SavedSongMetadata>()
+            remoteSongs.forEach { remote ->
+                val localMatch = localOnly.firstOrNull { it.id == remote.id }
+                byId[remote.id] = if (localMatch != null) {
+                    remote.copy(
+                        savedLocally = true,
+                        isYtmSynced = true,
+                        addedAtMs = localMatch.addedAtMs,
+                        isExplicit = remote.isExplicit || localMatch.isExplicit,
+                    )
+                } else {
+                    remote.copy(savedLocally = false, isYtmSynced = true)
+                }
+            }
+            localOnly.forEach { local ->
+                if (local.id !in byId) {
+                    byId[local.id] = local
+                }
+            }
+            val result = byId.values.toList()
+            _likedSongs.value = result
+            persistSongs(KEY_LIKED_SONGS, result)
+            result.mapTo(LinkedHashSet()) { it.id }
+        }
+        return merged
+    }
+
+    fun replaceYtmHistory(context: Context, historySongs: List<SavedSongMetadata>) {
+        ensureInit(context)
+        val clean = historySongs.distinctBy { it.id }.take(MAX_RECENT_SONGS)
+        synchronized(this) {
+            _ytmHistorySongs.value = clean
+            persistSongs(KEY_YTM_HISTORY, clean)
+        }
+    }
+
+    fun prependYtmHistoryTrack(context: Context, track: MusicTrack) {
+        ensureInit(context)
+        val entry = SavedSongMetadata.fromTrack(track, savedLocally = false, isYtmSynced = true)
+        synchronized(this) {
+            val updated = (listOf(entry) + _ytmHistorySongs.value.filterNot { it.id == track.id })
+                .take(MAX_RECENT_SONGS)
+            _ytmHistorySongs.value = updated
+            persistSongs(KEY_YTM_HISTORY, updated)
+        }
+    }
+
+    fun mergeRemoteArtists(context: Context, remoteArtists: List<SavedCollectionEntry>): Set<String> {
+        ensureInit(context)
+        return synchronized(this) {
+            val existingLocal = _likedArtists.value.filter { it.savedLocally }
+            val byId = linkedMapOf<String, SavedCollectionEntry>()
+            remoteArtists.forEach { r ->
+                val loc = existingLocal.firstOrNull { it.browseId == r.browseId }
+                byId[r.browseId] = if (loc != null) {
+                    r.copy(savedLocally = true, isYtmSynced = true, thumbnailUrl = r.thumbnailUrl ?: loc.thumbnailUrl)
+                } else {
+                    r.copy(savedLocally = false, isYtmSynced = true)
+                }
+            }
+            existingLocal.forEach { loc -> if (loc.browseId !in byId) byId[loc.browseId] = loc }
+            val list = byId.values.toList()
+            _likedArtists.value = list
+            persistCollections(KEY_ARTISTS, list)
+            list.mapTo(LinkedHashSet()) { it.browseId }
+        }
+    }
+
+    fun mergeRemoteAlbums(context: Context, remoteAlbums: List<SavedCollectionEntry>): Set<String> {
+        ensureInit(context)
+        return synchronized(this) {
+            val existingLocal = _savedAlbums.value.filter { it.savedLocally }
+            val byId = linkedMapOf<String, SavedCollectionEntry>()
+            remoteAlbums.forEach { r ->
+                val loc = existingLocal.firstOrNull { it.browseId == r.browseId }
+                byId[r.browseId] = if (loc != null) {
+                    r.copy(
+                        savedLocally = true,
+                        isYtmSynced = true,
+                        isExplicit = r.isExplicit || loc.isExplicit,
+                        playlistId = r.playlistId ?: loc.playlistId,
+                    )
+                } else {
+                    r.copy(savedLocally = false, isYtmSynced = true)
+                }
+            }
+            existingLocal.forEach { loc -> if (loc.browseId !in byId) byId[loc.browseId] = loc }
+            val list = byId.values.toList()
+            _savedAlbums.value = list
+            persistCollections(KEY_ALBUMS, list)
+            list.mapTo(LinkedHashSet()) { it.browseId }
+        }
+    }
+
+    fun mergeRemoteSavedPlaylists(context: Context, remoteSaved: List<SavedCollectionEntry>): Set<String> {
+        ensureInit(context)
+        return synchronized(this) {
+            val existingLocal = _savedPlaylists.value.filter { it.savedLocally }
+            val byId = linkedMapOf<String, SavedCollectionEntry>()
+            remoteSaved.forEach { r ->
+                val loc = existingLocal.firstOrNull { it.browseId == r.browseId }
+                byId[r.browseId] = if (loc != null) {
+                    r.copy(
+                        savedLocally = true,
+                        isYtmSynced = true,
+                        isExplicit = r.isExplicit || loc.isExplicit,
+                        playlistId = r.playlistId ?: loc.playlistId,
+                    )
+                } else {
+                    r.copy(savedLocally = false, isYtmSynced = true)
+                }
+            }
+            existingLocal.forEach { loc -> if (loc.browseId !in byId) byId[loc.browseId] = loc }
+            val list = byId.values.toList()
+            _savedPlaylists.value = list
+            persistCollections(KEY_PLAYLISTS, list)
+            list.mapTo(LinkedHashSet()) { it.browseId }
+        }
+    }
+
+    fun mergeRemoteUserPlaylists(context: Context, remoteGooglePlaylists: List<UserPlaylist>) {
+        ensureInit(context)
+        synchronized(this) {
+            val localOnly = _userPlaylists.value.filterNot { it.isGoogleAccount }
+            val cleanRemote = remoteGooglePlaylists.map { it.copy(isGoogleAccount = true) }
+            val combined = cleanRemote + localOnly
+            _userPlaylists.value = combined
+            persistUserPlaylists(combined)
+        }
+    }
+
+    fun clearGoogleAccountDataOnSignOut(context: Context): Triple<Set<String>, Set<String>, Set<String>> {
+        ensureInit(context)
+        return synchronized(this) {
+            val keptLikes = _likedSongs.value
+                .filter { it.savedLocally }
+                .map { it.copy(isYtmSynced = false) }
+            _likedSongs.value = keptLikes
+            persistSongs(KEY_LIKED_SONGS, keptLikes)
+
+            _ytmHistorySongs.value = emptyList()
+            persistSongs(KEY_YTM_HISTORY, emptyList())
+
+            val keptArtists = _likedArtists.value
+                .filter { it.savedLocally }
+                .map { it.copy(isYtmSynced = false) }
+            _likedArtists.value = keptArtists
+            persistCollections(KEY_ARTISTS, keptArtists)
+
+            val keptAlbums = _savedAlbums.value
+                .filter { it.savedLocally }
+                .map { it.copy(isYtmSynced = false) }
+            _savedAlbums.value = keptAlbums
+            persistCollections(KEY_ALBUMS, keptAlbums)
+
+            val keptSavedPlaylists = _savedPlaylists.value
+                .filter { it.savedLocally }
+                .map { it.copy(isYtmSynced = false) }
+            _savedPlaylists.value = keptSavedPlaylists
+            persistCollections(KEY_PLAYLISTS, keptSavedPlaylists)
+
+            val keptUserPlaylists = _userPlaylists.value.filterNot { it.isGoogleAccount }
+            _userPlaylists.value = keptUserPlaylists
+            persistUserPlaylists(keptUserPlaylists)
+
+            val likeIds = keptLikes.mapTo(LinkedHashSet()) { it.id }
+            val artistIds = keptArtists.mapTo(LinkedHashSet()) { it.browseId }
+            val releaseIds = LinkedHashSet<String>().apply {
+                keptAlbums.forEach { add(it.browseId) }
+                keptSavedPlaylists.forEach { add(it.browseId) }
+            }
+            Triple(likeIds, artistIds, releaseIds)
+        }
+    }
+
     private fun persistUserPlaylists(items: List<UserPlaylist>) {
         val arr = JSONArray()
         items.forEach { pl ->
@@ -626,6 +911,9 @@ object LibraryStore {
                     put("songs", songsArr)
                     put("createdAtMs", pl.createdAtMs)
                     put("updatedAtMs", pl.updatedAtMs)
+                    put("isGoogleAccount", pl.isGoogleAccount)
+                    put("ytPlaylistId", pl.ytPlaylistId ?: JSONObject.NULL)
+                    put("isEditable", pl.isEditable)
                 },
             )
         }
@@ -657,6 +945,9 @@ object LibraryStore {
                             songs = decodedSongs,
                             createdAtMs = o.optLong("createdAtMs", System.currentTimeMillis()),
                             updatedAtMs = o.optLong("updatedAtMs", System.currentTimeMillis()),
+                            isGoogleAccount = o.optBoolean("isGoogleAccount", false),
+                            ytPlaylistId = o.optNullableString("ytPlaylistId"),
+                            isEditable = o.optBoolean("isEditable", true),
                         ),
                     )
                 }
@@ -675,6 +966,10 @@ object LibraryStore {
                     put("thumbnailUrl", c.thumbnailUrl ?: JSONObject.NULL)
                     put("type", c.type.name)
                     put("addedAtMs", c.addedAtMs)
+                    put("isExplicit", c.isExplicit)
+                    put("isYtmSynced", c.isYtmSynced)
+                    put("savedLocally", c.savedLocally)
+                    put("playlistId", c.playlistId ?: JSONObject.NULL)
                 },
             )
         }
@@ -699,6 +994,10 @@ object LibraryStore {
                             thumbnailUrl = o.optNullableString("thumbnailUrl"),
                             type = parsedType,
                             addedAtMs = o.optLong("addedAtMs", System.currentTimeMillis()),
+                            isExplicit = o.optBoolean("isExplicit", false),
+                            isYtmSynced = o.optBoolean("isYtmSynced", false),
+                            savedLocally = o.optBoolean("savedLocally", true),
+                            playlistId = o.optNullableString("playlistId"),
                         ),
                     )
                 }

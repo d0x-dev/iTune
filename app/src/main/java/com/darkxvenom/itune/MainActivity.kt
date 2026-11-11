@@ -20,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.darkxvenom.itune.backend.AudioDownloader
 import com.darkxvenom.itune.backend.MusicPlayerState
+import com.darkxvenom.itune.data.auth.GoogleAuthStore
+import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.repository.AvatarManager
 import com.darkxvenom.itune.radio.OnlineRadioController
@@ -36,7 +38,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         AvatarManager.init(this)
         SettingsStore.ensureInit(this)
+        GoogleAuthStore.ensureInit(this)
         MusicPlayerState.init(this)
+        YouTubeLibrarySyncManager.launchFullSync(this)
         OnlineRadioController.ensureInit(this)
         DynamicIslandStore.ensureInit(this)
         DynamicIslandStore.syncServiceState(this)

@@ -2,6 +2,7 @@ package com.darkxvenom.itune.data.artist
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.model.BrowseType
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -80,6 +81,7 @@ object ArtistStateStore {
         }
         _subscribedArtists.value = current
         prefs?.edit()?.putStringSet(KEY_SUBSCRIBED, current)?.apply()
+        YouTubeLibrarySyncManager.pushArtistSubscriptionAsync(browseId, nowSubscribed)
         return nowSubscribed
     }
 
@@ -92,6 +94,8 @@ object ArtistStateStore {
         subtitle: String = "",
         thumbnailUrl: String? = null,
         type: BrowseType = BrowseType.OTHER,
+        isExplicit: Boolean = false,
+        playlistId: String? = null,
     ): Boolean {
         ensureInit(context)
         val current = _savedReleases.value.toMutableSet()
@@ -108,11 +112,37 @@ object ArtistStateStore {
                 subtitle = subtitle,
                 thumbnailUrl = thumbnailUrl,
                 type = type,
+                isExplicit = isExplicit,
+                playlistId = playlistId,
             )
             true
         }
         _savedReleases.value = current
         prefs?.edit()?.putStringSet(KEY_SAVED_RELEASES, current)?.apply()
+        YouTubeLibrarySyncManager.pushReleaseSavedAsync(browseId, playlistId, nowSaved)
         return nowSaved
+    }
+
+    fun replaceSubscribedFromSync(context: Context, ids: Set<String>) {
+        ensureInit(context)
+        _subscribedArtists.value = ids.toSet()
+        prefs?.edit()?.putStringSet(KEY_SUBSCRIBED, ids.toSet())?.apply()
+    }
+
+    fun mergeSavedReleaseIdsFromSync(context: Context, ids: Set<String>) {
+        ensureInit(context)
+        val combined = _savedReleases.value + ids
+        _savedReleases.value = combined
+        prefs?.edit()?.putStringSet(KEY_SAVED_RELEASES, combined)?.apply()
+    }
+
+    fun replaceAllFromSignOut(context: Context, artistIds: Set<String>, releaseIds: Set<String>) {
+        ensureInit(context)
+        _subscribedArtists.value = artistIds
+        _savedReleases.value = releaseIds
+        prefs?.edit()
+            ?.putStringSet(KEY_SUBSCRIBED, artistIds)
+            ?.putStringSet(KEY_SAVED_RELEASES, releaseIds)
+            ?.apply()
     }
 }

@@ -269,6 +269,7 @@ fun Song.toMusicTrack(): MusicTrack = MusicTrack(
     durationSec = durationMillis() / 1000L,
     liked = false,
     isVideo = isVideo,
+    isExplicit = isExplicit == true,
 )
 
 fun MusicTrack.toArtistSong(): Song {
@@ -293,6 +294,7 @@ fun MusicTrack.toArtistSong(): Song {
         albumId = albumId,
         albumName = album,
         isVideo = isVideo,
+        isExplicit = isExplicit,
     )
 }
 

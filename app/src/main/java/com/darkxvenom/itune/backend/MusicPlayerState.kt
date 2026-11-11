@@ -38,6 +38,8 @@ import com.darkxvenom.itune.audio.AudioOutputManager
 import com.darkxvenom.itune.audio.SimultaneousAudioProcessor
 import com.darkxvenom.itune.backend.lyrics.LyricsHelper
 import com.darkxvenom.itune.data.artist.ArtistStateStore
+import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
+import com.darkxvenom.itune.data.auth.YouTubePlaybackTracker
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.model.PendingArtistNav
 import com.darkxvenom.itune.ishare.IShareSyncManager
@@ -144,13 +146,18 @@ object MusicPlayerState : Player.Listener {
 
     fun toggleFavorite(track: MusicTrack) {
         val ctx = appContext
+        val nowLiked: Boolean
         if (favoriteIds.contains(track.id)) {
             favoriteIds.remove(track.id)
             ctx?.let { LibraryStore.removeLikedSong(it, track.id) }
+            nowLiked = false
         } else {
             favoriteIds.add(track.id)
-            ctx?.let { LibraryStore.saveLikedSong(it, track) }
+            // Always persist with savedLocally = true so liked tracks stay viewable even after logout
+            ctx?.let { LibraryStore.saveLikedSong(it, track, savedLocally = true, isYtmSynced = true) }
+            nowLiked = true
         }
+        YouTubeLibrarySyncManager.pushSongLikeAsync(track.id, nowLiked)
         ctx?.getSharedPreferences("itune_favorites", Context.MODE_PRIVATE)
             ?.edit()
             ?.putStringSet("favorite_track_ids", favoriteIds.toSet())
@@ -165,9 +172,11 @@ object MusicPlayerState : Player.Listener {
             return
         }
         val ctx = appContext
+        val nowLiked: Boolean
         if (favoriteIds.contains(trackId)) {
             favoriteIds.remove(trackId)
             ctx?.let { LibraryStore.removeLikedSong(it, trackId) }
+            nowLiked = false
         } else {
             favoriteIds.add(trackId)
             ctx?.let {
@@ -178,11 +187,25 @@ object MusicPlayerState : Player.Listener {
                     savedReleaseIds = emptyList(),
                 )
             }
+            nowLiked = true
         }
+        YouTubeLibrarySyncManager.pushSongLikeAsync(trackId, nowLiked)
         ctx?.getSharedPreferences("itune_favorites", Context.MODE_PRIVATE)
             ?.edit()
             ?.putStringSet("favorite_track_ids", favoriteIds.toSet())
             ?.apply()
+    }
+
+    fun replaceFavoriteIdsFromSync(context: Context, ids: Set<String>) {
+        mainHandler.post {
+            favoriteIds.clear()
+            favoriteIds.addAll(ids)
+            context.applicationContext
+                .getSharedPreferences("itune_favorites", Context.MODE_PRIVATE)
+                .edit()
+                .putStringSet("favorite_track_ids", ids)
+                .apply()
+        }
     }
 
     @OptIn(UnstableApi::class)
@@ -362,6 +385,10 @@ object MusicPlayerState : Player.Listener {
                         }
                         isPlaying = player.isPlaying
                         isLoading = !player.isPlaying && player.playbackState == Player.STATE_BUFFERING
+                        val active = currentTrack
+                        if (player.isPlaying && active != null) {
+                            YouTubePlaybackTracker.onProgress(active.id, positionMs / 1000L)
+                        }
 
                         val now = System.currentTimeMillis()
                         if (player.isPlaying && now - lastPersistedAtMs >= 2000L) {
@@ -383,6 +410,9 @@ object MusicPlayerState : Player.Listener {
         autoPlay: Boolean = true,
     ) {
         com.darkxvenom.itune.radio.OnlineRadioController.pauseIfPlaying()
+        if (currentTrack != null && currentTrack?.id != track.id) {
+            YouTubePlaybackTracker.onTrackChanged(positionMs / 1000L)
+        }
         if (expandPlayer) expanded = true
         loadJob?.cancel()
 
@@ -758,6 +788,7 @@ object MusicPlayerState : Player.Listener {
     }
 
     fun close() {
+        YouTubePlaybackTracker.onPlaybackFinished(positionMs / 1000L)
         loadJob?.cancel()
         lyricsJob?.cancel()
         exoPlayer?.stop()
@@ -812,6 +843,11 @@ object MusicPlayerState : Player.Listener {
                 AudioEngineManager.attachAudioSession(sid, true)
             }
             simultaneousProcessor?.onPlay()
+            val active = currentTrack
+            val ctx = appContext
+            if (active != null && ctx != null) {
+                YouTubePlaybackTracker.onPlaying(ctx, active)
+            }
         } else {
             simultaneousProcessor?.onPause()
             if (!restoredPendingStream && !resolvingStream) {

@@ -3,6 +3,8 @@ package com.darkxvenom.itune.backend
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import com.darkxvenom.itune.data.artist.ArtistInnertubeClient
+import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.SettingsStore
 import kotlinx.coroutines.Dispatchers
@@ -109,7 +111,7 @@ object MusicBackend {
         suggestionCache[cacheKey]?.let { return@withContext it }
 
         val innerTubeSuggestions = runCatching {
-            val root = postInnerTube(SUGGESTIONS_URL, JSONObject().put("input", trimmed))
+            val root = postInnerTube(SUGGESTIONS_URL, JSONObject().put("input", trimmed), anonymous = true)
             extractMusicSuggestions(root)
         }.getOrDefault(emptyList())
 
@@ -310,7 +312,7 @@ object MusicBackend {
             year = year,
             releaseType = releaseType,
             thumbnailUrl = thumbUrl,
-            isExplicit = twoRow.opt("subtitleBadges").hasExplicitBadge()
+            isExplicit = twoRow.hasExplicitBadge()
         )
     }
 
@@ -602,7 +604,7 @@ object MusicBackend {
             browseId = browseId,
             videoId = videoId,
             playlistId = playlistId,
-            isExplicit = twoRow.opt("subtitleBadges").hasExplicitBadge()
+            isExplicit = twoRow.hasExplicitBadge()
         )
     }
 
@@ -710,33 +712,79 @@ object MusicBackend {
     private fun postInnerTubeSearch(query: String, params: String? = null): JSONObject {
         val body = JSONObject().put("query", query)
         if (params != null) body.put("params", params)
-        return postInnerTube(SEARCH_URL, body)
+        // Search runs anonymously so account delegation or expired cookies never truncate results.
+        return postInnerTube(SEARCH_URL, body, anonymous = true)
     }
 
-    private fun postInnerTube(url: String, body: JSONObject): JSONObject {
+    private fun postInnerTube(
+        url: String,
+        body: JSONObject,
+        anonymous: Boolean = false,
+    ): JSONObject {
+        val useAuth = !anonymous && ArtistInnertubeClient.hasSession()
+        val firstResult = executeInnerTubeCall(url, body, authenticated = useAuth)
+        val firstJson = firstResult.second
+        val hasErrorPayload = firstJson?.has("error") == true
+        if (useAuth && (!firstResult.first || firstJson == null || hasErrorPayload)) {
+            Log.w(TAG, "InnerTube authenticated request failed on $url; retrying anonymously")
+            val fallback = executeInnerTubeCall(url, body, authenticated = false)
+            return fallback.second ?: JSONObject()
+        }
+        return firstJson ?: JSONObject()
+    }
+
+    private fun executeInnerTubeCall(
+        url: String,
+        body: JSONObject,
+        authenticated: Boolean,
+    ): Pair<Boolean, JSONObject?> {
         val hl = SettingsStore.effectiveHl()
         val gl = SettingsStore.effectiveGl()
+        val clientVersion = ArtistInnertubeClient.currentClientVersion()
         val clientObj = JSONObject()
             .put("clientName", "WEB_REMIX")
-            .put("clientVersion", "1.20240101.01.00")
+            .put("clientVersion", clientVersion)
             .put("hl", hl)
             .put("gl", gl)
 
-        val payload = JSONObject(body.toString())
-            .put("context", JSONObject().put("client", clientObj))
+        val userObj = if (authenticated) {
+            ArtistInnertubeClient.buildUserContextObject()
+        } else {
+            JSONObject().put("lockedSafetyMode", false)
+        }
 
-        val request = Request.Builder()
+        val contextObj = JSONObject()
+            .put("client", clientObj)
+            .put("user", userObj)
+            .put("request", JSONObject().put("useSsl", true))
+
+        val payload = JSONObject(body.toString())
+            .put("context", contextObj)
+
+        val reqBuilder = Request.Builder()
             .url(url)
             .post(payload.toString().toRequestBody(JSON_TYPE))
             .header("Accept-Language", "$hl,en-US;q=0.8,en;q=0.7")
+            .header("X-Origin", "https://music.youtube.com")
             .header("Origin", "https://music.youtube.com")
             .header("Referer", "https://music.youtube.com/")
-            .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-            .build()
+            .header("X-YouTube-Client-Name", "67")
+            .header("X-YouTube-Client-Version", clientVersion)
+        if (authenticated) {
+            ArtistInnertubeClient.applyAuthHeaders(reqBuilder)
+        }
+        val request = reqBuilder.build()
 
-        Net.client.newCall(request).execute().use { response ->
-            val text = response.body?.string().orEmpty()
-            return JSONObject(text)
+        return try {
+            Net.client.newCall(request).execute().use { response ->
+                GoogleAuthStore.absorbSetCookies(response.headers("Set-Cookie"))
+                val text = response.body?.string().orEmpty()
+                val json = text.takeIf { it.isNotBlank() }?.let { runCatching { JSONObject(it) }.getOrNull() }
+                response.isSuccessful to json
+            }
+        } catch (e: Throwable) {
+            Log.w(TAG, "InnerTube call error on $url (auth=$authenticated): ${e.message}")
+            false to null
         }
     }
 
@@ -880,8 +928,7 @@ object MusicBackend {
             thumbnailUrl = thumbUrl,
             isAlbum = isAlbum,
             watchPlaylistId = watchPlaylistId,
-            isExplicit = responsive.opt("badges").hasExplicitBadge() ||
-                responsive.opt("subtitleBadges").hasExplicitBadge()
+            isExplicit = responsive.hasExplicitBadge()
         )
     }
 
@@ -945,8 +992,7 @@ object MusicBackend {
                 albumId = albumId,
                 thumbnailUrl = thumbUrl,
                 durationSec = durationSec,
-                isExplicit = responsive.opt("badges").hasExplicitBadge() ||
-                    responsive.opt("subtitleBadges").hasExplicitBadge()
+            isExplicit = responsive.hasExplicitBadge()
             )
         }
 
@@ -983,7 +1029,7 @@ object MusicBackend {
                 artists = artists.ifBlank { "Various Artists" },
                 artistId = artistId,
                 thumbnailUrl = thumbUrl,
-                isExplicit = twoRow.opt("subtitleBadges").hasExplicitBadge()
+                isExplicit = twoRow.hasExplicitBadge()
             )
         }
 
