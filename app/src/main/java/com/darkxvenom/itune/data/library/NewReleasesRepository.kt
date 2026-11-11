@@ -51,9 +51,13 @@ object NewReleasesRepository {
             _isLoading.value = true
             _errorMessage.value = null
             try {
-                val fetched = MusicBackend.fetchNewReleaseAlbums()
-                if (fetched.isNotEmpty()) {
-                    _releases.value = fetched
+                val releasesDeferred = async { MusicBackend.fetchNewReleaseAlbums() }
+                val playlistsDeferred = async { MusicBackend.fetchLocalizedExplorePlaylists() }
+                val fetchedReleases = releasesDeferred.await()
+                val fetchedPlaylists = playlistsDeferred.await()
+                if (fetchedReleases.isNotEmpty()) {
+                    _releases.value = fetchedReleases
+                    syncedLocaleSignature = targetSig
                 } else if (_releases.value.isEmpty()) {
                     _errorMessage.value = "Couldn't load new releases"
                 }
