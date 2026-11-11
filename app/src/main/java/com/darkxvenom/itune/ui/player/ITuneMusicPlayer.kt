@@ -927,6 +927,17 @@ fun ITuneMusicPlayer(
                 val pillBadge = audioEngineState.pillBadge
                 Box(
                     modifier = Modifier
+                        .onGloballyPositioned { coords ->
+                            val root = rootBoxCoords
+                            if (root != null && root.isAttached && coords.isAttached) {
+                                val c = root.localPositionOf(
+                                    coords,
+                                    Offset(coords.size.width / 2f, coords.size.height / 2f),
+                                )
+                                enginePillAnchorXPx = c.x
+                                enginePillAnchorYPx = c.y
+                            }
+                        }
                         .clip(RoundedCornerShape(14.dp))
                         .background(Color.White.copy(alpha = 0.12f))
                         .clickable { onLyricsInteraction() }
