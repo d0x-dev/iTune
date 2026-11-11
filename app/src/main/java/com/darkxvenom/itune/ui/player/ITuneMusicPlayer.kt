@@ -253,8 +253,25 @@ fun ITuneMusicPlayer(
         }
     }
 
-    LaunchedEffect(isLyricsOpen, lastLyricsInteractionTime, areLyricsControlsVisible, isSeeking, isMoreMenuOpen) {
-        if (isLyricsOpen && areLyricsControlsVisible && !isSeeking && !isMoreMenuOpen) {
+    LaunchedEffect(
+        isLyricsOpen,
+        lastLyricsInteractionTime,
+        areLyricsControlsVisible,
+        isSeeking,
+        isMoreMenuOpen,
+        isISharePopupOpen,
+        isAudioOutputPopupOpen,
+        isAudioEnginePopupOpen,
+    ) {
+        if (
+            isLyricsOpen &&
+            areLyricsControlsVisible &&
+            !isSeeking &&
+            !isMoreMenuOpen &&
+            !isISharePopupOpen &&
+            !isAudioOutputPopupOpen &&
+            !isAudioEnginePopupOpen
+        ) {
             delay(2000L)
             areLyricsControlsVisible = false
         }
