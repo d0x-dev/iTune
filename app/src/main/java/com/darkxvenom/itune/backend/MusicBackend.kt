@@ -244,7 +244,7 @@ object MusicBackend {
                     }
                 }
             }
-            fallback.distinctBy { it.browseId }
+            fallback.distinctBy { it.browseId }.filter { !hideExplicit || !it.isExplicit }
         }.getOrDefault(emptyList())
     }
 
@@ -317,7 +317,14 @@ object MusicBackend {
     /**
      * Fetches AirBeats "Moods & moments" navigation items from `FEmusic_moods_and_genres`.
      */
-    suspend fun fetchMoodsAndMoments(): List<MoodAndMomentRef> = withContext(Dispatchers.IO) {
+    suspend fun fetchMoodsAndMoments(): List<MoodAndMomentRef> =
+        fetchMoodsAndGenresCatalog().moods
+
+    /**
+     * Fetches localized Moods & Moments AND Genres sections from `FEmusic_moods_and_genres`
+     * for the user's configured Content Language (`hl`) and Content Country (`gl`).
+     */
+    suspend fun fetchMoodsAndGenresCatalog(): MoodsAndGenresCatalog = withContext(Dispatchers.IO) {
         runCatching {
             val root = postInnerTube(BROWSE_URL, JSONObject().put("browseId", BROWSE_MOODS_AND_GENRES))
             val sections = root.optJSONObject("contents")
