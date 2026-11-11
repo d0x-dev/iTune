@@ -368,7 +368,7 @@ fun HomeScreen(
                 // Curated Playlists (Spatial Audio & Essentials)
                 item(key = "curated_playlists") {
                     CuratedPlaylistsSection(
-                        playlists = MusicRepository.essentialPlaylists,
+                        playlists = homePlaylists,
                         onPlaylistClick = { playlist ->
                             Toast.makeText(context, "Playlist: ${playlist.title}", Toast.LENGTH_SHORT).show()
                         }
