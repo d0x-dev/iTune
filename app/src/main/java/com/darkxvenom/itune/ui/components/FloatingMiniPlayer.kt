@@ -68,9 +68,10 @@ fun FloatingMiniPlayer(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 14.dp)
+            .height(54.dp)
             .shadow(
-                elevation = 16.dp,
-                shape = RoundedCornerShape(16.dp),
+                elevation = 14.dp,
+                shape = CircleShape,
                 ambientColor = Color.Black,
                 spotColor = Color.Black
             )
