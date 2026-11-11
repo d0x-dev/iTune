@@ -132,7 +132,12 @@ fun AppleMoodCategoryScreen(
     var focusSearchNext by remember { mutableStateOf(false) }
     var isPlayingMix by remember { mutableStateOf(false) }
 
-    LaunchedEffect(category.browseId, category.params, refreshNonce) {
+    val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
+    val localeSignature = remember(settingsState.contentLanguage, settingsState.contentCountry) {
+        SettingsStore.localeSignature()
+    }
+
+    LaunchedEffect(category.browseId, category.params, refreshNonce, localeSignature) {
         isLoading = true
         errorMessage = null
         try {
