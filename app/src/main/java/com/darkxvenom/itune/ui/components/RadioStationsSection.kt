@@ -62,12 +62,14 @@ fun RadioStationsSection(
     liveMetadataTitle: String?,
     isLoading: Boolean,
     modifier: Modifier = Modifier,
-    onStationClick: (RadioStation) -> Unit = {}
+    onHeaderClick: () -> Unit = {},
+    onStationClick: (OnlineRadioStation) -> Unit = {},
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .clickable(onClick = onHeaderClick)
                 .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
