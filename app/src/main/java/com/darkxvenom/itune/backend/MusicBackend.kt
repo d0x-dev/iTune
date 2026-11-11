@@ -541,7 +541,8 @@ object MusicBackend {
                             subtitle = tr.artists,
                             thumbnailUrl = tr.thumbnailUrl,
                             type = MoodCategoryItemType.SONG,
-                            videoId = tr.id
+                            videoId = tr.id,
+                            isExplicit = tr.isExplicit,
                         )
                     }
                 }
