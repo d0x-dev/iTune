@@ -2,6 +2,8 @@ package com.darkxvenom.itune.data.artist
 
 import android.util.Log
 import com.darkxvenom.itune.backend.Net
+import com.darkxvenom.itune.data.library.ContentLocaleCatalog
+import com.darkxvenom.itune.data.library.SettingsStore
 import kotlinx.coroutines.delay
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
@@ -23,7 +25,14 @@ object ArtistInnertubeClient {
     private var visitorData: String? = null
 
     val currentLocaleTag: String
-        get() = LocaleTags.normalizeAppTag(Locale.getDefault().toLanguageTag().ifEmpty { "en" })
+        get() {
+            val lang = SettingsStore.state.value.contentLanguage
+            return if (lang == ContentLocaleCatalog.SYSTEM_DEFAULT) {
+                LocaleTags.normalizeAppTag(Locale.getDefault().toLanguageTag().ifEmpty { "en" })
+            } else {
+                LocaleTags.normalizeAppTag(lang)
+            }
+        }
 
     val currentLanguage: String
         get() = LocaleTags.ytHl(currentLocaleTag)
