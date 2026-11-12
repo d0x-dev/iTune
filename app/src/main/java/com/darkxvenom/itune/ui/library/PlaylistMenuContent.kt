@@ -896,8 +896,9 @@ fun AppleSheetAddToPlaylistContent(
                             busy = true
                             scope.launch {
                                 try {
-                                    resolveAndAddToPlaylist(context, pl, payload, resolvedSongs)
-                                    onCompleted()
+                                    if (resolveAndAddToPlaylist(context, pl, payload, resolvedSongs)) {
+                                        onCompleted()
+                                    }
                                 } finally {
                                     busy = false
                                 }
