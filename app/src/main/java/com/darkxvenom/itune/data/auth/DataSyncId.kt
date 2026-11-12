@@ -21,5 +21,9 @@ fun delegatedSessionId(raw: String?): String? {
     val value = raw?.trim()?.takeIf { it.isNotBlank() } ?: return null
     val separator = value.indexOf("||")
     if (separator <= 0) return null
+    // A primary account is USER_SESSION_ID|| (empty right-hand side), not a
+    // delegated channel. Secondary channels provide both parts.
+    val userSessionId = value.substring(separator + 2).trim()
+    if (userSessionId.isBlank()) return null
     return value.substring(0, separator).trim().takeIf { it.isNotBlank() }
 }
