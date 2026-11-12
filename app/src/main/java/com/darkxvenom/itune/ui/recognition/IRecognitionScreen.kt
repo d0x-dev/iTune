@@ -383,7 +383,7 @@ fun IRecognitionScreen(
                                 text = when (uiState) {
                                     IRecognitionUiState.Listening -> "Listening…"
                                     IRecognitionUiState.Processing -> "Finding your song…"
-                                    else -> "Tap to recognize",
+                                    else -> "Tap to recognize"
                                 },
                                 color = if (isListening || isProcessing) Color.White else RecognitionSecondary,
                                 fontSize = 15.sp,
