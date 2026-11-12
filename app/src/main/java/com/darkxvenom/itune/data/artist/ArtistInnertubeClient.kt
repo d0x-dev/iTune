@@ -133,7 +133,7 @@ object ArtistInnertubeClient {
     suspend fun browseContinuation(
         token: String,
         anonymous: Boolean = false,
-        allowAnonymousFallback: Boolean = true,
+        allowAnonymousFallback: Boolean = false,
     ): JSONObject = postMusic(
         endpoint = "browse",
         query = mapOf("ctoken" to token, "continuation" to token, "type" to "next"),
@@ -381,6 +381,7 @@ object ArtistInnertubeClient {
      */
     suspend fun verifyAuthenticatedLibraryAccess() {
         requireSession()
+        refreshSessionScope()
         val failures = mutableListOf<String>()
         for (browseId in listOf("FEmusic_liked_playlists", "FEmusic_liked_videos")) {
             try {
@@ -673,6 +674,29 @@ object ArtistInnertubeClient {
 
     private fun requireSession() {
         if (cookie.isNullOrBlank()) error("Sign in with Google to sync with YouTube Music")
+    }
+
+    /**
+     * Refresh the account/channel scope from live YouTube Music ytcfg. Existing sessions
+     * may have been saved by older builds with delegated and user session IDs swapped.
+     */
+    private suspend fun refreshSessionScope() {
+        val activeCookie = cookie ?: error("Sign in with Google to sync with YouTube Music")
+        scopeLock.withLock {
+            val previous = scope
+            val fresh = fetchSessionScope(activeCookie)
+                ?: error("YouTube Music did not provide an authenticated session configuration")
+            if (cookie != activeCookie) error("Google account changed while refreshing YouTube session")
+            val refreshed = fresh.copy(
+                clientVersion = fresh.clientVersion ?: previous?.clientVersion,
+                authUser = fresh.authUser.ifBlank { previous?.authUser ?: "0" },
+            )
+            scope = refreshed
+            GoogleAuthStore.updateActiveScope(
+                pageId = refreshed.pageId,
+                dataSyncId = refreshed.dataSyncId,
+            )
+        }
     }
 
     private suspend fun ensureSessionScope() {
