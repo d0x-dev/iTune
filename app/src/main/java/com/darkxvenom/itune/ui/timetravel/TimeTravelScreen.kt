@@ -1,12 +1,9 @@
 package com.darkxvenom.itune.ui.timetravel
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,39 +18,32 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Album
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.IosShare
-import androidx.compose.material.icons.rounded.MoreHoriz
-import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -70,7 +60,7 @@ import com.darkxvenom.itune.data.library.SavedCollectionEntry
 import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.model.BrowseType
 import com.darkxvenom.itune.data.model.Song
-import com.darkxvenom.itune.data.timetravel.ListeningHistoryItem
+import com.darkxvenom.itune.data.model.toMusicTrack
 import com.darkxvenom.itune.data.timetravel.ListeningPeriod
 import com.darkxvenom.itune.data.timetravel.TimeTravelRepository
 import com.darkxvenom.itune.data.timetravel.TimeTravelStats
@@ -84,306 +74,264 @@ import com.darkxvenom.itune.ui.library.LibraryHostController
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.AppleTextPrimary
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
-import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+
+private val PAGE_GUTTER = 16.dp
+private val AccentRed = Color(0xFFFA2D48)
 
 @Composable
 fun TimeTravelScreen(
-    controller: LibraryHostController,
-    hasMiniPlayer: Boolean,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    controller: LibraryHostController? = null,
+    hasMiniPlayer: Boolean = false,
 ) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val listState = rememberLazyListState()
-
     val stats by TimeTravelRepository.stats.collectAsStateWithLifecycle()
     val selectedPeriod by TimeTravelRepository.selectedPeriod.collectAsStateWithLifecycle()
     val isLoading by TimeTravelRepository.isLoading.collectAsStateWithLifecycle()
-    val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
-    val displayName = settingsState.displayName.ifBlank { "You" }
 
-    var showInsightsDialog by remember { mutableStateOf(false) }
+    val userDisplayName = remember {
+        SettingsStore.ensureInit(context)
+        SettingsStore.state.value.displayName.ifBlank { "iTune Listener" }
+    }
+
+    var storyStartPage by remember { mutableStateOf<ReplayStoryPage?>(null) }
+    var showShareSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         TimeTravelRepository.ensureInit(context)
         TimeTravelRepository.refresh()
     }
 
+    val leadArtwork = stats.topSongs.firstOrNull()?.artworkUrl
+    val palette = rememberArtworkColors(leadArtwork)
+    val listState = rememberLazyListState()
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(AppleOledBlack),
     ) {
+        // 1. BitChord Mesh Backdrop
+        MeshGradientBackground(
+            palette = palette,
+            trackKey = leadArtwork,
+            animated = false,
+        )
+
+        // 2. Subtle Dark Gradient Wash
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.Black.copy(alpha = 0.30f),
+                            Color.Black.copy(alpha = 0.72f),
+                            Color.Black.copy(alpha = 0.88f),
+                        ),
+                    ),
+                ),
+        )
+
+        // 3. Scrollable Replay Content
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                top = 90.dp,
-                bottom = if (hasMiniPlayer) 150.dp else 100.dp,
-            ),
+            contentPadding = PaddingValues(top = 80.dp, bottom = if (hasMiniPlayer) 140.dp else 100.dp),
         ) {
-            // 1. Credit-Card-Style Statistics Cards Carousel
-            item(key = "cards_carousel") {
-                TimeTravelCardsCarousel(
-                    stats = stats,
-                    displayName = displayName,
-                    modifier = Modifier.padding(bottom = 18.dp),
+            // Heading + Period Picker
+            item("heading") {
+                HeadingSection(
+                    period = selectedPeriod,
+                    onPeriodSelect = { period ->
+                        TimeTravelRepository.selectPeriod(period)
+                    },
                 )
             }
 
-            // 2. Listening Period Selector Chips
-            item(key = "period_selector") {
-                PeriodSelectorRow(
-                    selectedPeriod = selectedPeriod,
-                    onSelect = { TimeTravelRepository.selectPeriod(it) },
-                    modifier = Modifier.padding(bottom = 20.dp),
-                )
-            }
-
-            // 3. iTune Insights Stories Experience Launcher Banner
-            item(key = "insights_banner") {
-                InsightsStoryLauncherBanner(
-                    onClick = { showInsightsDialog = true },
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                )
-            }
-
-            // 4. Overview Metric Badges (Listening Time, Total Plays, Avg per Track)
-            item(key = "metrics_row") {
-                OverviewMetricsRow(
-                    stats = stats,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp),
-                )
-            }
-
-            // 5. Most Played Songs (Ranks 1..10)
-            if (stats.topSongs.isNotEmpty()) {
-                item(key = "top_songs_header") {
-                    SectionHeader(title = "Top Songs", subtitle = "Your most played tracks in this period")
+            if (isLoading) {
+                item("loading") {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(64.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator(color = Color.White.copy(alpha = 0.6f))
+                    }
                 }
+            } else if (stats.isEmpty) {
+                item("empty") {
+                    EmptyReplayView(selectedPeriod)
+                }
+            } else {
+                // Headline Credit Cards
+                item("cards") {
+                    val heroCards = remember(stats) {
+                        buildList {
+                            add(
+                                ReplayHeroCard(
+                                    label = "MINUTES LISTENED",
+                                    value = "${stats.totalListeningSec / 60}",
+                                    detail = "${stats.totalPlays} plays · ${selectedPeriod.label}",
+                                    artworkUrl = stats.topSongs.firstOrNull()?.artworkUrl,
+                                    page = ReplayStoryPage.MINUTES,
+                                ),
+                            )
+                            stats.topSongs.firstOrNull()?.let {
+                                add(
+                                    ReplayHeroCard(
+                                        label = "TOP SONG",
+                                        value = it.title,
+                                        detail = "${it.artist} · ${it.playCount} plays",
+                                        artworkUrl = it.artworkUrl,
+                                        page = ReplayStoryPage.SONGS,
+                                    ),
+                                )
+                            }
+                            stats.topArtists.firstOrNull()?.let {
+                                add(
+                                    ReplayHeroCard(
+                                        label = "TOP ARTIST",
+                                        value = it.artistName,
+                                        detail = "${it.durationSec / 60}m · ${it.playCount} plays",
+                                        artworkUrl = it.artworkUrl,
+                                        page = ReplayStoryPage.ARTISTS,
+                                    ),
+                                )
+                            }
+                            stats.topAlbums.firstOrNull()?.let {
+                                add(
+                                    ReplayHeroCard(
+                                        label = "TOP ALBUM",
+                                        value = it.albumName,
+                                        detail = "${it.artistName} · ${it.playCount} plays",
+                                        artworkUrl = it.artworkUrl,
+                                        page = ReplayStoryPage.ALBUMS,
+                                    ),
+                                )
+                            }
+                        }
+                    }
 
-                itemsIndexed(
-                    items = stats.topSongs.take(10),
-                    key = { _, item -> "top_song_${item.songId}" },
-                ) { index, item ->
-                    TopSongRow(
-                        stat = item,
-                        onClick = {
-                            val songObj = item.toSong()
-                            controller.playSongs(listOf(songObj))
-                        },
-                        onMenuClick = {
-                            controller.openSongMenu(item.toSong())
+                    ReplayCardRow(
+                        cards = heroCards,
+                        holder = userDisplayName,
+                        memberSince = "11/26",
+                        onCardClick = { page ->
+                            storyStartPage = page
                         },
                     )
                 }
 
-                item(key = "top_songs_spacer") {
-                    Spacer(Modifier.height(24.dp))
-                }
-            }
-
-            // 6. Most Played Artists (Carousel)
-            if (stats.topArtists.isNotEmpty()) {
-                item(key = "top_artists_section") {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        SectionHeader(title = "Top Artists", subtitle = "Artists on your heaviest rotation")
-                        Spacer(Modifier.height(12.dp))
-                        LazyRow(
-                            contentPadding = PaddingValues(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(14.dp),
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            items(stats.topArtists, key = { "art_${it.artistName}" }) { artStat ->
-                                TopArtistCard(
-                                    artist = artStat,
-                                    onClick = {
-                                        if (!artStat.artistId.isNullOrBlank()) {
-                                            controller.openDetail(
-                                                browseId = artStat.artistId,
-                                                title = artStat.artistName,
-                                                subtitle = "Artist",
-                                                thumbnailUrl = artStat.artworkUrl,
-                                                type = BrowseType.ARTIST,
-                                            )
-                                        } else {
-                                            controller.openCollectionMenu(
-                                                SavedCollectionEntry(
-                                                    browseId = artStat.artistId.orEmpty(),
-                                                    title = artStat.artistName,
-                                                    subtitle = "Artist",
-                                                    thumbnailUrl = artStat.artworkUrl,
-                                                    type = BrowseType.ARTIST,
-                                                ),
-                                            )
-                                        }
-                                    },
-                                    onMenuClick = {
-                                        controller.openCollectionMenu(
-                                            SavedCollectionEntry(
-                                                browseId = artStat.artistId.orEmpty(),
-                                                title = artStat.artistName,
-                                                subtitle = "Artist",
-                                                thumbnailUrl = artStat.artworkUrl,
-                                                type = BrowseType.ARTIST,
-                                            ),
-                                        )
-                                    },
-                                )
-                            }
-                        }
-                        Spacer(Modifier.height(24.dp))
-                    }
-                }
-            }
-
-            // 7. Most Played Albums (Shelf)
-            if (stats.topAlbums.isNotEmpty()) {
-                item(key = "top_albums_section") {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        SectionHeader(title = "Top Albums", subtitle = "Complete projects you explored")
-                        Spacer(Modifier.height(12.dp))
-                        LazyRow(
-                            contentPadding = PaddingValues(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(14.dp),
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            items(stats.topAlbums, key = { "alb_${it.albumName}" }) { albStat ->
-                                TopAlbumCard(
-                                    album = albStat,
-                                    onClick = {
-                                        controller.openCollectionMenu(
-                                            SavedCollectionEntry(
-                                                browseId = "",
-                                                title = albStat.albumName,
-                                                subtitle = albStat.artistName,
-                                                thumbnailUrl = albStat.artworkUrl,
-                                                type = BrowseType.ALBUM,
-                                            ),
-                                        )
-                                    },
-                                    onMenuClick = {
-                                        controller.openCollectionMenu(
-                                            SavedCollectionEntry(
-                                                browseId = "",
-                                                title = albStat.albumName,
-                                                subtitle = albStat.artistName,
-                                                thumbnailUrl = albStat.artworkUrl,
-                                                type = BrowseType.ALBUM,
-                                            ),
-                                        )
-                                    },
-                                )
-                            }
-                        }
-                        Spacer(Modifier.height(24.dp))
-                    }
-                }
-            }
-
-            // 8. Listening Activity Charts (Day and Hour)
-            item(key = "charts_section") {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    SectionHeader(title = "Listening Rhythm", subtitle = "When you tune in most")
-                    ListeningActivityByDayChart(dailyActivity = stats.dailyActivity)
-                    ListeningActivityByHourChart(hourlyActivity = stats.hourlyActivity)
-                    Spacer(Modifier.height(8.dp))
-                }
-            }
-
-            // 9. When You Listened – Chronological Timeline
-            if (stats.timeline.isNotEmpty()) {
-                item(key = "timeline_header") {
-                    SectionHeader(title = "When You Listened", subtitle = "Your chronological playback activity")
+                // Play Replay Action Row
+                item("play_replay") {
+                    ReplayActionRow(
+                        icon = Icons.Rounded.PlayArrow,
+                        label = "Play your Replay",
+                        onClick = { storyStartPage = ReplayStoryPage.INTRO },
+                    )
                 }
 
-                // Group timeline items by formatted date
-                val groupedTimeline = stats.timeline.groupBy { item ->
-                    formatTimelineDate(item.timestamp)
-                }
-
-                groupedTimeline.forEach { (dateHeader, items) ->
-                    item(key = "timeline_date_$dateHeader") {
-                        Text(
-                            text = dateHeader,
-                            color = Color(0xFFFC3C44),
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.5.sp,
-                            modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp),
-                        )
-                    }
-
-                    items(items, key = { "tl_${it.id}" }) { tlItem ->
-                        TimelineSongRow(
-                            item = tlItem,
+                // Top Songs Chart
+                if (stats.topSongs.isNotEmpty()) {
+                    chartSection(
+                        title = "Top songs",
+                        items = stats.topSongs.take(5),
+                        keySelector = { it.songId },
+                    ) { songStat ->
+                        SongChartRow(
+                            stat = songStat,
                             onClick = {
-                                controller.playSongs(listOf(tlItem.toSong()))
+                                MusicPlayerState.play(songStat.toSong().toMusicTrack())
                             },
                             onMenuClick = {
-                                controller.openSongMenu(tlItem.toSong())
+                                controller?.openSongMenu(songStat.toSong())
                             },
                         )
                     }
                 }
 
-                item(key = "timeline_bottom_spacer") {
-                    Spacer(Modifier.height(28.dp))
-                }
-            }
-
-            // 10. Share Replay Prominent Action Button
-            item(key = "share_replay_action") {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Button(
-                        onClick = {
-                            scope.launch {
-                                TimeTravelShareManager.shareReplay(context, stats, displayName)
-                            }
-                        },
-                        shape = RoundedCornerShape(26.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFFC3C44),
-                            contentColor = Color.White,
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(54.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.IosShare,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                        )
-                        Spacer(Modifier.width(10.dp))
-                        Text(
-                            text = "Share Replay",
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Bold,
+                // Top Artists Chart
+                if (stats.topArtists.isNotEmpty()) {
+                    chartSection(
+                        title = "Top artists",
+                        items = stats.topArtists.take(5),
+                        keySelector = { it.artistName },
+                    ) { artistStat ->
+                        ArtistChartRow(
+                            stat = artistStat,
+                            onClick = {
+                                if (!artistStat.artistId.isNullOrBlank()) {
+                                    controller?.openDetail(
+                                        browseId = artistStat.artistId,
+                                        title = artistStat.artistName,
+                                        subtitle = "Artist",
+                                        thumbnailUrl = artistStat.artworkUrl,
+                                        type = BrowseType.ARTIST,
+                                    )
+                                }
+                            },
+                            onMenuClick = {
+                                controller?.openCollectionMenu(
+                                    SavedCollectionEntry(
+                                        browseId = artistStat.artistId.orEmpty(),
+                                        title = artistStat.artistName,
+                                        subtitle = "Artist",
+                                        thumbnailUrl = artistStat.artworkUrl,
+                                        type = BrowseType.ARTIST,
+                                    ),
+                                )
+                            },
                         )
                     }
+                }
 
-                    Spacer(Modifier.height(10.dp))
+                // Top Albums Chart
+                if (stats.topAlbums.isNotEmpty()) {
+                    chartSection(
+                        title = "Top albums",
+                        items = stats.topAlbums.take(5),
+                        keySelector = { it.albumName },
+                    ) { albumStat ->
+                        AlbumChartRow(
+                            stat = albumStat,
+                            onClick = {
+                                controller?.openDetail(
+                                    browseId = albumStat.albumName,
+                                    title = albumStat.albumName,
+                                    subtitle = albumStat.artistName,
+                                    thumbnailUrl = albumStat.artworkUrl,
+                                    type = BrowseType.ALBUM,
+                                )
+                            },
+                            onMenuClick = {
+                                controller?.openCollectionMenu(
+                                    SavedCollectionEntry(
+                                        browseId = albumStat.albumName,
+                                        title = albumStat.albumName,
+                                        subtitle = albumStat.artistName,
+                                        thumbnailUrl = albumStat.artworkUrl,
+                                        type = BrowseType.ALBUM,
+                                    ),
+                                )
+                            },
+                        )
+                    }
+                }
 
-                    Text(
-                        text = "Share a dynamic high-resolution card to Instagram Stories & socials",
-                        color = Color.White.copy(alpha = 0.45f),
-                        fontSize = 12.sp,
-                        textAlign = TextAlign.Center,
+                // Habits / Listening Shape
+                item("habits") {
+                    HabitsSection(stats)
+                }
+
+                // Share Replay Action Row
+                item("share_replay") {
+                    ReplayActionRow(
+                        icon = Icons.Rounded.IosShare,
+                        label = "Share my Replay",
+                        onClick = { showShareSheet = true },
                     )
                 }
             }
@@ -403,601 +351,466 @@ fun TimeTravelScreen(
                 }
             },
             actions = {
-                IconButton(
-                    onClick = {
-                        scope.launch {
-                            TimeTravelShareManager.shareReplay(context, stats, displayName)
-                        }
-                    },
-                ) {
+                IconButton(onClick = { showShareSheet = true }) {
                     Icon(
                         imageVector = Icons.Rounded.IosShare,
                         contentDescription = "Share Replay",
                         tint = AppleTextPrimary,
-                        modifier = Modifier.size(22.dp),
+                        modifier = Modifier.size(20.dp),
                     )
                 }
             },
         )
 
-        // Loading indicator
-        AnimatedVisibility(
-            visible = isLoading,
-            enter = fadeIn(),
-            exit = fadeOut(),
-            modifier = Modifier.align(Alignment.Center),
-        ) {
-            CircularProgressIndicator(color = Color(0xFFFC3C44))
-        }
-
-        // Fullscreen Instagram Stories-inspired Insights Experience
-        if (showInsightsDialog) {
-            TimeTravelInsightsDialog(
+        // Stories Dialog
+        storyStartPage?.let { page ->
+            TimeTravelStoriesDialog(
                 stats = stats,
-                displayName = displayName,
-                onDismiss = { showInsightsDialog = false },
+                displayName = userDisplayName,
+                startPage = page,
+                onDismiss = { storyStartPage = null },
+                onSharePage = {
+                    showShareSheet = true
+                },
+            )
+        }
+
+        // Share Sheet
+        if (showShareSheet) {
+            TimeTravelShareSheet(
+                stats = stats,
+                holder = userDisplayName,
+                memberSince = "11/26",
+                onDismiss = { showShareSheet = false },
             )
         }
     }
 }
 
+// ── Heading ─────────────────────────────────────────────────────────────────
+
 @Composable
-private fun PeriodSelectorRow(
-    selectedPeriod: ListeningPeriod,
+private fun HeadingSection(
+    period: ListeningPeriod,
+    onPeriodSelect: (ListeningPeriod) -> Unit,
+) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = PAGE_GUTTER + 4.dp),
+    ) {
+        Spacer(Modifier.height(18.dp))
+        Text(
+            text = "Replay",
+            style = MaterialTheme.typography.displayLarge,
+            fontWeight = FontWeight.W800,
+            color = Color.White,
+        )
+        Text(
+            text = period.label,
+            style = MaterialTheme.typography.titleMedium,
+            color = Color.White.copy(alpha = 0.6f),
+        )
+        Spacer(Modifier.height(14.dp))
+
+        // BitChord 4-Segment Period Picker
+        PeriodPicker(
+            selected = period,
+            onSelect = onPeriodSelect,
+        )
+        Spacer(Modifier.height(18.dp))
+    }
+}
+
+@Composable
+private fun PeriodPicker(
+    selected: ListeningPeriod,
     onSelect: (ListeningPeriod) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
+    val periods = listOf(
+        ListeningPeriod.ONE_WEEK to "Weekly",
+        ListeningPeriod.ONE_MONTH to "Monthly",
+        ListeningPeriod.ONE_YEAR to "Yearly",
+        ListeningPeriod.ALL_TIME to "Lifetime",
+    )
+
     Row(
-        modifier = modifier
+        Modifier
             .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color.White.copy(alpha = 0.10f))
+            .padding(3.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        ListeningPeriod.values().forEach { period ->
-            val isSelected = period == selectedPeriod
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(
-                        if (isSelected) Color(0xFFFC3C44) else Color(0xFF161524),
-                    )
-                    .border(
-                        1.dp,
-                        if (isSelected) Color(0xFFFF525E) else Color.White.copy(alpha = 0.1f),
-                        RoundedCornerShape(20.dp),
-                    )
-                    .clickable { onSelect(period) }
-                    .padding(horizontal = 16.dp, vertical = 9.dp),
-            ) {
-                Text(
-                    text = period.label,
-                    color = if (isSelected) Color.White else Color.White.copy(alpha = 0.7f),
-                    fontSize = 13.5.sp,
-                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun InsightsStoryLauncherBanner(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(22.dp))
-            .background(
-                Brush.linearGradient(
-                    colors = listOf(Color(0xFF2A103D), Color(0xFF1B0926), Color(0xFF0F0418)),
-                ),
+        periods.forEach { (period, tabName) ->
+            val active = period == selected
+            val background by animateColorAsState(
+                if (active) Color.White.copy(alpha = 0.92f) else Color.Transparent,
+                tween(160),
+                label = "periodChip",
             )
-            .border(
-                1.dp,
-                Brush.linearGradient(listOf(Color(0xFFFC3C44), Color(0xFF7928CA))),
-                RoundedCornerShape(22.dp),
-            )
-            .clickable(onClick = onClick)
-            .padding(18.dp),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        painter = painterResource(R.drawable.replay),
-                        contentDescription = null,
-                        tint = Color(0xFFB388FF),
-                        modifier = Modifier.size(16.dp),
-                    )
-                    Spacer(Modifier.width(6.dp))
-                    Text(
-                        text = "iTune INSIGHTS",
-                        color = Color(0xFFB388FF),
-                        fontSize = 11.5.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                    )
-                }
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = "Tap to View Your Story",
-                    color = Color.White,
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    text = "Full-screen interactive highlights & personality",
-                    color = Color.White.copy(alpha = 0.65f),
-                    fontSize = 12.5.sp,
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .size(42.dp)
-                    .clip(CircleShape)
-                    .background(
-                        Brush.radialGradient(
-                            listOf(Color(0xFFFC3C44), Color(0xFF7928CA)),
-                        ),
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.PlayArrow,
-                    contentDescription = "Play Story",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun OverviewMetricsRow(
-    stats: TimeTravelStats,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        MetricCard(
-            label = "LISTENING TIME",
-            value = stats.formattedListeningTime,
-            accentColor = Color(0xFFFC3C44),
-            modifier = Modifier.weight(1f),
-        )
-        MetricCard(
-            label = "TOTAL PLAYS",
-            value = "${stats.totalPlays}",
-            accentColor = Color(0xFF00DF89),
-            modifier = Modifier.weight(1f),
-        )
-        MetricCard(
-            label = "AVG PER TRACK",
-            value = "${stats.averageDurationSec / 60}m ${stats.averageDurationSec % 60}s",
-            accentColor = Color(0xFF7928CA),
-            modifier = Modifier.weight(1f),
-        )
-    }
-}
-
-@Composable
-private fun MetricCard(
-    label: String,
-    value: String,
-    accentColor: Color,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(18.dp))
-            .background(Color(0xFF14131E))
-            .border(1.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(18.dp))
-            .padding(horizontal = 12.dp, vertical = 14.dp),
-    ) {
-        Column {
             Text(
-                text = label,
-                color = Color.White.copy(alpha = 0.5f),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.5.sp,
-            )
-            Spacer(Modifier.height(6.dp))
-            Text(
-                text = value,
-                color = accentColor,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold,
+                text = tabName,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.W700,
+                color = if (active) Color.Black else Color.White.copy(alpha = 0.75f),
+                textAlign = TextAlign.Center,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(background)
+                    .clickable { onSelect(period) }
+                    .padding(horizontal = 6.dp, vertical = 8.dp),
             )
         }
     }
 }
 
+// ── Action Row ──────────────────────────────────────────────────────────────
+
 @Composable
-private fun SectionHeader(title: String, subtitle: String) {
-    Column(
-        modifier = Modifier
+private fun ReplayActionRow(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        Modifier
+            .padding(horizontal = PAGE_GUTTER + 4.dp, vertical = 14.dp)
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp),
+            .clip(RoundedCornerShape(14.dp))
+            .background(Color.White.copy(alpha = 0.12f))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = title,
-            color = AppleTextPrimary,
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = (-0.3).sp,
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier.size(18.dp),
         )
+        Spacer(Modifier.width(12.dp))
         Text(
-            text = subtitle,
-            color = AppleTextSecondary,
-            fontSize = 13.sp,
+            text = label,
+            style = MaterialTheme.typography.titleMedium,
+            color = Color.White,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.weight(1f),
+        )
+        Icon(
+            imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+            contentDescription = null,
+            tint = Color.White.copy(alpha = 0.5f),
+            modifier = Modifier.size(16.dp),
         )
     }
 }
 
+// ── Chart Section ───────────────────────────────────────────────────────────
+
+private fun <T> LazyListScope.chartSection(
+    title: String,
+    items: List<T>,
+    keySelector: (T) -> String,
+    content: @Composable (T) -> Unit,
+) {
+    item("$title-heading") {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.W800,
+            color = Color.White,
+            modifier = Modifier.padding(
+                start = PAGE_GUTTER + 4.dp,
+                end = PAGE_GUTTER + 4.dp,
+                top = 10.dp,
+                bottom = 10.dp,
+            ),
+        )
+    }
+    items(items, key = { keySelector(it) }) { item ->
+        content(item)
+    }
+    item("$title-gap") {
+        Spacer(Modifier.height(18.dp))
+    }
+}
+
 @Composable
-private fun TopSongRow(
+private fun SongChartRow(
     stat: TopSongStat,
     onClick: () -> Unit,
     onMenuClick: () -> Unit,
 ) {
-    val rankColor = when (stat.rank) {
-        1 -> Color(0xFFFC3C44)
-        2 -> Color(0xFFFF525E)
-        3 -> Color(0xFFFF8A94)
-        else -> Color.White.copy(alpha = 0.45f)
-    }
-
     Row(
-        modifier = Modifier
+        Modifier
             .fillMaxWidth()
             .longPressMenuClickable(onClick = onClick, onLongClick = onMenuClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = PAGE_GUTTER + 4.dp, vertical = 7.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Rank number
-        Text(
-            text = "${stat.rank}",
-            color = rankColor,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.width(28.dp),
-        )
+        RankBadge(stat.rank)
 
-        Spacer(Modifier.width(10.dp))
-
-        // Artwork
-        Box(
+        AsyncImage(
+            model = stat.artworkUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(48.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color.White.copy(alpha = 0.1f)),
-        ) {
-            if (!stat.artworkUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = stat.artworkUrl,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Rounded.MusicNote,
-                    contentDescription = null,
-                    tint = Color.White.copy(alpha = 0.5f),
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.Center),
-                )
-            }
-        }
-
-        Spacer(Modifier.width(14.dp))
-
-        // Song & Artist Details
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = stat.title,
-                color = AppleTextPrimary,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Spacer(Modifier.height(2.dp))
-            Text(
-                text = stat.artist,
-                color = AppleTextSecondary,
-                fontSize = 12.5.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-
-        // Play Count & 3-dot menu button
-        Column(horizontalAlignment = Alignment.End) {
-            Text(
-                text = "${stat.playCount} plays",
-                color = Color.White.copy(alpha = 0.6f),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-            )
-            if (stat.durationSec > 0) {
-                Text(
-                    text = "${stat.durationSec / 60}m",
-                    color = Color.White.copy(alpha = 0.35f),
-                    fontSize = 11.sp,
-                )
-            }
-        }
-
-        IconButton(
-            onClick = onMenuClick,
-            modifier = Modifier.size(36.dp),
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.MoreHoriz,
-                contentDescription = "Options",
-                tint = Color.White.copy(alpha = 0.5f),
-                modifier = Modifier.size(18.dp),
-            )
-        }
-    }
-}
-
-@Composable
-private fun TopArtistCard(
-    artist: TopArtistStat,
-    onClick: () -> Unit,
-    onMenuClick: () -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .width(110.dp)
-            .longPressMenuClickable(onClick = onClick, onLongClick = onMenuClick),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Box(
-            modifier = Modifier
-                .size(92.dp)
-                .clip(CircleShape)
-                .border(2.dp, Color(0xFF7928CA).copy(alpha = 0.6f), CircleShape)
-                .background(Color.White.copy(alpha = 0.1f)),
-            contentAlignment = Alignment.Center,
-        ) {
-            if (!artist.artworkUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = artist.artworkUrl,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                )
-            } else {
-                Text(
-                    text = artist.artistName.take(1),
-                    color = Color.White,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-
-            // Rank badge
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .size(24.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF7928CA)),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = "${artist.rank}",
-                    color = Color.White,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-        }
-
-        Spacer(Modifier.height(8.dp))
-
-        Text(
-            text = artist.artistName,
-            color = AppleTextPrimary,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.SemiBold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
+                .clip(RoundedCornerShape(6.dp))
+                .background(Color.White.copy(alpha = 0.08f)),
         )
-        Text(
-            text = "${artist.playCount} plays",
-            color = AppleTextSecondary,
-            fontSize = 11.sp,
-            textAlign = TextAlign.Center,
-        )
-    }
-}
-
-@Composable
-private fun TopAlbumCard(
-    album: TopAlbumStat,
-    onClick: () -> Unit,
-    onMenuClick: () -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .width(120.dp)
-            .longPressMenuClickable(onClick = onClick, onLongClick = onMenuClick),
-    ) {
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(Color.White.copy(alpha = 0.1f)),
-            contentAlignment = Alignment.Center,
-        ) {
-            if (!album.artworkUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = album.artworkUrl,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Rounded.Album,
-                    contentDescription = null,
-                    tint = Color.White.copy(alpha = 0.5f),
-                    modifier = Modifier.size(42.dp),
-                )
-            }
-        }
-
-        Spacer(Modifier.height(8.dp))
-
-        Text(
-            text = album.albumName,
-            color = AppleTextPrimary,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.SemiBold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Text(
-            text = album.artistName,
-            color = AppleTextSecondary,
-            fontSize = 11.5.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Text(
-            text = "${album.playCount} plays",
-            color = Color(0xFF0072F5),
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Medium,
-        )
-    }
-}
-
-@Composable
-private fun TimelineSongRow(
-    item: ListeningHistoryItem,
-    onClick: () -> Unit,
-    onMenuClick: () -> Unit,
-) {
-    val timeFormat = remember { SimpleDateFormat("h:mm a", Locale.getDefault()) }
-    val timeStr = remember(item.timestamp) { timeFormat.format(Date(item.timestamp)) }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .longPressMenuClickable(onClick = onClick, onLongClick = onMenuClick)
-            .padding(horizontal = 16.dp, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        // Thumbnail
-        Box(
-            modifier = Modifier
-                .size(44.dp)
-                .clip(RoundedCornerShape(9.dp))
-                .background(Color.White.copy(alpha = 0.1f)),
-            contentAlignment = Alignment.Center,
-        ) {
-            if (!item.artworkUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = item.artworkUrl,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Rounded.MusicNote,
-                    contentDescription = null,
-                    tint = Color.White.copy(alpha = 0.5f),
-                    modifier = Modifier.size(20.dp),
-                )
-            }
-        }
 
         Spacer(Modifier.width(12.dp))
 
-        // Titles
-        Column(modifier = Modifier.weight(1f)) {
+        Column(Modifier.weight(1f)) {
             Text(
-                text = item.title,
-                color = AppleTextPrimary,
-                fontSize = 14.5.sp,
-                fontWeight = FontWeight.Medium,
+                text = stat.title,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.W600,
+                color = Color.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            val sub = buildString {
-                append(item.artist)
-                item.album?.takeIf { it.isNotBlank() }?.let { append(" • $it") }
-            }
+            val durationText = "${stat.durationSec / 60}m ${stat.durationSec % 60}s"
             Text(
-                text = sub,
-                color = AppleTextSecondary,
-                fontSize = 12.sp,
+                text = "${stat.artist} · $durationText",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.55f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
         }
 
-        // Time and duration
-        Column(horizontalAlignment = Alignment.End) {
+        if (stat.playCount > 0) {
             Text(
-                text = timeStr,
-                color = Color.White.copy(alpha = 0.7f),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-            if (item.durationSec > 0) {
-                Text(
-                    text = "${item.durationSec / 60}:${(item.durationSec % 60).toString().padStart(2, '0')}",
-                    color = Color.White.copy(alpha = 0.35f),
-                    fontSize = 11.sp,
-                )
-            }
-        }
-
-        IconButton(
-            onClick = onMenuClick,
-            modifier = Modifier.size(34.dp),
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.MoreHoriz,
-                contentDescription = "Options",
-                tint = Color.White.copy(alpha = 0.45f),
-                modifier = Modifier.size(16.dp),
+                text = stat.playCount.toString(),
+                style = MaterialTheme.typography.labelMedium,
+                color = Color.White.copy(alpha = 0.45f),
             )
         }
     }
 }
 
-private fun formatTimelineDate(timestamp: Long): String {
-    val now = System.currentTimeMillis()
-    val diffDays = (now - timestamp) / (1000 * 60 * 60 * 24)
-    return when {
-        diffDays == 0L -> "Today"
-        diffDays == 1L -> "Yesterday"
-        diffDays < 7L -> SimpleDateFormat("EEEE", Locale.getDefault()).format(Date(timestamp))
-        else -> SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(Date(timestamp))
+@Composable
+private fun ArtistChartRow(
+    stat: TopArtistStat,
+    onClick: () -> Unit,
+    onMenuClick: () -> Unit,
+) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .longPressMenuClickable(onClick = onClick, onLongClick = onMenuClick)
+            .padding(horizontal = PAGE_GUTTER + 4.dp, vertical = 7.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RankBadge(stat.rank)
+
+        AsyncImage(
+            model = stat.artworkUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(Color.White.copy(alpha = 0.08f)),
+        )
+
+        Spacer(Modifier.width(12.dp))
+
+        Column(Modifier.weight(1f)) {
+            Text(
+                text = stat.artistName,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.W600,
+                color = Color.White,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = "${stat.durationSec / 60} minutes",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.55f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        if (stat.playCount > 0) {
+            Text(
+                text = stat.playCount.toString(),
+                style = MaterialTheme.typography.labelMedium,
+                color = Color.White.copy(alpha = 0.45f),
+            )
+        }
     }
+}
+
+@Composable
+private fun AlbumChartRow(
+    stat: TopAlbumStat,
+    onClick: () -> Unit,
+    onMenuClick: () -> Unit,
+) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .longPressMenuClickable(onClick = onClick, onLongClick = onMenuClick)
+            .padding(horizontal = PAGE_GUTTER + 4.dp, vertical = 7.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RankBadge(stat.rank)
+
+        AsyncImage(
+            model = stat.artworkUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(6.dp))
+                .background(Color.White.copy(alpha = 0.08f)),
+        )
+
+        Spacer(Modifier.width(12.dp))
+
+        Column(Modifier.weight(1f)) {
+            Text(
+                text = stat.albumName,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.W600,
+                color = Color.White,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = "${stat.artistName} · ${stat.durationSec / 60}m",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.55f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        if (stat.playCount > 0) {
+            Text(
+                text = stat.playCount.toString(),
+                style = MaterialTheme.typography.labelMedium,
+                color = Color.White.copy(alpha = 0.45f),
+            )
+        }
+    }
+}
+
+@Composable
+private fun RankBadge(rank: Int) {
+    Text(
+        text = rank.toString(),
+        style = if (rank == 1) MaterialTheme.typography.titleLarge else MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.W800,
+        color = if (rank == 1) AccentRed else Color.White.copy(alpha = 0.45f),
+        modifier = Modifier.width(28.dp),
+    )
+}
+
+// ── Habits Section ──────────────────────────────────────────────────────────
+
+@Composable
+private fun HabitsSection(stats: TimeTravelStats) {
+    Column(Modifier.padding(horizontal = PAGE_GUTTER + 4.dp)) {
+        Text(
+            text = "Your listening pattern",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.W800,
+            color = Color.White,
+            modifier = Modifier.padding(top = 8.dp, bottom = 10.dp),
+        )
+        Spacer(Modifier.height(4.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            StatTile("SONGS", stats.distinctSongsCount.toString(), Modifier.weight(1f))
+            StatTile("ARTISTS", stats.distinctArtistsCount.toString(), Modifier.weight(1f))
+            StatTile("ALBUMS", stats.distinctAlbumsCount.toString(), Modifier.weight(1f))
+        }
+
+        Spacer(Modifier.height(10.dp))
+        Text(
+            text = "You listen most around ${formatHour(stats.peakListeningHour)}.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.White.copy(alpha = 0.6f),
+        )
+
+        if (stats.busiestDay != null) {
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = "Your biggest day was ${stats.busiestDay}.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.6f),
+            )
+        }
+    }
+}
+
+@Composable
+private fun StatTile(label: String, value: String, modifier: Modifier = Modifier) {
+    Column(
+        modifier
+            .clip(RoundedCornerShape(14.dp))
+            .background(Color.White.copy(alpha = 0.09f))
+            .padding(vertical = 14.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = value,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.W800,
+            color = Color.White,
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = Color.White.copy(alpha = 0.55f),
+            letterSpacing = 1.sp,
+        )
+    }
+}
+
+@Composable
+private fun EmptyReplayView(period: ListeningPeriod) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 36.dp, vertical = 48.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.replay),
+            contentDescription = null,
+            tint = Color.White.copy(alpha = 0.4f),
+            modifier = Modifier.size(44.dp),
+        )
+        Spacer(Modifier.height(16.dp))
+        Text(
+            text = "Not enough listening yet",
+            style = MaterialTheme.typography.titleLarge,
+            color = Color.White,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = "Play a few more songs in ${period.label.lowercase()} and iTune will turn your history into a Replay.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.White.copy(alpha = 0.6f),
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+private fun formatHour(hour: Int): String = when (hour) {
+    0 -> "midnight"
+    12 -> "midday"
+    in 1..11 -> "$hour AM"
+    else -> "${hour - 12} PM"
 }

@@ -44,13 +44,13 @@ object TimeTravelShareManager {
                     putExtra(Intent.EXTRA_STREAM, uri)
                     putExtra(
                         Intent.EXTRA_TEXT,
-                        "Check out my ${stats.period.label} Time Travel Replay on iTune! 🎵"
+                        "Check out my ${stats.period.label} Time Travel on iTune! 🎵"
                     )
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
 
-                val chooser = Intent.createChooser(intent, "Share Time Travel Replay").apply {
+                val chooser = Intent.createChooser(intent, "Share Time Travel").apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
                 context.startActivity(chooser)
@@ -120,7 +120,7 @@ object TimeTravelShareManager {
 
         textPaint.textSize = 26f
         textPaint.color = Color.parseColor("#FC3C44")
-        canvas.drawText("iTune REPLAY", 90f, 128f, textPaint)
+        canvas.drawText("iTune TIME TRAVEL", 90f, 128f, textPaint)
 
         // Title: TIME TRAVEL
         textPaint.color = Color.WHITE

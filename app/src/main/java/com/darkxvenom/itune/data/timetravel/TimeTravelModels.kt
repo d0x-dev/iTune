@@ -156,4 +156,20 @@ data class TimeTravelStats(
 
     val mostActiveDay: Int?
         get() = dailyActivity.maxByOrNull { it.value }?.takeIf { it.value > 0 }?.key
+
+    val distinctSongsCount: Int get() = topSongs.size
+    val distinctArtistsCount: Int get() = topArtists.size
+    val distinctAlbumsCount: Int get() = topAlbums.size
+    val peakListeningHour: Int get() = mostActiveHour ?: 16
+    val busiestDay: String? get() = mostActiveDay?.let { dayIdx ->
+        when (dayIdx) {
+            0 -> "Sunday"
+            1 -> "Monday"
+            2 -> "Tuesday"
+            3 -> "Wednesday"
+            4 -> "Thursday"
+            5 -> "Friday"
+            else -> "Saturday"
+        }
+    }
 }

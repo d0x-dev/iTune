@@ -115,13 +115,13 @@ fun TimeTravelInsightsDialog(
             // Ambient animated gradient background based on slide
             val slideBgColors = remember(currentSlideIndex) {
                 when (currentSlideIndex) {
-                    0 -> listOf(Color(0xFF2A103D), Color(0xFF130920), Color(0xFF06040A))
-                    1 -> listOf(Color(0xFF380816), Color(0xFF1D0610), Color(0xFF070206))
-                    2 -> listOf(Color(0xFF0D2545), Color(0xFF081426), Color(0xFF040A14))
-                    3 -> listOf(Color(0xFF2B1F05), Color(0xFF191203), Color(0xFF0A0701))
-                    4 -> listOf(Color(0xFF083324), Color(0xFF051E15), Color(0xFF020D09))
-                    5 -> listOf(Color(0xFF27133D), Color(0xFF160A24), Color(0xFF08030F))
-                    else -> listOf(Color(0xFF3D101E), Color(0xFF1F080F), Color(0xFF080205))
+                    0 -> listOf(Color(0xFF29292D), Color(0xFF171719), Color(0xFF09090A))
+                    1 -> listOf(Color(0xFF303033), Color(0xFF1A1A1C), Color(0xFF09090A))
+                    2 -> listOf(Color(0xFF252629), Color(0xFF171819), Color(0xFF08090A))
+                    3 -> listOf(Color(0xFF343434), Color(0xFF1B1B1B), Color(0xFF090909))
+                    4 -> listOf(Color(0xFF282A29), Color(0xFF171918), Color(0xFF080909))
+                    5 -> listOf(Color(0xFF2B2B2D), Color(0xFF18181A), Color(0xFF09090A))
+                    else -> listOf(Color(0xFF303033), Color(0xFF1A1A1C), Color(0xFF09090A))
                 }
             }
 
@@ -199,7 +199,7 @@ fun TimeTravelInsightsDialog(
                     }
                 }
 
-                // Top Bar: iTune Replay Badge & Close Button
+                // Top Bar: iTune Time Travel badge & close button
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -215,12 +215,12 @@ fun TimeTravelInsightsDialog(
                         Icon(
                             imageVector = Icons.Rounded.MusicNote,
                             contentDescription = null,
-                            tint = Color(0xFFFC3C44),
+                            tint = Color.White.copy(alpha = 0.82f),
                             modifier = Modifier.size(14.dp),
                         )
                         Spacer(Modifier.width(6.dp))
                         Text(
-                            text = "iTune Replay",
+                            text = "iTune Time Travel",
                             color = Color.White,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
@@ -307,7 +307,7 @@ private fun IntroSlide(displayName: String, periodLabel: String) {
                 .clip(CircleShape)
                 .background(
                     Brush.radialGradient(
-                        colors = listOf(Color(0xFFFC3C44), Color(0xFF7928CA)),
+                        colors = listOf(Color.White.copy(alpha = 0.82f), Color.White.copy(alpha = 0.42f)),
                     ),
                 ),
             contentAlignment = Alignment.Center,
@@ -324,7 +324,7 @@ private fun IntroSlide(displayName: String, periodLabel: String) {
 
         Text(
             text = "Welcome, $displayName",
-            color = Color(0xFFFC3C44),
+            color = Color.White.copy(alpha = 0.82f),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,
@@ -367,7 +367,7 @@ private fun TopArtistSlide(stats: TimeTravelStats) {
     ) {
         Text(
             text = "YOUR MUSICAL ANCHOR",
-            color = Color(0xFFB388FF),
+            color = Color.White.copy(alpha = 0.68f),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.5.sp,
@@ -404,7 +404,7 @@ private fun TopArtistSlide(stats: TimeTravelStats) {
                         .fillMaxSize()
                         .background(
                             Brush.linearGradient(
-                                colors = listOf(Color(0xFF7928CA), Color(0xFFFC3C44)),
+                                colors = listOf(Color.White.copy(alpha = 0.42f), Color.White.copy(alpha = 0.82f)),
                             ),
                         ),
                     contentAlignment = Alignment.Center,
@@ -455,7 +455,7 @@ private fun TopSongSlide(stats: TimeTravelStats) {
     ) {
         Text(
             text = "ON HEAVY REPEAT",
-            color = Color(0xFFFC3C44),
+            color = Color.White.copy(alpha = 0.82f),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.5.sp,
@@ -493,7 +493,7 @@ private fun TopSongSlide(stats: TimeTravelStats) {
                         .fillMaxSize()
                         .background(
                             Brush.linearGradient(
-                                colors = listOf(Color(0xFF0070F3), Color(0xFF00DF89)),
+                                colors = listOf(Color.White.copy(alpha = 0.64f), Color.White.copy(alpha = 0.72f)),
                             ),
                         ),
                     contentAlignment = Alignment.Center,
@@ -524,7 +524,7 @@ private fun TopSongSlide(stats: TimeTravelStats) {
 
         Text(
             text = song?.artist ?: "",
-            color = Color(0xFFFC3C44),
+            color = Color.White.copy(alpha = 0.82f),
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center,
@@ -552,7 +552,7 @@ private fun ListeningTimeSlide(stats: TimeTravelStats) {
     ) {
         Text(
             text = "IMMERSION",
-            color = Color(0xFFFFB800),
+            color = Color.White.copy(alpha = 0.64f),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.5.sp,
@@ -581,7 +581,7 @@ private fun ListeningTimeSlide(stats: TimeTravelStats) {
 
         Text(
             text = "${stats.totalPlays} songs played",
-            color = Color(0xFFFFB800),
+            color = Color.White.copy(alpha = 0.64f),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
         )
@@ -622,7 +622,7 @@ private fun ActivityPeakSlide(stats: TimeTravelStats) {
     ) {
         Text(
             text = "LISTENING PATTERNS",
-            color = Color(0xFF00DF89),
+            color = Color.White.copy(alpha = 0.72f),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.5.sp,
@@ -656,7 +656,7 @@ private fun ActivityPeakSlide(stats: TimeTravelStats) {
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = "around $hourString",
-                    color = Color(0xFF00DF89),
+                    color = Color.White.copy(alpha = 0.72f),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.SemiBold,
                 )
@@ -750,7 +750,7 @@ private fun ShareSummarySlide(
     ) {
         Text(
             text = "TIME TRAVEL WRAP",
-            color = Color(0xFFFC3C44),
+            color = Color.White.copy(alpha = 0.82f),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.5.sp,
@@ -781,8 +781,8 @@ private fun ShareSummarySlide(
         ) {
             Column {
                 Text(
-                    text = "iTune Replay  •  ${stats.period.label}",
-                    color = Color(0xFFFC3C44),
+                    text = "iTune Time Travel  •  ${stats.period.label}",
+                    color = Color.White.copy(alpha = 0.82f),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
                 )
@@ -820,7 +820,7 @@ private fun ShareSummarySlide(
             onClick = onShare,
             shape = RoundedCornerShape(28.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFFC3C44),
+                containerColor = Color.White.copy(alpha = 0.82f),
                 contentColor = Color.White,
             ),
             modifier = Modifier
@@ -834,7 +834,7 @@ private fun ShareSummarySlide(
             )
             Spacer(Modifier.width(10.dp))
             Text(
-                text = "Share Your Replay",
+                text = "Share Your Time Travel",
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
             )
