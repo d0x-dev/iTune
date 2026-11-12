@@ -277,7 +277,7 @@ class SharedMusicIdentifier(private val context: Context) {
             .post(requestBody.toString().toRequestBody("application/json; charset=utf-8".toMediaType()))
             .build()
 
-        http.newCall(request).execute().use { response ->
+        return http.newCall(request).execute().use { response ->
             if (response.code == 404) throw IllegalArgumentException("No matching song was found.")
             if (response.code == 429) throw IllegalStateException("Music recognition is busy. Please try again shortly.")
             if (!response.isSuccessful) throw IllegalStateException("Music recognition failed (HTTP ${response.code}).")
