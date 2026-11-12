@@ -71,14 +71,20 @@ object GoogleAuthStore {
         synchronized(this) {
             val currentCookie = ArtistInnertubeClient.cookie ?: activeCookie() ?: return
             val merged = mergeSetCookies(currentCookie, setCookieHeaders) ?: return
-            EncryptedAuthPrefs.putEncrypted(app, KEY_COOKIE, merged)
             val sessions = readSessions(app).toMutableList()
             val activeAccId = activeAccountId()
-            val idx = sessions.indexOfFirst { it.accountId == activeAccId }
+            val idx = sessions.indexOfFirst {
+                it.accountId == activeAccId && it.cookie == currentCookie
+            }
             if (idx >= 0) {
                 sessions[idx] = sessions[idx].copy(cookie = merged)
                 EncryptedAuthPrefs.putEncrypted(app, KEY_SESSIONS, sessions.sessionsToJson())
+                EncryptedAuthPrefs.putEncrypted(app, KEY_COOKIE, merged)
+            } else if (activeAccId == null && activeLegacyCookie() == currentCookie) {
+                // Legacy single-account sessions have no account list to match.
+                EncryptedAuthPrefs.putEncrypted(app, KEY_COOKIE, merged)
             }
+            // A temporary new-account login must never overwrite another account's cookie.
             ArtistInnertubeClient.updateCookie(merged)
         }
     }
@@ -89,6 +95,12 @@ object GoogleAuthStore {
         synchronized(this) {
             val mp = meta(app)
             val activeAccId = mp.getString(KEY_ACTIVE_ACCOUNT, null)
+            val clientCookie = ArtistInnertubeClient.cookie
+            val activeSessionCookie = readSessions(app)
+                .firstOrNull { it.accountId == activeAccId }?.cookie
+            val belongsToActiveAccount = activeSessionCookie == clientCookie ||
+                (activeAccId == null && activeLegacyCookie() == clientCookie)
+            if (!belongsToActiveAccount) return
             mp.edit().apply {
                 if (pageId.isNullOrBlank()) remove(KEY_CHANNEL_PAGE_ID) else putString(KEY_CHANNEL_PAGE_ID, pageId)
                 if (dataSyncId.isNullOrBlank()) remove(KEY_CHANNEL_DATASYNC_ID) else putString(KEY_CHANNEL_DATASYNC_ID, dataSyncId)
