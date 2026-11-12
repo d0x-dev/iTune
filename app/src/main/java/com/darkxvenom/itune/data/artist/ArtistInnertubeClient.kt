@@ -691,7 +691,13 @@ object ArtistInnertubeClient {
             val previous = scope
             val fresh = fetchSessionScope(activeCookie)
                 ?: error("YouTube Music did not provide an authenticated session configuration")
-            if (cookie != activeCookie) error("Google account changed while refreshing YouTube session")
+            val refreshedCookie = cookie
+            if (
+                refreshedCookie != activeCookie &&
+                sapisidFrom(refreshedCookie.orEmpty()) != sapisidFrom(activeCookie)
+            ) {
+                error("Google account changed while refreshing YouTube session")
+            }
             val refreshed = fresh.copy(
                 clientVersion = fresh.clientVersion ?: previous?.clientVersion,
                 authUser = fresh.authUser.ifBlank { previous?.authUser ?: "0" },
@@ -717,7 +723,11 @@ object ArtistInnertubeClient {
                 .onFailure { Log.w(TAG, "could not read session scope: ${it.message}") }
                 .getOrNull()
                 ?.let { fresh ->
-                    if (cookie != activeCookie) return@let
+                    val refreshedCookie = cookie
+                    if (
+                        refreshedCookie != activeCookie &&
+                        sapisidFrom(refreshedCookie.orEmpty()) != sapisidFrom(activeCookie)
+                    ) return@let
                     // Refresh both session identifiers from the live ytcfg. Older app
                     // versions stored DELEGATED_SESSION_ID as the user session id.
                     val refreshed = if (lockedExisting != null) {
