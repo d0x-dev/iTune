@@ -433,48 +433,65 @@ object YouTubeLibrarySyncManager {
 
     // --- Real-time mutations ---
 
+    private fun reportMutationFailure(label: String, error: Throwable, sessionKey: String?) {
+        Log.w(TAG, "$label failed: ${error.message}", error)
+        if (sessionKey != null && GoogleAuthStore.activeSessionKey() == sessionKey) {
+            GoogleAuthStore.updateSyncStatus(
+                syncing = GoogleAuthStore.state.value.isSyncing,
+                error = "$label was not saved to YouTube Music: ${error.message ?: "request failed"}",
+                expectedSessionKey = sessionKey,
+            )
+        }
+    }
+
     fun pushSongLikeAsync(trackId: String, liked: Boolean) {
         if (!GoogleAuthStore.isSignedIn || trackId.isBlank()) return
+        val sessionKey = GoogleAuthStore.activeSessionKey()
         scope.launch {
-            runCatching {
+            try {
                 ArtistInnertubeClient.rateVideo(
                     videoId = trackId,
                     status = if (liked) LikeStatus.LIKE else LikeStatus.INDIFFERENT,
                 )
-            }.onFailure {
-                Log.w(TAG, "rateVideo($trackId, $liked) failed: ${it.message}")
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                reportMutationFailure("Like update", e, sessionKey)
             }
         }
     }
 
     fun pushArtistSubscriptionAsync(channelId: String, subscribed: Boolean) {
         if (!GoogleAuthStore.isSignedIn || channelId.isBlank()) return
+        val sessionKey = GoogleAuthStore.activeSessionKey()
         scope.launch {
-            runCatching {
+            try {
                 ArtistInnertubeClient.setSubscribed(channelId = channelId, subscribed = subscribed)
-            }.onFailure {
-                Log.w(TAG, "setSubscribed($channelId, $subscribed) failed: ${it.message}")
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                reportMutationFailure("Artist subscription update", e, sessionKey)
             }
         }
     }
 
     fun pushReleaseSavedAsync(browseId: String, playlistIdHint: String?, saved: Boolean) {
         if (!GoogleAuthStore.isSignedIn || browseId.isBlank()) return
+        val sessionKey = GoogleAuthStore.activeSessionKey()
         scope.launch {
-            runCatching {
+            try {
                 val resolvedPlaylistId = playlistIdHint?.takeIf { it.isNotBlank() }
                     ?: when {
                         browseId.startsWith("VL") -> browseId.removePrefix("VL")
                         browseId.startsWith("PL") || browseId.startsWith("OLAK") -> browseId
-                        else -> ArtistRepository.browseSongs(browseId).getOrNull()?.library?.playlistId
+                        else -> ArtistRepository.browseSongs(browseId).getOrThrow().library?.playlistId
                     }
-                if (resolvedPlaylistId.isNullOrBlank()) {
-                    Log.w(TAG, "No playlistId found to save $browseId on YTM")
-                    return@runCatching
-                }
+                    ?: error("Could not resolve the YouTube Music playlist ID for $browseId")
                 ArtistInnertubeClient.ratePlaylist(resolvedPlaylistId, saved)
-            }.onFailure {
-                Log.w(TAG, "ratePlaylist($browseId, $saved) failed: ${it.message}")
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                reportMutationFailure("Album or playlist save update", e, sessionKey)
             }
         }
     }
