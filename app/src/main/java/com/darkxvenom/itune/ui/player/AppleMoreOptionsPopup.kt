@@ -131,7 +131,8 @@ private enum class MorePopupPage {
     LYRICS_OFFSET,
     LYRICS_TRANSLATE,
     DETAILS,
-    SLEEP_TIMER
+    SLEEP_TIMER,
+    TOOLS
 }
 
 private fun lerpFloatPopup(start: Float, stop: Float, fraction: Float): Float {
@@ -586,6 +587,16 @@ fun AppleMoreOptionsPopup(
     val context = LocalContext.current
     val view = LocalView.current
     var activePage by remember { mutableStateOf(MorePopupPage.MAIN) }
+    var showPlayerToolsDialog by remember { mutableStateOf(false) }
+    var playerToolMode by remember { mutableStateOf(PlayerToolMode.RINGTONE) }
+
+    if (showPlayerToolsDialog) {
+        PlayerToolsDialog(
+            track = track,
+            mode = playerToolMode,
+            onDismiss = { showPlayerToolsDialog = false }
+        )
+    }
 
     LaunchedEffect(visible) {
         if (visible) activePage = MorePopupPage.MAIN
@@ -756,6 +767,42 @@ fun AppleMoreOptionsPopup(
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 activePage = MorePopupPage.SLEEP_TIMER
+                                            }
+                                        )
+                                        PopupMenuDivider()
+
+                                        MorePopupOptionRow(
+                                            iconRes = R.drawable.ic_menu_details,
+                                            title = "Tools",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                activePage = MorePopupPage.TOOLS
+                                            }
+                                        )
+                                    }
+                                }
+
+                                MorePopupPage.TOOLS -> {
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        PopupSubPageHeader(title = "Tools", onBack = { activePage = MorePopupPage.MAIN })
+                                        PopupMenuDivider()
+                                        MorePopupOptionRow(
+                                            iconRes = R.drawable.ic_menu_sleep_timer,
+                                            title = "Set Ringtone",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                playerToolMode = PlayerToolMode.RINGTONE
+                                                showPlayerToolsDialog = true
+                                            }
+                                        )
+                                        PopupMenuDivider()
+                                        MorePopupOptionRow(
+                                            iconRes = R.drawable.ic_menu_download,
+                                            title = "Snippet",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                playerToolMode = PlayerToolMode.SNIPPET
+                                                showPlayerToolsDialog = true
                                             }
                                         )
                                     }
