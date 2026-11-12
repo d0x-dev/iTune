@@ -138,37 +138,49 @@ fun sapisidFrom(cookieHeader: String): String? {
     return API_SID_NAMES.firstNotNullOfOrNull { jar[it] }
 }
 
-/** Builds a single `<SCHEME> <ts>_<sha1>` token for a given secret and origin. */
+/**
+ * Builds a Google Innertube SAPISID authorization token. When a user session id is
+ * available, it is included in both the SHA-1 input and the trailing `_u` marker.
+ */
 fun buildSapisidHash(
     sapisid: String,
     origin: String = MUSIC_ORIGIN,
     timestampSeconds: Long = System.currentTimeMillis() / 1000L,
     scheme: String = "SAPISIDHASH",
+    userSessionId: String? = null,
 ): String {
+    val userId = userSessionId?.takeIf { it.isNotBlank() }
+    val hashInput = buildString {
+        if (userId != null) append(userId).append(' ')
+        append(timestampSeconds).append(' ').append(sapisid).append(' ').append(origin)
+    }
     val digest = MessageDigest.getInstance("SHA-1")
-        .digest("$timestampSeconds $sapisid $origin".toByteArray(Charsets.UTF_8))
+        .digest(hashInput.toByteArray(Charsets.UTF_8))
         .joinToString("") { "%02x".format(Locale.ROOT, it) }
-    return "$scheme ${timestampSeconds}_$digest"
+    val userMarker = if (userId != null) "_u" else ""
+    return "$scheme ${timestampSeconds}_$digest$userMarker"
 }
 
 /**
- * Builds the complete Google Innertube Authorization header (`SAPISIDHASH`, `SAPISID1PHASH`,
- * `SAPISID3PHASH`) matching Chrome & iTube so partitioned `__Secure-*PAPISID` cookies always validate.
+ * Builds the full Google Innertube Authorization header for every available SAPISID cookie.
+ * The optional user session id must come from DATASYNC_ID's user-session component; the
+ * delegated session id is sent separately as X-Goog-PageId.
  */
 fun buildFullSapisidAuthorization(
     cookieHeader: String,
     origin: String = MUSIC_ORIGIN,
     timestampSeconds: Long = System.currentTimeMillis() / 1000L,
+    userSessionId: String? = null,
 ): String? {
     val jar = parseCookieHeader(cookieHeader)
     val baseSecret = jar["SAPISID"] ?: jar["__Secure-3PAPISID"] ?: jar["__Secure-1PAPISID"] ?: return null
     val parts = linkedSetOf<String>()
-    parts.add(buildSapisidHash(baseSecret, origin, timestampSeconds, "SAPISIDHASH"))
+    parts.add(buildSapisidHash(baseSecret, origin, timestampSeconds, "SAPISIDHASH", userSessionId))
     jar["__Secure-1PAPISID"]?.let { secret1p ->
-        parts.add(buildSapisidHash(secret1p, origin, timestampSeconds, "SAPISID1PHASH"))
+        parts.add(buildSapisidHash(secret1p, origin, timestampSeconds, "SAPISID1PHASH", userSessionId))
     }
     jar["__Secure-3PAPISID"]?.let { secret3p ->
-        parts.add(buildSapisidHash(secret3p, origin, timestampSeconds, "SAPISID3PHASH"))
+        parts.add(buildSapisidHash(secret3p, origin, timestampSeconds, "SAPISID3PHASH", userSessionId))
     }
     return parts.joinToString(" ")
 }
