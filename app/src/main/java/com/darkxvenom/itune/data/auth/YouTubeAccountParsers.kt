@@ -69,8 +69,9 @@ object YouTubeAccountParsers {
             val name = item.optJSONObject("accountName").runsText()
                 .ifBlank { item.optJSONObject("accountName")?.optString("simpleText").orEmpty() }
             if (name.isBlank()) return@mapNotNull null
-            val pageId = findStringDeep(item, "pageId")
-            val dataSyncId = normalizeDataSyncId(findStringDeep(item, "datasyncIdToken"))
+            val rawDataSyncId = findStringDeep(item, "datasyncIdToken")
+            val pageId = findStringDeep(item, "pageId") ?: delegatedSessionId(rawDataSyncId)
+            val dataSyncId = normalizeDataSyncId(rawDataSyncId)
             if (pageId == null && dataSyncId == null) return@mapNotNull null
             val subtitle = item.optJSONObject("channelHandle").runsText()
                 .ifBlank { item.optJSONObject("channelHandle")?.optString("simpleText").orEmpty() }
