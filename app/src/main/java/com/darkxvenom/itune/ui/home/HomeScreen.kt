@@ -96,6 +96,7 @@ import com.darkxvenom.itune.ui.library.LibraryScreenOverlayContent
 import com.darkxvenom.itune.ui.library.LibraryScreenOverlayPopups
 import com.darkxvenom.itune.ui.library.rememberLibraryHostController
 import com.darkxvenom.itune.ui.player.ITuneMusicPlayer
+import com.darkxvenom.itune.ui.recognition.IRecognitionScreen
 import com.darkxvenom.itune.ui.player.SheetMorph
 import com.darkxvenom.itune.ui.player.miniPlayerGestures
 import com.darkxvenom.itune.ui.player.rememberSheetMorph
@@ -310,6 +311,7 @@ fun HomeScreen(
     var showDynamicIsland by remember { mutableStateOf(false) }
     var showAvatarDialog by remember { mutableStateOf(false) }
     var showHomeGoogleLogin by remember { mutableStateOf(false) }
+    var showIRecognition by remember { mutableStateOf(false) }
 
     // Retain visited screens in memory so navigation is 100% instantaneous with zero GC or layout stutter
     var hasVisitedBrowse by remember { mutableStateOf(false) }
@@ -1261,6 +1263,9 @@ fun HomeScreen(
                                 showIShare = true
                                 MusicPlayerState.expanded = false
                             },
+                            onOpenIRecognition = {
+                                showIRecognition = true
+                            },
                         )
                     }
                 }
@@ -1326,6 +1331,17 @@ fun HomeScreen(
                 },
                 onClose = { showHomeGoogleLogin = false },
                 modifier = Modifier.fillMaxSize(),
+            )
+        }
+
+        AnimatedVisibility(
+            visible = showIRecognition,
+            enter = fadeIn(tween(220)),
+            exit = fadeOut(tween(180)),
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            IRecognitionScreen(
+                onClose = { showIRecognition = false },
             )
         }
     }
