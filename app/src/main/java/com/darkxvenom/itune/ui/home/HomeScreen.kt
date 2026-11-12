@@ -80,7 +80,6 @@ import com.darkxvenom.itune.ui.components.FeaturedHeroCarousel
 import com.darkxvenom.itune.ui.components.FloatingMiniPlayer
 import com.darkxvenom.itune.ui.components.FloatingNavBar
 import com.darkxvenom.itune.ui.components.LatestSongsSection
-import com.darkxvenom.itune.ui.components.HomeAlbumShelf
 import com.darkxvenom.itune.ui.components.HomeArtistShelf
 import com.darkxvenom.itune.ui.components.HomeCollectionShelf
 import com.darkxvenom.itune.ui.components.HomeNewReleaseShelf
@@ -528,7 +527,7 @@ fun HomeScreen(
                                 MusicPlayerState.play(primaryHomeTracks.first(), primaryHomeTracks)
                             } else {
                                 currentScreen = AppScreen.BROWSE
-                                selectedTab = NavTab.BROWSE
+                                selectedTab = NavTab.NEW
                             }
                         },
                         onTrackClick = { track ->
