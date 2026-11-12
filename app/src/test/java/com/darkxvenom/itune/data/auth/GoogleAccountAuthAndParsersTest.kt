@@ -9,6 +9,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.security.MessageDigest
 
 class GoogleAccountAuthAndParsersTest {
 
@@ -223,6 +224,24 @@ class GoogleAccountAuthAndParsersTest {
         assertFalse(looksSignedInCookies("SAPISID=abc; PREF=f1"))
         assertFalse(looksSignedInCookies("LOGIN_INFO=def; SID=xyz"))
         assertFalse(looksSignedInCookies(null))
+    }
+
+    @Test
+    fun buildSapisidHash_usesYouTubeUserSessionHashFormat() {
+        val header = buildSapisidHash(
+            sapisid = "test_secret",
+            origin = "https://music.youtube.com",
+            timestampSeconds = 1700000000L,
+            userSessionId = "user-session-123",
+        )
+        val expectedDigest = MessageDigest.getInstance("SHA-1")
+            .digest(
+                "user-session-123:1700000000 test_secret https://music.youtube.com"
+                    .toByteArray(Charsets.UTF_8),
+            )
+            .joinToString("") { "%02x".format(it) }
+
+        assertEquals("SAPISIDHASH 1700000000_${expectedDigest}_u", header)
     }
 
     @Test
