@@ -3,6 +3,7 @@ package com.darkxvenom.itune.ui.player
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.media.MediaCodec
 import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.media.MediaMuxer
@@ -265,7 +266,7 @@ private object PlayerToolsAudio {
             val outTrack = muxer.addTrack(format)
             muxer.start()
             extractor.seekTo(startMs * 1000L, MediaExtractor.SEEK_TO_PREVIOUS_SYNC)
-            val info = MediaMuxer.BufferInfo()
+            val info = MediaCodec.BufferInfo()
             val buffer = java.nio.ByteBuffer.allocate(1024 * 1024)
             val endUs = endMs * 1000L
             while (true) {
@@ -273,7 +274,10 @@ private object PlayerToolsAudio {
                 val size = extractor.readSampleData(buffer, 0)
                 if (size < 0 || extractor.sampleTime < 0 || extractor.sampleTime >= endUs) break
                 if (extractor.sampleTime >= startMs * 1000L) {
-                    info.set(0, size, extractor.sampleTime - startMs * 1000L, extractor.sampleFlags)
+                    info.offset = 0
+                    info.size = size
+                    info.presentationTimeUs = extractor.sampleTime - startMs * 1000L
+                    info.flags = extractor.sampleFlags
                     muxer.writeSampleData(outTrack, buffer, info)
                 }
                 extractor.advance()
