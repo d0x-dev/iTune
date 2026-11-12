@@ -485,7 +485,10 @@ object YouTubeLibrarySyncManager {
         target: PlaylistStorageTarget,
         initialSongs: List<SavedSongMetadata> = emptyList(),
     ): UserPlaylist {
-        if (target == PlaylistStorageTarget.GOOGLE_ACCOUNT && GoogleAuthStore.isSignedIn) {
+        if (target == PlaylistStorageTarget.GOOGLE_ACCOUNT && !GoogleAuthStore.isSignedIn) {
+            error("Sign in with Google before creating a YouTube Music playlist")
+        }
+        if (target == PlaylistStorageTarget.GOOGLE_ACCOUNT) {
             val ytId = withContext(Dispatchers.IO) {
                 ArtistInnertubeClient.createPlaylist(
                     title = name.trim().ifBlank { "New Playlist" },
@@ -523,73 +526,119 @@ object YouTubeLibrarySyncManager {
         )
     }
 
-    fun addSongsToPlaylist(
+    suspend fun addSongsToPlaylist(
         context: Context,
         playlistId: String,
         songs: List<SavedSongMetadata>,
-    ): Int {
-        val addedCount = LibraryStore.addSongsToUserPlaylist(context, playlistId, songs)
+    ): Int = withContext(Dispatchers.IO) {
         val playlist = LibraryStore.userPlaylists.value.firstOrNull { it.id == playlistId }
-        val ytId = playlist?.ytPlaylistId
-        if (addedCount > 0 && playlist?.isGoogleAccount == true && !ytId.isNullOrBlank() && GoogleAuthStore.isSignedIn) {
-            scope.launch {
-                runCatching {
-                    val resultMap = ArtistInnertubeClient.addToPlaylist(ytId, songs.map { it.id }.distinct())
-                    LibraryStore.setSongSetVideoIds(context, playlistId, resultMap)
-                }.onFailure {
-                    Log.w(TAG, "addToPlaylist($ytId) failed: ${it.message}")
-                }
+            ?: error("Playlist no longer exists")
+        val existingIds = playlist.songs.mapTo(HashSet()) { it.id }
+        val freshSongs = songs.distinctBy { it.id }.filterNot { it.id in existingIds }
+        if (freshSongs.isEmpty()) return@withContext 0
+
+        var resultMap: Map<String, String> = emptyMap()
+        if (playlist.isGoogleAccount) {
+            if (!GoogleAuthStore.isSignedIn) {
+                error("Sign in with Google before editing this YouTube Music playlist")
             }
+            val ytId = playlist.ytPlaylistId?.takeIf { it.isNotBlank() }
+                ?: error("This YouTube playlist is missing its remote playlist ID")
+            // Commit remotely first. Local state changes only after YouTube accepts the edit.
+            resultMap = ArtistInnertubeClient.addToPlaylist(
+                ytId,
+                freshSongs.map { it.id },
+            )
         }
-        return addedCount
+
+        val addedCount = LibraryStore.addSongsToUserPlaylist(context, playlistId, freshSongs)
+        if (resultMap.isNotEmpty()) {
+            LibraryStore.setSongSetVideoIds(context, playlistId, resultMap)
+        }
+        addedCount
     }
 
     fun removeSongFromPlaylist(
         context: Context,
         playlistId: String,
         songId: String,
+        onResult: (Result<Unit>) -> Unit = {},
     ) {
-        val playlist = LibraryStore.userPlaylists.value.firstOrNull { it.id == playlistId }
-        val targetSong = playlist?.songs?.firstOrNull { it.id == songId }
-        val ytId = playlist?.ytPlaylistId
-        val setId = targetSong?.setVideoId
-        LibraryStore.removeSongFromUserPlaylist(context, playlistId, songId)
-        if (playlist?.isGoogleAccount == true && !ytId.isNullOrBlank() && GoogleAuthStore.isSignedIn) {
-            scope.launch {
-                runCatching {
-                    val resolvedSetId = setId ?: ArtistRepository.browseSongs("VL$ytId").getOrNull()
-                        ?.songs?.firstOrNull { it.videoId == songId }?.setVideoId
-                    if (resolvedSetId != null) {
-                        ArtistInnertubeClient.removeFromPlaylist(ytId, listOf(resolvedSetId to songId))
+        scope.launch {
+            val result = try {
+                val playlist = LibraryStore.userPlaylists.value.firstOrNull { it.id == playlistId }
+                    ?: error("Playlist no longer exists")
+                val targetSong = playlist.songs.firstOrNull { it.id == songId }
+                    ?: error("Track is no longer in this playlist")
+                if (playlist.isGoogleAccount) {
+                    if (!GoogleAuthStore.isSignedIn) {
+                        error("Sign in with Google before editing this YouTube Music playlist")
                     }
-                }.onFailure {
-                    Log.w(TAG, "removeFromPlaylist($ytId, $songId) failed: ${it.message}")
+                    val ytId = playlist.ytPlaylistId?.takeIf { it.isNotBlank() }
+                        ?: error("This YouTube playlist is missing its remote playlist ID")
+                    val setId = targetSong.setVideoId
+                        ?: ArtistRepository.browseSongs("VL$ytId").getOrThrow()
+                            .songs.firstOrNull { it.videoId == songId }?.setVideoId
+                        ?: error("Could not resolve the YouTube playlist entry for this track")
+                    // Do not remove the local entry unless the remote operation succeeds.
+                    ArtistInnertubeClient.removeFromPlaylist(ytId, listOf(setId to songId))
                 }
+                LibraryStore.removeSongFromUserPlaylist(context, playlistId, songId)
+                Result.success(Unit)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                Log.w(TAG, "removeSongFromPlaylist($playlistId, $songId) failed: ${e.message}", e)
+                Result.failure(e)
             }
+            withContext(Dispatchers.Main) { onResult(result) }
         }
     }
 
-    fun renamePlaylist(context: Context, playlistId: String, newName: String) {
-        val playlist = LibraryStore.userPlaylists.value.firstOrNull { it.id == playlistId }
-        val ytId = playlist?.ytPlaylistId
-        LibraryStore.renameUserPlaylist(context, playlistId, newName)
-        if (playlist?.isGoogleAccount == true && !ytId.isNullOrBlank() && GoogleAuthStore.isSignedIn) {
-            scope.launch {
-                runCatching { ArtistInnertubeClient.renamePlaylist(ytId, newName.trim()) }
-                    .onFailure { Log.w(TAG, "renamePlaylist($ytId) failed: ${it.message}") }
+    suspend fun renamePlaylist(context: Context, playlistId: String, newName: String) =
+        withContext(Dispatchers.IO) {
+            val cleanName = newName.trim()
+            if (cleanName.isBlank()) error("Enter a playlist name")
+            val playlist = LibraryStore.userPlaylists.value.firstOrNull { it.id == playlistId }
+                ?: error("Playlist no longer exists")
+            if (playlist.isGoogleAccount) {
+                if (!GoogleAuthStore.isSignedIn) {
+                    error("Sign in with Google before renaming this YouTube Music playlist")
+                }
+                val ytId = playlist.ytPlaylistId?.takeIf { it.isNotBlank() }
+                    ?: error("This YouTube playlist is missing its remote playlist ID")
+                ArtistInnertubeClient.renamePlaylist(ytId, cleanName)
             }
+            LibraryStore.renameUserPlaylist(context, playlistId, cleanName)
         }
-    }
 
-    fun deletePlaylist(context: Context, playlistId: String) {
-        val playlist = LibraryStore.userPlaylists.value.firstOrNull { it.id == playlistId }
-        val ytId = playlist?.ytPlaylistId
-        LibraryStore.deleteUserPlaylist(context, playlistId)
-        if (playlist?.isGoogleAccount == true && !ytId.isNullOrBlank() && GoogleAuthStore.isSignedIn) {
-            scope.launch {
-                runCatching { ArtistInnertubeClient.deletePlaylist(ytId) }
-                    .onFailure { Log.w(TAG, "deletePlaylist($ytId) failed: ${it.message}") }
+    fun deletePlaylist(
+        context: Context,
+        playlistId: String,
+        onResult: (Result<Unit>) -> Unit = {},
+    ) {
+        scope.launch {
+            val result = try {
+                val playlist = LibraryStore.userPlaylists.value.firstOrNull { it.id == playlistId }
+                    ?: error("Playlist no longer exists")
+                if (playlist.isGoogleAccount) {
+                    if (!GoogleAuthStore.isSignedIn) {
+                        error("Sign in with Google before deleting this YouTube Music playlist")
+                    }
+                    val ytId = playlist.ytPlaylistId?.takeIf { it.isNotBlank() }
+                        ?: error("This YouTube playlist is missing its remote playlist ID")
+                    // Keep the playlist locally visible until YouTube confirms deletion.
+                    ArtistInnertubeClient.deletePlaylist(ytId)
+                }
+                LibraryStore.deleteUserPlaylist(context, playlistId)
+                Result.success(Unit)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                Log.w(TAG, "deletePlaylist($playlistId) failed: ${e.message}", e)
+                Result.failure(e)
             }
+            withContext(Dispatchers.Main) { onResult(result) }
         }
     }
 
