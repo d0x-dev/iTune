@@ -39,7 +39,7 @@ import kotlinx.coroutines.withContext
 object YouTubeLibrarySyncManager {
     private const val TAG = "YtmLibrarySync"
     private const val MAX_LIBRARY_PAGES = 10
-    private const val MAX_PLAYLIST_TRACKS_PAGES = 4
+    private const val MAX_PLAYLIST_TRACKS_PAGES = MAX_LIBRARY_PAGES
     private const val PLAYLIST_HYDRATE_BATCH_SIZE = 8
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -176,7 +176,7 @@ object YouTubeLibrarySyncManager {
         }
         var token = firstToken
         var pageCount = 1
-        while (token != null && pageCount < 3) {
+        while (token != null && pageCount < MAX_LIBRARY_PAGES) {
             if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
             val cont = try {
                 ArtistInnertubeClient.browseContinuation(token, allowAnonymousFallback = false)
