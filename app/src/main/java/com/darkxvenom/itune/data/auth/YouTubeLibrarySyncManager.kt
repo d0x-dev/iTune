@@ -188,6 +188,16 @@ object YouTubeLibrarySyncManager {
             token = nextToken
             pageCount++
         }
+        if (collected.isEmpty()) {
+            // Some accounts still expose the history shelf only through the WEB endpoint.
+            runCatching { ArtistInnertubeClient.postWebBrowse("FEhistory") }
+                .getOrNull()
+                ?.let { fallback ->
+                    YouTubeAccountParsers.parseHistoryTracks(fallback).first.forEach { song ->
+                        collected.add(SavedSongMetadata.fromSong(song = song, savedLocally = false, isYtmSynced = true))
+                    }
+                }
+        }
         if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
         LibraryStore.replaceYtmHistory(context, collected.distinctBy { it.id })
     }
@@ -239,6 +249,17 @@ object YouTubeLibrarySyncManager {
             }
         }
 
+        if (songs.isEmpty() && firstPage != null) {
+            // Keep a second authenticated shelf parser for accounts where VLLM is empty
+            // or its content renderer differs from the FEmusic private-library renderer.
+            runCatching { ArtistInnertubeClient.browse("FEmusic_liked_videos") }
+                .getOrNull()
+                ?.let { fallback ->
+                    YouTubeAccountParsers.parseHistoryTracks(fallback).first.forEach { song ->
+                        songs.add(SavedSongMetadata.fromSong(song, savedLocally = false, isYtmSynced = true))
+                    }
+                }
+        }
         if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
         val mergedIds = LibraryStore.mergeRemoteLikedSongs(context, songs.distinctBy { it.id })
         MusicPlayerState.replaceFavoriteIdsFromSync(context, mergedIds)
