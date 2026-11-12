@@ -74,7 +74,8 @@ class SharedMusicIdentifier(private val context: Context) {
             .find(url)?.groupValues?.getOrNull(1)
 
         val mediaUrl = if (youtubeId != null) {
-            // Reuse iTune's existing YouTube stream resolver instead of a second extractor stack.
+            // Initialize NewPipe before using the app's existing YouTube stream resolver.
+            MusicBackend.init(context.applicationContext)
             MusicBackend.resolveAudioStream(youtubeId)
                 ?: return null
         } else {
