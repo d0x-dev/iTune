@@ -72,6 +72,7 @@ internal fun PlayerToolsDialog(
     var source by remember(track.id) { mutableStateOf<File?>(null) }
     var loading by remember { mutableStateOf(true) }
     var working by remember { mutableStateOf(false) }
+    var isPreviewPlaying by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     var durationMs by remember { mutableFloatStateOf((track.durationSec * 1000L).coerceAtLeast(30_000L).toFloat()) }
     var range by remember(track.id) {
@@ -103,14 +104,12 @@ internal fun PlayerToolsDialog(
         }
     }
 
-    LaunchedEffect(range, player.isPlaying) {
-        if (player.isPlaying) {
-            while (player.isPlaying) {
-                if (player.currentPosition >= range.endInclusive.toLong()) {
-                    player.seekTo(range.start.toLong())
-                }
-                kotlinx.coroutines.delay(100)
+    LaunchedEffect(range, isPreviewPlaying) {
+        while (isPreviewPlaying) {
+            if (player.currentPosition >= range.endInclusive.toLong()) {
+                player.seekTo(range.start.toLong())
             }
+            kotlinx.coroutines.delay(100)
         }
     }
 
@@ -134,9 +133,13 @@ internal fun PlayerToolsDialog(
                     else -> {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             IconButton(onClick = {
-                                if (player.isPlaying) player.pause() else {
+                                if (isPreviewPlaying) {
+                                    player.pause()
+                                    isPreviewPlaying = false
+                                } else {
                                     player.seekTo(range.start.toLong())
                                     player.play()
+                                    isPreviewPlaying = true
                                 }
                             }) {
                                 Icon(if (player.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow, contentDescription = "Preview")
@@ -149,7 +152,8 @@ internal fun PlayerToolsDialog(
                             onValueChange = { next ->
                                 val start = next.start.coerceAtLeast(0f)
                                 val end = next.endInclusive.coerceAtMost(durationMs)
-                                range = if (end - start < 3_000f) start..(start + 3_000f).coerceAtMost(durationMs) else start..end
+                                val boundedEnd = end.coerceAtMost(start + 30_000f)
+                                range = if (boundedEnd - start < 3_000f) start..(start + 3_000f).coerceAtMost(durationMs) else start..boundedEnd
                                 player.seekTo(range.start.toLong())
                             },
                             valueRange = 0f..durationMs.coerceAtLeast(3_000f),
