@@ -4,7 +4,6 @@ import com.darkxvenom.itune.backend.MusicBackend
 import com.darkxvenom.itune.backend.MusicTrack
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
@@ -46,6 +45,7 @@ object PlaylistLinkImporter {
         if (host != "spotify.com" && !host.endsWith(".spotify.com")) return null
         val parts = uri.path.orEmpty().split('/').filter(String::isNotBlank)
         val index = parts.indexOf("playlist")
+        if (index < 0) return null
         return parts.getOrNull(index + 1)?.takeIf(playlistIdPattern::matches)
     }
 
