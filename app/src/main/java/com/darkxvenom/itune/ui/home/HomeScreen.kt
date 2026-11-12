@@ -196,6 +196,11 @@ fun HomeScreen(
             settingsState.hideExplicitContent,
         ) { it.isExplicit }
     }
+    val primaryHomeTracks = if (ytAccountState.isSignedIn && visibleQuickPicks.isNotEmpty()) {
+        visibleQuickPicks
+    } else {
+        visibleTrendingTracks
+    }
     val allHomePlaylistRefs = remember(
         personalizedPlaylists, featuredPlaylists, popularPlaylists, ytAccountState.isSignedIn
     ) {
@@ -470,12 +475,15 @@ fun HomeScreen(
                 item(key = "latest_songs") {
                     LatestSongsSection(
                         songColumns = MusicRepository.latestSongColumns,
-                        personalizedTracks = if (ytAccountState.isSignedIn) visibleQuickPicks else visibleTrendingTracks,
-                        sectionTitle = if (ytAccountState.isSignedIn) "Picked for You" else "Trending on YouTube Music",
+                        personalizedTracks = primaryHomeTracks,
+                        sectionTitle = if (ytAccountState.isSignedIn && visibleQuickPicks.isNotEmpty()) {
+                            "Picked for You"
+                        } else {
+                            "Trending on YouTube Music"
+                        },
                         onSeeAllClick = {
-                            val feed = if (ytAccountState.isSignedIn) visibleQuickPicks else visibleTrendingTracks
-                            if (feed.isNotEmpty()) {
-                                MusicPlayerState.play(feed.first(), feed)
+                            if (primaryHomeTracks.isNotEmpty()) {
+                                MusicPlayerState.play(primaryHomeTracks.first(), primaryHomeTracks)
                             } else {
                                 currentScreen = AppScreen.BROWSE
                                 selectedTab = NavTab.BROWSE
@@ -499,8 +507,7 @@ fun HomeScreen(
                             Toast.makeText(context, "Options for ${track.title}", Toast.LENGTH_SHORT).show()
                         },
                         onPersonalizedTrackClick = { liveTrack ->
-                            val queue = if (ytAccountState.isSignedIn) visibleQuickPicks else visibleTrendingTracks
-                            MusicPlayerState.play(liveTrack, queue)
+                            MusicPlayerState.play(liveTrack, primaryHomeTracks)
                         },
                         onPersonalizedTrackMenuClick = { liveTrack ->
                             MusicPlayerState.playNext(liveTrack)
@@ -537,7 +544,7 @@ fun HomeScreen(
                     item(key = "spacer_taste_recommendations") { Spacer(Modifier.height(28.dp)) }
                 }
 
-                if (recommendedArtists.isNotEmpty()) {
+                if (ytAccountState.isSignedIn && recommendedArtists.isNotEmpty()) {
                     item(key = "home_recommended_artists") {
                         HomeArtistShelf(
                             title = if (ytAccountState.isSignedIn && savedArtists.isNotEmpty()) "Your Artists" else "Popular Artists",
@@ -556,7 +563,7 @@ fun HomeScreen(
                     item(key = "spacer_recommended_artists") { Spacer(Modifier.height(28.dp)) }
                 }
 
-                if (recommendedAlbums.isNotEmpty()) {
+                if (ytAccountState.isSignedIn && recommendedAlbums.isNotEmpty()) {
                     item(key = "home_recommended_albums") {
                         HomeCollectionShelf(
                             title = if (ytAccountState.isSignedIn && savedAlbums.isNotEmpty()) "Albums You Saved & More" else "Popular Albums",
@@ -575,7 +582,7 @@ fun HomeScreen(
                     item(key = "spacer_recommended_albums") { Spacer(Modifier.height(28.dp)) }
                 }
 
-                if (visibleNewReleases.isNotEmpty()) {
+                if (ytAccountState.isSignedIn && visibleNewReleases.isNotEmpty()) {
                     item(key = "home_new_releases") {
                         HomeNewReleaseShelf(
                             title = "New Releases",
@@ -615,7 +622,7 @@ fun HomeScreen(
                     item(key = "spacer_playlists") { Spacer(Modifier.height(28.dp)) }
                 }
 
-                if (podcastShows.isNotEmpty()) {
+                if (ytAccountState.isSignedIn && podcastShows.isNotEmpty()) {
                     item(key = "home_podcasts") {
                         HomeCollectionShelf(
                             title = "Podcasts",
