@@ -20,6 +20,7 @@ import org.schabi.newpipe.extractor.MediaFormat
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.search.SearchInfo
+import org.schabi.newpipe.extractor.stream.AudioStream
 import org.schabi.newpipe.extractor.stream.AudioTrackType
 import org.schabi.newpipe.extractor.stream.DeliveryMethod
 import org.schabi.newpipe.extractor.stream.StreamInfo
@@ -681,7 +682,66 @@ object MusicBackend {
         result
     }
 
-    suspend fun resolveAudioStream(videoId: String): String? = withContext(Dispatchers.IO) {
+    /**
+     * Resolves the best audio stream candidate matching the user's Lossless Audio and Streaming Quality settings.
+     * - When Lossless Audio is ON: selects the maximum fidelity, highest-bitrate stream available (favoring M4A if equal).
+     * - When Lossless Audio is OFF: selects according to chosen streaming quality:
+     *     - Extreme: Maximum fidelity / highest bitrate
+     *     - High: ~160 kbps target
+     *     - Medium: ~128 kbps target (standard)
+     *     - Low: ~48-64 kbps target (data saver)
+     */
+    fun pickAudioStream(
+        candidates: List<AudioStream>,
+        isLossless: Boolean,
+        quality: String,
+    ): AudioStream? {
+        if (candidates.isEmpty()) return null
+        if (isLossless) {
+            return candidates.maxWithOrNull(
+                compareBy<AudioStream> { it.averageBitrate }
+                    .thenBy { if (it.format == MediaFormat.M4A) 1 else 0 }
+            ) ?: candidates.maxByOrNull { it.averageBitrate }
+        }
+        return when (quality.trim().lowercase()) {
+            "extreme", "hi-res lossless", "lossless (24-bit)", "lossless" -> {
+                candidates.maxWithOrNull(
+                    compareBy<AudioStream> { it.averageBitrate }
+                        .thenBy { if (it.format == MediaFormat.M4A) 1 else 0 }
+                ) ?: candidates.maxByOrNull { it.averageBitrate }
+            }
+            "high", "high quality" -> {
+                candidates.minWithOrNull(
+                    compareBy<AudioStream> { kotlin.math.abs(it.averageBitrate - 160) }
+                        .thenBy { if (it.format == MediaFormat.M4A) 0 else 1 }
+                )
+            }
+            "medium" -> {
+                candidates.minWithOrNull(
+                    compareBy<AudioStream> { kotlin.math.abs(it.averageBitrate - 128) }
+                        .thenBy { if (it.format == MediaFormat.M4A) 0 else 1 }
+                )
+            }
+            "low", "high efficiency" -> {
+                candidates.minWithOrNull(
+                    compareBy<AudioStream> { it.averageBitrate }
+                        .thenBy { if (it.format == MediaFormat.M4A) 0 else 1 }
+                ) ?: candidates.minByOrNull { it.averageBitrate }
+            }
+            else -> {
+                candidates.maxWithOrNull(
+                    compareBy<AudioStream> { it.averageBitrate }
+                        .thenBy { if (it.format == MediaFormat.M4A) 1 else 0 }
+                ) ?: candidates.maxByOrNull { it.averageBitrate }
+            }
+        }
+    }
+
+    suspend fun resolveAudioStream(
+        videoId: String,
+        forceLossless: Boolean? = null,
+        targetQuality: String? = null,
+    ): String? = withContext(Dispatchers.IO) {
         try {
             val info = getOrLoadStreamInfo(videoId)
 
@@ -691,16 +751,26 @@ object MusicBackend {
                 return@withContext null
             }
 
-            val bestM4a = audioStreams
-                .filter { it.format == MediaFormat.M4A && it.deliveryMethod == DeliveryMethod.PROGRESSIVE_HTTP && it.audioTrackType != AudioTrackType.DUBBED }
-                .maxByOrNull { it.averageBitrate }
+            val progressiveCandidates = audioStreams.filter {
+                it.deliveryMethod == DeliveryMethod.PROGRESSIVE_HTTP &&
+                    it.audioTrackType != AudioTrackType.DUBBED &&
+                    !it.content.isNullOrBlank()
+            }
+            val candidates = progressiveCandidates.ifEmpty {
+                audioStreams.filter { !it.content.isNullOrBlank() }
+            }
 
-            val bestAny = audioStreams
-                .filter { it.deliveryMethod == DeliveryMethod.PROGRESSIVE_HTTP && it.audioTrackType != AudioTrackType.DUBBED }
-                .maxByOrNull { it.averageBitrate }
+            if (candidates.isEmpty()) {
+                Log.w(TAG, "No usable audio stream candidates found for $videoId")
+                return@withContext null
+            }
 
-            val chosen = bestM4a ?: bestAny ?: audioStreams.firstOrNull()
-            Log.d(TAG, "Selected stream: ${chosen?.format} @ ${chosen?.averageBitrate} kbps")
+            val isLossless = forceLossless ?: SettingsStore.state.value.losslessAudio
+            val userQuality = targetQuality ?: SettingsStore.state.value.audioQuality
+
+            val chosen = pickAudioStream(candidates, isLossless, userQuality) ?: candidates.firstOrNull()
+            val effectiveQuality = if (isLossless) "Lossless (Max)" else userQuality
+            Log.d(TAG, "Selected stream for $videoId (lossless=$isLossless, quality=$effectiveQuality): format=${chosen?.format}, bitrate=${chosen?.averageBitrate} kbps")
             return@withContext chosen?.content
         } catch (e: Exception) {
             Log.e(TAG, "Failed to resolve stream for $videoId: ${e.message}", e)
@@ -708,7 +778,11 @@ object MusicBackend {
         }
     }
 
-    suspend fun resolveAudioStreamUrl(videoId: String): String? = resolveAudioStream(videoId)
+    suspend fun resolveAudioStreamUrl(
+        videoId: String,
+        forceLossless: Boolean? = null,
+        targetQuality: String? = null,
+    ): String? = resolveAudioStream(videoId, forceLossless, targetQuality)
 
     data class CacheStreamChoice(val url: String, val bitrateKbps: Int)
 
