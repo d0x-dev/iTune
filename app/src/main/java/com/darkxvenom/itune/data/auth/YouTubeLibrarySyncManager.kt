@@ -71,22 +71,20 @@ object YouTubeLibrarySyncManager {
             )
             try {
                 refreshAccountMetadata(app, expectedKey)
-                val failures = coroutineScope {
-                    val likesJob = async { runCatching { syncLikedSongs(app, expectedKey) }.onFailure { Log.w(TAG, "syncLikedSongs failed: ${it.message}", it) } }
-                    val artistsJob = async { runCatching { syncSubscribedArtists(app, expectedKey) }.onFailure { Log.w(TAG, "syncSubscribedArtists failed: ${it.message}", it) } }
-                    val albumsJob = async { runCatching { syncSavedAlbums(app, expectedKey) }.onFailure { Log.w(TAG, "syncSavedAlbums failed: ${it.message}", it) } }
-                    val playlistsJob = async { runCatching { syncPlaylists(app, expectedKey) }.onFailure { Log.w(TAG, "syncPlaylists failed: ${it.message}", it) } }
-                    val historyJob = async { runCatching { syncHistory(app, expectedKey) }.onFailure { Log.w(TAG, "syncHistory failed: ${it.message}", it) } }
-                    val homeJob = async { runCatching { PersonalizedHomeRepository.refreshIfSignedIn() }.onFailure { Log.w(TAG, "home refresh failed: ${it.message}", it) } }
+                val taskResults = coroutineScope {
+                    val likesJob = async { labeledSyncTask("Liked songs") { syncLikedSongs(app, expectedKey) } }
+                    val artistsJob = async { labeledSyncTask("Artists") { syncSubscribedArtists(app, expectedKey) } }
+                    val albumsJob = async { labeledSyncTask("Albums") { syncSavedAlbums(app, expectedKey) } }
+                    val playlistsJob = async { labeledSyncTask("Playlists") { syncPlaylists(app, expectedKey) } }
+                    val historyJob = async { labeledSyncTask("History") { syncHistory(app, expectedKey) } }
+                    val homeJob = async { labeledSyncTask("Home feed") { PersonalizedHomeRepository.refreshIfSignedIn() } }
                     awaitAll(likesJob, artistsJob, albumsJob, playlistsJob, historyJob, homeJob)
-                }.mapNotNull { it.exceptionOrNull() }
-
-                if (GoogleAuthStore.activeSessionKey() != expectedKey) return@withLock
-                val syncError = if (failures.size >= 5) {
-                    failures.firstOrNull()?.message ?: "Could not retrieve library from Google account"
-                } else {
-                    null
                 }
+                if (GoogleAuthStore.activeSessionKey() != expectedKey) return@withLock
+                val failures = taskResults.filter { it.second.isFailure }
+                val syncError = failures.takeIf { it.isNotEmpty() }?.joinToString(" • ") { (label, result) ->
+                    "$label: ${result.exceptionOrNull()?.message?.take(180) ?: "request failed"}"
+                }?.take(900)
                 GoogleAuthStore.updateSyncStatus(
                     syncing = false,
                     error = syncError,
@@ -106,6 +104,20 @@ object YouTubeLibrarySyncManager {
                     expectedSessionKey = expectedKey,
                 )
             }
+        }
+    }
+
+    private suspend fun <T> labeledSyncTask(
+        label: String,
+        task: suspend () -> T,
+    ): Pair<String, Result<T>> {
+        return try {
+            label to Result.success(task())
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            Log.w(TAG, "$label sync failed: ${e.message}", e)
+            label to Result.failure(e)
         }
     }
 
@@ -138,10 +150,23 @@ object YouTubeLibrarySyncManager {
         expectedSessionKey: String? = GoogleAuthStore.activeSessionKey(),
     ) {
         if (!GoogleAuthStore.isSignedIn || expectedSessionKey == null) return
-        val first = runCatching { ArtistInnertubeClient.browse("FEmusic_history") }.getOrNull()
+
+        val first = try {
+            ArtistInnertubeClient.browse("FEmusic_history")
+        } catch (primaryError: Throwable) {
+            if (primaryError is CancellationException) throw primaryError
+            runCatching { ArtistInnertubeClient.postWebBrowse("FEhistory") }
+                .getOrElse { webError ->
+                    if (webError is CancellationException) throw webError
+                    throw IllegalStateException(
+                        "Could not read YouTube Music watch history: ${primaryError.message}; fallback: ${webError.message}",
+                        webError,
+                    )
+                }
+        }
+
         val collected = mutableListOf<SavedSongMetadata>()
-        val (firstSongs, firstToken) = first?.let { YouTubeAccountParsers.parseHistoryTracks(it) }
-            ?: (emptyList<com.darkxvenom.itune.data.model.Song>() to null)
+        val (firstSongs, firstToken) = YouTubeAccountParsers.parseHistoryTracks(first)
         firstSongs.forEach { song ->
             collected.add(SavedSongMetadata.fromSong(song = song, savedLocally = false, isYtmSynced = true))
         }
@@ -149,21 +174,19 @@ object YouTubeLibrarySyncManager {
         var pageCount = 1
         while (token != null && pageCount < 3) {
             if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
-            val cont = runCatching { ArtistInnertubeClient.browseContinuation(token!!, allowAnonymousFallback = false) }.getOrNull() ?: break
+            val cont = try {
+                ArtistInnertubeClient.browseContinuation(token, allowAnonymousFallback = false)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                throw IllegalStateException("YouTube Music history page $pageCount failed: ${e.message}", e)
+            }
             val (nextSongs, nextToken) = YouTubeAccountParsers.parseHistoryTracks(cont)
             nextSongs.forEach { song ->
                 collected.add(SavedSongMetadata.fromSong(song = song, savedLocally = false, isYtmSynced = true))
             }
             token = nextToken
             pageCount++
-        }
-        if (collected.isEmpty()) {
-            val webHistory = runCatching { ArtistInnertubeClient.postWebBrowse("FEhistory") }.getOrNull()
-            if (webHistory != null) {
-                YouTubeAccountParsers.parseHistoryTracks(webHistory).first.forEach { song ->
-                    collected.add(SavedSongMetadata.fromSong(song = song, savedLocally = false, isYtmSynced = true))
-                }
-            }
         }
         if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
         LibraryStore.replaceYtmHistory(context, collected.distinctBy { it.id })
@@ -175,38 +198,50 @@ object YouTubeLibrarySyncManager {
     ) {
         if (!GoogleAuthStore.isSignedIn || expectedSessionKey == null) return
         val songs = mutableListOf<SavedSongMetadata>()
-        val firstPage = runCatching { ArtistRepository.browseSongs("VLLM").getOrNull() }.getOrNull()
-        if (firstPage != null && firstPage.songs.isNotEmpty()) {
-            firstPage.songs.forEach { s ->
-                songs.add(SavedSongMetadata.fromSong(s, savedLocally = false, isYtmSynced = true))
+        val firstPageResult = ArtistRepository.browseSongs("VLLM")
+        val firstPage = firstPageResult.getOrNull()
+        if (firstPage != null) {
+            firstPage.songs.forEach { song ->
+                songs.add(SavedSongMetadata.fromSong(song, savedLocally = false, isYtmSynced = true))
             }
             var token = firstPage.continuation
-            var count = 1
-            while (token != null && count < MAX_LIBRARY_PAGES) {
+            var page = 1
+            while (token != null && page < MAX_LIBRARY_PAGES) {
                 if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
-                val next = ArtistRepository.moreSongs(token).getOrNull() ?: break
-                next.songs.forEach { s ->
-                    songs.add(SavedSongMetadata.fromSong(s, savedLocally = false, isYtmSynced = true))
+                val next = ArtistRepository.moreSongs(token).getOrElse { error ->
+                    throw IllegalStateException("YouTube Music liked songs page $page failed: ${error.message}", error)
+                }
+                next.songs.forEach { song ->
+                    songs.add(SavedSongMetadata.fromSong(song, savedLocally = false, isYtmSynced = true))
                 }
                 token = next.continuation
-                count++
+                page++
+            }
+        } else {
+            val primaryError = firstPageResult.exceptionOrNull()
+                ?: IllegalStateException("YouTube Music returned no liked-songs page")
+            val likedResponse = try {
+                ArtistInnertubeClient.browse("FEmusic_liked_videos")
+            } catch (musicError: Throwable) {
+                if (musicError is CancellationException) throw musicError
+                runCatching { ArtistInnertubeClient.postWebBrowse("VLLL") }
+                    .getOrElse { webError ->
+                        if (webError is CancellationException) throw webError
+                        throw IllegalStateException(
+                            "Could not read liked songs: ${primaryError.message}; YouTube Music fallback: ${musicError.message}; YouTube fallback: ${webError.message}",
+                            webError,
+                        )
+                    }
+            }
+            val (parsed, _) = YouTubeAccountParsers.parseHistoryTracks(likedResponse)
+            parsed.forEach { song ->
+                songs.add(SavedSongMetadata.fromSong(song, savedLocally = false, isYtmSynced = true))
             }
         }
-        if (songs.isEmpty()) {
-            val likedResp = runCatching { ArtistInnertubeClient.browse("FEmusic_liked_videos") }.getOrNull()
-                ?: runCatching { ArtistInnertubeClient.postWebBrowse("VLLL") }.getOrNull()
-            if (likedResp != null) {
-                val (parsed, _) = YouTubeAccountParsers.parseHistoryTracks(likedResp)
-                parsed.forEach { s ->
-                    songs.add(SavedSongMetadata.fromSong(s, savedLocally = false, isYtmSynced = true))
-                }
-            }
-        }
+
         if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
-        if (songs.isNotEmpty()) {
-            val mergedIds = LibraryStore.mergeRemoteLikedSongs(context, songs.distinctBy { it.id })
-            MusicPlayerState.replaceFavoriteIdsFromSync(context, mergedIds)
-        }
+        val mergedIds = LibraryStore.mergeRemoteLikedSongs(context, songs.distinctBy { it.id })
+        MusicPlayerState.replaceFavoriteIdsFromSync(context, mergedIds)
     }
 
     suspend fun syncSubscribedArtists(
@@ -381,9 +416,13 @@ object YouTubeLibrarySyncManager {
         var token = parsedFirst.continuation
         var pages = 1
         while (token != null && pages < MAX_LIBRARY_PAGES) {
-            val cont = runCatching {
-                ArtistInnertubeClient.browseContinuation(token!!, allowAnonymousFallback = false)
-            }.getOrNull() ?: break
+            val cont = try {
+                ArtistInnertubeClient.browseContinuation(token, allowAnonymousFallback = false)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                throw IllegalStateException("YouTube Music library continuation failed: ${e.message}", e)
+            }
             val parsedNext = YouTubeAccountParsers.parseLibraryItems(cont, expectedType)
             all.addAll(parsedNext.items)
             token = parsedNext.continuation
