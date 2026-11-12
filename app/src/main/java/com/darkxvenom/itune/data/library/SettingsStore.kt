@@ -17,7 +17,7 @@ data class SettingsUiState(
     val spatialAudioMode: String = "Automatic",
     val dolbyAtmos: Boolean = true,
     val losslessAudio: Boolean = true,
-    val audioQuality: String = "Hi-Res Lossless",
+    val audioQuality: String = "Extreme",
     val eqPreset: String = "Late Night",
     val crossfadeDuration: String = "Off",
     val autoMix: Boolean = false,
@@ -71,6 +71,19 @@ object SettingsStore {
     const val KEY_DOLBY_ATMOS = "dolby_atmos"
     const val KEY_LOSSLESS_AUDIO = "lossless_audio"
     const val KEY_AUDIO_QUALITY = "audio_quality"
+
+    const val QUALITY_EXTREME = "Extreme"
+    const val QUALITY_HIGH = "High"
+    const val QUALITY_MEDIUM = "Medium"
+    const val QUALITY_LOW = "Low"
+
+    fun normalizeAudioQuality(raw: String?): String = when (raw?.trim()) {
+        QUALITY_EXTREME, QUALITY_HIGH, QUALITY_MEDIUM, QUALITY_LOW -> raw.trim()
+        "Hi-Res Lossless", "Lossless (24-bit)", "Lossless" -> QUALITY_EXTREME
+        "High Quality" -> QUALITY_HIGH
+        "High Efficiency" -> QUALITY_LOW
+        else -> QUALITY_EXTREME
+    }
     const val KEY_EQ_PRESET = "eq_preset"
     const val KEY_CROSSFADE = "crossfade_duration"
     const val KEY_AUTOMIX = "automix_enabled"
@@ -214,7 +227,7 @@ object SettingsStore {
             KEY_DISPLAY_NAME -> cur.copy(displayName = normalized)
             KEY_PLAYER_TYPE -> cur.copy(playerType = if (normalized.equals("Static", ignoreCase = true)) "Static" else "Dynamic")
             KEY_SPATIAL_AUDIO -> cur.copy(spatialAudioMode = normalized)
-            KEY_AUDIO_QUALITY -> cur.copy(audioQuality = normalized)
+            KEY_AUDIO_QUALITY -> cur.copy(audioQuality = normalizeAudioQuality(normalized))
             KEY_EQ_PRESET -> cur.copy(eqPreset = normalized)
             KEY_CROSSFADE -> cur.copy(crossfadeDuration = normalized)
             KEY_CELLULAR_STREAMING -> cur.copy(cellularStreaming = normalized)
@@ -385,7 +398,7 @@ object SettingsStore {
                 ?: defaults.spatialAudioMode,
             dolbyAtmos = p.getBoolean(KEY_DOLBY_ATMOS, defaults.dolbyAtmos),
             losslessAudio = p.getBoolean(KEY_LOSSLESS_AUDIO, defaults.losslessAudio),
-            audioQuality = p.getString(KEY_AUDIO_QUALITY, defaults.audioQuality) ?: defaults.audioQuality,
+            audioQuality = normalizeAudioQuality(p.getString(KEY_AUDIO_QUALITY, defaults.audioQuality)),
             eqPreset = p.getString(KEY_EQ_PRESET, defaults.eqPreset) ?: defaults.eqPreset,
             crossfadeDuration = p.getString(KEY_CROSSFADE, defaults.crossfadeDuration) ?: defaults.crossfadeDuration,
             autoMix = p.getBoolean(KEY_AUTOMIX, defaults.autoMix),

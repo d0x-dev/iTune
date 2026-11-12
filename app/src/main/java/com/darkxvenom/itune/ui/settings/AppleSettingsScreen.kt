@@ -190,6 +190,7 @@ private sealed interface SettingsEntry {
         val description: String,
         val options: List<SettingsOptionChoice>,
         val onSelect: (String) -> Unit,
+        val enabled: Boolean = true,
     ) : SettingsEntry
 
     data class Action(
@@ -701,11 +702,15 @@ fun AppleSettingsScreen(
         val latestPicker = (sections.asSequence()
             .flatMap { it.entries.asSequence() }
             .firstOrNull { it.id == picker.id } as? SettingsEntry.Picker) ?: picker
-        SettingsOptionPickerDialog(
-            picker = latestPicker,
-            haptics = haptics,
-            onDismiss = { activePicker = null },
-        )
+        if (!latestPicker.enabled) {
+            activePicker = null
+        } else {
+            SettingsOptionPickerDialog(
+                picker = latestPicker,
+                haptics = haptics,
+                onDismiss = { activePicker = null },
+            )
+        }
     }
 
     if (showNameDialog) {
@@ -1019,6 +1024,15 @@ private fun SettingsEntryRow(
     haptics: Haptics,
     onOpenPicker: (SettingsEntry.Picker) -> Unit,
 ) {
+    val isEntryEnabled = when (entry) {
+        is SettingsEntry.Picker -> entry.enabled
+        else -> true
+    }
+    val animatedAlpha by animateFloatAsState(
+        targetValue = if (isEntryEnabled) 1f else 0.40f,
+        label = "settingsRowAlpha"
+    )
+
     val rowClick: () -> Unit = when (entry) {
         is SettingsEntry.Toggle -> {
             {
@@ -1029,8 +1043,10 @@ private fun SettingsEntryRow(
         }
         is SettingsEntry.Picker -> {
             {
-                haptics.play(Haptic.Tap)
-                onOpenPicker(entry)
+                if (entry.enabled) {
+                    haptics.play(Haptic.Tap)
+                    onOpenPicker(entry)
+                }
             }
         }
         is SettingsEntry.Action -> {
@@ -1061,7 +1077,8 @@ private fun SettingsEntryRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = rowClick)
+            .alpha(animatedAlpha)
+            .clickable(enabled = isEntryEnabled, onClick = rowClick)
             .padding(horizontal = 15.dp, vertical = if (entry.subtitle != null) 11.dp else 13.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -1903,25 +1920,34 @@ private fun buildSettingsSections(
                 SettingsEntry.Toggle(
                     id = "lossless_audio",
                     title = "Lossless Audio",
-                    subtitle = "Studio-grade uncompressed ALAC playback",
+                    subtitle = if (state.losslessAudio) {
+                        "Studio-grade maximum fidelity audio stream"
+                    } else {
+                        "Disabled · Select streaming bitrate below"
+                    },
                     iconRes = R.drawable.ic_settings_lossless,
-                    keywords = listOf("flac", "alac", "hires", "studio", "fidelity", "quality"),
+                    keywords = listOf("flac", "alac", "hires", "studio", "fidelity", "quality", "lossless"),
                     checked = state.losslessAudio,
                     onToggle = { onToggleBool(SettingsStore.KEY_LOSSLESS_AUDIO, it) },
                 ),
                 SettingsEntry.Picker(
                     id = "audio_quality",
                     title = "Streaming Quality",
-                    subtitle = "Wi-Fi & DAC bitrate preference",
+                    subtitle = if (state.losslessAudio) {
+                        "Locked to Maximum Quality (Lossless Active)"
+                    } else {
+                        "Bitrate preference (Extreme, High, Medium, Low)"
+                    },
                     iconRes = R.drawable.ic_settings_streaming_quality,
-                    keywords = listOf("bitrate", "lossless", "aac", "24bit", "192khz", "wifi"),
-                    currentValue = state.audioQuality,
-                    description = "Select the target streaming audio resolution on Wi-Fi connections.",
+                    keywords = listOf("bitrate", "lossless", "aac", "extreme", "high", "medium", "low", "wifi"),
+                    currentValue = if (state.losslessAudio) "Lossless (Max)" else state.audioQuality,
+                    description = "Select the target streaming audio resolution when Lossless Audio is disabled.",
+                    enabled = !state.losslessAudio,
                     options = listOf(
-                        SettingsOptionChoice("Hi-Res Lossless", "ALAC up to 24-bit/192 kHz (External DAC recommended)"),
-                        SettingsOptionChoice("Lossless (24-bit)", "ALAC up to 24-bit/48 kHz"),
-                        SettingsOptionChoice("High Quality", "AAC 256 kbps for low latency & smooth streaming"),
-                        SettingsOptionChoice("High Efficiency", "HE-AAC for minimal bandwidth usage"),
+                        SettingsOptionChoice("Extreme", "Maximum fidelity (256+ kbps)"),
+                        SettingsOptionChoice("High", "High quality audio (~160 kbps)"),
+                        SettingsOptionChoice("Medium", "Standard audio quality (~128 kbps)"),
+                        SettingsOptionChoice("Low", "Data saver (~48-64 kbps)"),
                     ),
                     onSelect = { onSelectString(SettingsStore.KEY_AUDIO_QUALITY, it) },
                 ),
