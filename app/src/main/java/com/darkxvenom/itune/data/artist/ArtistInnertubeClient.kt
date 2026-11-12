@@ -304,10 +304,21 @@ object ArtistInnertubeClient {
         if (newCookie.isNotBlank()) cookie = newCookie
     }
 
-    private fun clearInvalidDelegationScope() {
-        channelOverride = null
-        scope = scope?.copy(pageId = null, dataSyncId = null)
-        GoogleAuthStore.updateActiveScope(pageId = null, dataSyncId = null)
+    private fun clearInvalidDelegationScope(clearUserSessionId: Boolean = true) {
+        val retainedUserSessionId = if (clearUserSessionId) {
+            null
+        } else {
+            channelOverride?.dataSyncId ?: scope?.dataSyncId
+        }
+        channelOverride = channelOverride?.copy(
+            pageId = null,
+            dataSyncId = if (clearUserSessionId) null else channelOverride?.dataSyncId,
+        )
+        scope = scope?.copy(
+            pageId = null,
+            dataSyncId = if (clearUserSessionId) null else scope?.dataSyncId,
+        )
+        GoogleAuthStore.updateActiveScope(pageId = null, dataSyncId = retainedUserSessionId)
     }
 
     private fun isPrivateLibraryBrowseId(browseId: String): Boolean =
@@ -886,7 +897,7 @@ object ArtistInnertubeClient {
                             userSessionId = if (activePageId != null) activeDataSyncId else null,
                         )
                     }.onSuccess {
-                        clearInvalidDelegationScope()
+                        clearInvalidDelegationScope(clearUserSessionId = activePageId == null)
                     }.getOrNull()
                 } else {
                     null
