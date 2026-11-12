@@ -548,6 +548,20 @@ fun SettingsProfileAccountScreen(
                                     )
                                 }
 
+                                if (!ytAccount.lastSyncError.isNullOrBlank()) {
+                                    Text(
+                                        text = "Sync issue: ${ytAccount.lastSyncError}",
+                                        color = Color(0xFFFF6961),
+                                        fontSize = 12.sp,
+                                        lineHeight = 16.sp,
+                                        maxLines = 4,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                                    )
+                                }
+
                                 HorizontalDivider(
                                     modifier = Modifier.padding(start = 16.dp),
                                     thickness = 0.5.dp,
