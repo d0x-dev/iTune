@@ -122,14 +122,20 @@ object ArtistInnertubeClient {
         params: String? = null,
         anonymous: Boolean = false,
         persistScopeRecovery: Boolean = true,
-    ): JSONObject = postMusic(
-        endpoint = "browse",
-        anonymous = anonymous,
-        allowAnonymousFallback = !isPrivateLibraryBrowseId(browseId),
-        persistScopeRecovery = persistScopeRecovery,
-    ) {
-        put("browseId", browseId)
-        if (params != null) put("params", params)
+    ): JSONObject {
+        val response = postMusic(
+            endpoint = "browse",
+            anonymous = anonymous,
+            allowAnonymousFallback = !isPrivateLibraryBrowseId(browseId),
+            persistScopeRecovery = persistScopeRecovery,
+        ) {
+            put("browseId", browseId)
+            if (params != null) put("params", params)
+        }
+        if (!anonymous && isPrivateLibraryBrowseId(browseId)) {
+            Log.i(TAG, "Private browse $browseId response: ${summarizeResponseStructure(response)}")
+        }
+        return response
     }
 
     suspend fun browseContinuation(
@@ -146,16 +152,22 @@ object ArtistInnertubeClient {
     }
 
     /** Calls youtube.com WEB client `/browse` for account-wide fallbacks (`FEhistory`, `FEchannels`). */
-    suspend fun postWebBrowse(browseId: String): JSONObject = postMusicRawUrl(
-        url = "https://www.youtube.com/youtubei/v1/browse",
-        clientName = "WEB",
-        clientVersion = WEB_VERSION,
-        clientId = "1",
-        origin = "https://www.youtube.com",
-        anonymous = false,
-        allowAnonymousFallback = false,
-    ) {
-        put("browseId", browseId)
+    suspend fun postWebBrowse(browseId: String): JSONObject {
+        val response = postMusicRawUrl(
+            url = "https://www.youtube.com/youtubei/v1/browse",
+            clientName = "WEB",
+            clientVersion = WEB_VERSION,
+            clientId = "1",
+            origin = "https://www.youtube.com",
+            anonymous = false,
+            allowAnonymousFallback = false,
+        ) {
+            put("browseId", browseId)
+        }
+        if (browseId == "FEhistory" || browseId == "FEchannels") {
+            Log.i(TAG, "Private WEB browse $browseId response: ${summarizeResponseStructure(response)}")
+        }
+        return response
     }
 
     suspend fun next(videoId: String): JSONObject = postMusic(
@@ -336,6 +348,73 @@ object ArtistInnertubeClient {
             browseId == "FEchannels" ||
             browseId == "VLLM" ||
             browseId == "LM"
+
+    /**
+     * Logs only response structure, never playlist titles, video IDs, cookies or auth tokens.
+     * This distinguishes a genuinely empty library from a sign-in/error shell or a new
+     * Innertube renderer shape when private library parsing returns no items.
+     */
+    private fun summarizeResponseStructure(root: JSONObject): String {
+        fun keysOf(value: JSONObject?): String {
+            if (value == null) return "none"
+            val keys = mutableListOf<String>()
+            val iterator = value.keys()
+            while (iterator.hasNext()) keys += iterator.next()
+            return keys.sorted().joinToString(",").ifBlank { "none" }
+        }
+
+        val responseContext = root.optJSONObject("responseContext")
+        val mainAppContext = responseContext?.optJSONObject("mainAppWebResponseContext")
+        val rendererNames = listOf(
+            "musicShelfRenderer",
+            "musicPlaylistShelfRenderer",
+            "musicResponsiveListItemRenderer",
+            "musicTwoRowItemRenderer",
+            "musicCarouselShelfRenderer",
+            "lockupViewModel",
+            "playlistRenderer",
+            "gridPlaylistRenderer",
+            "channelRenderer",
+            "gridChannelRenderer",
+            "playlistVideoRenderer",
+            "videoRenderer",
+            "alertRenderer",
+            "messageRenderer",
+            "continuationItemRenderer",
+        )
+        val counts = rendererNames.mapNotNull { name ->
+            countRendererOccurrences(root, name).takeIf { it > 0 }?.let { "$name=$it" }
+        }.joinToString(",").ifBlank { "none" }
+        val loggedOut = if (mainAppContext?.has("loggedOut") == true) {
+            mainAppContext.opt("loggedOut").toString()
+        } else {
+            "unknown"
+        }
+        return "rootKeys=[${keysOf(root)}]; contentsKeys=[${keysOf(root.optJSONObject("contents"))}]; " +
+            "loggedOut=$loggedOut; renderers=[$counts]"
+    }
+
+    private fun countRendererOccurrences(root: Any?, target: String): Int {
+        var count = 0
+        fun walk(node: Any?) {
+            when (node) {
+                is JSONObject -> {
+                    val iterator = node.keys()
+                    while (iterator.hasNext()) {
+                        val key = iterator.next()
+                        val value = node.opt(key)
+                        if (key == target && value is JSONObject) count++
+                        walk(value)
+                    }
+                }
+                is JSONArray -> {
+                    for (index in 0 until node.length()) walk(node.opt(index))
+                }
+            }
+        }
+        walk(root)
+        return count
+    }
 
     fun adoptSessionScope(
         cookie: String,
