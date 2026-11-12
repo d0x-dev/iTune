@@ -1212,8 +1212,17 @@ fun LibraryScreenOverlayPopups(
                                 val pid = controller.activeUserPlaylistId
                                 controller.clearMenus()
                                 if (pid != null) {
-                                    YouTubeLibrarySyncManager.removeSongFromPlaylist(controller.context, pid, song.videoId)
-                                    controller.showToast("Removed \"${song.title}\" from playlist")
+                                    YouTubeLibrarySyncManager.removeSongFromPlaylist(
+                                        context = controller.context,
+                                        playlistId = pid,
+                                        songId = song.videoId,
+                                    ) { result ->
+                                        result.onSuccess {
+                                            controller.showToast("Removed \"${song.title}\" from playlist")
+                                        }.onFailure { error ->
+                                            controller.showToast(error.message ?: "Could not remove track from playlist")
+                                        }
+                                    }
                                 }
                             }
                         } else {
@@ -1407,8 +1416,13 @@ fun LibraryScreenOverlayPopups(
                         onRename = onOpenRename,
                         onDelete = {
                             controller.clearMenus()
-                            YouTubeLibrarySyncManager.deletePlaylist(controller.context, pl.id)
-                            controller.showToast("Deleted \"${pl.name}\"")
+                            YouTubeLibrarySyncManager.deletePlaylist(controller.context, pl.id) { result ->
+                                result.onSuccess {
+                                    controller.showToast("Deleted \"${pl.name}\"")
+                                }.onFailure { error ->
+                                    controller.showToast(error.message ?: "Could not delete playlist")
+                                }
+                            }
                         },
                     )
                 }
@@ -1546,9 +1560,14 @@ fun LibraryScreenOverlayPopups(
                                 iconTint = LibraryCrimsonAccent,
                                 onClick = {
                                     controller.clearMenus()
-                                    YouTubeLibrarySyncManager.deletePlaylist(controller.context, pl.id)
-                                    controller.pop()
-                                    controller.showToast("Deleted \"${pl.name}\"")
+                                    YouTubeLibrarySyncManager.deletePlaylist(controller.context, pl.id) { result ->
+                                        result.onSuccess {
+                                            controller.pop()
+                                            controller.showToast("Deleted \"${pl.name}\"")
+                                        }.onFailure { error ->
+                                            controller.showToast(error.message ?: "Could not delete playlist")
+                                        }
+                                    }
                                 },
                             )
                         }
