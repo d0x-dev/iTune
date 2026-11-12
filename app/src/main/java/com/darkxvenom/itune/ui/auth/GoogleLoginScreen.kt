@@ -60,9 +60,7 @@ import com.darkxvenom.itune.data.auth.looksSignedInCookies
 import com.darkxvenom.itune.data.auth.normalizeDataSyncId
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -143,9 +141,9 @@ fun GoogleLoginScreen(
             }
             val pageId = obj.optString("pageId").takeIf { it.isNotBlank() && it != "null" }
             val rawDataSyncId = obj.optString("dataSyncId").takeIf { it.isNotBlank() && it != "null" }
-            val dataSyncId = pageId ?: rawDataSyncId
-                ?.takeIf { !it.contains("||") || it.substringAfter("||").isNotBlank() }
-                ?.let { normalizeDataSyncId(it) }
+            // DATASYNC_ID is USER_SESSION_ID (or DELEGATED_SESSION_ID||USER_SESSION_ID).
+            // Keep it independent from DELEGATED_SESSION_ID, which is X-Goog-PageId.
+            val dataSyncId = normalizeDataSyncId(rawDataSyncId)
             val initialCaptured = CapturedSession(
                 cookie = mergedCookies,
                 dataSyncId = dataSyncId,
@@ -157,14 +155,6 @@ fun GoogleLoginScreen(
             )
             capturedOnce = true
             val appCtx = context.applicationContext
-            if (returnImmediatelyOnCapture) {
-                CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
-                    runCatching { verifyAndPersistCapturedSession(appCtx, initialCaptured, mode) }
-                        .onSuccess { YouTubeLibrarySyncManager.launchFullSync(appCtx) }
-                }
-                onSignedIn()
-                return@evaluateJavascript
-            }
             isCapturing = true
             scope.launch {
                 try {
@@ -175,7 +165,7 @@ fun GoogleLoginScreen(
                     onSignedIn()
                 } catch (e: Throwable) {
                     capturedOnce = false
-                    Toast.makeText(context, e.message ?: "Sign-in verification failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, e.message ?: "Sign-in verification failed", Toast.LENGTH_LONG).show()
                 } finally {
                     isCapturing = false
                 }
@@ -394,6 +384,9 @@ private suspend fun verifyAndPersistCapturedSession(
         clientVersion = initialCaptured.clientVersion,
         loggedIn = true,
     )
+    // Do not mark a WebView cookie as a working YouTube account until private
+    // library requests succeed with the captured browser session.
+    ArtistInnertubeClient.verifyAuthenticatedLibraryAccess()
     val menuResult = runCatching { ArtistInnertubeClient.accountMenu() }
     val info = menuResult.getOrNull()?.let { YouTubeAccountParsers.parseAccountInfo(it) }
     val listResult = runCatching { ArtistInnertubeClient.accountsList() }
@@ -407,12 +400,8 @@ private suspend fun verifyAndPersistCapturedSession(
             }.getOrDefault(emptyList())
         }
     }
-    if (menuResult.isFailure && listResult.isFailure && info == null && channels.isEmpty()) {
-        GoogleAuthStore.restoreClientScope(context)
-        throw (menuResult.exceptionOrNull()
-            ?: listResult.exceptionOrNull()
-            ?: IllegalStateException("Could not verify Google account"))
-    }
+    // account_menu/accounts_list are optional account-profile metadata APIs.
+    // Private library access above is the sign-in verification signal.
 
     val resolvedCaptured = initialCaptured.copy(
         cookie = ArtistInnertubeClient.cookie ?: initialCaptured.cookie,
