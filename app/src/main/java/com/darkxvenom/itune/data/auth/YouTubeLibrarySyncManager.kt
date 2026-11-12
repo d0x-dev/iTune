@@ -70,6 +70,10 @@ object YouTubeLibrarySyncManager {
                 expectedSessionKey = expectedKey,
             )
             try {
+                // Rebuild the user/delegated session IDs from live ytcfg on every full sync.
+                // This also repairs sessions saved by older versions with mixed identifiers.
+                ArtistInnertubeClient.verifyAuthenticatedLibraryAccess(persistScope = true)
+                if (GoogleAuthStore.activeSessionKey() != expectedKey) return@withLock
                 refreshAccountMetadata(app, expectedKey)
                 val taskResults = coroutineScope {
                     val likesJob = async { labeledSyncTask("Liked songs") { syncLikedSongs(app, expectedKey) } }
