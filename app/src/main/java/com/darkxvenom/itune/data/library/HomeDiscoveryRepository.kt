@@ -8,6 +8,7 @@ import com.darkxvenom.itune.backend.NewReleaseAlbum
 import com.darkxvenom.itune.backend.UnifiedSearchResults
 import com.darkxvenom.itune.data.artist.ArtistInnertubeClient
 import com.darkxvenom.itune.data.artist.ArtistInnertubeParser
+import com.darkxvenom.itune.data.model.toMusicTrack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -61,6 +62,13 @@ object HomeDiscoveryRepository {
                     ?: SettingsStore.effectiveGl()
                 val fetched = coroutineScope {
                     val music = async { MusicBackend.searchAllCategories("trending songs $country") }
+                    val charts = async {
+                        runCatching {
+                            ArtistInnertubeParser.collectSongsDeep(
+                                ArtistInnertubeClient.browse("FEmusic_charts")
+                            ).map { it.toMusicTrack() }
+                        }.getOrDefault(emptyList())
+                    }
                     val explore = async { MusicBackend.fetchLocalizedExplorePlaylists() }
                     val releases = async { MusicBackend.fetchNewReleaseAlbums() }
                     val podcasts = async { MusicBackend.searchAllCategories("popular podcasts $country") }
@@ -83,6 +91,7 @@ object HomeDiscoveryRepository {
                     }
                     DiscoveryData(
                         music = music.await(),
+                        chartTracks = charts.await(),
                         explore = explore.await(),
                         releases = releases.await(),
                         podcasts = podcasts.await(),
@@ -90,7 +99,9 @@ object HomeDiscoveryRepository {
                     )
                 }
 
-                _trendingTracks.value = fetched.music.songs.distinctBy { it.id }.take(36)
+                _trendingTracks.value = (fetched.chartTracks + fetched.music.songs)
+                    .distinctBy { it.id }
+                    .take(36)
                 _popularPlaylists.value = (fetched.music.playlists + fetched.explore)
                     .filterNot { it.isAlbum }
                     .distinctBy { it.id }
@@ -170,6 +181,7 @@ object HomeDiscoveryRepository {
 
     private data class DiscoveryData(
         val music: UnifiedSearchResults,
+        val chartTracks: List<MusicTrack>,
         val explore: List<MusicPlaylistRef>,
         val releases: List<NewReleaseAlbum>,
         val podcasts: UnifiedSearchResults,
