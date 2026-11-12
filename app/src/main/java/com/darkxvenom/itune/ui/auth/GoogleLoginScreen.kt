@@ -61,6 +61,7 @@ import com.darkxvenom.itune.data.auth.looksSignedInCookies
 import com.darkxvenom.itune.data.auth.normalizeDataSyncId
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
