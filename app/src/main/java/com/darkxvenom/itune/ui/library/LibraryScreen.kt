@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -92,7 +93,8 @@ fun LibraryScreen(
     onRecentAlbumClick: (LibraryRecentAlbum) -> Unit = {},
     onRecentlyAddedClick: () -> Unit = {},
     onNewReleaseClick: (NewReleaseAlbum) -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    onRecognizeClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -188,6 +190,66 @@ fun LibraryScreen(
                             onClick = onProfileClick
                         )
                     }
+                }
+            }
+
+            item(key = "library_ireconization") {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 22.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(Color(0xFF17171B))
+                        .border(
+                            width = 1.dp,
+                            color = Color.White.copy(alpha = 0.07f),
+                            shape = RoundedCornerShape(18.dp),
+                        )
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = onRecognizeClick,
+                        )
+                        .padding(horizontal = 15.dp, vertical = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(13.dp),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(46.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(Color(0xFFFF2D55).copy(alpha = 0.16f)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Mic,
+                            contentDescription = null,
+                            tint = Color(0xFFFF375F),
+                            modifier = Modifier.size(24.dp),
+                        )
+                    }
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "iReconization",
+                            color = AppleTextPrimary,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Spacer(modifier = Modifier.height(3.dp))
+                        Text(
+                            text = "Identify music playing around you",
+                            color = AppleTextSecondary,
+                            fontSize = 12.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                    Icon(
+                        imageVector = Icons.Default.ChevronRight,
+                        contentDescription = "Open iReconization",
+                        tint = Color.White.copy(alpha = 0.52f),
+                        modifier = Modifier.size(21.dp),
+                    )
                 }
             }
 
