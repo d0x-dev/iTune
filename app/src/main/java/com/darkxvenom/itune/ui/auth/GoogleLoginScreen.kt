@@ -1,6 +1,7 @@
 package com.darkxvenom.itune.ui.auth
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -59,7 +60,9 @@ import com.darkxvenom.itune.data.auth.looksSignedInCookies
 import com.darkxvenom.itune.data.auth.normalizeDataSyncId
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -100,6 +103,7 @@ private const val YTCFG_PROBE = """
 fun GoogleLoginScreen(
     mode: WebSessionMode = WebSessionMode.SIGN_IN,
     initialCookie: String? = null,
+    returnImmediatelyOnCapture: Boolean = false,
     onSignedIn: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
@@ -152,51 +156,22 @@ fun GoogleLoginScreen(
                 loggedIn = true,
             )
             capturedOnce = true
+            val appCtx = context.applicationContext
+            if (returnImmediatelyOnCapture) {
+                CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+                    runCatching { verifyAndPersistCapturedSession(appCtx, initialCaptured, mode) }
+                        .onSuccess { YouTubeLibrarySyncManager.launchFullSync(appCtx) }
+                }
+                onSignedIn()
+                return@evaluateJavascript
+            }
             isCapturing = true
             scope.launch {
                 try {
                     withContext(Dispatchers.IO) {
-                        ArtistInnertubeClient.adoptSessionScope(
-                            cookie = initialCaptured.cookie,
-                            pageId = initialCaptured.pageId,
-                            dataSyncId = initialCaptured.dataSyncId,
-                            authUser = initialCaptured.authUser,
-                            visitorData = initialCaptured.visitorData,
-                            clientVersion = initialCaptured.clientVersion,
-                            loggedIn = true,
-                        )
-                        val menuResult = runCatching { ArtistInnertubeClient.accountMenu() }
-                        val info = menuResult.getOrNull()?.let { YouTubeAccountParsers.parseAccountInfo(it) }
-                        val listResult = runCatching { ArtistInnertubeClient.accountsList() }
-                        val channels = run {
-                            val list = listResult.getOrNull()
-                                ?.let { YouTubeAccountParsers.parseAccountChannels(it) }
-                                .orEmpty()
-                            list.ifEmpty {
-                                runCatching {
-                                    YouTubeAccountParsers.parseAccountChannels(ArtistInnertubeClient.accountSwitcher())
-                                }.getOrDefault(emptyList())
-                            }
-                        }
-                        if (menuResult.isFailure && listResult.isFailure && info == null && channels.isEmpty()) {
-                            throw (menuResult.exceptionOrNull()
-                                ?: listResult.exceptionOrNull()
-                                ?: IllegalStateException("Could not verify Google account"))
-                        }
-
-                        val resolvedCaptured = initialCaptured.copy(
-                            cookie = ArtistInnertubeClient.cookie ?: initialCaptured.cookie,
-                            dataSyncId = ArtistInnertubeClient.activeDataSyncId(),
-                            pageId = ArtistInnertubeClient.activePageId(),
-                        )
-                        GoogleAuthStore.saveCapturedSession(
-                            context = context,
-                            captured = resolvedCaptured,
-                            accountInfo = info,
-                            channels = channels,
-                        )
+                        verifyAndPersistCapturedSession(appCtx, initialCaptured, mode)
                     }
-                    YouTubeLibrarySyncManager.launchFullSync(context)
+                    YouTubeLibrarySyncManager.launchFullSync(appCtx)
                     onSignedIn()
                 } catch (e: Throwable) {
                     capturedOnce = false
@@ -349,7 +324,7 @@ fun GoogleLoginScreen(
                                     canConfirm = hasSid
                                     if (fullLogin && mode == WebSessionMode.SIGN_IN && !capturedOnce) {
                                         scope.launch {
-                                            delay(850L)
+                                            delay(if (returnImmediatelyOnCapture) 1600L else 850L)
                                             if (!capturedOnce && !isCapturing) {
                                                 finishCapture(view, manualTrigger = false)
                                             }
@@ -401,5 +376,63 @@ fun GoogleLoginScreen(
                 }
             }
         }
+    }
+}
+
+private suspend fun verifyAndPersistCapturedSession(
+    context: Context,
+    initialCaptured: CapturedSession,
+    mode: WebSessionMode,
+) {
+    val previousSessionKey = GoogleAuthStore.activeSessionKey()
+    ArtistInnertubeClient.adoptSessionScope(
+        cookie = initialCaptured.cookie,
+        pageId = initialCaptured.pageId,
+        dataSyncId = initialCaptured.dataSyncId,
+        authUser = initialCaptured.authUser,
+        visitorData = initialCaptured.visitorData,
+        clientVersion = initialCaptured.clientVersion,
+        loggedIn = true,
+    )
+    val menuResult = runCatching { ArtistInnertubeClient.accountMenu() }
+    val info = menuResult.getOrNull()?.let { YouTubeAccountParsers.parseAccountInfo(it) }
+    val listResult = runCatching { ArtistInnertubeClient.accountsList() }
+    val channels = run {
+        val list = listResult.getOrNull()
+            ?.let { YouTubeAccountParsers.parseAccountChannels(it) }
+            .orEmpty()
+        list.ifEmpty {
+            runCatching {
+                YouTubeAccountParsers.parseAccountChannels(ArtistInnertubeClient.accountSwitcher())
+            }.getOrDefault(emptyList())
+        }
+    }
+    if (menuResult.isFailure && listResult.isFailure && info == null && channels.isEmpty()) {
+        GoogleAuthStore.restoreClientScope(context)
+        throw (menuResult.exceptionOrNull()
+            ?: listResult.exceptionOrNull()
+            ?: IllegalStateException("Could not verify Google account"))
+    }
+
+    val resolvedCaptured = initialCaptured.copy(
+        cookie = ArtistInnertubeClient.cookie ?: initialCaptured.cookie,
+        dataSyncId = ArtistInnertubeClient.activeDataSyncId(),
+        pageId = ArtistInnertubeClient.activePageId(),
+    )
+    GoogleAuthStore.saveCapturedSession(
+        context = context,
+        captured = resolvedCaptured,
+        accountInfo = info,
+        channels = channels,
+        mode = mode,
+    )
+    val nextSessionKey = GoogleAuthStore.activeSessionKey()
+    if (previousSessionKey != nextSessionKey) {
+        YouTubeLibrarySyncManager.onAccountSessionChanged(
+            context = context,
+            previousSessionKey = previousSessionKey,
+            newSessionKey = nextSessionKey,
+            launchSync = false,
+        )
     }
 }

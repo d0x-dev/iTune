@@ -71,11 +71,14 @@ data class GoogleAccountSession(
     val email: String = "",
     val profiles: List<YouTubeProfile> = emptyList(),
     val activeProfileId: String? = null,
+    val visitorData: String? = null,
 )
 
 @Immutable
 data class YouTubeAccountUiState(
     val isSignedIn: Boolean = false,
+    val activeAccountId: String? = null,
+    val activeProfileId: String? = null,
     val accountName: String = "",
     val accountEmail: String = "",
     val accountHandle: String = "",
@@ -86,7 +89,10 @@ data class YouTubeAccountUiState(
     val lastSyncError: String? = null,
     val channels: List<AccountChannel> = emptyList(),
     val accounts: List<GoogleAccountSession> = emptyList(),
-)
+) {
+    val activeSessionKey: String?
+        get() = activeAccountId?.let { "$it:${activeProfileId.orEmpty()}" }
+}
 
 /** Checks cookie entries by exact name for a SAPISID signing secret. */
 fun hasApiSid(cookieHeader: String?): Boolean {
@@ -213,6 +219,7 @@ internal fun List<GoogleAccountSession>.sessionsToJson(): String = JSONArray().a
                 put("name", session.name)
                 put("email", session.email)
                 put("activeProfileId", session.activeProfileId ?: JSONObject.NULL)
+                put("visitorData", session.visitorData ?: JSONObject.NULL)
                 put(
                     "profiles",
                     JSONArray().apply {
@@ -271,6 +278,7 @@ internal fun sessionsFromJson(raw: String?): List<GoogleAccountSession> = runCat
                     email = obj.optString("email"),
                     profiles = profiles,
                     activeProfileId = obj.optString("activeProfileId").takeIf { it.isNotBlank() && it != "null" },
+                    visitorData = obj.optString("visitorData").takeIf { it.isNotBlank() && it != "null" },
                 ),
             )
         }

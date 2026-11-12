@@ -40,6 +40,8 @@ object GoogleAuthStore {
     val isSignedIn: Boolean
         get() = _state.value.isSignedIn
 
+    fun activeSessionKey(): String? = _state.value.activeSessionKey
+
     fun ensureInit(context: Context) {
         if (metaPrefs != null) return
         synchronized(this) {
@@ -109,20 +111,141 @@ object GoogleAuthStore {
         captured: CapturedSession,
         accountInfo: YouTubeAccountInfo?,
         channels: List<AccountChannel> = emptyList(),
+        mode: WebSessionMode = WebSessionMode.SIGN_IN,
     ) {
         ensureInit(context)
         val app = context.applicationContext
-        val name = accountInfo?.name?.takeIf { it.isNotBlank() } ?: "Google Account"
-        val email = accountInfo?.email.orEmpty()
-        val handle = accountInfo?.handle.orEmpty()
-        val avatarUrl = accountInfo?.avatarUrl
+        synchronized(this) {
+            val mp = meta(app)
+            val name = accountInfo?.name?.takeIf { it.isNotBlank() } ?: "Google Account"
+            val email = accountInfo?.email.orEmpty()
+            val handle = accountInfo?.handle.orEmpty()
+            val avatarUrl = accountInfo?.avatarUrl
 
-        val existingSessions = readSessions(app).toMutableList()
-        val activeChannel = channels.firstOrNull { it.activeOnWeb }
-            ?: channels.firstOrNull { it.pageId == captured.pageId && it.dataSyncId == captured.dataSyncId }
+            val existingSessions = readSessions(app).toMutableList()
+            val currentActiveAccId = mp.getString(KEY_ACTIVE_ACCOUNT, null)
+            val candidateAccId = sessionId(captured.cookie, captured.dataSyncId)
 
-        val profiles = if (channels.isNotEmpty()) {
-            channels.map { ch ->
+            val matchIndex = when (mode) {
+                WebSessionMode.SWITCH_CHANNEL -> existingSessions.indexOfFirst { it.accountId == currentActiveAccId }
+                    .takeIf { it >= 0 }
+                    ?: existingSessions.indexOfFirst {
+                        it.accountId == candidateAccId || (email.isNotBlank() && it.email.equals(email, ignoreCase = true))
+                    }
+                WebSessionMode.SIGN_IN -> existingSessions.indexOfFirst {
+                    (email.isNotBlank() && it.email.equals(email, ignoreCase = true)) ||
+                        it.accountId == candidateAccId
+                }
+            }
+
+            val previous = if (matchIndex >= 0) existingSessions[matchIndex] else null
+            val accId = previous?.accountId ?: candidateAccId
+
+            val activeChannel = channels.firstOrNull { it.activeOnWeb }
+                ?: channels.firstOrNull { it.pageId == captured.pageId && it.dataSyncId == captured.dataSyncId }
+
+            val detectedProfiles = if (channels.isNotEmpty()) {
+                channels.map { ch ->
+                    val isSelected = activeChannel != null &&
+                        ch.pageId == activeChannel.pageId &&
+                        ch.dataSyncId == activeChannel.dataSyncId &&
+                        ch.name == activeChannel.name
+                    YouTubeProfile(
+                        profileId = profileId(ch.pageId, ch.dataSyncId, ch.name),
+                        name = ch.name,
+                        handle = ch.subtitle.ifBlank { if (isSelected) email else "" },
+                        avatar = ch.thumbnailUrl ?: if (isSelected) avatarUrl else null,
+                        pageId = ch.pageId,
+                        dataSyncId = ch.dataSyncId,
+                        authUser = captured.authUser,
+                        isBrandAccount = ch.pageId != null,
+                    )
+                }
+            } else {
+                listOf(
+                    YouTubeProfile(
+                        profileId = profileId(captured.pageId, captured.dataSyncId, name),
+                        name = name,
+                        handle = handle.ifBlank { email },
+                        avatar = avatarUrl,
+                        pageId = captured.pageId,
+                        dataSyncId = captured.dataSyncId,
+                        authUser = captured.authUser,
+                        isBrandAccount = captured.pageId != null,
+                    ),
+                )
+            }
+
+            val resolvedActiveProfile = detectedProfiles.firstOrNull {
+                it.pageId == (activeChannel?.pageId ?: captured.pageId) &&
+                    it.dataSyncId == (activeChannel?.dataSyncId ?: captured.dataSyncId)
+            } ?: detectedProfiles.first()
+
+            val hasRealIdentity = detectedProfiles.any { it.pageId != null || it.dataSyncId != null }
+            val mergedProfiles = previous?.profiles.orEmpty().filterNot { known ->
+                detectedProfiles.any { it.profileId == known.profileId } ||
+                    (hasRealIdentity && known.profileId.startsWith("profile:"))
+            } + detectedProfiles
+
+            val newSession = GoogleAccountSession(
+                accountId = accId,
+                cookie = captured.cookie,
+                name = if (mode == WebSessionMode.SWITCH_CHANNEL && previous?.name?.isNotBlank() == true) {
+                    previous.name
+                } else {
+                    name
+                },
+                email = email.ifBlank { previous?.email.orEmpty() },
+                profiles = mergedProfiles,
+                activeProfileId = resolvedActiveProfile.profileId,
+                visitorData = captured.visitorData ?: previous?.visitorData,
+            )
+
+            if (matchIndex >= 0) {
+                existingSessions[matchIndex] = newSession
+            } else {
+                existingSessions.add(0, newSession)
+            }
+
+            EncryptedAuthPrefs.putEncrypted(app, KEY_SESSIONS, existingSessions.sessionsToJson())
+            mp.edit().remove(KEY_LAST_SYNCED_MS).apply()
+            applyActiveSessionLocked(
+                app = app,
+                mp = mp,
+                session = newSession,
+                profile = resolvedActiveProfile,
+                channelsOverride = channels.takeIf { it.isNotEmpty() },
+                visitorOverride = captured.visitorData,
+                clientVersion = captured.clientVersion,
+            )
+            _state.value = _state.value.copy(lastSyncError = null, lastSyncedAtMs = 0L)
+        }
+    }
+
+    fun selectChannel(context: Context, channel: AccountChannel) {
+        ensureInit(context)
+        val targetPid = profileId(channel.pageId, channel.dataSyncId, channel.name)
+        val activeAccId = activeAccountId() ?: return
+        switchProfile(context, activeAccId, targetPid, suppliedChannel = channel)
+    }
+
+    fun switchProfile(
+        context: Context,
+        accountId: String,
+        profileId: String? = null,
+        suppliedChannel: AccountChannel? = null,
+    ): Boolean {
+        ensureInit(context)
+        val app = context.applicationContext
+        return synchronized(this) {
+            val mp = meta(app)
+            val sessions = readSessions(app).toMutableList()
+            val idx = sessions.indexOfFirst { it.accountId == accountId }
+            if (idx < 0) return false
+            val session = sessions[idx]
+            val targetPid = profileId ?: session.activeProfileId ?: session.profiles.firstOrNull()?.profileId
+            val existingProfile = session.profiles.firstOrNull { it.profileId == targetPid }
+            val profile = existingProfile ?: suppliedChannel?.let { ch ->
                 YouTubeProfile(
                     profileId = profileId(ch.pageId, ch.dataSyncId, ch.name),
                     name = ch.name,
@@ -130,121 +253,76 @@ object GoogleAuthStore {
                     avatar = ch.thumbnailUrl,
                     pageId = ch.pageId,
                     dataSyncId = ch.dataSyncId,
-                    authUser = captured.authUser,
+                    authUser = mp.getString(KEY_CHANNEL_AUTH_USER, null),
                     isBrandAccount = ch.pageId != null,
                 )
+            } ?: session.profiles.firstOrNull()
+                ?: YouTubeProfile(
+                    profileId = profileId(null, null, session.name.ifBlank { "Google Account" }),
+                    name = session.name.ifBlank { "Google Account" },
+                    handle = session.email,
+                )
+
+            val updatedProfiles = if (existingProfile != null) {
+                session.profiles
+            } else {
+                session.profiles + profile
             }
-        } else {
-            listOf(
-                YouTubeProfile(
-                    profileId = profileId(captured.pageId, captured.dataSyncId, name),
-                    name = name,
-                    handle = handle.ifBlank { email },
-                    avatar = avatarUrl,
-                    pageId = captured.pageId,
-                    dataSyncId = captured.dataSyncId,
-                    authUser = captured.authUser,
-                    isBrandAccount = captured.pageId != null,
-                ),
+            val updatedSession = session.copy(
+                profiles = updatedProfiles,
+                activeProfileId = profile.profileId,
             )
+            sessions[idx] = updatedSession
+            EncryptedAuthPrefs.putEncrypted(app, KEY_SESSIONS, sessions.sessionsToJson())
+            mp.edit().remove(KEY_LAST_SYNCED_MS).apply()
+
+            applyActiveSessionLocked(
+                app = app,
+                mp = mp,
+                session = updatedSession,
+                profile = profile,
+                visitorOverride = updatedSession.visitorData,
+            )
+            _state.value = _state.value.copy(isSyncing = false, lastSyncError = null, lastSyncedAtMs = 0L)
+            true
         }
-
-        val resolvedActiveProfile = profiles.firstOrNull {
-            it.pageId == (activeChannel?.pageId ?: captured.pageId) &&
-                it.dataSyncId == (activeChannel?.dataSyncId ?: captured.dataSyncId)
-        } ?: profiles.first()
-
-        val accId = sessionId(captured.cookie, captured.dataSyncId)
-        val newSession = GoogleAccountSession(
-            accountId = accId,
-            cookie = captured.cookie,
-            name = name,
-            email = email,
-            profiles = profiles,
-            activeProfileId = resolvedActiveProfile.profileId,
-        )
-
-        val matchIndex = existingSessions.indexOfFirst {
-            it.accountId == accId || (email.isNotBlank() && it.email.equals(email, ignoreCase = true))
-        }
-        if (matchIndex >= 0) {
-            existingSessions[matchIndex] = newSession
-        } else {
-            existingSessions.add(0, newSession)
-        }
-
-        EncryptedAuthPrefs.putEncrypted(app, KEY_COOKIE, captured.cookie)
-        EncryptedAuthPrefs.putEncrypted(app, KEY_SESSIONS, existingSessions.sessionsToJson())
-
-        val mp = meta(app)
-        mp.edit()
-            .putString(KEY_ACTIVE_ACCOUNT, accId)
-            .putString(KEY_ACTIVE_PROFILE, resolvedActiveProfile.profileId)
-            .putString(KEY_CHANNEL_PAGE_ID, resolvedActiveProfile.pageId)
-            .putString(KEY_CHANNEL_DATASYNC_ID, resolvedActiveProfile.dataSyncId ?: captured.dataSyncId)
-            .putString(KEY_CHANNEL_NAME, resolvedActiveProfile.name)
-            .putString(KEY_CHANNEL_AUTH_USER, captured.authUser)
-            .putString(KEY_ACCOUNT_NAME, name)
-            .putString(KEY_ACCOUNT_EMAIL, email)
-            .putString(KEY_ACCOUNT_HANDLE, handle)
-            .putString(KEY_ACCOUNT_AVATAR, resolvedActiveProfile.avatar ?: avatarUrl)
-            .apply {
-                if (!captured.visitorData.isNullOrBlank()) {
-                    putString(KEY_VISITOR_DATA, captured.visitorData)
-                }
-            }
-            .apply()
-
-        ArtistInnertubeClient.adoptSessionScope(
-            cookie = captured.cookie,
-            pageId = resolvedActiveProfile.pageId,
-            dataSyncId = resolvedActiveProfile.dataSyncId ?: captured.dataSyncId,
-            authUser = captured.authUser,
-            visitorData = captured.visitorData,
-            clientVersion = captured.clientVersion,
-            loggedIn = captured.loggedIn,
-        )
-        ArtistInnertubeClient.selectChannel(
-            pageId = resolvedActiveProfile.pageId,
-            dataSyncId = resolvedActiveProfile.dataSyncId ?: captured.dataSyncId,
-            authUser = captured.authUser,
-        )
-        publishState(channels = channels)
     }
 
-    fun selectChannel(context: Context, channel: AccountChannel) {
+    fun removeAccount(context: Context, accountId: String): Boolean {
         ensureInit(context)
         val app = context.applicationContext
-        val mp = meta(app)
-        val currentAccId = mp.getString(KEY_ACTIVE_ACCOUNT, null)
-        val sessions = readSessions(app).toMutableList()
-        val chosenPid = profileId(channel.pageId, channel.dataSyncId, channel.name)
-        val authUser = mp.getString(KEY_CHANNEL_AUTH_USER, null)
-
-        val idx = sessions.indexOfFirst { it.accountId == currentAccId }
-        if (idx >= 0) {
-            sessions[idx] = sessions[idx].copy(activeProfileId = chosenPid)
-            EncryptedAuthPrefs.putEncrypted(app, KEY_SESSIONS, sessions.sessionsToJson())
-        }
-
-        mp.edit()
-            .putString(KEY_ACTIVE_PROFILE, chosenPid)
-            .putString(KEY_CHANNEL_PAGE_ID, channel.pageId)
-            .putString(KEY_CHANNEL_DATASYNC_ID, channel.dataSyncId)
-            .putString(KEY_CHANNEL_NAME, channel.name)
-            .apply {
-                if (!channel.thumbnailUrl.isNullOrBlank()) {
-                    putString(KEY_ACCOUNT_AVATAR, channel.thumbnailUrl)
-                }
+        return synchronized(this) {
+            val mp = meta(app)
+            val currentActiveId = mp.getString(KEY_ACTIVE_ACCOUNT, null)
+            val remaining = readSessions(app).filterNot { it.accountId == accountId }
+            if (remaining.isEmpty()) {
+                signOut(app)
+                return false
             }
-            .apply()
-
-        ArtistInnertubeClient.selectChannel(
-            pageId = channel.pageId,
-            dataSyncId = channel.dataSyncId,
-            authUser = authUser,
-        )
-        publishState()
+            EncryptedAuthPrefs.putEncrypted(app, KEY_SESSIONS, remaining.sessionsToJson())
+            if (currentActiveId == accountId || currentActiveId == null) {
+                val fallback = remaining.first()
+                val profile = fallback.profiles.firstOrNull { it.profileId == fallback.activeProfileId }
+                    ?: fallback.profiles.firstOrNull()
+                    ?: YouTubeProfile(
+                        profileId = profileId(null, null, fallback.name.ifBlank { "Google Account" }),
+                        name = fallback.name.ifBlank { "Google Account" },
+                        handle = fallback.email,
+                    )
+                mp.edit().remove(KEY_LAST_SYNCED_MS).apply()
+                applyActiveSessionLocked(
+                    app = app,
+                    mp = mp,
+                    session = fallback,
+                    profile = profile,
+                    visitorOverride = fallback.visitorData,
+                )
+                _state.value = _state.value.copy(isSyncing = false, lastSyncError = null, lastSyncedAtMs = 0L)
+            } else {
+                publishState()
+            }
+            true
+        }
     }
 
     fun updateSyncStatus(
@@ -253,34 +331,89 @@ object GoogleAuthStore {
         syncedNow: Boolean = false,
         channels: List<AccountChannel>? = null,
         accountInfo: YouTubeAccountInfo? = null,
+        expectedSessionKey: String? = null,
     ) {
+        if (expectedSessionKey != null && _state.value.activeSessionKey != expectedSessionKey) return
         val ctx = appContext
-        if (ctx != null && accountInfo != null) {
-            meta(ctx).edit().apply {
-                if (accountInfo.name.isNotBlank()) putString(KEY_ACCOUNT_NAME, accountInfo.name)
-                if (accountInfo.email.isNotBlank()) putString(KEY_ACCOUNT_EMAIL, accountInfo.email)
-                if (accountInfo.handle.isNotBlank()) putString(KEY_ACCOUNT_HANDLE, accountInfo.handle)
-                if (!accountInfo.avatarUrl.isNullOrBlank()) putString(KEY_ACCOUNT_AVATAR, accountInfo.avatarUrl)
-            }.apply()
-        }
-        val syncedMs = if (syncedNow && ctx != null) {
-            System.currentTimeMillis().also { now ->
-                meta(ctx).edit().putLong(KEY_LAST_SYNCED_MS, now).apply()
+        synchronized(this) {
+            if (expectedSessionKey != null && _state.value.activeSessionKey != expectedSessionKey) return
+            if (ctx != null) {
+                val mp = meta(ctx)
+                val activeAccId = mp.getString(KEY_ACTIVE_ACCOUNT, null)
+                val sessions = readSessions(ctx).toMutableList()
+                val idx = sessions.indexOfFirst { it.accountId == activeAccId }
+
+                if (accountInfo != null) {
+                    mp.edit().apply {
+                        if (accountInfo.name.isNotBlank()) putString(KEY_ACCOUNT_NAME, accountInfo.name)
+                        if (accountInfo.email.isNotBlank()) putString(KEY_ACCOUNT_EMAIL, accountInfo.email)
+                        if (accountInfo.handle.isNotBlank()) putString(KEY_ACCOUNT_HANDLE, accountInfo.handle)
+                        if (!accountInfo.avatarUrl.isNullOrBlank()) putString(KEY_ACCOUNT_AVATAR, accountInfo.avatarUrl)
+                    }.apply()
+                }
+                if (idx >= 0 && (accountInfo != null || !channels.isNullOrEmpty())) {
+                    val cur = sessions[idx]
+                    val currentActivePid = mp.getString(KEY_ACTIVE_PROFILE, cur.activeProfileId)
+                    val detectedProfiles = channels.orEmpty().map { ch ->
+                        YouTubeProfile(
+                            profileId = profileId(ch.pageId, ch.dataSyncId, ch.name),
+                            name = ch.name,
+                            handle = ch.subtitle,
+                            avatar = ch.thumbnailUrl,
+                            pageId = ch.pageId,
+                            dataSyncId = ch.dataSyncId,
+                            authUser = mp.getString(KEY_CHANNEL_AUTH_USER, null),
+                            isBrandAccount = ch.pageId != null,
+                        )
+                    }
+                    val hasReal = detectedProfiles.any { it.pageId != null || it.dataSyncId != null }
+                    val mergedProfiles = if (detectedProfiles.isNotEmpty()) {
+                        cur.profiles.filterNot { known ->
+                            detectedProfiles.any { it.profileId == known.profileId } ||
+                                (hasReal && known.profileId.startsWith("profile:"))
+                        } + detectedProfiles
+                    } else {
+                        cur.profiles.map { p ->
+                            if (p.profileId == currentActivePid && accountInfo != null) {
+                                p.copy(
+                                    name = accountInfo.name.ifBlank { p.name },
+                                    handle = accountInfo.handle.ifBlank { p.handle },
+                                    avatar = accountInfo.avatarUrl ?: p.avatar,
+                                )
+                            } else {
+                                p
+                            }
+                        }
+                    }
+                    sessions[idx] = cur.copy(
+                        name = accountInfo?.name?.takeIf { it.isNotBlank() } ?: cur.name,
+                        email = accountInfo?.email?.takeIf { it.isNotBlank() } ?: cur.email,
+                        profiles = mergedProfiles,
+                    )
+                    EncryptedAuthPrefs.putEncrypted(ctx, KEY_SESSIONS, sessions.sessionsToJson())
+                }
             }
-        } else {
-            _state.value.lastSyncedAtMs
+            val syncedMs = if (syncedNow && ctx != null) {
+                System.currentTimeMillis().also { now ->
+                    meta(ctx).edit().putLong(KEY_LAST_SYNCED_MS, now).apply()
+                }
+            } else {
+                _state.value.lastSyncedAtMs
+            }
+            val latestSessions = if (ctx != null) readSessions(ctx) else _state.value.accounts
+            val current = _state.value
+            _state.value = current.copy(
+                accountName = accountInfo?.name?.takeIf { it.isNotBlank() } ?: current.accountName,
+                accountEmail = accountInfo?.email?.takeIf { it.isNotBlank() } ?: current.accountEmail,
+                accountHandle = accountInfo?.handle?.takeIf { it.isNotBlank() } ?: current.accountHandle,
+                avatarUrl = accountInfo?.avatarUrl?.takeIf { it.isNotBlank() } ?: current.avatarUrl,
+                isSyncing = syncing ?: current.isSyncing,
+                lastSyncError = error,
+                lastSyncedAtMs = syncedMs,
+                channels = channels ?: current.channels,
+                accounts = latestSessions,
+            )
         }
-        val current = _state.value
-        _state.value = current.copy(
-            accountName = accountInfo?.name?.takeIf { it.isNotBlank() } ?: current.accountName,
-            accountEmail = accountInfo?.email?.takeIf { it.isNotBlank() } ?: current.accountEmail,
-            accountHandle = accountInfo?.handle?.takeIf { it.isNotBlank() } ?: current.accountHandle,
-            avatarUrl = accountInfo?.avatarUrl?.takeIf { it.isNotBlank() } ?: current.avatarUrl,
-            isSyncing = syncing ?: current.isSyncing,
-            lastSyncError = error,
-            lastSyncedAtMs = syncedMs,
-            channels = channels ?: current.channels,
-        )
     }
 
     fun signOut(context: Context) {
@@ -305,6 +438,14 @@ object GoogleAuthStore {
         BrowserSession.clearGoogleCookies()
         ArtistInnertubeClient.clearAuthSession()
         _state.value = YouTubeAccountUiState()
+    }
+
+    fun restoreClientScope(context: Context) {
+        ensureInit(context)
+        val app = context.applicationContext
+        synchronized(this) {
+            restoreToClient(app, meta(app))
+        }
     }
 
     private fun restoreToClient(app: Context, mp: SharedPreferences) {
@@ -336,12 +477,67 @@ object GoogleAuthStore {
         }
     }
 
+    private fun applyActiveSessionLocked(
+        app: Context,
+        mp: SharedPreferences,
+        session: GoogleAccountSession,
+        profile: YouTubeProfile,
+        channelsOverride: List<AccountChannel>? = null,
+        visitorOverride: String? = null,
+        clientVersion: String? = null,
+    ) {
+        EncryptedAuthPrefs.putEncrypted(app, KEY_COOKIE, session.cookie)
+        val resolvedDataSyncId = profile.dataSyncId
+        val resolvedPageId = profile.pageId
+        val resolvedAuthUser = profile.authUser
+        val resolvedVisitor = visitorOverride ?: session.visitorData
+        val resolvedAvatar = profile.avatar ?: mp.getString(KEY_ACCOUNT_AVATAR, null)
+            .takeIf { mp.getString(KEY_ACTIVE_ACCOUNT, null) == session.accountId }
+
+        mp.edit()
+            .putString(KEY_ACTIVE_ACCOUNT, session.accountId)
+            .putString(KEY_ACTIVE_PROFILE, profile.profileId)
+            .putString(KEY_CHANNEL_PAGE_ID, resolvedPageId)
+            .putString(KEY_CHANNEL_DATASYNC_ID, resolvedDataSyncId)
+            .putString(KEY_CHANNEL_NAME, profile.name)
+            .putString(KEY_CHANNEL_AUTH_USER, resolvedAuthUser)
+            .putString(KEY_ACCOUNT_NAME, profile.name.ifBlank { session.name.ifBlank { "Google Account" } })
+            .putString(KEY_ACCOUNT_EMAIL, session.email.ifBlank { profile.handle })
+            .putString(KEY_ACCOUNT_HANDLE, profile.handle)
+            .apply {
+                if (resolvedAvatar.isNullOrBlank()) remove(KEY_ACCOUNT_AVATAR)
+                else putString(KEY_ACCOUNT_AVATAR, resolvedAvatar)
+                if (resolvedVisitor.isNullOrBlank()) remove(KEY_VISITOR_DATA)
+                else putString(KEY_VISITOR_DATA, resolvedVisitor)
+            }
+            .apply()
+
+        ArtistInnertubeClient.adoptSessionScope(
+            cookie = session.cookie,
+            pageId = resolvedPageId,
+            dataSyncId = resolvedDataSyncId,
+            authUser = resolvedAuthUser,
+            visitorData = resolvedVisitor,
+            clientVersion = clientVersion,
+            loggedIn = true,
+        )
+        if (resolvedPageId != null || resolvedDataSyncId != null) {
+            ArtistInnertubeClient.selectChannel(
+                pageId = resolvedPageId,
+                dataSyncId = resolvedDataSyncId,
+                authUser = resolvedAuthUser,
+            )
+        }
+        publishState(channels = channelsOverride)
+    }
+
     private fun publishState(channels: List<AccountChannel>? = null) {
         val app = appContext ?: return
         val mp = meta(app)
         val sessions = readSessions(app)
         val activeAccId = mp.getString(KEY_ACTIVE_ACCOUNT, null)
         val activeSession = sessions.firstOrNull { it.accountId == activeAccId } ?: sessions.firstOrNull()
+        val activeProfId = mp.getString(KEY_ACTIVE_PROFILE, activeSession?.activeProfileId)
         val cookie = activeSession?.cookie ?: EncryptedAuthPrefs.getDecrypted(app, KEY_COOKIE)
         val signedIn = hasApiSid(cookie)
         val derivedChannels = channels ?: activeSession?.profiles?.map { p ->
@@ -351,11 +547,13 @@ object GoogleAuthStore {
                 thumbnailUrl = p.avatar,
                 pageId = p.pageId,
                 dataSyncId = p.dataSyncId,
-                activeOnWeb = p.profileId == activeSession.activeProfileId,
+                activeOnWeb = p.profileId == (activeProfId ?: activeSession.activeProfileId),
             )
         }.orEmpty()
         _state.value = _state.value.copy(
             isSignedIn = signedIn,
+            activeAccountId = activeSession?.accountId ?: activeAccId,
+            activeProfileId = activeProfId ?: activeSession?.activeProfileId,
             accountName = mp.getString(KEY_ACCOUNT_NAME, null).orEmpty(),
             accountEmail = mp.getString(KEY_ACCOUNT_EMAIL, null).orEmpty(),
             accountHandle = mp.getString(KEY_ACCOUNT_HANDLE, null).orEmpty(),

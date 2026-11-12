@@ -18,6 +18,7 @@ import com.darkxvenom.itune.data.model.LikeStatus
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -37,19 +38,24 @@ import kotlinx.coroutines.withContext
  */
 object YouTubeLibrarySyncManager {
     private const val TAG = "YtmLibrarySync"
-    private const val MAX_LIBRARY_PAGES = 6
+    private const val MAX_LIBRARY_PAGES = 10
     private const val MAX_PLAYLIST_TRACKS_PAGES = 4
-    private const val MAX_PLAYLISTS_TO_HYDRATE = 24
+    private const val PLAYLIST_HYDRATE_BATCH_SIZE = 8
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val syncMutex = Mutex()
 
+    @Volatile
+    private var syncJob: Job? = null
+
     fun launchFullSync(context: Context) {
         val app = context.applicationContext
-        scope.launch { performFullSync(app) }
+        syncJob?.cancel()
+        syncJob = scope.launch { performFullSync(app) }
     }
 
-    private val SYSTEM_AUTO_PLAYLIST_IDS = setOf("LM", "SE", "SS", "LL", "WL")
+    private val SYSTEM_AUTO_PLAYLIST_IDS = setOf("LM", "SE", "NE", "SS", "SR", "LL", "WL")
+    private val NOT_EDITABLE_PLAYLIST_PREFIXES = listOf("LM", "SE", "NE", "SS", "SR", "LL", "WL", "RD", "OLAK", "MPRE")
 
     suspend fun performFullSync(context: Context) = withContext(Dispatchers.IO) {
         GoogleAuthStore.ensureInit(context)
@@ -57,36 +63,57 @@ object YouTubeLibrarySyncManager {
         val app = context.applicationContext
         syncMutex.withLock {
             if (!GoogleAuthStore.isSignedIn) return@withLock
-            GoogleAuthStore.updateSyncStatus(syncing = true, error = null)
+            val expectedKey = GoogleAuthStore.activeSessionKey() ?: return@withLock
+            GoogleAuthStore.updateSyncStatus(
+                syncing = true,
+                error = null,
+                expectedSessionKey = expectedKey,
+            )
             try {
-                refreshAccountMetadata(app)
+                refreshAccountMetadata(app, expectedKey)
                 val failures = coroutineScope {
-                    val likesJob = async { runCatching { syncLikedSongs(app) }.onFailure { Log.w(TAG, "syncLikedSongs failed: ${it.message}", it) } }
-                    val artistsJob = async { runCatching { syncSubscribedArtists(app) }.onFailure { Log.w(TAG, "syncSubscribedArtists failed: ${it.message}", it) } }
-                    val albumsJob = async { runCatching { syncSavedAlbums(app) }.onFailure { Log.w(TAG, "syncSavedAlbums failed: ${it.message}", it) } }
-                    val playlistsJob = async { runCatching { syncPlaylists(app) }.onFailure { Log.w(TAG, "syncPlaylists failed: ${it.message}", it) } }
-                    val historyJob = async { runCatching { syncHistory(app) }.onFailure { Log.w(TAG, "syncHistory failed: ${it.message}", it) } }
+                    val likesJob = async { runCatching { syncLikedSongs(app, expectedKey) }.onFailure { Log.w(TAG, "syncLikedSongs failed: ${it.message}", it) } }
+                    val artistsJob = async { runCatching { syncSubscribedArtists(app, expectedKey) }.onFailure { Log.w(TAG, "syncSubscribedArtists failed: ${it.message}", it) } }
+                    val albumsJob = async { runCatching { syncSavedAlbums(app, expectedKey) }.onFailure { Log.w(TAG, "syncSavedAlbums failed: ${it.message}", it) } }
+                    val playlistsJob = async { runCatching { syncPlaylists(app, expectedKey) }.onFailure { Log.w(TAG, "syncPlaylists failed: ${it.message}", it) } }
+                    val historyJob = async { runCatching { syncHistory(app, expectedKey) }.onFailure { Log.w(TAG, "syncHistory failed: ${it.message}", it) } }
                     val homeJob = async { runCatching { PersonalizedHomeRepository.refreshIfSignedIn() }.onFailure { Log.w(TAG, "home refresh failed: ${it.message}", it) } }
                     awaitAll(likesJob, artistsJob, albumsJob, playlistsJob, historyJob, homeJob)
                 }.mapNotNull { it.exceptionOrNull() }
 
+                if (GoogleAuthStore.activeSessionKey() != expectedKey) return@withLock
                 val syncError = if (failures.size >= 5) {
                     failures.firstOrNull()?.message ?: "Could not retrieve library from Google account"
                 } else {
                     null
                 }
-                GoogleAuthStore.updateSyncStatus(syncing = false, error = syncError, syncedNow = syncError == null)
+                GoogleAuthStore.updateSyncStatus(
+                    syncing = false,
+                    error = syncError,
+                    syncedNow = syncError == null,
+                    expectedSessionKey = expectedKey,
+                )
             } catch (e: CancellationException) {
+                if (GoogleAuthStore.activeSessionKey() == expectedKey) {
+                    GoogleAuthStore.updateSyncStatus(syncing = false, expectedSessionKey = expectedKey)
+                }
                 throw e
             } catch (e: Throwable) {
                 Log.w(TAG, "Full sync failed: ${e.message}", e)
-                GoogleAuthStore.updateSyncStatus(syncing = false, error = e.message ?: "Sync failed")
+                GoogleAuthStore.updateSyncStatus(
+                    syncing = false,
+                    error = e.message ?: "Sync failed",
+                    expectedSessionKey = expectedKey,
+                )
             }
         }
     }
 
-    suspend fun refreshAccountMetadata(context: Context) {
-        if (!GoogleAuthStore.isSignedIn) return
+    suspend fun refreshAccountMetadata(
+        context: Context,
+        expectedSessionKey: String? = GoogleAuthStore.activeSessionKey(),
+    ) {
+        if (!GoogleAuthStore.isSignedIn || expectedSessionKey == null) return
         val info = runCatching {
             YouTubeAccountParsers.parseAccountInfo(ArtistInnertubeClient.accountMenu())
         }.getOrNull()
@@ -98,11 +125,19 @@ object YouTubeLibrarySyncManager {
                 YouTubeAccountParsers.parseAccountChannels(ArtistInnertubeClient.accountSwitcher())
             }
         }.getOrDefault(emptyList())
-        GoogleAuthStore.updateSyncStatus(channels = channels.takeIf { it.isNotEmpty() }, accountInfo = info)
+        if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
+        GoogleAuthStore.updateSyncStatus(
+            channels = channels.takeIf { it.isNotEmpty() },
+            accountInfo = info,
+            expectedSessionKey = expectedSessionKey,
+        )
     }
 
-    suspend fun syncHistory(context: Context) {
-        if (!GoogleAuthStore.isSignedIn) return
+    suspend fun syncHistory(
+        context: Context,
+        expectedSessionKey: String? = GoogleAuthStore.activeSessionKey(),
+    ) {
+        if (!GoogleAuthStore.isSignedIn || expectedSessionKey == null) return
         val first = runCatching { ArtistInnertubeClient.browse("FEmusic_history") }.getOrNull()
         val collected = mutableListOf<SavedSongMetadata>()
         val (firstSongs, firstToken) = first?.let { YouTubeAccountParsers.parseHistoryTracks(it) }
@@ -113,6 +148,7 @@ object YouTubeLibrarySyncManager {
         var token = firstToken
         var pageCount = 1
         while (token != null && pageCount < 3) {
+            if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
             val cont = runCatching { ArtistInnertubeClient.browseContinuation(token!!, allowAnonymousFallback = false) }.getOrNull() ?: break
             val (nextSongs, nextToken) = YouTubeAccountParsers.parseHistoryTracks(cont)
             nextSongs.forEach { song ->
@@ -129,11 +165,15 @@ object YouTubeLibrarySyncManager {
                 }
             }
         }
+        if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
         LibraryStore.replaceYtmHistory(context, collected.distinctBy { it.id })
     }
 
-    suspend fun syncLikedSongs(context: Context) {
-        if (!GoogleAuthStore.isSignedIn) return
+    suspend fun syncLikedSongs(
+        context: Context,
+        expectedSessionKey: String? = GoogleAuthStore.activeSessionKey(),
+    ) {
+        if (!GoogleAuthStore.isSignedIn || expectedSessionKey == null) return
         val songs = mutableListOf<SavedSongMetadata>()
         val firstPage = runCatching { ArtistRepository.browseSongs("VLLM").getOrNull() }.getOrNull()
         if (firstPage != null && firstPage.songs.isNotEmpty()) {
@@ -143,6 +183,7 @@ object YouTubeLibrarySyncManager {
             var token = firstPage.continuation
             var count = 1
             while (token != null && count < MAX_LIBRARY_PAGES) {
+                if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
                 val next = ArtistRepository.moreSongs(token).getOrNull() ?: break
                 next.songs.forEach { s ->
                     songs.add(SavedSongMetadata.fromSong(s, savedLocally = false, isYtmSynced = true))
@@ -161,14 +202,18 @@ object YouTubeLibrarySyncManager {
                 }
             }
         }
+        if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
         if (songs.isNotEmpty()) {
             val mergedIds = LibraryStore.mergeRemoteLikedSongs(context, songs.distinctBy { it.id })
             MusicPlayerState.replaceFavoriteIdsFromSync(context, mergedIds)
         }
     }
 
-    suspend fun syncSubscribedArtists(context: Context) {
-        if (!GoogleAuthStore.isSignedIn) return
+    suspend fun syncSubscribedArtists(
+        context: Context,
+        expectedSessionKey: String? = GoogleAuthStore.activeSessionKey(),
+    ) {
+        if (!GoogleAuthStore.isSignedIn || expectedSessionKey == null) return
         val corpusCards = fetchAllLibraryCards("FEmusic_library_corpus_artists", BrowseType.ARTIST)
         val trackArtistCards = if (corpusCards.isEmpty()) {
             fetchAllLibraryCards("FEmusic_library_corpus_track_artists", BrowseType.ARTIST)
@@ -198,12 +243,16 @@ object YouTubeLibrarySyncManager {
                 savedLocally = false,
             )
         }
+        if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
         val mergedIds = LibraryStore.mergeRemoteArtists(context, entries)
         ArtistStateStore.replaceSubscribedFromSync(context, mergedIds)
     }
 
-    suspend fun syncSavedAlbums(context: Context) {
-        if (!GoogleAuthStore.isSignedIn) return
+    suspend fun syncSavedAlbums(
+        context: Context,
+        expectedSessionKey: String? = GoogleAuthStore.activeSessionKey(),
+    ) {
+        if (!GoogleAuthStore.isSignedIn || expectedSessionKey == null) return
         val cards = fetchAllLibraryCards("FEmusic_liked_albums", BrowseType.ALBUM)
         val entries = cards.map { card ->
             SavedCollectionEntry(
@@ -218,81 +267,104 @@ object YouTubeLibrarySyncManager {
                 playlistId = card.playlistId,
             )
         }
+        if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
         val mergedAlbumIds = LibraryStore.mergeRemoteAlbums(context, entries)
         ArtistStateStore.mergeSavedReleaseIdsFromSync(context, mergedAlbumIds)
     }
 
-    suspend fun syncPlaylists(context: Context) {
-        if (!GoogleAuthStore.isSignedIn) return
+    suspend fun syncPlaylists(
+        context: Context,
+        expectedSessionKey: String? = GoogleAuthStore.activeSessionKey(),
+    ) {
+        if (!GoogleAuthStore.isSignedIn || expectedSessionKey == null) return
+        // Fetch strictly from YouTube Music (`FEmusic_liked_playlists` via WEB_REMIX)
+        // rather than YouTube's account-wide aggregation feed, which includes Saved Shorts
+        // and non-music YouTube video playlists.
         val ytmCards = fetchAllLibraryCards("FEmusic_liked_playlists", BrowseType.PLAYLIST)
-        val webCards = runCatching {
-            YouTubeAccountParsers.parseLibraryItems(
-                ArtistInnertubeClient.postWebBrowse("FEplaylist_aggregation"),
-                BrowseType.PLAYLIST,
-            ).items
-        }.getOrDefault(emptyList())
-        val fromWebIds = webCards.mapTo(hashSetOf()) { it.browseId.removePrefix("VL") }
-
-        val cards = (ytmCards + webCards)
-            .filterNot { it.browseId.removePrefix("VL") in SYSTEM_AUTO_PLAYLIST_IDS }
+        val cards = ytmCards
+            .asSequence()
+            .filter { it.type == BrowseType.PLAYLIST }
+            .filter {
+                val clean = it.browseId.removePrefix("VL")
+                clean.isNotBlank() &&
+                    clean !in SYSTEM_AUTO_PLAYLIST_IDS &&
+                    !clean.startsWith("FE") &&
+                    !clean.startsWith("MPSP") &&
+                    !clean.startsWith("MPED") &&
+                    !clean.startsWith("UC")
+            }
             .distinctBy { it.browseId.removePrefix("VL") }
+            .toList()
+
+        val existingByYtId = LibraryStore.userPlaylists.value
+            .filter { it.isGoogleAccount && !it.ytPlaylistId.isNullOrBlank() }
+            .associateBy { it.ytPlaylistId!! }
+
         val userOwned = mutableListOf<UserPlaylist>()
         val bookmarked = mutableListOf<SavedCollectionEntry>()
 
-        coroutineScope {
-            cards.take(MAX_PLAYLISTS_TO_HYDRATE).map { card ->
-                async {
-                    val cleanYtId = card.browseId.removePrefix("VL")
-                    val browseId = "VL$cleanYtId"
-                    val page = runCatching { ArtistRepository.browseSongs(browseId).getOrNull() }.getOrNull()
-                    val isUserOwned = page?.owned == true || (
-                        page?.owned == null &&
-                            cleanYtId in fromWebIds &&
-                            !cleanYtId.startsWith("RDCLAK") &&
-                            !cleanYtId.startsWith("OLAK")
-                        )
-                    if (isUserOwned) {
-                        val allSongs = page?.songs.orEmpty().toMutableList()
-                        var token = page?.continuation
-                        var steps = 1
-                        while (token != null && steps < MAX_PLAYLIST_TRACKS_PAGES) {
-                            val cont = ArtistRepository.moreSongs(token).getOrNull() ?: break
-                            allSongs.addAll(cont.songs)
-                            token = cont.continuation
-                            steps++
+        cards.chunked(PLAYLIST_HYDRATE_BATCH_SIZE).forEach { batch ->
+            coroutineScope {
+                batch.map { card ->
+                    async {
+                        val cleanYtId = card.browseId.removePrefix("VL")
+                        val browseId = "VL$cleanYtId"
+                        val notEditablePrefix = NOT_EDITABLE_PLAYLIST_PREFIXES.any { cleanYtId.startsWith(it) }
+                        val page = runCatching { ArtistRepository.browseSongs(browseId).getOrNull() }.getOrNull()
+                        val existingOwned = existingByYtId[cleanYtId]
+                        val isUserOwned = !notEditablePrefix && (
+                            page?.owned == true ||
+                                (page == null && existingOwned != null)
+                            )
+                        if (isUserOwned) {
+                            val syncedSongs = if (page != null) {
+                                val allSongs = page.songs.toMutableList()
+                                var token = page.continuation
+                                var steps = 1
+                                while (token != null && steps < MAX_PLAYLIST_TRACKS_PAGES) {
+                                    val cont = ArtistRepository.moreSongs(token).getOrNull() ?: break
+                                    allSongs.addAll(cont.songs)
+                                    token = cont.continuation
+                                    steps++
+                                }
+                                allSongs.distinctBy { it.setVideoId ?: it.videoId }.map { s ->
+                                    SavedSongMetadata.fromSong(s, savedLocally = false, isYtmSynced = true)
+                                }
+                            } else {
+                                existingOwned?.songs.orEmpty()
+                            }
+                            card to UserPlaylist(
+                                id = "yt_$cleanYtId",
+                                name = card.title,
+                                songs = syncedSongs,
+                                isGoogleAccount = true,
+                                ytPlaylistId = cleanYtId,
+                                isEditable = true,
+                            )
+                        } else {
+                            card to SavedCollectionEntry(
+                                browseId = browseId,
+                                title = card.title,
+                                subtitle = card.subtitle.ifBlank { "Playlist" },
+                                thumbnailUrl = card.thumbnailUrl ?: page?.header?.thumbnailUrl,
+                                type = BrowseType.PLAYLIST,
+                                isExplicit = card.isExplicit,
+                                isYtmSynced = true,
+                                savedLocally = false,
+                                playlistId = card.playlistId ?: cleanYtId,
+                            )
                         }
-                        card to UserPlaylist(
-                            id = "yt_$cleanYtId",
-                            name = card.title,
-                            songs = allSongs.distinctBy { it.setVideoId ?: it.videoId }.map { s ->
-                                SavedSongMetadata.fromSong(s, savedLocally = false, isYtmSynced = true)
-                            },
-                            isGoogleAccount = true,
-                            ytPlaylistId = cleanYtId,
-                            isEditable = true,
-                        )
-                    } else {
-                        card to SavedCollectionEntry(
-                            browseId = browseId,
-                            title = card.title,
-                            subtitle = card.subtitle.ifBlank { "Playlist" },
-                            thumbnailUrl = card.thumbnailUrl ?: page?.header?.thumbnailUrl,
-                            type = BrowseType.PLAYLIST,
-                            isExplicit = card.isExplicit,
-                            isYtmSynced = true,
-                            savedLocally = false,
-                            playlistId = card.playlistId ?: cleanYtId,
-                        )
                     }
-                }
-            }.awaitAll().forEach { (_, resolved) ->
-                when (resolved) {
-                    is UserPlaylist -> userOwned.add(resolved)
-                    is SavedCollectionEntry -> bookmarked.add(resolved)
+                }.awaitAll().forEach { (_, resolved) ->
+                    when (resolved) {
+                        is UserPlaylist -> userOwned.add(resolved)
+                        is SavedCollectionEntry -> bookmarked.add(resolved)
+                    }
                 }
             }
         }
 
+        if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
         LibraryStore.mergeRemoteUserPlaylists(context, userOwned)
         val mergedPlIds = LibraryStore.mergeRemoteSavedPlaylists(context, bookmarked)
         ArtistStateStore.mergeSavedReleaseIdsFromSync(context, mergedPlIds)
@@ -303,7 +375,7 @@ object YouTubeLibrarySyncManager {
         expectedType: BrowseType,
     ): List<YouTubeAccountParsers.LibraryCardItem> {
         val all = mutableListOf<YouTubeAccountParsers.LibraryCardItem>()
-        val first = runCatching { ArtistInnertubeClient.browse(browseId) }.getOrNull() ?: return emptyList()
+        val first = ArtistInnertubeClient.browse(browseId)
         val parsedFirst = YouTubeAccountParsers.parseLibraryItems(first, expectedType)
         all.addAll(parsedFirst.items)
         var token = parsedFirst.continuation
@@ -482,8 +554,75 @@ object YouTubeLibrarySyncManager {
         }
     }
 
+    fun onAccountSessionChanged(
+        context: Context,
+        previousSessionKey: String?,
+        newSessionKey: String?,
+        launchSync: Boolean = true,
+    ) {
+        val app = context.applicationContext
+        syncJob?.cancel()
+        val (keptLikes, keptArtists, keptReleases) = LibraryStore.switchRemoteSession(
+            context = app,
+            previousSessionKey = previousSessionKey,
+            targetSessionKey = newSessionKey,
+        )
+        MusicPlayerState.replaceFavoriteIdsFromSync(app, keptLikes)
+        ArtistStateStore.replaceAllFromSignOut(app, keptArtists, keptReleases)
+        PersonalizedHomeRepository.switchSession(newSessionKey)
+        if (launchSync && !newSessionKey.isNullOrBlank()) {
+            launchFullSync(app)
+        }
+    }
+
+    fun switchAccountOrProfile(
+        context: Context,
+        accountId: String,
+        profileId: String? = null,
+    ): Boolean {
+        val app = context.applicationContext
+        GoogleAuthStore.ensureInit(app)
+        val previousKey = GoogleAuthStore.activeSessionKey()
+        val targetAccount = GoogleAuthStore.state.value.accounts.firstOrNull { it.accountId == accountId } ?: return false
+        val resolvedPid = profileId ?: targetAccount.activeProfileId ?: targetAccount.profiles.firstOrNull()?.profileId
+        val targetKey = "$accountId:${resolvedPid.orEmpty()}"
+        if (previousKey == targetKey) return false
+        if (!GoogleAuthStore.switchProfile(app, accountId, resolvedPid)) return false
+        val newKey = GoogleAuthStore.activeSessionKey()
+        onAccountSessionChanged(app, previousKey, newKey, launchSync = true)
+        return true
+    }
+
+    fun removeAccountAndSwitch(context: Context, accountId: String): Boolean {
+        val app = context.applicationContext
+        GoogleAuthStore.ensureInit(app)
+        val targetSession = GoogleAuthStore.state.value.accounts.firstOrNull { it.accountId == accountId }
+        val wasActive = GoogleAuthStore.state.value.activeAccountId == accountId
+        val stillSignedIn = GoogleAuthStore.removeAccount(app, accountId)
+        targetSession?.profiles?.forEach { p ->
+            LibraryStore.removeRemoteSnapshot(app, "$accountId:${p.profileId}")
+        }
+        LibraryStore.removeRemoteSnapshot(app, "$accountId:")
+        PersonalizedHomeRepository.clearAccountCache(accountId)
+
+        if (stillSignedIn) {
+            if (wasActive) {
+                val newKey = GoogleAuthStore.activeSessionKey()
+                onAccountSessionChanged(app, previousSessionKey = null, newSessionKey = newKey, launchSync = true)
+            }
+        } else {
+            syncJob?.cancel()
+            val (keptLikes, keptArtists, keptReleases) = LibraryStore.clearGoogleAccountDataOnSignOut(app)
+            MusicPlayerState.replaceFavoriteIdsFromSync(app, keptLikes)
+            ArtistStateStore.replaceAllFromSignOut(app, keptArtists, keptReleases)
+            PersonalizedHomeRepository.clear()
+        }
+        return stillSignedIn
+    }
+
     fun signOutAndPreserveLocal(context: Context) {
         val app = context.applicationContext
+        syncJob?.cancel()
         val (keptLikes, keptArtists, keptReleases) = LibraryStore.clearGoogleAccountDataOnSignOut(app)
         MusicPlayerState.replaceFavoriteIdsFromSync(app, keptLikes)
         ArtistStateStore.replaceAllFromSignOut(app, keptArtists, keptReleases)

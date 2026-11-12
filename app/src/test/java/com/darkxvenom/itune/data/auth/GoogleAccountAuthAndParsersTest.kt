@@ -329,4 +329,160 @@ class GoogleAccountAuthAndParsersTest {
         assertEquals("UCEminemChannel123", artists.items.first().browseId)
         assertEquals("Eminem", artists.items.first().title)
     }
+
+    @Test
+    fun parseLibraryItems_forPlaylistsFiltersSystemAutoPlaylistsAndNonPlaylistTypes() {
+        val ytmLibraryPlaylistsRoot = JSONObject(
+            """
+            {
+              "items": [
+                {
+                  "musicTwoRowItemRenderer": {
+                    "title": { "runs": [{ "text": "New playlist" }] },
+                    "navigationEndpoint": {
+                      "browseEndpoint": { "browseId": "FEmusic_create_playlist" }
+                    }
+                  }
+                },
+                {
+                  "musicTwoRowItemRenderer": {
+                    "title": { "runs": [{ "text": "Liked music" }] },
+                    "subtitle": { "runs": [{ "text": "Auto playlist" }] },
+                    "navigationEndpoint": {
+                      "browseEndpoint": { "browseId": "VLLM" }
+                    }
+                  }
+                },
+                {
+                  "musicTwoRowItemRenderer": {
+                    "title": { "runs": [{ "text": "Episodes for later" }] },
+                    "subtitle": { "runs": [{ "text": "Auto playlist" }] },
+                    "navigationEndpoint": {
+                      "browseEndpoint": { "browseId": "VLSE" }
+                    }
+                  }
+                },
+                {
+                  "musicTwoRowItemRenderer": {
+                    "title": { "runs": [{ "text": "New Episodes" }] },
+                    "navigationEndpoint": {
+                      "browseEndpoint": { "browseId": "VLNE" }
+                    }
+                  }
+                },
+                {
+                  "musicTwoRowItemRenderer": {
+                    "title": { "runs": [{ "text": "Tech Podcast" }] },
+                    "navigationEndpoint": {
+                      "browseEndpoint": { "browseId": "MPSPpodcast99" }
+                    }
+                  }
+                },
+                {
+                  "musicTwoRowItemRenderer": {
+                    "title": { "runs": [{ "text": "Dark" }] },
+                    "subtitle": { "runs": [{ "text": "Playlist • Dar • 2 songs" }] },
+                    "navigationEndpoint": {
+                      "browseEndpoint": { "browseId": "VLPLdarkYtm01" }
+                    }
+                  }
+                },
+                {
+                  "musicResponsiveListItemRenderer": {
+                    "navigationEndpoint": {
+                      "browseEndpoint": { "browseId": "VLRDCLAK5uy_mix01" }
+                    },
+                    "flexColumns": [
+                      {
+                        "musicResponsiveListItemFlexColumnRenderer": {
+                          "text": { "runs": [{ "text": "Late Night Drives" }] }
+                        }
+                      },
+                      {
+                        "musicResponsiveListItemFlexColumnRenderer": {
+                          "text": { "runs": [{ "text": "Playlist • YouTube Music" }] }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+            """.trimIndent(),
+        )
+
+        val result = YouTubeAccountParsers.parseLibraryItems(ytmLibraryPlaylistsRoot, BrowseType.PLAYLIST)
+        assertEquals(2, result.items.size)
+        assertEquals("VLPLdarkYtm01", result.items[0].browseId)
+        assertEquals("Dark", result.items[0].title)
+        assertEquals("VLRDCLAK5uy_mix01", result.items[1].browseId)
+        assertEquals("Late Night Drives", result.items[1].title)
+    }
+
+    @Test
+    fun sessionsSerialization_preservesMultipleAccountsChannelsAndVisitorData() {
+        val accA = GoogleAccountSession(
+            accountId = "acc_a",
+            cookie = "SAPISID=aaa; SID=sid_a",
+            name = "Personal User",
+            email = "personal@example.com",
+            profiles = listOf(
+                YouTubeProfile(
+                    profileId = "ds_personal",
+                    name = "Personal User",
+                    handle = "@personal",
+                    dataSyncId = "ds_personal",
+                    isBrandAccount = false,
+                ),
+                YouTubeProfile(
+                    profileId = "page_brand",
+                    name = "Music Brand Channel",
+                    handle = "@brand",
+                    pageId = "page_brand",
+                    dataSyncId = "ds_brand",
+                    isBrandAccount = true,
+                ),
+            ),
+            activeProfileId = "page_brand",
+            visitorData = "CgvisitorA",
+        )
+        val accB = GoogleAccountSession(
+            accountId = "acc_b",
+            cookie = "SAPISID=bbb; SID=sid_b",
+            name = "Second Account",
+            email = "second@example.com",
+            profiles = listOf(
+                YouTubeProfile(
+                    profileId = "ds_second",
+                    name = "Second Account",
+                    handle = "@second",
+                    dataSyncId = "ds_second",
+                    isBrandAccount = false,
+                ),
+            ),
+            activeProfileId = "ds_second",
+            visitorData = "CgvisitorB",
+        )
+
+        val restored = sessionsFromJson(listOf(accA, accB).sessionsToJson())
+        assertEquals(2, restored.size)
+        assertEquals("acc_a", restored[0].accountId)
+        assertEquals("CgvisitorA", restored[0].visitorData)
+        assertEquals(2, restored[0].profiles.size)
+        assertEquals("page_brand", restored[0].activeProfileId)
+        assertTrue(restored[0].profiles[1].isBrandAccount)
+        assertEquals("acc_b", restored[1].accountId)
+        assertEquals("second@example.com", restored[1].email)
+        assertEquals("CgvisitorB", restored[1].visitorData)
+
+        val statePersonal = YouTubeAccountUiState(
+            isSignedIn = true,
+            activeAccountId = "acc_a",
+            activeProfileId = "ds_personal",
+        )
+        val stateBrand = statePersonal.copy(activeProfileId = "page_brand")
+        val stateOther = statePersonal.copy(activeAccountId = "acc_b", activeProfileId = "ds_second")
+        assertFalse(statePersonal.activeSessionKey == stateBrand.activeSessionKey)
+        assertFalse(stateBrand.activeSessionKey == stateOther.activeSessionKey)
+    }
 }

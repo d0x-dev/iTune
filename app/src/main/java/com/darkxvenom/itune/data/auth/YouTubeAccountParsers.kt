@@ -256,6 +256,13 @@ object YouTubeAccountParsers {
         }
     }
 
+    private val SYSTEM_AUTO_PLAYLIST_IDS = setOf("LM", "SE", "NE", "SS", "SR", "LL", "WL")
+
+    private fun isValidPlaylistBrowseId(browseId: String): Boolean {
+        if (!browseId.startsWith("VL") && !browseId.startsWith("PL")) return false
+        return browseId.removePrefix("VL") !in SYSTEM_AUTO_PLAYLIST_IDS
+    }
+
     private fun parseLibraryTwoRow(renderer: JSONObject, expectedType: BrowseType): LibraryCardItem? {
         val title = renderer.optJSONObject("title").runsText().trim()
         if (title.isBlank()) return null
@@ -264,9 +271,13 @@ object YouTubeAccountParsers {
             ?.optString("browseId")
             ?.takeIf { it.isNotBlank() }
             ?: return null
-        // Skip YouTube's synthetic "New playlist" placeholder card (`FEmusic_create_playlist`, etc.)
-        if (rawBrowseId.startsWith("FE") || rawBrowseId == "VLSE" || rawBrowseId == "SE") return null
+        // Skip synthetic create tiles and podcast/episode containers.
+        if (rawBrowseId.startsWith("FE") || rawBrowseId.startsWith("MPSP") || rawBrowseId.startsWith("MPED")) return null
         val browseId = normalizeLibraryBrowseId(rawBrowseId, expectedType)
+        val resolvedType = inferType(browseId, expectedType)
+        if (expectedType == BrowseType.PLAYLIST && (!isValidPlaylistBrowseId(browseId) || resolvedType != BrowseType.PLAYLIST)) {
+            return null
+        }
 
         val subtitle = renderer.optJSONObject("subtitle").runsText().trim()
         val thumb = renderer.optJSONObject("thumbnailRenderer")
@@ -288,7 +299,7 @@ object YouTubeAccountParsers {
             title = title,
             subtitle = subtitle,
             thumbnailUrl = thumb,
-            type = inferType(browseId, expectedType),
+            type = resolvedType,
             isExplicit = renderer.hasExplicitBadgeRecursive(),
             playlistId = watchPlId ?: browseId.takeIf { it.startsWith("VL") || it.startsWith("PL") }?.removePrefix("VL"),
         )
@@ -319,8 +330,12 @@ object YouTubeAccountParsers {
             ?: titleRunBrowseId
             ?: subscribeChannelId
             ?: return null
-        if (rawBrowseId.startsWith("FE") || rawBrowseId == "VLSE" || rawBrowseId == "SE") return null
+        if (rawBrowseId.startsWith("FE") || rawBrowseId.startsWith("MPSP") || rawBrowseId.startsWith("MPED")) return null
         val browseId = normalizeLibraryBrowseId(rawBrowseId, expectedType)
+        val resolvedType = inferType(browseId, expectedType)
+        if (expectedType == BrowseType.PLAYLIST && (!isValidPlaylistBrowseId(browseId) || resolvedType != BrowseType.PLAYLIST)) {
+            return null
+        }
 
         val title = renderer.columnText(0)
         if (title.isBlank()) return null
@@ -344,7 +359,7 @@ object YouTubeAccountParsers {
             title = title,
             subtitle = subtitle,
             thumbnailUrl = thumb,
-            type = inferType(browseId, expectedType),
+            type = resolvedType,
             isExplicit = renderer.hasExplicitBadgeRecursive(),
             playlistId = watchPlId ?: browseId.takeIf { it.startsWith("VL") || it.startsWith("PL") }?.removePrefix("VL"),
         )
@@ -357,7 +372,7 @@ object YouTubeAccountParsers {
             ?: findStringDeep(vm, "playlistId")
             ?: return null
         val cleanId = contentId.removePrefix("VL")
-        if (cleanId in setOf("LM", "SE", "SS", "LL", "WL")) return null
+        if (cleanId in SYSTEM_AUTO_PLAYLIST_IDS) return null
         val metadata = vm.optJSONObject("metadata")?.optJSONObject("lockupMetadataViewModel")
         val title = metadata?.optJSONObject("title")?.optString("content")?.trim()
             ?.takeIf { it.isNotBlank() } ?: return null
@@ -388,7 +403,7 @@ object YouTubeAccountParsers {
 
     private fun parseWebPlaylistRenderer(renderer: JSONObject): LibraryCardItem? {
         val playlistId = renderer.optString("playlistId").takeIf { it.isNotBlank() } ?: return null
-        if (playlistId in setOf("LM", "SE", "SS", "LL", "WL")) return null
+        if (playlistId in SYSTEM_AUTO_PLAYLIST_IDS) return null
         val title = renderer.optJSONObject("title").runsText().trim()
         if (title.isBlank()) return null
         val author = renderer.optJSONObject("shortBylineText").runsText()
