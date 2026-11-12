@@ -379,9 +379,9 @@ object ArtistInnertubeClient {
      * Account-menu metadata is optional; this probe is the actual permission check
      * required before the app advertises bidirectional library sync.
      */
-    suspend fun verifyAuthenticatedLibraryAccess() {
+    suspend fun verifyAuthenticatedLibraryAccess(persistScope: Boolean = true) {
         requireSession()
-        refreshSessionScope()
+        refreshSessionScope(persistScope)
         val failures = mutableListOf<String>()
         for (browseId in listOf("FEmusic_liked_playlists", "FEmusic_liked_videos")) {
             try {
@@ -681,7 +681,7 @@ object ArtistInnertubeClient {
      * Refresh the account/channel scope from live YouTube Music ytcfg. Existing sessions
      * may have been saved by older builds with delegated and user session IDs swapped.
      */
-    private suspend fun refreshSessionScope() {
+    private suspend fun refreshSessionScope(persistScope: Boolean) {
         val activeCookie = cookie ?: error("Sign in with Google to sync with YouTube Music")
         scopeLock.withLock {
             val previous = scope
@@ -693,10 +693,12 @@ object ArtistInnertubeClient {
                 authUser = fresh.authUser.ifBlank { previous?.authUser ?: "0" },
             )
             scope = refreshed
-            GoogleAuthStore.updateActiveScope(
-                pageId = refreshed.pageId,
-                dataSyncId = refreshed.dataSyncId,
-            )
+            if (persistScope) {
+                GoogleAuthStore.updateActiveScope(
+                    pageId = refreshed.pageId,
+                    dataSyncId = refreshed.dataSyncId,
+                )
+            }
         }
     }
 
