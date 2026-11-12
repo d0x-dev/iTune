@@ -14,9 +14,13 @@ import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -73,12 +77,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
 import androidx.compose.material.icons.automirrored.rounded.VolumeDown
 import androidx.compose.material.icons.automirrored.rounded.VolumeOff
 import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DragHandle
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.PlaylistPlay
+import com.darkxvenom.itune.backend.AutomixManager
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -138,11 +145,15 @@ import com.darkxvenom.itune.audio.AudioOutputManager
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.highQualityThumbnail
+import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.ishare.IShareSyncManager
 import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
 import com.darkxvenom.itune.ui.components.AnimatedEqualizer
 import com.darkxvenom.itune.ui.components.WavySlider
+import com.darkxvenom.itune.ui.welcome.WelcomeMeshBackground
+import com.darkxvenom.itune.ui.welcome.sampleWelcomeAmbientFrame
 import kotlinx.coroutines.delay
+import kotlin.math.PI
 import kotlin.math.roundToInt
 
 private fun lerpDp(start: Dp, stop: Dp, fraction: Float): Dp =
@@ -192,6 +203,9 @@ fun ITuneMusicPlayer(
     val isLyricsOpen = MusicPlayerState.lyricsOpen
     val isQueueOpen = MusicPlayerState.queueOpen
     val isPanelOpen = isLyricsOpen || isQueueOpen
+
+    val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
+    val isStaticPlayer = settingsState.playerType == "Static"
 
     val panelProgress by animateFloatAsState(
         targetValue = if (isPanelOpen) 1f else 0f,
@@ -320,7 +334,7 @@ fun ITuneMusicPlayer(
         val navBottomDp = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
         val fullBleedHeight = maxHeight * 0.56f
 
-        // ── 1. Fullscreen Ambient Blurred Artwork Layer ──
+        // ── 1. Fullscreen Ambient Blurred Artwork Layer / Static Mesh Layer ──
         val blurScale by animateFloatAsState(
             targetValue = if (isPanelOpen) 1.45f else 1.35f,
             animationSpec = spring(dampingRatio = 0.90f, stiffness = 170f),
@@ -329,36 +343,60 @@ fun ITuneMusicPlayer(
 
         val currentArtUrl = track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl
 
-        Crossfade(
-            targetState = currentArtUrl,
-            animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
-            label = "ambientBlurCrossfade",
-            modifier = Modifier.fillMaxSize()
-        ) { artUrl ->
-            if (!artUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = ImageRequest.Builder(context)
-                        .data(artUrl)
-                        .size(Size.ORIGINAL)
-                        .crossfade(200)
-                        .build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .blur(48.dp)
-                        .graphicsLayer {
-                            scaleX = blurScale
-                            scaleY = blurScale
-                            alpha = 0.95f
-                        }
-                )
-            } else {
+        if (isStaticPlayer) {
+            PlayerStaticMeshBackground(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        scaleX = blurScale
+                        scaleY = blurScale
+                        alpha = 0.96f
+                    }
+            )
+
+            // When lyrics or queue opens in Static mode, apply a darker blur overlay without crushing the colors
+            if (panelProgress > 0.001f) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black)
+                        .graphicsLayer {
+                            alpha = panelProgress
+                        }
+                        .background(Color.Black.copy(alpha = 0.38f))
                 )
+            }
+        } else {
+            Crossfade(
+                targetState = currentArtUrl,
+                animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
+                label = "ambientBlurCrossfade",
+                modifier = Modifier.fillMaxSize()
+            ) { artUrl ->
+                if (!artUrl.isNullOrBlank()) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(artUrl)
+                            .size(Size.ORIGINAL)
+                            .crossfade(200)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .blur(48.dp)
+                            .graphicsLayer {
+                                scaleX = blurScale
+                                scaleY = blurScale
+                                alpha = 0.95f
+                            }
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black)
+                    )
+                }
             }
         }
 
@@ -1606,6 +1644,155 @@ private fun InPlayerQueueContent(
                 }
             }
         }
+
+        // ── 3. Automix Recommendations ──
+        val automixItems = AutomixManager.automixTracks
+        if (automixItems.isNotEmpty()) {
+            item(key = "header_automix") {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, bottom = 4.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.PlaylistPlay,
+                            contentDescription = "Automix",
+                            tint = Color(0xFF64B5F6),
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(
+                            text = "Automix",
+                            style = TextStyle(
+                                fontFamily = SFProDisplay,
+                                fontWeight = FontWeight.W700,
+                                fontSize = 16.sp,
+                                letterSpacing = (-0.2).sp
+                            ),
+                            color = Color.White
+                        )
+                    }
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        text = "Similar tracks queued automatically",
+                        style = TextStyle(
+                            fontFamily = SFProDisplay,
+                            fontWeight = FontWeight.W400,
+                            fontSize = 13.sp
+                        ),
+                        color = Color.White.copy(alpha = 0.55f)
+                    )
+                }
+            }
+
+            itemsIndexed(
+                items = automixItems,
+                key = { idx, item -> "automix_${item.id}_$idx" }
+            ) { automixIdx, item ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable {
+                            AutomixManager.playNextAutomix(item, automixIdx)
+                        }
+                        .padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val itemContext = LocalContext.current
+                    AsyncImage(
+                        model = ImageRequest.Builder(itemContext)
+                            .data(item.thumbnailUrl?.highQualityThumbnail() ?: item.thumbnailUrl)
+                            .memoryCacheKey("${item.id}_queue_thumb_46")
+                            .crossfade(200)
+                            .build(),
+                        contentDescription = item.title,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(46.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                    )
+
+                    Spacer(Modifier.width(14.dp))
+
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (item.isExplicit) {
+                                ExplicitBadge(
+                                    color = Color.White.copy(alpha = 0.78f),
+                                    modifier = Modifier.padding(end = 5.dp)
+                                )
+                            }
+                            Text(
+                                text = item.title,
+                                style = TextStyle(
+                                    fontFamily = SFProDisplay,
+                                    fontWeight = FontWeight.W600,
+                                    fontSize = 15.sp,
+                                    lineHeight = 18.sp,
+                                    letterSpacing = (-0.3).sp
+                                ),
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f, fill = false)
+                            )
+                        }
+                        Spacer(Modifier.height(2.dp))
+                        Text(
+                            text = item.artists,
+                            style = TextStyle(
+                                fontFamily = SFProDisplay,
+                                fontWeight = FontWeight.W400,
+                                fontSize = 13.sp,
+                                lineHeight = 16.sp
+                            ),
+                            color = Color.White.copy(alpha = 0.62f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    Spacer(Modifier.width(8.dp))
+
+                    // Play Next Button
+                    IconButton(
+                        onClick = {
+                            AutomixManager.playNextAutomix(item, automixIdx)
+                        },
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.PlaylistPlay,
+                            contentDescription = "Play Next",
+                            tint = Color.White.copy(alpha = 0.70f),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    // Add to Queue Button
+                    IconButton(
+                        onClick = {
+                            AutomixManager.addToQueueAutomix(item, automixIdx)
+                        },
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.PlaylistAdd,
+                            contentDescription = "Add to Queue",
+                            tint = Color.White.copy(alpha = 0.70f),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -2139,3 +2326,52 @@ private fun BottomPanelToggleButton(
         )
     }
 }
+
+/**
+ * Continuous ambient mesh background for the Player matching the Welcome screen's
+ * 7-keyframe ambient lighting cycle, smoothly animated at 60/120 FPS without
+ * hardware RenderEffect stalls.
+ */
+@Composable
+private fun PlayerStaticMeshBackground(
+    modifier: Modifier = Modifier,
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "playerMeshLoop")
+    val colorProgress by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 35_000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart,
+        ),
+        label = "playerAmbientCycle",
+    )
+    val orbitPhaseA by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = (2f * PI).toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 15_000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart,
+        ),
+        label = "playerDriftA",
+    )
+    val orbitPhaseB by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = (2f * PI).toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 21_000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart,
+        ),
+        label = "playerDriftB",
+    )
+
+    val ambient = sampleWelcomeAmbientFrame(colorProgress)
+
+    WelcomeMeshBackground(
+        ambient = ambient,
+        orbitPhaseA = orbitPhaseA,
+        orbitPhaseB = orbitPhaseB,
+        modifier = modifier.fillMaxSize(),
+    )
+}
+

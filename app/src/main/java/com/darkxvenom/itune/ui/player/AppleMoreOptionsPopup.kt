@@ -129,6 +129,7 @@ private enum class MorePopupPage {
     LYRICS_SEARCH,
     LYRICS_EDIT,
     LYRICS_OFFSET,
+    LYRICS_TRANSLATE,
     DETAILS,
     SLEEP_TIMER
 }
@@ -770,10 +771,19 @@ fun AppleMoreOptionsPopup(
 
                                 MorePopupPage.LYRICS_MENU -> {
                                     MorePopupLyricsMenuSection(
+                                        track = track,
                                         onBack = { activePage = MorePopupPage.MAIN },
                                         onOpenSearch = { activePage = MorePopupPage.LYRICS_SEARCH },
                                         onOpenEdit = { activePage = MorePopupPage.LYRICS_EDIT },
-                                        onOpenOffset = { activePage = MorePopupPage.LYRICS_OFFSET }
+                                        onOpenOffset = { activePage = MorePopupPage.LYRICS_OFFSET },
+                                        onOpenTranslate = { activePage = MorePopupPage.LYRICS_TRANSLATE },
+                                    )
+                                }
+
+                                MorePopupPage.LYRICS_TRANSLATE -> {
+                                    MorePopupLyricsTranslateSection(
+                                        track = track,
+                                        onBack = { activePage = MorePopupPage.LYRICS_MENU },
                                     )
                                 }
 
