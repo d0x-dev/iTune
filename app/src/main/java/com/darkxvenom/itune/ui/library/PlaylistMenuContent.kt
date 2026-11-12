@@ -296,14 +296,25 @@ private suspend fun resolveAndAddToPlaylist(
         Toast.makeText(context, "No tracks available to add", Toast.LENGTH_SHORT).show()
         return false
     }
-    val added = YouTubeLibrarySyncManager.addSongsToPlaylist(context, target.id, songs)
-    val msg = when {
-        added == 0 -> "Already in \"${target.name}\""
-        added == 1 -> "Added to \"${target.name}\""
-        else -> "Added $added songs to \"${target.name}\""
+    return try {
+        val added = YouTubeLibrarySyncManager.addSongsToPlaylist(context, target.id, songs)
+        val msg = when {
+            added == 0 -> "Already in \"${target.name}\""
+            added == 1 -> "Added to \"${target.name}\""
+            else -> "Added $added songs to \"${target.name}\""
+        }
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+        true
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Throwable) {
+        Toast.makeText(
+            context,
+            e.message ?: "Could not update playlist on YouTube Music",
+            Toast.LENGTH_LONG,
+        ).show()
+        false
     }
-    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-    return true
 }
 
 private suspend fun resolveAndCreatePlaylist(
@@ -499,8 +510,9 @@ fun IosAddToPlaylistMenuView(
                             busy = true
                             scope.launch {
                                 try {
-                                    resolveAndAddToPlaylist(context, pl, payload, resolvedSongs)
-                                    onCompleted()
+                                    if (resolveAndAddToPlaylist(context, pl, payload, resolvedSongs)) {
+                                        onCompleted()
+                                    }
                                 } finally {
                                     busy = false
                                 }
