@@ -627,6 +627,20 @@ object YouTubeLibrarySyncManager {
         addedCount
     }
 
+    private suspend fun resolvePlaylistSetVideoId(playlistId: String, songId: String): String? {
+        val first = ArtistRepository.browseSongs("VL" + playlistId.removePrefix("VL")).getOrThrow()
+        first.songs.firstOrNull { it.videoId == songId }?.setVideoId?.let { return it }
+        var token = first.continuation
+        var page = 1
+        while (token != null && page < MAX_PLAYLIST_TRACKS_PAGES) {
+            val next = ArtistRepository.moreSongs(token).getOrThrow()
+            next.songs.firstOrNull { it.videoId == songId }?.setVideoId?.let { return it }
+            token = next.continuation
+            page++
+        }
+        return null
+    }
+
     fun removeSongFromPlaylist(
         context: Context,
         playlistId: String,
@@ -646,8 +660,7 @@ object YouTubeLibrarySyncManager {
                     val ytId = playlist.ytPlaylistId?.takeIf { it.isNotBlank() }
                         ?: error("This YouTube playlist is missing its remote playlist ID")
                     val setId = targetSong.setVideoId
-                        ?: ArtistRepository.browseSongs("VL$ytId").getOrThrow()
-                            .songs.firstOrNull { it.videoId == songId }?.setVideoId
+                        ?: resolvePlaylistSetVideoId(ytId, songId)
                         ?: error("Could not resolve the YouTube playlist entry for this track")
                     // Do not remove the local entry unless the remote operation succeeds.
                     ArtistInnertubeClient.removeFromPlaylist(ytId, listOf(setId to songId))
