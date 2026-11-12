@@ -122,7 +122,13 @@ object HomeDiscoveryRepository {
             _tasteTracks.value = emptyList()
             return
         }
-        val artists = artistNames.map(String::trim).filter(String::isNotBlank).distinctBy { it.lowercase() }.take(4)
+        if (tasteSessionKey != sessionKey) {
+            _tasteTracks.value = emptyList()
+        }
+        val artists = artistNames.map { it.trim() }
+            .filter { it.isNotBlank() }
+            .distinctBy { it.lowercase() }
+            .take(4)
         val requestKey = "$sessionKey|${artists.joinToString("|")}"
         if (tasteRequestKey == requestKey) return
         tasteRequestKey = requestKey
