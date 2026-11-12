@@ -832,6 +832,9 @@ fun HomeScreen(
                     },
                     onProfileClick = {
                         showSettings = true
+                    },
+                    onRecognizeClick = {
+                        showIRecognition = true
                     }
                 )
                 if (libraryHostController.isOpen) {
@@ -1261,9 +1264,6 @@ fun HomeScreen(
                                 showSettings = false
                                 showIShare = true
                                 MusicPlayerState.expanded = false
-                            },
-                            onOpenIRecognition = {
-                                showIRecognition = true
                             },
                         )
                     }
