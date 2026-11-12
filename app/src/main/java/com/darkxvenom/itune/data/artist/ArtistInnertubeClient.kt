@@ -676,14 +676,23 @@ object ArtistInnertubeClient {
                 .getOrNull()
                 ?.let { fresh ->
                     if (cookie != activeCookie) return@let
-                    scope = if (lockedExisting != null) {
+                    // Refresh both session identifiers from the live ytcfg. Older app
+                    // versions stored DELEGATED_SESSION_ID as the user session id.
+                    val refreshed = if (lockedExisting != null) {
                         lockedExisting.copy(
+                            dataSyncId = fresh.dataSyncId,
+                            pageId = fresh.pageId,
+                            authUser = fresh.authUser,
                             clientVersion = fresh.clientVersion ?: lockedExisting.clientVersion,
-                            authUser = lockedExisting.authUser.ifBlank { fresh.authUser },
                         )
                     } else {
                         fresh
                     }
+                    scope = refreshed
+                    GoogleAuthStore.updateActiveScope(
+                        pageId = refreshed.pageId,
+                        dataSyncId = refreshed.dataSyncId,
+                    )
                 }
         }
     }
