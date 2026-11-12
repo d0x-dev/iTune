@@ -35,7 +35,6 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun PlaylistImportDialog(
     onDismiss: () -> Unit,
-    onImported: (String) -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -45,7 +44,6 @@ internal fun PlaylistImportDialog(
     var error by remember { mutableStateOf<String?>(null) }
     var progress by remember { mutableStateOf(0 to 0) }
     var result by remember { mutableStateOf<PlaylistImportResult?>(null) }
-    var createdPlaylistId by remember { mutableStateOf<String?>(null) }
 
     fun startImport() {
         val id = PlaylistLinkImporter.extractPlaylistId(link)
@@ -73,9 +71,7 @@ internal fun PlaylistImportDialog(
                         initialSongs = imported.tracks.map { SavedSongMetadata.fromTrack(it) },
                     )
                     result = imported
-                    createdPlaylistId = playlist.id
                     status = "Imported ${imported.tracks.size} of ${imported.tracks.size + imported.unmatched.size} tracks."
-                    onImported(playlist.id)
                 }
             } catch (cancelled: CancellationException) {
                 throw cancelled
