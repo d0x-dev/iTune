@@ -1,5 +1,19 @@
 package com.darkxvenom.itune.ui.player
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import androidx.compose.material3.Dialog
+import androidx.compose.material3.RangeSliderDefaults
+import androidx.compose.ui.window.DialogProperties
+
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -113,26 +127,116 @@ internal fun PlayerToolsDialog(
         }
     }
 
-    val title = if (mode == PlayerToolMode.RINGTONE) "Set as Ringtone" else "Snippet Studio"
-    AlertDialog(
+    val title = if (mode == PlayerToolMode.RINGTONE) "Set Ringtone" else "Snippet Studio"
+    val accent = Color(0xFFFA2D48)
+    val panel = Color(0xFF29282E)
+    val muted = Color(0xFF98979F)
+
+    Dialog(
         onDismissRequest = {
             player.stop()
             onDismiss()
         },
-        title = { Text(title) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(track.title, style = MaterialTheme.typography.titleMedium, maxLines = 2)
-                Text(track.artists, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                when {
-                    loading -> Row(verticalAlignment = Alignment.CenterVertically) {
-                        CircularProgressIndicator(modifier = Modifier.size(22.dp), strokeWidth = 2.dp)
-                        Text("Preparing audio…", modifier = Modifier.padding(start = 10.dp))
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .clip(RoundedCornerShape(30.dp))
+                .background(panel)
+                .border(1.dp, Color.White.copy(alpha = 0.07f), RoundedCornerShape(30.dp))
+                .padding(horizontal = 22.dp, vertical = 22.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(title, fontFamily = SFProDisplay, fontSize = 25.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                Box(
+                    modifier = Modifier.size(32.dp).clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.09f))
+                        .clickable { player.stop(); onDismiss() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("×", fontFamily = SFProDisplay, fontSize = 23.sp, color = Color.White.copy(alpha = 0.78f))
+                }
+            }
+
+            Spacer(Modifier.height(22.dp))
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier.size(58.dp).clip(RoundedCornerShape(15.dp))
+                        .background(Brush.linearGradient(listOf(Color(0xFF65313D), Color(0xFF342A35), Color(0xFF1E2028)))),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Default.PlayArrow, contentDescription = null, tint = accent, modifier = Modifier.size(29.dp))
+                }
+                Column(modifier = Modifier.weight(1f).padding(start = 14.dp), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                    Text(track.title, fontFamily = SFProDisplay, fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = Color.White, maxLines = 2)
+                    Text(track.artists, fontFamily = SFProDisplay, fontSize = 14.sp, color = muted, maxLines = 1)
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+            when {
+                loading -> Row(
+                    modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
+                        .background(Color.White.copy(alpha = 0.055f)).padding(horizontal = 15.dp, vertical = 17.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(21.dp), color = accent, strokeWidth = 2.dp)
+                    Text("Preparing audio…", modifier = Modifier.padding(start = 13.dp), fontFamily = SFProDisplay, fontSize = 15.sp, color = Color.White.copy(alpha = 0.62f))
+                }
+                error != null -> Column(
+                    modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
+                        .background(accent.copy(alpha = 0.10f)).padding(15.dp),
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    Text("Couldn't prepare audio", fontFamily = SFProDisplay, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                    Text(error.orEmpty(), fontFamily = SFProDisplay, fontSize = 13.sp, color = Color.White.copy(alpha = 0.65f))
+                }
+                else -> {
+                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                            Text("CLIP RANGE", fontFamily = SFProDisplay, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.1.sp, color = muted)
+                            Text("${PlayerToolsAudio.time(range.start.toLong())}  –  ${PlayerToolsAudio.time(range.endInclusive.toLong())}", fontFamily = SFProDisplay, fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                        }
+                        Box(modifier = Modifier.clip(RoundedCornerShape(20.dp)).background(accent.copy(alpha = 0.13f)).padding(horizontal = 10.dp, vertical = 6.dp)) {
+                            Text("UP TO 30 SEC", fontFamily = SFProDisplay, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 0.4.sp, color = accent)
+                        }
                     }
-                    error != null -> Text(error!!, color = MaterialTheme.colorScheme.error)
-                    else -> {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            IconButton(onClick = {
+                    RangeSlider(
+                        value = range,
+                        onValueChange = { next ->
+                            val startMs = next.start.coerceAtLeast(0f)
+                            val endMs = next.endInclusive.coerceAtMost(durationMs)
+                            val boundedEnd = endMs.coerceAtMost(startMs + 30_000f)
+                            range = if (boundedEnd - startMs < 3_000f) startMs..(startMs + 3_000f).coerceAtMost(durationMs) else startMs..boundedEnd
+                            player.seekTo(range.start.toLong())
+                        },
+                        valueRange = 0f..durationMs.coerceAtLeast(3_000f),
+                        steps = 0,
+                        colors = RangeSliderDefaults.colors(
+                            thumbColor = Color.White,
+                            activeTrackColor = accent,
+                            inactiveTrackColor = Color.White.copy(alpha = 0.16f),
+                            activeTickColor = Color.Transparent,
+                            inactiveTickColor = Color.Transparent
+                        ),
+                        modifier = Modifier.padding(top = 8.dp, bottom = 3.dp)
+                    )
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text("0:00", fontFamily = SFProDisplay, fontSize = 12.sp, color = muted)
+                        Text(PlayerToolsAudio.time(durationMs.toLong()), fontFamily = SFProDisplay, fontSize = 12.sp, color = muted)
+                    }
+                    Spacer(Modifier.height(15.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(17.dp))
+                            .background(Color.White.copy(alpha = 0.055f))
+                            .clickable {
                                 if (isPreviewPlaying) {
                                     player.pause()
                                     isPreviewPlaying = false
@@ -141,80 +245,81 @@ internal fun PlayerToolsDialog(
                                     player.play()
                                     isPreviewPlaying = true
                                 }
-                            }) {
-                                Icon(if (player.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow, contentDescription = "Preview")
-                            }
-                            Text("${PlayerToolsAudio.time(range.start.toLong())} – ${PlayerToolsAudio.time(range.endInclusive.toLong())}")
+                            }.padding(horizontal = 14.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(modifier = Modifier.size(36.dp).clip(CircleShape).background(accent.copy(alpha = 0.15f)), contentAlignment = Alignment.Center) {
+                            Icon(if (isPreviewPlaying) Icons.Default.Pause else Icons.Default.PlayArrow, contentDescription = if (isPreviewPlaying) "Pause preview" else "Play preview", tint = accent, modifier = Modifier.size(21.dp))
                         }
-                        Text("Select a clip (up to 30 seconds)", style = MaterialTheme.typography.bodySmall)
-                        RangeSlider(
-                            value = range,
-                            onValueChange = { next ->
-                                val start = next.start.coerceAtLeast(0f)
-                                val end = next.endInclusive.coerceAtMost(durationMs)
-                                val boundedEnd = end.coerceAtMost(start + 30_000f)
-                                range = if (boundedEnd - start < 3_000f) start..(start + 3_000f).coerceAtMost(durationMs) else start..boundedEnd
-                                player.seekTo(range.start.toLong())
-                            },
-                            valueRange = 0f..durationMs.coerceAtLeast(3_000f),
-                            steps = 0,
-                        )
+                        Column(modifier = Modifier.weight(1f).padding(start = 11.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text("Preview selection", fontFamily = SFProDisplay, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                            Text("Listen to the selected part", fontFamily = SFProDisplay, fontSize = 12.sp, color = muted)
+                        }
+                        Text(if (isPreviewPlaying) "PAUSE" else "PLAY", fontFamily = SFProDisplay, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 0.8.sp, color = accent)
                     }
                 }
             }
-        },
-        confirmButton = {
-            Button(
-                enabled = source != null && !loading && !working && error == null,
-                onClick = {
-                    val input = source ?: return@Button
-                    working = true
-                    player.pause()
-                    scope.launch {
-                        val output = withContext(Dispatchers.IO) {
-                            PlayerToolsAudio.trim(input, range.start.toLong(), range.endInclusive.toLong(), context.cacheDir)
-                        }
-                        val result = if (output == null) null else withContext(Dispatchers.IO) {
-                            if (mode == PlayerToolMode.RINGTONE) {
-                                PlayerToolsAudio.saveRingtone(context, output, track.title, track.artists)
-                            } else {
-                                PlayerToolsAudio.saveSnippet(context, output, track.title, track.artists)
-                            }
-                        }
-                        working = false
-                        if (result == null) {
-                            Toast.makeText(context, "Could not create audio clip", Toast.LENGTH_LONG).show()
-                        } else if (mode == PlayerToolMode.RINGTONE) {
-                            Toast.makeText(context, "Added to system ringtones. Choose it in Sound settings.", Toast.LENGTH_LONG).show()
-                            runCatching {
-                                context.startActivity(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                                    putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE)
-                                    putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Ringtone")
-                                    putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, result)
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                })
-                            }
-                            onDismiss()
-                        } else {
-                            Toast.makeText(context, "Snippet saved to Music/iTune/Snippets", Toast.LENGTH_LONG).show()
-                            val share = Intent(Intent.ACTION_SEND).apply {
-                                type = "audio/mp4"
-                                putExtra(Intent.EXTRA_STREAM, result)
-                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            }
-                            runCatching { context.startActivity(Intent.createChooser(share, "Share snippet")) }
-                            onDismiss()
-                        }
-                    }
+
+            Spacer(Modifier.height(24.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier.weight(1f).height(52.dp).clip(RoundedCornerShape(18.dp))
+                        .background(Color.White.copy(alpha = 0.075f))
+                        .clickable { player.stop(); onDismiss() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Cancel", fontFamily = SFProDisplay, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White.copy(alpha = 0.78f))
                 }
-            ) {
-                if (working) CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
-                else Text(if (mode == PlayerToolMode.RINGTONE) "Set Ringtone" else "Save Snippet")
+                Box(
+                    modifier = Modifier.weight(1.25f).height(52.dp).clip(RoundedCornerShape(18.dp))
+                        .background(if (source != null && !loading && !working && error == null) accent else Color.White.copy(alpha = 0.10f))
+                        .clickable(enabled = source != null && !loading && !working && error == null) {
+                            val input = source ?: return@clickable
+                            working = true
+                            player.pause()
+                            isPreviewPlaying = false
+                            scope.launch {
+                                val output = withContext(Dispatchers.IO) {
+                                    PlayerToolsAudio.trim(input, range.start.toLong(), range.endInclusive.toLong(), context.cacheDir)
+                                }
+                                val result = if (output == null) null else withContext(Dispatchers.IO) {
+                                    if (mode == PlayerToolMode.RINGTONE) PlayerToolsAudio.saveRingtone(context, output, track.title, track.artists)
+                                    else PlayerToolsAudio.saveSnippet(context, output, track.title, track.artists)
+                                }
+                                working = false
+                                if (result == null) {
+                                    Toast.makeText(context, "Could not create audio clip", Toast.LENGTH_LONG).show()
+                                } else if (mode == PlayerToolMode.RINGTONE) {
+                                    Toast.makeText(context, "Added to system ringtones. Choose it in Sound settings.", Toast.LENGTH_LONG).show()
+                                    runCatching {
+                                        context.startActivity(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                                            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE)
+                                            putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Ringtone")
+                                            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, result)
+                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        })
+                                    }
+                                    onDismiss()
+                                } else {
+                                    Toast.makeText(context, "Snippet saved to Music/iTune/Snippets", Toast.LENGTH_LONG).show()
+                                    val share = Intent(Intent.ACTION_SEND).apply {
+                                        type = "audio/mp4"
+                                        putExtra(Intent.EXTRA_STREAM, result)
+                                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                    }
+                                    runCatching { context.startActivity(Intent.createChooser(share, "Share snippet")) }
+                                    onDismiss()
+                                }
+                            }
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (working) CircularProgressIndicator(modifier = Modifier.size(19.dp), color = Color.White, strokeWidth = 2.dp)
+                    else Text(if (mode == PlayerToolMode.RINGTONE) "Set Ringtone" else "Save Snippet", fontFamily = SFProDisplay, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = if (source != null && !loading && error == null) Color.White else Color.White.copy(alpha = 0.32f))
+                }
             }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
-        shape = RoundedCornerShape(24.dp),
-    )
+        }
+    }
 }
 
 private object PlayerToolsAudio {
