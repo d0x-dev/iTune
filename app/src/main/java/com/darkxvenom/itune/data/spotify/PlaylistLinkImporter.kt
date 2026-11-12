@@ -127,7 +127,7 @@ object PlaylistLinkImporter {
                     }.trim()
                     add(PlaylistImportTrack(name, artist))
                 }
-            }
+            }.toMutableList()
             if (tracks.isEmpty()) error("No tracks were found. The playlist may be private or empty.")
 
             // The public embed contains up to 100 tracks. When it exposes its
@@ -138,9 +138,11 @@ object PlaylistLinkImporter {
                     ?.optString("accessToken")
                     ?.takeIf(String::isNotBlank)
                 if (token != null) {
-                    runCatching { fetchRemainingTracks(id, token, tracks.size) }
+                    val remaining = runCatching { fetchRemainingTracks(id, token, tracks.size) }
                         .getOrNull()
-                        ?.let(tracks::addAll)
+                    if (remaining != null) {
+                        tracks.addAll(remaining)
+                    }
                 }
             }
             title to tracks
