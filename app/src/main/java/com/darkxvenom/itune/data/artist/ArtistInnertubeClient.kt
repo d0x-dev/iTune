@@ -5,6 +5,7 @@ import com.darkxvenom.itune.backend.Net
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.auth.YouTubeAccountParsers
 import com.darkxvenom.itune.data.auth.buildFullSapisidAuthorization
+import com.darkxvenom.itune.data.auth.delegatedSessionId
 import com.darkxvenom.itune.data.auth.buildSapisidHash
 import com.darkxvenom.itune.data.auth.normalizeDataSyncId
 import com.darkxvenom.itune.data.auth.sapisidFrom
@@ -494,7 +495,8 @@ object ArtistInnertubeClient {
                 )
             }
         }
-        val arr = response.optJSONArray("playlistEditResults") ?: return emptyMap()
+        val arr = response.optJSONArray("playlistEditResults")
+            ?: error("YouTube Music did not confirm the playlist add operation")
         val out = linkedMapOf<String, String>()
         for (i in 0 until arr.length()) {
             val added = arr.optJSONObject(i)?.optJSONObject("playlistEditVideoAddedResultData") ?: continue
@@ -597,6 +599,7 @@ object ArtistInnertubeClient {
         visitorData?.let { builder.header("X-Goog-Visitor-Id", it) }
         cookie?.let { c ->
             builder.header("Cookie", c)
+            builder.header("X-Youtube-Bootstrap-Logged-In", "true")
             builder.header("X-Goog-AuthUser", authUserFor(session))
             pageIdFor(session)?.let { builder.header("X-Goog-PageId", it) }
             buildFullSapisidAuthorization(
@@ -692,6 +695,7 @@ object ArtistInnertubeClient {
             .header("User-Agent", WEB_USER_AGENT)
             .header("Accept-Language", acceptLanguageHeader)
             .header("Cookie", sessionCookie)
+            .header("X-Youtube-Bootstrap-Logged-In", "true")
         val activeScope = scope
         builder.header("X-Goog-AuthUser", authUserFor(activeScope))
         pageIdFor(activeScope)?.let { builder.header("X-Goog-PageId", it) }
@@ -709,9 +713,10 @@ object ArtistInnertubeClient {
         if (!signedIn) {
             return@withContext clientVersion?.let { SessionScope(null, null, "0", it) }
         }
-        val pageId = CONFIG_PAGE_ID.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }
         val rawDataSync = CONFIG_DATASYNC_ID.find(html)?.groupValues?.get(1)?.trim()
-        // DATASYNC_ID stores USER_SESSION_ID (possibly after DELEGATED_SESSION_ID||).
+        val pageId = CONFIG_PAGE_ID.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }
+            ?: delegatedSessionId(rawDataSync)
+        // DATASYNC_ID stores USER_SESSION_ID (or DELEGATED_SESSION_ID||USER_SESSION_ID).
         // DELEGATED_SESSION_ID is a separate header value and must never replace it.
         val dataSyncId = normalizeDataSyncId(rawDataSync)
         val authUser = CONFIG_SESSION_INDEX.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() } ?: "0"
