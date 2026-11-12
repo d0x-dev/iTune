@@ -348,7 +348,10 @@ object ArtistInnertubeClient {
     ) {
         this.cookie = cookie.takeIf { it.isNotBlank() }
         this.channelOverride = null
-        val version = clientVersion?.takeIf { it.isNotBlank() } ?: scope?.clientVersion
+        // A restored account has no trusted persisted ytcfg version/scope. Leave it
+        // unset so the next authenticated request refreshes session identifiers from
+        // the current cookie instead of reusing another account's cached scope.
+        val version = clientVersion?.takeIf { it.isNotBlank() }
         scope = if (!loggedIn) {
             version?.let { SessionScope(null, null, "0", it) }
         } else {
