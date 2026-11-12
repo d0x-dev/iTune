@@ -142,12 +142,107 @@ object LyricsTranslationHelper {
         else -> "https://openrouter.ai/api/v1/chat/completions"
     }
 
+    /**
+     * Defaults must be models that are still being served: retired ids (e.g. `gemini-2.0-flash`,
+     * `claude-3-haiku-20240307`) answer with HTTP 404, which was the "translation returns 404" bug.
+     */
     fun defaultModel(provider: String): String = when (provider) {
         PROVIDER_OPENROUTER -> "openai/gpt-4o-mini"
-        PROVIDER_GEMINI -> "gemini-2.0-flash"
+        PROVIDER_GEMINI -> "gemini-2.5-flash"
         PROVIDER_OPENAI -> "gpt-4o-mini"
-        PROVIDER_CLAUDE -> "claude-3-haiku-20240307"
+        PROVIDER_CLAUDE -> "claude-haiku-4-5"
         else -> ""
+    }
+
+    /** Offline fallback shown in the model picker when the live model list can't be fetched. */
+    fun suggestedModels(provider: String): List<String> = when (provider) {
+        PROVIDER_OPENROUTER -> listOf(
+            "openai/gpt-4o-mini", "openai/gpt-4o", "anthropic/claude-haiku-4.5",
+            "google/gemini-2.5-flash", "meta-llama/llama-3.3-70b-instruct", "deepseek/deepseek-chat",
+        )
+        PROVIDER_GEMINI -> listOf("gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro")
+        PROVIDER_OPENAI -> listOf("gpt-4o-mini", "gpt-4o", "gpt-4.1-mini", "gpt-4.1")
+        PROVIDER_CLAUDE -> listOf("claude-haiku-4-5", "claude-sonnet-4-5", "claude-opus-4-1")
+        else -> emptyList()
+    }
+
+    /**
+     * Accepts a full endpoint or just an API root ("https://api.openai.com/v1") and returns the
+     * actual chat endpoint, so a trimmed custom Base URL no longer ends in a 404.
+     */
+    fun resolveChatUrl(provider: String, baseUrl: String): String {
+        val raw = baseUrl.trim().trimEnd('/')
+        if (raw.isBlank()) return defaultBaseUrl(provider)
+        return when {
+            provider == PROVIDER_CLAUDE ->
+                if (raw.endsWith("/messages")) raw else if (raw.endsWith("/v1")) "$raw/messages" else "$raw/v1/messages"
+            raw.endsWith("/chat/completions") -> raw
+            else -> "$raw/chat/completions"
+        }
+    }
+
+    private fun modelsUrl(provider: String, baseUrl: String): String {
+        val chat = resolveChatUrl(provider, baseUrl)
+        return if (provider == PROVIDER_CLAUDE) {
+            chat.removeSuffix("/messages") + "/models?limit=100"
+        } else {
+            chat.removeSuffix("/chat/completions") + "/models"
+        }
+    }
+
+    /** Live list of models the key can use, so the user picks a valid id instead of typing one. */
+    suspend fun fetchModels(provider: String, apiKey: String, baseUrl: String): Result<List<String>> =
+        withContext(Dispatchers.IO) {
+            runCatching {
+                val key = apiKey.trim()
+                val builder = Request.Builder().url(modelsUrl(provider, baseUrl)).get()
+                if (provider == PROVIDER_CLAUDE) {
+                    builder.addHeader("x-api-key", key).addHeader("anthropic-version", "2023-06-01")
+                } else if (key.isNotBlank()) {
+                    builder.addHeader("Authorization", "Bearer $key")
+                }
+                aiClient.newCall(builder.build()).execute().use { response ->
+                    val body = response.body?.string().orEmpty()
+                    if (!response.isSuccessful) error(describeHttpError(response.code, body, provider, "", ""))
+                    val data = JSONObject(body).optJSONArray("data") ?: error("Provider returned no model list.")
+                    val ids = (0 until data.length()).mapNotNull {
+                        data.optJSONObject(it)?.optString("id")?.removePrefix("models/")?.takeIf { id -> id.isNotBlank() }
+                    }
+                    ids.filter { isChatModel(provider, it) }.distinct().sorted()
+                        .ifEmpty { error("No chat models available for this key.") }
+                }
+            }
+        }
+
+    private fun isChatModel(provider: String, id: String): Boolean {
+        val l = id.lowercase()
+        val blocked = listOf(
+            "embedding", "embed", "tts", "whisper", "dall-e", "image", "imagen", "audio",
+            "realtime", "transcribe", "moderation", "veo", "aqa", "babbage", "davinci",
+        )
+        if (blocked.any { l.contains(it) }) return false
+        return when (provider) {
+            PROVIDER_GEMINI -> l.startsWith("gemini") || l.startsWith("gemma")
+            PROVIDER_OPENAI -> l.startsWith("gpt") || l.startsWith("chatgpt") || Regex("^o\\d").containsMatchIn(l)
+            else -> true
+        }
+    }
+
+    private fun describeHttpError(code: Int, body: String, provider: String, model: String, url: String): String {
+        val apiMessage = runCatching {
+            val trimmed = body.trim()
+            val obj = if (trimmed.startsWith("[")) JSONArray(trimmed).optJSONObject(0) else JSONObject(trimmed)
+            obj?.optJSONObject("error")?.optString("message")?.takeIf { it.isNotBlank() }
+                ?: obj?.optString("message")?.takeIf { it.isNotBlank() }
+        }.getOrNull()
+        val hint = when (code) {
+            401, 403 -> "Check your $provider API key."
+            404 -> "Model \"$model\" or the endpoint was not found. Open Settings > Lyrics > Model and pick a model from the list" +
+                if (url.isNotBlank()) " (endpoint: $url)." else "."
+            429 -> "Rate limit or quota reached. Try again shortly or pick another model."
+            else -> ""
+        }
+        return listOfNotNull("HTTP $code", apiMessage, hint.ifBlank { null }).joinToString(" · ")
     }
 
     private fun getCacheFile(context: Context, songId: String, lang: String): File {
@@ -308,7 +403,7 @@ object LyricsTranslationHelper {
         _status.value = TranslationStatus.Translating(listOf("Connecting to $provider..."))
 
         val targetLanguageName = AiTranslationLanguages[targetLanguageCode] ?: targetLanguageCode
-        val effectiveBaseUrl = baseUrl.ifBlank { defaultBaseUrl(provider) }
+        val effectiveBaseUrl = resolveChatUrl(provider, baseUrl)
         val effectiveModel = model.ifBlank { defaultModel(provider) }
         val safeSongId = songId.replace(Regex("[^a-zA-Z0-9_-]"), "_")
 
@@ -429,6 +524,8 @@ object LyricsTranslationHelper {
                 jsonBody = body.toString(),
                 isClaude = true,
                 lineCount = lineCount,
+                model = model.ifBlank { defaultModel(PROVIDER_CLAUDE) },
+                provider = provider,
                 onLog = onLog
             )
         } else {
@@ -454,6 +551,8 @@ object LyricsTranslationHelper {
                 jsonBody = body.toString(),
                 isClaude = false,
                 lineCount = lineCount,
+                model = model,
+                provider = provider,
                 onLog = onLog
             )
         }
@@ -465,10 +564,13 @@ object LyricsTranslationHelper {
         jsonBody: String,
         isClaude: Boolean,
         lineCount: Int,
+        model: String,
+        provider: String,
         onLog: (String) -> Unit,
         maxRetries: Int = 3,
     ): Result<List<String>> {
         var attempt = 0
+        var lastError: String? = null
         while (attempt < maxRetries) {
             try {
                 onLog("Sending request (Attempt ${attempt + 1})...")
@@ -487,18 +589,18 @@ object LyricsTranslationHelper {
 
                 val request = requestBuilder.post(jsonBody.toRequestBody(JSON_MEDIA_TYPE)).build()
                 val response = aiClient.newCall(request).execute()
-                val bodyText = response.body?.string().orEmpty()
+                val bodyText = response.use { it.body?.string().orEmpty() }
 
                 if (!response.isSuccessful) {
-                    if (response.code >= 500) {
+                    if (response.code >= 500 || response.code == 429) {
+                        lastError = describeHttpError(response.code, bodyText, provider, model, url)
                         attempt++
                         delay(1000L * attempt)
                         continue
                     }
-                    val err = runCatching {
-                        JSONObject(bodyText).optJSONObject("error")?.optString("message")
-                    }.getOrNull() ?: "HTTP ${response.code}: ${response.message}"
-                    return Result.failure(Exception("AI request failed: $err"))
+                    return Result.failure(
+                        Exception(describeHttpError(response.code, bodyText, provider, model, url)),
+                    )
                 }
 
                 val parsed = if (isClaude) {
@@ -511,6 +613,7 @@ object LyricsTranslationHelper {
                     onLog("Successfully translated $lineCount lines")
                     return Result.success(parsed)
                 }
+                lastError = "The model returned an unreadable answer. Try a different model."
             } catch (e: Exception) {
                 Log.w(TAG, "AI attempt $attempt failed", e)
                 if (attempt == maxRetries - 1) return Result.failure(e)
@@ -518,7 +621,7 @@ object LyricsTranslationHelper {
             attempt++
             delay(1000L * attempt)
         }
-        return Result.failure(Exception("Failed to translate lyrics after $maxRetries attempts."))
+        return Result.failure(Exception(lastError ?: "Failed to translate lyrics after $maxRetries attempts."))
     }
 
     private fun parseOpenAiCompatResponse(responseBody: String, expectedCount: Int): List<String>? {

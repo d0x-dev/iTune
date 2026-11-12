@@ -787,7 +787,7 @@ fun AppleMoreOptionsPopup(
                                         PopupSubPageHeader(title = "Tools", onBack = { activePage = MorePopupPage.MAIN })
                                         PopupMenuDivider()
                                         MorePopupOptionRow(
-                                            iconRes = R.drawable.ic_menu_sleep_timer,
+                                            iconRes = R.drawable.ic_settings_notifications,
                                             title = "Set Ringtone",
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
@@ -797,8 +797,8 @@ fun AppleMoreOptionsPopup(
                                         )
                                         PopupMenuDivider()
                                         MorePopupOptionRow(
-                                            iconRes = R.drawable.ic_menu_download,
-                                            title = "Snippet",
+                                            iconRes = R.drawable.ic_itune_waves,
+                                            title = "Snippet Studio",
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 playerToolMode = PlayerToolMode.SNIPPET

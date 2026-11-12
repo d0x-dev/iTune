@@ -266,11 +266,19 @@ object YouTubeAccountParsers {
 
     private fun parseLibraryTwoRow(renderer: JSONObject, expectedType: BrowseType): LibraryCardItem? {
         val title = renderer.optJSONObject("title").runsText().trim()
+            .ifBlank { renderer.optString("title").trim() }
         if (title.isBlank()) return null
-        val rawBrowseId = renderer.optJSONObject("navigationEndpoint")
-            ?.optJSONObject("browseEndpoint")
-            ?.optString("browseId")
-            ?.takeIf { it.isNotBlank() }
+        val nav = renderer.optJSONObject("navigationEndpoint")
+        val rawBrowseId = nav?.optJSONObject("browseEndpoint")?.optString("browseId")?.takeIf { it.isNotBlank() }
+            ?: nav?.optJSONObject("watchEndpoint")?.optString("playlistId")?.takeIf { it.isNotBlank() }?.let { "VL$it" }
+            ?: nav?.optJSONObject("watchPlaylistEndpoint")?.optString("playlistId")?.takeIf { it.isNotBlank() }?.let { "VL$it" }
+            ?: renderer.optJSONObject("thumbnailOverlay")
+                ?.optJSONObject("musicItemThumbnailOverlayRenderer")
+                ?.optJSONObject("content")
+                ?.optJSONObject("musicPlayButtonRenderer")
+                ?.optJSONObject("playNavigationEndpoint")
+                ?.optJSONObject("watchPlaylistEndpoint")
+                ?.optString("playlistId")?.takeIf { it.isNotBlank() }?.let { "VL$it" }
             ?: return null
         // Skip synthetic create tiles and podcast/episode containers.
         if (rawBrowseId.startsWith("FE") || rawBrowseId.startsWith("MPSP") || rawBrowseId.startsWith("MPED")) return null

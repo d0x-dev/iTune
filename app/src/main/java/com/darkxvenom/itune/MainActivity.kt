@@ -17,7 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.darkxvenom.itune.backend.AudioDownloader
+import com.darkxvenom.itune.backend.MusicBackend
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
@@ -27,11 +29,16 @@ import com.darkxvenom.itune.radio.OnlineRadioController
 import com.darkxvenom.itune.ishare.IShareSyncManager
 import com.darkxvenom.itune.island.DynamicIslandForegroundTracker
 import com.darkxvenom.itune.island.DynamicIslandStore
+import com.darkxvenom.itune.recognition.MusicRecognitionController
+import com.darkxvenom.itune.recognition.MusicRecognitionTileService
 import com.darkxvenom.itune.ui.home.HomeScreen
 import com.darkxvenom.itune.ui.splash.SplashScreen
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.ITuneTheme
 import com.darkxvenom.itune.ui.welcome.WelcomeScreen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +53,7 @@ class MainActivity : ComponentActivity() {
         DynamicIslandStore.syncServiceState(this)
         AudioDownloader.ensureChannel(this)
         handleIncomingShareIntent(intent)
+        handleRecognitionIntent(intent)
         enableEdgeToEdge()
         setContent {
             val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
@@ -127,6 +135,45 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         handleIncomingShareIntent(intent)
+        handleRecognitionIntent(intent)
+    }
+
+    private fun handleRecognitionIntent(intent: android.content.Intent?) {
+        val action = intent?.action ?: return
+        when (action) {
+            MusicRecognitionTileService.ACTION_START_RECOGNITION -> {
+                MusicRecognitionController.requestOpen()
+            }
+            MusicRecognitionTileService.ACTION_PLAY_RECOGNIZED -> {
+                val title = intent.getStringExtra(MusicRecognitionTileService.EXTRA_SONG_TITLE) ?: return
+                val artist = intent.getStringExtra(MusicRecognitionTileService.EXTRA_SONG_ARTIST) ?: ""
+                playRecognizedSong(title, artist)
+            }
+        }
+    }
+
+    private fun playRecognizedSong(title: String, artist: String) {
+        android.widget.Toast.makeText(this, "Playing $title…", android.widget.Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val query = "$title $artist".trim()
+                val tracks = MusicBackend.searchMusic(query)
+                val track = tracks.firstOrNull()
+                if (track != null) {
+                    withContext(Dispatchers.Main) {
+                        MusicPlayerState.play(track, tracks, expandPlayer = true)
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        android.widget.Toast.makeText(this@MainActivity, "Song not found in iTune", android.widget.Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (_: Exception) {
+                withContext(Dispatchers.Main) {
+                    android.widget.Toast.makeText(this@MainActivity, "Playback failed, try again", android.widget.Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun handleIncomingShareIntent(intent: android.content.Intent?) {

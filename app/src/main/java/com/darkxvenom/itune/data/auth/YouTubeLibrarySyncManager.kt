@@ -209,7 +209,7 @@ object YouTubeLibrarySyncManager {
             }
         }
         if (collected.isEmpty()) {
-            throw IllegalStateException("YouTube returned no recognizable history tracks. Existing history was kept.")
+            Log.i(TAG, "No remote history tracks found on YouTube Music.")
         }
         if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
         LibraryStore.replaceYtmHistory(context, collected.distinctBy { it.id })
@@ -280,7 +280,7 @@ object YouTubeLibrarySyncManager {
             }
         }
         if (songs.isEmpty()) {
-            throw IllegalStateException("YouTube returned no recognizable liked songs. Existing likes were kept.")
+            Log.i(TAG, "No remote liked songs found on YouTube Music.")
         }
         if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
         val mergedIds = LibraryStore.mergeRemoteLikedSongs(context, songs.distinctBy { it.id })
@@ -310,7 +310,7 @@ object YouTubeLibrarySyncManager {
         }
         val cards = (corpusCards + trackArtistCards + webChannels).distinctBy { it.browseId }
         if (cards.isEmpty()) {
-            throw IllegalStateException("YouTube returned no recognizable subscribed artists. Existing artists were kept.")
+            Log.i(TAG, "No remote subscribed artists found on YouTube Music.")
         }
         val entries = cards.map { card ->
             SavedCollectionEntry(
@@ -336,7 +336,7 @@ object YouTubeLibrarySyncManager {
         if (!GoogleAuthStore.isSignedIn || expectedSessionKey == null) return
         val cards = fetchAllLibraryCards("FEmusic_liked_albums", BrowseType.ALBUM)
         if (cards.isEmpty()) {
-            throw IllegalStateException("YouTube returned no recognizable saved albums. Existing albums were kept.")
+            Log.i(TAG, "No remote saved albums found on YouTube Music.")
         }
         val entries = cards.map { card ->
             SavedCollectionEntry(
@@ -380,7 +380,7 @@ object YouTubeLibrarySyncManager {
             .distinctBy { it.browseId.removePrefix("VL") }
             .toList()
         if (cards.isEmpty()) {
-            throw IllegalStateException("YouTube returned no recognizable playlists. Existing playlists were kept.")
+            Log.i(TAG, "No remote playlists found on YouTube Music.")
         }
 
         val existingByYtId = LibraryStore.userPlaylists.value

@@ -215,6 +215,8 @@ object MusicPlayerState : Player.Listener {
         this.appContext = appContext
         MusicBackend.init(appContext)
         LibraryStore.ensureInit(appContext)
+        com.darkxvenom.itune.data.library.ListeningProfileStore.ensureInit(appContext)
+        com.darkxvenom.itune.data.timetravel.TimeTravelRepository.ensureInit(appContext)
         ArtistStateStore.ensureInit(appContext)
 
         val prefs = appContext.getSharedPreferences("itune_favorites", Context.MODE_PRIVATE)
@@ -422,6 +424,7 @@ object MusicPlayerState : Player.Listener {
         com.darkxvenom.itune.radio.OnlineRadioController.pauseIfPlaying()
         if (currentTrack != null && currentTrack?.id != track.id) {
             YouTubePlaybackTracker.onTrackChanged(positionMs / 1000L)
+            com.darkxvenom.itune.data.timetravel.TimeTravelPlaybackTracker.onTrackChanged()
         }
         if (expandPlayer) expanded = true
         loadJob?.cancel()
@@ -444,6 +447,12 @@ object MusicPlayerState : Player.Listener {
         }
         currentTrack = track
         appContext?.let { LibraryStore.recordRecentSong(it, track) }
+        if (autoPlay) {
+            appContext?.let {
+                com.darkxvenom.itune.data.library.ListeningProfileStore.recordPlay(it, track)
+                com.darkxvenom.itune.data.timetravel.TimeTravelPlaybackTracker.onTrackStarted(it, track)
+            }
+        }
 
         // Fetch synchronized lyrics unless already loaded for this restored track
         if (!sameTrack || (lyrics.isEmpty() && !lyricsLoading)) {
@@ -896,6 +905,7 @@ object MusicPlayerState : Player.Listener {
     override fun onIsPlayingChanged(isPlaying: Boolean) {
         this.isPlaying = isPlaying
         AudioEngineManager.updatePlayingState(isPlaying)
+        com.darkxvenom.itune.data.timetravel.TimeTravelPlaybackTracker.onIsPlayingChanged(isPlaying)
         if (isPlaying) {
             isLoading = false
             exoPlayer?.audioSessionId?.let { sid ->
@@ -1061,6 +1071,7 @@ object MusicPlayerState : Player.Listener {
                 durationMs = exoPlayer?.duration?.coerceAtLeast(0L) ?: 0L
             }
             Player.STATE_ENDED -> {
+                com.darkxvenom.itune.data.timetravel.TimeTravelPlaybackTracker.onTrackCompleted()
                 if (sleepTimerEndOfTrack) {
                     sleepTimerEndOfTrack = false
                     exoPlayer?.pause()

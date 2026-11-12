@@ -180,6 +180,11 @@ fun LibraryScreenOverlayContent(
                     onBack = { controller.pop() },
                     onExploreClick = onExploreClick,
                 )
+                LibraryDestination.TIME_TRAVEL -> com.darkxvenom.itune.ui.timetravel.TimeTravelScreen(
+                    controller = controller,
+                    hasMiniPlayer = hasMiniPlayer,
+                    onBack = { controller.pop() },
+                )
             }
         }
     }

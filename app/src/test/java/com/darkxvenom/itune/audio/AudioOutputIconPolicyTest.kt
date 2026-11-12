@@ -25,7 +25,7 @@ class AudioOutputIconPolicyTest {
             resolveOutputCapsuleIcon(AudioDeviceCategory.BUILTIN_SPEAKER, explicitSelection = true),
         )
         assertEquals(
-            R.drawable.ic_airbuds,
+            R.drawable.ic_output_speaker,
             resolveOutputCapsuleIcon(AudioDeviceCategory.BUILTIN_SPEAKER, explicitSelection = false),
         )
         assertEquals(

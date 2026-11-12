@@ -405,9 +405,7 @@ internal fun resolveOutputCapsuleIcon(
         AudioDeviceCategory.USB_DAC -> R.drawable.ic_headphone
         AudioDeviceCategory.HEARING_AID -> R.drawable.ic_output_hearing_aid
         AudioDeviceCategory.EXTERNAL_SPEAKER -> R.drawable.ic_output_external_speaker
-        AudioDeviceCategory.BUILTIN_SPEAKER -> {
-            if (explicitSelection) R.drawable.ic_output_speaker else R.drawable.ic_airbuds
-        }
+        AudioDeviceCategory.BUILTIN_SPEAKER -> R.drawable.ic_output_speaker
     }
 }
 

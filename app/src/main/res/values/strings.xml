@@ -81,4 +81,6 @@
     <string name="minutes_short">%1$d min</string>
     <string name="pin">Pin</string>
     <string name="unpin">Unpin</string>
+    <string name="tile_identify_music">Identify Music</string>
+    <string name="tile_identify_music_desc">Identify songs playing around you with iTune</string>
 </resources>
