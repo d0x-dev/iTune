@@ -148,8 +148,12 @@ class MainActivity : ComponentActivity() {
         DynamicIslandForegroundTracker.setForeground(false)
         MusicPlayerState.savePlaybackSession(sync = true)
         super.onDestroy()
-        OnlineRadioController.release()
-        MusicPlayerState.release()
+        // Keep playback alive after the task is cleared; PlaybackService handles the optional stop.
+        val keepAlive = MusicPlayerState.isPlaying || OnlineRadioController.state.value.isPlaying
+        if (!keepAlive) {
+            OnlineRadioController.release()
+            MusicPlayerState.release()
+        }
     }
 }
 

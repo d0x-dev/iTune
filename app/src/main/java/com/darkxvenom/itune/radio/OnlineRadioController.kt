@@ -434,6 +434,7 @@ object OnlineRadioController : Player.Listener {
         if (sessionId != C.AUDIO_SESSION_ID_UNSET && isPlaying) {
             AudioEngineManager.attachAudioSession(sessionId, true)
         }
+        appContext?.let { com.darkxvenom.itune.backend.PlaybackService.sync(it) }
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {
