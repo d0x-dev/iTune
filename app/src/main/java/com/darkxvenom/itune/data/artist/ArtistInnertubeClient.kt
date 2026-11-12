@@ -752,10 +752,23 @@ object ArtistInnertubeClient {
                         fresh
                     }
                     scope = refreshed
-                    // The cookie-only ytcfg request describes the browser's primary
-                    // identity. Do not overwrite a separately selected Brand channel
-                    // profile with that primary-account scope.
-                    if (persistScope && channelOverride == null) {
+                    val selectedChannel = channelOverride
+                    if (selectedChannel != null) {
+                        // The cookie-only ytcfg refresh supplies the correct user-session
+                        // id, but its page id belongs to the browser's primary identity.
+                        // Keep the selected channel page id and repair only its user id.
+                        val repairedChannel = selectedChannel.copy(
+                            dataSyncId = fresh.dataSyncId,
+                            authUser = fresh.authUser,
+                        )
+                        channelOverride = repairedChannel
+                        if (persistScope) {
+                            GoogleAuthStore.updateActiveScope(
+                                pageId = repairedChannel.pageId,
+                                dataSyncId = repairedChannel.dataSyncId,
+                            )
+                        }
+                    } else if (persistScope) {
                         GoogleAuthStore.updateActiveScope(
                             pageId = refreshed.pageId,
                             dataSyncId = refreshed.dataSyncId,
