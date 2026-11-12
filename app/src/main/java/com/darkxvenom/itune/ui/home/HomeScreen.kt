@@ -262,6 +262,40 @@ fun HomeScreen(
             settingsState.hideExplicitContent,
         ) { it.isExplicit }
     }
+    val featuredSourceRefs = remember(visibleNewReleases, visibleHomePlaylistRefs, popularAlbums) {
+        val liveAlbums = visibleNewReleases.map { album ->
+            MusicPlaylistRef(
+                id = album.browseId,
+                title = album.title,
+                author = album.artist,
+                authorId = album.artistId,
+                thumbnailUrl = album.thumbnailUrl,
+                isAlbum = true,
+                year = album.year?.toString(),
+            )
+        }
+        (liveAlbums + visibleHomePlaylistRefs + popularAlbums)
+            .distinctBy { it.id }
+            .take(3)
+    }
+    val homeFeaturedCards = remember(featuredSourceRefs) {
+        MusicRepository.featuredCards.mapIndexed { index, baseCard ->
+            val ref = featuredSourceRefs.getOrNull(index) ?: return@mapIndexed baseCard
+            baseCard.copy(
+                category = if (ref.isAlbum) "NEW ALBUM" else "FEATURED PLAYLIST",
+                title = ref.title,
+                subtitle = ref.author.ifBlank { "YouTube Music" },
+                caption = if (ref.isAlbum) {
+                    listOfNotNull("New release", ref.year).joinToString(" • ")
+                } else {
+                    if (ref.trackCount > 0) "${ref.trackCount} tracks • YouTube Music" else "Featured on YouTube Music"
+                },
+                imageUrl = ref.thumbnailUrl,
+                destinationBrowseId = ref.id,
+                destinationIsAlbum = ref.isAlbum,
+            )
+        }
+    }
     val listState = rememberLazyListState()
     val overscrollState = rememberSpringOverscrollState()
     val coroutineScope = rememberCoroutineScope()
@@ -453,16 +487,22 @@ fun HomeScreen(
                 // Featured Hero Carousel (Today's Hits / New Album)
                 item(key = "featured_hero") {
                     FeaturedHeroCarousel(
-                        cards = MusicRepository.featuredCards,
+                        cards = homeFeaturedCards,
                         modifier = Modifier.padding(top = 4.dp),
                         onCardClick = { card ->
-                            MusicPlayerState.pendingArtistSearch = when (card.id) {
-                                "f1" -> "today's hits"
-                                "f2" -> "The Weeknd latest album"
-                                "f3" -> "A list pop hits"
-                                else -> card.title
+                            val browseId = card.destinationBrowseId
+                            if (!browseId.isNullOrBlank()) {
+                                MusicPlayerState.pendingArtistNav = PendingArtistNav(
+                                    browseId = browseId,
+                                    name = card.title,
+                                    subtitle = card.subtitle,
+                                    thumbnailUrl = card.imageUrl,
+                                    initialType = if (card.destinationIsAlbum) BrowseType.ALBUM else BrowseType.PLAYLIST,
+                                )
+                            } else {
+                                MusicPlayerState.pendingArtistSearch = card.title
+                                currentScreen = AppScreen.SEARCH
                             }
-                            currentScreen = AppScreen.SEARCH
                         }
                     )
                 }
