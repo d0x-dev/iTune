@@ -47,14 +47,18 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.darkxvenom.itune.backend.MusicArtist
 import com.darkxvenom.itune.backend.MusicPlayerState
+import com.darkxvenom.itune.backend.MusicPlaylistRef
 import com.darkxvenom.itune.backend.MusicTrack
+import com.darkxvenom.itune.backend.NewReleaseAlbum
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.auth.WebSessionMode
 import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.ui.auth.GoogleLoginScreen
 import com.darkxvenom.itune.ui.settings.ContinueWithGoogleRedCard
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
+import com.darkxvenom.itune.data.library.HomeDiscoveryRepository
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.library.NewReleasesRepository
 import com.darkxvenom.itune.data.library.PersonalizedHomeRepository
@@ -76,6 +80,11 @@ import com.darkxvenom.itune.ui.components.FeaturedHeroCarousel
 import com.darkxvenom.itune.ui.components.FloatingMiniPlayer
 import com.darkxvenom.itune.ui.components.FloatingNavBar
 import com.darkxvenom.itune.ui.components.LatestSongsSection
+import com.darkxvenom.itune.ui.components.HomeAlbumShelf
+import com.darkxvenom.itune.ui.components.HomeArtistShelf
+import com.darkxvenom.itune.ui.components.HomeCollectionShelf
+import com.darkxvenom.itune.ui.components.HomeNewReleaseShelf
+import com.darkxvenom.itune.ui.components.HomeTrackShelf
 import com.darkxvenom.itune.ui.components.NavTab
 import com.darkxvenom.itune.ui.components.RadioStationsSection
 import com.darkxvenom.itune.ui.components.TopHeaderBar
@@ -147,48 +156,106 @@ fun HomeScreen(
         SettingsStore.localeSignature()
     }
     val featuredPlaylists by NewReleasesRepository.featuredPlaylists.collectAsStateWithLifecycle()
+    val newReleaseAlbums by NewReleasesRepository.releases.collectAsStateWithLifecycle()
     val personalizedQuickPicks by PersonalizedHomeRepository.quickPickTracks.collectAsStateWithLifecycle()
     val personalizedPlaylists by PersonalizedHomeRepository.recommendedPlaylists.collectAsStateWithLifecycle()
     val ytAccountState by GoogleAuthStore.state.collectAsStateWithLifecycle()
+
+    val trendingTracks by HomeDiscoveryRepository.trendingTracks.collectAsStateWithLifecycle()
+    val popularPlaylists by HomeDiscoveryRepository.popularPlaylists.collectAsStateWithLifecycle()
+    val popularAlbums by HomeDiscoveryRepository.popularAlbums.collectAsStateWithLifecycle()
+    val popularArtists by HomeDiscoveryRepository.popularArtists.collectAsStateWithLifecycle()
+    val podcastShows by HomeDiscoveryRepository.podcastShows.collectAsStateWithLifecycle()
+    val tasteTracks by HomeDiscoveryRepository.tasteTracks.collectAsStateWithLifecycle()
+
+    val localRecentSongs by LibraryStore.recentSongs.collectAsStateWithLifecycle()
+    val accountHistory by LibraryStore.ytmHistorySongs.collectAsStateWithLifecycle()
+    val savedArtists by LibraryStore.likedArtists.collectAsStateWithLifecycle()
+    val savedAlbums by LibraryStore.savedAlbums.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        LibraryStore.ensureInit(context)
+    }
     LaunchedEffect(localeSignature, ytAccountState.isSignedIn, ytAccountState.activeSessionKey) {
+        HomeDiscoveryRepository.ensureLoaded()
         NewReleasesRepository.ensureLoaded()
         if (ytAccountState.isSignedIn) {
             PersonalizedHomeRepository.refreshIfSignedIn()
         }
     }
+
     val visibleQuickPicks = remember(personalizedQuickPicks, settingsState.hideExplicitContent) {
         ContentLocaleCatalog.filterVisible(
             personalizedQuickPicks,
             settingsState.hideExplicitContent,
         ) { it.isExplicit }
     }
-    val allHomePlaylistRefs = remember(personalizedPlaylists, featuredPlaylists, ytAccountState.isSignedIn) {
-        val merged = if (ytAccountState.isSignedIn && personalizedPlaylists.isNotEmpty()) {
-            (personalizedPlaylists + featuredPlaylists).distinctBy { it.id }
-        } else {
-            featuredPlaylists
-        }
-        merged
+    val visibleTrendingTracks = remember(trendingTracks, settingsState.hideExplicitContent) {
+        ContentLocaleCatalog.filterVisible(
+            trendingTracks,
+            settingsState.hideExplicitContent,
+        ) { it.isExplicit }
     }
-    val homePlaylists = remember(allHomePlaylistRefs, settingsState.hideExplicitContent) {
-        val visible = ContentLocaleCatalog.filterVisible(
+    val allHomePlaylistRefs = remember(
+        personalizedPlaylists, featuredPlaylists, popularPlaylists, ytAccountState.isSignedIn
+    ) {
+        val accountFeed = if (ytAccountState.isSignedIn) personalizedPlaylists else emptyList()
+        (accountFeed + featuredPlaylists + popularPlaylists).distinctBy { it.id }
+    }
+    val visibleHomePlaylistRefs = remember(allHomePlaylistRefs, settingsState.hideExplicitContent) {
+        ContentLocaleCatalog.filterVisible(
             allHomePlaylistRefs,
             settingsState.hideExplicitContent,
         ) { it.isExplicit }
-        if (visible.isEmpty()) {
-            MusicRepository.essentialPlaylists
-        } else {
-            val gradients = MusicRepository.essentialPlaylists.map { it.gradientColors }
-            visible.take(10).mapIndexed { index, ref ->
-                Playlist(
-                    id = ref.id,
-                    title = ref.title,
-                    curator = ref.author.ifBlank { "Apple Music" },
-                    description = ref.year ?: if (ref.trackCount > 0) "${ref.trackCount} tracks" else "Recommended",
-                    gradientColors = gradients[index % gradients.size],
+    }
+    val recentHomeTracks = remember(localRecentSongs, accountHistory) {
+        (localRecentSongs + accountHistory)
+            .distinctBy { it.id }
+            .map { it.toMusicTrack() }
+            .take(24)
+    }
+    val preferredArtistNames = remember(savedArtists, recentHomeTracks) {
+        (savedArtists.map { it.title } + recentHomeTracks.map { it.artists.substringBefore(",").trim() })
+            .filter { it.isNotBlank() }
+            .distinctBy { it.lowercase() }
+            .take(4)
+    }
+    LaunchedEffect(ytAccountState.isSignedIn, ytAccountState.activeSessionKey, preferredArtistNames) {
+        HomeDiscoveryRepository.refreshFromListeningTaste(
+            sessionKey = ytAccountState.activeSessionKey.takeIf { ytAccountState.isSignedIn },
+            artistNames = preferredArtistNames,
+        )
+    }
+    val recommendedAlbums = remember(savedAlbums, popularAlbums) {
+        (
+            savedAlbums.map { album ->
+                MusicPlaylistRef(
+                    id = album.browseId,
+                    title = album.title,
+                    author = album.subtitle,
+                    thumbnailUrl = album.thumbnailUrl,
+                    isAlbum = true,
                 )
-            }
-        }
+            } + popularAlbums
+        ).distinctBy { it.id }.take(24)
+    }
+    val recommendedArtists = remember(savedArtists, popularArtists) {
+        (
+            savedArtists.map { artist ->
+                MusicArtist(
+                    id = artist.browseId,
+                    name = artist.title,
+                    thumbnailUrl = artist.thumbnailUrl,
+                    subscribers = artist.subtitle,
+                )
+            } + popularArtists
+        ).distinctBy { it.id }.take(24)
+    }
+    val visibleNewReleases = remember(newReleaseAlbums, settingsState.hideExplicitContent) {
+        ContentLocaleCatalog.filterVisible(
+            newReleaseAlbums,
+            settingsState.hideExplicitContent,
+        ) { it.isExplicit }
     }
     val listState = rememberLazyListState()
     val overscrollState = rememberSpringOverscrollState()
@@ -259,6 +326,7 @@ fun HomeScreen(
     LaunchedEffect(overscrollState.offset.value) {
         if (listState.firstVisibleItemIndex == 0 && overscrollState.offset.value > 25f && !isRefreshing) {
             isRefreshing = true
+            HomeDiscoveryRepository.refresh()
             NewReleasesRepository.refresh()
             if (ytAccountState.isSignedIn) {
                 YouTubeLibrarySyncManager.launchFullSync(context)
@@ -383,7 +451,13 @@ fun HomeScreen(
                         cards = MusicRepository.featuredCards,
                         modifier = Modifier.padding(top = 4.dp),
                         onCardClick = { card ->
-                            Toast.makeText(context, "Opening ${card.title}", Toast.LENGTH_SHORT).show()
+                            MusicPlayerState.pendingArtistSearch = when (card.id) {
+                                "f1" -> "today's hits"
+                                "f2" -> "The Weeknd latest album"
+                                "f3" -> "A list pop hits"
+                                else -> card.title
+                            }
+                            currentScreen = AppScreen.SEARCH
                         }
                     )
                 }
@@ -396,17 +470,15 @@ fun HomeScreen(
                 item(key = "latest_songs") {
                     LatestSongsSection(
                         songColumns = MusicRepository.latestSongColumns,
-                        personalizedTracks = if (ytAccountState.isSignedIn) visibleQuickPicks else emptyList(),
-                        sectionTitle = if (ytAccountState.isSignedIn && visibleQuickPicks.isNotEmpty()) {
-                            "Picked for You"
-                        } else {
-                            "Latest Songs"
-                        },
+                        personalizedTracks = if (ytAccountState.isSignedIn) visibleQuickPicks else visibleTrendingTracks,
+                        sectionTitle = if (ytAccountState.isSignedIn) "Picked for You" else "Trending on YouTube Music",
                         onSeeAllClick = {
-                            if (ytAccountState.isSignedIn && visibleQuickPicks.isNotEmpty()) {
-                                MusicPlayerState.play(visibleQuickPicks.first(), visibleQuickPicks)
+                            val feed = if (ytAccountState.isSignedIn) visibleQuickPicks else visibleTrendingTracks
+                            if (feed.isNotEmpty()) {
+                                MusicPlayerState.play(feed.first(), feed)
                             } else {
-                                Toast.makeText(context, "Browsing all latest songs", Toast.LENGTH_SHORT).show()
+                                currentScreen = AppScreen.BROWSE
+                                selectedTab = NavTab.BROWSE
                             }
                         },
                         onTrackClick = { track ->
@@ -427,7 +499,8 @@ fun HomeScreen(
                             Toast.makeText(context, "Options for ${track.title}", Toast.LENGTH_SHORT).show()
                         },
                         onPersonalizedTrackClick = { liveTrack ->
-                            MusicPlayerState.play(liveTrack, visibleQuickPicks)
+                            val queue = if (ytAccountState.isSignedIn) visibleQuickPicks else visibleTrendingTracks
+                            MusicPlayerState.play(liveTrack, queue)
                         },
                         onPersonalizedTrackMenuClick = { liveTrack ->
                             MusicPlayerState.playNext(liveTrack)
@@ -440,25 +513,126 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(28.dp))
                 }
 
-                // Curated Playlists (Spatial Audio & Essentials / Personalized Mixes)
-                item(key = "curated_playlists") {
-                    CuratedPlaylistsSection(
-                        playlists = homePlaylists,
-                        onPlaylistClick = { playlist ->
-                            val liveRef = allHomePlaylistRefs.firstOrNull { it.id == playlist.id }
-                            if (liveRef != null) {
+                if (ytAccountState.isSignedIn && recentHomeTracks.isNotEmpty()) {
+                    item(key = "home_recently_played") {
+                        HomeTrackShelf(
+                            title = "Recently Played",
+                            subtitle = "From your listening history",
+                            tracks = recentHomeTracks,
+                            onTrackClick = { track -> MusicPlayerState.play(track, recentHomeTracks) },
+                        )
+                    }
+                    item(key = "spacer_recently_played") { Spacer(Modifier.height(28.dp)) }
+                }
+
+                if (ytAccountState.isSignedIn && tasteTracks.isNotEmpty()) {
+                    item(key = "home_taste_recommendations") {
+                        HomeTrackShelf(
+                            title = "Because You Listen To",
+                            subtitle = preferredArtistNames.joinToString(" · "),
+                            tracks = tasteTracks,
+                            onTrackClick = { track -> MusicPlayerState.play(track, tasteTracks) },
+                        )
+                    }
+                    item(key = "spacer_taste_recommendations") { Spacer(Modifier.height(28.dp)) }
+                }
+
+                if (recommendedArtists.isNotEmpty()) {
+                    item(key = "home_recommended_artists") {
+                        HomeArtistShelf(
+                            title = if (ytAccountState.isSignedIn && savedArtists.isNotEmpty()) "Your Artists" else "Popular Artists",
+                            artists = recommendedArtists,
+                            onArtistClick = { artist ->
                                 MusicPlayerState.pendingArtistNav = PendingArtistNav(
-                                    browseId = liveRef.id,
-                                    name = liveRef.title,
-                                    subtitle = liveRef.author.ifBlank { "Featured Playlist" },
-                                    thumbnailUrl = liveRef.thumbnailUrl,
+                                    browseId = artist.id,
+                                    name = artist.name,
+                                    subtitle = artist.subscribers ?: "Artist",
+                                    thumbnailUrl = artist.thumbnailUrl,
+                                    initialType = BrowseType.ARTIST,
+                                )
+                            },
+                        )
+                    }
+                    item(key = "spacer_recommended_artists") { Spacer(Modifier.height(28.dp)) }
+                }
+
+                if (recommendedAlbums.isNotEmpty()) {
+                    item(key = "home_recommended_albums") {
+                        HomeCollectionShelf(
+                            title = if (ytAccountState.isSignedIn && savedAlbums.isNotEmpty()) "Albums You Saved & More" else "Popular Albums",
+                            items = recommendedAlbums,
+                            onItemClick = { album ->
+                                MusicPlayerState.pendingArtistNav = PendingArtistNav(
+                                    browseId = album.id,
+                                    name = album.title,
+                                    subtitle = album.author.ifBlank { "Album" },
+                                    thumbnailUrl = album.thumbnailUrl,
+                                    initialType = BrowseType.ALBUM,
+                                )
+                            },
+                        )
+                    }
+                    item(key = "spacer_recommended_albums") { Spacer(Modifier.height(28.dp)) }
+                }
+
+                if (visibleNewReleases.isNotEmpty()) {
+                    item(key = "home_new_releases") {
+                        HomeNewReleaseShelf(
+                            title = "New Releases",
+                            albums = visibleNewReleases,
+                            onAlbumClick = { album ->
+                                MusicPlayerState.pendingArtistNav = PendingArtistNav(
+                                    browseId = album.browseId,
+                                    name = album.title,
+                                    subtitle = album.subtitleLine,
+                                    thumbnailUrl = album.thumbnailUrl,
+                                    initialType = BrowseType.ALBUM,
+                                )
+                            },
+                        )
+                    }
+                    item(key = "spacer_new_releases") { Spacer(Modifier.height(28.dp)) }
+                }
+
+                val playlistShelf = if (visibleHomePlaylistRefs.isNotEmpty()) visibleHomePlaylistRefs else emptyList()
+                if (playlistShelf.isNotEmpty()) {
+                    item(key = "curated_playlists") {
+                        HomeCollectionShelf(
+                            title = if (ytAccountState.isSignedIn && personalizedPlaylists.isNotEmpty()) "Made for You" else "Popular Playlists",
+                            items = playlistShelf,
+                            subtitle = "Playlists from YouTube Music",
+                            onItemClick = { playlist ->
+                                MusicPlayerState.pendingArtistNav = PendingArtistNav(
+                                    browseId = playlist.id,
+                                    name = playlist.title,
+                                    subtitle = playlist.author.ifBlank { "YouTube Music" },
+                                    thumbnailUrl = playlist.thumbnailUrl,
                                     initialType = BrowseType.PLAYLIST,
                                 )
-                            } else {
-                                Toast.makeText(context, "Playlist: ${playlist.title}", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    )
+                            },
+                        )
+                    }
+                    item(key = "spacer_playlists") { Spacer(Modifier.height(28.dp)) }
+                }
+
+                if (podcastShows.isNotEmpty()) {
+                    item(key = "home_podcasts") {
+                        HomeCollectionShelf(
+                            title = "Podcasts",
+                            subtitle = "Shows discovered on YouTube Music",
+                            items = podcastShows,
+                            onItemClick = { show ->
+                                MusicPlayerState.pendingArtistNav = PendingArtistNav(
+                                    browseId = show.id,
+                                    name = show.title,
+                                    subtitle = show.author.ifBlank { "Podcast" },
+                                    thumbnailUrl = show.thumbnailUrl,
+                                    initialType = BrowseType.PLAYLIST,
+                                )
+                            },
+                        )
+                    }
+                    item(key = "spacer_podcasts") { Spacer(Modifier.height(28.dp)) }
                 }
 
                 item(key = "spacer_playlists") {
