@@ -236,7 +236,7 @@ class GoogleAccountAuthAndParsersTest {
         )
         val expectedDigest = MessageDigest.getInstance("SHA-1")
             .digest(
-                "user-session-123:1700000000 test_secret https://music.youtube.com"
+                "user-session-123 1700000000 test_secret https://music.youtube.com"
                     .toByteArray(Charsets.UTF_8),
             )
             .joinToString("") { "%02x".format(it) }
