@@ -92,6 +92,10 @@ import androidx.compose.ui.unit.sp
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.backend.LyricsLine
 import com.darkxvenom.itune.backend.MusicPlayerState
+import com.darkxvenom.itune.backend.lyrics.LyricsTranslationHelper
+import com.darkxvenom.itune.data.library.SettingsStore
+import com.darkxvenom.itune.ui.theme.AppleTextSecondary
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
@@ -218,6 +222,23 @@ internal fun AirBeatsLyricsV2Content(
 
     var isSelectionModeActive by rememberSaveable { mutableStateOf(false) }
     val selectedIndices = remember { mutableStateListOf<Int>() }
+
+    val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
+    val songTranslations by LyricsTranslationHelper.currentSongTranslations.collectAsStateWithLifecycle()
+    val currentTrackId = MusicPlayerState.currentTrack?.id.orEmpty()
+
+    // Automatically check for cached translations for this song
+    LaunchedEffect(currentTrackId) {
+        if (currentTrackId.isNotBlank() && !songTranslations.containsKey(currentTrackId)) {
+            LyricsTranslationHelper.getTranslationsForSong(
+                context,
+                currentTrackId,
+                settingsState.lyricsTranslateLanguage
+            )
+        }
+    }
+
+    val activeSongTranslation = songTranslations[currentTrackId]
 
     val entriesWithWords: List<AirBeatsLyricsEntry> = remember(lyrics) {
         if (lyrics.isEmpty()) return@remember emptyList()
@@ -534,7 +555,25 @@ internal fun AirBeatsLyricsV2Content(
                         ),
                     horizontalAlignment = horizontalAlignment
                 ) {
-                    if (!item.words.isNullOrEmpty() && isSynced) {
+                    val translatedLine = if (index > 0) activeSongTranslation?.getOrNull(index - 1) else null
+                    val replaceOriginal = settingsState.lyricsReplaceOriginal && !translatedLine.isNullOrBlank()
+
+                    if (replaceOriginal) {
+                        // ── Replaced actual line with translated text ──
+                        Text(
+                            text = translatedLine!!,
+                            style = TextStyle(
+                                fontFamily = SFProDisplay,
+                                fontSize = if (isSynced) lyricsTextSize.sp else 23.sp,
+                                fontWeight = if (isActive) FontWeight.W800 else FontWeight.W700,
+                                letterSpacing = (-0.6).sp,
+                                lineHeight = 35.sp
+                            ),
+                            color = textColor,
+                            textAlign = textAlign,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    } else if (!item.words.isNullOrEmpty() && isSynced) {
                         AirBeatsLyricsLineV2(
                             words = item.words,
                             isActive = isActive,
@@ -558,6 +597,25 @@ internal fun AirBeatsLyricsV2Content(
                             color = textColor,
                             textAlign = textAlign,
                             modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
+                    // ── AI Lyrics Translation Subtitle (only when NOT replacing original) ──
+                    if (!replaceOriginal && !translatedLine.isNullOrBlank() && item.text.isNotBlank()) {
+                        Text(
+                            text = translatedLine,
+                            style = TextStyle(
+                                fontFamily = SFProDisplay,
+                                fontSize = if (isSynced) (lyricsTextSize * 0.60f).sp else 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                letterSpacing = (-0.2).sp,
+                                lineHeight = 22.sp
+                            ),
+                            color = if (isActive) Color.White.copy(alpha = 0.85f) else AppleTextSecondary.copy(alpha = 0.65f),
+                            textAlign = textAlign,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 4.dp)
                         )
                     }
                 }

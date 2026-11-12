@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -25,10 +26,17 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.SmartToy
+import androidx.compose.material.icons.rounded.Sync
 import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material.icons.rounded.Tune
+import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -39,6 +47,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,11 +64,19 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.formatMusicDuration
 import com.darkxvenom.itune.backend.lyrics.LyricsHelper
 import com.darkxvenom.itune.backend.lyrics.LyricsSearchResult
+import com.darkxvenom.itune.backend.lyrics.LyricsTranslationHelper
+import com.darkxvenom.itune.data.library.SettingsStore
+import com.darkxvenom.itune.ui.settings.AppleGlassSwitch
+import com.darkxvenom.itune.ui.theme.AppleMusicRed
+import com.darkxvenom.itune.ui.theme.AppleTextSecondary
 import kotlinx.coroutines.CancellationException
 import kotlin.math.roundToInt
 
@@ -72,14 +89,19 @@ internal fun formatLyricsOffsetLabel(offsetMs: Long): String {
 
 @Composable
 internal fun MorePopupLyricsMenuSection(
+    track: MusicTrack,
     onBack: () -> Unit,
     onOpenSearch: () -> Unit,
     onOpenEdit: () -> Unit,
-    onOpenOffset: () -> Unit
+    onOpenOffset: () -> Unit,
+    onOpenTranslate: () -> Unit,
 ) {
     val context = LocalContext.current
     val view = LocalView.current
     val offsetBadge = formatLyricsOffsetLabel(MusicPlayerState.lyricsOffsetMs)
+    val songTranslations by LyricsTranslationHelper.currentSongTranslations.collectAsStateWithLifecycle()
+    val isTranslatedForSong = songTranslations.containsKey(track.id) ||
+        LyricsTranslationHelper.hasCachedTranslation(context, track.id)
 
     Column(modifier = Modifier.fillMaxWidth()) {
         PopupSubPageHeader(
@@ -114,10 +136,10 @@ internal fun MorePopupLyricsMenuSection(
         LyricsMenuActionRow(
             icon = Icons.Rounded.Translate,
             title = "Translate",
-            trailingBadge = "Later",
+            trailingBadge = if (isTranslatedForSong) "Active" else "AI",
             onClick = {
                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                Toast.makeText(context, "Translation will be configured later", Toast.LENGTH_SHORT).show()
+                onOpenTranslate()
             }
         )
         PopupMenuDivider()
@@ -759,6 +781,710 @@ private fun FrostedInputField(
                 keyboardActions = KeyboardActions(onSearch = { onImeSearch() }),
                 modifier = Modifier.fillMaxWidth()
             )
+        }
+    }
+}
+
+@Composable
+internal fun MorePopupLyricsTranslateSection(
+    track: MusicTrack,
+    onBack: () -> Unit
+) {
+    val context = LocalContext.current
+    val view = LocalView.current
+    val scope = rememberCoroutineScope()
+    val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
+    val translationStatus by LyricsTranslationHelper.status.collectAsStateWithLifecycle()
+    val songTranslations by LyricsTranslationHelper.currentSongTranslations.collectAsStateWithLifecycle()
+
+    val isTranslating = translationStatus is LyricsTranslationHelper.TranslationStatus.Translating
+    val isTranslatedForSong = songTranslations.containsKey(track.id) ||
+        LyricsTranslationHelper.hasCachedTranslation(context, track.id, settingsState.lyricsTranslateLanguage)
+
+    var customPromptText by remember(settingsState.lyricsTranslationCustomPrompt) {
+        mutableStateOf(settingsState.lyricsTranslationCustomPrompt)
+    }
+    var showLanguageDialog by remember { mutableStateOf(false) }
+
+    val hasApiKey = settingsState.lyricsTranslationApiKey.isNotBlank()
+    val rawLyricsLines: List<String> = remember(track.id, MusicPlayerState.lyrics, MusicPlayerState.rawLyricsText) {
+        val parsed = MusicPlayerState.lyrics.map { it.text.trim() }.filter { it.isNotEmpty() }
+        if (parsed.isNotEmpty()) parsed else MusicPlayerState.rawLyricsText.lines().map { it.trim() }.filter { it.isNotEmpty() }
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        PopupSubPageHeader(
+            title = "Translate Lyrics",
+            trailingBadge = if (isTranslatedForSong) "Active" else null,
+            onBack = onBack
+        )
+        PopupMenuDivider()
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 10.dp)
+        ) {
+            // Track Info Card
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.White.copy(alpha = 0.07f))
+                    .padding(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = track.title,
+                            fontFamily = SFProDisplay,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Spacer(Modifier.height(2.dp))
+                        Text(
+                            text = track.artists,
+                            fontFamily = SFProDisplay,
+                            fontSize = 12.sp,
+                            color = AppleTextSecondary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .background(
+                                if (isTranslatedForSong) Color(0xFF34C759).copy(alpha = 0.22f)
+                                else Color.White.copy(alpha = 0.12f)
+                            )
+                            .padding(horizontal = 9.dp, vertical = 3.dp)
+                    ) {
+                        Text(
+                            text = if (isTranslatedForSong) "Translated" else "Original",
+                            fontFamily = SFProDisplay,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = if (isTranslatedForSong) Color(0xFF34C759) else AppleTextSecondary
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(14.dp))
+
+            // Target Language Row
+            Text(
+                text = "TARGET LANGUAGE",
+                fontFamily = SFProDisplay,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White.copy(alpha = 0.6f),
+                letterSpacing = 0.5.sp,
+                modifier = Modifier.padding(start = 2.dp, bottom = 6.dp)
+            )
+            val currentLangName = LyricsTranslationHelper.AiTranslationLanguages[settingsState.lyricsTranslateLanguage]
+                ?: settingsState.lyricsTranslateLanguage
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.White.copy(alpha = 0.08f))
+                    .clickable {
+                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                        showLanguageDialog = true
+                    }
+                    .padding(horizontal = 14.dp, vertical = 12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Language,
+                        contentDescription = null,
+                        tint = Color(0xFF0A84FF),
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        text = currentLangName,
+                        fontFamily = SFProDisplay,
+                        fontSize = 14.5.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Icon(
+                        imageVector = Icons.Rounded.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = AppleTextSecondary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(14.dp))
+
+            // Inbuilt Prompt Types / Mode
+            Text(
+                text = "PROMPT TYPE",
+                fontFamily = SFProDisplay,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White.copy(alpha = 0.6f),
+                letterSpacing = 0.5.sp,
+                modifier = Modifier.padding(start = 2.dp, bottom = 6.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val modes = listOf("Literal", "Hinglish", "Romanized", "Transcribed", "Custom")
+                modes.forEach { mode ->
+                    val isSelected = settingsState.lyricsTranslateMode == mode
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .background(
+                                if (isSelected) AppleMusicRed
+                                else Color.White.copy(alpha = 0.10f)
+                            )
+                            .clickable {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                SettingsStore.setLyricsTranslateMode(context, mode)
+                            }
+                            .padding(horizontal = 13.dp, vertical = 7.dp)
+                    ) {
+                        Text(
+                            text = mode,
+                            fontFamily = SFProDisplay,
+                            fontSize = 12.5.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isSelected) Color.White else Color.White.copy(alpha = 0.82f)
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(14.dp))
+
+            // AI Provider selector
+            Text(
+                text = "AI ENGINE",
+                fontFamily = SFProDisplay,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White.copy(alpha = 0.6f),
+                letterSpacing = 0.5.sp,
+                modifier = Modifier.padding(start = 2.dp, bottom = 6.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val providers = listOf(
+                    LyricsTranslationHelper.PROVIDER_OPENROUTER to "OpenRouter",
+                    LyricsTranslationHelper.PROVIDER_GEMINI to "Gemini",
+                    LyricsTranslationHelper.PROVIDER_OPENAI to "OpenAI",
+                    LyricsTranslationHelper.PROVIDER_CLAUDE to "Claude",
+                )
+                providers.forEach { (provId, provLabel) ->
+                    val isSelected = settingsState.lyricsTranslationProvider == provId
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .background(
+                                if (isSelected) Color(0xFF007AFF)
+                                else Color.White.copy(alpha = 0.10f)
+                            )
+                            .clickable {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                SettingsStore.setLyricsTranslationProvider(context, provId)
+                            }
+                            .padding(horizontal = 13.dp, vertical = 7.dp)
+                    ) {
+                        Text(
+                            text = provLabel,
+                            fontFamily = SFProDisplay,
+                            fontSize = 12.5.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isSelected) Color.White else Color.White.copy(alpha = 0.82f)
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(14.dp))
+
+            // Custom Prompt Field (shown if mode is Custom or can add custom nuances)
+            if (settingsState.lyricsTranslateMode == "Custom") {
+                Text(
+                    text = "CUSTOM INSTRUCTIONS",
+                    fontFamily = SFProDisplay,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White.copy(alpha = 0.6f),
+                    letterSpacing = 0.5.sp,
+                    modifier = Modifier.padding(start = 2.dp, bottom = 6.dp)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.White.copy(alpha = 0.08f))
+                        .border(0.75.dp, Color.White.copy(alpha = 0.14f), RoundedCornerShape(12.dp))
+                        .padding(12.dp)
+                ) {
+                    if (customPromptText.isEmpty()) {
+                        Text(
+                            text = "e.g. translate into poetic hinglish with rhymes",
+                            fontFamily = SFProDisplay,
+                            fontSize = 13.sp,
+                            color = Color.White.copy(alpha = 0.35f)
+                        )
+                    }
+                    BasicTextField(
+                        value = customPromptText,
+                        onValueChange = {
+                            customPromptText = it
+                            SettingsStore.setLyricsTranslationCustomPrompt(context, it)
+                        },
+                        textStyle = TextStyle(
+                            fontFamily = SFProDisplay,
+                            fontSize = 13.sp,
+                            color = Color.White
+                        ),
+                        cursorBrush = SolidColor(Color.White),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                Spacer(Modifier.height(14.dp))
+            }
+
+            // "Translate actual lines" Toggle
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.White.copy(alpha = 0.08f))
+                    .padding(horizontal = 14.dp, vertical = 10.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Translate actual lines",
+                            fontFamily = SFProDisplay,
+                            fontSize = 14.5.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                        Spacer(Modifier.height(2.dp))
+                        Text(
+                            text = if (settingsState.lyricsReplaceOriginal)
+                                "Replaces original lines with translation"
+                            else
+                                "Displays translated subtitles below each line",
+                            fontFamily = SFProDisplay,
+                            fontSize = 11.5.sp,
+                            color = AppleTextSecondary
+                        )
+                    }
+                    Spacer(Modifier.width(10.dp))
+                    AppleGlassSwitch(
+                        checked = settingsState.lyricsReplaceOriginal,
+                        onCheckedChange = { checked ->
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            SettingsStore.setLyricsReplaceOriginal(context, checked)
+                        }
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            // Missing API Key Warning
+            if (!hasApiKey) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(0xFFFF9F0A).copy(alpha = 0.18f))
+                        .border(0.75.dp, Color(0xFFFF9F0A).copy(alpha = 0.45f), RoundedCornerShape(12.dp))
+                        .padding(12.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Rounded.WarningAmber,
+                            contentDescription = null,
+                            tint = Color(0xFFFF9F0A),
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        Text(
+                            text = "API Key not configured for ${settingsState.lyricsTranslationProvider}. Please set it in Settings > Lyrics.",
+                            fontFamily = SFProDisplay,
+                            fontSize = 12.sp,
+                            color = Color.White.copy(alpha = 0.95f),
+                            lineHeight = 16.sp
+                        )
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
+            }
+
+            // Live Translation Status & Feedback
+            when (val status = translationStatus) {
+                is LyricsTranslationHelper.TranslationStatus.Translating -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color.White.copy(alpha = 0.10f))
+                            .padding(12.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                                color = AppleMusicRed
+                            )
+                            Spacer(Modifier.width(12.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Translating lyrics...",
+                                    fontFamily = SFProDisplay,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.White
+                                )
+                                val lastLog = status.logs.lastOrNull() ?: "Sending request..."
+                                Text(
+                                    text = lastLog,
+                                    fontFamily = SFProDisplay,
+                                    fontSize = 11.5.sp,
+                                    color = AppleTextSecondary,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(50))
+                                    .clickable {
+                                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                        LyricsTranslationHelper.cancelTranslation()
+                                    }
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "Cancel",
+                                    fontFamily = SFProDisplay,
+                                    fontSize = 12.sp,
+                                    color = Color(0xFFFF453A)
+                                )
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(12.dp))
+                }
+                is LyricsTranslationHelper.TranslationStatus.Error -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFFFF453A).copy(alpha = 0.18f))
+                            .border(0.75.dp, Color(0xFFFF453A).copy(alpha = 0.45f), RoundedCornerShape(12.dp))
+                            .padding(12.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Rounded.Close,
+                                contentDescription = null,
+                                tint = Color(0xFFFF453A),
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = status.message,
+                                fontFamily = SFProDisplay,
+                                fontSize = 12.sp,
+                                color = Color.White
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(12.dp))
+                }
+                is LyricsTranslationHelper.TranslationStatus.Success -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFF34C759).copy(alpha = 0.20f))
+                            .border(0.75.dp, Color(0xFF34C759).copy(alpha = 0.45f), RoundedCornerShape(12.dp))
+                            .padding(12.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Rounded.Check,
+                                contentDescription = null,
+                                tint = Color(0xFF34C759),
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = "Lyrics translated successfully!",
+                                fontFamily = SFProDisplay,
+                                fontSize = 12.5.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.White
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(12.dp))
+                }
+                else -> {}
+            }
+
+            // Action Buttons
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                if (isTranslatedForSong) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp)
+                            .clip(RoundedCornerShape(22.dp))
+                            .background(Color.White.copy(alpha = 0.10f))
+                            .clickable {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                LyricsTranslationHelper.clearSongTranslation(context, track.id)
+                                Toast.makeText(context, "Translation cleared", Toast.LENGTH_SHORT).show()
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Clear",
+                            fontFamily = SFProDisplay,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFFFF453A)
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .weight(if (isTranslatedForSong) 1.5f else 1f)
+                        .height(44.dp)
+                        .clip(RoundedCornerShape(22.dp))
+                        .background(if (isTranslating) Color.White.copy(alpha = 0.2f) else AppleMusicRed)
+                        .clickable(enabled = !isTranslating) {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            if (!hasApiKey) {
+                                Toast.makeText(
+                                    context,
+                                    "Please set your API Key in Settings > Lyrics first",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                return@clickable
+                            }
+                            val lines = rawLyricsLines
+                            if (lines.isEmpty()) {
+                                Toast.makeText(context, "No lyrics found for this song", Toast.LENGTH_SHORT).show()
+                                return@clickable
+                            }
+                            LyricsTranslationHelper.translateSong(
+                                context = context,
+                                songId = track.id,
+                                lines = lines,
+                                targetLanguageCode = settingsState.lyricsTranslateLanguage,
+                                mode = settingsState.lyricsTranslateMode,
+                                provider = settingsState.lyricsTranslationProvider,
+                                apiKey = settingsState.lyricsTranslationApiKey,
+                                baseUrl = settingsState.lyricsTranslationBaseUrl,
+                                model = settingsState.lyricsTranslationModel,
+                                customPrompt = customPromptText.takeIf { it.isNotBlank() },
+                                scope = scope
+                            )
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (isTranslating) "Translating..." else if (isTranslatedForSong) "Retranslate" else "Translate",
+                        fontFamily = SFProDisplay,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+    }
+
+    if (showLanguageDialog) {
+        AiLanguageSelectorDialog(
+            currentLanguageCode = settingsState.lyricsTranslateLanguage,
+            onSelect = { code ->
+                SettingsStore.setLyricsTranslateLanguage(context, code)
+                showLanguageDialog = false
+            },
+            onDismiss = { showLanguageDialog = false }
+        )
+    }
+}
+
+@Composable
+internal fun AiLanguageSelectorDialog(
+    currentLanguageCode: String,
+    onSelect: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var searchQuery by remember { mutableStateOf("") }
+    val allLanguages = remember { LyricsTranslationHelper.AiTranslationLanguages.toList() }
+    val filteredLanguages = remember(searchQuery) {
+        if (searchQuery.isBlank()) allLanguages
+        else allLanguages.filter { (code, name) ->
+            name.contains(searchQuery, ignoreCase = true) || code.contains(searchQuery, ignoreCase = true)
+        }
+    }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.92f)
+                .clip(RoundedCornerShape(20.dp))
+                .background(Color(0xFF1C1C1E))
+                .border(0.75.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(20.dp))
+                .padding(20.dp)
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Select Language",
+                        fontFamily = SFProDisplay,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .background(Color.White.copy(alpha = 0.1f))
+                            .clickable(onClick = onDismiss)
+                            .padding(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Close,
+                            contentDescription = "Close",
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(14.dp))
+
+                // Search field
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color.White.copy(alpha = 0.08f))
+                        .border(0.5.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(10.dp))
+                        .padding(horizontal = 12.dp, vertical = 9.dp)
+                ) {
+                    if (searchQuery.isEmpty()) {
+                        Text(
+                            text = "Search languages...",
+                            fontFamily = SFProDisplay,
+                            fontSize = 13.sp,
+                            color = Color.White.copy(alpha = 0.4f)
+                        )
+                    }
+                    BasicTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        singleLine = true,
+                        textStyle = TextStyle(
+                            fontFamily = SFProDisplay,
+                            fontSize = 13.sp,
+                            color = Color.White
+                        ),
+                        cursorBrush = SolidColor(Color.White),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                Spacer(Modifier.height(12.dp))
+
+                // Language list
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 350.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    filteredLanguages.forEach { (code, name) ->
+                        val isSelected = code == currentLanguageCode
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(
+                                    if (isSelected) AppleMusicRed.copy(alpha = 0.25f)
+                                    else Color.Transparent
+                                )
+                                .clickable { onSelect(code) }
+                                .padding(horizontal = 12.dp, vertical = 11.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = name,
+                                fontFamily = SFProDisplay,
+                                fontSize = 14.5.sp,
+                                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                                color = if (isSelected) Color.White else Color.White.copy(alpha = 0.88f),
+                                modifier = Modifier.weight(1f)
+                            )
+                            if (isSelected) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Check,
+                                    contentDescription = null,
+                                    tint = AppleMusicRed,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

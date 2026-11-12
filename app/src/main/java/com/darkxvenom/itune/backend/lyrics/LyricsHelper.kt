@@ -5,16 +5,20 @@ import android.util.Log
 import com.darkxvenom.itune.backend.LyricsLine
 import com.darkxvenom.itune.backend.Net
 import com.darkxvenom.itune.backend.WordTiming
+import com.darkxvenom.itune.data.artist.ArtistInnertubeClient
+import com.darkxvenom.itune.data.library.SettingsStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import kotlin.math.abs
 
@@ -41,13 +45,29 @@ data class LoadedLyrics(
     val rawText: String,
 )
 
+data class LyricsProviderInfo(
+    val id: String,
+    val displayName: String,
+    val description: String,
+    val iconRes: Int,
+)
+
 interface LyricsProvider {
+    val id: String
     val name: String
     suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String>
 }
 
+private val lyricsClient: OkHttpClient by lazy {
+    Net.client.newBuilder()
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(12, TimeUnit.SECONDS)
+        .build()
+}
+
 object LrcLibLyricsProvider : LyricsProvider {
-    override val name = "LrcLib"
+    override val id = "lrclib"
+    override val name = "LRC Lib"
 
     override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
         runCatching {
@@ -98,7 +118,6 @@ object LrcLibLyricsProvider : LyricsProvider {
         val secondBatch = runCatching { queryEndpoint(fallbackUrl) }.getOrDefault(emptyList())
         if (secondBatch.isNotEmpty()) return@withContext secondBatch
 
-        // Strip common remix/version tags like "(Lofi)" or "[Slowed]" when looking up original lyrics
         val strippedTitle = cleanTitle
             .replace(Regex("\\s*[(\\[].*?[)\\]]"), "")
             .substringBefore("|")
@@ -117,7 +136,7 @@ object LrcLibLyricsProvider : LyricsProvider {
             .header("Accept", "application/json")
             .build()
 
-        Net.client.newCall(req).execute().use { response ->
+        lyricsClient.newCall(req).execute().use { response ->
             if (!response.isSuccessful) throw IllegalStateException("LrcLib error: ${response.code}")
             val array = JSONArray(response.body?.string().orEmpty())
             val out = mutableListOf<LyricsSearchResult>()
@@ -143,6 +162,7 @@ object LrcLibLyricsProvider : LyricsProvider {
 }
 
 object KuGouLyricsProvider : LyricsProvider {
+    override val id = "kugou"
     override val name = "KuGou"
 
     override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
@@ -162,7 +182,7 @@ object KuGouLyricsProvider : LyricsProvider {
             val query = URLEncoder.encode(rawKeyword, StandardCharsets.UTF_8.name())
             val searchUrl = "https://mobileservice.kugou.com/api/v3/search/song?version=9108&plat=0&pagesize=5&showtype=0&keyword=$query"
             val searchReq = Request.Builder().url(searchUrl).header("User-Agent", "KuGou/1.0").build()
-            val songObj = Net.client.newCall(searchReq).execute().use { response ->
+            val songObj = lyricsClient.newCall(searchReq).execute().use { response ->
                 val json = JSONObject(response.body?.string().orEmpty())
                 json.optJSONObject("data")?.optJSONArray("info")?.optJSONObject(0)
             } ?: return@runCatching emptyList()
@@ -174,7 +194,7 @@ object KuGouLyricsProvider : LyricsProvider {
 
             val lyricsSearchUrl = "https://lyrics.kugou.com/search?ver=1&man=yes&client=pc&hash=$hash"
             val lyricsReq = Request.Builder().url(lyricsSearchUrl).header("User-Agent", "KuGou/1.0").build()
-            val candidates = Net.client.newCall(lyricsReq).execute().use { response ->
+            val candidates = lyricsClient.newCall(lyricsReq).execute().use { response ->
                 JSONObject(response.body?.string().orEmpty()).optJSONArray("candidates")
             } ?: return@runCatching emptyList()
 
@@ -189,7 +209,7 @@ object KuGouLyricsProvider : LyricsProvider {
                 val dlUrl = "https://lyrics.kugou.com/download?ver=1&client=pc&fmt=lrc&id=$candId&accesskey=$accessKey"
                 val dlReq = Request.Builder().url(dlUrl).header("User-Agent", "KuGou/1.0").build()
                 val lrcText = runCatching {
-                    Net.client.newCall(dlReq).execute().use { resp ->
+                    lyricsClient.newCall(dlReq).execute().use { resp ->
                         val base64Content = JSONObject(resp.body?.string().orEmpty()).optNonNullString("content")
                         if (base64Content.isBlank()) "" else String(Base64.decode(base64Content, Base64.DEFAULT), StandardCharsets.UTF_8)
                     }
@@ -218,13 +238,398 @@ object KuGouLyricsProvider : LyricsProvider {
     }
 }
 
+object SimpLyricsProvider : LyricsProvider {
+    override val id = "simpmusic"
+    override val name = "SimpMusic"
+
+    override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
+        runCatching {
+            val cleanId = id.trim()
+            if (cleanId.isBlank() || cleanId.startsWith("JS:")) throw IllegalArgumentException("Unsupported ID")
+            val req = Request.Builder()
+                .url("https://api-lyrics.simpmusic.org/v1/$cleanId")
+                .header("User-Agent", "iTune/1.0")
+                .header("Accept", "application/json")
+                .build()
+            lyricsClient.newCall(req).execute().use { resp ->
+                if (!resp.isSuccessful) throw IllegalStateException("HTTP ${resp.code}")
+                val body = resp.body?.string().orEmpty()
+                val json = JSONObject(body)
+                if (!json.optBoolean("success", false)) throw IllegalStateException("No lyrics found")
+                val dataArray = json.optJSONArray("data") ?: throw IllegalStateException("Empty data array")
+                var bestLyrics: String? = null
+                var minDiff = Int.MAX_VALUE
+                for (i in 0 until dataArray.length()) {
+                    val item = dataArray.optJSONObject(i) ?: continue
+                    val synced = item.optString("syncedLyrics", "").trim()
+                    val plain = item.optString("plainLyrics", "").trim()
+                    val lyrics = synced.ifBlank { plain }
+                    if (lyrics.isBlank()) continue
+                    val dur = item.optInt("duration", 0)
+                    if (durationSec > 0 && dur > 0) {
+                        val diff = abs(dur - durationSec)
+                        if (diff <= 12 && diff < minDiff) {
+                            minDiff = diff
+                            bestLyrics = lyrics
+                        }
+                    } else if (bestLyrics == null) {
+                        bestLyrics = lyrics
+                    }
+                }
+                bestLyrics ?: throw IllegalStateException("No matching lyrics on SimpMusic")
+            }
+        }
+    }
+}
+
+object YouTubeSubtitleLyricsProvider : LyricsProvider {
+    override val id = "youtube_subtitles"
+    override val name = "YouTube Subtitles"
+
+    override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
+        ArtistInnertubeClient.transcript(id)
+    }
+}
+
+object YouTubeLyricsProvider : LyricsProvider {
+    override val id = "youtube_music"
+    override val name = "YouTube Music"
+
+    override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
+        ArtistInnertubeClient.lyrics(id)
+    }
+}
+
+object PaxsenixLyricsProvider : LyricsProvider {
+    override val id = "paxsenix"
+    override val name = "Paxsenix"
+    private const val BASE_URL = "https://lyrics.paxsenix.org/"
+
+    override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
+        runCatching {
+            val cleanId = id.trim()
+            if (cleanId.isNotBlank() && !cleanId.startsWith("JS:")) {
+                try {
+                    val req = Request.Builder()
+                        .url("${BASE_URL}youtube/lyrics?id=$cleanId")
+                        .header("User-Agent", "iTune/1.0")
+                        .header("Accept", "application/json")
+                        .build()
+                    lyricsClient.newCall(req).execute().use { resp ->
+                        if (resp.isSuccessful) {
+                            val body = resp.body?.string().orEmpty()
+                            val lrc = extractLyrics(body)
+                            if (!lrc.isNullOrBlank()) return@runCatching lrc
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
+
+            val cleanTitle = title.trim()
+            val cleanArtist = artist.trim()
+            if (cleanTitle.isNotBlank() && cleanArtist.isNotBlank()) {
+                val encTitle = URLEncoder.encode(cleanTitle, StandardCharsets.UTF_8.name())
+                val encArtist = URLEncoder.encode(cleanArtist, StandardCharsets.UTF_8.name())
+                val paths = listOf(
+                    "spotify/lyrics?title=$encTitle&artist=$encArtist",
+                    "musixmatch/lyrics?title=$encTitle&artist=$encArtist",
+                    "apple-music/lyrics?title=$encTitle&artist=$encArtist",
+                    "netease/lyrics?title=$encTitle&artist=$encArtist"
+                )
+                for (p in paths) {
+                    try {
+                        val req = Request.Builder()
+                            .url(BASE_URL + p)
+                            .header("User-Agent", "iTune/1.0")
+                            .header("Accept", "application/json, text/plain, */*")
+                            .build()
+                        lyricsClient.newCall(req).execute().use { resp ->
+                            if (resp.isSuccessful) {
+                                val body = resp.body?.string().orEmpty()
+                                val lrc = extractLyrics(body)
+                                if (!lrc.isNullOrBlank()) return@runCatching lrc
+                            }
+                        }
+                    } catch (_: Exception) {}
+                }
+            }
+            throw IllegalStateException("No lyrics found on Paxsenix")
+        }
+    }
+
+    private fun extractLyrics(body: String): String? {
+        val trimmed = body.trim()
+        if (trimmed.isEmpty()) return null
+        if (!trimmed.startsWith("{") && !trimmed.startsWith("[")) return trimmed
+        return try {
+            val json = JSONObject(trimmed)
+            for (key in listOf("lyrics", "lrc", "content", "text", "plainLyrics", "syncedLyrics")) {
+                val value = json.optString(key, "").trim()
+                if (value.isNotEmpty() && value != "null") return value
+            }
+            null
+        } catch (_: Exception) {
+            trimmed
+        }
+    }
+}
+
+object UnisonLyricsProvider : LyricsProvider {
+    override val id = "unison"
+    override val name = "Unison"
+    private const val BASE_URL = "https://unison.boidu.dev/"
+
+    override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
+        runCatching {
+            val query = listOf(title.trim(), artist.trim()).filter { it.isNotBlank() }.joinToString(" ")
+            if (query.isNotBlank()) {
+                val enc = URLEncoder.encode(query, StandardCharsets.UTF_8.name())
+                var searchUrl = "${BASE_URL}search?q=$enc"
+                if (durationSec > 0) searchUrl += "&d=$durationSec"
+                try {
+                    val req = Request.Builder().url(searchUrl).header("User-Agent", "iTune/1.0").build()
+                    lyricsClient.newCall(req).execute().use { resp ->
+                        if (resp.isSuccessful) {
+                            val json = JSONObject(resp.body?.string().orEmpty())
+                            if (json.optBoolean("success", false)) {
+                                val arr = json.optJSONArray("data")
+                                if (arr != null && arr.length() > 0) {
+                                    for (i in 0 until arr.length()) {
+                                        val lrc = arr.optJSONObject(i)?.optString("lyrics", "")?.trim().orEmpty()
+                                        if (lrc.isNotBlank()) return@runCatching lrc
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
+
+            val cleanId = id.trim()
+            if (cleanId.isNotBlank() && !cleanId.startsWith("JS:")) {
+                val vidUrl = "${BASE_URL}lyrics?v=$cleanId"
+                try {
+                    val req = Request.Builder().url(vidUrl).header("User-Agent", "iTune/1.0").build()
+                    lyricsClient.newCall(req).execute().use { resp ->
+                        if (resp.isSuccessful) {
+                            val json = JSONObject(resp.body?.string().orEmpty())
+                            if (json.optBoolean("success", false)) {
+                                val lrc = json.optJSONObject("data")?.optString("lyrics", "")?.trim().orEmpty()
+                                if (lrc.isNotBlank()) return@runCatching lrc
+                            }
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
+
+            throw IllegalStateException("Lyrics not found on Unison")
+        }
+    }
+}
+
+object BetterLyricsProvider : LyricsProvider {
+    override val id = "betterlyrics"
+    override val name = "BetterLyrics"
+    private const val BASE_URL = "https://lyrics-api.boidu.dev/"
+
+    override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
+        runCatching {
+            val cleanTitle = title.trim()
+            val cleanArtist = artist.trim()
+            if (cleanTitle.isBlank() || cleanArtist.isBlank()) throw IllegalArgumentException("Title and artist required")
+            val encTitle = URLEncoder.encode(cleanTitle, StandardCharsets.UTF_8.name())
+            val encArtist = URLEncoder.encode(cleanArtist, StandardCharsets.UTF_8.name())
+
+            val endpoints = listOf(
+                "${BASE_URL}getLyrics?s=$encTitle&a=$encArtist" + (if (durationSec > 0) "&d=$durationSec" else ""),
+                "${BASE_URL}kugou/getLyrics?s=$encTitle&a=$encArtist" + (if (durationSec > 0) "&d=$durationSec" else ""),
+            )
+
+            for (url in endpoints) {
+                try {
+                    val req = Request.Builder().url(url).header("User-Agent", "iTune/1.0").build()
+                    lyricsClient.newCall(req).execute().use { resp ->
+                        if (resp.isSuccessful) {
+                            val text = resp.body?.string().orEmpty().trim()
+                            if (text.isNotBlank()) {
+                                val ttml = if (text.startsWith("{")) {
+                                    JSONObject(text).optString("ttml", "")
+                                } else text
+                                if (ttml.isNotBlank()) {
+                                    val lrc = if (TTMLParser.isTtml(ttml)) TTMLParser.ttmlToLrc(ttml) else ttml
+                                    if (lrc.isNotBlank()) return@runCatching lrc
+                                }
+                            }
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
+
+            throw IllegalStateException("Lyrics not found on BetterLyrics")
+        }
+    }
+}
+
+object PortatoLyricsProvider : LyricsProvider {
+    override val id = "portato"
+    override val name = "Portato"
+
+    override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
+        runCatching {
+            val encTitle = URLEncoder.encode(title.trim(), StandardCharsets.UTF_8.name())
+            val encArtist = URLEncoder.encode(artist.trim(), StandardCharsets.UTF_8.name())
+            val url = "https://lyrics.portato.app/api/v1/lyrics?title=$encTitle&artist=$encArtist"
+            val req = Request.Builder().url(url).header("User-Agent", "iTune/1.0").build()
+            lyricsClient.newCall(req).execute().use { resp ->
+                if (!resp.isSuccessful) throw IllegalStateException("HTTP ${resp.code}")
+                val json = JSONObject(resp.body?.string().orEmpty())
+                val lrc = json.optString("lyrics", json.optString("lrc", "")).trim()
+                if (lrc.isBlank()) throw IllegalStateException("No lyrics found on Portato")
+                lrc
+            }
+        }
+    }
+}
+
+object YouLyLyricsProvider : LyricsProvider {
+    override val id = "youly"
+    override val name = "YouLy"
+    private val mirrors = listOf(
+        "https://lyricsplus.binimum.org/",
+        "https://lyricsplus.prjktla.my.id/",
+        "https://lyricsplus.atomix.one/",
+        "https://lyricsplus-seven.vercel.app/"
+    )
+
+    override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
+        runCatching {
+            val encTitle = URLEncoder.encode(title.trim(), StandardCharsets.UTF_8.name())
+            val encArtist = URLEncoder.encode(artist.trim(), StandardCharsets.UTF_8.name())
+            val durParam = if (durationSec > 0) "&duration=$durationSec" else ""
+
+            for (mirror in mirrors) {
+                try {
+                    val ttmlUrl = "${mirror}v1/ttml/get?title=$encTitle&artist=$encArtist$durParam"
+                    val ttmlReq = Request.Builder().url(ttmlUrl).header("User-Agent", "iTune/1.0").build()
+                    lyricsClient.newCall(ttmlReq).execute().use { resp ->
+                        if (resp.isSuccessful) {
+                            val json = JSONObject(resp.body?.string().orEmpty())
+                            val ttml = json.optString("ttml", "").trim()
+                            if (ttml.isNotBlank()) {
+                                val lrc = if (TTMLParser.isTtml(ttml)) TTMLParser.ttmlToLrc(ttml) else ttml
+                                if (lrc.isNotBlank()) return@runCatching lrc
+                            }
+                        }
+                    }
+                    val lrcUrl = "${mirror}v2/lyrics/get?title=$encTitle&artist=$encArtist$durParam"
+                    val lrcReq = Request.Builder().url(lrcUrl).header("User-Agent", "iTune/1.0").build()
+                    lyricsClient.newCall(lrcReq).execute().use { resp ->
+                        if (resp.isSuccessful) {
+                            val json = JSONObject(resp.body?.string().orEmpty())
+                            val lrc = json.optString("lyrics", "").trim()
+                            if (lrc.isNotBlank()) return@runCatching lrc
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
+            throw IllegalStateException("Lyrics not found on YouLy")
+        }
+    }
+}
+
+object MegalobizLyricsProvider : LyricsProvider {
+    override val id = "megalobiz"
+    override val name = "Megalobiz"
+
+    override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
+        runCatching {
+            val query = listOf(artist.trim(), title.trim()).filter { it.isNotBlank() }.joinToString(" ")
+            val enc = URLEncoder.encode(query, StandardCharsets.UTF_8.name())
+            val searchUrl = "https://www.megalobiz.com/searchall?qry=$enc"
+            val req = Request.Builder().url(searchUrl).header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)").build()
+            val searchHtml = lyricsClient.newCall(req).execute().use { resp ->
+                if (!resp.isSuccessful) null else resp.body?.string()
+            } ?: throw IllegalStateException("Search failed")
+
+            val match = Regex("""href=["'](/lrc/maker/download/[^"']+)["']""").find(searchHtml)
+                ?: throw IllegalStateException("No LRC link found on Megalobiz")
+            val lrcUrl = "https://www.megalobiz.com" + match.groupValues[1]
+            val detailReq = Request.Builder().url(lrcUrl).header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)").build()
+            val detailHtml = lyricsClient.newCall(detailReq).execute().use { resp ->
+                if (!resp.isSuccessful) null else resp.body?.string()
+            } ?: throw IllegalStateException("Detail download failed")
+
+            val rawSpan = Regex("""id=["']lrc_[^"']*_details["'][^>]*>(.*?)</span>""", RegexOption.DOT_MATCHES_ALL)
+                .find(detailHtml)?.groupValues?.get(1) ?: detailHtml
+
+            val clean = rawSpan
+                .replace("&lt;", "<")
+                .replace("&gt;", ">")
+                .replace("&amp;", "&")
+                .replace("<br>", "\n")
+                .replace("<br/>", "\n")
+                .replace("<br />", "\n")
+                .replace(Regex("""<[^>]+>"""), "")
+                .trim()
+
+            if (LyricsHelper.parseLrc(clean).isNotEmpty()) {
+                clean
+            } else {
+                throw IllegalStateException("Lyrics not synced on Megalobiz")
+            }
+        }
+    }
+}
+
 object LyricsHelper {
     private const val TAG = "LyricsHelper"
     private val memoryCache = ConcurrentHashMap<String, LoadedLyrics>()
-    private val providers = listOf(
-        LrcLibLyricsProvider,
-        KuGouLyricsProvider
+
+    val ALL_PROVIDERS: Map<String, LyricsProvider> = mapOf(
+        "lrclib" to LrcLibLyricsProvider,
+        "kugou" to KuGouLyricsProvider,
+        "simpmusic" to SimpLyricsProvider,
+        "youtube_subtitles" to YouTubeSubtitleLyricsProvider,
+        "paxsenix" to PaxsenixLyricsProvider,
+        "unison" to UnisonLyricsProvider,
+        "betterlyrics" to BetterLyricsProvider,
+        "portato" to PortatoLyricsProvider,
+        "youly" to YouLyLyricsProvider,
+        "megalobiz" to MegalobizLyricsProvider,
+        "youtube_music" to YouTubeLyricsProvider,
     )
+
+    val PROVIDER_METADATA: List<LyricsProviderInfo> = listOf(
+        LyricsProviderInfo("lrclib", "LRC Lib", "Synchronized & plain community lyrics", com.darkxvenom.itune.R.drawable.lyrics_provider_lrclib),
+        LyricsProviderInfo("kugou", "KuGou", "Extensive Chinese & international lyrics", com.darkxvenom.itune.R.drawable.lyrics_provider_kugou),
+        LyricsProviderInfo("simpmusic", "SimpMusic", "Direct YouTube ID synced lyrics API", com.darkxvenom.itune.R.drawable.lyrics_provider_simpmusic),
+        LyricsProviderInfo("youtube_subtitles", "YouTube Subtitles", "Official YouTube video timed captions & CC", com.darkxvenom.itune.R.drawable.lyrics_provider_youtube_subtitles),
+        LyricsProviderInfo("paxsenix", "Paxsenix", "Multi-source (Spotify, Apple, Musixmatch, Netease)", com.darkxvenom.itune.R.drawable.lyrics_provider_paxsenix),
+        LyricsProviderInfo("unison", "Unison", "Fast synchronized lyrics search", com.darkxvenom.itune.R.drawable.lyrics_provider_unison),
+        LyricsProviderInfo("betterlyrics", "BetterLyrics", "High precision TTML & syllable-synced lyrics", com.darkxvenom.itune.R.drawable.lyrics_provider_betterlyrics),
+        LyricsProviderInfo("portato", "Portato", "Lightweight synced lyrics endpoint", com.darkxvenom.itune.R.drawable.lyrics_provider_portato),
+        LyricsProviderInfo("youly", "YouLy", "Multi-mirror TTML & LRC lyrics service", com.darkxvenom.itune.R.drawable.lyrics_provider_youly),
+        LyricsProviderInfo("megalobiz", "Megalobiz", "Crowdsourced synchronized LRC archive", com.darkxvenom.itune.R.drawable.lyrics_provider_megalobiz),
+        LyricsProviderInfo("youtube_music", "YouTube Music", "Official YouTube Music lyrics metadata", com.darkxvenom.itune.R.drawable.lyrics_provider_youtube_music),
+    )
+
+    fun getActiveProviders(): List<LyricsProvider> {
+        val state = SettingsStore.state.value
+        val order = state.lyricsProviderOrder
+        val disabled = state.disabledLyricsProviders
+        val active = mutableListOf<LyricsProvider>()
+        for (id in order) {
+            if (id !in disabled) {
+                ALL_PROVIDERS[id]?.let { active.add(it) }
+            }
+        }
+        for ((id, p) in ALL_PROVIDERS) {
+            if (id !in order && id !in disabled) {
+                active.add(p)
+            }
+        }
+        return active
+    }
 
     suspend fun loadLyricsWithRaw(
         songId: String,
@@ -235,9 +640,10 @@ object LyricsHelper {
         memoryCache[songId]?.let { return@withContext it }
 
         var rawLrc: String? = null
-        for (provider in providers) {
-            val result = provider.getLyrics(songId, title, artist, durationSec)
-            if (result.isSuccess) {
+        val active = getActiveProviders()
+        for (provider in active) {
+            val result = runCatching { provider.getLyrics(songId, title, artist, durationSec) }.getOrNull()
+            if (result != null && result.isSuccess) {
                 val text = result.getOrNull()
                 if (!text.isNullOrBlank()) {
                     rawLrc = text
@@ -267,17 +673,42 @@ object LyricsHelper {
         durationSec: Int = 0
     ): List<LyricsLine> = loadLyricsWithRaw(songId, title, artist, durationSec).lines
 
-    /** Queries LrcLib and KuGou in parallel and returns candidates sorted with synced & closest duration first. */
+    /** Queries active search providers in parallel and returns candidates sorted with synced & closest duration first. */
     suspend fun searchAllLyrics(
         title: String,
         artist: String,
         durationSec: Int = 0
     ): List<LyricsSearchResult> = withContext(Dispatchers.IO) {
         coroutineScope {
-            val lrcLibDeferred = async { LrcLibLyricsProvider.searchMatches(title, artist) }
-            val kugouDeferred = async { KuGouLyricsProvider.searchCandidates(title, artist, limit = 4) }
+            val lrcLibDeferred = async {
+                if (SettingsStore.isLyricsProviderEnabled("lrclib")) LrcLibLyricsProvider.searchMatches(title, artist) else emptyList()
+            }
+            val kugouDeferred = async {
+                if (SettingsStore.isLyricsProviderEnabled("kugou")) KuGouLyricsProvider.searchCandidates(title, artist, limit = 4) else emptyList()
+            }
+            val paxsenixDeferred = async {
+                if (SettingsStore.isLyricsProviderEnabled("paxsenix")) {
+                    PaxsenixLyricsProvider.getLyrics("", title, artist, durationSec).getOrNull()?.let { lrc ->
+                        listOf(LyricsSearchResult(PaxsenixLyricsProvider.name, title, artist, durationSec, lrc, null))
+                    } ?: emptyList()
+                } else emptyList()
+            }
+            val unisonDeferred = async {
+                if (SettingsStore.isLyricsProviderEnabled("unison")) {
+                    UnisonLyricsProvider.getLyrics("", title, artist, durationSec).getOrNull()?.let { lrc ->
+                        listOf(LyricsSearchResult(UnisonLyricsProvider.name, title, artist, durationSec, lrc, null))
+                    } ?: emptyList()
+                } else emptyList()
+            }
+            val betterLyricsDeferred = async {
+                if (SettingsStore.isLyricsProviderEnabled("betterlyrics")) {
+                    BetterLyricsProvider.getLyrics("", title, artist, durationSec).getOrNull()?.let { lrc ->
+                        listOf(LyricsSearchResult(BetterLyricsProvider.name, title, artist, durationSec, lrc, null))
+                    } ?: emptyList()
+                } else emptyList()
+            }
 
-            val combined = lrcLibDeferred.await() + kugouDeferred.await()
+            val combined = lrcLibDeferred.await() + kugouDeferred.await() + paxsenixDeferred.await() + unisonDeferred.await() + betterLyricsDeferred.await()
             combined
                 .filter { it.rawText.isNotBlank() }
                 .distinctBy { "${it.provider}_${it.rawText.take(120)}" }
@@ -326,10 +757,15 @@ object LyricsHelper {
         }
     }
 
-    /** Parses LRC (`[mm:ss.xx]`) when timestamps exist, falling back cleanly to plain lines for manual edits/plain matches. */
+    /** Parses TTML, LRC (`[mm:ss.xx]`), or plain text. */
     fun parseLyricsText(rawText: String): List<LyricsLine> {
         val clean = rawText.trim()
         if (clean.isBlank() || clean.equals("null", ignoreCase = true)) return emptyList()
+
+        if (TTMLParser.isTtml(clean)) {
+            val ttmlLines = TTMLParser.parseTtml(clean)
+            if (ttmlLines.isNotEmpty()) return ttmlLines
+        }
 
         val synced = parseLrc(clean)
         if (synced.isNotEmpty()) return synced
