@@ -50,6 +50,10 @@ class GoogleAccountAuthAndParsersTest {
         assertEquals("delegated123", normalizeDataSyncId("owner||delegated123"))
         assertEquals("ownerOnly", normalizeDataSyncId("ownerOnly||"))
         assertEquals("plainId", normalizeDataSyncId("plainId"))
+        assertEquals("user123", normalizeDataSyncId("delegated123||user123"))
+        assertEquals("delegated123", delegatedSessionId("delegated123||user123"))
+        assertNull(delegatedSessionId("ownerOnly||"))
+        assertNull(delegatedSessionId("plainId"))
         assertNull(normalizeDataSyncId("   "))
         assertNull(normalizeDataSyncId(null))
     }
