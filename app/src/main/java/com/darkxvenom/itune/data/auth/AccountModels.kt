@@ -140,8 +140,8 @@ fun sapisidFrom(cookieHeader: String): String? {
 
 /**
  * Builds a Google Innertube SAPISID authorization token. When a user session id is
- * available, it is prefixed to the timestamp with a colon in the SHA-1 input and the
- * trailing `_u` marker is added, matching YouTube's current cookie-auth format.
+ * available, it is prefixed to the timestamp in the SHA-1 input and the trailing
+ * `_u` marker is added, matching YouTube's current cookie-auth format.
  */
 fun buildSapisidHash(
     sapisid: String,
@@ -152,7 +152,7 @@ fun buildSapisidHash(
 ): String {
     val userId = userSessionId?.takeIf { it.isNotBlank() }
     val hashInput = buildString {
-        if (userId != null) append(userId).append(':')
+        if (userId != null) append(userId).append(' ')
         append(timestampSeconds).append(' ').append(sapisid).append(' ').append(origin)
     }
     val digest = MessageDigest.getInstance("SHA-1")
