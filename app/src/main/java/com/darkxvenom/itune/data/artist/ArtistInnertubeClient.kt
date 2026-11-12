@@ -747,14 +747,8 @@ object ArtistInnertubeClient {
             .header("Accept-Language", acceptLanguageHeader)
             .header("Cookie", sessionCookie)
             .header("X-Youtube-Bootstrap-Logged-In", "true")
-        val activeScope = scope
-        builder.header("X-Goog-AuthUser", authUserFor(activeScope))
-        pageIdFor(activeScope)?.let { builder.header("X-Goog-PageId", it) }
-        buildFullSapisidAuthorization(
-            cookieHeader = sessionCookie,
-            origin = MUSIC_ORIGIN,
-            userSessionId = dataSyncIdFor(activeScope),
-        )?.let { builder.header("Authorization", it) }
+        // Read ytcfg with the browser cookie only. Do not use the previously stored
+        // delegated/user IDs here: older builds may have persisted those fields swapped.
         val html = Net.client.newCall(builder.build()).execute().use { res ->
             GoogleAuthStore.absorbSetCookies(res.headers("Set-Cookie"))
             res.body?.string().orEmpty()
