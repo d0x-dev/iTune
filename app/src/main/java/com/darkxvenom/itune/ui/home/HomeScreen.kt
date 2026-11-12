@@ -523,9 +523,12 @@ fun HomeScreen(
 
                 // Top cards — real data: headline pick, newest release, trending, top artist, podcast
                 item(key = "featured_hero") {
+                    val isPortrait = settingsState.topCardType == SettingsStore.TOP_CARD_TYPE_PORTRAIT
                     LiveFeaturedHeroCarousel(
                         cards = heroCards,
                         isLoading = feedLoading || heroCards.isEmpty() && !feedFailed,
+                        isPortrait = isPortrait,
+                        sectionTitle = "Top Picks for You",
                         modifier = Modifier.padding(top = 4.dp),
                         onCardClick = { card -> onFeedItemClick(card.item, card.queue) },
                         onCardMenuClick = { card, offset -> onFeedItemMenuClick(card.item, offset) },

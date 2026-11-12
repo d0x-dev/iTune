@@ -2092,6 +2092,23 @@ private fun buildSettingsSections(
                 selectedOption = state.playerType,
                 onSelect = { onSelectString(SettingsStore.KEY_PLAYER_TYPE, it) },
             ),
+            SettingsEntry.SegmentedToggle(
+                id = "top_card_type",
+                title = "Home Top Card Style",
+                subtitle = if (state.topCardType == SettingsStore.TOP_CARD_TYPE_PORTRAIT) {
+                    "Portrait • Apple Music card with frosted blur"
+                } else {
+                    "Landscape • Wide 16:9 banner card"
+                },
+                iconRes = R.drawable.ic_settings_liquid_glass,
+                keywords = listOf(
+                    "top", "card", "hero", "portrait", "landscape", "home", "carousel",
+                    "style", "orientation", "shape", "banner"
+                ),
+                options = listOf(SettingsStore.TOP_CARD_TYPE_LANDSCAPE, SettingsStore.TOP_CARD_TYPE_PORTRAIT),
+                selectedOption = state.topCardType,
+                onSelect = { onSelectString(SettingsStore.KEY_TOP_CARD_TYPE, it) },
+            ),
             SettingsEntry.Toggle(
                 id = "time_synced_lyrics",
                 title = "Time-Synced Lyrics",

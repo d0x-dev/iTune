@@ -26,6 +26,7 @@ data class SettingsUiState(
     val animatedArtwork: Boolean = true,
     val timeSyncedLyrics: Boolean = true,
     val playerType: String = "Dynamic",
+    val topCardType: String = "Portrait",
     val liquidGlassChrome: Boolean = true,
     val tactileHaptics: Boolean = true,
     val cellularStreaming: String = "High Quality",
@@ -91,6 +92,9 @@ object SettingsStore {
     const val KEY_ANIMATED_ARTWORK = "animated_artwork"
     const val KEY_TIME_SYNCED_LYRICS = "time_synced_lyrics"
     const val KEY_PLAYER_TYPE = "player_type"
+    const val KEY_TOP_CARD_TYPE = "top_card_type"
+    const val TOP_CARD_TYPE_PORTRAIT = "Portrait"
+    const val TOP_CARD_TYPE_LANDSCAPE = "Landscape"
     const val KEY_LIQUID_GLASS = "liquid_glass_chrome"
     const val KEY_TACTILE_HAPTICS = "tactile_haptics"
     const val KEY_CELLULAR_STREAMING = "cellular_streaming"
@@ -226,6 +230,7 @@ object SettingsStore {
         _state.value = when (key) {
             KEY_DISPLAY_NAME -> cur.copy(displayName = normalized)
             KEY_PLAYER_TYPE -> cur.copy(playerType = if (normalized.equals("Static", ignoreCase = true)) "Static" else "Dynamic")
+            KEY_TOP_CARD_TYPE -> cur.copy(topCardType = if (normalized.equals(TOP_CARD_TYPE_LANDSCAPE, ignoreCase = true)) TOP_CARD_TYPE_LANDSCAPE else TOP_CARD_TYPE_PORTRAIT)
             KEY_SPATIAL_AUDIO -> cur.copy(spatialAudioMode = normalized)
             KEY_AUDIO_QUALITY -> cur.copy(audioQuality = normalizeAudioQuality(normalized))
             KEY_EQ_PRESET -> cur.copy(eqPreset = normalized)
@@ -407,6 +412,7 @@ object SettingsStore {
             animatedArtwork = p.getBoolean(KEY_ANIMATED_ARTWORK, defaults.animatedArtwork),
             timeSyncedLyrics = p.getBoolean(KEY_TIME_SYNCED_LYRICS, defaults.timeSyncedLyrics),
             playerType = p.getString(KEY_PLAYER_TYPE, defaults.playerType) ?: defaults.playerType,
+            topCardType = p.getString(KEY_TOP_CARD_TYPE, defaults.topCardType) ?: defaults.topCardType,
             liquidGlassChrome = p.getBoolean(KEY_LIQUID_GLASS, defaults.liquidGlassChrome),
             tactileHaptics = p.getBoolean(KEY_TACTILE_HAPTICS, defaults.tactileHaptics),
             cellularStreaming = p.getString(KEY_CELLULAR_STREAMING, defaults.cellularStreaming)

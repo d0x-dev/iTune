@@ -49,7 +49,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import coil.compose.AsyncImage
+import com.darkxvenom.itune.R
+import com.darkxvenom.itune.ui.player.SFProDisplay
 import com.darkxvenom.itune.data.model.HomeFeedItem
 import com.darkxvenom.itune.data.model.HomeFeedShelf
 import com.darkxvenom.itune.data.model.HomeHeroCard
@@ -387,112 +391,342 @@ fun LiveFeaturedHeroCarousel(
     cards: List<HomeHeroCard>,
     isLoading: Boolean,
     modifier: Modifier = Modifier,
+    isPortrait: Boolean = false,
+    sectionTitle: String = "Top Picks for You",
     onCardClick: (HomeHeroCard) -> Unit,
     onCardMenuClick: (HomeHeroCard, Offset) -> Unit = { _, _ -> },
 ) {
-    LazyRow(
-        modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        userScrollEnabled = cards.isNotEmpty(),
-    ) {
-        if (cards.isEmpty() && isLoading) {
-            items(2) { HeroSkeletonCard() }
-        } else {
-            items(cards, key = { it.id }) { card ->
-                var cardCenter by remember { mutableStateOf(Offset.Zero) }
-                Column(
-                    Modifier
-                        .width(320.dp)
-                        .onGloballyPositioned { coords ->
-                            if (coords.isAttached) {
-                                val pos = coords.positionInWindow()
-                                cardCenter = Offset(
-                                    x = pos.x + coords.size.width / 2f,
-                                    y = pos.y + coords.size.height / 2f,
+    if (isPortrait) {
+        Column(modifier = modifier.fillMaxWidth()) {
+            Text(
+                text = sectionTitle,
+                style = TextStyle(
+                    fontFamily = SFProDisplay,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = (-0.4).sp
+                ),
+                color = AppleTextPrimary,
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                userScrollEnabled = cards.isNotEmpty(),
+            ) {
+                if (cards.isEmpty() && isLoading) {
+                    items(2) { HeroPortraitSkeletonCard() }
+                } else {
+                    items(cards, key = { it.id }) { card ->
+                        PortraitHeroCardItem(
+                            card = card,
+                            onClick = { onCardClick(card) },
+                            onMenuClick = { offset -> onCardMenuClick(card, offset) },
+                        )
+                    }
+                }
+            }
+        }
+    } else {
+        LazyRow(
+            modifier = modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            userScrollEnabled = cards.isNotEmpty(),
+        ) {
+            if (cards.isEmpty() && isLoading) {
+                items(2) { HeroSkeletonCard() }
+            } else {
+                items(cards, key = { it.id }) { card ->
+                    var cardCenter by remember { mutableStateOf(Offset.Zero) }
+                    Column(
+                        Modifier
+                            .width(320.dp)
+                            .onGloballyPositioned { coords ->
+                                if (coords.isAttached) {
+                                    val pos = coords.positionInWindow()
+                                    cardCenter = Offset(
+                                        x = pos.x + coords.size.width / 2f,
+                                        y = pos.y + coords.size.height / 2f,
+                                    )
+                                }
+                            }
+                            .clip(RoundedCornerShape(18.dp))
+                            .combinedClickable(
+                                onClick = { onCardClick(card) },
+                                onLongClick = { onCardMenuClick(card, cardCenter) },
+                            ),
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text(
+                                card.category.uppercase(),
+                                color = AppleTextSecondary,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 0.8.sp,
+                                maxLines = 1,
+                            )
+                            IconButton(
+                                onClick = { onCardMenuClick(card, cardCenter) },
+                                modifier = Modifier.size(24.dp),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreHoriz,
+                                    contentDescription = "Options",
+                                    tint = AppleTextSecondary,
+                                    modifier = Modifier.size(18.dp),
                                 )
                             }
                         }
-                        .clip(RoundedCornerShape(18.dp))
-                        .combinedClickable(
-                            onClick = { onCardClick(card) },
-                            onLongClick = { onCardMenuClick(card, cardCenter) },
-                        ),
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
+                        Spacer(Modifier.height(2.dp))
                         Text(
-                            card.category.uppercase(),
-                            color = AppleTextSecondary,
-                            fontSize = 11.sp,
+                            card.title,
+                            color = AppleTextPrimary,
+                            fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.8.sp,
+                            lineHeight = 26.sp,
                             maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
-                        IconButton(
-                            onClick = { onCardMenuClick(card, cardCenter) },
-                            modifier = Modifier.size(24.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.MoreHoriz,
-                                contentDescription = "Options",
-                                tint = AppleTextSecondary,
-                                modifier = Modifier.size(18.dp),
-                            )
-                        }
-                    }
-                    Spacer(Modifier.height(2.dp))
-                    Text(
-                        card.title,
-                        color = AppleTextPrimary,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = 26.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Spacer(Modifier.height(1.dp))
-                    Text(
-                        card.subtitle,
-                        color = AppleTextSecondary,
-                        fontSize = 15.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Spacer(Modifier.height(10.dp))
-                    Box(
-                        Modifier
-                            .width(320.dp)
-                            .height(210.dp)
-                            .clip(RoundedCornerShape(18.dp))
-                            .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(18.dp)),
-                    ) {
-                        Artwork(card.imageUrl, Modifier.fillMaxSize(), RoundedCornerShape(18.dp))
+                        Spacer(Modifier.height(1.dp))
+                        Text(
+                            card.subtitle,
+                            color = AppleTextSecondary,
+                            fontSize = 15.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        Spacer(Modifier.height(10.dp))
                         Box(
                             Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.BottomStart)
-                                .background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xE6000000))))
-                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                                .width(320.dp)
+                                .height(210.dp)
+                                .clip(RoundedCornerShape(18.dp))
+                                .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(18.dp)),
                         ) {
-                            Text(
-                                card.caption,
-                                color = Color.White.copy(alpha = 0.92f),
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium,
-                                lineHeight = 17.sp,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                            )
+                            Artwork(card.imageUrl, Modifier.fillMaxSize(), RoundedCornerShape(18.dp))
+                            Box(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.BottomStart)
+                                    .background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xE6000000))))
+                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                            ) {
+                                Text(
+                                    card.caption,
+                                    color = Color.White.copy(alpha = 0.92f),
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    lineHeight = 17.sp,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun PortraitHeroCardItem(
+    card: HomeHeroCard,
+    onClick: () -> Unit,
+    onMenuClick: (Offset) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var cardCenter by remember { mutableStateOf(Offset.Zero) }
+
+    Box(
+        modifier = modifier
+            .width(235.dp)
+            .height(325.dp)
+            .onGloballyPositioned { coords ->
+                if (coords.isAttached) {
+                    val pos = coords.positionInWindow()
+                    cardCenter = Offset(
+                        x = pos.x + coords.size.width / 2f,
+                        y = pos.y + coords.size.height / 2f,
+                    )
+                }
+            }
+            .clip(RoundedCornerShape(26.dp))
+            .border(1.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(26.dp))
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = { onMenuClick(cardCenter) },
+            ),
+    ) {
+        // Base Artwork Layer
+        if (!card.imageUrl.isNullOrBlank()) {
+            Artwork(card.imageUrl, Modifier.fillMaxSize(), RoundedCornerShape(26.dp))
+        } else {
+            AppleMusicAmbientArtwork(title = card.title, category = card.category)
+        }
+
+        // Top Subtle Scrim
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .align(Alignment.TopCenter)
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color.Black.copy(alpha = 0.35f), Color.Transparent)
+                    )
+                )
+        )
+
+        // Top-right music badge
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 16.dp, end = 16.dp)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_apple_logo),
+                contentDescription = null,
+                tint = Color.White.copy(alpha = 0.95f),
+                modifier = Modifier.size(15.dp)
+            )
+            Spacer(Modifier.width(3.dp))
+            Text(
+                text = "music",
+                style = TextStyle(
+                    fontFamily = SFProDisplay,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.5.sp,
+                    letterSpacing = (-0.3).sp
+                ),
+                color = Color.White.copy(alpha = 0.95f)
+            )
+        }
+
+        // Bottom Morph Blur Container with smooth liquid glass gradient
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .clip(RoundedCornerShape(bottomStart = 26.dp, bottomEnd = 26.dp))
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Transparent,
+                            Color.Black.copy(alpha = 0.30f),
+                            Color.Black.copy(alpha = 0.68f),
+                            Color.Black.copy(alpha = 0.92f),
+                        )
+                    )
+                )
+                .padding(horizontal = 18.dp, vertical = 16.dp)
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                val catText = card.category.ifBlank { "Mood for You" }
+                Text(
+                    text = catText,
+                    style = TextStyle(
+                        fontFamily = SFProDisplay,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 12.sp,
+                        letterSpacing = 0.2.sp
+                    ),
+                    color = Color.White.copy(alpha = 0.85f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(Modifier.height(3.dp))
+                Text(
+                    text = card.title,
+                    style = TextStyle(
+                        fontFamily = SFProDisplay,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 19.sp,
+                        lineHeight = 23.sp,
+                        letterSpacing = (-0.3).sp
+                    ),
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(Modifier.height(4.dp))
+                val desc = card.caption.ifBlank { card.subtitle }
+                if (desc.isNotBlank()) {
+                    Text(
+                        text = desc,
+                        style = TextStyle(
+                            fontFamily = SFProDisplay,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 12.5.sp,
+                            lineHeight = 16.5.sp
+                        ),
+                        color = Color.White.copy(alpha = 0.78f),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AppleMusicAmbientArtwork(
+    title: String,
+    category: String,
+    modifier: Modifier = Modifier,
+) {
+    val bgGradient = remember(title, category) {
+        when {
+            title.contains("Focus", ignoreCase = true) || category.contains("Focus", ignoreCase = true) ->
+                listOf(Color(0xFFF07E26), Color(0xFFDD5F1B))
+            title.contains("Heavy", ignoreCase = true) || title.contains("Rotation", ignoreCase = true) ->
+                listOf(Color(0xFFF9A825), Color(0xFFE65100))
+            title.contains("Chill", ignoreCase = true) || title.contains("Relax", ignoreCase = true) ->
+                listOf(Color(0xFF1E88E5), Color(0xFF004D40))
+            else ->
+                listOf(Color(0xFFE53935), Color(0xFF8E24AA))
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Brush.radialGradient(bgGradient))
+    ) {
+        androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
+            val center = Offset(size.width * 0.48f, size.height * 0.44f)
+            val stroke = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx())
+            val ringColor = Color.White.copy(alpha = 0.28f)
+            val radii = listOf(size.width * 0.12f, size.width * 0.24f, size.width * 0.36f, size.width * 0.48f)
+            radii.forEach { r ->
+                drawCircle(color = ringColor, radius = r, center = center, style = stroke)
+            }
+            drawCircle(color = Color.White.copy(alpha = 0.4f), radius = 6.dp.toPx(), center = center)
+        }
+    }
+}
+
+@Composable
+private fun HeroPortraitSkeletonCard() {
+    Box(
+        modifier = Modifier
+            .width(235.dp)
+            .height(325.dp)
+            .clip(RoundedCornerShape(26.dp))
+            .background(AppleSurface)
+    )
 }
 
 @Composable
