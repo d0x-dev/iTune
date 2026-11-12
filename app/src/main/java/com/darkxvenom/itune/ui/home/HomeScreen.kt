@@ -108,6 +108,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
@@ -135,7 +136,10 @@ enum class AppScreen {
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showTopBarBrand: Boolean = true,
+    deferStartupPrompts: Boolean = false,
+    onTopBarBrandBoundsChanged: ((iconBounds: Rect, titleBounds: Rect) -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
@@ -146,7 +150,7 @@ fun HomeScreen(
     val personalizedQuickPicks by PersonalizedHomeRepository.quickPickTracks.collectAsStateWithLifecycle()
     val personalizedPlaylists by PersonalizedHomeRepository.recommendedPlaylists.collectAsStateWithLifecycle()
     val ytAccountState by GoogleAuthStore.state.collectAsStateWithLifecycle()
-    LaunchedEffect(localeSignature, ytAccountState.isSignedIn) {
+    LaunchedEffect(localeSignature, ytAccountState.isSignedIn, ytAccountState.activeSessionKey) {
         NewReleasesRepository.ensureLoaded()
         if (ytAccountState.isSignedIn) {
             PersonalizedHomeRepository.refreshIfSignedIn()
@@ -218,7 +222,11 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         OnlineRadioController.ensureInit(context)
         OnlineRadioController.ensureCatalogLoaded()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+    }
+
+    LaunchedEffect(deferStartupPrompts) {
+        if (!deferStartupPrompts &&
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
         ) {
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
@@ -345,6 +353,8 @@ fun HomeScreen(
                 item(key = "top_header") {
                     TopHeaderBar(
                         displayName = settingsState.displayName,
+                        showBrandLogoAndTitle = showTopBarBrand,
+                        onBrandBoundsChanged = onTopBarBrandBoundsChanged,
                         onProfileClick = {
                             showSettings = true
                         }
@@ -356,7 +366,11 @@ fun HomeScreen(
                     item(key = "home_google_connect_card") {
                         ContinueWithGoogleRedCard(
                             title = "Continue with Google",
-                            subtitle = "Sign in to sync YouTube Music playlists, likes, artists & history",
+                            subtitlePhrases = listOf(
+                                "Sync your YouTube Music playlists",
+                                "Sync liked songs, artists & history",
+                                "Personalize your feed in real time",
+                            ),
                             onClick = { showHomeGoogleLogin = true },
                             modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
                         )

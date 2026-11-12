@@ -24,6 +24,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.schabi.newpipe.extractor.services.youtube.YoutubeJavaScriptPlayerManager
 import java.io.IOException
+import java.nio.charset.StandardCharsets
 import java.util.Locale
 
 object ArtistInnertubeClient {
@@ -140,7 +141,7 @@ object ArtistInnertubeClient {
         put("continuation", token)
     }
 
-    /** Calls youtube.com WEB client `/browse` for account-wide fallbacks (`FEplaylist_aggregation`, `FEhistory`, `FEchannels`). */
+    /** Calls youtube.com WEB client `/browse` for account-wide fallbacks (`FEhistory`, `FEchannels`). */
     suspend fun postWebBrowse(browseId: String): JSONObject = postMusicRawUrl(
         url = "https://www.youtube.com/youtubei/v1/browse",
         clientName = "WEB",
@@ -174,6 +175,99 @@ object ArtistInnertubeClient {
         put("playlistId", playlistId)
         if (params != null) put("params", params)
         put("isAudioOnly", true)
+    }
+
+    suspend fun transcript(videoId: String): Result<String> = runCatching {
+        val cleanId = videoId.trim()
+        if (cleanId.isBlank()) throw IllegalArgumentException("Blank videoId")
+        val protoBytes = byteArrayOf(0x0a, cleanId.length.toByte()) + cleanId.toByteArray(StandardCharsets.UTF_8)
+        val paramsBase64 = android.util.Base64.encodeToString(protoBytes, android.util.Base64.NO_WRAP)
+        val json = postMusicRawUrl(
+            url = "https://www.youtube.com/youtubei/v1/get_transcript",
+            clientName = "WEB",
+            clientVersion = WEB_VERSION,
+            clientId = "1",
+            origin = "https://www.youtube.com",
+            anonymous = true,
+            allowAnonymousFallback = true,
+        ) {
+            put("params", paramsBase64)
+        }
+        parseTranscriptJson(json) ?: throw IllegalStateException("No transcript returned for $videoId")
+    }
+
+    private fun parseTranscriptJson(json: JSONObject): String? {
+        val actions = json.optJSONArray("actions") ?: return null
+        for (i in 0 until actions.length()) {
+            val action = actions.optJSONObject(i) ?: continue
+            val renderer = action.optJSONObject("updateEngagementPanelAction")
+                ?.optJSONObject("content")
+                ?.optJSONObject("transcriptRenderer")
+                ?.optJSONObject("body")
+                ?.optJSONObject("transcriptBodyRenderer") ?: continue
+            val cueGroups = renderer.optJSONArray("cueGroups") ?: continue
+            val lines = mutableListOf<String>()
+            for (j in 0 until cueGroups.length()) {
+                val group = cueGroups.optJSONObject(j) ?: continue
+                val cue = group.optJSONObject("transcriptCueGroupRenderer")
+                    ?.optJSONArray("cues")?.optJSONObject(0)
+                    ?.optJSONObject("transcriptCueRenderer") ?: continue
+                val timeMs = cue.optLong("startOffsetMs", 0L)
+                val text = cue.optJSONObject("cue")?.optString("simpleText", "")
+                    ?.trim('♪', ' ', '\n', '\r').orEmpty()
+                if (text.isNotBlank()) {
+                    val mins = timeMs / 60000L
+                    val secs = (timeMs / 1000L) % 60L
+                    val ms = timeMs % 1000L
+                    lines.add("[%02d:%02d.%03d] %s".format(mins, secs, ms, text))
+                }
+            }
+            if (lines.isNotEmpty()) {
+                return lines.joinToString("\n")
+            }
+        }
+        return null
+    }
+
+    suspend fun lyrics(videoId: String): Result<String> = runCatching {
+        val nextJson = next(videoId)
+        val tabs = nextJson.optJSONObject("contents")
+            ?.optJSONObject("singleColumnMusicWatchNextResultsRenderer")
+            ?.optJSONObject("tabbedRenderer")
+            ?.optJSONObject("watchNextTabbedResultsRenderer")
+            ?.optJSONArray("tabs") ?: throw IllegalStateException("No tabs in next response")
+
+        var browseId: String? = null
+        var params: String? = null
+        for (i in 0 until tabs.length()) {
+            val tab = tabs.optJSONObject(i)?.optJSONObject("tabRenderer") ?: continue
+            val ep = tab.optJSONObject("endpoint")?.optJSONObject("browseEndpoint") ?: continue
+            val bId = ep.optString("browseId", "")
+            if (bId.startsWith("MPLY") || tab.optString("title", "").contains("Lyrics", ignoreCase = true)) {
+                browseId = bId
+                params = ep.optString("params", "").takeIf { it.isNotBlank() }
+                break
+            }
+        }
+
+        val targetBrowseId = browseId ?: throw IllegalStateException("No lyrics tab found for $videoId")
+        val browseJson = browse(targetBrowseId, params = params, anonymous = true)
+        val runs = browseJson.optJSONObject("contents")
+            ?.optJSONObject("sectionListRenderer")
+            ?.optJSONArray("contents")?.optJSONObject(0)
+            ?.optJSONObject("musicDescriptionShelfRenderer")
+            ?.optJSONObject("description")
+            ?.optJSONArray("runs") ?: throw IllegalStateException("No lyrics runs found in browse response")
+
+        val sb = StringBuilder()
+        for (i in 0 until runs.length()) {
+            val run = runs.optJSONObject(i) ?: continue
+            val t = run.optString("text", "")
+            if (t.isNotEmpty()) sb.append(t)
+        }
+        val text = sb.toString().trim()
+        if (text.isBlank()) throw IllegalStateException("Empty lyrics content")
+        text
     }
 
     suspend fun search(
@@ -219,7 +313,6 @@ object ArtistInnertubeClient {
             browseId.startsWith("FEmusic_library") ||
             browseId == "FEmusic_history" ||
             browseId == "FEhistory" ||
-            browseId == "FEplaylist_aggregation" ||
             browseId == "FEchannels" ||
             browseId == "VLLM" ||
             browseId == "LM"
@@ -234,6 +327,7 @@ object ArtistInnertubeClient {
         loggedIn: Boolean,
     ) {
         this.cookie = cookie.takeIf { it.isNotBlank() }
+        this.channelOverride = null
         val version = clientVersion?.takeIf { it.isNotBlank() } ?: scope?.clientVersion
         scope = if (!loggedIn) {
             version?.let { SessionScope(null, null, "0", it) }
@@ -245,13 +339,14 @@ object ArtistInnertubeClient {
                 clientVersion = version,
             )
         }
-        visitorData?.takeIf { it.isNotBlank() }?.let { this.visitorData = it }
+        this.visitorData = visitorData?.takeIf { it.isNotBlank() }
     }
 
     fun clearAuthSession() {
         cookie = null
         scope = null
         channelOverride = null
+        visitorData = null
     }
 
     suspend fun accountMenu(): JSONObject = postMusic("account/account_menu") {}
