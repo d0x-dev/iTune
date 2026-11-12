@@ -474,7 +474,7 @@ fun HomeScreen(
                 // Latest Songs Section with Horizontal Paging Columns
                 item(key = "latest_songs") {
                     LatestSongsSection(
-                        songColumns = MusicRepository.latestSongColumns,
+                        songColumns = emptyList(),
                         personalizedTracks = primaryHomeTracks,
                         sectionTitle = if (ytAccountState.isSignedIn && visibleQuickPicks.isNotEmpty()) {
                             "Picked for You"
@@ -642,7 +642,7 @@ fun HomeScreen(
                     item(key = "spacer_podcasts") { Spacer(Modifier.height(28.dp)) }
                 }
 
-                item(key = "spacer_playlists") {
+                item(key = "spacer_before_radio") {
                     Spacer(modifier = Modifier.height(28.dp))
                 }
 
