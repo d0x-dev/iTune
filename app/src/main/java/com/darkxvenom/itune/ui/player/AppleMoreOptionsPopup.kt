@@ -581,6 +581,7 @@ fun AppleMoreOptionsPopup(
     maxHeightDp: Dp,
     rootCoordsProvider: () -> LayoutCoordinates?,
     onDismiss: () -> Unit,
+    onOpenRecognition: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -737,6 +738,17 @@ fun AppleMoreOptionsPopup(
                                                     thumbnailUrl = track.thumbnailUrl?.ifBlank { null },
                                                     initialType = BrowseType.ARTIST,
                                                 )
+                                            }
+                                        )
+                                        PopupMenuDivider()
+
+                                        MorePopupOptionRow(
+                                            iconRes = R.drawable.ic_recognition_mic,
+                                            title = "iReconization",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                onDismiss()
+                                                onOpenRecognition()
                                             }
                                         )
                                         PopupMenuDivider()
