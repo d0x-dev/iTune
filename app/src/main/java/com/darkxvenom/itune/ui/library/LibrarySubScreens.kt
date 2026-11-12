@@ -53,6 +53,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -190,6 +192,10 @@ fun LibraryPlaylistsScreen(
     onBack: () -> Unit,
     onExploreClick: () -> Unit,
 ) {
+    var showPlaylistImport by remember { mutableStateOf(false) }
+    if (showPlaylistImport) {
+        PlaylistImportDialog(onDismiss = { showPlaylistImport = false })
+    }
     val userPlaylists by LibraryStore.userPlaylists.collectAsStateWithLifecycle()
     val playlists by LibraryStore.savedPlaylists.collectAsStateWithLifecycle()
     val likedSongs by LibraryStore.likedSongs.collectAsStateWithLifecycle()
@@ -268,31 +274,46 @@ fun LibraryPlaylistsScreen(
                             )
                         }
                         Row(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .lightweightLiquidGlass(
-                                    shape = CircleShape,
-                                    fallbackColor = Color(0xCC141418),
-                                )
-                                .border(0.8.dp, Color.White.copy(alpha = 0.20f), CircleShape)
-                                .menuAnchor()
-                                .clickable { controller.openCreatePlaylistPopover() }
-                                .padding(horizontal = 14.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Add,
-                                contentDescription = "Create Playlist",
-                                tint = LibraryCrimsonAccent,
-                                modifier = Modifier.size(18.dp),
-                            )
-                            Spacer(Modifier.width(5.dp))
-                            Text(
-                                text = "New",
-                                color = Color.White,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.SemiBold,
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .lightweightLiquidGlass(shape = CircleShape, fallbackColor = Color(0xCC141418))
+                                    .border(0.8.dp, Color.White.copy(alpha = 0.20f), CircleShape)
+                                    .clickable { showPlaylistImport = true }
+                                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Rounded.PlaylistAdd,
+                                    contentDescription = "Import playlist",
+                                    tint = LibraryCrimsonAccent,
+                                    modifier = Modifier.size(18.dp),
+                                )
+                                Spacer(Modifier.width(5.dp))
+                                Text("Import", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .lightweightLiquidGlass(shape = CircleShape, fallbackColor = Color(0xCC141418))
+                                    .border(0.8.dp, Color.White.copy(alpha = 0.20f), CircleShape)
+                                    .menuAnchor()
+                                    .clickable { controller.openCreatePlaylistPopover() }
+                                    .padding(horizontal = 14.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Add,
+                                    contentDescription = "Create Playlist",
+                                    tint = LibraryCrimsonAccent,
+                                    modifier = Modifier.size(18.dp),
+                                )
+                                Spacer(Modifier.width(5.dp))
+                                Text("New", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                            }
                         }
                     }
                     LibraryFilterBar(
