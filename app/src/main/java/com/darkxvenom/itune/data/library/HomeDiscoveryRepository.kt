@@ -6,6 +6,8 @@ import com.darkxvenom.itune.backend.MusicPlaylistRef
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.NewReleaseAlbum
 import com.darkxvenom.itune.backend.UnifiedSearchResults
+import com.darkxvenom.itune.data.artist.ArtistInnertubeClient
+import com.darkxvenom.itune.data.artist.ArtistInnertubeParser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -62,11 +64,29 @@ object HomeDiscoveryRepository {
                     val explore = async { MusicBackend.fetchLocalizedExplorePlaylists() }
                     val releases = async { MusicBackend.fetchNewReleaseAlbums() }
                     val podcasts = async { MusicBackend.searchAllCategories("popular podcasts $country") }
+                    val podcastBrowse = async {
+                        runCatching {
+                            ArtistInnertubeParser.parseLibraryItemPage(
+                                ArtistInnertubeClient.browse("FEmusic_podcasts")
+                            ).items
+                                .filter { it.browseId?.startsWith("MPSP", ignoreCase = true) == true }
+                                .map { item ->
+                                    MusicPlaylistRef(
+                                        id = item.browseId.orEmpty(),
+                                        title = item.title,
+                                        author = item.subtitle,
+                                        thumbnailUrl = item.thumbnailUrl,
+                                        isAlbum = false,
+                                    )
+                                }
+                        }.getOrDefault(emptyList())
+                    }
                     DiscoveryData(
                         music = music.await(),
                         explore = explore.await(),
                         releases = releases.await(),
                         podcasts = podcasts.await(),
+                        podcastBrowse = podcastBrowse.await(),
                     )
                 }
 
@@ -79,14 +99,11 @@ object HomeDiscoveryRepository {
                     .distinctBy { it.id }
                     .take(24)
                 _popularArtists.value = fetched.music.artists.distinctBy { it.id }.take(24)
-                _podcastShows.value = (fetched.podcasts.playlists + fetched.podcasts.albums)
-                    .distinctBy { it.id }
-                    .take(18)
-                    .filter { item ->
-                        item.id.startsWith("MPSP", ignoreCase = true) ||
-                            item.title.contains("podcast", ignoreCase = true) ||
-                            item.author.contains("podcast", ignoreCase = true)
-                    }
+                _podcastShows.value = (
+                    fetched.podcastBrowse +
+                        fetched.podcasts.playlists.filter { it.id.startsWith("MPSP", ignoreCase = true) } +
+                        fetched.podcasts.albums.filter { it.id.startsWith("MPSP", ignoreCase = true) }
+                    ).distinctBy { it.id }.take(18)
                 loadedLocale = locale
             } finally {
                 synchronized(this) { loading = false }
@@ -150,5 +167,6 @@ object HomeDiscoveryRepository {
         val explore: List<MusicPlaylistRef>,
         val releases: List<NewReleaseAlbum>,
         val podcasts: UnifiedSearchResults,
+        val podcastBrowse: List<MusicPlaylistRef>,
     )
 }
