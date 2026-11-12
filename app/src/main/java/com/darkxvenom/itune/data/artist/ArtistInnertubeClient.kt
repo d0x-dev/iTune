@@ -121,10 +121,12 @@ object ArtistInnertubeClient {
         browseId: String,
         params: String? = null,
         anonymous: Boolean = false,
+        persistScopeRecovery: Boolean = true,
     ): JSONObject = postMusic(
         endpoint = "browse",
         anonymous = anonymous,
         allowAnonymousFallback = !isPrivateLibraryBrowseId(browseId),
+        persistScopeRecovery = persistScopeRecovery,
     ) {
         put("browseId", browseId)
         if (params != null) put("params", params)
@@ -304,7 +306,10 @@ object ArtistInnertubeClient {
         if (newCookie.isNotBlank()) cookie = newCookie
     }
 
-    private fun clearInvalidDelegationScope(clearUserSessionId: Boolean = true) {
+    private fun clearInvalidDelegationScope(
+        clearUserSessionId: Boolean = true,
+        persistScope: Boolean = true,
+    ) {
         val retainedUserSessionId = if (clearUserSessionId) {
             null
         } else {
@@ -318,7 +323,9 @@ object ArtistInnertubeClient {
             pageId = null,
             dataSyncId = if (clearUserSessionId) null else scope?.dataSyncId,
         )
-        GoogleAuthStore.updateActiveScope(pageId = null, dataSyncId = retainedUserSessionId)
+        if (persistScope) {
+            GoogleAuthStore.updateActiveScope(pageId = null, dataSyncId = retainedUserSessionId)
+        }
     }
 
     private fun isPrivateLibraryBrowseId(browseId: String): Boolean =
@@ -385,7 +392,11 @@ object ArtistInnertubeClient {
         val failures = mutableListOf<String>()
         for (browseId in listOf("FEmusic_liked_playlists", "FEmusic_liked_videos")) {
             try {
-                browse(browseId, anonymous = false)
+                browse(
+                    browseId = browseId,
+                    anonymous = false,
+                    persistScopeRecovery = persistScope,
+                )
                 return
             } catch (e: CancellationException) {
                 throw e
@@ -845,6 +856,7 @@ object ArtistInnertubeClient {
         region: String? = currentRegion,
         anonymous: Boolean = false,
         allowAnonymousFallback: Boolean = false,
+        persistScopeRecovery: Boolean = true,
         bodyExtras: JSONObject.() -> Unit,
     ): JSONObject = postMusicRawUrl(
         url = "$MUSIC_BASE/$endpoint",
@@ -852,6 +864,7 @@ object ArtistInnertubeClient {
         region = region,
         anonymous = anonymous,
         allowAnonymousFallback = allowAnonymousFallback,
+        persistScopeRecovery = persistScopeRecovery,
         bodyExtras = bodyExtras,
     )
 
@@ -865,6 +878,7 @@ object ArtistInnertubeClient {
         origin: String = MUSIC_ORIGIN,
         anonymous: Boolean = false,
         allowAnonymousFallback: Boolean = false,
+        persistScopeRecovery: Boolean = true,
         bodyExtras: JSONObject.() -> Unit,
     ): JSONObject {
         if (!anonymous && cookie != null) ensureSessionScope()
@@ -934,7 +948,10 @@ object ArtistInnertubeClient {
                         )
                     }.onSuccess {
                         // Only the delegated channel header was removed; preserve USER_SESSION_ID.
-                        clearInvalidDelegationScope(clearUserSessionId = false)
+                        clearInvalidDelegationScope(
+                            clearUserSessionId = false,
+                            persistScope = persistScopeRecovery,
+                        )
                     }.getOrNull()
                 } else {
                     null
@@ -955,7 +972,7 @@ object ArtistInnertubeClient {
                         singleHashOnly = true,
                     )
                 }.onSuccess {
-                    clearInvalidDelegationScope()
+                    clearInvalidDelegationScope(persistScope = persistScopeRecovery)
                     visitorData = null
                 }.getOrNull()
 
