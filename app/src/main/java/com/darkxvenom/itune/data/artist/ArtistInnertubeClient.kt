@@ -362,6 +362,30 @@ object ArtistInnertubeClient {
         origin = "https://www.youtube.com",
     ) {}
 
+    /**
+     * Confirms that this cookie session can read private YouTube Music library data.
+     * Account-menu metadata is optional; this probe is the actual permission check
+     * required before the app advertises bidirectional library sync.
+     */
+    suspend fun verifyAuthenticatedLibraryAccess() {
+        requireSession()
+        val failures = mutableListOf<String>()
+        for (browseId in listOf("FEmusic_liked_playlists", "FEmusic_liked_videos")) {
+            try {
+                browse(browseId, anonymous = false)
+                return
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                failures += "$browseId: ${e.message?.take(160) ?: e.javaClass.simpleName}"
+            }
+        }
+        throw IOException(
+            "Google sign-in succeeded, but YouTube Music did not authorize private library access. " +
+                failures.joinToString("; "),
+        )
+    }
+
     suspend fun rateVideo(videoId: String, status: LikeStatus) {
         requireSession()
         val endpoint = when (status) {
@@ -877,7 +901,7 @@ object ArtistInnertubeClient {
                     Log.w(TAG, "Falling back to anonymous request for $finalUrl")
                     executeInnertubePost(
                         finalUrl = finalUrl,
-                        payload = buildPayload(null, includeVisitorData = false),
+                        payload = buildPayload(includeVisitorData = false),
                         origin = origin,
                         clientId = clientId,
                         clientVersion = resolvedVersion,
@@ -929,6 +953,7 @@ object ArtistInnertubeClient {
         }
         if (!activeCookie.isNullOrBlank()) {
             builder.header("Cookie", activeCookie)
+            builder.header("X-Youtube-Bootstrap-Logged-In", "true")
             authUser?.takeIf { it.isNotBlank() }?.let { builder.header("X-Goog-AuthUser", it) }
             pageId?.let { builder.header("X-Goog-PageId", it) }
             val authHeader = if (singleHashOnly) {
