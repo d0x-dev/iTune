@@ -1,9 +1,9 @@
 package com.darkxvenom.itune.data.auth
 
 /**
- * Normalizes YouTube `DATASYNC_ID` into the `onBehalfOfUser` token expected by Innertube.
- * YouTube exposes `DATASYNC_ID` as `account||delegated`; the delegated half is the active
- * identity, while plain accounts may only expose the first half.
+ * Extracts the USER_SESSION_ID from YouTube's DATASYNC_ID for SAPISIDHASH authorization.
+ * YouTube exposes primary accounts as USER_SESSION_ID|| and secondary channels as
+ * DELEGATED_SESSION_ID||USER_SESSION_ID. The delegated component is parsed separately.
  */
 fun normalizeDataSyncId(raw: String?): String? {
     val value = raw?.trim()?.takeIf { it.isNotBlank() } ?: return null
