@@ -516,6 +516,10 @@ object ArtistInnertubeClient {
             val setId = added.optString("setVideoId").takeIf { it.isNotBlank() } ?: continue
             out[vid] = setId
         }
+        val missing = videoIds.distinct().filterNot { it in out }
+        if (missing.isNotEmpty()) {
+            error("YouTube Music did not confirm all added tracks")
+        }
         return out
     }
 
