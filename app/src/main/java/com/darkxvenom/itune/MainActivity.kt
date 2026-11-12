@@ -45,6 +45,7 @@ class MainActivity : ComponentActivity() {
         DynamicIslandStore.ensureInit(this)
         DynamicIslandStore.syncServiceState(this)
         AudioDownloader.ensureChannel(this)
+        handleIncomingShareIntent(intent)
         enableEdgeToEdge()
         setContent {
             val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
@@ -125,6 +126,18 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: android.content.Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        handleIncomingShareIntent(intent)
+    }
+
+    private fun handleIncomingShareIntent(intent: android.content.Intent?) {
+        val action = intent?.action ?: return
+        if (action == android.content.Intent.ACTION_SEND || action == android.content.Intent.ACTION_SEND_MULTIPLE) {
+            val forwardIntent = android.content.Intent(intent).apply {
+                setClass(this@MainActivity, com.darkxvenom.itune.share.ShareToIdentifyActivity::class.java)
+                addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            startActivity(forwardIntent)
+        }
     }
 
     override fun onStart() {
