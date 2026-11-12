@@ -24,6 +24,7 @@ import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.library.SettingsStore
+import com.darkxvenom.itune.data.news.DeveloperNewsManager
 import com.darkxvenom.itune.data.repository.AvatarManager
 import com.darkxvenom.itune.radio.OnlineRadioController
 import com.darkxvenom.itune.ishare.IShareSyncManager
@@ -49,6 +50,7 @@ class MainActivity : ComponentActivity() {
         MusicPlayerState.init(this)
         YouTubeLibrarySyncManager.launchFullSync(this)
         OnlineRadioController.ensureInit(this)
+        DeveloperNewsManager.init(this)
         DynamicIslandStore.ensureInit(this)
         DynamicIslandStore.syncServiceState(this)
         AudioDownloader.ensureChannel(this)

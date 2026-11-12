@@ -306,8 +306,13 @@ fun AppleSettingsScreen(
     var activeAudioEffectPage by remember { mutableStateOf<EnginePopupPage?>(null) }
     var showProfileAccount by remember { mutableStateOf(false) }
     var showLyricsSettings by rememberSaveable { mutableStateOf(false) }
+    var showDeveloperNews by rememberSaveable { mutableStateOf(false) }
     var showNameDialog by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = showDeveloperNews && !showLyricsSettings && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
+        showDeveloperNews = false
+    }
 
     BackHandler(enabled = showLyricsSettings && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
         showLyricsSettings = false
@@ -356,6 +361,7 @@ fun AppleSettingsScreen(
             onOpenDynamicIsland = onOpenDynamicIsland,
             onOpenAudioEffect = { page -> activeAudioEffectPage = page },
             onOpenLyricsSettings = { showLyricsSettings = true },
+            onOpenDeveloperNews = { showDeveloperNews = true },
             onToggleBool = { key, enabled -> SettingsStore.setBoolean(context, key, enabled) },
             onSelectString = { key, value -> SettingsStore.setString(context, key, value) },
             onClearCache = {
@@ -692,6 +698,17 @@ fun AppleSettingsScreen(
                     LyricsSettingsScreen(
                         hasMiniPlayer = hasMiniPlayer,
                         onBack = { showLyricsSettings = false },
+                    )
+                }
+
+                AnimatedVisibility(
+                    visible = showDeveloperNews,
+                    enter = fadeIn(tween(200)) + slideInHorizontally(tween(260)) { it / 8 },
+                    exit = fadeOut(tween(180)) + slideOutHorizontally(tween(220)) { it / 8 },
+                ) {
+                    DeveloperNewsScreen(
+                        hasMiniPlayer = hasMiniPlayer,
+                        onBack = { showDeveloperNews = false },
                     )
                 }
             }
@@ -1727,6 +1744,7 @@ private fun buildSettingsSections(
     onOpenDynamicIsland: () -> Unit,
     onOpenAudioEffect: (EnginePopupPage) -> Unit,
     onOpenLyricsSettings: () -> Unit,
+    onOpenDeveloperNews: () -> Unit,
     onToggleBool: (String, Boolean) -> Unit,
     onSelectString: (String, String) -> Unit,
     onClearCache: () -> Unit,
@@ -2349,6 +2367,15 @@ private fun buildSettingsSections(
                 keywords = listOf("search", "recent", "queries", "clear", "delete", "privacy"),
                 trailingValue = if (searchHistoryCount == 0) "Empty" else "$searchHistoryCount saved",
                 onAction = onClearSearchHistory,
+            ),
+            SettingsEntry.Action(
+                id = "developer_news",
+                title = "News from dev",
+                subtitle = "Announcements, releases & changelog",
+                iconRes = R.drawable.newspaper,
+                keywords = listOf("news", "developer", "dev", "updates", "changelog", "announcements", "release", "airbeats"),
+                trailingValue = null,
+                onAction = onOpenDeveloperNews,
             ),
             SettingsEntry.Action(
                 id = "about_itune",

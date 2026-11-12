@@ -125,7 +125,10 @@ import com.darkxvenom.itune.ui.player.FloatingRadioMiniPlayer
 import com.darkxvenom.itune.ui.radio.OnlineRadioScreen
 import com.darkxvenom.itune.ui.search.SearchScreen
 import com.darkxvenom.itune.ui.settings.AppleSettingsScreen
+import com.darkxvenom.itune.ui.settings.DeveloperNewsScreen
 import com.darkxvenom.itune.ui.settings.DynamicIslandScreen
+import com.darkxvenom.itune.data.news.DeveloperNewsManager
+import com.darkxvenom.itune.ui.components.DeveloperNewsPopupDialog
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.requiredSize
@@ -327,6 +330,13 @@ fun HomeScreen(
     var showAvatarDialog by remember { mutableStateOf(false) }
     var showHomeGoogleLogin by remember { mutableStateOf(false) }
     var showIRecognition by remember { mutableStateOf(false) }
+    var showDeveloperNewsScreen by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        DeveloperNewsManager.onOpenNewsRequested = {
+            showDeveloperNewsScreen = true
+        }
+    }
 
     LaunchedEffect(Unit) {
         com.darkxvenom.itune.recognition.MusicRecognitionController.openRecognitionRequested.collect { requested ->
@@ -822,12 +832,28 @@ fun HomeScreen(
             )
         }
 
+        // Developer News Screen Overlay
+        AnimatedVisibility(
+            visible = showDeveloperNewsScreen,
+            enter = fadeIn(tween(200)) + slideInHorizontally(tween(260)) { it / 8 },
+            exit = fadeOut(tween(180)) + slideOutHorizontally(tween(220)) { it / 8 },
+        ) {
+            BackHandler(enabled = showDeveloperNewsScreen && !MusicPlayerState.expanded) {
+                showDeveloperNewsScreen = false
+            }
+            DeveloperNewsScreen(
+                hasMiniPlayer = hasMiniPlayer,
+                onBack = { showDeveloperNewsScreen = false },
+            )
+        }
+
         // Apple Dark Mode Gradient Scrim for Floating Bottom Controls
         if (
             !artistHostController.isOpen &&
             !showSettings &&
             !showIShare &&
             !showDynamicIsland &&
+            !showDeveloperNewsScreen &&
             !showHomeGoogleLogin &&
             !(currentScreen == AppScreen.LIBRARY && libraryHostController.isOpen) &&
             !(currentScreen == AppScreen.BROWSE && activeMoodCategory != null)
@@ -1255,6 +1281,12 @@ fun HomeScreen(
                 onClose = { showIRecognition = false },
             )
         }
+
+        DeveloperNewsPopupDialog(
+            onNavigateToNews = {
+                showDeveloperNewsScreen = true
+            }
+        )
     }
 }
 
