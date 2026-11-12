@@ -752,10 +752,15 @@ object ArtistInnertubeClient {
                         fresh
                     }
                     scope = refreshed
-                    GoogleAuthStore.updateActiveScope(
-                        pageId = refreshed.pageId,
-                        dataSyncId = refreshed.dataSyncId,
-                    )
+                    // The cookie-only ytcfg request describes the browser's primary
+                    // identity. Do not overwrite a separately selected Brand channel
+                    // profile with that primary-account scope.
+                    if (channelOverride == null) {
+                        GoogleAuthStore.updateActiveScope(
+                            pageId = refreshed.pageId,
+                            dataSyncId = refreshed.dataSyncId,
+                        )
+                    }
                 }
         }
     }
