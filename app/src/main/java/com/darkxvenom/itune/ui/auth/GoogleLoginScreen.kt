@@ -55,6 +55,7 @@ import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.auth.WebSessionMode
 import com.darkxvenom.itune.data.auth.YouTubeAccountParsers
 import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
+import com.darkxvenom.itune.data.auth.delegatedSessionId
 import com.darkxvenom.itune.data.auth.hasApiSid
 import com.darkxvenom.itune.data.auth.looksSignedInCookies
 import com.darkxvenom.itune.data.auth.normalizeDataSyncId
@@ -139,8 +140,9 @@ fun GoogleLoginScreen(
                 }
                 return@evaluateJavascript
             }
-            val pageId = obj.optString("pageId").takeIf { it.isNotBlank() && it != "null" }
             val rawDataSyncId = obj.optString("dataSyncId").takeIf { it.isNotBlank() && it != "null" }
+            val pageId = obj.optString("pageId").takeIf { it.isNotBlank() && it != "null" }
+                ?: delegatedSessionId(rawDataSyncId)
             // DATASYNC_ID is USER_SESSION_ID (or DELEGATED_SESSION_ID||USER_SESSION_ID).
             // Keep it independent from DELEGATED_SESSION_ID, which is X-Goog-PageId.
             val dataSyncId = normalizeDataSyncId(rawDataSyncId)
