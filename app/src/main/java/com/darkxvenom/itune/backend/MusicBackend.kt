@@ -31,6 +31,7 @@ object MusicBackend {
     private const val SEARCH_URL = "https://music.youtube.com/youtubei/v1/search?prettyPrint=false"
     private const val SUGGESTIONS_URL = "https://music.youtube.com/youtubei/v1/music/get_search_suggestions?prettyPrint=false"
     private const val BROWSE_URL = "https://music.youtube.com/youtubei/v1/browse?prettyPrint=false"
+    private const val NEXT_URL = "https://music.youtube.com/youtubei/v1/next?prettyPrint=false"
     private const val BROWSE_NEW_RELEASES_ALBUMS = "FEmusic_new_releases_albums"
     private const val BROWSE_EXPLORE = "FEmusic_explore"
     private const val BROWSE_MOODS_AND_GENRES = "FEmusic_moods_and_genres"
@@ -708,6 +709,123 @@ object MusicBackend {
     }
 
     suspend fun resolveAudioStreamUrl(videoId: String): String? = resolveAudioStream(videoId)
+
+    /**
+     * Official YouTube Music Radio / Automix queue fetching using the official /v1/next endpoint.
+     * Parses authentic playlistPanelVideoRenderer items and returns algorithmic recommendations.
+     */
+    suspend fun fetchRadioQueue(videoId: String): List<MusicTrack> = withContext(Dispatchers.IO) {
+        val tracks = mutableListOf<MusicTrack>()
+        try {
+            val root = postInnerTubeNext(videoId)
+            root.walk { key, itemObj ->
+                if (key == "playlistPanelVideoRenderer") {
+                    parsePlaylistPanelVideo(itemObj)?.let {
+                        if (it.id != videoId) tracks.add(it)
+                    }
+                } else if (key == "musicResponsiveListItemRenderer") {
+                    val wrapper = JSONObject().put(key, itemObj)
+                    parseTrackItem(wrapper)?.let {
+                        if (it.id != videoId) tracks.add(it)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "fetchRadioQueue failed for videoId $videoId: ${e.message}")
+        }
+        tracks.distinctBy { it.id }
+    }
+
+    private fun postInnerTubeNext(videoId: String, playlistId: String? = null): JSONObject {
+        val clientObj = JSONObject()
+            .put("clientName", "WEB_REMIX")
+            .put("clientVersion", "1.20240101.01.00")
+            .put("hl", SettingsStore.effectiveHl())
+            .put("gl", SettingsStore.effectiveGl())
+
+        val body = JSONObject()
+            .put("videoId", videoId)
+            .put("isAudioOnly", true)
+            .put("context", JSONObject().put("client", clientObj))
+
+        if (!playlistId.isNullOrBlank()) {
+            body.put("playlistId", playlistId)
+        } else {
+            body.put("playlistId", "RDAMVM$videoId")
+        }
+
+        val request = Request.Builder()
+            .url(NEXT_URL)
+            .post(body.toString().toRequestBody(JSON_TYPE))
+            .header("Origin", "https://music.youtube.com")
+            .header("Referer", "https://music.youtube.com/")
+            .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+            .header("X-Youtube-Client-Name", "67")
+            .header("X-Youtube-Client-Version", "1.20240101.01.00")
+            .build()
+
+        Net.client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                throw java.io.IOException("InnerTube next request failed: ${response.code}")
+            }
+            val text = response.body?.string().orEmpty()
+            return JSONObject(text)
+        }
+    }
+
+    private fun parsePlaylistPanelVideo(panel: JSONObject): MusicTrack? {
+        val videoId = panel.optString("videoId")
+        if (videoId.isNullOrBlank()) return null
+
+        val title = panel.optJSONObject("title")?.optJSONArray("runs")?.optJSONObject(0)?.optString("text").orEmpty()
+        val bylineRuns = panel.optJSONObject("longBylineText")?.optJSONArray("runs")
+            ?: panel.optJSONObject("shortBylineText")?.optJSONArray("runs")
+
+        var artists = ""
+        var artistId: String? = null
+        var album: String? = null
+        var albumId: String? = null
+
+        if (bylineRuns != null && bylineRuns.length() > 0) {
+            val nonDelimiterRuns = mutableListOf<Pair<String, String?>>()
+            for (r in 0 until bylineRuns.length()) {
+                val runObj = bylineRuns.optJSONObject(r)
+                val t = runObj?.optString("text").orEmpty().trim()
+                val bId = runObj?.optJSONObject("navigationEndpoint")?.optJSONObject("browseEndpoint")?.optString("browseId")
+                if (t.isNotEmpty() && t != "•" && t != "·" && !t.contains("views") && !t.contains("likes")) {
+                    nonDelimiterRuns.add(t to bId)
+                }
+            }
+            if (nonDelimiterRuns.isNotEmpty()) {
+                artists = nonDelimiterRuns[0].first
+                artistId = nonDelimiterRuns[0].second
+                if (nonDelimiterRuns.size > 1) {
+                    album = nonDelimiterRuns[1].first
+                    albumId = nonDelimiterRuns[1].second
+                }
+            }
+        }
+
+        val lenText = panel.optJSONObject("lengthText")?.optJSONArray("runs")?.optJSONObject(0)?.optString("text").orEmpty()
+        val durationSec = if (lenText.isNotBlank()) parseTimeString(lenText) else 0L
+
+        val thumbUrl = panel.optJSONObject("thumbnail")
+            ?.optJSONArray("thumbnails")
+            ?.let { thumbs ->
+                thumbs.optJSONObject(thumbs.length() - 1)?.optString("url")
+            }?.highQualityThumbnail()
+
+        return MusicTrack(
+            id = videoId,
+            title = title.ifBlank { "Unknown Title" },
+            artists = artists.ifBlank { "Various Artists" },
+            artistId = artistId,
+            album = album,
+            albumId = albumId,
+            thumbnailUrl = thumbUrl,
+            durationSec = durationSec
+        )
+    }
 
     private fun postInnerTubeSearch(query: String, params: String? = null): JSONObject {
         val body = JSONObject().put("query", query)
