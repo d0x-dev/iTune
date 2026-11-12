@@ -186,6 +186,7 @@ fun ITuneMusicPlayer(
     sheetProgress: Float = 1f,
     onCollapse: () -> Unit = { MusicPlayerState.expanded = false },
     onOpenIShare: () -> Unit = {},
+    onOpenIRecognition: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val track = MusicPlayerState.currentTrack ?: return
@@ -1259,6 +1260,7 @@ fun ITuneMusicPlayer(
                 lastLyricsInteractionTime = System.currentTimeMillis()
                 isMoreMenuOpen = false
             },
+            onOpenRecognition = onOpenIRecognition,
             modifier = Modifier.zIndex(80f)
         )
 
