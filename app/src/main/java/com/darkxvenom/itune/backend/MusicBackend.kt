@@ -5,6 +5,7 @@ import android.os.Build
 import android.util.Log
 import com.darkxvenom.itune.data.artist.ArtistInnertubeClient
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
+import com.darkxvenom.itune.data.charts.ChartTrack
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.SettingsStore
 import kotlinx.coroutines.Dispatchers
@@ -428,6 +429,59 @@ object MusicBackend {
             explorePlaylistsCache[localeSig] = distinct
         }
         distinct.filter { !hideExplicit || !it.isExplicit }
+    }
+
+    /**
+     * Fetches ranked YouTube Charts tracks (`FEmusic_charts`) with fallback to regional top chart search.
+     */
+    suspend fun fetchYouTubeCharts(): List<ChartTrack> = withContext(Dispatchers.IO) {
+        val tracks = mutableListOf<ChartTrack>()
+        val seenIds = HashSet<String>()
+        runCatching {
+            val root = postInnerTube(BROWSE_URL, JSONObject().put("browseId", "FEmusic_charts"))
+            var rank = 1
+            root.walk { key, obj ->
+                if (key == "musicResponsiveListItemRenderer") {
+                    val parsed = parseTrackItem(JSONObject().put("musicResponsiveListItemRenderer", obj))
+                    if (parsed != null && seenIds.add(parsed.id)) {
+                        tracks.add(
+                            ChartTrack(
+                                rank = rank++,
+                                title = parsed.title,
+                                artist = parsed.artists,
+                                thumbnailUrl = parsed.thumbnailUrl,
+                                id = parsed.id,
+                                durationSec = parsed.durationSec,
+                                isExplicit = parsed.isExplicit
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        // Fallback: If FEmusic_charts returned fewer than 10 tracks, query regional top charts
+        if (tracks.size < 10) {
+            val country = SettingsStore.state.value.contentCountry.ifBlank { SettingsStore.effectiveGl() }
+            val query = "Top 100 Songs $country"
+            val searched = searchMusic(query)
+            for (st in searched) {
+                if (seenIds.add(st.id)) {
+                    tracks.add(
+                        ChartTrack(
+                            rank = tracks.size + 1,
+                            title = st.title,
+                            artist = st.artists,
+                            thumbnailUrl = st.thumbnailUrl,
+                            id = st.id,
+                            durationSec = st.durationSec,
+                            isExplicit = st.isExplicit
+                        )
+                    )
+                }
+            }
+        }
+        tracks.take(100)
     }
 
     /**

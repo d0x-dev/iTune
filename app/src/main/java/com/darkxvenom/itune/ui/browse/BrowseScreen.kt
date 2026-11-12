@@ -280,36 +280,11 @@ fun BrowseScreen(
                     }
                 }
 
-                BrowseSegment.PLAYLISTS -> {
-                    if (visiblePlaylists.isEmpty()) {
-                        item(span = { GridItemSpan(2) }, key = "playlists_empty") {
-                            BrowseEmptySectionMessage(
-                                text = if (releasesLoading) {
-                                    "Loading regional playlists..."
-                                } else {
-                                    "No playlists available for this language & country"
-                                },
-                            )
-                        }
-                    } else {
-                        items(visiblePlaylists, key = { "pl_${it.id}" }) { playlist ->
-                            BrowseMediaGridCard(
-                                title = playlist.title,
-                                subtitle = playlist.author.ifBlank { "Featured Playlist" },
-                                badge = if (playlist.trackCount > 0) "${playlist.trackCount} tracks" else null,
-                                imageUrl = playlist.thumbnailUrl,
-                                cacheKey = "${playlist.id}_browse_pl",
-                                onClick = {
-                                    MusicPlayerState.pendingArtistNav = PendingArtistNav(
-                                        browseId = playlist.id,
-                                        name = playlist.title,
-                                        subtitle = playlist.author.ifBlank { "Playlist" },
-                                        thumbnailUrl = playlist.thumbnailUrl,
-                                        initialType = BrowseType.PLAYLIST,
-                                    )
-                                },
-                            )
-                        }
+                BrowseSegment.CHARTS -> {
+                    item(span = { GridItemSpan(2) }, key = "browse_charts_content") {
+                        BrowseChartsView(
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
                 }
 
