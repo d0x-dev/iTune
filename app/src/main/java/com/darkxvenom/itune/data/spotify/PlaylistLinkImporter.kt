@@ -8,6 +8,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
@@ -25,6 +26,8 @@ data class PlaylistImportResult(
 )
 
 object PlaylistLinkImporter {
+    private const val PAGE_SIZE = 100
+    private const val PLAYLIST_QUERY_HASH = "19ff1327c29e99c208c86d7a9d8f1929cfdf3d3202a0ff4253c821f1901aa94d"
     private val playlistIdPattern = Regex("[A-Za-z0-9]{22}")
     private val client = OkHttpClient.Builder()
         .followRedirects(true)
@@ -126,8 +129,76 @@ object PlaylistLinkImporter {
                 }
             }
             if (tracks.isEmpty()) error("No tracks were found. The playlist may be private or empty.")
+
+            // The public embed contains up to 100 tracks. When it exposes its
+            // short-lived anonymous session token, page the remaining entries too.
+            if (tracks.size >= PAGE_SIZE) {
+                val token = state?.optJSONObject("settings")
+                    ?.optJSONObject("session")
+                    ?.optString("accessToken")
+                    ?.takeIf(String::isNotBlank)
+                if (token != null) {
+                    runCatching { fetchRemainingTracks(id, token, tracks.size) }
+                        .getOrNull()
+                        ?.let(tracks::addAll)
+                }
+            }
             title to tracks
         }
+
+    private fun fetchRemainingTracks(
+        playlistId: String,
+        token: String,
+        startOffset: Int,
+    ): List<PlaylistImportTrack> {
+        val output = mutableListOf<PlaylistImportTrack>()
+        var offset = startOffset
+        while (true) {
+            val variables = """{"uri":"spotify:playlist:$playlistId","offset":$offset,"limit":$PAGE_SIZE,"enableWatchFeedEntrypoint":false}"""
+            val extensions = """{"persistedQuery":{"version":1,"sha256Hash":"$PLAYLIST_QUERY_HASH"}}"""
+            val url = "https://api-partner.spotify.com/pathfinder/v1/query".toHttpUrl()
+                .newBuilder()
+                .addQueryParameter("operationName", "fetchPlaylist")
+                .addQueryParameter("variables", variables)
+                .addQueryParameter("extensions", extensions)
+                .build()
+            val request = Request.Builder()
+                .url(url)
+                .header("User-Agent", "Mozilla/5.0")
+                .header("Authorization", "Bearer $token")
+                .header("App-platform", "WebPlayer")
+                .header("Accept", "application/json")
+                .build()
+            val body = client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) error("HTTP ${response.code}")
+                response.body?.string().orEmpty()
+            }
+            val content = JSONObject(body).optJSONObject("data")
+                ?.optJSONObject("playlistV2")
+                ?.optJSONObject("content") ?: break
+            val items = content.optJSONArray("items") ?: break
+            for (index in 0 until items.length()) {
+                val data = items.optJSONObject(index)
+                    ?.optJSONObject("itemV2")
+                    ?.optJSONObject("data") ?: continue
+                val name = data.optString("name").trim()
+                if (name.isBlank()) continue
+                val artistItems = data.optJSONObject("artists")?.optJSONArray("items")
+                val artists = buildList {
+                    for (artistIndex in 0 until (artistItems?.length() ?: 0)) {
+                        val artistName = artistItems?.optJSONObject(artistIndex)
+                            ?.optJSONObject("profile")?.optString("name").orEmpty()
+                        if (artistName.isNotBlank()) add(artistName)
+                    }
+                }.joinToString(", ")
+                output += PlaylistImportTrack(name, artists)
+            }
+            val total = content.optInt("totalCount", 0)
+            offset += items.length()
+            if (items.length() == 0 || offset >= total) break
+        }
+        return output
+    }
 
     private fun JSONArray.joinJsonNames(): String = buildList {
         for (index in 0 until length()) {
