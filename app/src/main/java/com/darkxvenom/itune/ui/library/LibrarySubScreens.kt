@@ -172,6 +172,12 @@ fun LibraryScreenOverlayContent(
                     hasMiniPlayer = hasMiniPlayer,
                     onBack = { controller.pop() },
                 )
+                LibraryDestination.CACHED_SONGS -> CachedSongsScreen(
+                    controller = controller,
+                    hasMiniPlayer = hasMiniPlayer,
+                    onBack = { controller.pop() },
+                    onExploreClick = onExploreClick,
+                )
             }
         }
     }
@@ -671,7 +677,7 @@ fun LibrarySongsScreen(
     val query = controller.searchQuery
     val sort = controller.songSort
 
-    LaunchedEffect(ytAccount.isSignedIn) {
+    LaunchedEffect(ytAccount.isSignedIn, ytAccount.activeSessionKey) {
         if (ytAccount.isSignedIn) {
             runCatching { YouTubeLibrarySyncManager.syncHistory(context) }
         }

@@ -229,6 +229,7 @@ class LibraryHostController internal constructor(
             "lm3" -> LibraryDestination.ALBUMS
             "lm4" -> LibraryDestination.SONGS
             "lm5" -> LibraryDestination.LIKED_SONGS
+            "lm_cached" -> LibraryDestination.CACHED_SONGS
             else -> return
         }
         openDestination(dest)
@@ -246,6 +247,8 @@ class LibraryHostController internal constructor(
     }
 
     fun openLikedSongs() = openDestination(LibraryDestination.LIKED_SONGS)
+
+    fun openCachedSongs() = openDestination(LibraryDestination.CACHED_SONGS)
 
     fun openUserPlaylist(playlistId: String) {
         activeUserPlaylistId = playlistId

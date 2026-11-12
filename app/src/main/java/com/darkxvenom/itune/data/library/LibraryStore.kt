@@ -21,6 +21,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
+import java.security.MessageDigest
+import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
 
 enum class LibraryDestination {
@@ -31,6 +33,7 @@ enum class LibraryDestination {
     LIKED_SONGS,
     USER_PLAYLIST,
     NEW_RELEASES,
+    CACHED_SONGS,
 }
 
 @Immutable
@@ -187,6 +190,7 @@ object LibraryStore {
     private const val KEY_ALBUMS = "saved_albums_json"
     private const val KEY_PLAYLISTS = "saved_playlists_json"
     private const val KEY_USER_PLAYLISTS = "user_playlists_json"
+    private const val KEY_SNAPSHOT_PREFIX = "ytm_snap_"
     private const val MAX_RECENT_SONGS = 120
 
     @Volatile
@@ -194,6 +198,16 @@ object LibraryStore {
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val hydrating = ConcurrentHashMap.newKeySet<String>()
+    private val accountSnapshots = ConcurrentHashMap<String, RemoteAccountSnapshot>()
+
+    private data class RemoteAccountSnapshot(
+        val likedSongs: List<SavedSongMetadata> = emptyList(),
+        val historySongs: List<SavedSongMetadata> = emptyList(),
+        val likedArtists: List<SavedCollectionEntry> = emptyList(),
+        val savedAlbums: List<SavedCollectionEntry> = emptyList(),
+        val savedPlaylists: List<SavedCollectionEntry> = emptyList(),
+        val userPlaylists: List<UserPlaylist> = emptyList(),
+    )
 
     private val _likedSongs = MutableStateFlow<List<SavedSongMetadata>>(emptyList())
     val likedSongs: StateFlow<List<SavedSongMetadata>> = _likedSongs.asStateFlow()
@@ -722,33 +736,12 @@ object LibraryStore {
 
     fun mergeRemoteLikedSongs(context: Context, remoteSongs: List<SavedSongMetadata>): Set<String> {
         ensureInit(context)
-        val merged = synchronized(this) {
-            val localOnly = _likedSongs.value.filter { it.savedLocally }
-            val byId = linkedMapOf<String, SavedSongMetadata>()
-            remoteSongs.forEach { remote ->
-                val localMatch = localOnly.firstOrNull { it.id == remote.id }
-                byId[remote.id] = if (localMatch != null) {
-                    remote.copy(
-                        savedLocally = true,
-                        isYtmSynced = true,
-                        addedAtMs = localMatch.addedAtMs,
-                        isExplicit = remote.isExplicit || localMatch.isExplicit,
-                    )
-                } else {
-                    remote.copy(savedLocally = false, isYtmSynced = true)
-                }
-            }
-            localOnly.forEach { local ->
-                if (local.id !in byId) {
-                    byId[local.id] = local
-                }
-            }
-            val result = byId.values.toList()
+        return synchronized(this) {
+            val result = coalesceRemoteSongs(_likedSongs.value.filter { it.savedLocally }, remoteSongs)
             _likedSongs.value = result
             persistSongs(KEY_LIKED_SONGS, result)
             result.mapTo(LinkedHashSet()) { it.id }
         }
-        return merged
     }
 
     fun replaceYtmHistory(context: Context, historySongs: List<SavedSongMetadata>) {
@@ -774,18 +767,7 @@ object LibraryStore {
     fun mergeRemoteArtists(context: Context, remoteArtists: List<SavedCollectionEntry>): Set<String> {
         ensureInit(context)
         return synchronized(this) {
-            val existingLocal = _likedArtists.value.filter { it.savedLocally }
-            val byId = linkedMapOf<String, SavedCollectionEntry>()
-            remoteArtists.forEach { r ->
-                val loc = existingLocal.firstOrNull { it.browseId == r.browseId }
-                byId[r.browseId] = if (loc != null) {
-                    r.copy(savedLocally = true, isYtmSynced = true, thumbnailUrl = r.thumbnailUrl ?: loc.thumbnailUrl)
-                } else {
-                    r.copy(savedLocally = false, isYtmSynced = true)
-                }
-            }
-            existingLocal.forEach { loc -> if (loc.browseId !in byId) byId[loc.browseId] = loc }
-            val list = byId.values.toList()
+            val list = coalesceRemoteCollections(_likedArtists.value.filter { it.savedLocally }, remoteArtists)
             _likedArtists.value = list
             persistCollections(KEY_ARTISTS, list)
             list.mapTo(LinkedHashSet()) { it.browseId }
@@ -795,23 +777,7 @@ object LibraryStore {
     fun mergeRemoteAlbums(context: Context, remoteAlbums: List<SavedCollectionEntry>): Set<String> {
         ensureInit(context)
         return synchronized(this) {
-            val existingLocal = _savedAlbums.value.filter { it.savedLocally }
-            val byId = linkedMapOf<String, SavedCollectionEntry>()
-            remoteAlbums.forEach { r ->
-                val loc = existingLocal.firstOrNull { it.browseId == r.browseId }
-                byId[r.browseId] = if (loc != null) {
-                    r.copy(
-                        savedLocally = true,
-                        isYtmSynced = true,
-                        isExplicit = r.isExplicit || loc.isExplicit,
-                        playlistId = r.playlistId ?: loc.playlistId,
-                    )
-                } else {
-                    r.copy(savedLocally = false, isYtmSynced = true)
-                }
-            }
-            existingLocal.forEach { loc -> if (loc.browseId !in byId) byId[loc.browseId] = loc }
-            val list = byId.values.toList()
+            val list = coalesceRemoteCollections(_savedAlbums.value.filter { it.savedLocally }, remoteAlbums)
             _savedAlbums.value = list
             persistCollections(KEY_ALBUMS, list)
             list.mapTo(LinkedHashSet()) { it.browseId }
@@ -821,23 +787,7 @@ object LibraryStore {
     fun mergeRemoteSavedPlaylists(context: Context, remoteSaved: List<SavedCollectionEntry>): Set<String> {
         ensureInit(context)
         return synchronized(this) {
-            val existingLocal = _savedPlaylists.value.filter { it.savedLocally }
-            val byId = linkedMapOf<String, SavedCollectionEntry>()
-            remoteSaved.forEach { r ->
-                val loc = existingLocal.firstOrNull { it.browseId == r.browseId }
-                byId[r.browseId] = if (loc != null) {
-                    r.copy(
-                        savedLocally = true,
-                        isYtmSynced = true,
-                        isExplicit = r.isExplicit || loc.isExplicit,
-                        playlistId = r.playlistId ?: loc.playlistId,
-                    )
-                } else {
-                    r.copy(savedLocally = false, isYtmSynced = true)
-                }
-            }
-            existingLocal.forEach { loc -> if (loc.browseId !in byId) byId[loc.browseId] = loc }
-            val list = byId.values.toList()
+            val list = coalesceRemoteCollections(_savedPlaylists.value.filter { it.savedLocally }, remoteSaved)
             _savedPlaylists.value = list
             persistCollections(KEY_PLAYLISTS, list)
             list.mapTo(LinkedHashSet()) { it.browseId }
@@ -855,60 +805,198 @@ object LibraryStore {
         }
     }
 
-    fun clearGoogleAccountDataOnSignOut(context: Context): Triple<Set<String>, Set<String>, Set<String>> {
+    /**
+     * Snapshots [previousSessionKey]'s synced YouTube Music feeds and swaps to
+     * [targetSessionKey]'s cached feeds (or empty remote state for a new account),
+     * keeping all locally saved items intact across switches.
+     */
+    fun switchRemoteSession(
+        context: Context,
+        previousSessionKey: String?,
+        targetSessionKey: String?,
+    ): Triple<Set<String>, Set<String>, Set<String>> {
         ensureInit(context)
         return synchronized(this) {
-            val keptLikes = _likedSongs.value
-                .filter { it.savedLocally }
-                .map { it.copy(isYtmSynced = false) }
-            _likedSongs.value = keptLikes
-            persistSongs(KEY_LIKED_SONGS, keptLikes)
+            if (!previousSessionKey.isNullOrBlank()) {
+                val snapshot = RemoteAccountSnapshot(
+                    likedSongs = _likedSongs.value.filter { it.isYtmSynced }
+                        .map { it.copy(savedLocally = false, isYtmSynced = true) },
+                    historySongs = _ytmHistorySongs.value,
+                    likedArtists = _likedArtists.value.filter { it.isYtmSynced }
+                        .map { it.copy(savedLocally = false, isYtmSynced = true) },
+                    savedAlbums = _savedAlbums.value.filter { it.isYtmSynced }
+                        .map { it.copy(savedLocally = false, isYtmSynced = true) },
+                    savedPlaylists = _savedPlaylists.value.filter { it.isYtmSynced }
+                        .map { it.copy(savedLocally = false, isYtmSynced = true) },
+                    userPlaylists = _userPlaylists.value.filter { it.isGoogleAccount },
+                )
+                saveRemoteSnapshotLocked(previousSessionKey, snapshot)
+            }
 
-            _ytmHistorySongs.value = emptyList()
-            persistSongs(KEY_YTM_HISTORY, emptyList())
+            val target = targetSessionKey?.takeIf { it.isNotBlank() }?.let(::loadRemoteSnapshotLocked)
+            val nextLikes = coalesceRemoteSongs(
+                _likedSongs.value.filter { it.savedLocally }.map { it.copy(isYtmSynced = false) },
+                target?.likedSongs.orEmpty(),
+            )
+            val nextHistory = target?.historySongs.orEmpty()
+            val nextArtists = coalesceRemoteCollections(
+                _likedArtists.value.filter { it.savedLocally }.map { it.copy(isYtmSynced = false) },
+                target?.likedArtists.orEmpty(),
+            )
+            val nextAlbums = coalesceRemoteCollections(
+                _savedAlbums.value.filter { it.savedLocally }.map { it.copy(isYtmSynced = false) },
+                target?.savedAlbums.orEmpty(),
+            )
+            val nextSavedPlaylists = coalesceRemoteCollections(
+                _savedPlaylists.value.filter { it.savedLocally }.map { it.copy(isYtmSynced = false) },
+                target?.savedPlaylists.orEmpty(),
+            )
+            val nextUserPlaylists = target?.userPlaylists.orEmpty().map { it.copy(isGoogleAccount = true) } +
+                _userPlaylists.value.filterNot { it.isGoogleAccount }
 
-            val keptArtists = _likedArtists.value
-                .filter { it.savedLocally }
-                .map { it.copy(isYtmSynced = false) }
-            _likedArtists.value = keptArtists
-            persistCollections(KEY_ARTISTS, keptArtists)
+            _likedSongs.value = nextLikes
+            persistSongs(KEY_LIKED_SONGS, nextLikes)
+            _ytmHistorySongs.value = nextHistory
+            persistSongs(KEY_YTM_HISTORY, nextHistory)
+            _likedArtists.value = nextArtists
+            persistCollections(KEY_ARTISTS, nextArtists)
+            _savedAlbums.value = nextAlbums
+            persistCollections(KEY_ALBUMS, nextAlbums)
+            _savedPlaylists.value = nextSavedPlaylists
+            persistCollections(KEY_PLAYLISTS, nextSavedPlaylists)
+            _userPlaylists.value = nextUserPlaylists
+            persistUserPlaylists(nextUserPlaylists)
 
-            val keptAlbums = _savedAlbums.value
-                .filter { it.savedLocally }
-                .map { it.copy(isYtmSynced = false) }
-            _savedAlbums.value = keptAlbums
-            persistCollections(KEY_ALBUMS, keptAlbums)
-
-            val keptSavedPlaylists = _savedPlaylists.value
-                .filter { it.savedLocally }
-                .map { it.copy(isYtmSynced = false) }
-            _savedPlaylists.value = keptSavedPlaylists
-            persistCollections(KEY_PLAYLISTS, keptSavedPlaylists)
-
-            val keptUserPlaylists = _userPlaylists.value.filterNot { it.isGoogleAccount }
-            _userPlaylists.value = keptUserPlaylists
-            persistUserPlaylists(keptUserPlaylists)
-
-            val likeIds = keptLikes.mapTo(LinkedHashSet()) { it.id }
-            val artistIds = keptArtists.mapTo(LinkedHashSet()) { it.browseId }
+            val likeIds = nextLikes.mapTo(LinkedHashSet()) { it.id }
+            val artistIds = nextArtists.mapTo(LinkedHashSet()) { it.browseId }
             val releaseIds = LinkedHashSet<String>().apply {
-                keptAlbums.forEach { add(it.browseId) }
-                keptSavedPlaylists.forEach { add(it.browseId) }
+                nextAlbums.forEach { add(it.browseId) }
+                nextSavedPlaylists.forEach { add(it.browseId) }
             }
             Triple(likeIds, artistIds, releaseIds)
         }
     }
 
-    private fun persistUserPlaylists(items: List<UserPlaylist>) {
-        val arr = JSONArray()
+    fun removeRemoteSnapshot(context: Context, sessionKey: String) {
+        ensureInit(context)
+        synchronized(this) {
+            accountSnapshots.remove(sessionKey)
+            prefs?.edit()?.remove(snapshotPrefKey(sessionKey))?.apply()
+        }
+    }
+
+    fun clearAllRemoteSnapshots(context: Context) {
+        ensureInit(context)
+        synchronized(this) {
+            accountSnapshots.clear()
+            val p = prefs ?: return
+            val keysToDelete = p.all.keys.filter { it.startsWith(KEY_SNAPSHOT_PREFIX) }
+            if (keysToDelete.isNotEmpty()) {
+                p.edit().apply { keysToDelete.forEach(::remove) }.apply()
+            }
+        }
+    }
+
+    fun clearGoogleAccountDataOnSignOut(context: Context): Triple<Set<String>, Set<String>, Set<String>> {
+        clearAllRemoteSnapshots(context)
+        return switchRemoteSession(context, previousSessionKey = null, targetSessionKey = null)
+    }
+
+    private fun coalesceRemoteSongs(
+        localOnly: List<SavedSongMetadata>,
+        remoteSongs: List<SavedSongMetadata>,
+    ): List<SavedSongMetadata> {
+        val byId = linkedMapOf<String, SavedSongMetadata>()
+        remoteSongs.forEach { remote ->
+            val localMatch = localOnly.firstOrNull { it.id == remote.id }
+            byId[remote.id] = if (localMatch != null) {
+                remote.copy(
+                    savedLocally = true,
+                    isYtmSynced = true,
+                    addedAtMs = localMatch.addedAtMs,
+                    isExplicit = remote.isExplicit || localMatch.isExplicit,
+                )
+            } else {
+                remote.copy(savedLocally = false, isYtmSynced = true)
+            }
+        }
+        localOnly.forEach { local ->
+            if (local.id !in byId) byId[local.id] = local
+        }
+        return byId.values.toList()
+    }
+
+    private fun coalesceRemoteCollections(
+        localOnly: List<SavedCollectionEntry>,
+        remoteItems: List<SavedCollectionEntry>,
+    ): List<SavedCollectionEntry> {
+        val byId = linkedMapOf<String, SavedCollectionEntry>()
+        remoteItems.forEach { r ->
+            val loc = localOnly.firstOrNull { it.browseId == r.browseId }
+            byId[r.browseId] = if (loc != null) {
+                r.copy(
+                    savedLocally = true,
+                    isYtmSynced = true,
+                    thumbnailUrl = r.thumbnailUrl ?: loc.thumbnailUrl,
+                    isExplicit = r.isExplicit || loc.isExplicit,
+                    playlistId = r.playlistId ?: loc.playlistId,
+                )
+            } else {
+                r.copy(savedLocally = false, isYtmSynced = true)
+            }
+        }
+        localOnly.forEach { loc ->
+            if (loc.browseId !in byId) byId[loc.browseId] = loc
+        }
+        return byId.values.toList()
+    }
+
+    private fun saveRemoteSnapshotLocked(sessionKey: String, snapshot: RemoteAccountSnapshot) {
+        accountSnapshots[sessionKey] = snapshot
+        val payload = JSONObject().apply {
+            put("liked", encodeSongsArray(snapshot.likedSongs))
+            put("history", encodeSongsArray(snapshot.historySongs))
+            put("artists", encodeCollectionsArray(snapshot.likedArtists))
+            put("albums", encodeCollectionsArray(snapshot.savedAlbums))
+            put("playlists", encodeCollectionsArray(snapshot.savedPlaylists))
+            put("userPlaylists", encodeUserPlaylistsArray(snapshot.userPlaylists))
+        }.toString()
+        prefs?.edit()?.putString(snapshotPrefKey(sessionKey), payload)?.apply()
+    }
+
+    private fun loadRemoteSnapshotLocked(sessionKey: String): RemoteAccountSnapshot? {
+        accountSnapshots[sessionKey]?.let { return it }
+        val raw = prefs?.getString(snapshotPrefKey(sessionKey), null) ?: return null
+        val obj = runCatching { JSONObject(raw) }.getOrNull() ?: return null
+        return RemoteAccountSnapshot(
+            likedSongs = decodeSongs(obj.optJSONArray("liked")?.toString()),
+            historySongs = decodeSongs(obj.optJSONArray("history")?.toString()),
+            likedArtists = decodeCollections(obj.optJSONArray("artists")?.toString(), BrowseType.ARTIST),
+            savedAlbums = decodeCollections(obj.optJSONArray("albums")?.toString(), BrowseType.ALBUM),
+            savedPlaylists = decodeCollections(obj.optJSONArray("playlists")?.toString(), BrowseType.PLAYLIST),
+            userPlaylists = decodeUserPlaylists(obj.optJSONArray("userPlaylists")?.toString()),
+        ).also { accountSnapshots[sessionKey] = it }
+    }
+
+    private fun snapshotPrefKey(sessionKey: String): String {
+        val hex = MessageDigest.getInstance("SHA-256")
+            .digest(sessionKey.toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(Locale.ROOT, it) }
+            .take(24)
+        return "$KEY_SNAPSHOT_PREFIX$hex"
+    }
+
+    private fun encodeSongsArray(items: List<SavedSongMetadata>): JSONArray = JSONArray().apply {
+        items.forEach { put(songToJson(it)) }
+    }
+
+    private fun encodeUserPlaylistsArray(items: List<UserPlaylist>): JSONArray = JSONArray().apply {
         items.forEach { pl ->
-            val songsArr = JSONArray()
-            pl.songs.forEach { songsArr.put(songToJson(it)) }
-            arr.put(
+            put(
                 JSONObject().apply {
                     put("id", pl.id)
                     put("name", pl.name)
-                    put("songs", songsArr)
+                    put("songs", encodeSongsArray(pl.songs))
                     put("createdAtMs", pl.createdAtMs)
                     put("updatedAtMs", pl.updatedAtMs)
                     put("isGoogleAccount", pl.isGoogleAccount)
@@ -917,7 +1005,29 @@ object LibraryStore {
                 },
             )
         }
-        prefs?.edit()?.putString(KEY_USER_PLAYLISTS, arr.toString())?.apply()
+    }
+
+    private fun encodeCollectionsArray(items: List<SavedCollectionEntry>): JSONArray = JSONArray().apply {
+        items.forEach { c ->
+            put(
+                JSONObject().apply {
+                    put("browseId", c.browseId)
+                    put("title", c.title)
+                    put("subtitle", c.subtitle)
+                    put("thumbnailUrl", c.thumbnailUrl ?: JSONObject.NULL)
+                    put("type", c.type.name)
+                    put("addedAtMs", c.addedAtMs)
+                    put("isExplicit", c.isExplicit)
+                    put("isYtmSynced", c.isYtmSynced)
+                    put("savedLocally", c.savedLocally)
+                    put("playlistId", c.playlistId ?: JSONObject.NULL)
+                },
+            )
+        }
+    }
+
+    private fun persistUserPlaylists(items: List<UserPlaylist>) {
+        prefs?.edit()?.putString(KEY_USER_PLAYLISTS, encodeUserPlaylistsArray(items).toString())?.apply()
     }
 
     private fun decodeUserPlaylists(raw: String?): List<UserPlaylist> {
@@ -956,24 +1066,7 @@ object LibraryStore {
     }
 
     private fun persistCollections(key: String, items: List<SavedCollectionEntry>) {
-        val arr = JSONArray()
-        items.forEach { c ->
-            arr.put(
-                JSONObject().apply {
-                    put("browseId", c.browseId)
-                    put("title", c.title)
-                    put("subtitle", c.subtitle)
-                    put("thumbnailUrl", c.thumbnailUrl ?: JSONObject.NULL)
-                    put("type", c.type.name)
-                    put("addedAtMs", c.addedAtMs)
-                    put("isExplicit", c.isExplicit)
-                    put("isYtmSynced", c.isYtmSynced)
-                    put("savedLocally", c.savedLocally)
-                    put("playlistId", c.playlistId ?: JSONObject.NULL)
-                },
-            )
-        }
-        prefs?.edit()?.putString(key, arr.toString())?.apply()
+        prefs?.edit()?.putString(key, encodeCollectionsArray(items).toString())?.apply()
     }
 
     private fun decodeCollections(raw: String?, fallbackType: BrowseType): List<SavedCollectionEntry> {

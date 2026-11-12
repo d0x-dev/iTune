@@ -256,6 +256,24 @@ fun LibraryScreen(
                             )
                         },
                     )
+                    HorizontalDivider(
+                        modifier = Modifier.padding(start = 44.dp),
+                        color = Color(0x1FFFFFFF),
+                        thickness = 0.5.dp
+                    )
+                    LibraryCachedSongsMenuRow(
+                        count = com.darkxvenom.itune.backend.MusicCacheManager.cachedTracks.size,
+                        sizeText = com.darkxvenom.itune.backend.MusicCacheManager.formatStorageSize(com.darkxvenom.itune.backend.MusicCacheManager.totalStorageBytes.longValue),
+                        onClick = {
+                            onMenuItemClick(
+                                LibraryMenuItem(
+                                    id = "lm_cached",
+                                    title = "Downloaded & Cached",
+                                    iconRes = R.drawable.ic_settings_downloads,
+                                ),
+                            )
+                        },
+                    )
                 }
             }
 
@@ -527,6 +545,60 @@ private fun LibraryLikedSongsMenuRow(
                 text = count.toString(),
                 color = Color(0x99FFFFFF),
                 fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(end = 6.dp)
+            )
+        }
+
+        Icon(
+            imageVector = Icons.Default.ChevronRight,
+            contentDescription = "Open",
+            tint = Color(0x66FFFFFF),
+            modifier = Modifier.size(19.dp)
+        )
+    }
+}
+
+@Composable
+private fun LibraryCachedSongsMenuRow(
+    count: Int,
+    sizeText: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onClick() },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_settings_downloads),
+            contentDescription = "Downloaded & Cached",
+            tint = Color(0xFF007AFF),
+            modifier = Modifier.size(22.dp)
+        )
+
+        Spacer(modifier = Modifier.width(17.dp))
+
+        Text(
+            text = "Downloaded & Cached",
+            color = AppleTextPrimary,
+            fontSize = 17.sp,
+            fontWeight = FontWeight.Normal,
+            letterSpacing = (-0.2).sp,
+            modifier = Modifier.weight(1f)
+        )
+
+        if (count > 0) {
+            Text(
+                text = "$count • $sizeText",
+                color = Color(0x99FFFFFF),
+                fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(end = 6.dp)
             )
