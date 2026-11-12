@@ -52,6 +52,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -74,13 +75,18 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -93,8 +99,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.core.view.WindowCompat
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.data.auth.WebSessionMode
@@ -212,6 +220,21 @@ internal const val WELCOME_CLEARED_PAUSE_MS = 520L
 private enum class WelcomeStep {
     NAME,
     GOOGLE_CONNECT,
+    OUTRO,
+}
+
+private enum class OutroPhase {
+    TYPING_SIGNING_IN,
+    TYPING_GREETING,
+    TYPING_CUSTOMISING,
+    TRAVEL_TO_CENTER,
+    SHOW_ITUNE_CENTER,
+    WAIT_BEFORE_AIRBEATS,
+    TYPING_AIRBEATS,
+    TYPING_BACK_ITUNE,
+    REVEAL_HOME_DIM_BG,
+    TRAVEL_TO_HOME_BAR,
+    DONE,
 }
 
 /**
@@ -273,10 +296,15 @@ internal fun sampleWelcomeAmbientFrame(progress: Float): WelcomeAmbientFrame {
 @Composable
 fun WelcomeScreen(
     initialName: String = "",
+    fromSplash: Boolean = false,
+    homeIconBounds: Rect? = null,
+    homeTitleBounds: Rect? = null,
+    onRevealHomeUnderlay: (String) -> Unit = {},
     onContinue: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val haptics = rememberHaptics()
+    val density = LocalDensity.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val coroutineScope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
@@ -286,8 +314,22 @@ fun WelcomeScreen(
     var showEmptyHint by remember { mutableStateOf(false) }
     var enteredScreen by remember { mutableStateOf(false) }
     var currentStep by remember { mutableStateOf(WelcomeStep.NAME) }
+    var outroPhase by remember { mutableStateOf(OutroPhase.TYPING_SIGNING_IN) }
+    var outroText by remember { mutableStateOf("") }
+    var outroCursorVisible by remember { mutableStateOf(true) }
+    var outroActivelyTyping by remember { mutableStateOf(false) }
+    var outroShowLoader by remember { mutableStateOf(false) }
     var showGoogleLogin by remember { mutableStateOf(false) }
+
+    var rootSizePx by remember { mutableStateOf(IntSize.Zero) }
+    var cornerIconRect by remember { mutableStateOf<Rect?>(null) }
+    var cornerTitleRect by remember { mutableStateOf<Rect?>(null) }
+    var heroTitleSizePx by remember { mutableStateOf(IntSize.Zero) }
+
     val shakeOffsetPx = remember { Animatable(0f) }
+    val cornerToCenterProgress = remember { Animatable(0f) }
+    val backgroundAlpha = remember { Animatable(1f) }
+    val centerToHomeProgress = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
         enteredScreen = true
@@ -389,19 +431,154 @@ fun WelcomeScreen(
     BackHandler(enabled = currentStep == WelcomeStep.GOOGLE_CONNECT && !showGoogleLogin) {
         currentStep = WelcomeStep.NAME
     }
+    BackHandler(enabled = currentStep == WelcomeStep.OUTRO) {
+        // Prevent cancelling the post-onboarding transition once started.
+    }
 
-    Box(modifier = modifier.fillMaxSize()) {
+    LaunchedEffect(currentStep) {
+        if (currentStep != WelcomeStep.OUTRO) return@LaunchedEffect
+
+        suspend fun typeOut(target: String) {
+            outroActivelyTyping = false
+            outroCursorVisible = true
+            outroText = ""
+            delay(360L)
+            outroActivelyTyping = true
+            for (i in 0 until target.length) {
+                delay(welcomeTypingKeystrokeDelayMs(target, i))
+                outroText = target.take(i + 1)
+            }
+            outroActivelyTyping = false
+        }
+
+        suspend fun eraseOut(source: String) {
+            outroCursorVisible = true
+            delay(320L)
+            outroActivelyTyping = true
+            for (deleted in 0 until source.length) {
+                delay(welcomeBackspaceDelayMs(deleted))
+                outroText = source.dropLast(deleted + 1)
+            }
+            outroActivelyTyping = false
+        }
+
+        val cleaned = nameText.trim().ifBlank { "Listener" }
+        cornerToCenterProgress.snapTo(0f)
+        backgroundAlpha.snapTo(1f)
+        centerToHomeProgress.snapTo(0f)
+
+        // 1. Centered "Signing In" typing animation + loader (top bar stays visible, no buttons)
+        outroPhase = OutroPhase.TYPING_SIGNING_IN
+        outroShowLoader = true
+        typeOut("Signing In")
+        outroCursorVisible = false
+        delay(1050L)
+        eraseOut("Signing In")
+        outroShowLoader = false
+        delay(220L)
+
+        // 2. Centered "Hi, <name>, We Got You!" typing animation
+        outroPhase = OutroPhase.TYPING_GREETING
+        val greeting = "Hi, $cleaned, We Got You!"
+        typeOut(greeting)
+        outroCursorVisible = false
+        delay(1250L)
+        eraseOut(greeting)
+        delay(220L)
+
+        // 3. Centered "Customising Your feed.." typing animation, then erase completely
+        outroPhase = OutroPhase.TYPING_CUSTOMISING
+        val customising = "Customising Your feed.."
+        typeOut(customising)
+        outroCursorVisible = false
+        delay(1150L)
+        eraseOut(customising)
+        outroCursorVisible = false
+        delay(240L)
+
+        // 4. Bring corner waves icon + corner "iTune" -> travel smoothly to middle (big lockup)
+        outroText = "iTune"
+        outroCursorVisible = false
+        outroPhase = OutroPhase.TRAVEL_TO_CENTER
+        cornerToCenterProgress.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = 880, easing = FastOutSlowInEasing),
+        )
+
+        // 5. Hold centered "iTune", erase "iTune", wait 2 seconds before typing "AirBeats"
+        outroPhase = OutroPhase.SHOW_ITUNE_CENTER
+        delay(550L)
+        eraseOut("iTune")
+
+        outroPhase = OutroPhase.WAIT_BEFORE_AIRBEATS
+        outroCursorVisible = true
+        delay(2000L)
+
+        // 6. Type "AirBeats", hold ~2.5s, erase "AirBeats", then type back "iTune"
+        outroPhase = OutroPhase.TYPING_AIRBEATS
+        typeOut("AirBeats")
+        outroCursorVisible = false
+        delay(2500L)
+        eraseOut("AirBeats")
+        delay(220L)
+
+        outroPhase = OutroPhase.TYPING_BACK_ITUNE
+        typeOut("iTune")
+        outroCursorVisible = false
+        delay(520L)
+
+        // 7. Dim/erase Welcome background revealing HomeScreen while keeping big icon + "iTune" centered
+        outroPhase = OutroPhase.REVEAL_HOME_DIM_BG
+        onRevealHomeUnderlay(cleaned)
+        backgroundAlpha.animateTo(
+            targetValue = 0f,
+            animationSpec = tween(durationMillis = 820, easing = FastOutSlowInEasing),
+        )
+        delay(140L)
+
+        // 8. Fly both big icon + "iTune" smoothly from center to Home TopHeaderBar exact coords
+        outroPhase = OutroPhase.TRAVEL_TO_HOME_BAR
+        centerToHomeProgress.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = 860, easing = FastOutSlowInEasing),
+        )
+        outroPhase = OutroPhase.DONE
+        onContinue(cleaned)
+    }
+
+    val isOutro = currentStep == WelcomeStep.OUTRO
+    val isBrandTraveling = isOutro && outroPhase.ordinal >= OutroPhase.TRAVEL_TO_CENTER.ordinal
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .onGloballyPositioned { coords -> rootSizePx = coords.size }
+            .pointerInput(isOutro) {
+                if (isOutro) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            event.changes.forEach { it.consume() }
+                        }
+                    }
+                }
+            },
+    ) {
         WelcomeMeshBackground(
             ambient = ambient,
             orbitPhaseA = orbitPhaseA,
             orbitPhaseB = orbitPhaseB,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer { alpha = backgroundAlpha.value },
         )
 
         // Corner Header: ic_itune_waves top-left, iTune brand wordmark top-right
+        // Measured via boundsInRoot so Phase 4 seamlessly detaches and travels from exact coordinates.
         AnimatedVisibility(
-            visible = enteredScreen,
-            enter = fadeIn(tween(650)) + slideInVertically(tween(650, easing = FastOutSlowInEasing)) { -it / 2 },
+            visible = enteredScreen && !isBrandTraveling,
+            enter = if (fromSplash) fadeIn(tween(250)) else fadeIn(tween(650)) + slideInVertically(tween(650, easing = FastOutSlowInEasing)) { -it / 2 },
+            exit = fadeOut(tween(1)),
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
@@ -416,7 +593,11 @@ fun WelcomeScreen(
                     painter = painterResource(id = R.drawable.ic_itune_waves),
                     contentDescription = "iTune Waves",
                     colorFilter = ColorFilter.tint(cornerWaveColor),
-                    modifier = Modifier.size(34.dp),
+                    modifier = Modifier
+                        .size(34.dp)
+                        .onGloballyPositioned { coords ->
+                            if (!isBrandTraveling) cornerIconRect = coords.boundsInRoot()
+                        },
                 )
                 Text(
                     text = "iTune",
@@ -425,6 +606,9 @@ fun WelcomeScreen(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = (-0.4).sp,
+                    modifier = Modifier.onGloballyPositioned { coords ->
+                        if (!isBrandTraveling) cornerTitleRect = coords.boundsInRoot()
+                    },
                 )
             }
         }
@@ -619,24 +803,77 @@ fun WelcomeScreen(
                                 isLightBackground = inkFactor > 0.5f,
                                 onClick = {
                                     haptics.play(Haptic.Tap)
-                                    val cleaned = nameText.trim().ifBlank { "Listener" }
-                                    onContinue(cleaned)
+                                    keyboardController?.hide()
+                                    currentStep = WelcomeStep.OUTRO
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                             )
+                        }
+                    }
+
+                    WelcomeStep.OUTRO -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 32.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            AnimatedVisibility(
+                                visible = !isBrandTraveling,
+                                enter = fadeIn(tween(180)),
+                                exit = fadeOut(tween(160)),
+                            ) {
+                                WelcomeOutroCenterMessage(
+                                    text = outroText,
+                                    showCursor = outroCursorVisible,
+                                    activelyTyping = outroActivelyTyping,
+                                    showLoader = outroShowLoader,
+                                    textColor = headlineColor,
+                                    cursorColor = headlineCursorColor,
+                                )
+                            }
                         }
                     }
                 }
             }
         }
 
+        if (isBrandTraveling && outroPhase != OutroPhase.DONE) {
+            WelcomeOutroTravelingBrand(
+                rootSizePx = rootSizePx,
+                cornerIconRect = cornerIconRect,
+                cornerTitleRect = cornerTitleRect,
+                homeIconBounds = homeIconBounds,
+                homeTitleBounds = homeTitleBounds,
+                cornerWaveColor = cornerWaveColor,
+                cornerBrandColor = cornerBrandColor,
+                headlineColor = headlineColor,
+                cursorColor = headlineCursorColor,
+                cornerToCenter = cornerToCenterProgress.value,
+                dimProgress = 1f - backgroundAlpha.value,
+                centerToHome = centerToHomeProgress.value,
+                titleText = outroText,
+                showCursor = outroCursorVisible &&
+                    outroPhase in setOf(
+                        OutroPhase.SHOW_ITUNE_CENTER,
+                        OutroPhase.WAIT_BEFORE_AIRBEATS,
+                        OutroPhase.TYPING_AIRBEATS,
+                        OutroPhase.TYPING_BACK_ITUNE,
+                    ),
+                activelyTyping = outroActivelyTyping,
+                heroTitleSizePx = heroTitleSizePx,
+                onHeroTitleMeasured = { heroTitleSizePx = it },
+            )
+        }
+
         if (showGoogleLogin) {
             GoogleLoginScreen(
                 mode = WebSessionMode.SIGN_IN,
+                returnImmediatelyOnCapture = true,
                 onSignedIn = {
                     showGoogleLogin = false
-                    val cleaned = nameText.trim().ifBlank { "Listener" }
-                    onContinue(cleaned)
+                    keyboardController?.hide()
+                    currentStep = WelcomeStep.OUTRO
                 },
                 onClose = { showGoogleLogin = false },
                 modifier = Modifier.fillMaxSize(),
@@ -646,7 +883,278 @@ fun WelcomeScreen(
 }
 
 @Composable
-private fun WelcomeMeshBackground(
+private fun WelcomeOutroCenterMessage(
+    text: String,
+    showCursor: Boolean,
+    activelyTyping: Boolean,
+    showLoader: Boolean,
+    textColor: Color,
+    cursorColor: Color,
+) {
+    val blinkTransition = rememberInfiniteTransition(label = "outroCenterCursorBlink")
+    val blinkAlpha by blinkTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 0.08f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 440, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "outroCursorAlpha",
+    )
+    var textLayout by remember { mutableStateOf<TextLayoutResult?>(null) }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text(
+            text = text,
+            color = textColor,
+            fontFamily = WelcomeSFPro,
+            fontSize = 30.sp,
+            lineHeight = 38.sp,
+            fontWeight = FontWeight.W800,
+            letterSpacing = (-0.6).sp,
+            textAlign = TextAlign.Center,
+            onTextLayout = { textLayout = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 42.dp)
+                .drawWithContent {
+                    drawContent()
+                    val alpha = if (showCursor) (if (activelyTyping) 1f else blinkAlpha) else 0f
+                    if (alpha > 0.01f) {
+                        val caretW = 2.8.dp.toPx()
+                        val gap = 3.dp.toPx()
+                        val layout = textLayout
+                        val lastLine = ((layout?.lineCount ?: 1) - 1).coerceAtLeast(0)
+                        val caretX = if (text.isEmpty() || layout == null || layout.lineCount == 0) {
+                            size.width / 2f
+                        } else {
+                            (layout.getLineRight(lastLine) + gap).coerceAtMost(size.width - caretW)
+                        }
+                        val top = if (layout != null && layout.lineCount > 0 && text.isNotEmpty()) {
+                            layout.getLineTop(lastLine)
+                        } else {
+                            0f
+                        }
+                        val bottom = if (layout != null && layout.lineCount > 0 && text.isNotEmpty()) {
+                            layout.getLineBottom(lastLine)
+                        } else {
+                            38.sp.toPx()
+                        }
+                        val lineH = (bottom - top).coerceAtLeast(24.dp.toPx())
+                        val caretH = minOf(30.dp.toPx(), lineH * 0.78f)
+                        val caretTop = top + (lineH - caretH) / 2f
+                        drawRoundRect(
+                            color = cursorColor.copy(alpha = alpha),
+                            topLeft = Offset(caretX, caretTop),
+                            size = Size(caretW, caretH),
+                            cornerRadius = CornerRadius(caretW / 2f, caretW / 2f),
+                        )
+                    }
+                },
+        )
+
+        AnimatedVisibility(
+            visible = showLoader,
+            enter = fadeIn(tween(240)),
+            exit = fadeOut(tween(200)),
+        ) {
+            CircularProgressIndicator(
+                color = WelcomeCrimson,
+                trackColor = textColor.copy(alpha = 0.16f),
+                strokeWidth = 2.6.dp,
+                modifier = Modifier
+                    .padding(top = 22.dp)
+                    .size(26.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun WelcomeOutroTravelingBrand(
+    rootSizePx: IntSize,
+    cornerIconRect: Rect?,
+    cornerTitleRect: Rect?,
+    homeIconBounds: Rect?,
+    homeTitleBounds: Rect?,
+    cornerWaveColor: Color,
+    cornerBrandColor: Color,
+    headlineColor: Color,
+    cursorColor: Color,
+    cornerToCenter: Float,
+    dimProgress: Float,
+    centerToHome: Float,
+    titleText: String,
+    showCursor: Boolean,
+    activelyTyping: Boolean,
+    heroTitleSizePx: IntSize,
+    onHeroTitleMeasured: (IntSize) -> Unit,
+) {
+    if (rootSizePx.width <= 0 || rootSizePx.height <= 0) return
+    val density = LocalDensity.current
+    val blinkTransition = rememberInfiniteTransition(label = "outroHeroCursorBlink")
+    val blinkAlpha by blinkTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 0.08f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 440, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "heroCursorAlpha",
+    )
+    var textLayout by remember { mutableStateOf<TextLayoutResult?>(null) }
+
+    val rootW = rootSizePx.width.toFloat()
+    val rootH = rootSizePx.height.toFloat()
+
+    val fallbackStartIcon = with(density) { Rect(24.dp.toPx(), 42.dp.toPx(), 58.dp.toPx(), 76.dp.toPx()) }
+    val startIcon = cornerIconRect ?: fallbackStartIcon
+    val startTitle = cornerTitleRect ?: with(density) {
+        Rect(rootW - 76.dp.toPx(), 44.dp.toPx(), rootW - 24.dp.toPx(), 70.dp.toPx())
+    }
+    val endIcon = homeIconBounds ?: with(density) { Rect(20.dp.toPx(), 46.dp.toPx(), 52.dp.toPx(), 78.dp.toPx()) }
+    val endTitle = homeTitleBounds ?: with(density) { Rect(62.dp.toPx(), 48.dp.toPx(), 126.dp.toPx(), 76.dp.toPx()) }
+
+    val centerIconPx = with(density) { 96.dp.toPx() }
+    val heroGapPx = with(density) { 18.dp.toPx() }
+    val fallbackHeroTextH = with(density) { 54.dp.toPx() }
+    val baseHeroH = heroTitleSizePx.height.takeIf { it > 0 }?.toFloat() ?: fallbackHeroTextH
+
+    val totalHeroH = centerIconPx + heroGapPx + baseHeroH
+    val centerIconTopLeft = Offset(
+        x = (rootW - centerIconPx) / 2f,
+        y = (rootH - totalHeroH) / 2f,
+    )
+    val centerTitleCenter = Offset(
+        x = rootW / 2f,
+        y = centerIconTopLeft.y + centerIconPx + heroGapPx + baseHeroH / 2f,
+    )
+
+    val travelingHome = centerToHome > 0f
+    val iconTopLeft = if (!travelingHome) {
+        Offset(
+            x = startIcon.left + (centerIconTopLeft.x - startIcon.left) * cornerToCenter,
+            y = startIcon.top + (centerIconTopLeft.y - startIcon.top) * cornerToCenter,
+        )
+    } else {
+        Offset(
+            x = centerIconTopLeft.x + (endIcon.left - centerIconTopLeft.x) * centerToHome,
+            y = centerIconTopLeft.y + (endIcon.top - centerIconTopLeft.y) * centerToHome,
+        )
+    }
+    val iconSizePx = if (!travelingHome) {
+        startIcon.width + (centerIconPx - startIcon.width) * cornerToCenter
+    } else {
+        centerIconPx + (endIcon.width - centerIconPx) * centerToHome
+    }
+    val iconColor = if (!travelingHome) {
+        val midIconColor = lerp(headlineColor, Color.White, dimProgress)
+        lerp(cornerWaveColor, midIconColor, cornerToCenter)
+    } else {
+        lerp(lerp(headlineColor, Color.White, dimProgress), Color.White, centerToHome)
+    }
+
+    val startTitleScale = (startTitle.height / baseHeroH).coerceIn(0.32f, 0.72f)
+    val endTitleScale = (endTitle.height / baseHeroH).coerceIn(0.35f, 0.75f)
+    val titleScale = if (!travelingHome) {
+        startTitleScale + (1f - startTitleScale) * cornerToCenter
+    } else {
+        1f + (endTitleScale - 1f) * centerToHome
+    }
+    val titleCenter = if (!travelingHome) {
+        Offset(
+            x = startTitle.center.x + (centerTitleCenter.x - startTitle.center.x) * cornerToCenter,
+            y = startTitle.center.y + (centerTitleCenter.y - startTitle.center.y) * cornerToCenter,
+        )
+    } else {
+        Offset(
+            x = centerTitleCenter.x + (endTitle.center.x - centerTitleCenter.x) * centerToHome,
+            y = centerTitleCenter.y + (endTitle.center.y - centerTitleCenter.y) * centerToHome,
+        )
+    }
+    val textColor = if (!travelingHome) {
+        val midTextColor = lerp(headlineColor, Color.White, dimProgress)
+        lerp(cornerBrandColor, midTextColor, cornerToCenter)
+    } else {
+        lerp(lerp(headlineColor, Color.White, dimProgress), Color.White, centerToHome)
+    }
+    val letterSpacingSp = if (!travelingHome) {
+        (-0.4f + (-0.8f - -0.4f) * cornerToCenter).sp
+    } else {
+        (-0.8f + (-0.5f - -0.8f) * centerToHome).sp
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_itune_waves),
+            contentDescription = "iTune Waves",
+            colorFilter = ColorFilter.tint(iconColor),
+            modifier = Modifier
+                .offset { IntOffset(iconTopLeft.x.roundToInt(), iconTopLeft.y.roundToInt()) }
+                .size(with(density) { iconSizePx.toDp() }),
+        )
+
+        Text(
+            text = titleText,
+            color = textColor,
+            fontSize = 46.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = letterSpacingSp,
+            maxLines = 1,
+            onTextLayout = { textLayout = it },
+            modifier = Modifier
+                .onGloballyPositioned { coords ->
+                    if (coords.size.width > 0 && coords.size.height > 0 &&
+                        (titleText == "iTune" || heroTitleSizePx == IntSize.Zero)
+                    ) {
+                        onHeroTitleMeasured(coords.size)
+                    } else if (titleText != "iTune" && heroTitleSizePx.height == 0 && coords.size.height > 0) {
+                        onHeroTitleMeasured(coords.size)
+                    }
+                }
+                .graphicsLayer {
+                    translationX = titleCenter.x - size.width / 2f
+                    translationY = titleCenter.y - size.height / 2f
+                    scaleX = titleScale
+                    scaleY = titleScale
+                    transformOrigin = TransformOrigin.Center
+                }
+                .heightIn(min = with(density) { baseHeroH.toDp() })
+                .drawWithContent {
+                    drawContent()
+                    val alpha = if (showCursor) (if (activelyTyping) 1f else blinkAlpha) else 0f
+                    if (alpha > 0.01f) {
+                        val caretW = 3.2.dp.toPx()
+                        val gap = 4.dp.toPx()
+                        val layout = textLayout
+                        val caretX = if (titleText.isEmpty() || layout == null || layout.lineCount == 0) {
+                            size.width / 2f - caretW / 2f
+                        } else {
+                            layout.getLineRight(0) + gap
+                        }
+                        val lineH = (layout?.getLineBottom(0)?.minus(layout.getLineTop(0)))
+                            ?.coerceAtLeast(32.dp.toPx())
+                            ?: size.height
+                        val caretH = minOf(40.dp.toPx(), lineH * 0.78f)
+                        val caretTop = (size.height - caretH) / 2f
+                        drawRoundRect(
+                            color = cursorColor.copy(alpha = alpha),
+                            topLeft = Offset(caretX, caretTop),
+                            size = Size(caretW, caretH),
+                            cornerRadius = CornerRadius(caretW / 2f, caretW / 2f),
+                        )
+                    }
+                },
+        )
+    }
+}
+
+@Composable
+internal fun WelcomeMeshBackground(
     ambient: WelcomeAmbientFrame,
     orbitPhaseA: Float,
     orbitPhaseB: Float,

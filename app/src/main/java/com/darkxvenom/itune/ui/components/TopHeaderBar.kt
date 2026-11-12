@@ -17,11 +17,19 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,8 +42,21 @@ import com.darkxvenom.itune.ui.theme.AppleTextPrimary
 fun TopHeaderBar(
     modifier: Modifier = Modifier,
     displayName: String = "",
+    showBrandLogoAndTitle: Boolean = true,
+    onBrandBoundsChanged: ((iconBounds: Rect, titleBounds: Rect) -> Unit)? = null,
     onProfileClick: () -> Unit = {}
 ) {
+    var iconBounds by remember { mutableStateOf<Rect?>(null) }
+    var titleBounds by remember { mutableStateOf<Rect?>(null) }
+
+    fun publishBounds() {
+        val ib = iconBounds
+        val tb = titleBounds
+        if (ib != null && tb != null) {
+            onBrandBoundsChanged?.invoke(ib, tb)
+        }
+    }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -47,12 +68,20 @@ fun TopHeaderBar(
     ) {
         // Top Left: The requested ic_itune_waves.xml icon
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.graphicsLayer {
+                alpha = if (showBrandLogoAndTitle) 1f else 0f
+            },
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_itune_waves),
                 contentDescription = "iTune Brand Waves",
-                modifier = Modifier.size(32.dp),
+                modifier = Modifier
+                    .size(32.dp)
+                    .onGloballyPositioned { coords ->
+                        iconBounds = coords.boundsInRoot()
+                        publishBounds()
+                    },
                 colorFilter = ColorFilter.tint(Color.White)
             )
             Spacer(modifier = Modifier.width(10.dp))
@@ -61,7 +90,11 @@ fun TopHeaderBar(
                 color = AppleTextPrimary,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = (-0.5).sp
+                letterSpacing = (-0.5).sp,
+                modifier = Modifier.onGloballyPositioned { coords ->
+                    titleBounds = coords.boundsInRoot()
+                    publishBounds()
+                },
             )
         }
 
