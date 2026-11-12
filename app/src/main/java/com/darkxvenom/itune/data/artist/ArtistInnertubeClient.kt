@@ -717,10 +717,21 @@ object ArtistInnertubeClient {
                 authUser = fresh.authUser.ifBlank { previous?.authUser ?: "0" },
             )
             scope = refreshed
+
+            // A cookie-only refresh sees the browser's primary identity. Keep the
+            // explicitly selected channel's delegated page ID, but refresh its
+            // user-session ID and auth-user index from the live account config.
+            val selectedChannel = channelOverride?.copy(
+                dataSyncId = refreshed.dataSyncId,
+                authUser = refreshed.authUser,
+            )
+            if (selectedChannel != null) {
+                channelOverride = selectedChannel
+            }
             if (persistScope) {
                 GoogleAuthStore.updateActiveScope(
-                    pageId = refreshed.pageId,
-                    dataSyncId = refreshed.dataSyncId,
+                    pageId = if (selectedChannel != null) selectedChannel.pageId else refreshed.pageId,
+                    dataSyncId = if (selectedChannel != null) selectedChannel.dataSyncId else refreshed.dataSyncId,
                 )
             }
         }
