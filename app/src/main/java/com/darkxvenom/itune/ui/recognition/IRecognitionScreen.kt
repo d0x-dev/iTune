@@ -1,6 +1,7 @@
 package com.darkxvenom.itune.ui.recognition
 
 import android.Manifest
+import android.widget.Toast
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -75,6 +76,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -82,6 +84,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
+import com.darkxvenom.itune.R
+import com.darkxvenom.itune.backend.MusicBackend
+import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.recognition.IRecognitionRepository
 import com.darkxvenom.itune.recognition.IRecognitionResult
 import com.darkxvenom.itune.recognition.RecognitionNoMatchException
@@ -281,6 +286,7 @@ fun IRecognitionScreen(
                     is IRecognitionUiState.Success -> RecognitionResultCard(
                         result = target.result,
                         onTryAgain = ::requestMicrophoneAndStart,
+                        onClose = onClose,
                     )
                     IRecognitionUiState.PermissionDenied -> PermissionCard(
                         onRequest = {
@@ -425,8 +431,11 @@ fun IRecognitionScreen(
 private fun RecognitionResultCard(
     result: IRecognitionResult,
     onTryAgain: () -> Unit,
+    onClose: () -> Unit,
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var isPlayLoading by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -477,19 +486,49 @@ private fun RecognitionResultCard(
             )
         }
         Spacer(Modifier.height(24.dp))
-        if (!result.appleMusicUrl.isNullOrBlank()) {
-            Button(
-                onClick = { openExternalUrl(context, result.appleMusicUrl) },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = RecognitionRed),
-                shape = RoundedCornerShape(16.dp),
-            ) {
-                Icon(Icons.Rounded.MusicNote, contentDescription = null)
-                Spacer(Modifier.size(8.dp))
-                Text("Open in Apple Music", fontWeight = FontWeight.SemiBold)
-                Spacer(Modifier.weight(1f))
-                Icon(Icons.Rounded.OpenInNew, contentDescription = null, modifier = Modifier.size(17.dp))
+        Button(
+            onClick = {
+                if (!isPlayLoading) {
+                    scope.launch {
+                        isPlayLoading = true
+                        try {
+                            val query = "${result.title} ${result.artist}"
+                            val tracks = MusicBackend.searchMusic(query)
+                            val track = tracks.firstOrNull()
+                            if (track != null) {
+                                MusicPlayerState.play(track, tracks, expandPlayer = true)
+                                onClose()
+                            } else {
+                                Toast.makeText(context, "Song not found in iTune", Toast.LENGTH_SHORT).show()
+                            }
+                        } catch (_: Exception) {
+                            Toast.makeText(context, "Playback failed, try again", Toast.LENGTH_SHORT).show()
+                        } finally {
+                            isPlayLoading = false
+                        }
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = RecognitionRed),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            if (isPlayLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(18.dp),
+                    color = Color.White,
+                    strokeWidth = 2.dp,
+                )
+            } else {
+                Icon(
+                    painter = painterResource(R.drawable.ic_itune_waves),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                )
             }
+            Spacer(Modifier.size(8.dp))
+            Text("Play", fontWeight = FontWeight.SemiBold)
+            Spacer(Modifier.weight(1f))
         }
         if (!result.shazamUrl.isNullOrBlank()) {
             Spacer(Modifier.height(8.dp))
