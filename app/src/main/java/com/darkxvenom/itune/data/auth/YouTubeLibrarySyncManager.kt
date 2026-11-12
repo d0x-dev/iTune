@@ -397,8 +397,17 @@ object YouTubeLibrarySyncManager {
                         val cleanYtId = card.browseId.removePrefix("VL")
                         val browseId = "VL$cleanYtId"
                         val notEditablePrefix = NOT_EDITABLE_PLAYLIST_PREFIXES.any { cleanYtId.startsWith(it) }
-                        val page = runCatching { ArtistRepository.browseSongs(browseId).getOrNull() }.getOrNull()
                         val existingOwned = existingByYtId[cleanYtId]
+                        val page = ArtistRepository.browseSongs(browseId).getOrElse { error ->
+                            if (existingOwned != null) {
+                                null
+                            } else {
+                                throw IllegalStateException(
+                                    "Could not load YouTube playlist \"${card.title}\": ${error.message}",
+                                    error,
+                                )
+                            }
+                        }
                         val isUserOwned = !notEditablePrefix && (
                             page?.owned == true ||
                                 (page == null && existingOwned != null)
@@ -409,7 +418,12 @@ object YouTubeLibrarySyncManager {
                                 var token = page.continuation
                                 var steps = 1
                                 while (token != null && steps < MAX_PLAYLIST_TRACKS_PAGES) {
-                                    val cont = ArtistRepository.moreSongs(token).getOrNull() ?: break
+                                    val cont = ArtistRepository.moreSongs(token).getOrElse { error ->
+                                        throw IllegalStateException(
+                                            "Could not load tracks for \"${card.title}\": ${error.message}",
+                                            error,
+                                        )
+                                    }
                                     allSongs.addAll(cont.songs)
                                     token = cont.continuation
                                     steps++
