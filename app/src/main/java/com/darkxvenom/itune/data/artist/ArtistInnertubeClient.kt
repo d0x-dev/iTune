@@ -11,6 +11,7 @@ import com.darkxvenom.itune.data.auth.sapisidFrom
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.model.LikeStatus
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
@@ -574,7 +575,11 @@ object ArtistInnertubeClient {
             builder.header("Cookie", c)
             builder.header("X-Goog-AuthUser", authUserFor(session))
             pageIdFor(session)?.let { builder.header("X-Goog-PageId", it) }
-            buildFullSapisidAuthorization(c, origin)?.let { auth ->
+            buildFullSapisidAuthorization(
+                cookieHeader = c,
+                origin = origin,
+                userSessionId = dataSyncIdFor(session),
+            )?.let { auth ->
                 builder.header("Authorization", auth)
             }
         }
@@ -663,9 +668,14 @@ object ArtistInnertubeClient {
             .header("User-Agent", WEB_USER_AGENT)
             .header("Accept-Language", acceptLanguageHeader)
             .header("Cookie", sessionCookie)
-        buildFullSapisidAuthorization(sessionCookie, MUSIC_ORIGIN)?.let {
-            builder.header("Authorization", it)
-        }
+        val activeScope = scope
+        builder.header("X-Goog-AuthUser", authUserFor(activeScope))
+        pageIdFor(activeScope)?.let { builder.header("X-Goog-PageId", it) }
+        buildFullSapisidAuthorization(
+            cookieHeader = sessionCookie,
+            origin = MUSIC_ORIGIN,
+            userSessionId = dataSyncIdFor(activeScope),
+        )?.let { builder.header("Authorization", it) }
         val html = Net.client.newCall(builder.build()).execute().use { res ->
             GoogleAuthStore.absorbSetCookies(res.headers("Set-Cookie"))
             res.body?.string().orEmpty()
@@ -677,9 +687,9 @@ object ArtistInnertubeClient {
         }
         val pageId = CONFIG_PAGE_ID.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }
         val rawDataSync = CONFIG_DATASYNC_ID.find(html)?.groupValues?.get(1)?.trim()
-        val dataSyncId = pageId ?: rawDataSync
-            ?.takeIf { !it.contains("||") || it.substringAfter("||").isNotBlank() }
-            ?.let { normalizeDataSyncId(it) }
+        // DATASYNC_ID stores USER_SESSION_ID (possibly after DELEGATED_SESSION_ID||).
+        // DELEGATED_SESSION_ID is a separate header value and must never replace it.
+        val dataSyncId = normalizeDataSyncId(rawDataSync)
         val authUser = CONFIG_SESSION_INDEX.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() } ?: "0"
         CONFIG_VISITOR_DATA.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }?.let {
             visitorData = it
@@ -723,7 +733,11 @@ object ArtistInnertubeClient {
             builder.header("Cookie", c)
             builder.header("X-Goog-AuthUser", authUserFor(session))
             pageIdFor(session)?.let { builder.header("X-Goog-PageId", it) }
-            buildFullSapisidAuthorization(c, MUSIC_ORIGIN)?.let { builder.header("Authorization", it) }
+            buildFullSapisidAuthorization(
+                cookieHeader = c,
+                origin = MUSIC_ORIGIN,
+                userSessionId = dataSyncIdFor(session),
+            )?.let { builder.header("Authorization", it) }
         }
     }
 
@@ -778,7 +792,7 @@ object ArtistInnertubeClient {
         query.forEach { (k, v) -> urlBuilder.addQueryParameter(k, v) }
         val finalUrl = urlBuilder.build().toString()
 
-        fun buildPayload(delegatedId: String?, includeVisitorData: Boolean = true): String = JSONObject().apply {
+        fun buildPayload(includeVisitorData: Boolean = true): String = JSONObject().apply {
             put("context", JSONObject().apply {
                 put("client", JSONObject().apply {
                     put("clientName", clientName)
@@ -787,10 +801,9 @@ object ArtistInnertubeClient {
                     if (region != null) put("gl", region)
                     if (includeVisitorData) visitorData?.let { put("visitorData", it) }
                 })
-                put("user", JSONObject().apply {
-                    put("lockedSafetyMode", false)
-                    if (!delegatedId.isNullOrBlank()) put("onBehalfOfUser", delegatedId)
-                })
+                // Account/channel identity is carried by X-Goog-PageId and the
+                // user-session-bound SAPISID authorization header.
+                put("user", JSONObject().put("lockedSafetyMode", false))
                 put("request", JSONObject().apply {
                     put("useSsl", true)
                 })
@@ -806,13 +819,14 @@ object ArtistInnertubeClient {
         val responseObj = try {
             executeInnertubePost(
                 finalUrl = finalUrl,
-                payload = buildPayload(activeDataSyncId, includeVisitorData = true),
+                payload = buildPayload(includeVisitorData = true),
                 origin = origin,
                 clientId = clientId,
                 clientVersion = resolvedVersion,
                 activeCookie = activeCookie,
                 authUser = activeAuthUser,
                 pageId = activePageId,
+                userSessionId = activeDataSyncId,
             )
         } catch (e: HttpStatusException) {
             if (!anonymous && activeCookie != null && e.code in setOf(400, 401, 403, 500)) {
@@ -824,13 +838,14 @@ object ArtistInnertubeClient {
                     runCatching {
                         executeInnertubePost(
                             finalUrl = finalUrl,
-                            payload = buildPayload(null, includeVisitorData = true),
+                            payload = buildPayload(includeVisitorData = true),
                             origin = origin,
                             clientId = clientId,
                             clientVersion = resolvedVersion,
                             activeCookie = activeCookie,
                             authUser = activeAuthUser,
                             pageId = null,
+                            userSessionId = if (activePageId != null) activeDataSyncId else null,
                         )
                     }.onSuccess {
                         clearInvalidDelegationScope()
@@ -842,13 +857,14 @@ object ArtistInnertubeClient {
                 val minimalAuth = withoutDelegation ?: runCatching {
                     executeInnertubePost(
                         finalUrl = finalUrl,
-                        payload = buildPayload(null, includeVisitorData = false),
+                        payload = buildPayload(includeVisitorData = false),
                         origin = origin,
                         clientId = clientId,
                         clientVersion = resolvedVersion,
                         activeCookie = activeCookie,
                         authUser = null,
                         pageId = null,
+                        userSessionId = null,
                         includeVisitorHeader = false,
                         singleHashOnly = true,
                     )
@@ -868,6 +884,7 @@ object ArtistInnertubeClient {
                         activeCookie = null,
                         authUser = null,
                         pageId = null,
+                        userSessionId = null,
                         includeVisitorHeader = false,
                     )
                 } else {
@@ -894,6 +911,7 @@ object ArtistInnertubeClient {
         activeCookie: String?,
         authUser: String?,
         pageId: String?,
+        userSessionId: String?,
         includeVisitorHeader: Boolean = true,
         singleHashOnly: Boolean = false,
     ): JSONObject = withRetry {
@@ -914,9 +932,15 @@ object ArtistInnertubeClient {
             authUser?.takeIf { it.isNotBlank() }?.let { builder.header("X-Goog-AuthUser", it) }
             pageId?.let { builder.header("X-Goog-PageId", it) }
             val authHeader = if (singleHashOnly) {
-                sapisidFrom(activeCookie)?.let { buildSapisidHash(it, origin) }
+                sapisidFrom(activeCookie)?.let {
+                    buildSapisidHash(it, origin, userSessionId = userSessionId)
+                }
             } else {
-                buildFullSapisidAuthorization(activeCookie, origin)
+                buildFullSapisidAuthorization(
+                    cookieHeader = activeCookie,
+                    origin = origin,
+                    userSessionId = userSessionId,
+                )
             }
             authHeader?.let { builder.header("Authorization", it) }
         }
@@ -927,7 +951,16 @@ object ArtistInnertubeClient {
             if (!res.isSuccessful) {
                 throw HttpStatusException(res.code, finalUrl, text.take(240))
             }
-            JSONObject(text)
+            val json = JSONObject(text)
+            // Innertube can encode failures in a JSON "error" object while returning
+            // HTTP 200. Treat those as failures so auth fallback and sync reporting run.
+            val apiError = json.optJSONObject("error")
+            if (apiError != null) {
+                val apiCode = apiError.optInt("code", 500).takeIf { it in 400..599 } ?: 500
+                val message = apiError.optString("message").ifBlank { "YouTube API error" }
+                throw HttpStatusException(apiCode, finalUrl, message.take(240))
+            }
+            json
         }
     }
 }
