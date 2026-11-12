@@ -740,6 +740,7 @@ object ArtistInnertubeClient {
             .header("Accept-Language", acceptLanguageHeader)
             .header("Cookie", sessionCookie)
             .header("X-Youtube-Bootstrap-Logged-In", "true")
+            .header("X-Youtube-Bootstrap-Logged-In", "true")
         val activeScope = scope
         builder.header("X-Goog-AuthUser", authUserFor(activeScope))
         pageIdFor(activeScope)?.let { builder.header("X-Goog-PageId", it) }
@@ -801,6 +802,7 @@ object ArtistInnertubeClient {
             .header("Origin", MUSIC_ORIGIN)
             .header("Referer", "$MUSIC_ORIGIN/")
             .header("User-Agent", WEB_USER_AGENT)
+            .header("X-Youtube-Bootstrap-Logged-In", "true")
         visitorData?.let { builder.header("X-Goog-Visitor-Id", it) }
         cookie?.let { c ->
             builder.header("Cookie", c)
@@ -918,10 +920,11 @@ object ArtistInnertubeClient {
                             activeCookie = activeCookie,
                             authUser = activeAuthUser,
                             pageId = null,
-                            userSessionId = if (activePageId != null) activeDataSyncId else null,
+                            userSessionId = activeDataSyncId,
                         )
                     }.onSuccess {
-                        clearInvalidDelegationScope(clearUserSessionId = activePageId == null)
+                        // Only the delegated channel header was removed; preserve USER_SESSION_ID.
+                        clearInvalidDelegationScope(clearUserSessionId = false)
                     }.getOrNull()
                 } else {
                     null
