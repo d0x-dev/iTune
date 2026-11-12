@@ -60,14 +60,7 @@ object MusicPlayerState : Player.Listener {
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    private var playerA: ExoPlayer? = null
-    private var playerB: ExoPlayer? = null
-    private var activeExoPlayer: ExoPlayer? = null
-    private var standbyExoPlayer: ExoPlayer? = null
-
-    val exoPlayer: ExoPlayer? get() = activeExoPlayer
-    val standbyPlayer: ExoPlayer? get() = standbyExoPlayer
-
+    private var exoPlayer: ExoPlayer? = null
     private var appContext: Context? = null
     private var simultaneousProcessor: SimultaneousAudioProcessor? = null
     private var progressJob: Job? = null
@@ -250,8 +243,7 @@ object MusicPlayerState : Player.Listener {
 
         val dualProc = SimultaneousAudioProcessor(appContext)
         simultaneousProcessor = dualProc
-
-        fun createRenderers(): DefaultRenderersFactory = object : DefaultRenderersFactory(appContext) {
+        val renderersFactory = object : DefaultRenderersFactory(appContext) {
             override fun buildAudioSink(
                 context: Context,
                 enableFloatOutput: Boolean,
@@ -261,6 +253,7 @@ object MusicPlayerState : Player.Listener {
                 .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
                 .setAudioProcessors(
                     arrayOf(
+                        TransitionEngine.probe,
                         AudioEngineManager.djProcessor,
                         AudioEngineManager.spatialProcessor,
                         AudioEngineManager.eightDProcessor,
@@ -270,16 +263,16 @@ object MusicPlayerState : Player.Listener {
                 .build()
         }
 
-        val playerAudioAttributes = AudioAttributes.Builder()
-            .setUsage(C.USAGE_MEDIA)
-            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-            .build()
-
-        // Two peer ExoPlayers for seamless equal-power crossfading & automix role-swapping
-        playerA = ExoPlayer.Builder(appContext, createRenderers())
+        exoPlayer = ExoPlayer.Builder(appContext, renderersFactory)
             .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
             .setLooper(Looper.getMainLooper())
-            .setAudioAttributes(playerAudioAttributes, /* handleAudioFocus = */ true)
+            .setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(C.USAGE_MEDIA)
+                    .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                    .build(),
+                /* handleAudioFocus = */ true,
+            )
             .setHandleAudioBecomingNoisy(true)
             .build()
             .apply {
@@ -287,32 +280,19 @@ object MusicPlayerState : Player.Listener {
                 volume = this@MusicPlayerState.volume
             }
 
-        playerB = ExoPlayer.Builder(appContext, createRenderers())
-            .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
-            .setLooper(Looper.getMainLooper())
-            .setAudioAttributes(playerAudioAttributes, /* handleAudioFocus = */ false)
-            .setHandleAudioBecomingNoisy(false)
-            .build()
-            .apply {
-                volume = 0f
-            }
-
-        activeExoPlayer = playerA
-        standbyExoPlayer = playerB
-
+        TransitionEngine.init(appContext)
         AudioOutputManager.init(appContext, dualProc) { targetDevice ->
+            TransitionEngine.onPreferredDevice(targetDevice)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                playerA?.setPreferredAudioDevice(targetDevice)
-                playerB?.setPreferredAudioDevice(targetDevice)
+                exoPlayer?.setPreferredAudioDevice(targetDevice)
             }
         }
         AudioEngineManager.init(
             context = appContext,
-            getSessionId = { activeExoPlayer?.audioSessionId ?: C.AUDIO_SESSION_ID_UNSET },
+            getSessionId = { exoPlayer?.audioSessionId ?: C.AUDIO_SESSION_ID_UNSET },
             applyPlaybackParams = { params ->
                 if (!holdingFast) {
-                    playerA?.playbackParameters = params
-                    playerB?.playbackParameters = params
+                    exoPlayer?.playbackParameters = params
                 }
             },
         )
@@ -321,8 +301,6 @@ object MusicPlayerState : Player.Listener {
         startProgressLoop()
         IShareSyncManager.start(appContext)
         MusicCacheManager.init(appContext)
-        AutomixManager.init(appContext)
-        CrossfadeAudioEngine.init(appContext)
     }
 
     private fun prewarmTrackThumbnail(ctx: Context, track: MusicTrack) {
@@ -434,7 +412,13 @@ object MusicPlayerState : Player.Listener {
         startPositionMs: Long = 0L,
         expandPlayer: Boolean = true,
         autoPlay: Boolean = true,
+        fromEngine: Boolean = false,
+        preResolvedUrl: String? = null,
     ) {
+        // Any manual track change cancels a running crossfade; the engine's own hand-off must not.
+        if (!fromEngine) TransitionEngine.cancel()
+        plannedNext = null
+        TransitionEngine.onTrackStarted()
         com.darkxvenom.itune.radio.OnlineRadioController.pauseIfPlaying()
         if (currentTrack != null && currentTrack?.id != track.id) {
             YouTubePlaybackTracker.onTrackChanged(positionMs / 1000L)
@@ -460,8 +444,6 @@ object MusicPlayerState : Player.Listener {
         }
         currentTrack = track
         appContext?.let { LibraryStore.recordRecentSong(it, track) }
-        CrossfadeAudioEngine.cancelCrossfade(resetVolume = true)
-        AutomixManager.fetchAutomixForTrack(track)
 
         // Fetch synchronized lyrics unless already loaded for this restored track
         if (!sameTrack || (lyrics.isEmpty() && !lyricsLoading)) {
@@ -499,36 +481,12 @@ object MusicPlayerState : Player.Listener {
                     }
                 }
 
-                // 1. Play directly from offline audio cache if available
                 val cachedFile = MusicCacheManager.getCachedAudioFile(track.id)
-                if (cachedFile != null && cachedFile.exists() && cachedFile.length() > 0) {
-                    MusicCacheManager.markTrackPlayed(track.id)
-                    exoPlayer?.let { player ->
-                        val mediaItem = MediaItem.Builder()
-                            .setMediaId(track.id)
-                            .setUri(Uri.fromFile(cachedFile))
-                            .setMediaMetadata(
-                                MediaMetadata.Builder()
-                                    .setTitle(track.title)
-                                    .setArtist(track.artists)
-                                    .setAlbumTitle(track.album)
-                                    .setArtworkUri((track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl)?.let(Uri::parse))
-                                    .build()
-                            )
-                            .build()
-                        player.setMediaItem(mediaItem, safeStartMs)
-                        player.prepare()
-                        player.setPlaybackSpeed(if (holdingFast) 2f else playbackSpeed)
-                        player.playWhenReady = autoPlay
-                        if (autoPlay) player.play() else player.pause()
-                        resolvingStream = false
-                        if (!isApplyingRemoteSync) IShareSyncManager.onLocalPlaybackEvent()
-                        preCacheNextTrack()
-                    }
-                    return@launch
+                val streamUrl = preResolvedUrl ?: if (cachedFile != null) {
+                    Uri.fromFile(cachedFile).toString()
+                } else {
+                    MusicBackend.resolveAudioStreamUrl(track.id)
                 }
-
-                val streamUrl = MusicBackend.resolveAudioStreamUrl(track.id)
                 if (streamUrl.isNullOrBlank()) {
                     Log.e(TAG, "Failed to resolve stream URL for track: ${track.id}")
                     resolvingStream = false
@@ -536,9 +494,11 @@ object MusicPlayerState : Player.Listener {
                     return@launch
                 }
 
-                // 2. Start live caching audio in background while streaming
-                MusicCacheManager.startLiveCaching(track, streamUrl)
-                preCacheNextTrack()
+                if (MusicCacheManager.cachingEnabled.value && cachedFile == null) {
+                    scope.launch(Dispatchers.IO) {
+                        MusicCacheManager.cacheTrackOnDemand(track)
+                    }
+                }
 
                 exoPlayer?.let { player ->
                     val mediaItem = MediaItem.Builder()
@@ -570,63 +530,6 @@ object MusicPlayerState : Player.Listener {
                 }
             }
         }
-    }
-
-    /**
-     * Seamlessly swaps peer players at crossfade/automix handoff (progress >= 0.5).
-     * Transference of audio focus, session listener, queue index, lyrics, and metadata
-     * occurs without stopping, seeking, or re-buffering the incoming player.
-     */
-    fun handOffToIncoming(incomingTrack: MusicTrack) {
-        val outgoing = activeExoPlayer ?: return
-        val incoming = standbyExoPlayer ?: return
-
-        val attrs = AudioAttributes.Builder()
-            .setUsage(C.USAGE_MEDIA)
-            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-            .build()
-
-        // 1. Order matters: release focus on outgoing BEFORE incoming claims it
-        outgoing.setAudioAttributes(attrs, /* handleAudioFocus = */ false)
-        outgoing.setHandleAudioBecomingNoisy(false)
-
-        incoming.setAudioAttributes(attrs, /* handleAudioFocus = */ true)
-        incoming.setHandleAudioBecomingNoisy(true)
-
-        // 2. Transfer session listener to incoming player
-        outgoing.removeListener(this@MusicPlayerState)
-        incoming.addListener(this@MusicPlayerState)
-
-        // 3. Swap peer player roles
-        activeExoPlayer = incoming
-        standbyExoPlayer = outgoing
-
-        // 4. Advance queue index to incoming track
-        val nextIdx = queue.indexOfFirst { it.id == incomingTrack.id }
-        if (nextIdx >= 0) {
-            queueIndex = nextIdx
-        } else {
-            queue.add(incomingTrack)
-            queueIndex = queue.lastIndex
-        }
-
-        // 5. Update UI states and session metadata
-        currentTrack = incomingTrack
-        positionMs = incoming.currentPosition.coerceAtLeast(0L)
-        durationMs = if (incoming.duration > 0L) incoming.duration else (incomingTrack.durationSec * 1000L)
-        isLoading = false
-        isPlaying = incoming.isPlaying
-
-        appContext?.let { ctx ->
-            LibraryStore.recordRecentSong(ctx, incomingTrack)
-            prewarmTrackThumbnail(ctx, incomingTrack)
-        }
-
-        fetchLyricsForCurrentTrack(incomingTrack)
-        savePlaybackSession(sync = false)
-
-        preCacheNextTrack()
-        AutomixManager.fetchAutomixForTrack(incomingTrack)
     }
 
     private fun fetchLyricsForCurrentTrack(track: MusicTrack) {
@@ -726,7 +629,6 @@ object MusicPlayerState : Player.Listener {
     }
 
     fun pause() {
-        CrossfadeAudioEngine.onPause()
         exoPlayer?.pause()
     }
 
@@ -740,12 +642,10 @@ object MusicPlayerState : Player.Listener {
         }
         exoPlayer?.let { player ->
             if (player.isPlaying) {
-                CrossfadeAudioEngine.onPause()
                 player.pause()
             } else {
                 com.darkxvenom.itune.radio.OnlineRadioController.pauseIfPlaying()
                 player.play()
-                CrossfadeAudioEngine.onResume()
             }
         }
         if (!isApplyingRemoteSync) IShareSyncManager.onLocalPlaybackEvent()
@@ -765,47 +665,62 @@ object MusicPlayerState : Player.Listener {
             ((shuffleEnabled || repeatMode == Player.REPEAT_MODE_ALL) && queue.size > 1)
     }
 
-    fun nextUpTrack(): MusicTrack? {
+    // The next song is decided once so that the crossfade engine, which prepares it ahead of time,
+    // and skipNext() always agree (matters for shuffle, which picks at random).
+    private var plannedNext: Pair<Int, String>? = null
+
+    private fun pickNextIndex(): Int? {
         if (queue.isEmpty()) return null
-        val nextIndex = if (shuffleEnabled && queue.size > 1) {
-            val valid = queue.indices.filter { it != queueIndex }
-            if (valid.isNotEmpty()) valid.firstOrNull() else (queueIndex + 1) % queue.size
-        } else {
-            (queueIndex + 1).takeIf { it in queue.indices }
-        } ?: return null
-        return queue.getOrNull(nextIndex)
-    }
-
-    fun preCacheNextTrack() {
-        val next = nextUpTrack() ?: return
-        if (MusicCacheManager.cachingEnabled.value && !MusicCacheManager.isTrackCached(next.id)) {
-            scope.launch(Dispatchers.IO) {
-                MusicCacheManager.cacheTrackOnDemand(next)
-            }
-        }
-    }
-
-    fun skipNext() {
-        if (queue.isEmpty()) return
-        CrossfadeAudioEngine.cancelCrossfade(resetVolume = true)
-        val nextIndex = if (shuffleEnabled && queue.size > 1) {
-            (queue.indices.filter { it != queueIndex }).randomOrNull() ?: queueIndex
+        return if (shuffleEnabled && queue.size > 1) {
+            (queue.indices.filter { it != queueIndex }).randomOrNull()
         } else {
             val sequential = queueIndex + 1
             when {
                 sequential < queue.size -> sequential
                 repeatMode == Player.REPEAT_MODE_ALL -> 0
-                else -> return
+                else -> null
             }
         }
-        val nextTrack = queue.getOrNull(nextIndex) ?: return
+    }
+
+    internal fun peekNext(): Pair<Int, MusicTrack>? {
+        val planned = plannedNext
+        if (planned != null) {
+            val track = queue.getOrNull(planned.first)
+            if (track != null && track.id == planned.second && planned.first != queueIndex) {
+                return planned.first to track
+            }
+        }
+        val index = pickNextIndex() ?: return null
+        val track = queue.getOrNull(index) ?: return null
+        plannedNext = index to track.id
+        return index to track
+    }
+
+    fun skipNext() {
+        if (queue.isEmpty()) return
+        val (nextIndex, nextTrack) = peekNext() ?: return
         queueIndex = nextIndex
         play(nextTrack, expandPlayer = expanded)
     }
 
+    // ── Bridge used by TransitionEngine ──
+
+    internal fun enginePlayer(): ExoPlayer? = exoPlayer
+
+    internal fun engineBusy(): Boolean = resolvingStream || restoredPendingStream
+
+    internal fun engineRestoreVolume() {
+        exoPlayer?.volume = volume
+    }
+
+    internal fun startTransitionPlayback(index: Int, track: MusicTrack, url: String) {
+        queueIndex = index
+        play(track, expandPlayer = expanded, fromEngine = true, preResolvedUrl = url)
+    }
+
     fun skipPrevious(forcePrevious: Boolean = false) {
         if (queue.isEmpty()) return
-        CrossfadeAudioEngine.cancelCrossfade(resetVolume = true)
         val hasPreviousInQueue = (shuffleEnabled && queue.size > 1) ||
             queueIndex > 0 ||
             (repeatMode == Player.REPEAT_MODE_ALL && queue.size > 1)
@@ -826,7 +741,6 @@ object MusicPlayerState : Player.Listener {
     }
 
     fun seekTo(positionMs: Long) {
-        CrossfadeAudioEngine.cancelCrossfade(resetVolume = true)
         val safePos = positionMs.coerceAtLeast(0L)
         this.positionMs = safePos
         if (!restoredPendingStream) {
@@ -838,7 +752,7 @@ object MusicPlayerState : Player.Listener {
 
     fun adjustVolume(vol: Float) {
         volume = vol.coerceIn(0f, 1f)
-        CrossfadeAudioEngine.onUserVolumeChanged(volume)
+        exoPlayer?.volume = volume
     }
 
     fun toggleShuffle() {
@@ -932,8 +846,8 @@ object MusicPlayerState : Player.Listener {
     }
 
     fun close() {
+        TransitionEngine.cancel()
         YouTubePlaybackTracker.onPlaybackFinished(positionMs / 1000L)
-        CrossfadeAudioEngine.cancelCrossfade(resetVolume = true)
         loadJob?.cancel()
         lyricsJob?.cancel()
         exoPlayer?.stop()
@@ -1002,6 +916,7 @@ object MusicPlayerState : Player.Listener {
         if (!isApplyingRemoteSync && !resolvingStream) {
             IShareSyncManager.onLocalPlaybackEvent()
         }
+        appContext?.let { PlaybackService.sync(it) }
     }
 
     // ── iShare Remote Playback Synchronization Helpers ──
@@ -1146,10 +1061,6 @@ object MusicPlayerState : Player.Listener {
                 durationMs = exoPlayer?.duration?.coerceAtLeast(0L) ?: 0L
             }
             Player.STATE_ENDED -> {
-                if (CrossfadeAudioEngine.isTransitionActive()) {
-                    // Suppress premature skipping when crossfade or automix handoff is handling transition
-                    return
-                }
                 if (sleepTimerEndOfTrack) {
                     sleepTimerEndOfTrack = false
                     exoPlayer?.pause()
@@ -1172,21 +1083,16 @@ object MusicPlayerState : Player.Listener {
 
     @OptIn(UnstableApi::class)
     fun release() {
+        TransitionEngine.release()
         progressJob?.cancel()
         loadJob?.cancel()
         lyricsJob?.cancel()
         sleepTimerJob?.cancel()
-        CrossfadeAudioEngine.release()
-        AutomixManager.clearAutomix()
         AudioEngineManager.release()
         AudioOutputManager.release()
         simultaneousProcessor?.setEnabled(false)
         simultaneousProcessor = null
-        playerA?.release()
-        playerA = null
-        playerB?.release()
-        playerB = null
-        activeExoPlayer = null
-        standbyExoPlayer = null
+        exoPlayer?.release()
+        exoPlayer = null
     }
 }
