@@ -24,10 +24,12 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,6 +40,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -95,11 +99,16 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
+import coil.compose.AsyncImage
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.audio.AudioEngineManager
+import com.darkxvenom.itune.backend.MusicCacheManager
 import com.darkxvenom.itune.audio.AudioEngineUiState
 import com.darkxvenom.itune.audio.AudioOutputManager
+import com.darkxvenom.itune.data.auth.GoogleAccountSession
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
+import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
+import com.darkxvenom.itune.data.auth.YouTubeProfile
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.SearchHistoryStore
 import com.darkxvenom.itune.data.library.SettingsStore
@@ -134,6 +143,7 @@ import com.darkxvenom.itune.ui.library.LibraryCrimsonAccent
 import com.darkxvenom.itune.ui.library.LibraryFilterBar
 import com.darkxvenom.itune.ui.library.LibraryGlassEmptyCard
 import com.darkxvenom.itune.ui.player.EnginePopupPage
+import com.darkxvenom.itune.ui.player.SFProDisplay
 import com.darkxvenom.itune.ui.theme.AppleMusicRed
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
@@ -204,6 +214,17 @@ private sealed interface SettingsEntry {
         val onToggle: (Boolean) -> Unit,
         val onOpenDetails: () -> Unit,
     ) : SettingsEntry
+
+    data class SegmentedToggle(
+        override val id: String,
+        override val title: String,
+        override val subtitle: String?,
+        @param:DrawableRes override val iconRes: Int,
+        override val keywords: List<String>,
+        val options: List<String>,
+        val selectedOption: String,
+        val onSelect: (String) -> Unit,
+    ) : SettingsEntry
 }
 
 private data class SettingsSection(
@@ -220,6 +241,7 @@ private fun SettingsEntry.matches(query: String, sectionTitle: String): Boolean 
         is SettingsEntry.Action -> trailingValue.orEmpty()
         is SettingsEntry.Toggle -> if (checked) "on enabled" else "off disabled"
         is SettingsEntry.EffectToggleAction -> if (checked) "on enabled active" else "off disabled"
+        is SettingsEntry.SegmentedToggle -> "$selectedOption ${options.joinToString(" ")}"
     }
     return title.contains(needle, ignoreCase = true) ||
         subtitle?.contains(needle, ignoreCase = true) == true ||
@@ -282,8 +304,13 @@ fun AppleSettingsScreen(
     var activePicker by remember { mutableStateOf<SettingsEntry.Picker?>(null) }
     var activeAudioEffectPage by remember { mutableStateOf<EnginePopupPage?>(null) }
     var showProfileAccount by remember { mutableStateOf(false) }
+    var showLyricsSettings by rememberSaveable { mutableStateOf(false) }
     var showNameDialog by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = showLyricsSettings && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
+        showLyricsSettings = false
+    }
 
     BackHandler(enabled = showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
         showProfileAccount = false
@@ -298,6 +325,8 @@ fun AppleSettingsScreen(
         searchQuery = ""
     }
 
+    var showClearSongCacheDialog by remember { mutableStateOf(false) }
+
     val sections = remember(
         state,
         searchHistory.size,
@@ -307,6 +336,10 @@ fun AppleSettingsScreen(
         audioEngineState,
         audioOutputState.bitPerfectActive,
         audioOutputState.activeDevice,
+        MusicCacheManager.cachedTracks.size,
+        MusicCacheManager.cachingEnabled.value,
+        MusicCacheManager.maxCacheLimitMB.longValue,
+        MusicCacheManager.totalStorageBytes.longValue,
     ) {
         buildSettingsSections(
             state = state,
@@ -320,12 +353,14 @@ fun AppleSettingsScreen(
             onOpenIShare = onOpenIShare,
             onOpenDynamicIsland = onOpenDynamicIsland,
             onOpenAudioEffect = { page -> activeAudioEffectPage = page },
+            onOpenLyricsSettings = { showLyricsSettings = true },
             onToggleBool = { key, enabled -> SettingsStore.setBoolean(context, key, enabled) },
             onSelectString = { key, value -> SettingsStore.setString(context, key, value) },
             onClearCache = {
                 SettingsStore.clearAudioCache(context)
                 Toast.makeText(context, "Audio & artwork cache cleared", Toast.LENGTH_SHORT).show()
             },
+            onClearSongCache = { showClearSongCacheDialog = true },
             onEditName = { showNameDialog = true },
             onClearSearchHistory = {
                 SearchHistoryStore.clearAll(context)
@@ -451,22 +486,54 @@ fun AppleSettingsScreen(
 
                         if (showAccountCard) {
                             item(key = "settings_account_card") {
+                                val totalProfiles = ytAccountState.accounts.sumOf { acc -> acc.profiles.size.coerceAtLeast(1) }
                                 val resolvedSubtitle = if (ytAccountState.isSignedIn) {
                                     val idText = ytAccountState.accountEmail.ifBlank { ytAccountState.accountName }
-                                    if (idText.isNotBlank()) "YouTube Music • $idText" else "YouTube Music Connected"
+                                    val countSuffix = if (ytAccountState.accounts.size > 1) {
+                                        " (${ytAccountState.accounts.size} accounts)"
+                                    } else {
+                                        ""
+                                    }
+                                    if (idText.isNotBlank()) "YouTube Music • $idText$countSuffix" else "YouTube Music Connected$countSuffix"
                                 } else {
                                     state.accountSubtitle
                                 }
-                                SettingsAccountCard(
-                                    displayName = state.displayName,
-                                    subtitle = resolvedSubtitle,
-                                    useBackdropGlass = glassActive,
-                                    onClick = {
-                                        haptics.play(Haptic.Tap)
-                                        showProfileAccount = true
-                                    },
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                )
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    SettingsAccountCard(
+                                        displayName = state.displayName,
+                                        subtitle = resolvedSubtitle,
+                                        useBackdropGlass = glassActive,
+                                        onClick = {
+                                            haptics.play(Haptic.Tap)
+                                            showProfileAccount = true
+                                        },
+                                        modifier = Modifier.padding(horizontal = 16.dp),
+                                    )
+                                    if (ytAccountState.isSignedIn && (ytAccountState.accounts.size > 1 || totalProfiles > 1)) {
+                                        Spacer(Modifier.height(10.dp))
+                                        SettingsAccountQuickSwitchRow(
+                                            accounts = ytAccountState.accounts,
+                                            activeAccountId = ytAccountState.activeAccountId,
+                                            activeProfileId = ytAccountState.activeProfileId,
+                                            onSelect = { session, profile ->
+                                                haptics.play(Haptic.Select)
+                                                val switched = YouTubeLibrarySyncManager.switchAccountOrProfile(
+                                                    context = context,
+                                                    accountId = session.accountId,
+                                                    profileId = profile.profileId,
+                                                )
+                                                if (switched) {
+                                                    val label = profile.name.ifBlank { session.name.ifBlank { "Google Account" } }
+                                                    Toast.makeText(context, "Switched feed to $label", Toast.LENGTH_SHORT).show()
+                                                }
+                                            },
+                                            onManageAll = {
+                                                haptics.play(Haptic.Tap)
+                                                showProfileAccount = true
+                                            },
+                                        )
+                                    }
+                                }
                             }
                         }
 
@@ -614,6 +681,17 @@ fun AppleSettingsScreen(
                         onOpenAvatarPopup = onAccountClick,
                     )
                 }
+
+                AnimatedVisibility(
+                    visible = showLyricsSettings,
+                    enter = fadeIn(tween(200)) + slideInHorizontally(tween(260)) { it / 8 },
+                    exit = fadeOut(tween(180)) + slideOutHorizontally(tween(220)) { it / 8 },
+                ) {
+                    LyricsSettingsScreen(
+                        hasMiniPlayer = hasMiniPlayer,
+                        onBack = { showLyricsSettings = false },
+                    )
+                }
             }
         }
     }
@@ -653,6 +731,47 @@ fun AppleSettingsScreen(
             onDismiss = { showAboutDialog = false },
         )
     }
+
+    if (showClearSongCacheDialog) {
+        val count = MusicCacheManager.cachedTracks.size
+        val sizeStr = MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showClearSongCacheDialog = false },
+            title = {
+                Text(
+                    text = "Clear Cached Songs?",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                )
+            },
+            text = {
+                Text(
+                    text = "This will permanently remove all $count offline songs ($sizeStr) from device storage.",
+                    color = Color.White.copy(alpha = 0.76f),
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp,
+                )
+            },
+            containerColor = Color(0xFF1C1C1E),
+            confirmButton = {
+                androidx.compose.material3.TextButton(
+                    onClick = {
+                        MusicCacheManager.clearAllCache()
+                        showClearSongCacheDialog = false
+                        Toast.makeText(context, "Cached songs cleared", Toast.LENGTH_SHORT).show()
+                    },
+                ) {
+                    Text("Clear All", color = Color(0xFFFF453A), fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { showClearSongCacheDialog = false }) {
+                    Text("Cancel", color = Color.White.copy(alpha = 0.70f))
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -675,6 +794,109 @@ internal fun SettingsUniformGreyCard(
             .background(SettingsCardGrey),
     ) {
         content()
+    }
+}
+
+@Composable
+private fun SettingsAccountQuickSwitchRow(
+    accounts: List<GoogleAccountSession>,
+    activeAccountId: String?,
+    activeProfileId: String?,
+    onSelect: (GoogleAccountSession, YouTubeProfile) -> Unit,
+    onManageAll: () -> Unit,
+) {
+    val flattened = remember(accounts) {
+        accounts.flatMap { acc ->
+            val profiles = acc.profiles.ifEmpty {
+                listOf(
+                    YouTubeProfile(
+                        profileId = acc.activeProfileId ?: acc.accountId,
+                        name = acc.name.ifBlank { acc.email.ifBlank { "Account" } },
+                        handle = acc.email,
+                    ),
+                )
+            }
+            profiles.map { acc to it }
+        }
+    }
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        items(
+            items = flattened,
+            key = { (acc, prof) -> "${acc.accountId}:${prof.profileId}" },
+        ) { (acc, prof) ->
+            val resolvedActivePid = activeProfileId ?: acc.activeProfileId ?: acc.profiles.firstOrNull()?.profileId
+            val selected = acc.accountId == activeAccountId && prof.profileId == resolvedActivePid
+            Row(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(
+                        if (selected) AppleMusicRed.copy(alpha = 0.22f) else SettingsCardGrey,
+                    )
+                    .border(
+                        width = if (selected) 1.dp else 0.6.dp,
+                        color = if (selected) AppleMusicRed else Color.White.copy(alpha = 0.14f),
+                        shape = CircleShape,
+                    )
+                    .clickable { onSelect(acc, prof) }
+                    .padding(start = 6.dp, end = 12.dp, top = 6.dp, bottom = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(7.dp),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(22.dp)
+                        .clip(CircleShape)
+                        .background(Color.White),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (!prof.avatar.isNullOrBlank()) {
+                        AsyncImage(
+                            model = prof.avatar,
+                            contentDescription = prof.name,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize().clip(CircleShape),
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.ic_google_logo),
+                            contentDescription = null,
+                            modifier = Modifier.size(13.dp),
+                        )
+                    }
+                }
+                Text(
+                    text = prof.name.ifBlank { acc.name.ifBlank { "Account" } },
+                    color = Color.White,
+                    fontSize = 12.5.sp,
+                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.widthIn(max = 120.dp),
+                )
+            }
+        }
+        item(key = "quick_manage_accounts") {
+            Row(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(SettingsCardGrey)
+                    .border(0.6.dp, Color.White.copy(alpha = 0.14f), CircleShape)
+                    .clickable(onClick = onManageAll)
+                    .padding(horizontal = 12.dp, vertical = 7.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "+ Accounts",
+                    color = AppleMusicRed,
+                    fontSize = 12.5.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+        }
     }
 }
 
@@ -822,6 +1044,17 @@ private fun SettingsEntryRow(
                 entry.onOpenDetails()
             }
         }
+        is SettingsEntry.SegmentedToggle -> {
+            {
+                val next = if (entry.selectedOption == entry.options.firstOrNull()) {
+                    entry.options.getOrNull(1) ?: entry.options.first()
+                } else {
+                    entry.options.first()
+                }
+                haptics.play(Haptic.Select)
+                entry.onSelect(next)
+            }
+        }
     }
 
     Row(
@@ -887,6 +1120,16 @@ private fun SettingsEntryRow(
                     onCheckedChange = { checked ->
                         haptics.play(if (checked) Haptic.ToggleOn else Haptic.ToggleOff)
                         entry.onToggle(checked)
+                    },
+                )
+            }
+            is SettingsEntry.SegmentedToggle -> {
+                AppleSegmentedSwitch(
+                    options = entry.options,
+                    selectedOption = entry.selectedOption,
+                    onSelect = { choice ->
+                        haptics.play(Haptic.Select)
+                        entry.onSelect(choice)
                     },
                 )
             }
@@ -1002,6 +1245,90 @@ fun AppleGlassSwitch(
                 .clip(CircleShape)
                 .background(Color.White),
         )
+    }
+}
+
+@Composable
+fun AppleSegmentedSwitch(
+    options: List<String>,
+    selectedOption: String,
+    onSelect: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val selectedIndex = options.indexOf(selectedOption).coerceAtLeast(0)
+    val animatedIndex by animateFloatAsState(
+        targetValue = selectedIndex.toFloat(),
+        animationSpec = spring(
+            dampingRatio = 0.76f,
+            stiffness = Spring.StiffnessMediumLow,
+        ),
+        label = "appleSegmentedSwitchThumb",
+    )
+
+    BoxWithConstraints(
+        modifier = modifier
+            .width(152.dp)
+            .height(32.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.White.copy(alpha = 0.12f))
+            .border(
+                width = 0.5.dp,
+                color = Color.White.copy(alpha = 0.18f),
+                shape = RoundedCornerShape(16.dp),
+            )
+            .padding(2.dp),
+    ) {
+        val segmentWidth = maxWidth / options.size.coerceAtLeast(1)
+
+        // Sliding white thumb
+        Box(
+            modifier = Modifier
+                .offset(x = segmentWidth * animatedIndex)
+                .width(segmentWidth)
+                .fillMaxHeight()
+                .shadow(
+                    elevation = 3.dp,
+                    shape = RoundedCornerShape(14.dp),
+                    ambientColor = Color.Black.copy(alpha = 0.35f),
+                    spotColor = Color.Black.copy(alpha = 0.35f),
+                )
+                .clip(RoundedCornerShape(14.dp))
+                .background(Color.White),
+        )
+
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            options.forEachIndexed { index, option ->
+                val isSelected = index == selectedIndex
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ) {
+                            if (option != selectedOption) {
+                                onSelect(option)
+                            }
+                        },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = option,
+                        style = TextStyle(
+                            fontFamily = SFProDisplay,
+                            fontSize = 12.5.sp,
+                            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                            letterSpacing = (-0.2).sp,
+                        ),
+                        color = if (isSelected) Color(0xFF1C1C1E) else Color.White.copy(alpha = 0.72f),
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -1317,7 +1644,7 @@ private fun AboutInfoLine(label: String, value: String) {
 }
 
 @Composable
-private fun SettingsModalFrame(
+internal fun SettingsModalFrame(
     onDismiss: () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -1381,9 +1708,11 @@ private fun buildSettingsSections(
     onOpenIShare: () -> Unit,
     onOpenDynamicIsland: () -> Unit,
     onOpenAudioEffect: (EnginePopupPage) -> Unit,
+    onOpenLyricsSettings: () -> Unit,
     onToggleBool: (String, Boolean) -> Unit,
     onSelectString: (String, String) -> Unit,
     onClearCache: () -> Unit,
+    onClearSongCache: () -> Unit,
     onEditName: () -> Unit,
     onClearSearchHistory: () -> Unit,
     onOpenAbout: () -> Unit,
@@ -1595,23 +1924,40 @@ private fun buildSettingsSections(
                     ),
                     onSelect = { onSelectString(SettingsStore.KEY_AUDIO_QUALITY, it) },
                 ),
-                SettingsEntry.Picker(
-                    id = "crossfade",
-                    title = "Crossfade",
-                    subtitle = "Smooth transition between songs",
+            ).let { baseEntries ->
+                if (!state.automixEnabled) {
+                    baseEntries + listOf(
+                        SettingsEntry.Picker(
+                            id = "crossfade",
+                            title = "Crossfade",
+                            subtitle = "Smooth transition between songs",
+                            iconRes = R.drawable.ic_settings_crossfade,
+                            keywords = listOf("gapless", "fade", "blend", "mix", "dj", "transition"),
+                            currentValue = state.crossfadeDuration,
+                            description = "Overlap the fade-out of the ending track with the start of the next.",
+                            options = listOf(
+                                SettingsOptionChoice("Off", "Play tracks cleanly back-to-back"),
+                                SettingsOptionChoice("2 sec", "Subtle transition overlap"),
+                                SettingsOptionChoice("4 sec", "Short seamless fade"),
+                                SettingsOptionChoice("6 sec", "Balanced DJ-style transition"),
+                                SettingsOptionChoice("8 sec", "Smooth extended blend"),
+                                SettingsOptionChoice("12 sec", "Maximum continuous mix blend"),
+                            ),
+                            onSelect = { onSelectString(SettingsStore.KEY_CROSSFADE, it) },
+                        )
+                    )
+                } else {
+                    baseEntries
+                }
+            } + listOf(
+                SettingsEntry.Toggle(
+                    id = "automix",
+                    title = "Automix",
+                    subtitle = if (state.automixEnabled) "Intelligent continuous mix & auto-queue" else "Automix is off. Standard crossfade is active.",
                     iconRes = R.drawable.ic_settings_crossfade,
-                    keywords = listOf("gapless", "fade", "blend", "mix", "dj", "transition"),
-                    currentValue = state.crossfadeDuration,
-                    description = "Overlap the fade-out of the ending track with the start of the next.",
-                    options = listOf(
-                        SettingsOptionChoice("Off", "Play tracks cleanly back-to-back"),
-                        SettingsOptionChoice("2 sec", "Subtle transition overlap"),
-                        SettingsOptionChoice("4 sec", "Short seamless fade"),
-                        SettingsOptionChoice("6 sec", "Balanced DJ-style transition"),
-                        SettingsOptionChoice("8 sec", "Smooth extended blend"),
-                        SettingsOptionChoice("12 sec", "Maximum continuous mix blend"),
-                    ),
-                    onSelect = { onSelectString(SettingsStore.KEY_CROSSFADE, it) },
+                    keywords = listOf("automix", "radio", "continuous", "queue", "dj", "endless", "similar", "smart fade"),
+                    checked = state.automixEnabled,
+                    onToggle = { onToggleBool(SettingsStore.KEY_AUTOMIX, it) },
                 ),
             ),
         ),
@@ -1667,6 +2013,15 @@ private fun buildSettingsSections(
         title = "Now Playing & Liquid Glass",
         entries = listOf(
             SettingsEntry.Toggle(
+                id = "splash_screen",
+                title = "Splash Screen",
+                subtitle = "App launch brand animation & fluid title reveal",
+                iconRes = R.drawable.ic_itune_waves,
+                keywords = listOf("splash", "opening", "launch", "animation", "brand", "intro"),
+                checked = state.splashScreenEnabled,
+                onToggle = { onToggleBool(SettingsStore.KEY_SPLASH_SCREEN, it) },
+            ),
+            SettingsEntry.Toggle(
                 id = "animated_artwork",
                 title = "Animated Cover Art",
                 subtitle = "Motion canvas on artist & album views",
@@ -1674,6 +2029,23 @@ private fun buildSettingsSections(
                 keywords = listOf("motion", "canvas", "video", "cover", "artwork", "animation"),
                 checked = state.animatedArtwork,
                 onToggle = { onToggleBool(SettingsStore.KEY_ANIMATED_ARTWORK, it) },
+            ),
+            SettingsEntry.SegmentedToggle(
+                id = "player_type",
+                title = "Player Type",
+                subtitle = if (state.playerType == "Static") {
+                    "Static • Welcome screen ambient mesh gradient"
+                } else {
+                    "Dynamic • Real-time blurred artwork backdrop"
+                },
+                iconRes = R.drawable.ic_settings_liquid_glass,
+                keywords = listOf(
+                    "player", "type", "dynamic", "static", "background", "mesh", "blur",
+                    "artwork", "welcome", "ambient", "switch", "style"
+                ),
+                options = listOf("Dynamic", "Static"),
+                selectedOption = state.playerType,
+                onSelect = { onSelectString(SettingsStore.KEY_PLAYER_TYPE, it) },
             ),
             SettingsEntry.Toggle(
                 id = "time_synced_lyrics",
@@ -1683,6 +2055,19 @@ private fun buildSettingsSections(
                 keywords = listOf("lyrics", "sing", "karaoke", "text"),
                 checked = state.timeSyncedLyrics,
                 onToggle = { onToggleBool(SettingsStore.KEY_TIME_SYNCED_LYRICS, it) },
+            ),
+            SettingsEntry.Action(
+                id = "lyrics_providers",
+                title = "Lyrics Providers",
+                subtitle = "11 sources • Prioritize & toggle fallback order",
+                iconRes = R.drawable.lyrics,
+                keywords = listOf(
+                    "lyrics", "providers", "lrclib", "kugou", "simpmusic",
+                    "subtitles", "betterlyrics", "youly", "megalobiz",
+                    "paxsenix", "portato", "unison", "sources", "priority"
+                ),
+                trailingValue = "${state.lyricsProviderOrder.count { it !in state.disabledLyricsProviders }} Active",
+                onAction = onOpenLyricsSettings,
             ),
             SettingsEntry.Toggle(
                 id = "liquid_glass",
@@ -1734,6 +2119,59 @@ private fun buildSettingsSections(
                 onToggle = { onToggleBool(SettingsStore.KEY_DOWNLOAD_WIFI_ONLY, it) },
             ),
             SettingsEntry.Toggle(
+                id = "cache_songs_playing",
+                title = "Cache Songs While Playing",
+                subtitle = "Automatically save songs to offline storage as you listen",
+                iconRes = R.drawable.ic_settings_offline,
+                keywords = listOf("cache", "song", "offline", "playing", "streaming", "itube"),
+                checked = MusicCacheManager.cachingEnabled.value,
+                onToggle = { MusicCacheManager.setCachingEnabled(it) },
+            ),
+            SettingsEntry.Picker(
+                id = "song_cache_limit",
+                title = "Song Storage Limit",
+                subtitle = if (MusicCacheManager.maxCacheLimitMB.longValue <= 0) "Unlimited storage" else "Auto-evicts oldest songs beyond limit",
+                iconRes = R.drawable.ic_settings_storage,
+                keywords = listOf("storage", "limit", "cache", "mb", "gb", "evict"),
+                currentValue = when (val mb = MusicCacheManager.maxCacheLimitMB.longValue) {
+                    500L -> "500 MB"
+                    1024L -> "1 GB"
+                    2048L -> "2 GB"
+                    5120L -> "5 GB"
+                    10240L -> "10 GB"
+                    else -> "Unlimited"
+                },
+                description = "Maximum disk storage allocated for offline audio cache before older unplayed songs are evicted.",
+                options = listOf(
+                    SettingsOptionChoice("500 MB", "Compact cache (~70 songs)"),
+                    SettingsOptionChoice("1 GB", "Moderate cache (~150 songs)"),
+                    SettingsOptionChoice("2 GB", "Recommended default (~300 songs)"),
+                    SettingsOptionChoice("5 GB", "Large offline collection (~800 songs)"),
+                    SettingsOptionChoice("10 GB", "Very large library (~1,600 songs)"),
+                    SettingsOptionChoice("Unlimited", "Never evict cached songs"),
+                ),
+                onSelect = { choice ->
+                    val limitMb = when (choice) {
+                        "500 MB" -> 500L
+                        "1 GB" -> 1024L
+                        "2 GB" -> 2048L
+                        "5 GB" -> 5120L
+                        "10 GB" -> 10240L
+                        else -> -1L
+                    }
+                    MusicCacheManager.setMaxCacheLimitMB(limitMb)
+                },
+            ),
+            SettingsEntry.Action(
+                id = "clear_cached_songs",
+                title = "Clear Cached Songs",
+                subtitle = "${MusicCacheManager.cachedTracks.size} songs • ${MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)}",
+                iconRes = R.drawable.ic_settings_clear_cache,
+                keywords = listOf("clear", "cache", "songs", "delete", "free", "offline"),
+                trailingValue = MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue),
+                onAction = onClearSongCache,
+            ),
+            SettingsEntry.Toggle(
                 id = "automatic_downloads",
                 title = "Automatic Downloads",
                 subtitle = "Save newly liked & added tracks offline",
@@ -1761,8 +2199,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Action(
                 id = "audio_cache",
-                title = "Clear Audio Cache",
-                subtitle = "Remove temporary cover art & stream buffers",
+                title = "Clear App Buffer Cache",
+                subtitle = "Remove temporary cover art & network buffers",
                 iconRes = R.drawable.ic_settings_clear_cache,
                 keywords = listOf("cache", "storage", "free", "clean", "memory", "buffer"),
                 trailingValue = state.cachedSizeLabel,
