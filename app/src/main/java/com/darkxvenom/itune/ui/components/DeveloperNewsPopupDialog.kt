@@ -1,45 +1,52 @@
 package com.darkxvenom.itune.ui.components
 
+import android.os.Build
+import android.view.WindowManager
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -48,19 +55,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
 import coil.compose.AsyncImage
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.data.news.DeveloperNewsManager
 import com.darkxvenom.itune.ui.player.SFProDisplay
+import com.darkxvenom.itune.ui.theme.AppleMusicRed
+import com.darkxvenom.itune.ui.theme.AppleOledBlack
+import com.darkxvenom.itune.ui.theme.AppleTextPrimary
+import com.darkxvenom.itune.ui.theme.AppleTextSecondary
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
-private val PopupCardBg = Color(0xFF161618)
-private val AppleCrimson = Color(0xFFFC3C44)
-private val AppleCrimsonSoft = Color(0xFFFF375F)
-private val FrostedBorder = Color.White.copy(alpha = 0.12f)
 
 @Composable
 fun DeveloperNewsPopupDialog(
@@ -86,284 +93,308 @@ fun DeveloperNewsPopupDialog(
         onDismissRequest = {
             DeveloperNewsManager.dismissPopup(item.id)
         },
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
+        )
     ) {
-        Surface(
+        val dialogWindow = (LocalView.current.parent as? DialogWindowProvider)?.window
+        SideEffect {
+            dialogWindow?.let { win ->
+                win.setDimAmount(0.35f)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    win.clearFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
+                }
+            }
+        }
+
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 28.dp),
-            shape = RoundedCornerShape(26.dp),
-            color = PopupCardBg,
-            tonalElevation = 8.dp,
-            border = BorderStroke(1.dp, FrostedBorder)
+                .fillMaxSize()
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { DeveloperNewsManager.dismissPopup(item.id) },
+            contentAlignment = Alignment.Center
         ) {
+            // Centered Pure Black Apple-styled Modal Dialog Card
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
+                    .fillMaxWidth(0.88f)
+                    .widthIn(max = 360.dp)
+                    .heightIn(max = 580.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { /* Catch clicks inside */ }
+                    .shadow(
+                        elevation = 32.dp,
+                        shape = RoundedCornerShape(24.dp),
+                        ambientColor = Color.Black,
+                        spotColor = Color.Black
+                    )
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(AppleOledBlack)
+                    .border(
+                        width = 0.8.dp,
+                        color = Color.White.copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(24.dp)
+                    ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Banner Image if present
-                if (!item.imageUrl.isNullOrBlank()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(180.dp)
-                            .clip(RoundedCornerShape(topStart = 26.dp, topEnd = 26.dp))
-                    ) {
-                        AsyncImage(
-                            model = item.imageUrl,
-                            contentDescription = item.title,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        // Gradient shadow at bottom of image
+                // Scrollable Content Column (Image, Tag, Author, Title, Message)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f, fill = false)
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Banner Image if present
+                    if (!item.imageUrl.isNullOrBlank()) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(64.dp)
-                                .align(Alignment.BottomCenter)
-                                .background(
-                                    Brush.verticalGradient(
-                                        listOf(Color.Transparent, PopupCardBg)
+                                .height(170.dp)
+                                .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                        ) {
+                            AsyncImage(
+                                model = item.imageUrl,
+                                contentDescription = item.title,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                            // Gradient shadow at bottom of image
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(60.dp)
+                                    .align(Alignment.BottomCenter)
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color.Transparent, AppleOledBlack)
+                                        )
                                     )
-                                )
-                        )
+                            )
 
-                        // Floating Tag Badge
-                        val tagText = item.tag?.takeIf { it.isNotBlank() } ?: "Announcement"
-                        Surface(
-                            shape = RoundedCornerShape(50),
-                            color = AppleCrimson.copy(alpha = 0.22f),
-                            border = BorderStroke(1.dp, AppleCrimson.copy(alpha = 0.5f)),
+                            // Tag badge
+                            val tagText = item.tag?.takeIf { it.isNotBlank() } ?: "Announcement"
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopStart)
+                                    .padding(14.dp)
+                                    .clip(RoundedCornerShape(999.dp))
+                                    .background(Color.Black.copy(alpha = 0.70f))
+                                    .border(0.6.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(999.dp))
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = tagText,
+                                    style = TextStyle(
+                                        fontFamily = SFProDisplay,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = 11.sp,
+                                        letterSpacing = 0.3.sp
+                                    ),
+                                    color = AppleMusicRed
+                                )
+                            }
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.height(24.dp))
+                        // Pulsing Newspaper Icon Badge
+                        Box(
+                            contentAlignment = Alignment.Center,
                             modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .padding(16.dp)
+                                .size(56.dp)
+                                .scale(pulseScale)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .clip(CircleShape)
+                                    .background(AppleMusicRed.copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.newspaper),
+                                    contentDescription = "News",
+                                    tint = AppleMusicRed,
+                                    modifier = Modifier.size(26.dp)
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        val tagText = item.tag?.takeIf { it.isNotBlank() } ?: "News from Developer"
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(999.dp))
+                                .background(Color.White.copy(alpha = 0.08f))
+                                .border(0.6.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(999.dp))
+                                .padding(horizontal = 12.dp, vertical = 4.dp)
                         ) {
                             Text(
                                 text = tagText,
                                 style = TextStyle(
                                     fontFamily = SFProDisplay,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 11.sp,
-                                    letterSpacing = 0.3.sp
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 11.5.sp
                                 ),
-                                color = AppleCrimsonSoft,
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                                color = AppleMusicRed
                             )
                         }
                     }
-                } else {
-                    Spacer(modifier = Modifier.height(24.dp))
-                    // Icon Badge if no image
-                    Box(
-                        contentAlignment = Alignment.Center,
+
+                    Column(
                         modifier = Modifier
-                            .size(64.dp)
-                            .scale(pulseScale)
+                            .fillMaxWidth()
+                            .padding(horizontal = 22.dp, vertical = 14.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(64.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    Brush.radialGradient(
-                                        listOf(
-                                            AppleCrimson.copy(alpha = 0.25f),
-                                            Color.Transparent
-                                        )
-                                    )
-                                )
-                        )
-                        Box(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(CircleShape)
-                                .background(AppleCrimson.copy(alpha = 0.18f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.newspaper),
-                                contentDescription = "News",
-                                tint = AppleCrimsonSoft,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    }
+                        // Author & Date
+                        val authorName = item.author?.takeIf { it.isNotBlank() } ?: "Developer"
+                        val dateFormatted = try {
+                            val sdf = SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)
+                            sdf.format(Date(item.timestamp))
+                        } catch (_: Exception) { "" }
+                        val authorDateStr = if (dateFormatted.isNotBlank()) "$authorName • $dateFormatted" else authorName
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    val tagText = item.tag?.takeIf { it.isNotBlank() } ?: "News from Developer"
-                    Surface(
-                        shape = RoundedCornerShape(50),
-                        color = AppleCrimson.copy(alpha = 0.15f),
-                        border = BorderStroke(1.dp, AppleCrimson.copy(alpha = 0.35f))
-                    ) {
                         Text(
-                            text = tagText,
+                            text = authorDateStr,
                             style = TextStyle(
                                 fontFamily = SFProDisplay,
-                                fontWeight = FontWeight.SemiBold,
+                                fontWeight = FontWeight.Medium,
                                 fontSize = 12.sp
                             ),
-                            color = AppleCrimsonSoft,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                            color = AppleTextSecondary,
+                            textAlign = TextAlign.Center
+                        )
+
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        // Title
+                        Text(
+                            text = item.title,
+                            style = TextStyle(
+                                fontFamily = SFProDisplay,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 19.sp,
+                                letterSpacing = (-0.3).sp,
+                                lineHeight = 24.sp
+                            ),
+                            color = AppleTextPrimary,
+                            textAlign = TextAlign.Center
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        // Markdown Message Content
+                        MarkdownText(
+                            markdown = item.message,
+                            style = TextStyle(
+                                fontFamily = SFProDisplay,
+                                color = Color.White.copy(alpha = 0.90f),
+                                fontSize = 14.sp,
+                                lineHeight = 21.sp
+                            ),
+                            linkColor = AppleMusicRed,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 22.dp, vertical = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Author & Date
-                    val authorName = item.author?.takeIf { it.isNotBlank() } ?: "Developer"
-                    val dateFormatted = try {
-                        val sdf = SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)
-                        sdf.format(Date(item.timestamp))
-                    } catch (_: Exception) { "" }
-                    val authorDateStr = if (dateFormatted.isNotBlank()) "$authorName • $dateFormatted" else authorName
-
-                    Text(
-                        text = authorDateStr,
-                        style = TextStyle(
-                            fontFamily = SFProDisplay,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 12.sp
-                        ),
-                        color = Color.White.copy(alpha = 0.5f),
-                        textAlign = TextAlign.Center
+                // Apple Alert Style Action Rows with 0.5.dp Dividers (matching AvatarSelectionDialog)
+                if (!item.actionUrl.isNullOrBlank()) {
+                    HorizontalDivider(
+                        thickness = 0.5.dp,
+                        color = Color.White.copy(alpha = 0.12f)
                     )
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    // Title
-                    Text(
-                        text = item.title,
-                        style = TextStyle(
-                            fontFamily = SFProDisplay,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp,
-                            letterSpacing = (-0.3).sp
-                        ),
-                        color = Color.White,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    // Markdown Body Text in dark frosted container
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .heightIn(max = 240.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(Color.White.copy(alpha = 0.05f))
-                            .padding(14.dp)
-                    ) {
-                        MarkdownText(
-                            markdown = item.message,
-                            style = TextStyle(
-                                color = Color.White.copy(alpha = 0.88f),
-                                fontSize = 14.sp,
-                                lineHeight = 21.sp
-                            ),
-                            linkColor = AppleCrimsonSoft
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    // Primary Action Button (if actionUrl is provided)
-                    if (!item.actionUrl.isNullOrBlank()) {
-                        Button(
-                            onClick = {
+                            .height(48.dp)
+                            .clickable {
                                 try {
                                     uriHandler.openUri(item.actionUrl)
                                 } catch (_: Exception) {}
                             },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp),
-                            shape = RoundedCornerShape(14.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = AppleCrimson,
-                                contentColor = Color.White
-                            )
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
                         ) {
+                            Text(
+                                text = item.actionText?.takeIf { it.isNotBlank() } ?: "Learn More",
+                                color = AppleMusicRed,
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                fontFamily = SFProDisplay,
+                                letterSpacing = (-0.2).sp
+                            )
+                            Spacer(Modifier.width(6.dp))
                             Icon(
                                 painter = painterResource(R.drawable.open_in_new),
                                 contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = item.actionText?.takeIf { it.isNotBlank() } ?: "Learn More",
-                                style = TextStyle(
-                                    fontFamily = SFProDisplay,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 15.sp
-                                )
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-
-                    // Secondary actions: Dismiss / All Announcements
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        OutlinedButton(
-                            onClick = {
-                                DeveloperNewsManager.dismissPopup(item.id)
-                            },
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(46.dp),
-                            shape = RoundedCornerShape(14.dp),
-                            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.16f))
-                        ) {
-                            Text(
-                                text = "Dismiss",
-                                style = TextStyle(
-                                    fontFamily = SFProDisplay,
-                                    fontWeight = FontWeight.Medium,
-                                    fontSize = 14.sp
-                                ),
-                                color = Color.White.copy(alpha = 0.75f)
-                            )
-                        }
-
-                        Button(
-                            onClick = {
-                                DeveloperNewsManager.dismissPopup(item.id)
-                                onNavigateToNews()
-                            },
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(46.dp),
-                            shape = RoundedCornerShape(14.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White.copy(alpha = 0.12f),
-                                contentColor = Color.White
-                            )
-                        ) {
-                            Text(
-                                text = "All News",
-                                style = TextStyle(
-                                    fontFamily = SFProDisplay,
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 14.sp
-                                ),
-                                color = Color.White
+                                tint = AppleMusicRed,
+                                modifier = Modifier.size(15.dp)
                             )
                         }
                     }
+                }
+
+                HorizontalDivider(
+                    thickness = 0.5.dp,
+                    color = Color.White.copy(alpha = 0.12f)
+                )
+
+                // "All News" Button
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .clickable {
+                            DeveloperNewsManager.dismissPopup(item.id)
+                            onNavigateToNews()
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "All News",
+                        color = AppleMusicRed,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = SFProDisplay,
+                        letterSpacing = (-0.2).sp
+                    )
+                }
+
+                HorizontalDivider(
+                    thickness = 0.5.dp,
+                    color = Color.White.copy(alpha = 0.12f)
+                )
+
+                // "Dismiss" Button
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .clickable {
+                            DeveloperNewsManager.dismissPopup(item.id)
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Dismiss",
+                        color = Color(0xFF8E8E93),
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Normal,
+                        fontFamily = SFProDisplay,
+                        letterSpacing = (-0.2).sp
+                    )
                 }
             }
         }

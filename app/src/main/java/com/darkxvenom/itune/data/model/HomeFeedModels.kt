@@ -1,6 +1,7 @@
 package com.darkxvenom.itune.data.model
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Color
 import com.darkxvenom.itune.backend.MusicTrack
 
 enum class HomeItemKind { SONG, VIDEO, ALBUM, ARTIST, PLAYLIST, PODCAST, EPISODE }
@@ -72,4 +73,7 @@ data class HomeHeroCard(
     val imageUrl: String?,
     val item: HomeFeedItem,
     val queue: List<HomeFeedItem> = emptyList(),
+    val heroType: CoverArtType? = null,
+    val accentColor: Color? = null,
+    val gradientColors: List<Color> = emptyList(),
 )

@@ -85,6 +85,8 @@ import com.darkxvenom.itune.data.charts.ChartPlatform
 import com.darkxvenom.itune.data.charts.ChartRegionSlugToName
 import com.darkxvenom.itune.data.charts.ChartTrack
 import com.darkxvenom.itune.data.charts.ChartsRepository
+import com.darkxvenom.itune.data.library.ContentLocaleCatalog
+import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.ui.player.SFProDisplay
 import com.darkxvenom.itune.ui.theme.AppleMusicRed
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
@@ -134,7 +136,10 @@ fun BrowseChartsView(
 
         // Region Pill for Apple Music & iTune
         if (selectedPlatform == ChartPlatform.APPLE || selectedPlatform == ChartPlatform.ITUNE) {
-            val regionName = ChartRegionSlugToName[selectedRegion.lowercase()] ?: "United States"
+            val effectiveCode = if (selectedRegion == "system") {
+                ContentLocaleCatalog.resolveEffectiveGl(SettingsStore.state.value.contentCountry).lowercase()
+            } else selectedRegion.lowercase()
+            val regionName = ChartRegionSlugToName[effectiveCode] ?: "United States"
             Row(
                 modifier = Modifier
                     .padding(horizontal = 4.dp, vertical = 2.dp)
@@ -304,59 +309,15 @@ private fun ChartsPlatformSelector(
                         ) { onPlatformSelected(platform) },
                     contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        when (platform) {
-                            ChartPlatform.APPLE -> {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_apple_logo),
-                                    contentDescription = null,
-                                    tint = if (isSelected) AppleMusicRed else AppleTextSecondary,
-                                    modifier = Modifier.size(13.dp)
-                                )
-                                Spacer(Modifier.width(4.dp))
-                            }
-                            ChartPlatform.ITUNE -> {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_itune_waves),
-                                    contentDescription = null,
-                                    tint = if (isSelected) AppleMusicRed else AppleTextSecondary,
-                                    modifier = Modifier.size(13.dp)
-                                )
-                                Spacer(Modifier.width(4.dp))
-                            }
-                            ChartPlatform.YOUTUBE -> {
-                                Icon(
-                                    imageVector = Icons.Default.PlayArrow,
-                                    contentDescription = null,
-                                    tint = if (isSelected) Color(0xFFFF0000) else AppleTextSecondary,
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Spacer(Modifier.width(3.dp))
-                            }
-                            ChartPlatform.JIOSAAVN -> {
-                                Box(
-                                    modifier = Modifier
-                                        .size(6.dp)
-                                        .clip(CircleShape)
-                                        .background(if (isSelected) Color(0xFF2BC5B4) else AppleTextSecondary)
-                                )
-                                Spacer(Modifier.width(5.dp))
-                            }
-                        }
-
-                        Text(
-                            text = platform.title,
-                            color = textColor,
-                            fontSize = 12.5.sp,
-                            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                            fontFamily = SFProDisplay,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                    Text(
+                        text = platform.title,
+                        color = textColor,
+                        fontSize = 13.sp,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                        fontFamily = SFProDisplay,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
         }

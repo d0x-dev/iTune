@@ -218,6 +218,8 @@ private fun DeveloperNewsListContent(
 
     Column(modifier = Modifier.fillMaxSize()) {
         FrostedTopBar(
+            transparentBackdrop = true,
+            artworkPageChrome = true,
             onBack = onBack,
             centerContent = {
                 Text(
@@ -600,6 +602,8 @@ private fun DeveloperNewsDetailContent(
 
     Column(modifier = Modifier.fillMaxSize()) {
         FrostedTopBar(
+            transparentBackdrop = true,
+            artworkPageChrome = true,
             onBack = onBack,
             centerContent = {
                 Text(

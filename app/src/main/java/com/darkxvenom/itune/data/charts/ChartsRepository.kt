@@ -4,6 +4,8 @@ import android.util.Log
 import com.darkxvenom.itune.backend.MusicBackend
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
+import com.darkxvenom.itune.data.library.ContentLocaleCatalog
+import com.darkxvenom.itune.data.library.NewReleasesRepository
 import com.darkxvenom.itune.data.library.SettingsStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,16 +56,14 @@ object ChartsRepository {
     }
 
     fun refresh(countryCode: String = "system", force: Boolean = false) {
-        val resolvedCode = if (countryCode == "system") {
-            val userCountry = SettingsStore.state.value.contentCountry
-            if (userCountry.isNotBlank() && userCountry != "system") {
-                userCountry.lowercase()
+        val resolvedCode = runCatching {
+            if (countryCode == "system") {
+                ContentLocaleCatalog.resolveEffectiveGl(SettingsStore.state.value.contentCountry).lowercase(Locale.ROOT)
             } else {
-                Locale.getDefault().country.lowercase().ifEmpty { "us" }
+                val norm = ContentLocaleCatalog.normalizeCountryChoice(countryCode).lowercase(Locale.ROOT)
+                if (norm.length == 2 && norm.all { it.isLetter() }) norm else countryCode.lowercase(Locale.ROOT).take(2)
             }
-        } else {
-            countryCode.lowercase()
-        }
+        }.getOrDefault("us").let { if (it.length != 2 || !it.all { c -> c.isLetter() }) "us" else it }
 
         if (_isLoading.value && !force && currentLoadedRegion == resolvedCode) return
 
@@ -84,7 +84,11 @@ object ChartsRepository {
                 // Fetch in parallel
                 val appleSongsJob = launch {
                     try {
-                        val tracks = AppleMusicChartsScraper.fetchTopSongs(resolvedCode)
+                        var tracks = AppleMusicChartsScraper.fetchTopSongs(resolvedCode)
+                        if (tracks.isEmpty() && resolvedCode != "us") {
+                            Log.w(TAG, "No songs for region $resolvedCode, falling back to 'us'")
+                            tracks = AppleMusicChartsScraper.fetchTopSongs("us")
+                        }
                         if (tracks.isNotEmpty()) {
                             _appleTracks.value = tracks
                             val artists = AppleMusicChartsScraper.getTrendingArtists(tracks)
@@ -100,7 +104,10 @@ object ChartsRepository {
 
                 val appleAlbumsJob = launch {
                     try {
-                        val albums = AppleMusicChartsScraper.fetchTopAlbums(resolvedCode)
+                        var albums = AppleMusicChartsScraper.fetchTopAlbums(resolvedCode)
+                        if (albums.isEmpty() && resolvedCode != "us") {
+                            albums = AppleMusicChartsScraper.fetchTopAlbums("us")
+                        }
                         if (albums.isNotEmpty()) {
                             _appleAlbums.value = albums
                         }
@@ -135,6 +142,11 @@ object ChartsRepository {
                 appleAlbumsJob.join()
                 jioJob.join()
                 ytJob.join()
+
+                // If iTune tracks still empty, fallback to YouTube tracks
+                if (_ituneTracks.value.isEmpty()) {
+                    _ituneTracks.value = _youtubeTracks.value.take(50)
+                }
 
                 currentLoadedRegion = resolvedCode
             } catch (e: Exception) {

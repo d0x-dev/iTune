@@ -512,7 +512,13 @@ fun LiveFeaturedHeroCarousel(
                                 .clip(RoundedCornerShape(18.dp))
                                 .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(18.dp)),
                         ) {
-                            Artwork(card.imageUrl, Modifier.fillMaxSize(), RoundedCornerShape(18.dp))
+                            if (!card.imageUrl.isNullOrBlank()) {
+                                Artwork(card.imageUrl, Modifier.fillMaxSize(), RoundedCornerShape(18.dp))
+                            } else if (card.heroType != null) {
+                                AlbumArtwork(type = card.heroType, modifier = Modifier.fillMaxSize(), cornerRadius = 18.dp)
+                            } else {
+                                AppleMusicAmbientArtwork(title = card.title, category = card.category)
+                            }
                             Box(
                                 Modifier
                                     .fillMaxWidth()
@@ -571,6 +577,8 @@ private fun PortraitHeroCardItem(
         // Base Artwork Layer
         if (!card.imageUrl.isNullOrBlank()) {
             Artwork(card.imageUrl, Modifier.fillMaxSize(), RoundedCornerShape(26.dp))
+        } else if (card.heroType != null) {
+            AlbumArtwork(type = card.heroType, modifier = Modifier.fillMaxSize(), cornerRadius = 26.dp)
         } else {
             AppleMusicAmbientArtwork(title = card.title, category = card.category)
         }
@@ -588,7 +596,7 @@ private fun PortraitHeroCardItem(
                 )
         )
 
-        // Top-right music badge
+        // Top-right iTune badge
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -596,18 +604,18 @@ private fun PortraitHeroCardItem(
                 .padding(top = 16.dp, end = 16.dp)
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_apple_logo),
+                painter = painterResource(R.drawable.ic_itune_waves),
                 contentDescription = null,
                 tint = Color.White.copy(alpha = 0.95f),
-                modifier = Modifier.size(15.dp)
+                modifier = Modifier.size(16.dp)
             )
-            Spacer(Modifier.width(3.dp))
+            Spacer(Modifier.width(4.dp))
             Text(
-                text = "music",
+                text = "iTune",
                 style = TextStyle(
                     fontFamily = SFProDisplay,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.5.sp,
+                    fontSize = 14.sp,
                     letterSpacing = (-0.3).sp
                 ),
                 color = Color.White.copy(alpha = 0.95f)
