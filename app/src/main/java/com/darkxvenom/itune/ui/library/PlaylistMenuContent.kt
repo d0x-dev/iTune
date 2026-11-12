@@ -611,9 +611,20 @@ fun IosCreatePlaylistMenuView(
             return
         }
         if (renameTarget != null) {
-            YouTubeLibrarySyncManager.renamePlaylist(context, renameTarget.id, clean)
-            Toast.makeText(context, "Renamed to \"$clean\"", Toast.LENGTH_SHORT).show()
-            onDone(renameTarget.copy(name = clean))
+            busy = true
+            scope.launch {
+                try {
+                    YouTubeLibrarySyncManager.renamePlaylist(context, renameTarget.id, clean)
+                    Toast.makeText(context, "Renamed to \"$clean\"", Toast.LENGTH_SHORT).show()
+                    onDone(renameTarget.copy(name = clean))
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Throwable) {
+                    Toast.makeText(context, e.message ?: "Could not rename playlist on YouTube Music", Toast.LENGTH_LONG).show()
+                } finally {
+                    busy = false
+                }
+            }
             return
         }
         busy = true
