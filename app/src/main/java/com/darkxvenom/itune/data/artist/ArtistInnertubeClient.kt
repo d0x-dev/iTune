@@ -625,8 +625,9 @@ object ArtistInnertubeClient {
     }
 
     fun buildUserContextObject(): JSONObject = JSONObject().apply {
+        // USER_SESSION_ID belongs in the SAPISIDHASH authorization header.
+        // DELEGATED_SESSION_ID belongs in X-Goog-PageId, not onBehalfOfUser.
         put("lockedSafetyMode", false)
-        dataSyncIdFor(scope)?.let { put("onBehalfOfUser", it) }
     }
 
     fun currentClientVersion(): String = scope?.clientVersion ?: WEB_REMIX_VERSION
@@ -739,7 +740,6 @@ object ArtistInnertubeClient {
             .header("User-Agent", WEB_USER_AGENT)
             .header("Accept-Language", acceptLanguageHeader)
             .header("Cookie", sessionCookie)
-            .header("X-Youtube-Bootstrap-Logged-In", "true")
             .header("X-Youtube-Bootstrap-Logged-In", "true")
         val activeScope = scope
         builder.header("X-Goog-AuthUser", authUserFor(activeScope))
