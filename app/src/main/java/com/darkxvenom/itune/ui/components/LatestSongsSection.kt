@@ -1,8 +1,10 @@
 package com.darkxvenom.itune.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,11 +27,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -55,6 +64,7 @@ fun LatestSongsSection(
     onTrackMenuClick: (Track) -> Unit = {},
     onPersonalizedTrackClick: (MusicTrack) -> Unit = {},
     onPersonalizedTrackMenuClick: (MusicTrack) -> Unit = {},
+    onPersonalizedTrackMenuWithOffsetClick: (MusicTrack, Offset) -> Unit = { track, _ -> onPersonalizedTrackMenuClick(track) },
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         // Section Header with Chevron >
@@ -96,7 +106,7 @@ fun LatestSongsSection(
                             LiveSongRowItem(
                                 track = track,
                                 onClick = { onPersonalizedTrackClick(track) },
-                                onMenuClick = { onPersonalizedTrackMenuClick(track) }
+                                onMenuClick = { offset -> onPersonalizedTrackMenuWithOffsetClick(track, offset) }
                             )
                             if (index < columnTracks.size - 1) {
                                 HorizontalDivider(
@@ -128,17 +138,32 @@ fun LatestSongsSection(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LiveSongRowItem(
     track: MusicTrack,
     onClick: () -> Unit,
-    onMenuClick: () -> Unit,
+    onMenuClick: (Offset) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var itemCenter by remember { mutableStateOf(Offset.Zero) }
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .onGloballyPositioned { coords ->
+                if (coords.isAttached) {
+                    val pos = coords.positionInWindow()
+                    itemCenter = Offset(
+                        x = pos.x + coords.size.width / 2f,
+                        y = pos.y + coords.size.height / 2f
+                    )
+                }
+            }
+            .clip(RoundedCornerShape(8.dp))
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = { onMenuClick(itemCenter) }
+            )
             .padding(vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -184,7 +209,7 @@ private fun LiveSongRowItem(
         }
 
         IconButton(
-            onClick = onMenuClick,
+            onClick = { onMenuClick(itemCenter) },
             modifier = Modifier.size(36.dp)
         ) {
             Icon(

@@ -2,6 +2,7 @@ package com.darkxvenom.itune.share
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -15,7 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,17 +26,24 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.darkxvenom.itune.MainActivity
+import com.darkxvenom.itune.R
+import com.darkxvenom.itune.backend.MusicBackend
+import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.ITuneTheme
+import kotlinx.coroutines.launch
 
 class ShareToIdentifyActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +65,8 @@ private fun ShareIdentifyScreen(
     onClose: () -> Unit
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
+    val scope = rememberCoroutineScope()
+    var isPlayingTrack by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
     var track by remember { mutableStateOf<IdentifiedTrack?>(null) }
@@ -131,6 +143,51 @@ private fun ShareIdentifyScreen(
                     }
                     Spacer(Modifier.height(28.dp))
                     Text("Identified with Shazam", color = Color(0xFF8AB4F8), style = MaterialTheme.typography.labelMedium)
+                    Spacer(Modifier.height(20.dp))
+                    Button(
+                        onClick = {
+                            if (!isPlayingTrack) {
+                                scope.launch {
+                                    isPlayingTrack = true
+                                    try {
+                                        val query = "${result.title} ${result.artist}"
+                                        val tracks = MusicBackend.searchMusic(query)
+                                        val match = tracks.firstOrNull()
+                                        if (match != null) {
+                                            MusicPlayerState.play(match, tracks, expandPlayer = true)
+                                            val mainIntent = Intent(context, MainActivity::class.java).apply {
+                                                flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                                            }
+                                            context.startActivity(mainIntent)
+                                            onClose()
+                                        } else {
+                                            Toast.makeText(context, "Song not found in iTune", Toast.LENGTH_SHORT).show()
+                                        }
+                                    } catch (_: Exception) {
+                                        Toast.makeText(context, "Playback failed", Toast.LENGTH_SHORT).show()
+                                    } finally {
+                                        isPlayingTrack = false
+                                    }
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFA2D48)),
+                        shape = RoundedCornerShape(16.dp),
+                    ) {
+                        if (isPlayingTrack) {
+                            CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                        } else {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_itune_waves),
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                                tint = Color.White
+                            )
+                        }
+                        Spacer(Modifier.size(8.dp))
+                        Text("Play in iTune", fontWeight = FontWeight.SemiBold, color = Color.White)
+                    }
                 } else {
                     Text(
                         error ?: "No music found",

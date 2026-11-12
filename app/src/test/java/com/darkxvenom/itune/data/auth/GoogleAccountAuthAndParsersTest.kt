@@ -9,6 +9,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.security.MessageDigest
 
 class GoogleAccountAuthAndParsersTest {
 
@@ -50,6 +51,10 @@ class GoogleAccountAuthAndParsersTest {
         assertEquals("delegated123", normalizeDataSyncId("owner||delegated123"))
         assertEquals("ownerOnly", normalizeDataSyncId("ownerOnly||"))
         assertEquals("plainId", normalizeDataSyncId("plainId"))
+        assertEquals("user123", normalizeDataSyncId("delegated123||user123"))
+        assertEquals("delegated123", delegatedSessionId("delegated123||user123"))
+        assertNull(delegatedSessionId("ownerOnly||"))
+        assertNull(delegatedSessionId("plainId"))
         assertNull(normalizeDataSyncId("   "))
         assertNull(normalizeDataSyncId(null))
     }
@@ -222,6 +227,24 @@ class GoogleAccountAuthAndParsersTest {
     }
 
     @Test
+    fun buildSapisidHash_usesYouTubeUserSessionHashFormat() {
+        val header = buildSapisidHash(
+            sapisid = "test_secret",
+            origin = "https://music.youtube.com",
+            timestampSeconds = 1700000000L,
+            userSessionId = "user-session-123",
+        )
+        val expectedDigest = MessageDigest.getInstance("SHA-1")
+            .digest(
+                "user-session-123 1700000000 test_secret https://music.youtube.com"
+                    .toByteArray(Charsets.UTF_8),
+            )
+            .joinToString("") { "%02x".format(it) }
+
+        assertEquals("SAPISIDHASH 1700000000_${expectedDigest}_u", header)
+    }
+
+    @Test
     fun buildFullSapisidAuthorization_includesAllPresentHashSchemes() {
         val header = buildFullSapisidAuthorization(
             cookieHeader = "SAPISID=s0; __Secure-1PAPISID=s1; __Secure-3PAPISID=s3",
@@ -237,6 +260,27 @@ class GoogleAccountAuthAndParsersTest {
         assertEquals("SAPISID1PHASH", pairs[1].groupValues[1])
         assertEquals("SAPISID3PHASH", pairs[2].groupValues[1])
         assertFalse(pairs[0].groupValues[2] == pairs[1].groupValues[2])
+    }
+
+    @Test
+    fun buildFullSapisidAuthorization_bindsUserSessionIdIntoHash() {
+        val cookies = "SAPISID=s0; __Secure-3PAPISID=s3"
+        val withoutUser = buildFullSapisidAuthorization(
+            cookieHeader = cookies,
+            origin = "https://music.youtube.com",
+            timestampSeconds = 1700000000L,
+        )
+        val withUser = buildFullSapisidAuthorization(
+            cookieHeader = cookies,
+            origin = "https://music.youtube.com",
+            timestampSeconds = 1700000000L,
+            userSessionId = "user-session-123",
+        )
+
+        assertNotNull(withoutUser)
+        assertNotNull(withUser)
+        assertFalse(withoutUser == withUser)
+        assertTrue(withUser!!.contains("_u"))
     }
 
     @Test

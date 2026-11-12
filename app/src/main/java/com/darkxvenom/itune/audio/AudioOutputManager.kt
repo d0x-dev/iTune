@@ -166,12 +166,12 @@ object AudioOutputManager {
         }?.info
         usbBitPerfect?.setDevice(usbDeviceInfo)
 
-        // Capsule icon policy matching user specification:
+        // Capsule icon policy:
         // - Bluetooth audio connected/selected -> ic_airbuds
-        // - USB / wired audio jack connected/selected -> ic_headphone
-        // - Speaker explicitly selected -> ic_output_speaker
+        // - USB / wired audio jack -> ic_headphone
+        // - Speaker (explicit OR System Default routing to phone speaker) -> ic_output_speaker
         // - External/HDMI -> ic_output_external_speaker, Hearing aid -> ic_output_hearing_aid
-        // - Automatic with only speaker -> ic_airbuds (keeps buds silhouette ready by default)
+        // - No device resolved yet -> ic_airbuds (ready state)
         val capsuleIcon = resolveCapsuleIcon(
             chosenPref = chosenPref,
             activeEntry = activeEntry,
@@ -274,10 +274,17 @@ object AudioOutputManager {
     private fun resolveCapsuleIcon(
         chosenPref: OutputDeviceEntry?,
         activeEntry: OutputDeviceEntry?,
-    ): Int = resolveOutputCapsuleIcon(
-        category = (chosenPref ?: activeEntry)?.category,
-        explicitSelection = chosenPref != null,
-    )
+    ): Int {
+        val effectiveCategory = (chosenPref ?: activeEntry)?.category
+        // For BUILTIN_SPEAKER: treat "System Default → Phone Speaker" the same as explicit
+        // speaker selection — show the phone/speaker icon, not the buds silhouette.
+        val treatAsExplicit = chosenPref != null ||
+            effectiveCategory == AudioDeviceCategory.BUILTIN_SPEAKER
+        return resolveOutputCapsuleIcon(
+            category = effectiveCategory,
+            explicitSelection = treatAsExplicit,
+        )
+    }
 
     private fun toEntry(dev: AudioDeviceInfo, btBatteries: Map<String, Int>): OutputDeviceEntry {
         val name = dev.outputName()
@@ -398,9 +405,7 @@ internal fun resolveOutputCapsuleIcon(
         AudioDeviceCategory.USB_DAC -> R.drawable.ic_headphone
         AudioDeviceCategory.HEARING_AID -> R.drawable.ic_output_hearing_aid
         AudioDeviceCategory.EXTERNAL_SPEAKER -> R.drawable.ic_output_external_speaker
-        AudioDeviceCategory.BUILTIN_SPEAKER -> {
-            if (explicitSelection) R.drawable.ic_output_speaker else R.drawable.ic_airbuds
-        }
+        AudioDeviceCategory.BUILTIN_SPEAKER -> R.drawable.ic_output_speaker
     }
 }
 

@@ -1012,12 +1012,67 @@ internal fun MorePopupLyricsTranslateSection(
                             )
                             .clickable {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                if (settingsState.lyricsTranslationProvider != provId) {
+                                    // A model id / URL left over from another provider answers 404.
+                                    SettingsStore.setLyricsTranslationModel(context, "")
+                                    SettingsStore.setLyricsTranslationBaseUrl(context, "")
+                                }
                                 SettingsStore.setLyricsTranslationProvider(context, provId)
                             }
                             .padding(horizontal = 13.dp, vertical = 7.dp)
                     ) {
                         Text(
                             text = provLabel,
+                            fontFamily = SFProDisplay,
+                            fontSize = 12.5.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isSelected) Color.White else Color.White.copy(alpha = 0.82f)
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = "MODEL",
+                fontFamily = SFProDisplay,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White.copy(alpha = 0.6f),
+                letterSpacing = 0.5.sp,
+                modifier = Modifier.padding(start = 2.dp, bottom = 6.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val savedModel = settingsState.lyricsTranslationModel
+                val modelOptions = buildList {
+                    add("" to "Default")
+                    LyricsTranslationHelper.suggestedModels(settingsState.lyricsTranslationProvider)
+                        .forEach { add(it to it.substringAfterLast('/')) }
+                    // A custom id picked in Settings should stay visible as a chip.
+                    if (savedModel.isNotBlank() && none { it.first == savedModel }) add(savedModel to savedModel)
+                }
+                modelOptions.forEach { (modelId, modelLabel) ->
+                    val isSelected = savedModel == modelId
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .background(
+                                if (isSelected) Color(0xFF007AFF)
+                                else Color.White.copy(alpha = 0.10f)
+                            )
+                            .clickable {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                SettingsStore.setLyricsTranslationModel(context, modelId)
+                            }
+                            .padding(horizontal = 13.dp, vertical = 7.dp)
+                    ) {
+                        Text(
+                            text = modelLabel,
                             fontFamily = SFProDisplay,
                             fontSize = 12.5.sp,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,

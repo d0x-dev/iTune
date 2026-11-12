@@ -69,8 +69,9 @@ object YouTubeAccountParsers {
             val name = item.optJSONObject("accountName").runsText()
                 .ifBlank { item.optJSONObject("accountName")?.optString("simpleText").orEmpty() }
             if (name.isBlank()) return@mapNotNull null
-            val pageId = findStringDeep(item, "pageId")
-            val dataSyncId = normalizeDataSyncId(findStringDeep(item, "datasyncIdToken"))
+            val rawDataSyncId = findStringDeep(item, "datasyncIdToken")
+            val pageId = findStringDeep(item, "pageId") ?: delegatedSessionId(rawDataSyncId)
+            val dataSyncId = normalizeDataSyncId(rawDataSyncId)
             if (pageId == null && dataSyncId == null) return@mapNotNull null
             val subtitle = item.optJSONObject("channelHandle").runsText()
                 .ifBlank { item.optJSONObject("channelHandle")?.optString("simpleText").orEmpty() }
@@ -265,11 +266,19 @@ object YouTubeAccountParsers {
 
     private fun parseLibraryTwoRow(renderer: JSONObject, expectedType: BrowseType): LibraryCardItem? {
         val title = renderer.optJSONObject("title").runsText().trim()
+            .ifBlank { renderer.optString("title").trim() }
         if (title.isBlank()) return null
-        val rawBrowseId = renderer.optJSONObject("navigationEndpoint")
-            ?.optJSONObject("browseEndpoint")
-            ?.optString("browseId")
-            ?.takeIf { it.isNotBlank() }
+        val nav = renderer.optJSONObject("navigationEndpoint")
+        val rawBrowseId = nav?.optJSONObject("browseEndpoint")?.optString("browseId")?.takeIf { it.isNotBlank() }
+            ?: nav?.optJSONObject("watchEndpoint")?.optString("playlistId")?.takeIf { it.isNotBlank() }?.let { "VL$it" }
+            ?: nav?.optJSONObject("watchPlaylistEndpoint")?.optString("playlistId")?.takeIf { it.isNotBlank() }?.let { "VL$it" }
+            ?: renderer.optJSONObject("thumbnailOverlay")
+                ?.optJSONObject("musicItemThumbnailOverlayRenderer")
+                ?.optJSONObject("content")
+                ?.optJSONObject("musicPlayButtonRenderer")
+                ?.optJSONObject("playNavigationEndpoint")
+                ?.optJSONObject("watchPlaylistEndpoint")
+                ?.optString("playlistId")?.takeIf { it.isNotBlank() }?.let { "VL$it" }
             ?: return null
         // Skip synthetic create tiles and podcast/episode containers.
         if (rawBrowseId.startsWith("FE") || rawBrowseId.startsWith("MPSP") || rawBrowseId.startsWith("MPED")) return null

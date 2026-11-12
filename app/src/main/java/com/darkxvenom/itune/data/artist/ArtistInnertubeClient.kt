@@ -5,12 +5,14 @@ import com.darkxvenom.itune.backend.Net
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.auth.YouTubeAccountParsers
 import com.darkxvenom.itune.data.auth.buildFullSapisidAuthorization
+import com.darkxvenom.itune.data.auth.delegatedSessionId
 import com.darkxvenom.itune.data.auth.buildSapisidHash
 import com.darkxvenom.itune.data.auth.normalizeDataSyncId
 import com.darkxvenom.itune.data.auth.sapisidFrom
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.model.LikeStatus
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
@@ -119,19 +121,27 @@ object ArtistInnertubeClient {
         browseId: String,
         params: String? = null,
         anonymous: Boolean = false,
-    ): JSONObject = postMusic(
-        endpoint = "browse",
-        anonymous = anonymous,
-        allowAnonymousFallback = !isPrivateLibraryBrowseId(browseId),
-    ) {
-        put("browseId", browseId)
-        if (params != null) put("params", params)
+        persistScopeRecovery: Boolean = true,
+    ): JSONObject {
+        val response = postMusic(
+            endpoint = "browse",
+            anonymous = anonymous,
+            allowAnonymousFallback = !isPrivateLibraryBrowseId(browseId),
+            persistScopeRecovery = persistScopeRecovery,
+        ) {
+            put("browseId", browseId)
+            if (params != null) put("params", params)
+        }
+        if (!anonymous && isPrivateLibraryBrowseId(browseId)) {
+            Log.i(TAG, "Private browse $browseId response: ${summarizeResponseStructure(response)}")
+        }
+        return response
     }
 
     suspend fun browseContinuation(
         token: String,
         anonymous: Boolean = false,
-        allowAnonymousFallback: Boolean = true,
+        allowAnonymousFallback: Boolean = false,
     ): JSONObject = postMusic(
         endpoint = "browse",
         query = mapOf("ctoken" to token, "continuation" to token, "type" to "next"),
@@ -142,16 +152,22 @@ object ArtistInnertubeClient {
     }
 
     /** Calls youtube.com WEB client `/browse` for account-wide fallbacks (`FEhistory`, `FEchannels`). */
-    suspend fun postWebBrowse(browseId: String): JSONObject = postMusicRawUrl(
-        url = "https://www.youtube.com/youtubei/v1/browse",
-        clientName = "WEB",
-        clientVersion = WEB_VERSION,
-        clientId = "1",
-        origin = "https://www.youtube.com",
-        anonymous = false,
-        allowAnonymousFallback = false,
-    ) {
-        put("browseId", browseId)
+    suspend fun postWebBrowse(browseId: String): JSONObject {
+        val response = postMusicRawUrl(
+            url = "https://www.youtube.com/youtubei/v1/browse",
+            clientName = "WEB",
+            clientVersion = WEB_VERSION,
+            clientId = "1",
+            origin = "https://www.youtube.com",
+            anonymous = false,
+            allowAnonymousFallback = false,
+        ) {
+            put("browseId", browseId)
+        }
+        if (browseId == "FEhistory" || browseId == "FEchannels") {
+            Log.i(TAG, "Private WEB browse $browseId response: ${summarizeResponseStructure(response)}")
+        }
+        return response
     }
 
     suspend fun next(videoId: String): JSONObject = postMusic(
@@ -302,10 +318,26 @@ object ArtistInnertubeClient {
         if (newCookie.isNotBlank()) cookie = newCookie
     }
 
-    private fun clearInvalidDelegationScope() {
-        channelOverride = null
-        scope = scope?.copy(pageId = null, dataSyncId = null)
-        GoogleAuthStore.updateActiveScope(pageId = null, dataSyncId = null)
+    private fun clearInvalidDelegationScope(
+        clearUserSessionId: Boolean = true,
+        persistScope: Boolean = true,
+    ) {
+        val retainedUserSessionId = if (clearUserSessionId) {
+            null
+        } else {
+            channelOverride?.dataSyncId ?: scope?.dataSyncId
+        }
+        channelOverride = channelOverride?.copy(
+            pageId = null,
+            dataSyncId = if (clearUserSessionId) null else channelOverride?.dataSyncId,
+        )
+        scope = scope?.copy(
+            pageId = null,
+            dataSyncId = if (clearUserSessionId) null else scope?.dataSyncId,
+        )
+        if (persistScope) {
+            GoogleAuthStore.updateActiveScope(pageId = null, dataSyncId = retainedUserSessionId)
+        }
     }
 
     private fun isPrivateLibraryBrowseId(browseId: String): Boolean =
@@ -316,6 +348,73 @@ object ArtistInnertubeClient {
             browseId == "FEchannels" ||
             browseId == "VLLM" ||
             browseId == "LM"
+
+    /**
+     * Logs only response structure, never playlist titles, video IDs, cookies or auth tokens.
+     * This distinguishes a genuinely empty library from a sign-in/error shell or a new
+     * Innertube renderer shape when private library parsing returns no items.
+     */
+    private fun summarizeResponseStructure(root: JSONObject): String {
+        fun keysOf(value: JSONObject?): String {
+            if (value == null) return "none"
+            val keys = mutableListOf<String>()
+            val iterator = value.keys()
+            while (iterator.hasNext()) keys += iterator.next()
+            return keys.sorted().joinToString(",").ifBlank { "none" }
+        }
+
+        val responseContext = root.optJSONObject("responseContext")
+        val mainAppContext = responseContext?.optJSONObject("mainAppWebResponseContext")
+        val rendererNames = listOf(
+            "musicShelfRenderer",
+            "musicPlaylistShelfRenderer",
+            "musicResponsiveListItemRenderer",
+            "musicTwoRowItemRenderer",
+            "musicCarouselShelfRenderer",
+            "lockupViewModel",
+            "playlistRenderer",
+            "gridPlaylistRenderer",
+            "channelRenderer",
+            "gridChannelRenderer",
+            "playlistVideoRenderer",
+            "videoRenderer",
+            "alertRenderer",
+            "messageRenderer",
+            "continuationItemRenderer",
+        )
+        val counts = rendererNames.mapNotNull { name ->
+            countRendererOccurrences(root, name).takeIf { it > 0 }?.let { "$name=$it" }
+        }.joinToString(",").ifBlank { "none" }
+        val loggedOut = if (mainAppContext?.has("loggedOut") == true) {
+            mainAppContext.opt("loggedOut").toString()
+        } else {
+            "unknown"
+        }
+        return "rootKeys=[${keysOf(root)}]; contentsKeys=[${keysOf(root.optJSONObject("contents"))}]; " +
+            "loggedOut=$loggedOut; renderers=[$counts]"
+    }
+
+    private fun countRendererOccurrences(root: Any?, target: String): Int {
+        var count = 0
+        fun walk(node: Any?) {
+            when (node) {
+                is JSONObject -> {
+                    val iterator = node.keys()
+                    while (iterator.hasNext()) {
+                        val key = iterator.next()
+                        val value = node.opt(key)
+                        if (key == target && value is JSONObject) count++
+                        walk(value)
+                    }
+                }
+                is JSONArray -> {
+                    for (index in 0 until node.length()) walk(node.opt(index))
+                }
+            }
+        }
+        walk(root)
+        return count
+    }
 
     fun adoptSessionScope(
         cookie: String,
@@ -328,7 +427,10 @@ object ArtistInnertubeClient {
     ) {
         this.cookie = cookie.takeIf { it.isNotBlank() }
         this.channelOverride = null
-        val version = clientVersion?.takeIf { it.isNotBlank() } ?: scope?.clientVersion
+        // A restored account has no trusted persisted ytcfg version/scope. Leave it
+        // unset so the next authenticated request refreshes session identifiers from
+        // the current cookie instead of reusing another account's cached scope.
+        val version = clientVersion?.takeIf { it.isNotBlank() }
         scope = if (!loggedIn) {
             version?.let { SessionScope(null, null, "0", it) }
         } else {
@@ -360,6 +462,35 @@ object ArtistInnertubeClient {
         clientId = "1",
         origin = "https://www.youtube.com",
     ) {}
+
+    /**
+     * Confirms that this cookie session can read private YouTube Music library data.
+     * Account-menu metadata is optional; this probe is the actual permission check
+     * required before the app advertises bidirectional library sync.
+     */
+    suspend fun verifyAuthenticatedLibraryAccess(persistScope: Boolean = true) {
+        requireSession()
+        refreshSessionScope(persistScope)
+        val failures = mutableListOf<String>()
+        for (browseId in listOf("FEmusic_liked_playlists", "FEmusic_liked_videos")) {
+            try {
+                browse(
+                    browseId = browseId,
+                    anonymous = false,
+                    persistScopeRecovery = persistScope,
+                )
+                return
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                failures += "$browseId: ${e.message?.take(160) ?: e.javaClass.simpleName}"
+            }
+        }
+        throw IOException(
+            "Google sign-in succeeded, but YouTube Music did not authorize private library access. " +
+                failures.joinToString("; "),
+        )
+    }
 
     suspend fun rateVideo(videoId: String, status: LikeStatus) {
         requireSession()
@@ -469,13 +600,18 @@ object ArtistInnertubeClient {
                 )
             }
         }
-        val arr = response.optJSONArray("playlistEditResults") ?: return emptyMap()
+        val arr = response.optJSONArray("playlistEditResults")
+            ?: error("YouTube Music did not confirm the playlist add operation")
         val out = linkedMapOf<String, String>()
         for (i in 0 until arr.length()) {
             val added = arr.optJSONObject(i)?.optJSONObject("playlistEditVideoAddedResultData") ?: continue
             val vid = added.optString("videoId").takeIf { it.isNotBlank() } ?: continue
             val setId = added.optString("setVideoId").takeIf { it.isNotBlank() } ?: continue
             out[vid] = setId
+        }
+        val missing = videoIds.distinct().filterNot { it in out }
+        if (missing.isNotEmpty()) {
+            error("YouTube Music did not confirm all added tracks")
         }
         return out
     }
@@ -572,17 +708,23 @@ object ArtistInnertubeClient {
         visitorData?.let { builder.header("X-Goog-Visitor-Id", it) }
         cookie?.let { c ->
             builder.header("Cookie", c)
+            builder.header("X-Youtube-Bootstrap-Logged-In", "true")
             builder.header("X-Goog-AuthUser", authUserFor(session))
             pageIdFor(session)?.let { builder.header("X-Goog-PageId", it) }
-            buildFullSapisidAuthorization(c, origin)?.let { auth ->
+            buildFullSapisidAuthorization(
+                cookieHeader = c,
+                origin = origin,
+                userSessionId = dataSyncIdFor(session),
+            )?.let { auth ->
                 builder.header("Authorization", auth)
             }
         }
     }
 
     fun buildUserContextObject(): JSONObject = JSONObject().apply {
+        // USER_SESSION_ID belongs in the SAPISIDHASH authorization header.
+        // DELEGATED_SESSION_ID belongs in X-Goog-PageId, not onBehalfOfUser.
         put("lockedSafetyMode", false)
-        dataSyncIdFor(scope)?.let { put("onBehalfOfUser", it) }
     }
 
     fun currentClientVersion(): String = scope?.clientVersion ?: WEB_REMIX_VERSION
@@ -632,7 +774,49 @@ object ArtistInnertubeClient {
         if (cookie.isNullOrBlank()) error("Sign in with Google to sync with YouTube Music")
     }
 
-    private suspend fun ensureSessionScope() {
+    /**
+     * Refresh the account/channel scope from live YouTube Music ytcfg. Existing sessions
+     * may have been saved by older builds with delegated and user session IDs swapped.
+     */
+    private suspend fun refreshSessionScope(persistScope: Boolean) {
+        val activeCookie = cookie ?: error("Sign in with Google to sync with YouTube Music")
+        scopeLock.withLock {
+            val previous = scope
+            val fresh = fetchSessionScope(activeCookie)
+                ?: error("YouTube Music did not provide an authenticated session configuration")
+            val refreshedCookie = cookie
+            if (
+                refreshedCookie != activeCookie &&
+                sapisidFrom(refreshedCookie.orEmpty()) != sapisidFrom(activeCookie)
+            ) {
+                error("Google account changed while refreshing YouTube session")
+            }
+            val refreshed = fresh.copy(
+                clientVersion = fresh.clientVersion ?: previous?.clientVersion,
+                authUser = fresh.authUser.ifBlank { previous?.authUser ?: "0" },
+            )
+            scope = refreshed
+
+            // A cookie-only refresh sees the browser's primary identity. Keep the
+            // explicitly selected channel's delegated page ID, but refresh its
+            // user-session ID and auth-user index from the live account config.
+            val selectedChannel = channelOverride?.copy(
+                dataSyncId = refreshed.dataSyncId,
+                authUser = refreshed.authUser,
+            )
+            if (selectedChannel != null) {
+                channelOverride = selectedChannel
+            }
+            if (persistScope) {
+                GoogleAuthStore.updateActiveScope(
+                    pageId = if (selectedChannel != null) selectedChannel.pageId else refreshed.pageId,
+                    dataSyncId = if (selectedChannel != null) selectedChannel.dataSyncId else refreshed.dataSyncId,
+                )
+            }
+        }
+    }
+
+    private suspend fun ensureSessionScope(persistScope: Boolean = true) {
         val activeCookie = cookie ?: return
         val existing = scope
         if (existing != null && !existing.clientVersion.isNullOrBlank()) return
@@ -643,14 +827,45 @@ object ArtistInnertubeClient {
                 .onFailure { Log.w(TAG, "could not read session scope: ${it.message}") }
                 .getOrNull()
                 ?.let { fresh ->
-                    if (cookie != activeCookie) return@let
-                    scope = if (lockedExisting != null) {
+                    val refreshedCookie = cookie
+                    if (
+                        refreshedCookie != activeCookie &&
+                        sapisidFrom(refreshedCookie.orEmpty()) != sapisidFrom(activeCookie)
+                    ) return@let
+                    // Refresh both session identifiers from the live ytcfg. Older app
+                    // versions stored DELEGATED_SESSION_ID as the user session id.
+                    val refreshed = if (lockedExisting != null) {
                         lockedExisting.copy(
+                            dataSyncId = fresh.dataSyncId,
+                            pageId = fresh.pageId,
+                            authUser = fresh.authUser,
                             clientVersion = fresh.clientVersion ?: lockedExisting.clientVersion,
-                            authUser = lockedExisting.authUser.ifBlank { fresh.authUser },
                         )
                     } else {
                         fresh
+                    }
+                    scope = refreshed
+                    val selectedChannel = channelOverride
+                    if (selectedChannel != null) {
+                        // The cookie-only ytcfg refresh supplies the correct user-session
+                        // id, but its page id belongs to the browser's primary identity.
+                        // Keep the selected channel page id and repair only its user id.
+                        val repairedChannel = selectedChannel.copy(
+                            dataSyncId = fresh.dataSyncId,
+                            authUser = fresh.authUser,
+                        )
+                        channelOverride = repairedChannel
+                        if (persistScope) {
+                            GoogleAuthStore.updateActiveScope(
+                                pageId = repairedChannel.pageId,
+                                dataSyncId = repairedChannel.dataSyncId,
+                            )
+                        }
+                    } else if (persistScope) {
+                        GoogleAuthStore.updateActiveScope(
+                            pageId = refreshed.pageId,
+                            dataSyncId = refreshed.dataSyncId,
+                        )
                     }
                 }
         }
@@ -663,9 +878,9 @@ object ArtistInnertubeClient {
             .header("User-Agent", WEB_USER_AGENT)
             .header("Accept-Language", acceptLanguageHeader)
             .header("Cookie", sessionCookie)
-        buildFullSapisidAuthorization(sessionCookie, MUSIC_ORIGIN)?.let {
-            builder.header("Authorization", it)
-        }
+            .header("X-Youtube-Bootstrap-Logged-In", "true")
+        // Read ytcfg with the browser cookie only. Do not use the previously stored
+        // delegated/user IDs here: older builds may have persisted those fields swapped.
         val html = Net.client.newCall(builder.build()).execute().use { res ->
             GoogleAuthStore.absorbSetCookies(res.headers("Set-Cookie"))
             res.body?.string().orEmpty()
@@ -675,11 +890,12 @@ object ArtistInnertubeClient {
         if (!signedIn) {
             return@withContext clientVersion?.let { SessionScope(null, null, "0", it) }
         }
-        val pageId = CONFIG_PAGE_ID.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }
         val rawDataSync = CONFIG_DATASYNC_ID.find(html)?.groupValues?.get(1)?.trim()
-        val dataSyncId = pageId ?: rawDataSync
-            ?.takeIf { !it.contains("||") || it.substringAfter("||").isNotBlank() }
-            ?.let { normalizeDataSyncId(it) }
+        val pageId = CONFIG_PAGE_ID.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }
+            ?: delegatedSessionId(rawDataSync)
+        // DATASYNC_ID stores USER_SESSION_ID (or DELEGATED_SESSION_ID||USER_SESSION_ID).
+        // DELEGATED_SESSION_ID is a separate header value and must never replace it.
+        val dataSyncId = normalizeDataSyncId(rawDataSync)
         val authUser = CONFIG_SESSION_INDEX.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() } ?: "0"
         CONFIG_VISITOR_DATA.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }?.let {
             visitorData = it
@@ -718,12 +934,17 @@ object ArtistInnertubeClient {
             .header("Origin", MUSIC_ORIGIN)
             .header("Referer", "$MUSIC_ORIGIN/")
             .header("User-Agent", WEB_USER_AGENT)
+            .header("X-Youtube-Bootstrap-Logged-In", "true")
         visitorData?.let { builder.header("X-Goog-Visitor-Id", it) }
         cookie?.let { c ->
             builder.header("Cookie", c)
             builder.header("X-Goog-AuthUser", authUserFor(session))
             pageIdFor(session)?.let { builder.header("X-Goog-PageId", it) }
-            buildFullSapisidAuthorization(c, MUSIC_ORIGIN)?.let { builder.header("Authorization", it) }
+            buildFullSapisidAuthorization(
+                cookieHeader = c,
+                origin = MUSIC_ORIGIN,
+                userSessionId = dataSyncIdFor(session),
+            )?.let { builder.header("Authorization", it) }
         }
     }
 
@@ -746,6 +967,7 @@ object ArtistInnertubeClient {
         region: String? = currentRegion,
         anonymous: Boolean = false,
         allowAnonymousFallback: Boolean = false,
+        persistScopeRecovery: Boolean = true,
         bodyExtras: JSONObject.() -> Unit,
     ): JSONObject = postMusicRawUrl(
         url = "$MUSIC_BASE/$endpoint",
@@ -753,6 +975,7 @@ object ArtistInnertubeClient {
         region = region,
         anonymous = anonymous,
         allowAnonymousFallback = allowAnonymousFallback,
+        persistScopeRecovery = persistScopeRecovery,
         bodyExtras = bodyExtras,
     )
 
@@ -766,9 +989,10 @@ object ArtistInnertubeClient {
         origin: String = MUSIC_ORIGIN,
         anonymous: Boolean = false,
         allowAnonymousFallback: Boolean = false,
+        persistScopeRecovery: Boolean = true,
         bodyExtras: JSONObject.() -> Unit,
     ): JSONObject {
-        if (!anonymous && cookie != null) ensureSessionScope()
+        if (!anonymous && cookie != null) ensureSessionScope(persistScope = persistScopeRecovery)
         val session = scope
         val resolvedVersion = if (clientName == "WEB_REMIX") currentClientVersion() else clientVersion
 
@@ -778,7 +1002,7 @@ object ArtistInnertubeClient {
         query.forEach { (k, v) -> urlBuilder.addQueryParameter(k, v) }
         val finalUrl = urlBuilder.build().toString()
 
-        fun buildPayload(delegatedId: String?, includeVisitorData: Boolean = true): String = JSONObject().apply {
+        fun buildPayload(includeVisitorData: Boolean = true): String = JSONObject().apply {
             put("context", JSONObject().apply {
                 put("client", JSONObject().apply {
                     put("clientName", clientName)
@@ -787,10 +1011,9 @@ object ArtistInnertubeClient {
                     if (region != null) put("gl", region)
                     if (includeVisitorData) visitorData?.let { put("visitorData", it) }
                 })
-                put("user", JSONObject().apply {
-                    put("lockedSafetyMode", false)
-                    if (!delegatedId.isNullOrBlank()) put("onBehalfOfUser", delegatedId)
-                })
+                // Account/channel identity is carried by X-Goog-PageId and the
+                // user-session-bound SAPISID authorization header.
+                put("user", JSONObject().put("lockedSafetyMode", false))
                 put("request", JSONObject().apply {
                     put("useSsl", true)
                 })
@@ -806,13 +1029,14 @@ object ArtistInnertubeClient {
         val responseObj = try {
             executeInnertubePost(
                 finalUrl = finalUrl,
-                payload = buildPayload(activeDataSyncId, includeVisitorData = true),
+                payload = buildPayload(includeVisitorData = true),
                 origin = origin,
                 clientId = clientId,
                 clientVersion = resolvedVersion,
                 activeCookie = activeCookie,
                 authUser = activeAuthUser,
                 pageId = activePageId,
+                userSessionId = activeDataSyncId,
             )
         } catch (e: HttpStatusException) {
             if (!anonymous && activeCookie != null && e.code in setOf(400, 401, 403, 500)) {
@@ -824,16 +1048,21 @@ object ArtistInnertubeClient {
                     runCatching {
                         executeInnertubePost(
                             finalUrl = finalUrl,
-                            payload = buildPayload(null, includeVisitorData = true),
+                            payload = buildPayload(includeVisitorData = true),
                             origin = origin,
                             clientId = clientId,
                             clientVersion = resolvedVersion,
                             activeCookie = activeCookie,
                             authUser = activeAuthUser,
                             pageId = null,
+                            userSessionId = activeDataSyncId,
                         )
                     }.onSuccess {
-                        clearInvalidDelegationScope()
+                        // Only the delegated channel header was removed; preserve USER_SESSION_ID.
+                        clearInvalidDelegationScope(
+                            clearUserSessionId = false,
+                            persistScope = persistScopeRecovery,
+                        )
                     }.getOrNull()
                 } else {
                     null
@@ -842,18 +1071,19 @@ object ArtistInnertubeClient {
                 val minimalAuth = withoutDelegation ?: runCatching {
                     executeInnertubePost(
                         finalUrl = finalUrl,
-                        payload = buildPayload(null, includeVisitorData = false),
+                        payload = buildPayload(includeVisitorData = false),
                         origin = origin,
                         clientId = clientId,
                         clientVersion = resolvedVersion,
                         activeCookie = activeCookie,
                         authUser = null,
                         pageId = null,
+                        userSessionId = null,
                         includeVisitorHeader = false,
                         singleHashOnly = true,
                     )
                 }.onSuccess {
-                    clearInvalidDelegationScope()
+                    clearInvalidDelegationScope(persistScope = persistScopeRecovery)
                     visitorData = null
                 }.getOrNull()
 
@@ -861,13 +1091,14 @@ object ArtistInnertubeClient {
                     Log.w(TAG, "Falling back to anonymous request for $finalUrl")
                     executeInnertubePost(
                         finalUrl = finalUrl,
-                        payload = buildPayload(null, includeVisitorData = false),
+                        payload = buildPayload(includeVisitorData = false),
                         origin = origin,
                         clientId = clientId,
                         clientVersion = resolvedVersion,
                         activeCookie = null,
                         authUser = null,
                         pageId = null,
+                        userSessionId = null,
                         includeVisitorHeader = false,
                     )
                 } else {
@@ -894,6 +1125,7 @@ object ArtistInnertubeClient {
         activeCookie: String?,
         authUser: String?,
         pageId: String?,
+        userSessionId: String?,
         includeVisitorHeader: Boolean = true,
         singleHashOnly: Boolean = false,
     ): JSONObject = withRetry {
@@ -911,12 +1143,19 @@ object ArtistInnertubeClient {
         }
         if (!activeCookie.isNullOrBlank()) {
             builder.header("Cookie", activeCookie)
+            builder.header("X-Youtube-Bootstrap-Logged-In", "true")
             authUser?.takeIf { it.isNotBlank() }?.let { builder.header("X-Goog-AuthUser", it) }
             pageId?.let { builder.header("X-Goog-PageId", it) }
             val authHeader = if (singleHashOnly) {
-                sapisidFrom(activeCookie)?.let { buildSapisidHash(it, origin) }
+                sapisidFrom(activeCookie)?.let {
+                    buildSapisidHash(it, origin, userSessionId = userSessionId)
+                }
             } else {
-                buildFullSapisidAuthorization(activeCookie, origin)
+                buildFullSapisidAuthorization(
+                    cookieHeader = activeCookie,
+                    origin = origin,
+                    userSessionId = userSessionId,
+                )
             }
             authHeader?.let { builder.header("Authorization", it) }
         }
@@ -927,7 +1166,16 @@ object ArtistInnertubeClient {
             if (!res.isSuccessful) {
                 throw HttpStatusException(res.code, finalUrl, text.take(240))
             }
-            JSONObject(text)
+            val json = JSONObject(text)
+            // Innertube can encode failures in a JSON "error" object while returning
+            // HTTP 200. Treat those as failures so auth fallback and sync reporting run.
+            val apiError = json.optJSONObject("error")
+            if (apiError != null) {
+                val apiCode = apiError.optInt("code", 500).takeIf { it in 400..599 } ?: 500
+                val message = apiError.optString("message").ifBlank { "YouTube API error" }
+                throw HttpStatusException(apiCode, finalUrl, message.take(240))
+            }
+            json
         }
     }
 }

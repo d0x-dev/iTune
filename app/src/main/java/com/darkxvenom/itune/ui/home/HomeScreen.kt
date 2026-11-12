@@ -27,6 +27,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import kotlinx.coroutines.launch
+import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,15 +50,29 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.darkxvenom.itune.backend.MusicArtist
 import com.darkxvenom.itune.backend.MusicPlayerState
+import com.darkxvenom.itune.backend.MusicPlaylistRef
 import com.darkxvenom.itune.backend.MusicTrack
+import com.darkxvenom.itune.backend.NewReleaseAlbum
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.auth.WebSessionMode
 import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.ui.auth.GoogleLoginScreen
 import com.darkxvenom.itune.ui.settings.ContinueWithGoogleRedCard
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
+import com.darkxvenom.itune.data.library.HomeFeedRepository
 import com.darkxvenom.itune.data.library.LibraryStore
+import com.darkxvenom.itune.data.library.ListeningProfileStore
+import com.darkxvenom.itune.data.model.HomeFeedItem
+import com.darkxvenom.itune.data.model.HomeFeedShelf
+import com.darkxvenom.itune.data.model.HomeHeroCard
+import com.darkxvenom.itune.data.model.HomeItemKind
+import com.darkxvenom.itune.ui.components.ArtistCircleShelf
+import com.darkxvenom.itune.ui.components.HomeShelfSkeleton
+import com.darkxvenom.itune.ui.components.LiveFeaturedHeroCarousel
+import com.darkxvenom.itune.ui.components.SquareCardShelf
+import com.darkxvenom.itune.ui.components.WideCardShelf
 import com.darkxvenom.itune.data.library.NewReleasesRepository
 import com.darkxvenom.itune.data.library.PersonalizedHomeRepository
 import com.darkxvenom.itune.data.library.SettingsStore
@@ -70,12 +87,20 @@ import com.darkxvenom.itune.ui.artist.ArtistScreenOverlayPopups
 import com.darkxvenom.itune.ui.artist.rememberArtistHostController
 import com.darkxvenom.itune.ui.browse.AppleMoodCategoryScreen
 import com.darkxvenom.itune.ui.browse.BrowseScreen
+import com.darkxvenom.itune.backend.MusicBackend
 import com.darkxvenom.itune.ui.components.AvatarSelectionDialog
+import com.darkxvenom.itune.ui.search.AppleSearchMorePopup
+import com.darkxvenom.itune.ui.search.SearchMoreRequest
+import com.darkxvenom.itune.ui.search.SearchMoreTarget
 import com.darkxvenom.itune.ui.components.CuratedPlaylistsSection
 import com.darkxvenom.itune.ui.components.FeaturedHeroCarousel
 import com.darkxvenom.itune.ui.components.FloatingMiniPlayer
 import com.darkxvenom.itune.ui.components.FloatingNavBar
 import com.darkxvenom.itune.ui.components.LatestSongsSection
+import com.darkxvenom.itune.ui.components.HomeArtistShelf
+import com.darkxvenom.itune.ui.components.HomeCollectionShelf
+import com.darkxvenom.itune.ui.components.HomeNewReleaseShelf
+import com.darkxvenom.itune.ui.components.HomeTrackShelf
 import com.darkxvenom.itune.ui.components.NavTab
 import com.darkxvenom.itune.ui.components.RadioStationsSection
 import com.darkxvenom.itune.ui.components.TopHeaderBar
@@ -87,6 +112,7 @@ import com.darkxvenom.itune.ui.library.LibraryScreenOverlayContent
 import com.darkxvenom.itune.ui.library.LibraryScreenOverlayPopups
 import com.darkxvenom.itune.ui.library.rememberLibraryHostController
 import com.darkxvenom.itune.ui.player.ITuneMusicPlayer
+import com.darkxvenom.itune.ui.recognition.IRecognitionScreen
 import com.darkxvenom.itune.ui.player.SheetMorph
 import com.darkxvenom.itune.ui.player.miniPlayerGestures
 import com.darkxvenom.itune.ui.player.rememberSheetMorph
@@ -114,6 +140,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.runtime.mutableFloatStateOf
+import com.darkxvenom.itune.data.library.HomeDiscoveryRepository
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -147,52 +174,147 @@ fun HomeScreen(
         SettingsStore.localeSignature()
     }
     val featuredPlaylists by NewReleasesRepository.featuredPlaylists.collectAsStateWithLifecycle()
+    val newReleaseAlbums by NewReleasesRepository.releases.collectAsStateWithLifecycle()
     val personalizedQuickPicks by PersonalizedHomeRepository.quickPickTracks.collectAsStateWithLifecycle()
     val personalizedPlaylists by PersonalizedHomeRepository.recommendedPlaylists.collectAsStateWithLifecycle()
     val ytAccountState by GoogleAuthStore.state.collectAsStateWithLifecycle()
+    val remoteShelves by HomeFeedRepository.remoteShelves.collectAsStateWithLifecycle()
+    val personalShelves by HomeFeedRepository.personalShelves.collectAsStateWithLifecycle()
+    val feedLoading by HomeFeedRepository.isLoading.collectAsStateWithLifecycle()
+    val feedFailed by HomeFeedRepository.failed.collectAsStateWithLifecycle()
+    val newReleases by NewReleasesRepository.releases.collectAsStateWithLifecycle()
+    val recentSongs by LibraryStore.recentSongs.collectAsStateWithLifecycle()
+    val profileSongs by ListeningProfileStore.songs.collectAsStateWithLifecycle()
+
     LaunchedEffect(localeSignature, ytAccountState.isSignedIn, ytAccountState.activeSessionKey) {
+        HomeDiscoveryRepository.ensureLoaded()
         NewReleasesRepository.ensureLoaded()
+        HomeFeedRepository.ensureLoaded()
         if (ytAccountState.isSignedIn) {
             PersonalizedHomeRepository.refreshIfSignedIn()
         }
     }
-    val visibleQuickPicks = remember(personalizedQuickPicks, settingsState.hideExplicitContent) {
-        ContentLocaleCatalog.filterVisible(
-            personalizedQuickPicks,
-            settingsState.hideExplicitContent,
-        ) { it.isExplicit }
+    // Rebuild listening-based shelves (recently played / top artists / because you listened) as taste changes
+    val tasteKey = remember(recentSongs, profileSongs) {
+        "${recentSongs.firstOrNull()?.id}|${profileSongs.take(2).joinToString { it.id }}"
     }
+    LaunchedEffect(tasteKey) {
+        HomeFeedRepository.refreshPersonal(context)
+    }
+
+    val hideExplicit = settingsState.hideExplicitContent
     val allHomePlaylistRefs = remember(personalizedPlaylists, featuredPlaylists, ytAccountState.isSignedIn) {
-        val merged = if (ytAccountState.isSignedIn && personalizedPlaylists.isNotEmpty()) {
+        if (ytAccountState.isSignedIn && personalizedPlaylists.isNotEmpty()) {
             (personalizedPlaylists + featuredPlaylists).distinctBy { it.id }
         } else {
             featuredPlaylists
         }
-        merged
     }
-    val homePlaylists = remember(allHomePlaylistRefs, settingsState.hideExplicitContent) {
-        val visible = ContentLocaleCatalog.filterVisible(
-            allHomePlaylistRefs,
-            settingsState.hideExplicitContent,
-        ) { it.isExplicit }
-        if (visible.isEmpty()) {
-            MusicRepository.essentialPlaylists
-        } else {
-            val gradients = MusicRepository.essentialPlaylists.map { it.gradientColors }
-            visible.take(10).mapIndexed { index, ref ->
-                Playlist(
-                    id = ref.id,
-                    title = ref.title,
-                    curator = ref.author.ifBlank { "Apple Music" },
-                    description = ref.year ?: if (ref.trackCount > 0) "${ref.trackCount} tracks" else "Recommended",
-                    gradientColors = gradients[index % gradients.size],
-                )
-            }
-        }
+    val visibleRemote = remember(remoteShelves, hideExplicit) { remoteShelves.withoutExplicit(hideExplicit) }
+    val visiblePersonal = remember(personalShelves, hideExplicit) { personalShelves.withoutExplicit(hideExplicit) }
+    val heroCards = remember(visibleRemote, visiblePersonal, newReleases, ytAccountState.isSignedIn) {
+        HomeFeedRepository.buildHeroCards(visibleRemote, visiblePersonal, newReleases, ytAccountState.isSignedIn)
+    }
+    val homeShelves = remember(
+        visibleRemote, visiblePersonal, newReleases, allHomePlaylistRefs, ytAccountState.isSignedIn, hideExplicit,
+    ) {
+        orderHomeShelves(
+            remote = visibleRemote,
+            personal = visiblePersonal,
+            releases = newReleases.filter { !hideExplicit || !it.isExplicit },
+            playlists = allHomePlaylistRefs.filter { !hideExplicit || !it.isExplicit },
+            signedIn = ytAccountState.isSignedIn,
+        )
     }
     val listState = rememberLazyListState()
     val overscrollState = rememberSpringOverscrollState()
     val coroutineScope = rememberCoroutineScope()
+
+    // One handler for every tappable feed tile (hero cards, shelves, artists, albums, podcasts…)
+    val onFeedItemClick: (HomeFeedItem, List<HomeFeedItem>) -> Unit = { item, queue ->
+        fun openPage(type: BrowseType) {
+            MusicPlayerState.pendingArtistNav = PendingArtistNav(
+                browseId = item.browseId,
+                name = item.title,
+                subtitle = item.subtitle,
+                thumbnailUrl = item.thumbnailUrl,
+                initialType = type,
+            )
+        }
+        when (item.kind) {
+            HomeItemKind.SONG, HomeItemKind.VIDEO, HomeItemKind.EPISODE -> {
+                val track = item.toMusicTrack()
+                if (track != null) {
+                    val q = queue.filter { it.isPlayableTrack }.mapNotNull { it.toMusicTrack() }
+                    MusicPlayerState.play(track, q.ifEmpty { listOf(track) })
+                }
+            }
+            HomeItemKind.ALBUM -> openPage(BrowseType.ALBUM)
+            HomeItemKind.ARTIST -> openPage(BrowseType.ARTIST)
+            HomeItemKind.PODCAST -> openPage(BrowseType.OTHER)
+            HomeItemKind.PLAYLIST -> {
+                if (!item.browseId.isNullOrBlank()) {
+                    openPage(BrowseType.PLAYLIST)
+                } else if (!item.watchPlaylistId.isNullOrBlank()) {
+                    coroutineScope.launch {
+                        val tracks = HomeFeedRepository.loadWatchPlaylist(item.watchPlaylistId, item.videoId)
+                        if (tracks.isNotEmpty()) {
+                            MusicPlayerState.play(tracks.first(), tracks)
+                        } else {
+                            Toast.makeText(context, "Couldn't load ${item.title}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    var homeMoreRequest by remember { mutableStateOf<SearchMoreRequest?>(null) }
+
+    val onFeedItemMenuClick: (HomeFeedItem, Offset) -> Unit = { item, offset ->
+        val target: SearchMoreTarget? = when (item.kind) {
+            HomeItemKind.SONG, HomeItemKind.VIDEO, HomeItemKind.EPISODE -> {
+                item.toMusicTrack()?.let { SearchMoreTarget.Song(it) }
+            }
+            HomeItemKind.ARTIST -> {
+                SearchMoreTarget.Artist(
+                    MusicArtist(
+                        id = item.browseId.orEmpty(),
+                        name = item.title,
+                        thumbnailUrl = item.thumbnailUrl,
+                        subscribers = item.subtitle.ifBlank { "Artist" },
+                    ),
+                )
+            }
+            HomeItemKind.ALBUM -> {
+                SearchMoreTarget.Collection(
+                    MusicPlaylistRef(
+                        id = item.browseId.orEmpty(),
+                        title = item.title,
+                        author = item.subtitle.ifBlank { "Album" },
+                        thumbnailUrl = item.thumbnailUrl,
+                        isAlbum = true,
+                    ),
+                )
+            }
+            HomeItemKind.PLAYLIST, HomeItemKind.PODCAST -> {
+                val plId = item.browseId ?: item.watchPlaylistId.orEmpty()
+                SearchMoreTarget.Collection(
+                    MusicPlaylistRef(
+                        id = plId,
+                        title = item.title,
+                        author = item.subtitle.ifBlank { "Playlist" },
+                        thumbnailUrl = item.thumbnailUrl,
+                        isAlbum = false,
+                        watchPlaylistId = item.watchPlaylistId ?: plId.removePrefix("VL"),
+                    ),
+                )
+            }
+        }
+        if (target != null) {
+            homeMoreRequest = SearchMoreRequest(target, offset)
+        }
+    }
 
     var currentScreen by remember { mutableStateOf(AppScreen.HOME) }
     var selectedTab by remember { mutableStateOf(NavTab.HOME) }
@@ -204,6 +326,16 @@ fun HomeScreen(
     var showDynamicIsland by remember { mutableStateOf(false) }
     var showAvatarDialog by remember { mutableStateOf(false) }
     var showHomeGoogleLogin by remember { mutableStateOf(false) }
+    var showIRecognition by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        com.darkxvenom.itune.recognition.MusicRecognitionController.openRecognitionRequested.collect { requested ->
+            if (requested) {
+                showIRecognition = true
+                com.darkxvenom.itune.recognition.MusicRecognitionController.consumeOpenRequest()
+            }
+        }
+    }
 
     // Retain visited screens in memory so navigation is 100% instantaneous with zero GC or layout stutter
     var hasVisitedBrowse by remember { mutableStateOf(false) }
@@ -259,7 +391,9 @@ fun HomeScreen(
     LaunchedEffect(overscrollState.offset.value) {
         if (listState.firstVisibleItemIndex == 0 && overscrollState.offset.value > 25f && !isRefreshing) {
             isRefreshing = true
+            HomeDiscoveryRepository.refresh()
             NewReleasesRepository.refresh()
+            HomeFeedRepository.refresh()
             if (ytAccountState.isSignedIn) {
                 YouTubeLibrarySyncManager.launchFullSync(context)
             }
@@ -377,14 +511,14 @@ fun HomeScreen(
                     }
                 }
 
-                // Featured Hero Carousel (Today's Hits / New Album)
+                // Top cards — real data: headline pick, newest release, trending, top artist, podcast
                 item(key = "featured_hero") {
-                    FeaturedHeroCarousel(
-                        cards = MusicRepository.featuredCards,
+                    LiveFeaturedHeroCarousel(
+                        cards = heroCards,
+                        isLoading = feedLoading || heroCards.isEmpty() && !feedFailed,
                         modifier = Modifier.padding(top = 4.dp),
-                        onCardClick = { card ->
-                            Toast.makeText(context, "Opening ${card.title}", Toast.LENGTH_SHORT).show()
-                        }
+                        onCardClick = { card -> onFeedItemClick(card.item, card.queue) },
+                        onCardMenuClick = { card, offset -> onFeedItemMenuClick(card.item, offset) },
                     )
                 }
 
@@ -392,76 +526,29 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                 }
 
-                // Latest Songs Section with Horizontal Paging Columns
-                item(key = "latest_songs") {
-                    LatestSongsSection(
-                        songColumns = MusicRepository.latestSongColumns,
-                        personalizedTracks = if (ytAccountState.isSignedIn) visibleQuickPicks else emptyList(),
-                        sectionTitle = if (ytAccountState.isSignedIn && visibleQuickPicks.isNotEmpty()) {
-                            "Picked for You"
-                        } else {
-                            "Latest Songs"
-                        },
-                        onSeeAllClick = {
-                            if (ytAccountState.isSignedIn && visibleQuickPicks.isNotEmpty()) {
-                                MusicPlayerState.play(visibleQuickPicks.first(), visibleQuickPicks)
-                            } else {
-                                Toast.makeText(context, "Browsing all latest songs", Toast.LENGTH_SHORT).show()
-                            }
-                        },
-                        onTrackClick = { track ->
-                            currentTrack = track
-                            isPlaying = true
-                            MusicPlayerState.play(
-                                MusicTrack(
-                                    id = track.id,
-                                    title = track.title,
-                                    artists = track.artist,
-                                    durationSec = 210L,
-                                    isExplicit = track.isExplicit,
-                                )
+                // Dynamic Apple Music style shelves built from YouTube Music + your listening
+                if (homeShelves.isEmpty()) {
+                    if (feedLoading || !feedFailed) {
+                        items(2, key = { "skeleton_$it" }) {
+                            HomeShelfSkeleton()
+                            Spacer(modifier = Modifier.height(28.dp))
+                        }
+                    } else {
+                        item(key = "feed_error") {
+                            Text(
+                                text = "Couldn't load music right now. Pull down to try again.",
+                                color = com.darkxvenom.itune.ui.theme.AppleTextSecondary,
+                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 24.dp),
                             )
-                            Toast.makeText(context, "Now playing: ${track.title}", Toast.LENGTH_SHORT).show()
-                        },
-                        onTrackMenuClick = { track ->
-                            Toast.makeText(context, "Options for ${track.title}", Toast.LENGTH_SHORT).show()
-                        },
-                        onPersonalizedTrackClick = { liveTrack ->
-                            MusicPlayerState.play(liveTrack, visibleQuickPicks)
-                        },
-                        onPersonalizedTrackMenuClick = { liveTrack ->
-                            MusicPlayerState.playNext(liveTrack)
-                            Toast.makeText(context, "Playing \"${liveTrack.title}\" next", Toast.LENGTH_SHORT).show()
                         }
+                    }
+                }
+                items(homeShelves, key = { it.key }) { shelf ->
+                    HomeFeedShelfRow(
+                        shelf = shelf,
+                        onItemClick = onFeedItemClick,
+                        onItemMenuClick = onFeedItemMenuClick,
                     )
-                }
-
-                item(key = "spacer_songs") {
-                    Spacer(modifier = Modifier.height(28.dp))
-                }
-
-                // Curated Playlists (Spatial Audio & Essentials / Personalized Mixes)
-                item(key = "curated_playlists") {
-                    CuratedPlaylistsSection(
-                        playlists = homePlaylists,
-                        onPlaylistClick = { playlist ->
-                            val liveRef = allHomePlaylistRefs.firstOrNull { it.id == playlist.id }
-                            if (liveRef != null) {
-                                MusicPlayerState.pendingArtistNav = PendingArtistNav(
-                                    browseId = liveRef.id,
-                                    name = liveRef.title,
-                                    subtitle = liveRef.author.ifBlank { "Featured Playlist" },
-                                    thumbnailUrl = liveRef.thumbnailUrl,
-                                    initialType = BrowseType.PLAYLIST,
-                                )
-                            } else {
-                                Toast.makeText(context, "Playlist: ${playlist.title}", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    )
-                }
-
-                item(key = "spacer_playlists") {
                     Spacer(modifier = Modifier.height(28.dp))
                 }
 
@@ -610,6 +697,14 @@ fun HomeScreen(
                     },
                     onProfileClick = {
                         showSettings = true
+                    },
+                    onRecognizeClick = {
+                        showIRecognition = true
+                    },
+                    onTimeTravelClick = {
+                        libraryHostController.openDestination(
+                            com.darkxvenom.itune.data.library.LibraryDestination.TIME_TRAVEL,
+                        )
                     }
                 )
                 if (libraryHostController.isOpen) {
@@ -984,6 +1079,48 @@ fun HomeScreen(
             )
         }
 
+        // Apple frosted liquid-glass 3-dot more popup for home screen items
+        AppleSearchMorePopup(
+            request = homeMoreRequest,
+            onOpenDetail = { detail ->
+                MusicPlayerState.pendingArtistNav = PendingArtistNav(
+                    browseId = detail.browseId,
+                    name = detail.title,
+                    subtitle = detail.subtitle,
+                    thumbnailUrl = detail.thumbnailUrl,
+                    initialType = detail.initialType,
+                )
+            },
+            onPlayCollection = { browseId, title, _, thumb ->
+                coroutineScope.launch {
+                    val loaded = MusicBackend.loadCollectionTracks(
+                        browseId = browseId,
+                        fallbackArtist = title,
+                        fallbackThumbnailUrl = thumb,
+                    )
+                    if (loaded.isNotEmpty()) {
+                        MusicPlayerState.play(loaded.first(), loaded)
+                    } else {
+                        Toast.makeText(context, "No tracks found", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            },
+            onQueueCollection = { browseId, title, _, thumb ->
+                coroutineScope.launch {
+                    val loaded = MusicBackend.loadCollectionTracks(
+                        browseId = browseId,
+                        fallbackArtist = title,
+                        fallbackThumbnailUrl = thumb,
+                    )
+                    if (loaded.isNotEmpty()) {
+                        MusicPlayerState.addToQueue(loaded)
+                        Toast.makeText(context, "Added \"$title\" to queue", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            },
+            onDismiss = { homeMoreRequest = null },
+        )
+
         // ── Full Player Sheet with Continuous Morphing Bounds & 1:1 Tip-of-Finger Physics ──
         val realTrack = MusicPlayerState.currentTrack
         if (realTrack != null) {
@@ -1107,5 +1244,74 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize(),
             )
         }
+
+        AnimatedVisibility(
+            visible = showIRecognition,
+            enter = fadeIn(tween(220)),
+            exit = fadeOut(tween(180)),
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            IRecognitionScreen(
+                onClose = { showIRecognition = false },
+            )
+        }
+    }
+}
+
+
+/** Renders one shelf in the Apple Music layout that fits its content. */
+@Composable
+private fun HomeFeedShelfRow(
+    shelf: HomeFeedShelf,
+    onItemClick: (HomeFeedItem, List<HomeFeedItem>) -> Unit,
+    onItemMenuClick: (HomeFeedItem, Offset) -> Unit,
+) {
+    when {
+        shelf.isSongShelf -> {
+            val tracks = remember(shelf) { shelf.items.mapNotNull { it.toMusicTrack() } }
+            val title = if (shelf.strapline.isBlank()) {
+                shelf.title
+            } else {
+                shelf.strapline.lowercase().replaceFirstChar { it.uppercase() } + " " + shelf.title
+            }
+            LatestSongsSection(
+                songColumns = emptyList(),
+                personalizedTracks = tracks,
+                sectionTitle = title,
+                onSeeAllClick = { tracks.firstOrNull()?.let { MusicPlayerState.play(it, tracks) } },
+                onPersonalizedTrackClick = { t -> MusicPlayerState.play(t, tracks) },
+                onPersonalizedTrackMenuWithOffsetClick = { t, offset ->
+                    val feedItem = shelf.items.firstOrNull { it.videoId == t.id }
+                        ?: HomeFeedItem(
+                            kind = HomeItemKind.SONG,
+                            title = t.title,
+                            subtitle = t.artists,
+                            videoId = t.id,
+                            thumbnailUrl = t.thumbnailUrl,
+                            artistName = t.artists,
+                            artistId = t.artistId,
+                            albumName = t.album,
+                            albumId = t.albumId,
+                            isExplicit = t.isExplicit,
+                        )
+                    onItemMenuClick(feedItem, offset)
+                },
+            )
+        }
+        shelf.isArtistShelf -> ArtistCircleShelf(
+            shelf = shelf,
+            onItemClick = { onItemClick(it, shelf.items) },
+            onItemMenuClick = onItemMenuClick,
+        )
+        shelf.isVideoShelf -> WideCardShelf(
+            shelf = shelf,
+            onItemClick = { onItemClick(it, shelf.items) },
+            onItemMenuClick = onItemMenuClick,
+        )
+        else -> SquareCardShelf(
+            shelf = shelf,
+            onItemClick = { onItemClick(it, shelf.items) },
+            onItemMenuClick = onItemMenuClick,
+        )
     }
 }

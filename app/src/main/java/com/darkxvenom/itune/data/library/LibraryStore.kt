@@ -34,6 +34,7 @@ enum class LibraryDestination {
     USER_PLAYLIST,
     NEW_RELEASES,
     CACHED_SONGS,
+    TIME_TRAVEL,
 }
 
 @Immutable

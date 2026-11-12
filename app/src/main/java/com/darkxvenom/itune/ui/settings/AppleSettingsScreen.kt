@@ -1936,18 +1936,18 @@ private fun buildSettingsSections(
                     subtitle = if (state.losslessAudio) {
                         "Locked to Maximum Quality (Lossless Active)"
                     } else {
-                        "Bitrate preference (Extreme, High, Medium, Low)"
+                        "Select audio quality (Extreme, High, Medium, Low)"
                     },
                     iconRes = R.drawable.ic_settings_streaming_quality,
-                    keywords = listOf("bitrate", "lossless", "aac", "extreme", "high", "medium", "low", "wifi"),
+                    keywords = listOf("bitrate", "quality", "audio", "extreme", "high", "medium", "low", "stream"),
                     currentValue = if (state.losslessAudio) "Lossless (Max)" else state.audioQuality,
-                    description = "Select the target streaming audio resolution when Lossless Audio is disabled.",
+                    description = "Select your preferred streaming audio quality.",
                     enabled = !state.losslessAudio,
                     options = listOf(
                         SettingsOptionChoice("Extreme", "Maximum fidelity (256+ kbps)"),
                         SettingsOptionChoice("High", "High quality audio (~160 kbps)"),
                         SettingsOptionChoice("Medium", "Standard audio quality (~128 kbps)"),
-                        SettingsOptionChoice("Low", "Data saver (~48-64 kbps)"),
+                        SettingsOptionChoice("Low", "Data saver audio (~48-64 kbps)"),
                     ),
                     onSelect = { onSelectString(SettingsStore.KEY_AUDIO_QUALITY, it) },
                 ),

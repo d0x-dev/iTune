@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -132,6 +133,7 @@ fun LyricsSettingsScreen(
     var showProviderDialog by remember { mutableStateOf(false) }
     var showApiKeyDialog by remember { mutableStateOf(false) }
     var showBaseUrlDialog by remember { mutableStateOf(false) }
+    var showModelDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showModeDialog by remember { mutableStateOf(false) }
     var showPromptDialog by remember { mutableStateOf(false) }
@@ -370,6 +372,26 @@ fun LyricsSettingsScreen(
                                 modifier = Modifier.padding(start = 58.dp),
                             )
 
+                            // Model row
+                            val effectiveModel = settingsState.lyricsTranslationModel.ifBlank {
+                                LyricsTranslationHelper.defaultModel(settingsState.lyricsTranslationProvider)
+                            }
+                            LyricsActionRow(
+                                icon = Icons.Rounded.SmartToy,
+                                title = "Model",
+                                value = if (settingsState.lyricsTranslationModel.isBlank()) "$effectiveModel (default)" else effectiveModel,
+                                onClick = {
+                                    haptics.play(Haptic.Select)
+                                    showModelDialog = true
+                                },
+                            )
+
+                            HorizontalDivider(
+                                color = LyricsCardDivider,
+                                thickness = 0.5.dp,
+                                modifier = Modifier.padding(start = 58.dp),
+                            )
+
                             // Target Language row
                             val currentLangName = LyricsTranslationHelper.AiTranslationLanguages[settingsState.lyricsTranslateLanguage]
                                 ?: settingsState.lyricsTranslateLanguage
@@ -565,6 +587,11 @@ fun LyricsSettingsScreen(
                 currentProvider = settingsState.lyricsTranslationProvider,
                 haptics = haptics,
                 onSelect = { providerId ->
+                    if (!providerId.equals(settingsState.lyricsTranslationProvider, ignoreCase = true)) {
+                        // A model id / URL from another provider would answer 404 here.
+                        SettingsStore.setLyricsTranslationModel(context, "")
+                        SettingsStore.setLyricsTranslationBaseUrl(context, "")
+                    }
                     SettingsStore.setLyricsTranslationProvider(context, providerId)
                     LyricsTranslationHelper.clearCache()
                     showProviderDialog = false
@@ -605,6 +632,27 @@ fun LyricsSettingsScreen(
                     Toast.makeText(context, "Base URL updated", Toast.LENGTH_SHORT).show()
                 },
                 onDismiss = { showBaseUrlDialog = false },
+            )
+        }
+
+        if (showModelDialog) {
+            AiModelPickerDialog(
+                provider = settingsState.lyricsTranslationProvider,
+                apiKey = settingsState.lyricsTranslationApiKey,
+                baseUrl = settingsState.lyricsTranslationBaseUrl,
+                currentModel = settingsState.lyricsTranslationModel,
+                haptics = haptics,
+                onSelect = { model ->
+                    SettingsStore.setLyricsTranslationModel(context, model)
+                    LyricsTranslationHelper.clearCache()
+                    showModelDialog = false
+                    Toast.makeText(
+                        context,
+                        if (model.isBlank()) "Using default model" else "Model set to $model",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                },
+                onDismiss = { showModelDialog = false },
             )
         }
 
@@ -1589,6 +1637,199 @@ private fun AiModePickerDialog(
                 color = Color(0xFF8E8E93),
                 fontSize = 16.5.sp,
                 fontWeight = FontWeight.Medium,
+            )
+        }
+    }
+}
+
+@Composable
+private fun AiModelPickerDialog(
+    provider: String,
+    apiKey: String,
+    baseUrl: String,
+    currentModel: String,
+    haptics: com.darkxvenom.itune.ui.artist.haptics.Haptics,
+    onSelect: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val defaultModel = LyricsTranslationHelper.defaultModel(provider)
+    var query by remember { mutableStateOf("") }
+    var loading by remember { mutableStateOf(true) }
+    var loadError by remember { mutableStateOf<String?>(null) }
+    var models by remember { mutableStateOf(LyricsTranslationHelper.suggestedModels(provider)) }
+
+    // Ask the provider which models this key can actually use.
+    LaunchedEffect(provider, apiKey, baseUrl) {
+        loading = true
+        loadError = null
+        if (apiKey.isBlank()) {
+            loading = false
+            loadError = "Add your API key to load the live model list."
+            return@LaunchedEffect
+        }
+        LyricsTranslationHelper.fetchModels(provider, apiKey, baseUrl)
+            .onSuccess { models = it }
+            .onFailure { loadError = it.message ?: "Couldn't load models." }
+        loading = false
+    }
+
+    val trimmed = query.trim()
+    val filtered = remember(models, trimmed) {
+        if (trimmed.isEmpty()) models else models.filter { it.contains(trimmed, ignoreCase = true) }
+    }
+    val effectiveCurrent = currentModel.ifBlank { defaultModel }
+
+    SettingsModalFrame(onDismiss = onDismiss) {
+        Spacer(Modifier.height(18.dp))
+        Text(
+            text = "Model",
+            color = Color.White,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 20.dp),
+        )
+        Spacer(Modifier.height(5.dp))
+        Text(
+            text = when {
+                loading -> "Loading available models…"
+                loadError != null -> "$loadError Showing suggested models. You can also type any model id."
+                else -> "${models.size} models available. Type to search or enter a custom id."
+            },
+            color = AppleTextSecondary,
+            fontSize = 12.5.sp,
+            lineHeight = 16.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 24.dp),
+        )
+        Spacer(Modifier.height(12.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color.White.copy(alpha = 0.07f))
+                .border(0.75.dp, Color.White.copy(alpha = 0.14f), RoundedCornerShape(12.dp))
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+        ) {
+            if (query.isEmpty()) {
+                Text(
+                    text = "Search or type a model id",
+                    color = Color.White.copy(alpha = 0.38f),
+                    fontSize = 14.sp,
+                )
+            }
+            BasicTextField(
+                value = query,
+                onValueChange = { query = it },
+                singleLine = true,
+                cursorBrush = SolidColor(AppleMusicRed),
+                textStyle = TextStyle(color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        if (trimmed.isNotEmpty()) {
+                            haptics.play(Haptic.Select)
+                            onSelect(trimmed)
+                        }
+                    },
+                ),
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        Spacer(Modifier.height(10.dp))
+
+        LazyColumn(modifier = Modifier.fillMaxWidth().heightIn(max = 340.dp)) {
+            item(key = "__default") {
+                ModelRow(
+                    label = "Default",
+                    detail = defaultModel,
+                    selected = currentModel.isBlank(),
+                    onClick = {
+                        haptics.play(Haptic.Select)
+                        onSelect("")
+                    },
+                )
+            }
+            if (trimmed.isNotEmpty() && models.none { it.equals(trimmed, ignoreCase = true) }) {
+                item(key = "__custom") {
+                    ModelRow(
+                        label = "Use \"$trimmed\"",
+                        detail = "Custom model id",
+                        selected = false,
+                        onClick = {
+                            haptics.play(Haptic.Select)
+                            onSelect(trimmed)
+                        },
+                    )
+                }
+            }
+            items(filtered, key = { it }) { model ->
+                ModelRow(
+                    label = model,
+                    detail = null,
+                    selected = currentModel.isNotBlank() && model == effectiveCurrent,
+                    onClick = {
+                        haptics.play(Haptic.Select)
+                        onSelect(model)
+                    },
+                )
+            }
+        }
+
+        HorizontalDivider(thickness = 0.5.dp, color = Color.White.copy(alpha = 0.10f))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .clickable { onDismiss() },
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = "Cancel",
+                color = Color(0xFF8E8E93),
+                fontSize = 16.5.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ModelRow(
+    label: String,
+    detail: String?,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    HorizontalDivider(thickness = 0.5.dp, color = Color.White.copy(alpha = 0.10f))
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 20.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = label,
+                color = if (selected) AppleMusicRed else Color.White,
+                fontSize = 14.5.sp,
+                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+            )
+            if (detail != null) {
+                Text(text = detail, color = Color.White.copy(alpha = 0.50f), fontSize = 12.sp, maxLines = 1)
+            }
+        }
+        if (selected) {
+            Icon(
+                imageVector = Icons.Rounded.Check,
+                contentDescription = "Selected",
+                tint = AppleMusicRed,
+                modifier = Modifier.size(19.dp),
             )
         }
     }

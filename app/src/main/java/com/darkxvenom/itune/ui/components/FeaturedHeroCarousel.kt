@@ -23,7 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontFamily
+import coil.compose.AsyncImage
+import com.darkxvenom.itune.backend.highQualityThumbnail
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -101,11 +104,20 @@ fun FeaturedHeroCardItem(
                 .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(18.dp))
         ) {
             // Artwork layer
-            AlbumArtwork(
-                type = card.heroType,
-                modifier = Modifier.fillMaxSize(),
-                cornerRadius = 18.dp
-            )
+            if (!card.imageUrl.isNullOrBlank()) {
+                AsyncImage(
+                    model = card.imageUrl.highQualityThumbnail(),
+                    contentDescription = card.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            } else {
+                AlbumArtwork(
+                    type = card.heroType,
+                    modifier = Modifier.fillMaxSize(),
+                    cornerRadius = 18.dp
+                )
+            }
 
             // Overlaid embossed title (matching "Today's Hits" gold typography)
             Column(
