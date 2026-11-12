@@ -240,6 +240,27 @@ class GoogleAccountAuthAndParsersTest {
     }
 
     @Test
+    fun buildFullSapisidAuthorization_bindsUserSessionIdIntoHash() {
+        val cookies = "SAPISID=s0; __Secure-3PAPISID=s3"
+        val withoutUser = buildFullSapisidAuthorization(
+            cookieHeader = cookies,
+            origin = "https://music.youtube.com",
+            timestampSeconds = 1700000000L,
+        )
+        val withUser = buildFullSapisidAuthorization(
+            cookieHeader = cookies,
+            origin = "https://music.youtube.com",
+            timestampSeconds = 1700000000L,
+            userSessionId = "user-session-123",
+        )
+
+        assertNotNull(withoutUser)
+        assertNotNull(withUser)
+        assertFalse(withoutUser == withUser)
+        assertTrue(withUser!!.contains("_u"))
+    }
+
+    @Test
     fun mergeSetCookies_updatesAndDeletesRotatedCookies() {
         val initial = "SAPISID=old; __Secure-1PSIDTS=t1; TMP=remove_me"
         val updated = mergeSetCookies(
