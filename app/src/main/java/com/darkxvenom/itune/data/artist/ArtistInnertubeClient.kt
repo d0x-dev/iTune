@@ -723,7 +723,7 @@ object ArtistInnertubeClient {
         }
     }
 
-    private suspend fun ensureSessionScope() {
+    private suspend fun ensureSessionScope(persistScope: Boolean = true) {
         val activeCookie = cookie ?: return
         val existing = scope
         if (existing != null && !existing.clientVersion.isNullOrBlank()) return
@@ -755,7 +755,7 @@ object ArtistInnertubeClient {
                     // The cookie-only ytcfg request describes the browser's primary
                     // identity. Do not overwrite a separately selected Brand channel
                     // profile with that primary-account scope.
-                    if (channelOverride == null) {
+                    if (persistScope && channelOverride == null) {
                         GoogleAuthStore.updateActiveScope(
                             pageId = refreshed.pageId,
                             dataSyncId = refreshed.dataSyncId,
@@ -886,7 +886,7 @@ object ArtistInnertubeClient {
         persistScopeRecovery: Boolean = true,
         bodyExtras: JSONObject.() -> Unit,
     ): JSONObject {
-        if (!anonymous && cookie != null) ensureSessionScope()
+        if (!anonymous && cookie != null) ensureSessionScope(persistScope = persistScopeRecovery)
         val session = scope
         val resolvedVersion = if (clientName == "WEB_REMIX") currentClientVersion() else clientVersion
 
