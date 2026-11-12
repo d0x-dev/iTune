@@ -194,13 +194,22 @@ object YouTubeLibrarySyncManager {
         }
         if (collected.isEmpty()) {
             // Some accounts still expose the history shelf only through the WEB endpoint.
-            runCatching { ArtistInnertubeClient.postWebBrowse("FEhistory") }
-                .getOrNull()
-                ?.let { fallback ->
-                    YouTubeAccountParsers.parseHistoryTracks(fallback).first.forEach { song ->
-                        collected.add(SavedSongMetadata.fromSong(song = song, savedLocally = false, isYtmSynced = true))
-                    }
+            try {
+                val fallback = ArtistInnertubeClient.postWebBrowse("FEhistory")
+                YouTubeAccountParsers.parseHistoryTracks(fallback).first.forEach { song ->
+                    collected.add(SavedSongMetadata.fromSong(song = song, savedLocally = false, isYtmSynced = true))
                 }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                throw IllegalStateException(
+                    "Could not read YouTube history from either endpoint: ${e.message}. Existing history was kept.",
+                    e,
+                )
+            }
+        }
+        if (collected.isEmpty()) {
+            throw IllegalStateException("YouTube returned no recognizable history tracks. Existing history was kept.")
         }
         if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
         LibraryStore.replaceYtmHistory(context, collected.distinctBy { it.id })
@@ -256,13 +265,22 @@ object YouTubeLibrarySyncManager {
         if (songs.isEmpty() && firstPage != null) {
             // Keep a second authenticated shelf parser for accounts where VLLM is empty
             // or its content renderer differs from the FEmusic private-library renderer.
-            runCatching { ArtistInnertubeClient.browse("FEmusic_liked_videos") }
-                .getOrNull()
-                ?.let { fallback ->
-                    YouTubeAccountParsers.parseHistoryTracks(fallback).first.forEach { song ->
-                        songs.add(SavedSongMetadata.fromSong(song, savedLocally = false, isYtmSynced = true))
-                    }
+            try {
+                val fallback = ArtistInnertubeClient.browse("FEmusic_liked_videos", anonymous = false)
+                YouTubeAccountParsers.parseHistoryTracks(fallback).first.forEach { song ->
+                    songs.add(SavedSongMetadata.fromSong(song, savedLocally = false, isYtmSynced = true))
                 }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                throw IllegalStateException(
+                    "Could not read liked songs from the alternate YouTube Music shelf: ${e.message}. Existing likes were kept.",
+                    e,
+                )
+            }
+        }
+        if (songs.isEmpty()) {
+            throw IllegalStateException("YouTube returned no recognizable liked songs. Existing likes were kept.")
         }
         if (GoogleAuthStore.activeSessionKey() != expectedSessionKey) return
         val mergedIds = LibraryStore.mergeRemoteLikedSongs(context, songs.distinctBy { it.id })
@@ -291,6 +309,9 @@ object YouTubeLibrarySyncManager {
             emptyList()
         }
         val cards = (corpusCards + trackArtistCards + webChannels).distinctBy { it.browseId }
+        if (cards.isEmpty()) {
+            throw IllegalStateException("YouTube returned no recognizable subscribed artists. Existing artists were kept.")
+        }
         val entries = cards.map { card ->
             SavedCollectionEntry(
                 browseId = card.browseId,
@@ -314,6 +335,9 @@ object YouTubeLibrarySyncManager {
     ) {
         if (!GoogleAuthStore.isSignedIn || expectedSessionKey == null) return
         val cards = fetchAllLibraryCards("FEmusic_liked_albums", BrowseType.ALBUM)
+        if (cards.isEmpty()) {
+            throw IllegalStateException("YouTube returned no recognizable saved albums. Existing albums were kept.")
+        }
         val entries = cards.map { card ->
             SavedCollectionEntry(
                 browseId = card.browseId,
@@ -355,6 +379,9 @@ object YouTubeLibrarySyncManager {
             }
             .distinctBy { it.browseId.removePrefix("VL") }
             .toList()
+        if (cards.isEmpty()) {
+            throw IllegalStateException("YouTube returned no recognizable playlists. Existing playlists were kept.")
+        }
 
         val existingByYtId = LibraryStore.userPlaylists.value
             .filter { it.isGoogleAccount && !it.ytPlaylistId.isNullOrBlank() }
