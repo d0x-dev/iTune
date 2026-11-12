@@ -388,7 +388,7 @@ private suspend fun verifyAndPersistCapturedSession(
     )
     // Do not mark a WebView cookie as a working YouTube account until private
     // library requests succeed with the captured browser session.
-    ArtistInnertubeClient.verifyAuthenticatedLibraryAccess()
+    ArtistInnertubeClient.verifyAuthenticatedLibraryAccess(persistScope = false)
     val menuResult = runCatching { ArtistInnertubeClient.accountMenu() }
     val info = menuResult.getOrNull()?.let { YouTubeAccountParsers.parseAccountInfo(it) }
     val listResult = runCatching { ArtistInnertubeClient.accountsList() }
