@@ -24,7 +24,10 @@ data class FeaturedCard(
     val caption: String,
     val heroType: CoverArtType,
     val accentColor: Color = Color(0xFFFFD159),
-    val gradientColors: List<Color> = listOf(Color(0xFF2E2922), Color(0xFF151412), Color(0xFF0A0A0A))
+    val gradientColors: List<Color> = listOf(Color(0xFF2E2922), Color(0xFF151412), Color(0xFF0A0A0A)),
+    val imageUrl: String? = null,
+    val destinationBrowseId: String? = null,
+    val destinationIsAlbum: Boolean = false
 )
 
 data class Track(
