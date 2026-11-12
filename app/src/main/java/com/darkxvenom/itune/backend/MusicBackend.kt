@@ -710,6 +710,41 @@ object MusicBackend {
 
     suspend fun resolveAudioStreamUrl(videoId: String): String? = resolveAudioStream(videoId)
 
+    data class CacheStreamChoice(val url: String, val bitrateKbps: Int)
+
+    /**
+     * Picks the stream to store in the offline cache for the chosen cache quality.
+     * - High: the highest-bitrate progressive audio stream available (any container).
+     * - Medium / Low: the M4A stream closest to the target bitrate (any container as fallback); the
+     *   cache manager then compresses the file if it is still above the target.
+     */
+    suspend fun resolveAudioStreamForCache(videoId: String, quality: String): CacheStreamChoice? =
+        withContext(Dispatchers.IO) {
+            try {
+                val info = getOrLoadStreamInfo(videoId)
+                val candidates = info.audioStreams.orEmpty().filter {
+                    it.deliveryMethod == DeliveryMethod.PROGRESSIVE_HTTP &&
+                        it.audioTrackType != AudioTrackType.DUBBED &&
+                        !it.content.isNullOrBlank()
+                }
+                if (candidates.isEmpty()) return@withContext null
+                val target = MusicCacheManager.targetBitrateKbps(quality)
+                val chosen = (
+                    if (target == null) {
+                        candidates.maxByOrNull { it.averageBitrate }
+                    } else {
+                        val m4a = candidates.filter { it.format == MediaFormat.M4A }
+                        m4a.ifEmpty { candidates }.minByOrNull { kotlin.math.abs(it.averageBitrate - target) }
+                    }
+                    ) ?: return@withContext null
+                Log.d(TAG, "Cache stream ($quality): ${chosen.format} @ ${chosen.averageBitrate} kbps")
+                CacheStreamChoice(chosen.content, chosen.averageBitrate)
+            } catch (e: Exception) {
+                Log.w(TAG, "Cache stream resolve failed for $videoId: ${e.message}")
+                null
+            }
+        }
+
     /**
      * Official YouTube Music Radio / Automix queue fetching using the official /v1/next endpoint.
      * Parses authentic playlistPanelVideoRenderer items and returns algorithmic recommendations.

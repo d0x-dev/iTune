@@ -83,6 +83,11 @@ object MusicCacheManager {
     private const val PREFS_NAME = "music_cache_settings"
     private const val KEY_ENABLED = "caching_enabled"
     private const val KEY_LIMIT_MB = "max_cache_limit_mb"
+    private const val KEY_QUALITY = "cache_quality"
+
+    const val QUALITY_LOW = "Low"
+    const val QUALITY_MEDIUM = "Medium"
+    const val QUALITY_HIGH = "High"
     private const val INDEX_FILE = "cached_songs_index.json"
 
     private lateinit var appContext: Context
@@ -99,6 +104,14 @@ object MusicCacheManager {
     val totalStorageBytes = mutableLongStateOf(0L)
     val cachingEnabled = mutableStateOf(true)
     val maxCacheLimitMB = mutableLongStateOf(2048L) // 2 GB default
+    val cacheQuality = mutableStateOf(QUALITY_HIGH)
+
+    /** Target AAC bitrate in kbps for the quality, or null for High (best available, never re-encoded). */
+    fun targetBitrateKbps(quality: String): Int? = when (quality) {
+        QUALITY_LOW -> 64
+        QUALITY_MEDIUM -> 128
+        else -> null
+    }
 
     private const val CHUNK_SIZE = 2L * 1024L * 1024L // 2MB ranged chunks: completely bypasses YouTube CDN rate limiter
     private const val PARALLEL_WORKERS = 3 // 3 concurrent streams for maximum bandwidth
@@ -112,6 +125,7 @@ object MusicCacheManager {
 
         cachingEnabled.value = prefs.getBoolean(KEY_ENABLED, true)
         maxCacheLimitMB.value = prefs.getLong(KEY_LIMIT_MB, 2048L)
+        cacheQuality.value = prefs.getString(KEY_QUALITY, QUALITY_HIGH) ?: QUALITY_HIGH
 
         loadIndex()
     }
@@ -282,7 +296,7 @@ object MusicCacheManager {
      * Uses 2MB ranged parallel chunks to bypass YouTube's CDN bandwidth throttling.
      * Downloads high-quality thumbnail alongside the audio file for 100% offline coverage.
      */
-    fun startLiveCaching(track: MusicTrack, streamUrl: String) {
+    fun startLiveCaching(track: MusicTrack, playbackStreamUrl: String) {
         if (!cachingEnabled.value) return
         if (isTrackCached(track.id)) return
         if (activeDownloads.containsKey(track.id)) return
@@ -293,6 +307,12 @@ object MusicCacheManager {
             val thumbFile = File(thumbsDir, "${track.id}.jpg")
 
             try {
+                // Pick the stream for the selected cache quality (falls back to the playback stream)
+                val quality = cacheQuality.value
+                val choice = MusicBackend.resolveAudioStreamForCache(track.id, quality)
+                val streamUrl = choice?.url ?: playbackStreamUrl
+                val sourceKbps = choice?.bitrateKbps ?: 0
+
                 // 0. Cache high-resolution thumbnail in background
                 val hqThumbUrl = track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl
                 if (!hqThumbUrl.isNullOrBlank() && (!thumbFile.exists() || thumbFile.length() <= 0)) {
@@ -444,6 +464,30 @@ object MusicCacheManager {
                     }
                 }
 
+                // 3b. Compress after download when a lower cache quality is selected
+                val targetKbps = targetBitrateKbps(quality)
+                if (targetKbps != null && tmpFile.exists() && tmpFile.length() > 0) {
+                    val actualKbps = if (track.durationSec > 0) {
+                        (tmpFile.length() * 8L / 1000L / track.durationSec).toInt()
+                    } else sourceKbps
+                    if (actualKbps > targetKbps * 115 / 100) {
+                        val encFile = File(cacheDir, "${track.id}.enc.tmp")
+                        val done = AudioTranscoder.transcodeToAac(
+                            input = tmpFile,
+                            output = encFile,
+                            targetBitrateBps = targetKbps * 1000,
+                            isActive = { isActive },
+                        )
+                        // Keep the smaller file; if transcoding failed, the original download is kept
+                        if (done && encFile.length() in 1 until tmpFile.length()) {
+                            tmpFile.delete()
+                            encFile.renameTo(tmpFile)
+                            Log.d(TAG, "Compressed '${track.title}' to ${targetKbps}kbps")
+                        }
+                        if (encFile.exists()) encFile.delete()
+                    }
+                }
+
                 // 4. Commit cached audio file safely with fallback copy
                 if (tmpFile.exists() && tmpFile.length() > 0) {
                     if (finalFile.exists()) finalFile.delete()
@@ -573,6 +617,12 @@ object MusicCacheManager {
     fun setCachingEnabled(enabled: Boolean) {
         cachingEnabled.value = enabled
         prefs.edit().putBoolean(KEY_ENABLED, enabled).apply()
+    }
+
+    /** Applies to songs cached from now on; already cached songs are left as they are. */
+    fun setCacheQuality(quality: String) {
+        cacheQuality.value = quality
+        prefs.edit().putString(KEY_QUALITY, quality).apply()
     }
 
     fun setMaxCacheLimitMB(limitMB: Long) {

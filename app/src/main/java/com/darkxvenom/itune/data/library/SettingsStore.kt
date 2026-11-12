@@ -19,8 +19,9 @@ data class SettingsUiState(
     val losslessAudio: Boolean = true,
     val audioQuality: String = "Hi-Res Lossless",
     val eqPreset: String = "Late Night",
-    val crossfadeDuration: String = "6 sec",
-    val automixEnabled: Boolean = true,
+    val crossfadeDuration: String = "Off",
+    val autoMix: Boolean = false,
+    val automixEnabled: Boolean = false,
     val soundCheck: Boolean = true,
     val animatedArtwork: Boolean = true,
     val timeSyncedLyrics: Boolean = true,
@@ -54,6 +55,7 @@ data class SettingsUiState(
     val lyricsReplaceOriginal: Boolean = false,
     val lyricsTranslateLanguage: String = "hi-Latn",
     val lyricsTranslateMode: String = "Literal",
+    val stopMusicOnTaskClear: Boolean = false,
 )
 
 /**
@@ -119,6 +121,7 @@ object SettingsStore {
         "megalobiz",
         "youtube_music"
     )
+    const val KEY_STOP_MUSIC_ON_TASK_CLEAR = "stop_music_on_task_clear"
 
     @Volatile
     private var prefs: SharedPreferences? = null
@@ -134,6 +137,11 @@ object SettingsStore {
             prefs = p
             _state.value = loadFromPrefs(p)
         }
+    }
+
+    fun isStopMusicOnTaskClearEnabled(context: Context): Boolean {
+        ensureInit(context)
+        return _state.value.stopMusicOnTaskClear
     }
 
     fun isHapticsEnabled(): Boolean = _state.value.tactileHaptics
@@ -165,7 +173,7 @@ object SettingsStore {
             KEY_WELCOME_COMPLETED -> cur.copy(welcomeCompleted = value)
             KEY_SPLASH_SCREEN -> cur.copy(splashScreenEnabled = value)
             KEY_DOLBY_ATMOS -> cur.copy(dolbyAtmos = value)
-            KEY_AUTOMIX -> cur.copy(automixEnabled = value)
+            KEY_AUTOMIX -> cur.copy(autoMix = value, automixEnabled = value)
             KEY_LOSSLESS_AUDIO -> cur.copy(losslessAudio = value)
             KEY_SOUND_CHECK -> cur.copy(soundCheck = value)
             KEY_ANIMATED_ARTWORK -> cur.copy(animatedArtwork = value)
@@ -184,6 +192,7 @@ object SettingsStore {
             KEY_ADD_FAVORITE_SONGS -> cur.copy(addFavoriteSongs = value)
             KEY_NEW_MUSIC_ALERTS -> cur.copy(newMusicAlerts = value)
             KEY_OFFLINE_MODE -> cur.copy(offlineMode = value)
+            KEY_STOP_MUSIC_ON_TASK_CLEAR -> cur.copy(stopMusicOnTaskClear = value)
             else -> cur
         }
     }
@@ -379,6 +388,7 @@ object SettingsStore {
             audioQuality = p.getString(KEY_AUDIO_QUALITY, defaults.audioQuality) ?: defaults.audioQuality,
             eqPreset = p.getString(KEY_EQ_PRESET, defaults.eqPreset) ?: defaults.eqPreset,
             crossfadeDuration = p.getString(KEY_CROSSFADE, defaults.crossfadeDuration) ?: defaults.crossfadeDuration,
+            autoMix = p.getBoolean(KEY_AUTOMIX, defaults.autoMix),
             automixEnabled = p.getBoolean(KEY_AUTOMIX, defaults.automixEnabled),
             soundCheck = p.getBoolean(KEY_SOUND_CHECK, defaults.soundCheck),
             animatedArtwork = p.getBoolean(KEY_ANIMATED_ARTWORK, defaults.animatedArtwork),
@@ -418,6 +428,7 @@ object SettingsStore {
             lyricsReplaceOriginal = p.getBoolean(KEY_LYRICS_REPLACE_ORIGINAL, defaults.lyricsReplaceOriginal),
             lyricsTranslateLanguage = p.getString(KEY_LYRICS_TRANSLATE_LANGUAGE, defaults.lyricsTranslateLanguage) ?: defaults.lyricsTranslateLanguage,
             lyricsTranslateMode = p.getString(KEY_LYRICS_TRANSLATE_MODE, defaults.lyricsTranslateMode) ?: defaults.lyricsTranslateMode,
+            stopMusicOnTaskClear = p.getBoolean(KEY_STOP_MUSIC_ON_TASK_CLEAR, defaults.stopMusicOnTaskClear),
         )
     }
 }

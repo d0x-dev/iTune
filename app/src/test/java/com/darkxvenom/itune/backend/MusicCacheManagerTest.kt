@@ -9,6 +9,13 @@ import java.io.File
 class MusicCacheManagerTest {
 
     @Test
+    fun targetBitrateKbps_mapsQualityToBitrate() {
+        assertEquals(64, MusicCacheManager.targetBitrateKbps(MusicCacheManager.QUALITY_LOW))
+        assertEquals(128, MusicCacheManager.targetBitrateKbps(MusicCacheManager.QUALITY_MEDIUM))
+        assertNull(MusicCacheManager.targetBitrateKbps(MusicCacheManager.QUALITY_HIGH))
+    }
+
+    @Test
     fun formatStorageSize_formatsCorrectUnits() {
         assertEquals("0 B", MusicCacheManager.formatStorageSize(0L))
         assertEquals("500 B", MusicCacheManager.formatStorageSize(500L))

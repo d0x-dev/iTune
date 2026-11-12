@@ -339,6 +339,7 @@ fun AppleSettingsScreen(
         MusicCacheManager.cachedTracks.size,
         MusicCacheManager.cachingEnabled.value,
         MusicCacheManager.maxCacheLimitMB.longValue,
+        MusicCacheManager.cacheQuality.value,
         MusicCacheManager.totalStorageBytes.longValue,
     ) {
         buildSettingsSections(
@@ -1925,7 +1926,7 @@ private fun buildSettingsSections(
                     onSelect = { onSelectString(SettingsStore.KEY_AUDIO_QUALITY, it) },
                 ),
             ).let { baseEntries ->
-                if (!state.automixEnabled) {
+                if (!state.autoMix) {
                     baseEntries + listOf(
                         SettingsEntry.Picker(
                             id = "crossfade",
@@ -1952,11 +1953,11 @@ private fun buildSettingsSections(
             } + listOf(
                 SettingsEntry.Toggle(
                     id = "automix",
-                    title = "Automix",
-                    subtitle = if (state.automixEnabled) "Intelligent continuous mix & auto-queue" else "Automix is off. Standard crossfade is active.",
-                    iconRes = R.drawable.ic_settings_crossfade,
-                    keywords = listOf("automix", "radio", "continuous", "queue", "dj", "endless", "similar", "smart fade"),
-                    checked = state.automixEnabled,
+                    title = "AutoMix",
+                    subtitle = "Smart blends that adapt to every song",
+                    iconRes = R.drawable.ic_settings_automix,
+                    keywords = listOf("automix", "auto mix", "smart", "dj", "blend", "transition", "crossfade", "level", "loudness"),
+                    checked = state.autoMix,
                     onToggle = { onToggleBool(SettingsStore.KEY_AUTOMIX, it) },
                 ),
             ),
@@ -2128,6 +2129,21 @@ private fun buildSettingsSections(
                 onToggle = { MusicCacheManager.setCachingEnabled(it) },
             ),
             SettingsEntry.Picker(
+                id = "song_cache_quality",
+                title = "Cache Quality",
+                subtitle = "Lower quality saves storage",
+                iconRes = R.drawable.ic_settings_storage,
+                keywords = listOf("cache", "quality", "compress", "low", "high", "space", "storage", "bitrate"),
+                currentValue = MusicCacheManager.cacheQuality.value,
+                description = "Choose the quality of songs saved to offline storage. Applies to songs cached from now on.",
+                options = listOf(
+                    SettingsOptionChoice(MusicCacheManager.QUALITY_LOW, "Compressed to 64 kbps AAC • smallest files (~2 MB per song)"),
+                    SettingsOptionChoice(MusicCacheManager.QUALITY_MEDIUM, "Compressed to 128 kbps AAC • balanced (~4 MB per song)"),
+                    SettingsOptionChoice(MusicCacheManager.QUALITY_HIGH, "Highest available quality, never compressed"),
+                ),
+                onSelect = { MusicCacheManager.setCacheQuality(it) },
+            ),
+            SettingsEntry.Picker(
                 id = "song_cache_limit",
                 title = "Song Storage Limit",
                 subtitle = if (MusicCacheManager.maxCacheLimitMB.longValue <= 0) "Unlimited storage" else "Auto-evicts oldest songs beyond limit",
@@ -2262,6 +2278,15 @@ private fun buildSettingsSections(
                 keywords = listOf("airplane", "offline", "local", "disconnect"),
                 checked = state.offlineMode,
                 onToggle = { onToggleBool(SettingsStore.KEY_OFFLINE_MODE, it) },
+            ),
+            SettingsEntry.Toggle(
+                id = "stop_music_on_task_clear",
+                title = "Stop Music on Task Clear",
+                subtitle = "Stop playback when iTune is swiped away from recents",
+                iconRes = R.drawable.ic_settings_sleep_timer,
+                keywords = listOf("stop", "close", "recents", "swipe", "task", "clear", "background", "playback"),
+                checked = state.stopMusicOnTaskClear,
+                onToggle = { onToggleBool(SettingsStore.KEY_STOP_MUSIC_ON_TASK_CLEAR, it) },
             ),
             SettingsEntry.Picker(
                 id = "sleep_timer",
