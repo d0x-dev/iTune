@@ -190,6 +190,7 @@ private fun SyncedPlayerLyricWord(
     endMs: Long,
     positionMs: Long
 ) {
+    val spacedText = if (text.lastOrNull()?.isWhitespace() == true) text else "$text "
     val wordDuration = (endMs - startMs).coerceAtLeast(1L)
     val isComplete = positionMs >= endMs
     val isActive = positionMs in startMs until endMs
@@ -223,7 +224,7 @@ private fun SyncedPlayerLyricWord(
         }
     ) {
         Text(
-            text = text,
+            text = spacedText,
             fontFamily = SFProDisplay,
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
@@ -233,7 +234,7 @@ private fun SyncedPlayerLyricWord(
         )
         if (isComplete || isActive) {
             Text(
-                text = text,
+                text = spacedText,
                 fontFamily = SFProDisplay,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
