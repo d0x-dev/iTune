@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -81,12 +82,13 @@ fun AlwaysOnDisplaySettingsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
+                .navigationBarsPadding()
                 .springOverscroll(overscrollState)
+                .verticalScroll(scrollState)
                 .hazeSource(state = hazeState)
                 .padding(
                     top = topBarContentPadding() + 8.dp,
-                    bottom = 80.dp,
+                    bottom = 24.dp,
                     start = 16.dp,
                     end = 16.dp,
                 ),
