@@ -191,7 +191,7 @@ private fun SyncedPlayerLyricWord(
     endMs: Long,
     positionMs: Long
 ) {
-    val spacedText = if (text.lastOrNull()?.isWhitespace() == true) text else "$text "
+    val spacedText = text
     val wordDuration = (endMs - startMs).coerceAtLeast(1L)
     val isComplete = positionMs >= endMs
     val isActive = positionMs in startMs until endMs
@@ -776,23 +776,8 @@ fun ITuneMusicPlayer(
                             .padding(vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        AnimatedContent(
-                            targetState = activeLyric,
-                            transitionSpec = {
-                                (slideInVertically(
-                                    animationSpec = spring(dampingRatio = 0.82f, stiffness = 380f)
-                                ) { (it * 0.75f).toInt() } + fadeIn(tween(350)))
-                                    .togetherWith(
-                                        slideOutVertically(tween(300, easing = FastOutSlowInEasing)) {
-                                            -(it * 0.65f).toInt()
-                                        } + fadeOut(tween(200))
-                                    )
-                            },
-                            contentAlignment = Alignment.CenterStart,
-                            label = "player_synced_lyric_transition",
-                            modifier = Modifier.weight(1f, fill = false)
-                        ) { line ->
-                            if (line == null || line.text.isBlank()) {
+                        key(activeLyric?.timeMs) {
+                            if (activeLyric == null || activeLyric.text.isBlank()) {
                                 Text(
                                     text = if (MusicPlayerState.lyricsLoading) "Loading lyrics…" else "Tap to view lyrics",
                                     fontFamily = SFProDisplay,
@@ -800,14 +785,18 @@ fun ITuneMusicPlayer(
                                     fontWeight = FontWeight.Medium,
                                     color = Color.White.copy(alpha = 0.56f),
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f, fill = false)
                                 )
-                            } else if (line.words.isNotEmpty()) {
+                            } else if (activeLyric.words.isNotEmpty()) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.basicMarquee()
+                                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                                    modifier = Modifier
+                                        .weight(1f, fill = false)
+                                        .basicMarquee()
                                 ) {
-                                    line.words.forEach { word ->
+                                    activeLyric.words.forEach { word ->
                                         SyncedPlayerLyricWord(
                                             text = word.text,
                                             startMs = word.startMs,
@@ -818,14 +807,16 @@ fun ITuneMusicPlayer(
                                 }
                             } else {
                                 Text(
-                                    text = line.text,
+                                    text = activeLyric.text,
                                     fontFamily = SFProDisplay,
                                     fontSize = 12.5.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color.White.copy(alpha = 0.92f),
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.basicMarquee()
+                                    modifier = Modifier
+                                        .weight(1f, fill = false)
+                                        .basicMarquee()
                                 )
                             }
                         }
