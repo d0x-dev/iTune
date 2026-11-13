@@ -129,6 +129,8 @@ import com.darkxvenom.itune.ui.settings.DeveloperNewsScreen
 import com.darkxvenom.itune.ui.settings.DynamicIslandScreen
 import com.darkxvenom.itune.data.news.DeveloperNewsManager
 import com.darkxvenom.itune.ui.components.DeveloperNewsPopupDialog
+import com.darkxvenom.itune.data.updates.AppUpdateManager
+import com.darkxvenom.itune.ui.components.AppUpdatePopupDialog
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.requiredSize
@@ -172,6 +174,8 @@ fun HomeScreen(
     onTopBarBrandBoundsChanged: ((iconBounds: Rect, titleBounds: Rect) -> Unit)? = null,
 ) {
     val context = LocalContext.current
+    val availableUpdate by AppUpdateManager.availableUpdate.collectAsStateWithLifecycle()
+    var dismissedUpdateTag by remember { mutableStateOf<String?>(null) }
     val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
     val localeSignature = remember(settingsState.contentLanguage, settingsState.contentCountry) {
         SettingsStore.localeSignature()
@@ -1316,6 +1320,13 @@ fun HomeScreen(
                 showDeveloperNewsScreen = true
             }
         )
+
+        availableUpdate?.takeIf { it.tag != dismissedUpdateTag }?.let { release ->
+            AppUpdatePopupDialog(
+                release = release,
+                onDismiss = { dismissedUpdateTag = release.tag },
+            )
+        }
     }
 }
 
