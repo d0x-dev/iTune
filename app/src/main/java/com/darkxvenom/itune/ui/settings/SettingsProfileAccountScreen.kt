@@ -1,6 +1,13 @@
 package com.darkxvenom.itune.ui.settings
 
 import android.widget.Toast
+import android.annotation.SuppressLint
+import android.view.ViewGroup
+import android.webkit.JsResult
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -28,11 +35,14 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -76,18 +86,25 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.data.auth.GoogleAccountSession
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
+import com.darkxvenom.itune.data.auth.CapturedSession
 import com.darkxvenom.itune.data.auth.WebSessionMode
+import com.darkxvenom.itune.data.auth.looksSignedInCookies
 import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.auth.YouTubeProfile
 import com.darkxvenom.itune.data.library.SettingsStore
+import com.darkxvenom.itune.data.lastfm.LastFmIntegration
+import com.darkxvenom.itune.data.discord.DiscordPresenceManager
 import com.darkxvenom.itune.ishare.IShareSyncManager
 import com.darkxvenom.itune.ui.artist.components.BottomFadeScrim
 import com.darkxvenom.itune.ui.artist.components.FrostedTopBar
@@ -98,6 +115,7 @@ import com.darkxvenom.itune.ui.artist.haptics.Haptic
 import com.darkxvenom.itune.ui.artist.haptics.rememberHaptics
 import com.darkxvenom.itune.ui.artist.icons.SfIcons
 import com.darkxvenom.itune.ui.auth.GoogleLoginScreen
+import com.darkxvenom.itune.ui.auth.verifyAndPersistCapturedSession
 import com.darkxvenom.itune.ui.components.AppleMemojiAvatar
 import com.darkxvenom.itune.ui.components.rememberSpringOverscrollState
 import com.darkxvenom.itune.ui.components.springOverscroll
@@ -109,6 +127,9 @@ import com.darkxvenom.itune.ui.welcome.welcomeTypingKeystrokeDelayMs
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import androidx.compose.runtime.rememberCoroutineScope
 
 private val ProfileCardGrey = Color(0xFF1C1C1E)
 private val ProfileDivider = Color(0xFF2C2C2E)
@@ -128,6 +149,7 @@ fun SettingsProfileAccountScreen(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val integrationScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     val haptics = rememberHaptics()
     val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
@@ -135,6 +157,8 @@ fun SettingsProfileAccountScreen(
 
     LaunchedEffect(Unit) {
         GoogleAuthStore.ensureInit(context)
+        LastFmIntegration.initialize(context)
+        DiscordPresenceManager.initialize(context)
     }
 
     var nameInput by remember(settingsState.displayName) { mutableStateOf(settingsState.displayName) }
@@ -142,6 +166,12 @@ fun SettingsProfileAccountScreen(
     val nameDirty = cleanName.isNotEmpty() && cleanName != settingsState.displayName
 
     var loginMode by remember { mutableStateOf<WebSessionMode?>(null) }
+    var showAdvancedCookieLogin by remember { mutableStateOf(false) }
+    var advancedCookieLoginBusy by remember { mutableStateOf(false) }
+    var showLastFmSignIn by remember { mutableStateOf(false) }
+    var lastFmBusy by remember { mutableStateOf(false) }
+    var showDiscordLogin by remember { mutableStateOf(false) }
+    var discordLoginBusy by remember { mutableStateOf(false) }
 
     val listState = rememberLazyListState()
     val overscrollState = rememberSpringOverscrollState()
@@ -770,6 +800,123 @@ fun SettingsProfileAccountScreen(
                         )
                     }
                 }
+
+                item(key = "music_services_section") {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    ) {
+                        Text(
+                            text = "MUSIC SERVICES",
+                            color = Color.White.copy(alpha = 0.56f),
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = 0.4.sp,
+                            modifier = Modifier.padding(start = 12.dp, bottom = 7.dp),
+                        )
+                        Column(
+                            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(ProfileCardGrey),
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().clickable {
+                                    if (LastFmIntegration.username.isNotBlank()) {
+                                        LastFmIntegration.signOut(context)
+                                    } else {
+                                        showLastFmSignIn = true
+                                    }
+                                }.padding(horizontal = 16.dp, vertical = 15.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Box(Modifier.size(30.dp).clip(RoundedCornerShape(8.dp)).background(Color(0xFFD51007)), contentAlignment = Alignment.Center) {
+                                    Text("L", color = Color.White, fontSize = 19.sp, fontWeight = FontWeight.Bold)
+                                }
+                                Spacer(Modifier.width(12.dp))
+                                Column(Modifier.weight(1f)) {
+                                    Text("Last.fm Scrobbling", color = Color.White, fontSize = 15.5.sp, fontWeight = FontWeight.Medium)
+                                    Text(LastFmIntegration.status, color = AppleTextSecondary, fontSize = 12.5.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                }
+                                Text(
+                                    if (LastFmIntegration.username.isNotBlank()) "Disconnect" else "Connect",
+                                    color = AppleMusicRed,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                )
+                            }
+                            HorizontalDivider(modifier = Modifier.padding(start = 58.dp), thickness = 0.5.dp, color = ProfileDivider)
+                            Row(
+                                modifier = Modifier.fillMaxWidth().clickable {
+                                    if (DiscordPresenceManager.username.isBlank()) showDiscordLogin = true
+                                    else DiscordPresenceManager.setPresenceEnabled(!DiscordPresenceManager.enabled)
+                                }.padding(horizontal = 16.dp, vertical = 15.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Box(Modifier.size(30.dp).clip(RoundedCornerShape(8.dp)).background(Color(0xFF5865F2)), contentAlignment = Alignment.Center) {
+                                    Text("D", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                                }
+                                Spacer(Modifier.width(12.dp))
+                                Column(Modifier.weight(1f)) {
+                                    Text("Discord Rich Presence", color = Color.White, fontSize = 15.5.sp, fontWeight = FontWeight.Medium)
+                                    val subtitle = when {
+                                        DiscordPresenceManager.username.isBlank() -> "Optional · Show what you’re listening to"
+                                        DiscordPresenceManager.enabled -> "On · ${DiscordPresenceManager.displayName}"
+                                        else -> "Off · ${DiscordPresenceManager.displayName}"
+                                    }
+                                    Text(subtitle, color = AppleTextSecondary, fontSize = 12.5.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                }
+                                Text(
+                                    when {
+                                        DiscordPresenceManager.username.isBlank() -> "Connect"
+                                        DiscordPresenceManager.enabled -> "On"
+                                        else -> "Off"
+                                    },
+                                    color = if (DiscordPresenceManager.enabled || DiscordPresenceManager.username.isBlank()) AppleMusicRed else AppleTextSecondary,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                )
+                            }
+                            if (DiscordPresenceManager.username.isNotBlank()) {
+                                HorizontalDivider(modifier = Modifier.padding(start = 58.dp), thickness = 0.5.dp, color = ProfileDivider)
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().clickable {
+                                        DiscordPresenceManager.disconnect()
+                                        Toast.makeText(context, "Discord disconnected", Toast.LENGTH_SHORT).show()
+                                    }.padding(start = 58.dp, end = 16.dp, top = 11.dp, bottom = 12.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Text("Disconnect Discord", color = AppleMusicRed, fontSize = 13.5.sp, fontWeight = FontWeight.Medium)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                item(key = "advanced_google_login") {
+                    Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                        Text(
+                            text = "ADVANCED LOGIN",
+                            color = Color.White.copy(alpha = 0.56f),
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = 0.4.sp,
+                            modifier = Modifier.padding(start = 12.dp, bottom = 7.dp),
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(ProfileCardGrey)
+                                .clickable { haptics.play(Haptic.Tap); showAdvancedCookieLogin = true }
+                                .padding(horizontal = 16.dp, vertical = 15.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Box(Modifier.size(30.dp).clip(RoundedCornerShape(8.dp)).background(Color(0xFF3A3A3C)), contentAlignment = Alignment.Center) {
+                                Icon(Icons.Rounded.SwapHoriz, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
+                            }
+                            Spacer(Modifier.width(12.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text("Advanced Cookie Login", color = Color.White, fontSize = 15.5.sp, fontWeight = FontWeight.Medium)
+                                Text("Connect YouTube Music with session cookies", color = AppleTextSecondary, fontSize = 12.5.sp)
+                            }
+                            Icon(SfIcons.ChevronRight, contentDescription = null, tint = Color.White.copy(alpha = 0.36f), modifier = Modifier.size(13.dp))
+                        }
+                    }
+                }
             }
 
             TopFadeBlur(
@@ -821,6 +968,354 @@ fun SettingsProfileAccountScreen(
                 modifier = Modifier.fillMaxSize(),
             )
         }
+
+        if (showAdvancedCookieLogin) {
+            AdvancedGoogleCookieLoginDialog(
+                initialCookie = GoogleAuthStore.activeCookie().orEmpty(),
+                busy = advancedCookieLoginBusy,
+                onDismiss = { if (!advancedCookieLoginBusy) showAdvancedCookieLogin = false },
+                onSave = { cookie, visitorData ->
+                    if (!looksSignedInCookies(cookie)) {
+                        Toast.makeText(context, "Enter a valid signed-in YouTube Music cookie (SAPISID and a session cookie)", Toast.LENGTH_LONG).show()
+                    } else {
+                        advancedCookieLoginBusy = true
+                        integrationScope.launch {
+                            val attempt = runCatching {
+                                withContext(kotlinx.coroutines.Dispatchers.IO) {
+                                    verifyAndPersistCapturedSession(
+                                        context.applicationContext,
+                                        CapturedSession(
+                                            cookie = cookie,
+                                            dataSyncId = null,
+                                            pageId = null,
+                                            authUser = null,
+                                            visitorData = visitorData.takeIf { it.isNotBlank() },
+                                            clientVersion = null,
+                                            loggedIn = true,
+                                        ),
+                                        WebSessionMode.SIGN_IN,
+                                    )
+                                }
+                            }
+                            advancedCookieLoginBusy = false
+                            if (attempt.isSuccess) {
+                                showAdvancedCookieLogin = false
+                                Toast.makeText(context, "YouTube Music account connected", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, attempt.exceptionOrNull()?.message ?: "Cookie login failed", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                },
+            )
+        }
+
+        if (showLastFmSignIn) {
+            LastFmSignInDialog(
+                busy = lastFmBusy,
+                onDismiss = { if (!lastFmBusy) showLastFmSignIn = false },
+                onBrowserSignIn = {
+                    integrationScope.launch {
+                        LastFmIntegration.beginSignIn(context).onFailure {
+                            Toast.makeText(context, it.message ?: "Couldn't open Last.fm", Toast.LENGTH_LONG).show()
+                        }
+                        showLastFmSignIn = false
+                    }
+                },
+                onDirectSignIn = { username, password ->
+                    lastFmBusy = true
+                    integrationScope.launch {
+                        val result = LastFmIntegration.directSignIn(context, username, password)
+                        lastFmBusy = false
+                        if (result.isSuccess) {
+                            showLastFmSignIn = false
+                            Toast.makeText(context, "Last.fm connected as ${result.getOrNull()}", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, result.exceptionOrNull()?.message ?: "Last.fm sign in failed", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                },
+            )
+        }
+
+        if (showDiscordLogin) {
+            DiscordLoginDialog(
+                busy = discordLoginBusy,
+                onDismiss = { if (!discordLoginBusy) showDiscordLogin = false },
+                onToken = { token ->
+                    discordLoginBusy = true
+                    integrationScope.launch {
+                        val result = DiscordPresenceManager.connect(token)
+                        discordLoginBusy = false
+                        if (result.isSuccess) {
+                            showDiscordLogin = false
+                            Toast.makeText(context, "Discord connected as ${result.getOrNull()}", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, result.exceptionOrNull()?.message ?: "Discord sign in failed", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                },
+            )
+        }
+    }
+}
+
+@SuppressLint("SetJavaScriptEnabled")
+@Composable
+private fun DiscordLoginDialog(
+    busy: Boolean,
+    onDismiss: () -> Unit,
+    onToken: (String) -> Unit,
+) {
+    var webView by remember { mutableStateOf<WebView?>(null) }
+    var tokenCaptured by remember { mutableStateOf(false) }
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Column(
+            Modifier.fillMaxWidth(0.94f).heightIn(max = 720.dp).clip(RoundedCornerShape(26.dp))
+                .background(Color.Black).border(1.dp, Color(0xFF2C2C2E), RoundedCornerShape(26.dp))
+                .padding(16.dp),
+        ) {
+            Text("Connect Discord", color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Bold)
+            Text(
+                if (busy) "Verifying your Discord account…" else "Sign in securely on Discord to enable listening presence.",
+                color = AppleTextSecondary, fontSize = 13.sp, modifier = Modifier.padding(top = 5.dp, bottom = 12.dp),
+            )
+            AndroidView(
+                modifier = Modifier.fillMaxWidth().weight(1f, fill = false).heightIn(min = 380.dp, max = 540.dp)
+                    .clip(RoundedCornerShape(16.dp)),
+                factory = { ctx ->
+                    WebView(ctx).apply {
+                        webView = this
+                        settings.javaScriptEnabled = true
+                        settings.domStorageEnabled = true
+                        settings.databaseEnabled = true
+                        // Match AirBeats' working Discord web-login client UA; Discord rejects
+                        // the stock Android WebView UA on some devices and leaves a blank page.
+                        settings.userAgentString = "Mozilla/5.0 (Linux; Android 14; SM-S921U; Build/UP1A.231005.007) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Mobile Safari/537.363"
+                        val tokenScript = "javascript:(function()%7Bvar%20i%3Ddocument.createElement('iframe')%3Bdocument.body.appendChild(i)%3Balert(i.contentWindow.localStorage.token.slice(1,-1))%7D)()"
+                        webViewClient = object : WebViewClient() {
+                            private fun captureWhenReady(view: WebView, url: String) {
+                                if (url.contains("/app") || url.contains("/channels/")) {
+                                    view.stopLoading()
+                                    view.loadUrl(tokenScript)
+                                }
+                            }
+                            override fun onPageFinished(view: WebView, url: String) = captureWhenReady(view, url)
+                            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                                captureWhenReady(view, request.url.toString())
+                                return false
+                            }
+                        }
+                        webChromeClient = object : WebChromeClient() {
+                            override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
+                                if (!tokenCaptured && message.isNotBlank() && message != "error" && message != "null") {
+                                    tokenCaptured = true
+                                    onToken(message)
+                                }
+                                result.confirm()
+                                return true
+                            }
+                        }
+                        setBackgroundColor(android.graphics.Color.BLACK)
+                        loadUrl("https://discord.com/login")
+                    }
+                },
+                update = { webView = it },
+            )
+            Text(
+                "Your Discord session token is stored encrypted on this device and used only for Rich Presence.",
+                color = AppleTextSecondary.copy(alpha = 0.8f), fontSize = 11.sp, lineHeight = 15.sp,
+                modifier = Modifier.padding(top = 11.dp, bottom = 7.dp),
+            )
+            Text(
+                "Cancel", color = AppleTextSecondary, fontSize = 14.sp,
+                modifier = Modifier.align(Alignment.End).clip(RoundedCornerShape(8.dp)).clickable(enabled = !busy) {
+                    webView?.loadUrl("about:blank")
+                    onDismiss()
+                }.padding(horizontal = 10.dp, vertical = 8.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun LastFmSignInDialog(
+    busy: Boolean,
+    onDismiss: () -> Unit,
+    onBrowserSignIn: () -> Unit,
+    onDirectSignIn: (username: String, password: String) -> Unit,
+) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Column(
+            Modifier.fillMaxWidth(0.9f).clip(RoundedCornerShape(26.dp)).background(Color.Black)
+                .border(1.dp, Color(0xFF2C2C2E), RoundedCornerShape(26.dp)).padding(22.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Box(Modifier.size(54.dp).clip(CircleShape).background(Color(0xFFD51007)), contentAlignment = Alignment.Center) {
+                Text("L", color = Color.White, fontSize = 29.sp, fontWeight = FontWeight.Bold)
+            }
+            Spacer(Modifier.height(12.dp))
+            Text("Connect Last.fm", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text("Sign in with your Last.fm account", color = AppleTextSecondary, fontSize = 14.sp, modifier = Modifier.padding(top = 4.dp, bottom = 15.dp))
+            CookieInput("Username", username, { username = it })
+            CookieInput("Password", password, { password = it }, secure = true)
+            Text(
+                "Your password is sent to Last.fm only to create a session. iTune does not save it.",
+                color = AppleTextSecondary.copy(alpha = 0.8f), fontSize = 11.5.sp, lineHeight = 16.sp,
+                modifier = Modifier.fillMaxWidth().padding(top = 9.dp),
+            )
+            Spacer(Modifier.height(17.dp))
+            CookieDialogAction(if (busy) "Signing in…" else "Sign In", primary = true, enabled = !busy, modifier = Modifier.fillMaxWidth()) {
+                onDirectSignIn(username.trim(), password)
+            }
+            Text(
+                "Continue in browser instead",
+                color = Color(0xFF0A84FF), fontSize = 14.sp, fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(top = 14.dp).clip(RoundedCornerShape(8.dp)).clickable(enabled = !busy, onClick = onBrowserSignIn).padding(7.dp),
+            )
+            Text(
+                "Cancel", color = AppleTextSecondary, fontSize = 14.sp,
+                modifier = Modifier.padding(top = 2.dp).clip(RoundedCornerShape(8.dp)).clickable(enabled = !busy, onClick = onDismiss).padding(7.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun AdvancedGoogleCookieLoginDialog(
+    initialCookie: String,
+    busy: Boolean,
+    onDismiss: () -> Unit,
+    onSave: (cookie: String, visitorData: String) -> Unit,
+) {
+    val initial = remember(initialCookie) { com.darkxvenom.itune.data.auth.parseCookieHeader(initialCookie) }
+    var rawMode by remember { mutableStateOf(false) }
+    var showHelp by remember { mutableStateOf(false) }
+    var sapisid by remember { mutableStateOf(initial["SAPISID"] ?: initial["__Secure-3PAPISID"].orEmpty()) }
+    var hsid by remember { mutableStateOf(initial["HSID"].orEmpty()) }
+    var ssid by remember { mutableStateOf(initial["SSID"].orEmpty()) }
+    var sid by remember { mutableStateOf(initial["SID"].orEmpty()) }
+    var loginInfo by remember { mutableStateOf(initial["LOGIN_INFO"].orEmpty()) }
+    var rawCookie by remember { mutableStateOf(initialCookie) }
+    var visitorData by remember { mutableStateOf("") }
+    val cookie = remember(sapisid, hsid, ssid, sid, loginInfo, rawMode, rawCookie) {
+        if (rawMode) rawCookie.trim() else buildList {
+            if (sapisid.isNotBlank()) add("SAPISID=${sapisid.trim()}")
+            if (hsid.isNotBlank()) add("HSID=${hsid.trim()}")
+            if (ssid.isNotBlank()) add("SSID=${ssid.trim()}")
+            if (sid.isNotBlank()) add("SID=${sid.trim()}")
+            if (loginInfo.isNotBlank()) add("LOGIN_INFO=${loginInfo.trim()}")
+        }.joinToString("; ")
+    }
+
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Column(
+            modifier = Modifier.fillMaxWidth(0.92f).heightIn(max = 700.dp).clip(RoundedCornerShape(26.dp))
+                .background(Color.Black).border(1.dp, Color(0xFF2C2C2E), RoundedCornerShape(26.dp))
+                .verticalScroll(rememberScrollState()).padding(22.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Box(Modifier.size(54.dp).clip(CircleShape).background(Color(0xFF1C1C1E)), contentAlignment = Alignment.Center) {
+                Text("G", color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.Bold)
+            }
+            Spacer(Modifier.height(12.dp))
+            Text("Advanced Login", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text("YouTube Music session cookies", color = AppleTextSecondary, fontSize = 14.sp, modifier = Modifier.padding(top = 4.dp, bottom = 18.dp))
+
+            Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF111113)).padding(14.dp)) {
+                Row(
+                    Modifier.fillMaxWidth().clickable { showHelp = !showHelp },
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text("How to get your cookies", color = Color(0xFF0A84FF), fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                    Text(if (showHelp) "⌃" else "⌄", color = AppleTextSecondary, fontSize = 18.sp)
+                }
+                if (showHelp) {
+                    Text(
+                        "Sign in to music.youtube.com in a desktop browser. Open Developer Tools → Application → Cookies, then copy the signed-in session values. Treat these values like your password.",
+                        color = AppleTextSecondary, fontSize = 12.5.sp, lineHeight = 18.sp, modifier = Modifier.padding(top = 9.dp),
+                    )
+                }
+            }
+            Row(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 4.dp), horizontalArrangement = Arrangement.End) {
+                Text(
+                    if (rawMode) "Use individual fields" else "Use raw cookie",
+                    color = Color(0xFF0A84FF), fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.clip(RoundedCornerShape(8.dp)).clickable { rawMode = !rawMode }.padding(8.dp),
+                )
+            }
+            if (rawMode) {
+                CookieInput("InnerTube cookie", rawCookie, { rawCookie = it }, multiline = true)
+            } else {
+                CookieInput("SAPISID / __Secure-3PAPISID", sapisid, { sapisid = it })
+                CookieInput("HSID", hsid, { hsid = it })
+                CookieInput("SSID", ssid, { ssid = it })
+                CookieInput("SID", sid, { sid = it })
+                CookieInput("LOGIN_INFO", loginInfo, { loginInfo = it })
+            }
+            CookieInput("Visitor Data (optional)", visitorData, { visitorData = it })
+            Text(
+                "Cookie credentials are stored in iTune’s encrypted account storage and checked with YouTube Music before they are saved.",
+                color = AppleTextSecondary.copy(alpha = 0.8f), fontSize = 11.5.sp, lineHeight = 16.sp,
+                modifier = Modifier.fillMaxWidth().padding(top = 9.dp),
+            )
+            Spacer(Modifier.height(18.dp))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                CookieDialogAction("Cancel", enabled = !busy, modifier = Modifier.weight(1f), onClick = onDismiss)
+                CookieDialogAction(if (busy) "Checking…" else "Connect", primary = true, enabled = !busy, modifier = Modifier.weight(1f)) {
+                    onSave(cookie, visitorData.trim())
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CookieInput(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    multiline: Boolean = false,
+    secure: Boolean = false,
+) {
+    Column(Modifier.fillMaxWidth().padding(top = 7.dp)) {
+        Text(label, color = AppleTextSecondary, fontSize = 12.sp, modifier = Modifier.padding(start = 4.dp, bottom = 5.dp))
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            singleLine = !multiline,
+            visualTransformation = if (secure) PasswordVisualTransformation() else androidx.compose.ui.text.input.VisualTransformation.None,
+            textStyle = TextStyle(color = Color.White, fontSize = 14.sp),
+            cursorBrush = SolidColor(Color(0xFF0A84FF)),
+            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).background(Color(0xFF1C1C1E)).padding(12.dp),
+            decorationBox = { inner ->
+                Box {
+                    if (value.isEmpty()) Text("Enter $label", color = Color.White.copy(alpha = 0.3f), fontSize = 14.sp)
+                    inner()
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun CookieDialogAction(
+    text: String,
+    modifier: Modifier = Modifier,
+    primary: Boolean = false,
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier.height(46.dp).clip(RoundedCornerShape(13.dp))
+            .background(if (primary) Color(0xFF0A84FF).copy(alpha = if (enabled) 1f else 0.45f) else Color(0xFF1C1C1E))
+            .clickable(enabled = enabled, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text, color = if (primary) Color.White else AppleTextSecondary, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
     }
 }
 
