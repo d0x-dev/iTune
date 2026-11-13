@@ -8,6 +8,7 @@ import android.media.audiofx.AudioEffect
 import android.media.audiofx.Equalizer
 import android.media.audiofx.LoudnessEnhancer
 import android.provider.Settings
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
 import androidx.media3.common.C
@@ -112,12 +113,14 @@ data class AudioEngineUiState(
  */
 @UnstableApi
 object AudioEngineManager {
+    private const val TAG = "AudioEngine"
     private const val PREFS = "itune_audio_engine_prefs"
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     val djProcessor = DjAudioProcessor()
     val spatialProcessor = SpatialAudioProcessor()
     val eightDProcessor = EightDAudioProcessor()
+    val lowPassProcessor = LowPassAudioProcessor()
     val visualizerManager = AudioVisualizerManager(scope)
 
     private var appContext: Context? = null
@@ -301,13 +304,17 @@ object AudioEngineManager {
         appContext?.let { SettingsStore.setBoolean(it, SettingsStore.KEY_LOW_PASS_FILTER, enabled) }
     }
 
-    fun applyLowPassInstant(bands: List<Int>) {
+    fun applyLowPassInstant(bands: List<Int>): Boolean {
         val cur = _state.value
+        if (cur.bypassAllEffects || (cur.bitPerfectEnabled && cur.bitPerfectActive)) return false
         val sid = sessionIdProvider?.invoke() ?: C.AUDIO_SESSION_ID_UNSET
         if (hardwareEq == null && sid > 0) {
             setupHardwareEqualizer(sid)
         }
-        hardwareEq?.let { eq ->
+        val eq = hardwareEq
+        if (eq == null) {
+            Log.w(TAG, "No hardware Equalizer attached; applying Low-Pass through the playback PCM processor")
+        } else {
             runCatching {
                 eq.enabled = true
                 bands.forEachIndexed { idx, mb ->
@@ -315,14 +322,30 @@ object AudioEngineManager {
                         eq.setBandLevel(idx.toShort(), mb.coerceIn(cur.eqMinMb, cur.eqMaxMb).toShort())
                     }
                 }
+            }.onSuccess {
+                Log.i(TAG, "Applied Low-Pass EQ to ${eq.numberOfBands} hardware bands")
+            }.onFailure { error ->
+                Log.e(TAG, "Hardware Equalizer rejected Low-Pass bands; playback PCM processor remains active", error)
             }
+        }
+        val levels = cur.eqBandsMb.indices.map { index ->
+            bands.getOrElse(index) { 0 }.coerceIn(cur.eqMinMb, cur.eqMaxMb)
         }
         _state.value = cur.copy(
             eqEnabled = true,
             eqPreset = "Low-Pass",
-            eqBandsMb = bands,
+            eqBandsMb = levels,
             lowPassFilterActive = true,
         )
+        // Use the same live Equalizer state and reconciliation path as the manual EQ UI.
+        // Only use the PCM low-pass processor on devices where the Android hardware EQ is absent.
+        lowPassProcessor.mix = if (eq == null) 1f else 0f
+        reconcileAllEffects()
+        return true
+    }
+
+    fun setLowPassProcessorMix(mix: Float) {
+        lowPassProcessor.mix = if (hardwareEq == null) mix else 0f
     }
 
     fun applyLowPassInterpolated(bands: List<Int>) {
@@ -344,18 +367,32 @@ object AudioEngineManager {
                 }
             }
         }
+        if (eq != null) lowPassProcessor.mix = 0f
         _state.value = cur.copy(
-            eqBandsMb = bands,
+            eqBandsMb = cur.eqBandsMb.indices.map { index ->
+                bands.getOrElse(index) { 0 }.coerceIn(cur.eqMinMb, cur.eqMaxMb)
+            },
         )
     }
 
-    fun restoreEqAfterLowPass(originalEnabled: Boolean, originalPreset: String, originalBands: List<Int>) {
+    fun restoreEqAfterLowPass(
+        originalEnabled: Boolean,
+        originalPreset: String,
+        originalBands: List<Int>,
+        bandsAlreadyRestoredGradually: Boolean = false,
+    ) {
+        lowPassProcessor.mix = 0f
         val cur = _state.value
         hardwareEq?.let { eq ->
             runCatching {
-                originalBands.forEachIndexed { idx, mb ->
-                    if (idx < eq.numberOfBands) {
-                        eq.setBandLevel(idx.toShort(), mb.coerceIn(cur.eqMinMb, cur.eqMaxMb).toShort())
+                // A normal effect completion has already moved every band to its saved level.
+                // Rewriting all bands here can make Android's Equalizer apply them as one abrupt
+                // preset jump. Keep this write only for interruption/cancellation recovery.
+                if (!bandsAlreadyRestoredGradually) {
+                    originalBands.forEachIndexed { idx, mb ->
+                        if (idx < eq.numberOfBands) {
+                            eq.setBandLevel(idx.toShort(), mb.coerceIn(cur.eqMinMb, cur.eqMaxMb).toShort())
+                        }
                     }
                 }
                 eq.enabled = originalEnabled && !cur.bypassAllEffects
@@ -609,6 +646,7 @@ object AudioEngineManager {
 
     fun release() {
         visualizerManager.stop()
+        lowPassProcessor.mix = 0f
         releaseEffects()
     }
 
@@ -627,6 +665,8 @@ object AudioEngineManager {
     private fun reconcileAllEffects() {
         val s = _state.value
         val locked = s.bypassAllEffects || (s.bitPerfectEnabled && s.bitPerfectActive)
+
+        lowPassProcessor.bypass = locked
 
         // 1. Spatial & Dolby Atmos PCM processor
         spatialProcessor.bypass = locked
@@ -733,8 +773,9 @@ object AudioEngineManager {
                 eqFrequenciesHz = freqs,
                 eqBandsMb = levels,
             )
-        }.onFailure {
+        }.onFailure { error ->
             hardwareEq = null
+            Log.w(TAG, "Couldn't attach hardware Equalizer; software audio processing will be used", error)
         }
     }
 
