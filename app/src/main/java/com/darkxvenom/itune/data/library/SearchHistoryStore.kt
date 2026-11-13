@@ -31,6 +31,11 @@ object SearchHistoryStore {
         }
     }
 
+    fun reloadBackupState(context: Context) {
+        ensureInit(context)
+        _history.value = parseQueries(prefs?.getString(KEY_QUERIES, null))
+    }
+
     fun addQuery(context: Context, query: String) {
         val trimmed = query.trim()
         if (trimmed.isEmpty()) return
