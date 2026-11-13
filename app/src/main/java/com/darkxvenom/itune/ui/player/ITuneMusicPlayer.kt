@@ -84,7 +84,7 @@ import androidx.compose.material.icons.automirrored.rounded.VolumeOff
 import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DragHandle
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.PlaylistPlay
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -113,6 +113,7 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventTimeoutCancellationException
@@ -189,29 +190,85 @@ private fun SyncedPlayerLyricWord(
     endMs: Long,
     positionMs: Long
 ) {
-    val duration = (endMs - startMs).coerceAtLeast(1L)
+    val wordDuration = (endMs - startMs).coerceAtLeast(1L)
+    val isComplete = positionMs >= endMs
+    val isActive = positionMs in startMs until endMs
     val targetProgress = when {
-        positionMs >= endMs -> 1f
+        isComplete -> 1f
         positionMs <= startMs -> 0f
-        else -> ((positionMs - startMs).toFloat() / duration).coerceIn(0f, 1f)
+        else -> ((positionMs - startMs).toFloat() / wordDuration).coerceIn(0f, 1f)
     }
     val progress by animateFloatAsState(
         targetValue = targetProgress,
         animationSpec = tween(100, easing = FastOutSlowInEasing),
         label = "synced_lyric_word_progress"
     )
-    Text(
-        text = text,
-        fontFamily = SFProDisplay,
-        fontSize = 12.5.sp,
-        fontWeight = FontWeight.SemiBold,
-        color = Color.White.copy(alpha = 0.42f + 0.58f * progress),
-        maxLines = 1,
-        softWrap = false,
-        modifier = Modifier.graphicsLayer {
-            translationY = -1.2f * kotlin.math.sin(progress * PI).toFloat()
-        }
+    val sinProgress = kotlin.math.sin(progress * PI).toFloat()
+    val floatOffset by animateFloatAsState(
+        targetValue = if (isActive) -3.5f * sinProgress else 0f,
+        animationSpec = tween(
+            durationMillis = if (isActive) 50 else 350,
+            easing = FastOutSlowInEasing
+        ),
+        label = "synced_lyric_word_float"
     )
+    val glowAlpha = if (isActive) (progress * 2f).coerceAtMost(1f) * 0.45f else 0f
+    val glowRadius = if (isActive) (progress * 2f).coerceAtMost(1f) * 10f else 0f
+
+    Box(
+        modifier = Modifier.graphicsLayer {
+            translationY = floatOffset * density
+            scaleX = 1f + 0.015f * sinProgress
+            scaleY = 1f + 0.015f * sinProgress
+        }
+    ) {
+        Text(
+            text = text,
+            fontFamily = SFProDisplay,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.White.copy(alpha = 0.40f),
+            maxLines = 1,
+            softWrap = false
+        )
+        if (isComplete || isActive) {
+            Text(
+                text = text,
+                fontFamily = SFProDisplay,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White,
+                maxLines = 1,
+                softWrap = false,
+                style = TextStyle(
+                    shadow = if (glowAlpha > 0f) {
+                        Shadow(
+                            color = Color.White.copy(alpha = glowAlpha),
+                            offset = Offset.Zero,
+                            blurRadius = glowRadius.coerceAtLeast(1f)
+                        )
+                    } else null
+                ),
+                modifier = if (isActive && !isComplete) {
+                    Modifier
+                        .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+                        .drawWithContent {
+                            drawContent()
+                            val edgeWidth = 6.dp.toPx()
+                            val center = (size.width + edgeWidth * 2) * progress - edgeWidth
+                            drawRect(
+                                brush = Brush.horizontalGradient(
+                                    colors = listOf(Color.Black, Color.Transparent),
+                                    startX = center - edgeWidth,
+                                    endX = center + edgeWidth
+                                ),
+                                blendMode = BlendMode.DstIn
+                            )
+                        }
+                } else Modifier
+            )
+        }
+    }
 }
 
 @Composable
@@ -633,7 +690,7 @@ fun ITuneMusicPlayer(
                 .zIndex(36f)
                 .offset { IntOffset(curTitleLeftPx.roundToInt(), curTitleTopPx.roundToInt()) }
                 .width(curTitleWidthDp)
-                .height(if (sp < 0.5f) 38.dp else if (panelProgress < 0.80f) 76.dp else 48.dp)
+                .height(if (sp < 0.5f) 38.dp else if (panelProgress < 0.80f) 84.dp else 48.dp)
                 .then(
                     if (panelProgress > 0.80f) {
                         Modifier.clickable(
@@ -714,7 +771,7 @@ fun ITuneMusicPlayer(
                                     MusicPlayerState.refreshLyrics()
                                 }
                             }
-                            .padding(top = 3.dp, bottom = 2.dp),
+                            .padding(vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         AnimatedContent(
@@ -722,16 +779,16 @@ fun ITuneMusicPlayer(
                             transitionSpec = {
                                 (slideInVertically(
                                     animationSpec = spring(dampingRatio = 0.82f, stiffness = 380f)
-                                ) { (it * 0.75f).toInt() } + fadeIn(tween(260)))
+                                ) { (it * 0.75f).toInt() } + fadeIn(tween(350)))
                                     .togetherWith(
-                                        slideOutVertically(tween(220, easing = FastOutSlowInEasing)) {
+                                        slideOutVertically(tween(300, easing = FastOutSlowInEasing)) {
                                             -(it * 0.65f).toInt()
-                                        } + fadeOut(tween(160))
+                                        } + fadeOut(tween(200))
                                     )
                             },
                             contentAlignment = Alignment.CenterStart,
                             label = "player_synced_lyric_transition",
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f, fill = false)
                         ) { line ->
                             if (line == null || line.text.isBlank()) {
                                 Text(
@@ -772,10 +829,10 @@ fun ITuneMusicPlayer(
                         }
                         Spacer(Modifier.width(6.dp))
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Rounded.KeyboardArrowDown,
+                            imageVector = Icons.Rounded.KeyboardArrowRight,
                             contentDescription = "Open lyrics",
                             tint = Color.White.copy(alpha = 0.56f),
-                            modifier = Modifier.size(13.dp)
+                            modifier = Modifier.size(16.dp)
                         )
                     }
                 }
