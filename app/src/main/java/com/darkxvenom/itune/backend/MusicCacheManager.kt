@@ -267,7 +267,7 @@ object MusicCacheManager {
     /**
      * Starts live background caching while a song is playing or on user demand.
      */
-    fun cacheTrackOnDemand(track: MusicTrack, onComplete: ((Boolean) -> Unit)? = null) {
+    fun cacheTrackOnDemand(track: MusicTrack, onComplete: ((Boolean) -> Unit)? = null, force: Boolean = false) {
         if (isTrackCached(track.id)) {
             onComplete?.invoke(true)
             return
@@ -278,7 +278,7 @@ object MusicCacheManager {
                 withContext(Dispatchers.Main) { onComplete?.invoke(false) }
                 return@launch
             }
-            startLiveCaching(track, url)
+            startLiveCaching(track, url, force = force)
             var success = false
             for (i in 0 until 50) {
                 delay(400)
@@ -296,8 +296,8 @@ object MusicCacheManager {
      * Uses 2MB ranged parallel chunks to bypass YouTube's CDN bandwidth throttling.
      * Downloads high-quality thumbnail alongside the audio file for 100% offline coverage.
      */
-    fun startLiveCaching(track: MusicTrack, playbackStreamUrl: String) {
-        if (!cachingEnabled.value) return
+    fun startLiveCaching(track: MusicTrack, playbackStreamUrl: String, force: Boolean = false) {
+        if (!cachingEnabled.value && !force) return
         if (isTrackCached(track.id)) return
         if (activeDownloads.containsKey(track.id)) return
 
