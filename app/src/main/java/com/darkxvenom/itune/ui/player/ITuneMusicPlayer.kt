@@ -1298,6 +1298,12 @@ fun ITuneMusicPlayer(
                             ShuffleRepeatSplitCapsule(
                                 shuffleEnabled = MusicPlayerState.shuffleEnabled,
                                 repeatMode = MusicPlayerState.repeatMode,
+                                endlessQueueEnabled = MusicPlayerState.endlessQueueEnabled,
+                                onToggleEndlessQueue = {
+                                    onLyricsInteraction()
+                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                    MusicPlayerState.toggleEndlessQueue()
+                                },
                                 onToggleShuffle = {
                                     onLyricsInteraction()
                                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
@@ -2227,6 +2233,8 @@ private fun AirbudsIShareSplitCapsule(
 private fun ShuffleRepeatSplitCapsule(
     shuffleEnabled: Boolean,
     repeatMode: Int,
+    endlessQueueEnabled: Boolean,
+    onToggleEndlessQueue: () -> Unit,
     onToggleShuffle: () -> Unit,
     onToggleRepeat: () -> Unit,
     modifier: Modifier = Modifier
@@ -2238,7 +2246,7 @@ private fun ShuffleRepeatSplitCapsule(
     }
 
     AppleSplitCapsuleFrame(
-        capsuleWidth = 96.dp,
+        capsuleWidth = 138.dp,
         capsuleHeight = 34.dp,
         modifier = modifier,
     ) {
@@ -2249,6 +2257,17 @@ private fun ShuffleRepeatSplitCapsule(
             opticalOffsetStart = 2.dp,
             opticalOffsetEnd = 0.dp,
             onClick = onToggleShuffle,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        )
+        SplitCapsuleSegment(
+            iconRes = R.drawable.ic_infinite_queue,
+            contentDescription = "Endless Queue",
+            active = endlessQueueEnabled,
+            opticalOffsetStart = 0.dp,
+            opticalOffsetEnd = 0.dp,
+            onClick = onToggleEndlessQueue,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
