@@ -56,6 +56,15 @@ object GoogleAuthStore {
         }
     }
 
+    /** Reloads imported account metadata and encrypted session credentials after backup restore. */
+    fun refreshAfterBackupRestore(context: Context) {
+        synchronized(this) {
+            appContext = context.applicationContext
+            metaPrefs = null
+            ensureInit(context)
+        }
+    }
+
     fun activeCookie(): String? = _state.value.accounts
         .firstOrNull { it.accountId == activeAccountId() }
         ?.cookie
