@@ -25,4 +25,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "iTune"
 include(":app")
+include(":discordrpc")
  
