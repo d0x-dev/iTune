@@ -777,48 +777,20 @@ fun ITuneMusicPlayer(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         key(activeLyric?.timeMs) {
-                            if (activeLyric == null || activeLyric.text.isBlank()) {
-                                Text(
-                                    text = if (MusicPlayerState.lyricsLoading) "Loading lyrics…" else "Tap to view lyrics",
-                                    fontFamily = SFProDisplay,
-                                    fontSize = 12.5.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = Color.White.copy(alpha = 0.56f),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.weight(1f, fill = false)
-                                )
-                            } else if (activeLyric.words.isNotEmpty()) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(2.dp),
-                                    modifier = Modifier
-                                        .weight(1f, fill = false)
-                                        .basicMarquee()
-                                ) {
-                                    activeLyric.words.forEach { word ->
-                                        SyncedPlayerLyricWord(
-                                            text = word.text,
-                                            startMs = word.startMs,
-                                            endMs = word.endMs,
-                                            positionMs = position
-                                        )
-                                    }
-                                }
-                            } else {
-                                Text(
-                                    text = activeLyric.text,
-                                    fontFamily = SFProDisplay,
-                                    fontSize = 12.5.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color.White.copy(alpha = 0.92f),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier
-                                        .weight(1f, fill = false)
-                                        .basicMarquee()
-                                )
-                            }
+                            Text(
+                                text = activeLyric?.text
+                                    ?.takeIf { it.isNotBlank() }
+                                    ?: if (MusicPlayerState.lyricsLoading) "Loading lyrics…" else "Tap to view lyrics",
+                                fontFamily = SFProDisplay,
+                                fontSize = 12.5.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White.copy(alpha = if (activeLyric?.text.isNullOrBlank()) 0.56f else 0.92f),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                    .weight(1f, fill = false)
+                                    .basicMarquee()
+                            )
                         }
                         Spacer(Modifier.width(6.dp))
                         Icon(
