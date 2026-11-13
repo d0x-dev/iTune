@@ -45,6 +45,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -59,6 +61,10 @@ import com.darkxvenom.itune.ui.theme.AppleTextPrimary
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
 
 private val DAYS_OF_WEEK = listOf("All", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+private val DAY_LABELS = mapOf(
+    "Sunday" to "Su", "Monday" to "Mo", "Tuesday" to "Tu", "Wednesday" to "We",
+    "Thursday" to "Th", "Friday" to "Fr", "Saturday" to "Sa",
+)
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -108,8 +114,8 @@ fun AutoSleepTimerDialog(
                     ) { /* absorb clicks */ }
                     .shadow(32.dp, RoundedCornerShape(24.dp), ambientColor = Color.Black, spotColor = Color.Black)
                     .clip(RoundedCornerShape(24.dp))
-                    .background(Color(0xFF1C1C1E))
-                    .border(0.75.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(24.dp))
+                    .background(Color.Black)
+                    .border(0.75.dp, Color.White.copy(alpha = 0.14f), RoundedCornerShape(24.dp))
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -158,7 +164,7 @@ fun AutoSleepTimerDialog(
                         .fillMaxWidth()
                         .padding(horizontal = 18.dp)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(Color.White.copy(alpha = 0.06f))
+                        .background(Color(0xFF101012))
                         .padding(horizontal = 16.dp, vertical = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -199,7 +205,7 @@ fun AutoSleepTimerDialog(
                         .fillMaxWidth()
                         .padding(horizontal = 18.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .background(Color(0xFF141416))
+                        .background(Color(0xFF080809))
                         .border(0.75.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(16.dp))
                         .padding(14.dp)
                 ) {
@@ -254,7 +260,7 @@ fun AutoSleepTimerDialog(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     DAYS_OF_WEEK.forEach { day ->
                         val isSelected = if (day == "All") {
@@ -270,7 +276,8 @@ fun AutoSleepTimerDialog(
 
                         Box(
                             modifier = Modifier
-                                .clip(RoundedCornerShape(10.dp))
+                                .semantics { contentDescription = day }
+                            .clip(RoundedCornerShape(9.dp))
                                 .background(chipBg)
                                 .clickable {
                                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
@@ -283,13 +290,13 @@ fun AutoSleepTimerDialog(
                                         if (next.size == 7) setOf("All") else next
                                     }
                                 }
-                                .padding(horizontal = 12.dp, vertical = 6.dp),
+                                .then(if (day == "All") Modifier.padding(horizontal = 11.dp, vertical = 6.dp) else Modifier.size(width = 34.dp, height = 30.dp)),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = day,
+                                text = DAY_LABELS[day] ?: day,
                                 color = if (isSelected) Color.White else AppleTextSecondary,
-                                fontSize = 12.sp,
+                                fontSize = 11.sp,
                                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
                             )
                         }
