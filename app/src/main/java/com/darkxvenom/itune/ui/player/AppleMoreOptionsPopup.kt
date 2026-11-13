@@ -604,11 +604,9 @@ fun AppleMoreOptionsPopup(
         if (visible) activePage = MorePopupPage.MAIN
     }
 
-    val bottomClearanceDp = if (isPanelOpen) {
-        0.dp
-    } else {
-        (maxHeightDp - titleRowTopDp + 16.dp).coerceIn(180.dp, maxHeightDp - statusBarTopDp - 140.dp)
-    }
+    // Let the menu bloom to the full space above the navigation area. The old title-row-based
+    // clearance capped the sheet around the middle of the screen and hid the last menu actions.
+    val bottomClearanceDp = if (isPanelOpen) 0.dp else 12.dp
 
     AppleFrostedPopupOverlay(
         visible = visible,
