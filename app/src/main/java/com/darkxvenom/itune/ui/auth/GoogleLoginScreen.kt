@@ -372,7 +372,7 @@ fun GoogleLoginScreen(
     }
 }
 
-private suspend fun verifyAndPersistCapturedSession(
+internal suspend fun verifyAndPersistCapturedSession(
     context: Context,
     initialCaptured: CapturedSession,
     mode: WebSessionMode,
