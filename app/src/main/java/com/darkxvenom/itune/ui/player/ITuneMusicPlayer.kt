@@ -772,7 +772,7 @@ fun ITuneMusicPlayer(
                         }
                         Spacer(Modifier.width(6.dp))
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.AutoMirrored.Rounded.KeyboardArrowDown,
+                            imageVector = androidx.compose.material.icons.Icons.Rounded.KeyboardArrowDown,
                             contentDescription = "Open lyrics",
                             tint = Color.White.copy(alpha = 0.56f),
                             modifier = Modifier.size(13.dp)
