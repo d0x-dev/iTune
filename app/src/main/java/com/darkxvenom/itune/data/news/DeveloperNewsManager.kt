@@ -16,7 +16,7 @@ import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
 object DeveloperNewsManager {
-    private const val DIRECT_NEWS_URL = "https://airbeats-54c06-default-rtdb.firebaseio.com/developer_news.json"
+    private const val DIRECT_NEWS_URL = "https://community.airbeats.org/api/community/news"
     private const val PREFS_NAME = "itune_developer_news"
     private const val KEY_CACHED_NEWS = "cached_news_json"
     private const val KEY_DISMISSED_POPUPS = "dismissed_popup_ids"
@@ -50,7 +50,7 @@ object DeveloperNewsManager {
         // Load cached announcements for instant offline display
         loadCachedNews()
 
-        // Background direct fetch from Firebase Realtime Database
+        // Background fetch from the community news API
         refresh()
     }
 
@@ -91,15 +91,27 @@ object DeveloperNewsManager {
     private fun parseNewsJson(jsonString: String) {
         try {
             val root = JSONObject(jsonString)
+            if (root.has("success") && !root.optBoolean("success")) return
+            val newsArray = root.optJSONArray("news")
             val items = mutableListOf<DeveloperNewsItem>()
-            val keys = root.keys()
-            while (keys.hasNext()) {
-                val key = keys.next()
-                val obj = root.optJSONObject(key) ?: continue
+            val objects = mutableListOf<Pair<String, JSONObject>>()
+            if (newsArray != null) {
+                for (index in 0 until newsArray.length()) {
+                    newsArray.optJSONObject(index)?.let { objects += index.toString() to it }
+                }
+            } else {
+                // Continue reading existing cached Firebase-shaped payloads during migration.
+                val keys = root.keys()
+                while (keys.hasNext()) {
+                    val key = keys.next()
+                    root.optJSONObject(key)?.let { objects += key to it }
+                }
+            }
+            for ((key, obj) in objects) {
                 val item = DeveloperNewsItem(
                     id = obj.optString("id", key),
                     title = obj.optString("title", ""),
-                    message = obj.optString("message", ""),
+                    message = obj.optString("message", obj.optString("content", "")),
                     author = obj.optString("author", "").takeIf { it.isNotBlank() }
                         ?: obj.optString("authorName", "").takeIf { it.isNotBlank() },
                     imageUrl = obj.optString("imageUrl", "").takeIf { it.isNotBlank() },
@@ -109,9 +121,9 @@ object DeveloperNewsManager {
                     timestamp = obj.optLong("timestamp", System.currentTimeMillis()),
                     showPopup = obj.optBoolean("showPopup", false),
                     priority = obj.optInt("priority", 0),
-                    active = obj.optBoolean("active", true)
+                    active = obj.optBoolean("active", obj.optBoolean("isActive", true))
                 )
-                if (item.active) {
+                if (item.active && item.tag.orEmpty().contains("itune", ignoreCase = true)) {
                     items.add(item)
                 }
             }
