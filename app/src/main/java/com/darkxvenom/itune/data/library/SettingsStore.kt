@@ -18,15 +18,19 @@ data class SettingsUiState(
     val dolbyAtmos: Boolean = true,
     val losslessAudio: Boolean = true,
     val audioQuality: String = "Extreme",
+    val pcmOutputFormat: String = "16-bit PCM",
     val eqPreset: String = "Late Night",
     val crossfadeDuration: String = "Off",
     val autoMix: Boolean = false,
     val automixEnabled: Boolean = false,
+    val afterglowDuration: String = "Off",
     val soundCheck: Boolean = true,
     val animatedArtwork: Boolean = true,
     val timeSyncedLyrics: Boolean = true,
     val playerType: String = "Dynamic",
+    val playerDynamicColoring: Boolean = true,
     val topCardType: String = "Portrait",
+    val appFont: String = "system",
     val liquidGlassChrome: Boolean = true,
     val tactileHaptics: Boolean = true,
     val cellularStreaming: String = "High Quality",
@@ -94,6 +98,7 @@ object SettingsStore {
     const val KEY_DOLBY_ATMOS = "dolby_atmos"
     const val KEY_LOSSLESS_AUDIO = "lossless_audio"
     const val KEY_AUDIO_QUALITY = "audio_quality"
+    const val KEY_PCM_OUTPUT_FORMAT = "pcm_output_format"
 
     const val QUALITY_EXTREME = "Extreme"
     const val QUALITY_HIGH = "High"
@@ -107,14 +112,24 @@ object SettingsStore {
         "High Efficiency" -> QUALITY_LOW
         else -> QUALITY_EXTREME
     }
+
+    fun normalizeAfterglowDuration(raw: String?): String = when (raw?.trim()?.lowercase()) {
+        "5 sec", "5 seconds" -> "5 sec"
+        "10 sec", "10 seconds" -> "10 sec"
+        "15 sec", "15 seconds" -> "15 sec"
+        else -> "Off"
+    }
     const val KEY_EQ_PRESET = "eq_preset"
     const val KEY_CROSSFADE = "crossfade_duration"
     const val KEY_AUTOMIX = "automix_enabled"
+    const val KEY_AFTERGLOW_DURATION = "afterglow_duration"
     const val KEY_SOUND_CHECK = "sound_check"
     const val KEY_ANIMATED_ARTWORK = "animated_artwork"
     const val KEY_TIME_SYNCED_LYRICS = "time_synced_lyrics"
     const val KEY_PLAYER_TYPE = "player_type"
+    const val KEY_PLAYER_DYNAMIC_COLORING = "player_dynamic_coloring"
     const val KEY_TOP_CARD_TYPE = "top_card_type"
+    const val KEY_APP_FONT = "app_font"
     const val TOP_CARD_TYPE_PORTRAIT = "Portrait"
     const val TOP_CARD_TYPE_LANDSCAPE = "Landscape"
     const val KEY_LIQUID_GLASS = "liquid_glass_chrome"
@@ -255,6 +270,7 @@ object SettingsStore {
             KEY_LOSSLESS_AUDIO -> cur.copy(losslessAudio = value)
             KEY_SOUND_CHECK -> cur.copy(soundCheck = value)
             KEY_ANIMATED_ARTWORK -> cur.copy(animatedArtwork = value)
+            KEY_PLAYER_DYNAMIC_COLORING -> cur.copy(playerDynamicColoring = value)
             KEY_TIME_SYNCED_LYRICS -> cur.copy(timeSyncedLyrics = value)
             KEY_LIQUID_GLASS -> cur.copy(liquidGlassChrome = value)
             KEY_TACTILE_HAPTICS -> cur.copy(tactileHaptics = value)
@@ -313,10 +329,13 @@ object SettingsStore {
             KEY_DISPLAY_NAME -> cur.copy(displayName = normalized)
             KEY_PLAYER_TYPE -> cur.copy(playerType = if (normalized.equals("Static", ignoreCase = true)) "Static" else "Dynamic")
             KEY_TOP_CARD_TYPE -> cur.copy(topCardType = if (normalized.equals(TOP_CARD_TYPE_LANDSCAPE, ignoreCase = true)) TOP_CARD_TYPE_LANDSCAPE else TOP_CARD_TYPE_PORTRAIT)
+            KEY_APP_FONT -> cur.copy(appFont = normalized)
             KEY_SPATIAL_AUDIO -> cur.copy(spatialAudioMode = normalized)
             KEY_AUDIO_QUALITY -> cur.copy(audioQuality = normalizeAudioQuality(normalized))
+            KEY_PCM_OUTPUT_FORMAT -> cur.copy(pcmOutputFormat = if (normalized == "32-bit float PCM") normalized else "16-bit PCM")
             KEY_EQ_PRESET -> cur.copy(eqPreset = normalized)
             KEY_CROSSFADE -> cur.copy(crossfadeDuration = normalized)
+            KEY_AFTERGLOW_DURATION -> cur.copy(afterglowDuration = normalizeAfterglowDuration(normalized))
             KEY_CELLULAR_STREAMING -> cur.copy(cellularStreaming = normalized)
             KEY_OPTIMIZE_STORAGE -> cur.copy(optimizeStorage = normalized)
             KEY_CONTENT_LANGUAGE -> cur.copy(contentLanguage = normalized)
@@ -544,15 +563,19 @@ object SettingsStore {
             dolbyAtmos = p.getBoolean(KEY_DOLBY_ATMOS, defaults.dolbyAtmos),
             losslessAudio = p.getBoolean(KEY_LOSSLESS_AUDIO, defaults.losslessAudio),
             audioQuality = normalizeAudioQuality(p.getString(KEY_AUDIO_QUALITY, defaults.audioQuality)),
+            pcmOutputFormat = p.getString(KEY_PCM_OUTPUT_FORMAT, defaults.pcmOutputFormat) ?: defaults.pcmOutputFormat,
             eqPreset = p.getString(KEY_EQ_PRESET, defaults.eqPreset) ?: defaults.eqPreset,
             crossfadeDuration = p.getString(KEY_CROSSFADE, defaults.crossfadeDuration) ?: defaults.crossfadeDuration,
+            afterglowDuration = normalizeAfterglowDuration(p.getString(KEY_AFTERGLOW_DURATION, defaults.afterglowDuration)),
             autoMix = p.getBoolean(KEY_AUTOMIX, defaults.autoMix),
             automixEnabled = p.getBoolean(KEY_AUTOMIX, defaults.automixEnabled),
             soundCheck = p.getBoolean(KEY_SOUND_CHECK, defaults.soundCheck),
             animatedArtwork = p.getBoolean(KEY_ANIMATED_ARTWORK, defaults.animatedArtwork),
             timeSyncedLyrics = p.getBoolean(KEY_TIME_SYNCED_LYRICS, defaults.timeSyncedLyrics),
             playerType = p.getString(KEY_PLAYER_TYPE, defaults.playerType) ?: defaults.playerType,
+            playerDynamicColoring = p.getBoolean(KEY_PLAYER_DYNAMIC_COLORING, defaults.playerDynamicColoring),
             topCardType = p.getString(KEY_TOP_CARD_TYPE, defaults.topCardType) ?: defaults.topCardType,
+            appFont = p.getString(KEY_APP_FONT, defaults.appFont) ?: defaults.appFont,
             liquidGlassChrome = p.getBoolean(KEY_LIQUID_GLASS, defaults.liquidGlassChrome),
             tactileHaptics = p.getBoolean(KEY_TACTILE_HAPTICS, defaults.tactileHaptics),
             cellularStreaming = p.getString(KEY_CELLULAR_STREAMING, defaults.cellularStreaming)
