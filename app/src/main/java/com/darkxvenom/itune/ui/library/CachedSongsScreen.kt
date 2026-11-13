@@ -26,7 +26,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DeleteSweep
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Shuffle
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
@@ -34,7 +33,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -69,6 +67,7 @@ import com.darkxvenom.itune.ui.artist.haptics.Haptic
 import com.darkxvenom.itune.ui.artist.haptics.rememberHaptics
 import com.darkxvenom.itune.ui.artist.icons.ITubeIcons
 import com.darkxvenom.itune.ui.artist.icons.SfIcons
+import com.darkxvenom.itune.ui.settings.AppleConfirmDialog
 
 internal val LibraryIndigoAccent = Color(0xFF007AFF)
 
@@ -284,40 +283,15 @@ fun CachedSongsScreen(
     }
 
     if (showClearDialog) {
-        AlertDialog(
-            onDismissRequest = { showClearDialog = false },
-            title = {
-                Text(
-                    text = "Clear Cached Songs?",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                )
-            },
-            text = {
-                Text(
-                    text = "This will permanently remove all ${cachedTracks.size} offline audio songs (${MusicCacheManager.formatStorageSize(totalBytes)}) from your device storage.",
-                    color = Color.White.copy(alpha = 0.76f),
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                )
-            },
-            containerColor = Color(0xFF1C1C1E),
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        MusicCacheManager.clearAllCache()
-                        showClearDialog = false
-                        Toast.makeText(context, "Cached music cleared", Toast.LENGTH_SHORT).show()
-                    },
-                ) {
-                    Text("Clear All", color = Color(0xFFFF453A), fontWeight = FontWeight.Bold)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showClearDialog = false }) {
-                    Text("Cancel", color = Color.White.copy(alpha = 0.70f))
-                }
+        AppleConfirmDialog(
+            title = "Clear Cached Songs?",
+            message = "This will permanently remove all ${cachedTracks.size} offline audio songs (${MusicCacheManager.formatStorageSize(totalBytes)}) from your device storage.",
+            confirmLabel = "Clear All",
+            onDismiss = { showClearDialog = false },
+            onConfirm = {
+                MusicCacheManager.clearAllCache()
+                showClearDialog = false
+                Toast.makeText(context, "Cached music cleared", Toast.LENGTH_SHORT).show()
             },
         )
     }
