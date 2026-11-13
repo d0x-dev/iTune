@@ -35,9 +35,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Key
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
-import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.Refresh
@@ -52,6 +50,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -61,6 +60,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -89,6 +89,7 @@ import com.darkxvenom.itune.ui.artist.components.topBarContentPadding
 import com.darkxvenom.itune.ui.artist.haptics.Haptic
 import com.darkxvenom.itune.ui.artist.haptics.rememberHaptics
 import com.darkxvenom.itune.ui.components.rememberSpringOverscrollState
+import com.darkxvenom.itune.ui.components.ReorderDragHandle
 import com.darkxvenom.itune.ui.components.springOverscroll
 import com.darkxvenom.itune.ui.theme.AppleMusicRed
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
@@ -268,15 +269,11 @@ fun LyricsSettingsScreen(
                                     provider = provider,
                                     rank = index + 1,
                                     isEnabled = isEnabled,
-                                    canMoveUp = index > 0,
-                                    canMoveDown = index < orderedProviders.lastIndex,
-                                    onMoveUp = {
+                                    providerIndex = index,
+                                    providerCount = orderedProviders.size,
+                                    onMove = { from, to ->
                                         haptics.play(Haptic.Select)
-                                        SettingsStore.moveLyricsProvider(context, index, index - 1)
-                                    },
-                                    onMoveDown = {
-                                        haptics.play(Haptic.Select)
-                                        SettingsStore.moveLyricsProvider(context, index, index + 1)
+                                        SettingsStore.moveLyricsProvider(context, from, to)
                                     },
                                     onToggle = { enabled ->
                                         haptics.play(if (enabled) Haptic.ToggleOn else Haptic.ToggleOff)
@@ -706,12 +703,12 @@ private fun LyricsProviderRow(
     provider: LyricsProviderInfo,
     rank: Int,
     isEnabled: Boolean,
-    canMoveUp: Boolean,
-    canMoveDown: Boolean,
-    onMoveUp: () -> Unit,
-    onMoveDown: () -> Unit,
+    providerIndex: Int,
+    providerCount: Int,
+    onMove: (Int, Int) -> Unit,
     onToggle: (Boolean) -> Unit,
 ) {
+    var dragOffsetPx by remember(provider.id) { mutableFloatStateOf(0f) }
     val rowAlpha by animateFloatAsState(
         targetValue = if (isEnabled) 1f else 0.48f,
         animationSpec = tween(180),
@@ -721,6 +718,7 @@ private fun LyricsProviderRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .graphicsLayer { translationY = dragOffsetPx }
             .alpha(rowAlpha)
             .padding(horizontal = 14.dp, vertical = 11.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -782,36 +780,17 @@ private fun LyricsProviderRow(
 
         Spacer(modifier = Modifier.width(6.dp))
 
-        // Move Up / Move Down buttons for priority ordering
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
-        ) {
-            IconButton(
-                onClick = onMoveUp,
-                enabled = canMoveUp,
-                modifier = Modifier.size(28.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.KeyboardArrowUp,
-                    contentDescription = "Move up",
-                    tint = if (canMoveUp) Color(0xFF0A84FF) else Color(0xFF3A3A3C),
-                    modifier = Modifier.size(20.dp),
-                )
-            }
-            IconButton(
-                onClick = onMoveDown,
-                enabled = canMoveDown,
-                modifier = Modifier.size(28.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.KeyboardArrowDown,
-                    contentDescription = "Move down",
-                    tint = if (canMoveDown) Color(0xFF0A84FF) else Color(0xFF3A3A3C),
-                    modifier = Modifier.size(20.dp),
-                )
-            }
-        }
+        ReorderDragHandle(
+            index = providerIndex,
+            itemCount = providerCount,
+            onMove = onMove,
+            itemStep = 58.dp,
+            tint = Color(0xFF8E8E93),
+            modifier = Modifier.size(28.dp),
+            contentDescription = "Reorder provider",
+            onDragDistance = { dragOffsetPx += it },
+            onDragFinished = { dragOffsetPx = 0f },
+        )
 
         Spacer(modifier = Modifier.width(6.dp))
 
