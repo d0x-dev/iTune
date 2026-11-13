@@ -850,7 +850,7 @@ fun AppleRadioPlayerOverlay(
                             state.isPlaying -> "LIVE"
                             else -> "PAUSED"
                         },
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay, fontWeight = FontWeight.Bold),
                         color = Color.White.copy(alpha = 0.86f),
                     )
                 }
@@ -908,13 +908,13 @@ fun AppleRadioPlayerOverlay(
                                             append("Music • ${station.qualityBadge}")
                                         }
                                     },
-                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
+                                    style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay, fontWeight = FontWeight.Medium),
                                 )
                             } else {
                                 Text(
                                     text = badge.text,
                                     color = Color.White,
-                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                                    style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay, fontWeight = FontWeight.SemiBold),
                                 )
                             }
                         }
@@ -928,7 +928,7 @@ fun AppleRadioPlayerOverlay(
                     } else {
                         station.countryCode.ifBlank { "FM" }
                     },
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay),
                     color = Color.White.copy(alpha = 0.75f),
                 )
             }
