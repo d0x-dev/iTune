@@ -1,9 +1,13 @@
 package com.darkxvenom.itune.ui.settings
 
 import android.os.Build
+import android.net.Uri
+import android.provider.OpenableColumns
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -20,6 +24,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -111,6 +116,10 @@ import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.auth.YouTubeProfile
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.SearchHistoryStore
+import com.darkxvenom.itune.data.library.LibraryStore
+import com.darkxvenom.itune.data.backup.BackupRestoreManager
+import com.darkxvenom.itune.data.updates.AppUpdateManager
+import com.darkxvenom.itune.data.updates.GithubReleaseInfo
 import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.library.SettingsUiState
 import com.darkxvenom.itune.ishare.IShareConnectionMode
@@ -143,19 +152,24 @@ import com.darkxvenom.itune.ui.library.LibraryCrimsonAccent
 import com.darkxvenom.itune.ui.library.LibraryFilterBar
 import com.darkxvenom.itune.ui.library.LibraryGlassEmptyCard
 import com.darkxvenom.itune.ui.player.EnginePopupPage
-import com.darkxvenom.itune.ui.player.SFProDisplay
+import com.darkxvenom.itune.ui.theme.LocalAppFontFamily
 import com.darkxvenom.itune.ui.theme.AppleMusicRed
+import com.darkxvenom.itune.ui.theme.AppFont
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 private val SettingsAppleGreen = Color(0xFF34C759)
-private val SettingsDialogBg = Color(0xFF1C1C1E)
+private val SettingsDialogBg = Color.Black
 internal val SettingsScreenBlack = Color(0xFF000000)
 internal val SettingsCardGrey = Color(0xFF1C1C1E)
 internal val SettingsDividerGrey = Color(0xFF2C2C2E)
+
+private enum class SettingsClearAction { SEARCH_HISTORY, LISTENING_HISTORY, CACHED_SONGS }
 
 private data class SettingsOptionChoice(
     val label: String,
@@ -177,6 +191,7 @@ private sealed interface SettingsEntry {
         @param:DrawableRes override val iconRes: Int,
         override val keywords: List<String>,
         val checked: Boolean,
+        val enabled: Boolean = true,
         val onToggle: (Boolean) -> Unit,
     ) : SettingsEntry
 
@@ -287,6 +302,9 @@ fun AppleSettingsScreen(
     val audioEngineState by AudioEngineManager.state.collectAsStateWithLifecycle()
     val audioOutputState by AudioOutputManager.state.collectAsStateWithLifecycle()
     val ytAccountState by GoogleAuthStore.state.collectAsStateWithLifecycle()
+    val availableUpdate by AppUpdateManager.availableUpdate.collectAsStateWithLifecycle()
+    val latestRelease by AppUpdateManager.latestRelease.collectAsStateWithLifecycle()
+    val isCheckingForUpdate by AppUpdateManager.isChecking.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         GoogleAuthStore.ensureInit(context)
@@ -338,7 +356,62 @@ fun AppleSettingsScreen(
         searchQuery = ""
     }
 
-    var showClearSongCacheDialog by remember { mutableStateOf(false) }
+    var clearAction by remember { mutableStateOf<SettingsClearAction?>(null) }
+    var showBackupDialog by remember { mutableStateOf(false) }
+    var backupPassword by remember { mutableStateOf("") }
+    var backupPendingPassword by remember { mutableStateOf("") }
+    var backupPendingSelection by remember { mutableStateOf(setOf("account", "library")) }
+    var backupBusy by remember { mutableStateOf(false) }
+    var restoreUri by remember { mutableStateOf<Uri?>(null) }
+    var restorePassword by remember { mutableStateOf("") }
+    var restoreBusy by remember { mutableStateOf(false) }
+    var restoreError by remember { mutableStateOf<String?>(null) }
+    var scannedBackup by remember { mutableStateOf<BackupRestoreManager.ScannedBackup?>(null) }
+
+    val createBackupLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
+        if (uri == null) {
+            backupPendingPassword = ""
+        } else {
+            backupBusy = true
+            coroutineScope.launch {
+                val result = runCatching {
+                    withContext(Dispatchers.IO) {
+                        val bytes = BackupRestoreManager.createEncryptedBackup(
+                            context, backupPendingSelection, backupPendingPassword.toCharArray(),
+                        )
+                        context.contentResolver.openOutputStream(uri)?.use { it.write(bytes) }
+                            ?: error("Could not open the selected destination")
+                    }
+                }
+                backupBusy = false
+                backupPassword = ""
+                backupPendingPassword = ""
+                Toast.makeText(
+                    context,
+                    if (result.isSuccess) "Encrypted .itune backup saved" else result.exceptionOrNull()?.message ?: "Backup failed",
+                    if (result.isSuccess) Toast.LENGTH_SHORT else Toast.LENGTH_LONG,
+                ).show()
+            }
+        }
+    }
+
+    val restoreBackupLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) {
+            val name = runCatching {
+                context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { cursor ->
+                    if (cursor.moveToFirst()) cursor.getString(0) else null
+                }
+            }.getOrNull()
+            if (name.isNullOrBlank() || !name.endsWith(".itune", ignoreCase = true)) {
+                Toast.makeText(context, "Choose an .itune backup file", Toast.LENGTH_LONG).show()
+            } else {
+                restoreUri = uri
+                restorePassword = ""
+                restoreError = null
+                scannedBackup = null
+            }
+        }
+    }
 
     val sections = remember(
         state,
@@ -354,6 +427,9 @@ fun AppleSettingsScreen(
         MusicCacheManager.maxCacheLimitMB.longValue,
         MusicCacheManager.cacheQuality.value,
         MusicCacheManager.totalStorageBytes.longValue,
+        availableUpdate?.tag,
+        latestRelease?.tag,
+        isCheckingForUpdate,
     ) {
         buildSettingsSections(
             state = state,
@@ -361,6 +437,9 @@ fun AppleSettingsScreen(
             bitPerfectActive = audioOutputState.bitPerfectActive,
             activeOutputName = audioOutputState.activeDevice?.name ?: "Phone Speaker",
             searchHistoryCount = searchHistory.size,
+            updateVersion = availableUpdate?.tag,
+            latestVersion = latestRelease?.tag,
+            isCheckingForUpdate = isCheckingForUpdate,
             iShareSession = iShareSession,
             iShareIsLan = iShareMode == IShareConnectionMode.LAN,
             dynamicIslandEnabled = dynamicIslandConfig.enabled && android.provider.Settings.canDrawOverlays(context),
@@ -369,24 +448,40 @@ fun AppleSettingsScreen(
             onOpenAudioEffect = { page -> activeAudioEffectPage = page },
             onOpenLyricsSettings = { showLyricsSettings = true },
             onOpenDeveloperNews = { showDeveloperNews = true },
-            onToggleBool = { key, enabled -> SettingsStore.setBoolean(context, key, enabled) },
-            onSelectString = { key, value -> SettingsStore.setString(context, key, value) },
+            onToggleBool = { key, enabled ->
+                SettingsStore.setBoolean(context, key, enabled)
+                if (key == SettingsStore.KEY_SYNC_LIBRARY && enabled) {
+                    YouTubeLibrarySyncManager.launchFullSync(context)
+                }
+                if (key == SettingsStore.KEY_ADD_FAVORITE_SONGS) {
+                    LibraryStore.setLikedSongsSavedLocally(context, enabled)
+                }
+                if (key == SettingsStore.KEY_AUTO_DOWNLOADS && enabled) {
+                    LibraryStore.likedSongs.value.forEach { com.darkxvenom.itune.backend.MusicPlayerState.enqueueAutoDownloadForSettings(it.toMusicTrack()) }
+                }
+            },
+            onSelectString = { key, value ->
+                if (key == SettingsStore.KEY_PCM_OUTPUT_FORMAT) {
+                    com.darkxvenom.itune.backend.MusicPlayerState.setPcmOutputFormat(value)
+                } else {
+                    SettingsStore.setString(context, key, value)
+                }
+            },
             onClearCache = {
                 SettingsStore.clearAudioCache(context)
                 Toast.makeText(context, "Audio & artwork cache cleared", Toast.LENGTH_SHORT).show()
             },
-            onClearSongCache = { showClearSongCacheDialog = true },
+            onClearSongCache = { clearAction = SettingsClearAction.CACHED_SONGS },
             onEditName = { showNameDialog = true },
             onClearSearchHistory = {
-                SearchHistoryStore.clearAll(context)
-                Toast.makeText(context, "Search history cleared", Toast.LENGTH_SHORT).show()
+                clearAction = SettingsClearAction.SEARCH_HISTORY
             },
             onClearListeningHistory = {
-                com.darkxvenom.itune.data.library.ListeningProfileStore.clear(context)
-                com.darkxvenom.itune.data.library.LibraryStore.clearRecentSongs(context)
-                Toast.makeText(context, "Listening history cleared", Toast.LENGTH_SHORT).show()
+                clearAction = SettingsClearAction.LISTENING_HISTORY
             },
             onOpenAbout = { showAboutDialog = true },
+            onOpenBackup = { showBackupDialog = true },
+            onOpenRestore = { restoreBackupLauncher.launch(arrayOf("*/*")) },
             onOpenAutoSleepTimer = { showAutoSleepTimerDialog = true },
             onOpenProxySettings = { showProxySettingsDialog = true },
             onOpenAodSettings = { showAodSettings = true },
@@ -595,18 +690,25 @@ fun AppleSettingsScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
                                     Text(
-                                        text = "iTune Music • Spatial Audio & Liquid Glass",
-                                        color = Color.White.copy(alpha = 0.42f),
+                                        text = "v${AppUpdateManager.installedVersion} (${AppUpdateManager.installedVersionCode})",
+                                        color = Color.White.copy(alpha = 0.38f),
+                                        fontSize = 11.5.sp,
+                                        textAlign = TextAlign.Center,
+                                    )
+                                    Spacer(Modifier.height(8.dp))
+                                    Text(
+                                        text = "GitHub · Open source",
+                                        color = Color(0xFF0A84FF),
                                         fontSize = 12.5.sp,
                                         fontWeight = FontWeight.Medium,
                                         textAlign = TextAlign.Center,
-                                    )
-                                    Spacer(Modifier.height(2.dp))
-                                    Text(
-                                        text = "Version 2.4 (2408) • Signed in as ${state.displayName}",
-                                        color = Color.White.copy(alpha = 0.30f),
-                                        fontSize = 11.5.sp,
-                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.clickable {
+                                            runCatching {
+                                                context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, Uri.parse("https://github.com/d0x-dev/itune")))
+                                            }.onFailure {
+                                                Toast.makeText(context, "Could not open GitHub", Toast.LENGTH_SHORT).show()
+                                            }
+                                        },
                                     )
                                 }
                             }
@@ -771,7 +873,10 @@ fun AppleSettingsScreen(
 
     if (showAboutDialog) {
         SettingsAboutDialog(
-            displayName = state.displayName,
+            release = latestRelease,
+            updateAvailable = availableUpdate != null,
+            isCheckingForUpdate = isCheckingForUpdate,
+            onOpenRelease = { release -> AppUpdateManager.downloadApk(context, release) },
             onReplayWelcome = {
                 showAboutDialog = false
                 SettingsStore.setBoolean(context, SettingsStore.KEY_WELCOME_COMPLETED, false)
@@ -788,43 +893,116 @@ fun AppleSettingsScreen(
         ProxySettingsDialog(onDismiss = { showProxySettingsDialog = false })
     }
 
-    if (showClearSongCacheDialog) {
-        val count = MusicCacheManager.cachedTracks.size
-        val sizeStr = MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)
-        androidx.compose.material3.AlertDialog(
-            onDismissRequest = { showClearSongCacheDialog = false },
-            title = {
-                Text(
-                    text = "Clear Cached Songs?",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                )
+    if (showBackupDialog) {
+        BackupOptionsDialog(
+            password = backupPassword,
+            onPasswordChange = { backupPassword = it },
+            onDismiss = { showBackupDialog = false; backupPassword = "" },
+            onCreate = { selected ->
+                backupPendingSelection = selected
+                backupPendingPassword = backupPassword
+                showBackupDialog = false
+                createBackupLauncher.launch("iTune-backup-${System.currentTimeMillis()}.itune")
             },
-            text = {
-                Text(
-                    text = "This will permanently remove all $count offline songs ($sizeStr) from device storage.",
-                    color = Color.White.copy(alpha = 0.76f),
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                )
+        )
+    }
+
+    val pendingRestoreUri = restoreUri
+    if (pendingRestoreUri != null && scannedBackup == null) {
+        RestorePasswordDialog(
+            password = restorePassword,
+            onPasswordChange = { restorePassword = it; restoreError = null },
+            busy = restoreBusy,
+            error = restoreError,
+            onDismiss = { if (!restoreBusy) { restoreUri = null; restorePassword = ""; restoreError = null } },
+            onScan = {
+                restoreBusy = true
+                restoreError = null
+                val password = restorePassword.toCharArray()
+                coroutineScope.launch {
+                    val result = runCatching {
+                        withContext(Dispatchers.IO) {
+                            val bytes = context.contentResolver.openInputStream(pendingRestoreUri)?.use { it.readBytes() }
+                                ?: error("Could not read the selected backup")
+                            BackupRestoreManager.scanEncryptedBackup(bytes, password)
+                        }
+                    }
+                    password.fill('\u0000')
+                    restoreBusy = false
+                    result.onSuccess { scannedBackup = it }
+                        .onFailure { restoreError = it.message ?: "Could not read this backup" }
+                }
             },
-            containerColor = Color(0xFF1C1C1E),
-            confirmButton = {
-                androidx.compose.material3.TextButton(
-                    onClick = {
+        )
+    }
+
+    scannedBackup?.let { scanned ->
+        RestoreOptionsDialog(
+            accountDescription = scanned.accountDescription,
+            libraryDescription = scanned.libraryDescription,
+            available = scanned.categories,
+            onDismiss = { scannedBackup = null; restoreUri = null; restorePassword = "" },
+            onRestore = { selected ->
+                restoreBusy = true
+                coroutineScope.launch {
+                    val result = runCatching { withContext(Dispatchers.IO) { BackupRestoreManager.restore(context, scanned, selected) } }
+                    restoreBusy = false
+                    scannedBackup = null
+                    restoreUri = null
+                    restorePassword = ""
+                    Toast.makeText(
+                        context,
+                        if (result.isSuccess) "Backup restored" else result.exceptionOrNull()?.message ?: "Restore failed",
+                        if (result.isSuccess) Toast.LENGTH_SHORT else Toast.LENGTH_LONG,
+                    ).show()
+                }
+            },
+        )
+    }
+
+    val pendingClearAction = clearAction
+    if (pendingClearAction != null) {
+        val cacheCount = MusicCacheManager.cachedTracks.size
+        val cacheSize = MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)
+        val (title, message, confirmLabel) = when (pendingClearAction) {
+            SettingsClearAction.SEARCH_HISTORY -> Triple(
+                "Clear Search History?",
+                "This will remove your recent searches from this device.",
+                "Clear History",
+            )
+            SettingsClearAction.LISTENING_HISTORY -> Triple(
+                "Clear Song History?",
+                "This will remove your listening history and recently played songs from this device.",
+                "Clear History",
+            )
+            SettingsClearAction.CACHED_SONGS -> Triple(
+                "Clear Cached Songs?",
+                "This will permanently remove all $cacheCount offline songs ($cacheSize) from device storage.",
+                "Clear All",
+            )
+        }
+        AppleConfirmDialog(
+            title = title,
+            message = message,
+            confirmLabel = confirmLabel,
+            onDismiss = { clearAction = null },
+            onConfirm = {
+                when (pendingClearAction) {
+                    SettingsClearAction.SEARCH_HISTORY -> {
+                        SearchHistoryStore.clearAll(context)
+                        Toast.makeText(context, "Search history cleared", Toast.LENGTH_SHORT).show()
+                    }
+                    SettingsClearAction.LISTENING_HISTORY -> {
+                        com.darkxvenom.itune.data.library.ListeningProfileStore.clear(context)
+                        com.darkxvenom.itune.data.library.LibraryStore.clearRecentSongs(context)
+                        Toast.makeText(context, "Listening history cleared", Toast.LENGTH_SHORT).show()
+                    }
+                    SettingsClearAction.CACHED_SONGS -> {
                         MusicCacheManager.clearAllCache()
-                        showClearSongCacheDialog = false
                         Toast.makeText(context, "Cached songs cleared", Toast.LENGTH_SHORT).show()
-                    },
-                ) {
-                    Text("Clear All", color = Color(0xFFFF453A), fontWeight = FontWeight.Bold)
+                    }
                 }
-            },
-            dismissButton = {
-                androidx.compose.material3.TextButton(onClick = { showClearSongCacheDialog = false }) {
-                    Text("Cancel", color = Color.White.copy(alpha = 0.70f))
-                }
+                clearAction = null
             },
         )
     }
@@ -1003,7 +1181,7 @@ private fun SettingsAccountCard(
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.3).sp,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                 )
                 Spacer(Modifier.height(2.dp))
                 Text(
@@ -1011,7 +1189,7 @@ private fun SettingsAccountCard(
                     color = AppleTextSecondary,
                     fontSize = 13.sp,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                 )
             }
 
@@ -1076,6 +1254,7 @@ private fun SettingsEntryRow(
 ) {
     val isEntryEnabled = when (entry) {
         is SettingsEntry.Picker -> entry.enabled
+        is SettingsEntry.Toggle -> entry.enabled
         else -> true
     }
     val animatedAlpha by animateFloatAsState(
@@ -1087,8 +1266,10 @@ private fun SettingsEntryRow(
         is SettingsEntry.Toggle -> {
             {
                 val next = !entry.checked
-                haptics.play(if (next) Haptic.ToggleOn else Haptic.ToggleOff)
-                entry.onToggle(next)
+                if (entry.enabled) {
+                    haptics.play(if (next) Haptic.ToggleOn else Haptic.ToggleOff)
+                    entry.onToggle(next)
+                }
             }
         }
         is SettingsEntry.Picker -> {
@@ -1148,14 +1329,17 @@ private fun SettingsEntryRow(
         Spacer(Modifier.width(13.dp))
 
         Column(modifier = Modifier.weight(1f)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Text(
                     text = entry.title,
                     color = Color.White,
                     fontSize = 15.5.sp,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f).basicMarquee(iterations = Int.MAX_VALUE),
                 )
                 if (entry is SettingsEntry.EffectToggleAction) {
                     Spacer(Modifier.width(5.dp))
@@ -1174,7 +1358,7 @@ private fun SettingsEntryRow(
                     color = AppleTextSecondary,
                     fontSize = 12.sp,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                 )
             }
         }
@@ -1183,11 +1367,13 @@ private fun SettingsEntryRow(
 
         when (entry) {
             is SettingsEntry.Toggle -> {
-                AppleGlassSwitch(
+                AppleSettingsSlidingSwitch(
                     checked = entry.checked,
                     onCheckedChange = { checked ->
-                        haptics.play(if (checked) Haptic.ToggleOn else Haptic.ToggleOff)
-                        entry.onToggle(checked)
+                        if (entry.enabled) {
+                            haptics.play(if (checked) Haptic.ToggleOn else Haptic.ToggleOff)
+                            entry.onToggle(checked)
+                        }
                     },
                 )
             }
@@ -1203,7 +1389,7 @@ private fun SettingsEntryRow(
             }
             is SettingsEntry.EffectToggleAction -> {
                 Box(modifier = Modifier.alpha(if (entry.switchEnabled) 1f else 0.42f)) {
-                    AppleGlassSwitch(
+                    AppleSettingsSlidingSwitch(
                         checked = entry.checked,
                         onCheckedChange = { checked ->
                             if (entry.switchEnabled) {
@@ -1220,7 +1406,7 @@ private fun SettingsEntryRow(
                     color = AppleTextSecondary,
                     fontSize = 14.sp,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.widthIn(max = 120.dp).basicMarquee(iterations = Int.MAX_VALUE),
                 )
                 Spacer(Modifier.width(7.dp))
                 Icon(
@@ -1254,7 +1440,7 @@ private fun SettingsEntryRow(
                         color = AppleTextSecondary,
                         fontSize = 14.sp,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.widthIn(max = 120.dp).basicMarquee(iterations = Int.MAX_VALUE),
                     )
                     Spacer(Modifier.width(7.dp))
                 }
@@ -1281,10 +1467,7 @@ fun AppleGlassSwitch(
     )
     val thumbOffset by animateDpAsState(
         targetValue = if (checked) 20.dp else 0.dp,
-        animationSpec = spring(
-            dampingRatio = 0.72f,
-            stiffness = Spring.StiffnessMediumLow,
-        ),
+        animationSpec = spring(dampingRatio = 0.72f, stiffness = Spring.StiffnessMediumLow),
         label = "appleSwitchThumb",
     )
 
@@ -1293,15 +1476,10 @@ fun AppleGlassSwitch(
             .size(width = 50.dp, height = 30.dp)
             .clip(CircleShape)
             .background(trackColor)
-            .border(
-                width = 0.6.dp,
-                color = Color.White.copy(alpha = if (checked) 0.14f else 0.18f),
-                shape = CircleShape,
-            )
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-            ) { onCheckedChange(!checked) }
+            .border(0.6.dp, Color.White.copy(alpha = if (checked) 0.14f else 0.18f), CircleShape)
+            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
+                onCheckedChange(!checked)
+            }
             .padding(2.dp),
         contentAlignment = Alignment.CenterStart,
     ) {
@@ -1317,11 +1495,21 @@ fun AppleGlassSwitch(
 }
 
 @Composable
+private fun AppleSettingsSlidingSwitch(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    AppleSegmentedSwitch(
+        options = listOf("Off", "On"),
+        selectedOption = if (checked) "On" else "Off",
+        onSelect = { onCheckedChange(it == "On") },
+        modifier = Modifier.width(86.dp),
+    )
+}
+
+@Composable
 fun AppleSegmentedSwitch(
     options: List<String>,
     selectedOption: String,
     onSelect: (String) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.width(152.dp),
 ) {
     val selectedIndex = options.indexOf(selectedOption).coerceAtLeast(0)
     val animatedIndex by animateFloatAsState(
@@ -1335,7 +1523,6 @@ fun AppleSegmentedSwitch(
 
     BoxWithConstraints(
         modifier = modifier
-            .width(152.dp)
             .height(32.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(Color.White.copy(alpha = 0.12f))
@@ -1387,7 +1574,7 @@ fun AppleSegmentedSwitch(
                     Text(
                         text = option,
                         style = TextStyle(
-                            fontFamily = SFProDisplay,
+                            fontFamily = LocalAppFontFamily.current,
                             fontSize = 12.5.sp,
                             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
                             letterSpacing = (-0.2).sp,
@@ -1618,26 +1805,26 @@ private fun SettingsDisplayNameDialog(
 
 @Composable
 private fun SettingsAboutDialog(
-    displayName: String,
+    release: GithubReleaseInfo?,
+    updateAvailable: Boolean,
+    isCheckingForUpdate: Boolean,
+    onOpenRelease: (GithubReleaseInfo) -> Unit,
     onReplayWelcome: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     SettingsModalFrame(onDismiss = onDismiss) {
-        Spacer(Modifier.height(20.dp))
-        Text(
-            text = "About iTune",
-            color = Color.White,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.SemiBold,
+        Spacer(Modifier.height(22.dp))
+        Image(
+            painter = painterResource(R.drawable.ic_itune_waves),
+            contentDescription = "iTune icon",
+            modifier = Modifier.size(54.dp),
         )
-        Spacer(Modifier.height(6.dp))
+        Spacer(Modifier.height(7.dp))
         Text(
-            text = "Apple Music-inspired dark Liquid Glass player for $displayName.",
-            color = AppleTextSecondary,
-            fontSize = 12.5.sp,
-            lineHeight = 17.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 24.dp),
+            text = "iTune",
+            color = Color.White,
+            fontSize = 21.sp,
+            fontWeight = FontWeight.Bold,
         )
         Spacer(Modifier.height(14.dp))
 
@@ -1645,16 +1832,48 @@ private fun SettingsAboutDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 18.dp)
-                .clip(RoundedCornerShape(14.dp))
-                .background(Color.White.copy(alpha = 0.05f))
-                .border(0.6.dp, Color.White.copy(alpha = 0.10f), RoundedCornerShape(14.dp))
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.Black)
+                .border(0.6.dp, Color.White.copy(alpha = 0.14f), RoundedCornerShape(16.dp))
                 .padding(14.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            AboutInfoLine("Version", "2.4 (2408)")
-            AboutInfoLine("Audio Engine", "Lossless ALAC & Spatial DSP")
-            AboutInfoLine("UI Theme", "OLED Black • Liquid Glass")
-            AboutInfoLine("Status", "Up to date")
+            AboutInfoLine("Version", AppUpdateManager.installedVersion)
+            AboutInfoLine("Version code", AppUpdateManager.installedVersionCode.toString())
+            AboutInfoLine("Latest on GitHub", release?.tag ?: if (isCheckingForUpdate) "Checking…" else "No release found")
+            AboutInfoLine("Release codename", release?.name ?: "Not published")
+            AboutInfoLine("Last update", release?.let { AppUpdateManager.formattedPublishedDate(it.publishedAt) } ?: "—")
+            AboutInfoLine(
+                "Status",
+                when {
+                    updateAvailable -> "Update available"
+                    isCheckingForUpdate -> "Checking"
+                    release != null -> "Up to date"
+                    else -> "Release unavailable"
+                },
+            )
+        }
+
+        if (release != null && updateAvailable) {
+            Spacer(Modifier.height(12.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp)
+                    .height(44.dp)
+                    .clip(RoundedCornerShape(13.dp))
+                    .background(Color(0xFF0A84FF).copy(alpha = 0.18f))
+                    .border(0.7.dp, Color(0xFF0A84FF).copy(alpha = 0.30f), RoundedCornerShape(13.dp))
+                    .clickable { onOpenRelease(release) },
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = if (release.hasApkAsset) "Download iTune ${release.tag}" else "View iTune ${release.tag} Release",
+                    color = Color(0xFF64AFFF),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
         }
 
         Spacer(Modifier.height(16.dp))
@@ -1770,6 +1989,9 @@ private fun buildSettingsSections(
     bitPerfectActive: Boolean,
     activeOutputName: String,
     searchHistoryCount: Int,
+    updateVersion: String?,
+    latestVersion: String?,
+    isCheckingForUpdate: Boolean,
     iShareSession: IShareSession?,
     iShareIsLan: Boolean,
     dynamicIslandEnabled: Boolean,
@@ -1786,6 +2008,8 @@ private fun buildSettingsSections(
     onClearSearchHistory: () -> Unit,
     onClearListeningHistory: () -> Unit,
     onOpenAbout: () -> Unit,
+    onOpenBackup: () -> Unit,
+    onOpenRestore: () -> Unit,
     onOpenAutoSleepTimer: () -> Unit,
     onOpenProxySettings: () -> Unit,
     onOpenAodSettings: () -> Unit,
@@ -2034,17 +2258,32 @@ private fun buildSettingsSections(
                     ),
                     onSelect = { onSelectString(SettingsStore.KEY_AUDIO_QUALITY, it) },
                 ),
+                SettingsEntry.Picker(
+                    id = "pcm_output_format",
+                    title = "PCM Output Format",
+                    subtitle = "Rebuilds playback at the current position",
+                    iconRes = R.drawable.ic_settings_streaming_quality,
+                    keywords = listOf("pcm", "16 bit", "32 bit", "float", "uac", "usb dac", "output format"),
+                    currentValue = state.pcmOutputFormat,
+                    description = "Choose the PCM format requested from Android's audio output. A USB DAC may convert it to a format it supports.",
+                    options = listOf(
+                        SettingsOptionChoice("16-bit PCM", "Standard integer PCM output; broadly compatible with USB Audio Class DACs"),
+                        SettingsOptionChoice("32-bit float PCM", "Float PCM output when supported by Android and the connected audio path"),
+                    ),
+                    onSelect = { onSelectString(SettingsStore.KEY_PCM_OUTPUT_FORMAT, it) },
+                ),
             ).let { baseEntries ->
                 if (!state.autoMix) {
                     baseEntries + listOf(
                         SettingsEntry.Picker(
                             id = "crossfade",
                             title = "Crossfade",
-                            subtitle = "Smooth transition between songs",
+                            subtitle = if (state.afterglowDuration == "Off") "Smooth transition between songs" else "Unavailable while Afterglow is active",
                             iconRes = R.drawable.ic_settings_crossfade,
                             keywords = listOf("gapless", "fade", "blend", "mix", "dj", "transition"),
                             currentValue = state.crossfadeDuration,
                             description = "Overlap the fade-out of the ending track with the start of the next.",
+                            enabled = state.afterglowDuration == "Off",
                             options = listOf(
                                 SettingsOptionChoice("Off", "Play tracks cleanly back-to-back"),
                                 SettingsOptionChoice("2 sec", "Subtle transition overlap"),
@@ -2063,11 +2302,29 @@ private fun buildSettingsSections(
                 SettingsEntry.Toggle(
                     id = "automix",
                     title = "AutoMix",
-                    subtitle = "Smart blends that adapt to every song",
+                    subtitle = if (state.afterglowDuration == "Off") "Smart blends that adapt to every song" else "Unavailable while Afterglow is active",
                     iconRes = R.drawable.ic_settings_automix,
                     keywords = listOf("automix", "auto mix", "smart", "dj", "blend", "transition", "crossfade", "level", "loudness"),
                     checked = state.autoMix,
+                    enabled = state.afterglowDuration == "Off",
                     onToggle = { onToggleBool(SettingsStore.KEY_AUTOMIX, it) },
+                ),
+                SettingsEntry.Picker(
+                    id = "afterglow",
+                    title = "Afterglow",
+                    subtitle = if (state.afterglowDuration == "Off") "Apply the Low-Pass effect at each song’s end" else "Low-Pass for the final ${state.afterglowDuration.removeSuffix(" sec")} seconds",
+                    iconRes = R.drawable.ic_fx_low_pass,
+                    keywords = listOf("afterglow", "ending", "outro", "low pass", "final seconds", "song end"),
+                    currentValue = state.afterglowDuration,
+                    description = "Apply the same Low-Pass Equalizer effect during the selected final seconds of every song. Afterglow pauses AutoMix and Crossfade while enabled.",
+                    enabled = true,
+                    options = listOf(
+                        SettingsOptionChoice("Off", "Keep normal playback effects and transitions"),
+                        SettingsOptionChoice("5 sec", "Apply Low-Pass during each song’s final 5 seconds"),
+                        SettingsOptionChoice("10 sec", "Apply Low-Pass during each song’s final 10 seconds"),
+                        SettingsOptionChoice("15 sec", "Apply Low-Pass during each song’s final 15 seconds"),
+                    ),
+                    onSelect = { onSelectString(SettingsStore.KEY_AFTERGLOW_DURATION, it) },
                 ),
                 SettingsEntry.Toggle(
                     id = "permanent_shuffle",
@@ -2175,6 +2432,19 @@ private fun buildSettingsSections(
                 selectedOption = state.playerType,
                 onSelect = { onSelectString(SettingsStore.KEY_PLAYER_TYPE, it) },
             ),
+            SettingsEntry.Toggle(
+                id = "player_dynamic_coloring",
+                title = "Player Dynamic Coloring",
+                subtitle = if (state.playerDynamicColoring) {
+                    "Artwork colors on player controls, text & button bubbles"
+                } else {
+                    "Original white player colors"
+                },
+                iconRes = R.drawable.ic_settings_liquid_glass,
+                keywords = listOf("player", "dynamic", "color", "colour", "artwork", "accent", "buttons", "text", "bubbles"),
+                checked = state.playerDynamicColoring,
+                onToggle = { onToggleBool(SettingsStore.KEY_PLAYER_DYNAMIC_COLORING, it) },
+            ),
             SettingsEntry.SegmentedToggle(
                 id = "top_card_type",
                 title = "Home Top Card Style",
@@ -2200,6 +2470,19 @@ private fun buildSettingsSections(
                 keywords = listOf("lyrics", "sing", "karaoke", "text"),
                 checked = state.timeSyncedLyrics,
                 onToggle = { onToggleBool(SettingsStore.KEY_TIME_SYNCED_LYRICS, it) },
+            ),
+            SettingsEntry.Picker(
+                id = "app_font",
+                title = "App Font",
+                subtitle = "Change app typography; the player keeps its current SF Pro style",
+                iconRes = R.drawable.ic_settings_liquid_glass,
+                keywords = listOf("font", "typeface", "typography", "linotte", "poppins", "sf pro"),
+                currentValue = AppFont.fromKey(state.appFont).label,
+                description = "Choose a typeface for the app interface.",
+                options = AppFont.entries.map { font ->
+                    SettingsOptionChoice(font.label, "Use ${font.label} throughout the app")
+                },
+                onSelect = { onSelectString(SettingsStore.KEY_APP_FONT, it) },
             ),
             SettingsEntry.Action(
                 id = "lyrics_providers",
@@ -2257,7 +2540,7 @@ private fun buildSettingsSections(
             SettingsEntry.Toggle(
                 id = "download_wifi_only",
                 title = "Download Over Wi-Fi",
-                subtitle = "Prevent large album downloads on mobile data",
+                subtitle = "Wait for Wi-Fi before automatic downloads",
                 iconRes = R.drawable.ic_settings_wifi,
                 keywords = listOf("wifi", "offline", "save", "bandwidth"),
                 checked = state.downloadOverWifiOnly,
@@ -2340,23 +2623,6 @@ private fun buildSettingsSections(
                 checked = state.automaticDownloads,
                 onToggle = { onToggleBool(SettingsStore.KEY_AUTO_DOWNLOADS, it) },
             ),
-            SettingsEntry.Picker(
-                id = "optimize_storage",
-                title = "Optimize Storage",
-                subtitle = "Automatically trim older unplayed downloads",
-                iconRes = R.drawable.ic_settings_storage,
-                keywords = listOf("space", "disk", "gb", "clean", "downloads"),
-                currentValue = state.optimizeStorage,
-                description = "Minimum storage budget reserved for downloaded albums and playlists.",
-                options = listOf(
-                    SettingsOptionChoice("4 GB", "Compact library cache (~600 tracks)"),
-                    SettingsOptionChoice("8 GB", "Balanced storage (~1,200 tracks)"),
-                    SettingsOptionChoice("16 GB", "Large offline library (~2,400 tracks)"),
-                    SettingsOptionChoice("32 GB", "Maximum hi-res offline collection"),
-                    SettingsOptionChoice("Off", "Keep all downloaded tracks indefinitely"),
-                ),
-                onSelect = { onSelectString(SettingsStore.KEY_OPTIMIZE_STORAGE, it) },
-            ),
             SettingsEntry.Action(
                 id = "audio_cache",
                 title = "Clear App Buffer Cache",
@@ -2392,10 +2658,10 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "add_favorites",
-                title = "Add Favorite Songs",
-                subtitle = "Include liked tracks in Library automatically",
+                title = "Keep Likes on This Device",
+                subtitle = "Keep liked songs in iTune when signed out",
                 iconRes = R.drawable.ic_settings_favorites,
-                keywords = listOf("liked", "heart", "star", "favorites", "library"),
+                keywords = listOf("liked", "heart", "star", "favorites", "library", "offline", "sign out"),
                 checked = state.addFavoriteSongs,
                 onToggle = { onToggleBool(SettingsStore.KEY_ADD_FAVORITE_SONGS, it) },
             ),
@@ -2406,18 +2672,9 @@ private fun buildSettingsSections(
         title = "Notifications & General",
         entries = listOf(
             SettingsEntry.Toggle(
-                id = "new_music_alerts",
-                title = "New Music Alerts",
-                subtitle = "Alerts when followed artists release singles",
-                iconRes = R.drawable.ic_settings_notifications,
-                keywords = listOf("alerts", "notifications", "releases", "artists"),
-                checked = state.newMusicAlerts,
-                onToggle = { onToggleBool(SettingsStore.KEY_NEW_MUSIC_ALERTS, it) },
-            ),
-            SettingsEntry.Toggle(
                 id = "offline_mode",
                 title = "Offline Mode",
-                subtitle = "Show only downloaded songs & albums",
+                subtitle = "Require a downloaded copy to start playback",
                 iconRes = R.drawable.ic_settings_offline,
                 keywords = listOf("airplane", "offline", "local", "disconnect"),
                 checked = state.offlineMode,
@@ -2483,12 +2740,40 @@ private fun buildSettingsSections(
             SettingsEntry.Action(
                 id = "about_itune",
                 title = "General & About",
-                subtitle = "Build details, audio DSP & Liquid Glass",
+                subtitle = when {
+                    updateVersion != null -> "iTune $updateVersion is ready to update • Build details & Liquid Glass"
+                    isCheckingForUpdate -> "Checking GitHub for updates • Build details & Liquid Glass"
+                    else -> "Build details, audio DSP & Liquid Glass"
+                },
                 iconRes = R.drawable.ic_settings_about,
                 keywords = listOf("version", "about", "general", "build", "info", "update"),
-                trailingValue = "v2.4",
-                badgeCount = 1,
+                trailingValue = latestVersion?.let { "v$it" } ?: "v${AppUpdateManager.installedVersion}",
+                badgeCount = if (updateVersion != null) 1 else null,
                 onAction = onOpenAbout,
+            ),
+        ),
+    ),
+    SettingsSection(
+        id = "backup_restore",
+        title = "Backup & Restore",
+        entries = listOf(
+            SettingsEntry.Action(
+                id = "backup_itune",
+                title = "Back Up iTune",
+                subtitle = "Save encrypted accounts, playlists, history, albums and stats",
+                iconRes = R.drawable.ic_settings_storage,
+                keywords = listOf("backup", "export", "save", "encrypted", "account", "playlist", "history", "stats"),
+                trailingValue = "Create",
+                onAction = onOpenBackup,
+            ),
+            SettingsEntry.Action(
+                id = "restore_itune",
+                title = "Restore from Backup",
+                subtitle = "Import selected data from an encrypted .itune file",
+                iconRes = R.drawable.ic_settings_history,
+                keywords = listOf("restore", "import", "backup", "itune", "account", "library"),
+                trailingValue = "Choose File",
+                onAction = onOpenRestore,
             ),
         ),
     ),
@@ -2543,5 +2828,7 @@ private fun buildSettingsSections(
             ),
         ),
     ),
-)
+).let { settingsSections ->
+    settingsSections.filterNot { it.id == "notifications_general" } + settingsSections.filter { it.id == "notifications_general" }
+}
 }
