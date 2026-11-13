@@ -9,6 +9,8 @@ import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.library.ListeningProfileStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
 
 class TimeTravelDatabaseHelper private constructor(context: Context) :
     SQLiteOpenHelper(context.applicationContext, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -122,6 +124,53 @@ class TimeTravelDatabaseHelper private constructor(context: Context) :
         } catch (e: Exception) {
             Log.e(TAG, "Error saving playback session", e)
         }
+    }
+
+    fun exportPlaybackHistory(): JSONArray {
+        val columns = arrayOf(
+            COL_SESSION_ID, COL_SONG_ID, COL_SONG_TITLE, COL_ARTIST_NAME, COL_ARTIST_ID,
+            COL_ALBUM_NAME, COL_ALBUM_ID, COL_PLAYLIST_NAME, COL_PLAYLIST_ID, COL_ARTWORK_URL,
+            COL_TIMESTAMP, COL_DURATION_SEC, COL_COMPLETED,
+        )
+        val result = JSONArray()
+        readableDatabase.query(TABLE_PLAYBACK, columns, null, null, null, null, "$COL_TIMESTAMP ASC").use { cursor ->
+            while (cursor.moveToNext()) {
+                fun nullable(name: String): Any = cursor.getString(cursor.getColumnIndexOrThrow(name)) ?: JSONObject.NULL
+                result.put(JSONObject().apply {
+                    put(COL_SESSION_ID, cursor.getString(0)); put(COL_SONG_ID, cursor.getString(1))
+                    put(COL_SONG_TITLE, cursor.getString(2)); put(COL_ARTIST_NAME, cursor.getString(3))
+                    put(COL_ARTIST_ID, nullable(COL_ARTIST_ID)); put(COL_ALBUM_NAME, nullable(COL_ALBUM_NAME))
+                    put(COL_ALBUM_ID, nullable(COL_ALBUM_ID)); put(COL_PLAYLIST_NAME, nullable(COL_PLAYLIST_NAME))
+                    put(COL_PLAYLIST_ID, nullable(COL_PLAYLIST_ID)); put(COL_ARTWORK_URL, nullable(COL_ARTWORK_URL))
+                    put(COL_TIMESTAMP, cursor.getLong(10)); put(COL_DURATION_SEC, cursor.getLong(11))
+                    put(COL_COMPLETED, cursor.getInt(12) != 0)
+                })
+            }
+        }
+        return result
+    }
+
+    fun restorePlaybackHistory(records: JSONArray) {
+        val db = writableDatabase
+        db.beginTransaction()
+        try {
+            db.delete(TABLE_PLAYBACK, null, null)
+            for (i in 0 until records.length()) {
+                val row = records.optJSONObject(i) ?: continue
+                val values = ContentValues().apply {
+                    put(COL_SESSION_ID, row.optString(COL_SESSION_ID)); put(COL_SONG_ID, row.optString(COL_SONG_ID))
+                    put(COL_SONG_TITLE, row.optString(COL_SONG_TITLE)); put(COL_ARTIST_NAME, row.optString(COL_ARTIST_NAME))
+                    fun nullable(key: String) = row.optString(key).takeUnless { it.isBlank() || it == "null" }
+                    put(COL_ARTIST_ID, nullable(COL_ARTIST_ID)); put(COL_ALBUM_NAME, nullable(COL_ALBUM_NAME))
+                    put(COL_ALBUM_ID, nullable(COL_ALBUM_ID)); put(COL_PLAYLIST_NAME, nullable(COL_PLAYLIST_NAME))
+                    put(COL_PLAYLIST_ID, nullable(COL_PLAYLIST_ID)); put(COL_ARTWORK_URL, nullable(COL_ARTWORK_URL))
+                    put(COL_TIMESTAMP, row.optLong(COL_TIMESTAMP)); put(COL_DURATION_SEC, row.optLong(COL_DURATION_SEC))
+                    put(COL_COMPLETED, if (row.optBoolean(COL_COMPLETED)) 1 else 0)
+                }
+                db.insert(TABLE_PLAYBACK, null, values)
+            }
+            db.setTransactionSuccessful()
+        } finally { db.endTransaction() }
     }
 
     suspend fun getStats(period: ListeningPeriod, endTimeMs: Long = System.currentTimeMillis()): TimeTravelStats =
