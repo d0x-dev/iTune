@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -26,6 +27,7 @@ private val AppleDarkColorScheme = darkColorScheme(
 
 @Composable
 fun ITuneTheme(
+    appFont: String = "system",
     content: @Composable () -> Unit
 ) {
     val view = LocalView.current
@@ -40,9 +42,12 @@ fun ITuneTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = AppleDarkColorScheme,
-        typography = Typography,
-        content = content
-    )
+    val appFontFamily = AppFont.fromKey(appFont).family()
+    CompositionLocalProvider(LocalAppFontFamily provides appFontFamily) {
+        MaterialTheme(
+            colorScheme = AppleDarkColorScheme,
+            typography = typographyForAppFont(appFont),
+            content = content
+        )
+    }
 }
