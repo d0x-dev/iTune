@@ -27,7 +27,9 @@ import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.library.SettingsStore
+import com.darkxvenom.itune.data.lastfm.LastFmIntegration
 import com.darkxvenom.itune.data.news.DeveloperNewsManager
+import com.darkxvenom.itune.data.updates.AppUpdateManager
 import com.darkxvenom.itune.data.repository.AvatarManager
 import com.darkxvenom.itune.radio.OnlineRadioController
 import com.darkxvenom.itune.ishare.IShareSyncManager
@@ -53,6 +55,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         AvatarManager.init(this)
         SettingsStore.ensureInit(this)
+        LastFmIntegration.initialize(this)
+        handleLastFmCallback(intent)
         AutoSleepTimerManager.start(this)
         GoogleAuthStore.ensureInit(this)
         MusicPlayerState.init(this)
@@ -62,6 +66,7 @@ class MainActivity : ComponentActivity() {
         YouTubeLibrarySyncManager.launchFullSync(this)
         OnlineRadioController.ensureInit(this)
         DeveloperNewsManager.init(this)
+        AppUpdateManager.checkOnAppOpen()
         DynamicIslandStore.ensureInit(this)
         DynamicIslandStore.syncServiceState(this)
         AudioDownloader.ensureChannel(this)
@@ -80,7 +85,7 @@ class MainActivity : ComponentActivity() {
                     window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
                 }
             }
-            ITuneTheme {
+            ITuneTheme(appFont = settingsState.appFont) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = AppleOledBlack
@@ -161,6 +166,16 @@ class MainActivity : ComponentActivity() {
         setIntent(intent)
         handleIncomingShareIntent(intent)
         handleRecognitionIntent(intent)
+        handleLastFmCallback(intent)
+    }
+
+    private fun handleLastFmCallback(intent: android.content.Intent?) {
+        val uri = intent?.data ?: return
+        if (uri.scheme != "itune" || uri.host != "auth-callback") return
+        val token = uri.getQueryParameter("token").orEmpty()
+        lifecycleScope.launch(Dispatchers.IO) {
+            LastFmIntegration.completeSignIn(this@MainActivity, token)
+        }
     }
 
     private fun handleRecognitionIntent(intent: android.content.Intent?) {
