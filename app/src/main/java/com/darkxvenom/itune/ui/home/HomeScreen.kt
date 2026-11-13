@@ -215,26 +215,29 @@ fun HomeScreen(
     }
     val visibleRemote = remember(remoteShelves, hideExplicit) { remoteShelves.withoutExplicit(hideExplicit) }
     val visiblePersonal = remember(personalShelves, hideExplicit) { personalShelves.withoutExplicit(hideExplicit) }
-    val heroCards = remember {
-        MusicRepository.featuredCards.map { fc ->
-            HomeHeroCard(
-                id = fc.id,
-                category = fc.category,
-                title = fc.title,
-                subtitle = fc.subtitle,
-                caption = fc.caption,
-                imageUrl = fc.imageUrl,
-                heroType = fc.heroType,
-                accentColor = fc.accentColor,
-                gradientColors = fc.gradientColors,
-                item = HomeFeedItem(
-                    kind = HomeItemKind.PLAYLIST,
+    val heroCards = remember(visibleRemote, visiblePersonal, newReleases, ytAccountState.isSignedIn) {
+        val live = HomeFeedRepository.buildHeroCards(visibleRemote, visiblePersonal, newReleases, ytAccountState.isSignedIn)
+        if (live.isNotEmpty()) live else {
+            MusicRepository.featuredCards.map { fc ->
+                HomeHeroCard(
+                    id = fc.id,
+                    category = fc.category,
                     title = fc.title,
                     subtitle = fc.subtitle,
-                    thumbnailUrl = fc.imageUrl,
-                    browseId = fc.id
+                    caption = fc.caption,
+                    imageUrl = fc.imageUrl,
+                    heroType = fc.heroType,
+                    accentColor = fc.accentColor,
+                    gradientColors = fc.gradientColors,
+                    item = HomeFeedItem(
+                        kind = HomeItemKind.PLAYLIST,
+                        title = fc.title,
+                        subtitle = fc.subtitle,
+                        thumbnailUrl = fc.imageUrl,
+                        browseId = fc.id
+                    )
                 )
-            )
+            }
         }
     }
     val homeShelves = remember(
@@ -549,23 +552,7 @@ fun HomeScreen(
                         isPortrait = isPortrait,
                         sectionTitle = "Top Picks for You",
                         modifier = Modifier.padding(top = 4.dp),
-                        onCardClick = { card ->
-                            val query = when (card.id) {
-                                "f1" -> "Today's Hits"
-                                "f2" -> "Never Enough The Weeknd"
-                                "f3" -> "A-List Pop"
-                                else -> "${card.title} ${card.subtitle}"
-                            }
-                            coroutineScope.launch {
-                                val tracks = com.darkxvenom.itune.backend.MusicBackend.searchMusic(query)
-                                val first = tracks.firstOrNull()
-                                if (first != null) {
-                                    MusicPlayerState.play(first, newQueue = tracks)
-                                } else {
-                                    onFeedItemClick(card.item, card.queue)
-                                }
-                            }
-                        },
+                        onCardClick = { card -> onFeedItemClick(card.item, card.queue) },
                         onCardMenuClick = { card, offset -> onFeedItemMenuClick(card.item, offset) },
                     )
                 }

@@ -268,16 +268,19 @@ object HomeFeedRepository {
             it.group == HomeShelfGroup.FEED && !it.isSongShelf && !it.isArtistShelf &&
                 it.items.any { i -> i.kind == HomeItemKind.PLAYLIST || i.kind == HomeItemKind.ALBUM }
         }
-        feedPick?.items?.firstOrNull { it.kind == HomeItemKind.PLAYLIST || it.kind == HomeItemKind.ALBUM }?.let { item ->
-            add(
-                HomeHeroCard(
-                    id = "hero_feed", category = if (signedIn) "Made for you" else "Featured",
-                    title = item.title, subtitle = feedPick.title,
-                    caption = item.subtitle.ifBlank { feedPick.strapline.ifBlank { feedPick.title } },
-                    imageUrl = item.thumbnailUrl, item = item,
-                ),
-            )
-        }
+        feedPick?.items?.filter { (it.kind == HomeItemKind.PLAYLIST || it.kind == HomeItemKind.ALBUM) && it.thumbnailUrl != null }
+            ?.take(2)
+            ?.forEachIndexed { idx, item ->
+                add(
+                    HomeHeroCard(
+                        id = if (idx == 0) "hero_feed" else "hero_feed_$idx",
+                        category = if (signedIn) "Made for you" else "Featured",
+                        title = item.title, subtitle = feedPick.title,
+                        caption = item.subtitle.ifBlank { feedPick.strapline.ifBlank { feedPick.title } },
+                        imageUrl = item.thumbnailUrl, item = item,
+                    ),
+                )
+            }
 
         // 2. Newest release
         releases.firstOrNull()?.let { r ->

@@ -115,7 +115,7 @@ fun BrowseChartsView(
     var showRegionPicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(selectedRegion) {
-        ChartsRepository.ensureLoaded(selectedRegion)
+        ChartsRepository.refresh(selectedRegion, force = false)
     }
 
     Column(
@@ -129,6 +129,7 @@ fun BrowseChartsView(
             onPlatformSelected = { platform ->
                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 ChartsRepository.selectedPlatform.value = platform
+                ChartsRepository.ensureLoaded(selectedRegion)
             }
         )
 
@@ -136,9 +137,7 @@ fun BrowseChartsView(
 
         // Region Pill for Apple Music & iTune
         if (selectedPlatform == ChartPlatform.APPLE || selectedPlatform == ChartPlatform.ITUNE) {
-            val effectiveCode = if (selectedRegion == "system") {
-                ContentLocaleCatalog.resolveEffectiveGl(SettingsStore.state.value.contentCountry).lowercase()
-            } else selectedRegion.lowercase()
+            val effectiveCode = ChartsRepository.getEffectiveCountryCode(selectedRegion)
             val regionName = ChartRegionSlugToName[effectiveCode] ?: "United States"
             Row(
                 modifier = Modifier
@@ -179,7 +178,9 @@ fun BrowseChartsView(
                     if (isLoading && appleTracks.isEmpty()) {
                         ChartsSkeletonList()
                     } else if (appleTracks.isEmpty()) {
-                        ChartsEmptyView("No Apple Music charts available for this region.")
+                        ChartsEmptyView("No Apple Music charts available for this region.") {
+                            ChartsRepository.refresh(selectedRegion, force = true)
+                        }
                     } else {
                         ChartsTrackList(
                             tracks = appleTracks,
@@ -197,7 +198,9 @@ fun BrowseChartsView(
                     if (isLoading && ituneTracks.isEmpty()) {
                         ChartsSkeletonList()
                     } else if (ituneTracks.isEmpty()) {
-                        ChartsEmptyView("No iTune charts available.")
+                        ChartsEmptyView("No iTune charts available.") {
+                            ChartsRepository.refresh(selectedRegion, force = true)
+                        }
                     } else {
                         ChartsTrackList(
                             tracks = ituneTracks,
@@ -742,20 +745,43 @@ private fun ChartsSkeletonList() {
 }
 
 @Composable
-private fun ChartsEmptyView(message: String) {
+private fun ChartsEmptyView(message: String, onRetry: (() -> Unit)? = null) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp),
+            .height(220.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = message,
-            color = AppleTextSecondary,
-            fontSize = 14.sp,
-            fontFamily = SFProDisplay,
-            textAlign = TextAlign.Center
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = message,
+                color = AppleTextSecondary,
+                fontSize = 14.sp,
+                fontFamily = SFProDisplay,
+                textAlign = TextAlign.Center
+            )
+            if (onRetry != null) {
+                Spacer(Modifier.height(14.dp))
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(Color(0xFF2C2C2E))
+                        .clickable { onRetry() }
+                        .padding(horizontal = 20.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        text = "Retry",
+                        color = Color.White,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = SFProDisplay
+                    )
+                }
+            }
+        }
     }
 }
 

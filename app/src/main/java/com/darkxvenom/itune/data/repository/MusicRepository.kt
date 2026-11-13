@@ -25,7 +25,8 @@ object MusicRepository {
             caption = "It feels \"Illegal,\" but it's not. Hear the PinkPantheress single in Spatial Audio now.",
             heroType = CoverArtType.TODAYS_HITS_HERO,
             accentColor = Color(0xFFFFD159),
-            gradientColors = listOf(Color(0xFF2C241E), Color(0xFF191614), Color(0xFF0C0A09))
+            gradientColors = listOf(Color(0xFF2C241E), Color(0xFF191614), Color(0xFF0C0A09)),
+            imageUrl = "https://is1-ssl.mzstatic.com/image/thumb/Features125/v4/4a/01/70/4a017006-2dc0-5906-8d82-c2cb8b420235/mza_1033878564177727415.png/1000x1000bb.webp"
         ),
         FeaturedCard(
             id = "f2",
@@ -35,7 +36,8 @@ object MusicRepository {
             caption = "A thrilling descent into midnight alt-r&b. Experience in Spatial Audio with Dolby Atmos.",
             heroType = CoverArtType.NEVER_ENOUGH_HERO,
             accentColor = Color(0xFFFF3B30),
-            gradientColors = listOf(Color(0xFF330B0B), Color(0xFF1D0606), Color(0xFF0A0505))
+            gradientColors = listOf(Color(0xFF330B0B), Color(0xFF1D0606), Color(0xFF0A0505)),
+            imageUrl = "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/a4/d0/2d/a4d02dc2-80ea-3129-8e2b-fbc6d3ad93bc/24UMGIM88531.rgb.jpg/1000x1000bb.webp"
         ),
         FeaturedCard(
             id = "f3",
@@ -45,7 +47,8 @@ object MusicRepository {
             caption = "The defining sounds of today's pop universe, updated weekly in pure Lossless.",
             heroType = CoverArtType.ALIST_POP_HERO,
             accentColor = Color(0xFF5AC8FA),
-            gradientColors = listOf(Color(0xFF122C3D), Color(0xFF091621), Color(0xFF060B10))
+            gradientColors = listOf(Color(0xFF122C3D), Color(0xFF091621), Color(0xFF060B10)),
+            imageUrl = "https://is1-ssl.mzstatic.com/image/thumb/Features115/v4/eb/fa/1c/ebfa1cca-54ee-57c2-f1df-bb3470717208/mza_1495937177559124430.png/1000x1000bb.webp"
         )
     )
 

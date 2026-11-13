@@ -20,6 +20,12 @@ object ChartsRepository {
     private const val TAG = "ChartsRepository"
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+    init {
+        scope.launch {
+            refresh("system")
+        }
+    }
+
     val selectedPlatform = MutableStateFlow(ChartPlatform.APPLE)
     val selectedRegion = MutableStateFlow("system")
 
@@ -49,23 +55,29 @@ object ChartsRepository {
 
     private var currentLoadedRegion: String? = null
 
+    fun getEffectiveCountryCode(countryCode: String = "system"): String {
+        return if (countryCode.equals("system", ignoreCase = true)) {
+            val userCountry = SettingsStore.state.value.contentCountry
+            val norm = if (userCountry.isNotBlank() && !userCountry.equals("system", ignoreCase = true) && !userCountry.equals("System Default", ignoreCase = true)) {
+                ContentLocaleCatalog.normalizeCountryChoice(userCountry).lowercase(Locale.ROOT)
+            } else ""
+            if (norm.length == 2 && norm.all { it.isLetter() }) norm else Locale.getDefault().country.lowercase(Locale.ROOT).ifBlank { "us" }
+        } else {
+            countryCode.lowercase(Locale.ROOT).take(2).ifBlank { "us" }
+        }
+    }
+
     fun ensureLoaded(regionCode: String = "system") {
-        if (currentLoadedRegion == null || _appleTracks.value.isEmpty()) {
+        if (_appleTracks.value.isEmpty()) {
             refresh(regionCode, force = false)
         }
     }
 
     fun refresh(countryCode: String = "system", force: Boolean = false) {
-        val resolvedCode = runCatching {
-            if (countryCode == "system") {
-                ContentLocaleCatalog.resolveEffectiveGl(SettingsStore.state.value.contentCountry).lowercase(Locale.ROOT)
-            } else {
-                val norm = ContentLocaleCatalog.normalizeCountryChoice(countryCode).lowercase(Locale.ROOT)
-                if (norm.length == 2 && norm.all { it.isLetter() }) norm else countryCode.lowercase(Locale.ROOT).take(2)
-            }
-        }.getOrDefault("us").let { if (it.length != 2 || !it.all { c -> c.isLetter() }) "us" else it }
+        val resolvedCode = getEffectiveCountryCode(countryCode)
 
-        if (_isLoading.value && !force && currentLoadedRegion == resolvedCode) return
+        if (_isLoading.value && !force) return
+        if (_appleTracks.value.isNotEmpty() && !force && currentLoadedRegion == resolvedCode) return
 
         scope.launch {
             _isLoading.value = true
@@ -143,9 +155,13 @@ object ChartsRepository {
                 jioJob.join()
                 ytJob.join()
 
-                // If iTune tracks still empty, fallback to YouTube tracks
+                // If iTune tracks still empty, fallback to Apple or YouTube tracks
                 if (_ituneTracks.value.isEmpty()) {
-                    _ituneTracks.value = _youtubeTracks.value.take(50)
+                    if (_appleTracks.value.isNotEmpty()) {
+                        _ituneTracks.value = _appleTracks.value.take(50)
+                    } else if (_youtubeTracks.value.isNotEmpty()) {
+                        _ituneTracks.value = _youtubeTracks.value.take(50)
+                    }
                 }
 
                 currentLoadedRegion = resolvedCode
