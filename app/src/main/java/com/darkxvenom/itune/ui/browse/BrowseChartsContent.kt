@@ -87,7 +87,7 @@ import com.darkxvenom.itune.data.charts.ChartTrack
 import com.darkxvenom.itune.data.charts.ChartsRepository
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.SettingsStore
-import com.darkxvenom.itune.ui.player.SFProDisplay
+import com.darkxvenom.itune.ui.theme.LocalAppFontFamily
 import com.darkxvenom.itune.ui.theme.AppleMusicRed
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.AppleTextPrimary
@@ -161,7 +161,7 @@ fun BrowseChartsView(
                     color = Color.White.copy(alpha = 0.90f),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
-                    fontFamily = SFProDisplay
+                    fontFamily = LocalAppFontFamily.current
                 )
             }
             Spacer(Modifier.height(10.dp))
@@ -317,7 +317,7 @@ private fun ChartsPlatformSelector(
                         color = textColor,
                         fontSize = 13.sp,
                         fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                        fontFamily = SFProDisplay,
+                        fontFamily = LocalAppFontFamily.current,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -345,7 +345,7 @@ private fun ChartsTrackList(
                 color = AppleTextPrimary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                fontFamily = SFProDisplay,
+                fontFamily = LocalAppFontFamily.current,
                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
             )
 
@@ -361,7 +361,7 @@ private fun ChartsTrackList(
                 color = AppleTextPrimary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                fontFamily = SFProDisplay,
+                fontFamily = LocalAppFontFamily.current,
                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
             )
             LazyRow(
@@ -392,7 +392,7 @@ private fun ChartsTrackList(
                             color = AppleTextPrimary,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
-                            fontFamily = SFProDisplay,
+                            fontFamily = LocalAppFontFamily.current,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             textAlign = TextAlign.Center
@@ -408,7 +408,7 @@ private fun ChartsTrackList(
             color = AppleTextPrimary,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            fontFamily = SFProDisplay,
+            fontFamily = LocalAppFontFamily.current,
             modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
         )
 
@@ -482,7 +482,7 @@ private fun FeaturedChartHeroCard(
                     color = Color(0xFFFFD700),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = SFProDisplay
+                    fontFamily = LocalAppFontFamily.current
                 )
             }
 
@@ -495,7 +495,7 @@ private fun FeaturedChartHeroCard(
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.5.sp,
-                    fontFamily = SFProDisplay
+                    fontFamily = LocalAppFontFamily.current
                 )
                 Spacer(Modifier.height(2.dp))
                 Text(
@@ -503,7 +503,7 @@ private fun FeaturedChartHeroCard(
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = SFProDisplay,
+                    fontFamily = LocalAppFontFamily.current,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -511,7 +511,7 @@ private fun FeaturedChartHeroCard(
                     text = track.artist,
                     color = Color.White.copy(alpha = 0.75f),
                     fontSize = 13.sp,
-                    fontFamily = SFProDisplay,
+                    fontFamily = LocalAppFontFamily.current,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -571,7 +571,7 @@ private fun ChartSongRowItem(
                 color = rankColor,
                 fontSize = 15.sp,
                 fontWeight = if (rank <= 3) FontWeight.ExtraBold else FontWeight.Medium,
-                fontFamily = SFProDisplay
+                fontFamily = LocalAppFontFamily.current
             )
         }
 
@@ -600,7 +600,7 @@ private fun ChartSongRowItem(
                 color = AppleTextPrimary,
                 fontSize = 14.5.sp,
                 fontWeight = FontWeight.SemiBold,
-                fontFamily = SFProDisplay,
+                fontFamily = LocalAppFontFamily.current,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -627,7 +627,7 @@ private fun ChartSongRowItem(
                     text = track.artist,
                     color = AppleTextSecondary,
                     fontSize = 12.5.sp,
-                    fontFamily = SFProDisplay,
+                    fontFamily = LocalAppFontFamily.current,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -760,7 +760,7 @@ private fun ChartsEmptyView(message: String, onRetry: (() -> Unit)? = null) {
                 text = message,
                 color = AppleTextSecondary,
                 fontSize = 14.sp,
-                fontFamily = SFProDisplay,
+                fontFamily = LocalAppFontFamily.current,
                 textAlign = TextAlign.Center
             )
             if (onRetry != null) {
@@ -777,7 +777,7 @@ private fun ChartsEmptyView(message: String, onRetry: (() -> Unit)? = null) {
                         color = Color.White,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
-                        fontFamily = SFProDisplay
+                        fontFamily = LocalAppFontFamily.current
                     )
                 }
             }
@@ -817,7 +817,7 @@ private fun ChartRegionPickerSheet(
                 color = AppleTextPrimary,
                 fontSize = 19.sp,
                 fontWeight = FontWeight.Bold,
-                fontFamily = SFProDisplay,
+                fontFamily = LocalAppFontFamily.current,
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
@@ -873,7 +873,7 @@ private fun ChartRegionPickerSheet(
                             color = if (isSelected) AppleMusicRed else Color.White,
                             fontSize = 15.sp,
                             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                            fontFamily = SFProDisplay
+                            fontFamily = LocalAppFontFamily.current
                         )
                         if (isSelected) {
                             Icon(
