@@ -69,6 +69,15 @@ object ListeningProfileStore {
         }
     }
 
+    fun reloadBackupState(context: Context) {
+        ensureInit(context)
+        val p = prefs ?: return
+        synchronized(this) {
+            _songs.value = decodeSongs(p.getString(KEY_SONGS, null))
+            _artists.value = decodeArtists(p.getString(KEY_ARTISTS, null))
+        }
+    }
+
     fun recordPlay(context: Context, track: MusicTrack) {
         ensureInit(context)
         if (SettingsStore.isPauseListeningHistory()) return
