@@ -53,7 +53,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import coil.compose.AsyncImage
 import com.darkxvenom.itune.R
-import com.darkxvenom.itune.ui.player.SFProDisplay
+import com.darkxvenom.itune.ui.theme.LocalAppFontFamily
 import com.darkxvenom.itune.data.model.HomeFeedItem
 import com.darkxvenom.itune.data.model.HomeFeedShelf
 import com.darkxvenom.itune.data.model.HomeHeroCard
@@ -401,7 +401,7 @@ fun LiveFeaturedHeroCarousel(
             Text(
                 text = sectionTitle,
                 style = TextStyle(
-                    fontFamily = SFProDisplay,
+                    fontFamily = LocalAppFontFamily.current,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = (-0.4).sp
@@ -613,7 +613,7 @@ private fun PortraitHeroCardItem(
             Text(
                 text = "iTune",
                 style = TextStyle(
-                    fontFamily = SFProDisplay,
+                    fontFamily = LocalAppFontFamily.current,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
                     letterSpacing = (-0.3).sp
@@ -645,7 +645,7 @@ private fun PortraitHeroCardItem(
                 Text(
                     text = catText,
                     style = TextStyle(
-                        fontFamily = SFProDisplay,
+                        fontFamily = LocalAppFontFamily.current,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp,
                         letterSpacing = 0.2.sp
@@ -658,7 +658,7 @@ private fun PortraitHeroCardItem(
                 Text(
                     text = card.title,
                     style = TextStyle(
-                        fontFamily = SFProDisplay,
+                        fontFamily = LocalAppFontFamily.current,
                         fontWeight = FontWeight.Bold,
                         fontSize = 19.sp,
                         lineHeight = 23.sp,
@@ -674,7 +674,7 @@ private fun PortraitHeroCardItem(
                     Text(
                         text = desc,
                         style = TextStyle(
-                            fontFamily = SFProDisplay,
+                            fontFamily = LocalAppFontFamily.current,
                             fontWeight = FontWeight.Normal,
                             fontSize = 12.5.sp,
                             lineHeight = 16.5.sp
