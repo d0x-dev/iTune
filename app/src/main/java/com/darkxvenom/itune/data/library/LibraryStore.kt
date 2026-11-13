@@ -248,6 +248,21 @@ object LibraryStore {
         }
     }
 
+    /** Refresh cached library state after importing a backup. */
+    fun reloadBackupState(context: Context) {
+        ensureInit(context)
+        val p = prefs ?: return
+        synchronized(this) {
+            _likedSongs.value = decodeSongs(p.getString(KEY_LIKED_SONGS, null))
+            _recentSongs.value = decodeSongs(p.getString(KEY_RECENT_SONGS, null))
+            _ytmHistorySongs.value = decodeSongs(p.getString(KEY_YTM_HISTORY, null))
+            _likedArtists.value = decodeCollections(p.getString(KEY_ARTISTS, null), BrowseType.ARTIST)
+            _savedAlbums.value = decodeCollections(p.getString(KEY_ALBUMS, null), BrowseType.ALBUM)
+            _savedPlaylists.value = decodeCollections(p.getString(KEY_PLAYLISTS, null), BrowseType.PLAYLIST)
+            _userPlaylists.value = decodeUserPlaylists(p.getString(KEY_USER_PLAYLISTS, null))
+        }
+    }
+
     fun createUserPlaylist(
         context: Context,
         name: String,
@@ -402,6 +417,15 @@ object LibraryStore {
         ensureInit(context)
         synchronized(this) {
             val updated = _likedSongs.value.filterNot { it.id == trackId }
+            _likedSongs.value = updated
+            persistSongs(KEY_LIKED_SONGS, updated)
+        }
+    }
+
+    fun setLikedSongsSavedLocally(context: Context, savedLocally: Boolean) {
+        ensureInit(context)
+        synchronized(this) {
+            val updated = _likedSongs.value.map { it.copy(savedLocally = savedLocally) }
             _likedSongs.value = updated
             persistSongs(KEY_LIKED_SONGS, updated)
         }
