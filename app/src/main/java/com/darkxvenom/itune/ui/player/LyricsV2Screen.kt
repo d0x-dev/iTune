@@ -1,6 +1,5 @@
 package com.darkxvenom.itune.ui.player
 
-import android.content.Intent
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.CubicBezierEasing
@@ -119,7 +118,7 @@ private const val SCROLL_LEAD_MAX_MS = 500L
 private const val STAGGER_STEPS = 3
 private const val STAGGER_FRACTION = 0.06f
 private val LINE_FALLOFF_ALPHA_PHONE = floatArrayOf(1f, 0.72f, 0.56f, 0.44f, 0.34f, 0.26f)
-private val LINE_FALLOFF_BLUR = arrayOf(0.dp, 0.9.dp, 1.35.dp, 1.85.dp, 2.35.dp)
+private val LINE_FALLOFF_BLUR = arrayOf(0.dp, 1.1.dp, 1.8.dp, 2.6.dp, 3.4.dp)
 
 private class LyricsScrollRun(val id: Int, val delta: Float, val durationMs: Int) {
     val spanMs: Float get() = durationMs * (1f + STAGGER_FRACTION * STAGGER_STEPS)
@@ -211,6 +210,7 @@ internal fun AirBeatsLyricsV2Content(
     onSeek: (Long) -> Unit,
     modifier: Modifier = Modifier,
     onUserInteraction: () -> Unit = {},
+    onScrollDirection: (Boolean) -> Unit = {},
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -222,6 +222,7 @@ internal fun AirBeatsLyricsV2Content(
 
     var isSelectionModeActive by rememberSaveable { mutableStateOf(false) }
     val selectedIndices = remember { mutableStateListOf<Int>() }
+    var selectedShareLines by remember { mutableStateOf<List<ShareLyricsLine>?>(null) }
 
     val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
     val songTranslations by LyricsTranslationHelper.currentSongTranslations.collectAsStateWithLifecycle()
@@ -307,13 +308,15 @@ internal fun AirBeatsLyricsV2Content(
         ) { value, _ -> runElapsed.floatValue = value }
     }
 
-    val nestedScrollConnection = remember(onUserInteraction) {
+    val nestedScrollConnection = remember(onScrollDirection) {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 if (!isSelectionModeActive && source == NestedScrollSource.UserInput) {
                     isManualScrolling = true
                     lastManualScrollTime = System.currentTimeMillis()
-                    onUserInteraction()
+                    // Only a downward content scroll reveals controls; upward browsing
+                    // keeps them tucked away while the lyrics remain the focus.
+                    onScrollDirection(available.y < 0f)
                 }
                 return Offset.Zero
             }
@@ -425,7 +428,7 @@ internal fun AirBeatsLyricsV2Content(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(nestedScrollConnection)
-                .smoothFadingEdge(top = 34.dp, bottom = 92.dp),
+                .smoothFadingEdge(top = 34.dp, bottom = 132.dp),
             contentPadding = PaddingValues(
                 start = 24.dp,
                 end = 24.dp,
@@ -538,17 +541,18 @@ internal fun AirBeatsLyricsV2Content(
                                         selectedIndices.remove(index)
                                         if (selectedIndices.isEmpty()) isSelectionModeActive = false
                                     } else {
-                                        if (selectedIndices.size < 5) selectedIndices.add(index)
+                                        selectedIndices.add(index)
                                     }
                                 } else if (isSynced && item.time > 0) {
                                     onSeek(item.time)
                                 }
                             },
                             onLongClick = {
+                                onUserInteraction()
                                 if (!isSelectionModeActive) {
                                     isSelectionModeActive = true
                                     selectedIndices.add(index)
-                                } else if (!isSelected && selectedIndices.size < 5) {
+                                } else if (!isSelected) {
                                     selectedIndices.add(index)
                                 }
                             }
@@ -694,18 +698,11 @@ internal fun AirBeatsLyricsV2Content(
                             )
                             .clickable(enabled = selectedIndices.isNotEmpty()) {
                                 if (selectedIndices.isNotEmpty()) {
-                                    val sortedIndices = selectedIndices.sorted()
-                                    val selectedText = sortedIndices
-                                        .mapNotNull { entriesWithWords.getOrNull(it)?.text }
-                                        .joinToString("\n")
-
-                                    val trackInfo = MusicPlayerState.currentTrack
-                                    val shareText = "\"$selectedText\"\n\n${trackInfo?.title} - ${trackInfo?.artists}"
-                                    val sendIntent = Intent(Intent.ACTION_SEND).apply {
-                                        putExtra(Intent.EXTRA_TEXT, shareText)
-                                        type = "text/plain"
+                                    selectedShareLines = selectedIndices.sorted().mapNotNull { selectedIndex ->
+                                        entriesWithWords.getOrNull(selectedIndex)?.let { line ->
+                                            ShareLyricsLine(line.time, line.text)
+                                        }
                                     }
-                                    context.startActivity(Intent.createChooser(sendIntent, "Share Lyrics"))
                                     isSelectionModeActive = false
                                     selectedIndices.clear()
                                 }
@@ -729,6 +726,16 @@ internal fun AirBeatsLyricsV2Content(
                 }
             }
         }
+    }
+
+    selectedShareLines?.let { shareLines ->
+        LyricsShareCardDialog(
+            lines = shareLines,
+            songTitle = MusicPlayerState.currentTrack?.title.orEmpty(),
+            artists = MusicPlayerState.currentTrack?.artists.orEmpty(),
+            artworkUrl = MusicPlayerState.currentTrack?.thumbnailUrl,
+            onDismiss = { selectedShareLines = null },
+        )
     }
 }
 
