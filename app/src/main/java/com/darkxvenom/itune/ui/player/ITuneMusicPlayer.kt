@@ -29,6 +29,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -181,6 +182,38 @@ private fun formatTime(ms: Long): String {
  * - In-player Synced Lyrics view (AirBeatsLyricsV2Content) with line scrolling & liquid glow
  * - 3 clean playback controls (Previous, Play/Pause, Next) with WavySlider and iOS volume capsule slider
  */
+@Composable
+private fun SyncedPlayerLyricWord(
+    text: String,
+    startMs: Long,
+    endMs: Long,
+    positionMs: Long
+) {
+    val duration = (endMs - startMs).coerceAtLeast(1L)
+    val targetProgress = when {
+        positionMs >= endMs -> 1f
+        positionMs <= startMs -> 0f
+        else -> ((positionMs - startMs).toFloat() / duration).coerceIn(0f, 1f)
+    }
+    val progress by animateFloatAsState(
+        targetValue = targetProgress,
+        animationSpec = tween(100, easing = FastOutSlowInEasing),
+        label = "synced_lyric_word_progress"
+    )
+    Text(
+        text = text,
+        fontFamily = SFProDisplay,
+        fontSize = 12.5.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = Color.White.copy(alpha = 0.42f + 0.58f * progress),
+        maxLines = 1,
+        softWrap = false,
+        modifier = Modifier.graphicsLayer {
+            translationY = -1.2f * kotlin.math.sin(progress * PI).toFloat()
+        }
+    )
+}
+
 @Composable
 fun ITuneMusicPlayer(
     sheetProgress: Float = 1f,
@@ -566,7 +599,7 @@ fun ITuneMusicPlayer(
         // ── 5b. Continuous Morphing Title & Artist ──
         // Seamlessly morphs between Mini Player position/size and Full Player resting position/size,
         // and glides into the top header when Queue or Lyrics opens.
-        val defaultPlayerTitleTopDp = maxHeight - 340.dp - navBottomDp
+        val defaultPlayerTitleTopDp = maxHeight - 348.dp - navBottomDp
         val startTitleTopPx = if (playerTitleVisualTopPx > 0f) playerTitleVisualTopPx else with(density) { defaultPlayerTitleTopDp.toPx() }
 
         val fullTitleStartPx = lerpFloat(with(density) { 24.dp.toPx() }, with(density) { 96.dp.toPx() }, panelProgress)
@@ -600,7 +633,7 @@ fun ITuneMusicPlayer(
                 .zIndex(36f)
                 .offset { IntOffset(curTitleLeftPx.roundToInt(), curTitleTopPx.roundToInt()) }
                 .width(curTitleWidthDp)
-                .height(if (sp < 0.5f) 38.dp else 48.dp)
+                .height(if (sp < 0.5f) 38.dp else if (panelProgress < 0.80f) 76.dp else 48.dp)
                 .then(
                     if (panelProgress > 0.80f) {
                         Modifier.clickable(
@@ -659,6 +692,93 @@ fun ITuneMusicPlayer(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.basicMarquee()
                 )
+
+                AnimatedVisibility(
+                    visible = sp >= 0.5f && panelProgress < 0.80f,
+                    enter = fadeIn(tween(180)) + slideInVertically(tween(220)) { it / 3 },
+                    exit = fadeOut(tween(120)) + slideOutVertically(tween(160)) { -it / 3 }
+                ) {
+                    val activeLyric = MusicPlayerState.lyrics
+                        .lastOrNull { it.timeMs <= position }
+                        ?: MusicPlayerState.lyrics.firstOrNull()
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(6.dp))
+                            .clickable {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                MusicPlayerState.queueOpen = false
+                                MusicPlayerState.lyricsOpen = true
+                                if (MusicPlayerState.lyrics.isEmpty() && !MusicPlayerState.lyricsLoading) {
+                                    MusicPlayerState.refreshLyrics()
+                                }
+                            }
+                            .padding(top = 3.dp, bottom = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AnimatedContent(
+                            targetState = activeLyric,
+                            transitionSpec = {
+                                (slideInVertically(
+                                    animationSpec = spring(dampingRatio = 0.82f, stiffness = 380f)
+                                ) { (it * 0.75f).toInt() } + fadeIn(tween(260)))
+                                    .togetherWith(
+                                        slideOutVertically(tween(220, easing = FastOutSlowInEasing)) {
+                                            -(it * 0.65f).toInt()
+                                        } + fadeOut(tween(160))
+                                    )
+                            },
+                            contentAlignment = Alignment.CenterStart,
+                            label = "player_synced_lyric_transition",
+                            modifier = Modifier.weight(1f)
+                        ) { line ->
+                            if (line == null || line.text.isBlank()) {
+                                Text(
+                                    text = if (MusicPlayerState.lyricsLoading) "Loading lyrics…" else "Tap to view lyrics",
+                                    fontFamily = SFProDisplay,
+                                    fontSize = 12.5.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.White.copy(alpha = 0.56f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            } else if (line.words.isNotEmpty()) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.basicMarquee()
+                                ) {
+                                    line.words.forEach { word ->
+                                        SyncedPlayerLyricWord(
+                                            text = word.text,
+                                            startMs = word.startMs,
+                                            endMs = word.endMs,
+                                            positionMs = position
+                                        )
+                                    }
+                                }
+                            } else {
+                                Text(
+                                    text = line.text,
+                                    fontFamily = SFProDisplay,
+                                    fontSize = 12.5.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.White.copy(alpha = 0.92f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.basicMarquee()
+                                )
+                            }
+                        }
+                        Spacer(Modifier.width(6.dp))
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.AutoMirrored.Rounded.KeyboardArrowDown,
+                            contentDescription = "Open lyrics",
+                            tint = Color.White.copy(alpha = 0.56f),
+                            modifier = Modifier.size(13.dp)
+                        )
+                    }
+                }
             }
         }
 
