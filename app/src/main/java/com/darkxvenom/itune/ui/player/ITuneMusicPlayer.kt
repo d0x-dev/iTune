@@ -32,6 +32,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -83,9 +84,8 @@ import androidx.compose.material.icons.automirrored.rounded.VolumeDown
 import androidx.compose.material.icons.automirrored.rounded.VolumeOff
 import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.DragHandle
-import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material.icons.rounded.PlaylistPlay
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -111,6 +111,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size as ComposeSize
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -118,6 +120,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventTimeoutCancellationException
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -147,11 +150,15 @@ import com.darkxvenom.itune.audio.AudioEngineManager
 import com.darkxvenom.itune.audio.AudioOutputManager
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
+import com.darkxvenom.itune.backend.WordTiming
 import com.darkxvenom.itune.backend.highQualityThumbnail
 import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.ishare.IShareSyncManager
 import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
+import com.darkxvenom.itune.ui.artist.icons.SfIcons
+import com.darkxvenom.itune.ui.artist.theme.rememberArtworkPalette
 import com.darkxvenom.itune.ui.components.AnimatedEqualizer
+import com.darkxvenom.itune.ui.components.ReorderDragHandle
 import com.darkxvenom.itune.ui.components.WavySlider
 import com.darkxvenom.itune.ui.welcome.WelcomeMeshBackground
 import com.darkxvenom.itune.ui.welcome.sampleWelcomeAmbientFrame
@@ -177,6 +184,38 @@ private fun formatTime(ms: Long): String {
     return "%d:%02d".format(minutes, seconds)
 }
 
+@Composable
+private fun AppleBatteryIndicator(percent: Int, modifier: Modifier = Modifier) {
+    val batteryColor = if (percent <= 20) Color(0xFFFF453A) else Color.White.copy(alpha = 0.74f)
+    Canvas(modifier = modifier.size(width = 15.dp, height = 8.dp)) {
+        val strokeWidth = 1.dp.toPx()
+        val terminalWidth = size.width * 0.10f
+        val bodyWidth = size.width - terminalWidth - strokeWidth
+        val radius = CornerRadius(size.height * 0.24f)
+        drawRoundRect(
+            color = Color.White.copy(alpha = 0.58f),
+            topLeft = Offset.Zero,
+            size = ComposeSize(bodyWidth, size.height),
+            cornerRadius = radius,
+            style = Stroke(width = strokeWidth),
+        )
+        val inset = strokeWidth * 1.5f
+        val innerWidth = (bodyWidth - inset * 2).coerceAtLeast(0f)
+        drawRoundRect(
+            color = batteryColor,
+            topLeft = Offset(inset, inset),
+            size = ComposeSize(innerWidth * (percent.coerceIn(0, 100) / 100f), (size.height - inset * 2).coerceAtLeast(0f)),
+            cornerRadius = CornerRadius(size.height * 0.15f),
+        )
+        drawRoundRect(
+            color = Color.White.copy(alpha = 0.62f),
+            topLeft = Offset(bodyWidth + strokeWidth * 0.35f, size.height * 0.31f),
+            size = ComposeSize(terminalWidth * 0.58f, size.height * 0.38f),
+            cornerRadius = CornerRadius(size.height * 0.15f),
+        )
+    }
+}
+
 /**
  * Exact Apple Music / AirBeats iOS styled full-screen player:
  * - Full-bleed top artwork with gradient alpha fade dissolving into ambient blur
@@ -186,26 +225,23 @@ private fun formatTime(ms: Long): String {
  * - 3 clean playback controls (Previous, Play/Pause, Next) with WavySlider and iOS volume capsule slider
  */
 @Composable
-private fun SyncedPlayerLyricWord(
-    text: String,
-    startMs: Long,
-    endMs: Long,
-    positionMs: Long
+private fun AirBeatsMaterialWordPreview(
+    word: WordTiming,
+    currentPositionMs: Long,
+    fontSize: TextUnit = 14.sp,
 ) {
-    val spacedText = text
-    val wordDuration = (endMs - startMs).coerceAtLeast(1L)
-    val isComplete = positionMs >= endMs
-    val isActive = positionMs in startMs until endMs
-    val targetProgress = when {
+    // Some timed lyric providers emit each word as a separate span without whitespace.
+    // Keep the sweep animation unchanged, but give each span the same trailing space
+    // that AirBeats Material's word data carries.
+    val displayText = if (word.text.lastOrNull()?.isWhitespace() == true) word.text else "${word.text} "
+    val wordDuration = (word.endMs - word.startMs).coerceAtLeast(1L)
+    val isComplete = currentPositionMs >= word.endMs
+    val isActive = currentPositionMs in word.startMs until word.endMs
+    val progress = when {
         isComplete -> 1f
-        positionMs <= startMs -> 0f
-        else -> ((positionMs - startMs).toFloat() / wordDuration).coerceIn(0f, 1f)
+        currentPositionMs <= word.startMs -> 0f
+        else -> ((currentPositionMs - word.startMs).toFloat() / wordDuration).coerceIn(0f, 1f)
     }
-    val progress by animateFloatAsState(
-        targetValue = targetProgress,
-        animationSpec = tween(100, easing = FastOutSlowInEasing),
-        label = "synced_lyric_word_progress"
-    )
     val sinProgress = kotlin.math.sin(progress * PI).toFloat()
     val floatOffset by animateFloatAsState(
         targetValue = if (isActive) -3.5f * sinProgress else 0f,
@@ -215,8 +251,9 @@ private fun SyncedPlayerLyricWord(
         ),
         label = "synced_lyric_word_float"
     )
-    val glowAlpha = if (isActive) (progress * 2f).coerceAtMost(1f) * 0.45f else 0f
-    val glowRadius = if (isActive) (progress * 2f).coerceAtMost(1f) * 10f else 0f
+    val glowProgress = (progress * 2f).coerceAtMost(1f)
+    val glowAlpha = if (isActive) glowProgress * 0.45f else 0f
+    val glowRadius = if (isActive) glowProgress * 10f else 0f
 
     Box(
         modifier = Modifier.graphicsLayer {
@@ -226,32 +263,28 @@ private fun SyncedPlayerLyricWord(
         }
     ) {
         Text(
-            text = spacedText,
-            fontFamily = SFProDisplay,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold,
+            text = displayText,
+            style = TextStyle(fontFamily = SFProDisplay, fontSize = fontSize, fontWeight = FontWeight.SemiBold),
             color = Color.White.copy(alpha = 0.40f),
             maxLines = 1,
-            softWrap = false
+            softWrap = false,
         )
         if (isComplete || isActive) {
             Text(
-                text = spacedText,
-                fontFamily = SFProDisplay,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
+                text = displayText,
+                style = TextStyle(
+                    fontFamily = SFProDisplay,
+                    fontSize = fontSize,
+                    fontWeight = FontWeight.SemiBold,
+                    shadow = if (glowAlpha > 0f) Shadow(
+                        color = Color.White.copy(alpha = glowAlpha),
+                        offset = Offset.Zero,
+                        blurRadius = glowRadius.coerceAtLeast(1f),
+                    ) else null,
+                ),
                 color = Color.White,
                 maxLines = 1,
                 softWrap = false,
-                style = TextStyle(
-                    shadow = if (glowAlpha > 0f) {
-                        Shadow(
-                            color = Color.White.copy(alpha = glowAlpha),
-                            offset = Offset.Zero,
-                            blurRadius = glowRadius.coerceAtLeast(1f)
-                        )
-                    } else null
-                ),
                 modifier = if (isActive && !isComplete) {
                     Modifier
                         .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
@@ -263,15 +296,59 @@ private fun SyncedPlayerLyricWord(
                                 brush = Brush.horizontalGradient(
                                     colors = listOf(Color.Black, Color.Transparent),
                                     startX = center - edgeWidth,
-                                    endX = center + edgeWidth
+                                    endX = center + edgeWidth,
                                 ),
-                                blendMode = BlendMode.DstIn
+                                blendMode = BlendMode.DstIn,
                             )
                         }
-                } else Modifier
+                } else Modifier,
             )
         }
     }
+}
+
+private data class PlayerLyricPreviewLine(
+    val timeMs: Long,
+    val text: String,
+    val words: List<WordTiming>,
+)
+
+private fun buildPlayerLyricPreviewLine(
+    index: Int,
+    lines: List<com.darkxvenom.itune.backend.LyricsLine>,
+): PlayerLyricPreviewLine? {
+    val line = lines.getOrNull(index) ?: return null
+    if (line.text.isBlank()) return null
+    if (line.words.isNotEmpty()) return PlayerLyricPreviewLine(line.timeMs, line.text, line.words)
+
+    val nextLineTime = lines.getOrNull(index + 1)?.timeMs
+    val lineDurationMs = if (nextLineTime != null && nextLineTime > line.timeMs) {
+        (nextLineTime - line.timeMs).coerceIn(800L, 10_000L)
+    } else 4_000L
+    val tokens = line.text.split(Regex("\\s+")).filter(String::isNotBlank)
+    val totalCharacters = tokens.sumOf(String::length).coerceAtLeast(1)
+    var elapsedMs = 0L
+    val timedWords = tokens.mapIndexed { wordIndex, token ->
+        val durationMs = (lineDurationMs * token.length / totalCharacters).coerceAtLeast(1L)
+        val word = WordTiming(
+            startMs = line.timeMs + elapsedMs,
+            endMs = line.timeMs + elapsedMs + durationMs,
+            text = if (wordIndex < tokens.lastIndex) "$token " else token,
+        )
+        elapsedMs += durationMs
+        word
+    }
+    return PlayerLyricPreviewLine(line.timeMs, line.text, timedWords)
+}
+
+private fun findPlayerLyricPreviewIndex(
+    lines: List<com.darkxvenom.itune.backend.LyricsLine>,
+    positionMs: Long,
+): Int {
+    if (lines.isEmpty()) return -1
+    // Match the full lyrics screen: keep the first upcoming line visible before its timestamp
+    // instead of showing the loading/empty fallback until playback reaches that timestamp.
+    return lines.indexOfLast { it.timeMs <= positionMs }.coerceAtLeast(0)
 }
 
 @Composable
@@ -386,15 +463,11 @@ fun ITuneMusicPlayer(
 
     val onLyricsInteraction: () -> Unit = {
         lastLyricsInteractionTime = System.currentTimeMillis()
-        if (isLyricsOpen) {
-            areLyricsControlsVisible = !areLyricsControlsVisible
-        } else {
-            areLyricsControlsVisible = true
-        }
+        areLyricsControlsVisible = true
     }
 
     val controlsTranslationY by animateFloatAsState(
-        targetValue = if (!isLyricsOpen || areLyricsControlsVisible) 0f else with(density) { 340.dp.toPx() },
+        targetValue = if (isLyricsOpen && !areLyricsControlsVisible) with(density) { 22.dp.toPx() } else 0f,
         animationSpec = spring(dampingRatio = 0.90f, stiffness = 170f),
         label = "lyricsControlsTranslationY"
     )
@@ -415,6 +488,15 @@ fun ITuneMusicPlayer(
     val safeDuration = if (duration > 0) duration else (track.durationSec * 1000L).coerceAtLeast(1L)
     val displayPos = if (isSeeking) seekPosition else position.coerceIn(0L, safeDuration)
     val remaining = (safeDuration - displayPos).coerceAtLeast(0L)
+    val currentArtUrl = track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl
+    // The palette helper samples and caches the active cover, then smoothly transitions its accent.
+    val artworkAccentColor = rememberArtworkPalette(
+        imageUrl = currentArtUrl,
+        dark = true,
+        fallbackAccent = Color.White,
+    ).accent
+    // Artwork colors are optional; when disabled, restore the original white Apple-style player controls.
+    val playerAccentColor = if (settingsState.playerDynamicColoring) artworkAccentColor else Color.White
 
     BoxWithConstraints(
         modifier = modifier
@@ -424,16 +506,15 @@ fun ITuneMusicPlayer(
     ) {
         val statusBarTopDp = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
         val navBottomDp = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-        val fullBleedHeight = maxHeight * 0.56f
+        // Let the cover continue just through the lyric preview, where it dissolves into blur.
+        val fullBleedHeight = maxHeight * 0.58f
 
         // ── 1. Fullscreen Ambient Blurred Artwork Layer / Static Mesh Layer ──
         val blurScale by animateFloatAsState(
-            targetValue = if (isPanelOpen) 1.45f else 1.35f,
-            animationSpec = spring(dampingRatio = 0.90f, stiffness = 170f),
+            targetValue = lerpFloat(1.34f, 1.47f, panelProgress),
+            animationSpec = spring(dampingRatio = 0.88f, stiffness = 92f),
             label = "blurScale"
         )
-
-        val currentArtUrl = track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl
 
         if (isStaticPlayer) {
             PlayerStaticMeshBackground(
@@ -475,7 +556,7 @@ fun ITuneMusicPlayer(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxSize()
-                            .blur(48.dp)
+                            .blur(80.dp)
                             .graphicsLayer {
                                 scaleX = blurScale
                                 scaleY = blurScale
@@ -535,6 +616,13 @@ fun ITuneMusicPlayer(
                         MusicPlayerState.seekTo(seekPos)
                     },
                     onUserInteraction = onLyricsInteraction,
+                    onScrollDirection = { scrollingDown ->
+                        if (scrollingDown) {
+                            onLyricsInteraction()
+                        } else {
+                            areLyricsControlsVisible = false
+                        }
+                    },
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -548,7 +636,9 @@ fun ITuneMusicPlayer(
                     .fillMaxSize()
                     .statusBarsPadding()
                     .padding(top = 96.dp)
-                    .padding(bottom = contentBottomPadding)
+                    // End the queue viewport above the transport row so the final track
+                    // fades out before it can sit underneath the seek bar.
+                    .padding(bottom = contentBottomPadding + 48.dp)
                     .graphicsLayer {
                         alpha = panelProgress
                     }
@@ -569,6 +659,9 @@ fun ITuneMusicPlayer(
                     },
                     onRemoveTrack = { idx: Int ->
                         MusicPlayerState.removeFromQueue(idx)
+                    },
+                    onMoveTrack = { from, to ->
+                        MusicPlayerState.moveUpcomingTrack(from, to)
                     },
                     onUserInteraction = onLyricsInteraction,
                     modifier = Modifier.fillMaxSize()
@@ -617,7 +710,10 @@ fun ITuneMusicPlayer(
                 )
         ) {
             val playerFadeWeight = (1f - panelProgress * 8f).coerceIn(0f, 1f)
-            val fadeStart = lerpFloat(1.0f, 0.72f, playerFadeWeight)
+            // Move the sharp-to-ambient morph well up the cover so blur reaches the
+            // title and controls region in both Dynamic and Static player modes.
+            val fadeStart = lerpFloat(1.0f, 0.14f, playerFadeWeight)
+            val fadeMidAlpha = lerpFloat(1.0f, 0.44f, playerFadeWeight)
             val fadeEndAlpha = lerpFloat(1.0f, 0.0f, playerFadeWeight)
 
             Crossfade(
@@ -646,6 +742,7 @@ fun ITuneMusicPlayer(
                                     colorStops = arrayOf(
                                         0f to Color.Black,
                                         fadeStart to Color.Black,
+                                        0.58f to Color.Black.copy(alpha = fadeMidAlpha),
                                         1f to Color.Black.copy(alpha = fadeEndAlpha)
                                     )
                                 )
@@ -693,7 +790,7 @@ fun ITuneMusicPlayer(
                 .zIndex(36f)
                 .offset { IntOffset(curTitleLeftPx.roundToInt(), curTitleTopPx.roundToInt()) }
                 .width(curTitleWidthDp)
-                .height(if (sp < 0.5f) 38.dp else if (panelProgress < 0.80f) 86.dp else 48.dp)
+                .height(if (sp < 0.5f) 38.dp else if (panelProgress < 0.80f) 90.dp else 48.dp)
                 .then(
                     if (panelProgress > 0.80f) {
                         Modifier.clickable(
@@ -749,117 +846,119 @@ fun ITuneMusicPlayer(
                         fontSize = curArtistFontSize,
                         lineHeight = curArtistLineHeight
                     ),
-                    color = Color.White.copy(alpha = curArtistAlpha),
+                    color = playerAccentColor.copy(alpha = curArtistAlpha),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.basicMarquee()
                 )
 
                 // Send lyrics line a little bit below the artist
-                Spacer(Modifier.height(lerpDp(2.dp, 6.dp, sp)))
+                Spacer(Modifier.height(lerpDp(2.dp, 10.dp, sp)))
 
                 AnimatedVisibility(
                     visible = sp >= 0.5f && panelProgress < 0.80f,
                     enter = fadeIn(tween(180)) + slideInVertically(tween(220)) { it / 3 },
                     exit = fadeOut(tween(120)) + slideOutVertically(tween(160)) { -it / 3 }
                 ) {
-                    val activeLyric = MusicPlayerState.lyrics
-                        .lastOrNull { it.timeMs <= position }
-                        ?: MusicPlayerState.lyrics.firstOrNull()
+                    val lyricLines = MusicPlayerState.lyrics
+                    val lyricsPosition = (position + MusicPlayerState.lyricsOffsetMs).coerceAtLeast(0L)
+                    val activeLyricIndex = remember(lyricLines, lyricsPosition) {
+                        findPlayerLyricPreviewIndex(lyricLines, lyricsPosition)
+                    }
+                    val activeLyric = remember(lyricLines, activeLyricIndex) {
+                        buildPlayerLyricPreviewLine(activeLyricIndex, lyricLines)
+                    }
 
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(6.dp))
-                            .clickable {
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                MusicPlayerState.queueOpen = false
-                                MusicPlayerState.lyricsOpen = true
-                                if (MusicPlayerState.lyrics.isEmpty() && !MusicPlayerState.lyricsLoading) {
-                                    MusicPlayerState.refreshLyrics()
-                                }
-                            }
                             .clipToBounds()
                             .padding(vertical = 2.dp),
                         contentAlignment = Alignment.CenterStart
                     ) {
-                        AnimatedContent(
-                            targetState = activeLyric,
-                            transitionSpec = {
-                                (slideInVertically(animationSpec = spring(dampingRatio = 0.82f, stiffness = 380f)) { (it * 0.75f).toInt() } + fadeIn(tween(350)))
-                                    .togetherWith(
-                                        slideOutVertically(animationSpec = tween(300, easing = FastOutSlowInEasing)) { -(it * 0.75f).toInt() } + fadeOut(tween(200))
-                                    )
-                            },
-                            contentAlignment = Alignment.CenterStart,
-                            label = "lyrics_line_transition",
-                            modifier = Modifier.clipToBounds()
-                        ) { line ->
-                            if (line == null || line.text.isBlank()) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = if (MusicPlayerState.lyricsLoading) "Loading lyrics…" else "Tap to view lyrics",
-                                        fontFamily = SFProDisplay,
-                                        fontSize = 12.5.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = Color.White.copy(alpha = 0.56f),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                    Spacer(Modifier.width(4.dp))
-                                    Icon(
-                                        imageVector = Icons.Rounded.KeyboardArrowRight,
-                                        contentDescription = "Open lyrics",
-                                        tint = Color.White.copy(alpha = 0.55f),
-                                        modifier = Modifier.size(15.dp)
-                                    )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable {
+                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                    MusicPlayerState.queueOpen = false
+                                    MusicPlayerState.lyricsOpen = true
+                                    if (MusicPlayerState.lyrics.isEmpty() && !MusicPlayerState.lyricsLoading) {
+                                        MusicPlayerState.refreshLyrics()
+                                    }
                                 }
-                            } else if (line.words.isNotEmpty()) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(2.dp),
-                                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE)
-                                ) {
-                                    line.words.forEach { word ->
-                                        SyncedPlayerLyricWord(
-                                            text = word.text,
-                                            startMs = word.startMs,
-                                            endMs = word.endMs,
-                                            positionMs = position
+                                .padding(vertical = 4.dp),
+                        ) {
+                            AnimatedContent(
+                                targetState = activeLyric,
+                                transitionSpec = {
+                                    (slideInVertically(animationSpec = spring(dampingRatio = 0.82f, stiffness = 380f)) { (it * 0.75f).toInt() } + fadeIn(tween(350)))
+                                        .togetherWith(
+                                            slideOutVertically(animationSpec = tween(300, easing = FastOutSlowInEasing)) { -(it * 0.75f).toInt() } + fadeOut(tween(200))
+                                        )
+                                },
+                                contentAlignment = Alignment.CenterStart,
+                                label = "lyrics_line_transition",
+                                modifier = Modifier
+                                    .weight(1f, fill = false)
+                                    .clipToBounds()
+                            ) { line ->
+                                if (line == null || line.text.isBlank()) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.MusicNote,
+                                            contentDescription = null,
+                                            tint = playerAccentColor.copy(alpha = 0.82f),
+                                            modifier = Modifier.size(15.dp)
+                                        )
+                                        Text(
+                                            text = if (MusicPlayerState.lyricsLoading) "Bass first, words later" else "Lyrics are finding their rhythm",
+                                            fontFamily = SFProDisplay,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = playerAccentColor.copy(alpha = 0.72f),
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
                                         )
                                     }
-                                    Spacer(Modifier.width(3.dp))
-                                    Icon(
-                                        imageVector = Icons.Rounded.KeyboardArrowRight,
-                                        contentDescription = "Open lyrics",
-                                        tint = Color.White.copy(alpha = 0.55f),
-                                        modifier = Modifier.size(15.dp)
-                                    )
-                                }
-                            } else {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE)
-                                ) {
+                                } else if (line.words.isNotEmpty()) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE)
+                                    ) {
+                                        line.words.forEach { word ->
+                                            AirBeatsMaterialWordPreview(
+                                                word = word,
+                                                currentPositionMs = lyricsPosition,
+                                                fontSize = 14.sp,
+                                            )
+                                        }
+                                    }
+                                } else {
                                     Text(
                                         text = line.text,
                                         fontFamily = SFProDisplay,
-                                        fontSize = 13.sp,
+                                        fontSize = 14.sp,
                                         fontWeight = FontWeight.SemiBold,
-                                        color = Color.White.copy(alpha = 0.92f),
+                                        color = Color.White,
                                         maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                    Spacer(Modifier.width(4.dp))
-                                    Icon(
-                                        imageVector = Icons.Rounded.KeyboardArrowRight,
-                                        contentDescription = "Open lyrics",
-                                        tint = Color.White.copy(alpha = 0.55f),
-                                        modifier = Modifier.size(15.dp)
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE)
                                     )
                                 }
                             }
+                        Spacer(Modifier.width(6.dp))
+                        Icon(
+                            imageVector = SfIcons.ChevronRight,
+                            contentDescription = "Open lyrics",
+                            tint = playerAccentColor.copy(alpha = 0.68f),
+                            modifier = Modifier.size(11.dp),
+                        )
                         }
                     }
                 }
@@ -870,6 +969,8 @@ fun ITuneMusicPlayer(
         // Smoothly glides and scales between top-right mini player position and center full player playback row
         val panelControlsTransY = if (isPanelOpen) controlsTranslationY else 0f
         val panelControlsAlpha = if (isPanelOpen) controlsAlpha else 1f
+        val canSkipPrevious = MusicPlayerState.hasPreviousTrack()
+        val canSkipNext = MusicPlayerState.hasNextTrack()
 
         val fallbackPlayTopPx = with(density) { (maxHeight - 210.dp - navBottomDp).toPx() }
         val fullPlayTopPx = if (playerControlsVisualTopPx > 0f) playerControlsVisualTopPx else fallbackPlayTopPx
@@ -933,9 +1034,9 @@ fun ITuneMusicPlayer(
                 .zIndex(40f)
                 .offset { IntOffset(curNextLeftPx.roundToInt(), curNextTopPx.roundToInt()) }
                 .size(curNextSizeDp)
-                .graphicsLayer { alpha = panelControlsAlpha }
+                .graphicsLayer { alpha = panelControlsAlpha * if (canSkipNext) 1f else 0.38f }
                 .clip(CircleShape)
-                .clickable {
+                .clickable(enabled = canSkipNext) {
                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                     onLyricsInteraction()
                     MusicPlayerState.skipNext()
@@ -978,7 +1079,7 @@ fun ITuneMusicPlayer(
                 .size(curStarSizeDp)
                 .graphicsLayer { alpha = fullElementsAlpha }
                 .clip(CircleShape)
-                .background(Color.White.copy(alpha = curStarBgAlpha))
+                .background(playerAccentColor.copy(alpha = curStarBgAlpha))
                 .clickable {
                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                     MusicPlayerState.toggleFavorite(track)
@@ -990,9 +1091,7 @@ fun ITuneMusicPlayer(
                     if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_outline
                 ),
                 contentDescription = if (isFavorite) "Favorited" else "Favorite",
-                colorFilter = ColorFilter.tint(
-                    if (isFavorite) Color.White else Color.White.copy(alpha = 0.90f)
-                ),
+                colorFilter = ColorFilter.tint(Color.White),
                 modifier = Modifier.size(curStarIconSizeDp)
             )
         }
@@ -1020,7 +1119,7 @@ fun ITuneMusicPlayer(
                 .size(curMoreSizeDp)
                 .graphicsLayer { alpha = fullElementsAlpha }
                 .clip(CircleShape)
-                .background(Color.White.copy(alpha = curMoreBgAlpha))
+                .background(playerAccentColor.copy(alpha = curMoreBgAlpha))
                 .clickable {
                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                     lastLyricsInteractionTime = System.currentTimeMillis()
@@ -1035,7 +1134,7 @@ fun ITuneMusicPlayer(
             Image(
                 painter = painterResource(R.drawable.more_horiz),
                 contentDescription = "More Options",
-                colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
+                colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.96f)),
                 modifier = Modifier.size(curMoreIconSizeDp)
             )
         }
@@ -1113,7 +1212,7 @@ fun ITuneMusicPlayer(
                 .fillMaxWidth()
                 .navigationBarsPadding()
                 .padding(horizontal = 24.dp)
-                .padding(bottom = 18.dp)
+                .padding(bottom = 30.dp)
                 .graphicsLayer {
                     translationY = controlsTranslationY
                     alpha = controlsAlpha * fullElementsAlpha
@@ -1174,7 +1273,7 @@ fun ITuneMusicPlayer(
             ) {
                 Text(
                     text = formatTime(displayPos),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay),
                     color = Color.White.copy(alpha = 0.75f)
                 )
 
@@ -1182,28 +1281,28 @@ fun ITuneMusicPlayer(
                 val pillBadge = audioEngineState.pillBadge
                 Box(
                     modifier = Modifier
-                        .onGloballyPositioned { coords ->
-                            val root = rootBoxCoords
-                            if (root != null && root.isAttached && coords.isAttached) {
-                                val c = root.localPositionOf(
-                                    coords,
-                                    Offset(coords.size.width / 2f, coords.size.height / 2f),
-                                )
-                                enginePillAnchorXPx = c.x
-                                enginePillAnchorYPx = c.y
+                            .onGloballyPositioned { coords ->
+                                val root = rootBoxCoords
+                                if (root != null && root.isAttached && coords.isAttached) {
+                                    val c = root.localPositionOf(
+                                        coords,
+                                        Offset(coords.size.width / 2f, coords.size.height / 2f),
+                                    )
+                                    enginePillAnchorXPx = c.x
+                                    enginePillAnchorYPx = c.y
+                                }
                             }
-                        }
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(Color.White.copy(alpha = if (isAudioEnginePopupOpen || !pillBadge.isBrandedITune) 0.18f else 0.12f))
-                        .clickable {
-                            lastLyricsInteractionTime = System.currentTimeMillis()
-                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                            isMoreMenuOpen = false
-                            isISharePopupOpen = false
-                            isAudioOutputPopupOpen = false
-                            isAudioEnginePopupOpen = !isAudioEnginePopupOpen
-                        }
-                        .padding(horizontal = 12.dp, vertical = 5.dp),
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(Color.White.copy(alpha = if (isAudioEnginePopupOpen || !pillBadge.isBrandedITune) 0.18f else 0.12f))
+                            .clickable {
+                                lastLyricsInteractionTime = System.currentTimeMillis()
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                isMoreMenuOpen = false
+                                isISharePopupOpen = false
+                                isAudioOutputPopupOpen = false
+                                isAudioEnginePopupOpen = !isAudioEnginePopupOpen
+                            }
+                            .padding(horizontal = 12.dp, vertical = 5.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     AnimatedContent(
@@ -1211,11 +1310,11 @@ fun ITuneMusicPlayer(
                         transitionSpec = { fadeIn(tween(180)) togetherWith fadeOut(tween(140)) },
                         label = "audioEnginePillContent",
                     ) { badge ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Image(
+                    ) {
+                        Image(
                                 painter = painterResource(badge.iconRes),
                                 contentDescription = badge.text,
                                 colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
@@ -1228,13 +1327,13 @@ fun ITuneMusicPlayer(
                                         withStyle(SpanStyle(color = Color(0xFFFF1744))) { append("i") }
                                         withStyle(SpanStyle(color = Color.White)) { append("Music • 128k") }
                                     },
-                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium)
+                                    style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay, fontWeight = FontWeight.Medium)
                                 )
                             } else {
                                 Text(
                                     text = badge.text,
                                     color = Color.White,
-                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
+                                    style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay, fontWeight = FontWeight.SemiBold)
                                 )
                             }
                         }
@@ -1243,7 +1342,7 @@ fun ITuneMusicPlayer(
 
                 Text(
                     text = "-${formatTime(remaining)}",
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay),
                     color = Color.White.copy(alpha = 0.75f)
                 )
             }
@@ -1272,9 +1371,10 @@ fun ITuneMusicPlayer(
                         onLyricsInteraction()
                         MusicPlayerState.skipPrevious()
                     },
+                    enabled = canSkipPrevious,
                     modifier = Modifier
                         .size(72.dp)
-                        .graphicsLayer { alpha = fullElementsAlpha }
+                        .graphicsLayer { alpha = fullElementsAlpha * if (canSkipPrevious) 1f else 0.38f }
                 ) {
                     Image(
                         painter = painterResource(R.drawable.skip_previous),
@@ -1316,136 +1416,197 @@ fun ITuneMusicPlayer(
             Spacer(Modifier.height(14.dp))
 
             // ── Bottom Action Controls (Bigger, high-contrast icons with balanced horizontal spacing like iOS Apple Music) ──
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp)
                     .padding(bottom = 6.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
-                // 1. Left: Lyrics Button
-                BottomPanelToggleButton(
-                    iconRes = R.drawable.lyrics,
-                    contentDescription = "Lyrics",
-                    iconSize = 25.dp,
-                    active = isLyricsOpen,
-                    onClick = {
-                        onLyricsInteraction()
-                        if (isLyricsOpen) {
-                            MusicPlayerState.lyricsOpen = false
-                        } else {
-                            MusicPlayerState.queueOpen = false
-                            MusicPlayerState.lyricsOpen = true
-                        }
-                    }
-                )
-
-                // 2. Center: Shuffle & Repeat Split Capsule (When panel open) OR Apple Airbuds & iShare Split Capsule (When player in main mode)
-                Box(
-                    modifier = Modifier.widthIn(min = 104.dp),
-                    contentAlignment = Alignment.Center
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    AnimatedContent(
-                        targetState = isPanelOpen,
-                        transitionSpec = {
-                            fadeIn(tween(200, easing = LinearOutSlowInEasing)) +
-                                scaleIn(initialScale = 0.92f, animationSpec = tween(200, easing = LinearOutSlowInEasing)) togetherWith
-                                fadeOut(tween(160, easing = FastOutLinearInEasing)) +
-                                scaleOut(targetScale = 0.92f, animationSpec = tween(160, easing = FastOutLinearInEasing))
-                        },
-                        label = "centerControlsTransition"
-                    ) { panelOpen ->
-                        if (panelOpen) {
-                            ShuffleRepeatSplitCapsule(
-                                shuffleEnabled = MusicPlayerState.shuffleEnabled,
-                                repeatMode = MusicPlayerState.repeatMode,
-                                endlessQueueEnabled = MusicPlayerState.endlessQueueEnabled,
-                                onToggleEndlessQueue = {
-                                    onLyricsInteraction()
-                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    MusicPlayerState.toggleEndlessQueue()
-                                },
-                                onToggleShuffle = {
-                                    onLyricsInteraction()
-                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    MusicPlayerState.toggleShuffle()
-                                },
-                                onToggleRepeat = {
-                                    onLyricsInteraction()
-                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    MusicPlayerState.toggleRepeat()
-                                }
-                            )
-                        } else {
-                            val participantCount = ishareSession?.let { room ->
-                                room.participantList.size.coerceAtLeast(room.participants).coerceAtLeast(1)
-                            } ?: 0
-                            AirbudsIShareSplitCapsule(
-                                outputIconRes = audioOutputState.capsuleIconRes,
-                                isOutputPopupOpen = isAudioOutputPopupOpen,
-                                ishareActive = ishareSession != null,
-                                participantCount = participantCount,
-                                isPopupOpen = isISharePopupOpen,
-                                onAirbudsClick = {
-                                    lastLyricsInteractionTime = System.currentTimeMillis()
-                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    isMoreMenuOpen = false
-                                    isISharePopupOpen = false
-                                    isAudioEnginePopupOpen = false
-                                    isAudioOutputPopupOpen = !isAudioOutputPopupOpen
-                                },
-                                onAirbudsPositioned = { coords ->
-                                    val root = rootBoxCoords
-                                    if (root != null && root.isAttached && coords.isAttached) {
-                                        val center = root.localPositionOf(
-                                            coords,
-                                            Offset(coords.size.width / 2f, coords.size.height / 2f),
-                                        )
-                                        airbudsAnchorXPx = center.x
-                                        airbudsAnchorYPx = center.y
+                    // 1. Left: Lyrics Button
+                    BottomPanelToggleButton(
+                        iconRes = R.drawable.lyrics,
+                        contentDescription = "Lyrics",
+                        iconSize = 25.dp,
+                        active = isLyricsOpen,
+                        accentColor = playerAccentColor,
+                        onClick = {
+                            onLyricsInteraction()
+                            if (isLyricsOpen) {
+                                MusicPlayerState.lyricsOpen = false
+                            } else {
+                                MusicPlayerState.queueOpen = false
+                                MusicPlayerState.lyricsOpen = true
+                            }
+                        }
+                    )
+
+                    // Keep the capsule aligned with Lyrics and Queue; the output name sits below the row.
+                    Box(
+                        modifier = Modifier.widthIn(min = 104.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        AnimatedContent(
+                            targetState = isPanelOpen,
+                            transitionSpec = {
+                                fadeIn(tween(200, easing = LinearOutSlowInEasing)) +
+                                    scaleIn(initialScale = 0.92f, animationSpec = tween(200, easing = LinearOutSlowInEasing)) togetherWith
+                                    fadeOut(tween(160, easing = FastOutLinearInEasing)) +
+                                    scaleOut(targetScale = 0.92f, animationSpec = tween(160, easing = FastOutLinearInEasing))
+                            },
+                            label = "centerControlsTransition"
+                        ) { panelOpen ->
+                            if (panelOpen) {
+                                ShuffleRepeatSplitCapsule(
+                                    shuffleEnabled = MusicPlayerState.shuffleEnabled,
+                                    repeatMode = MusicPlayerState.repeatMode,
+                                    endlessQueueEnabled = MusicPlayerState.endlessQueueEnabled,
+                                    accentColor = playerAccentColor,
+                                    onToggleEndlessQueue = {
+                                        onLyricsInteraction()
+                                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                        MusicPlayerState.toggleEndlessQueue()
+                                    },
+                                    onToggleShuffle = {
+                                        onLyricsInteraction()
+                                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                        MusicPlayerState.toggleShuffle()
+                                    },
+                                    onToggleRepeat = {
+                                        onLyricsInteraction()
+                                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                        MusicPlayerState.toggleRepeat()
                                     }
-                                },
-                                onIShareClick = {
-                                    lastLyricsInteractionTime = System.currentTimeMillis()
-                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    isMoreMenuOpen = false
-                                    isAudioOutputPopupOpen = false
-                                    isAudioEnginePopupOpen = false
-                                    isISharePopupOpen = !isISharePopupOpen
-                                },
-                                onISharePositioned = { coords ->
-                                    val root = rootBoxCoords
-                                    if (root != null && root.isAttached && coords.isAttached) {
-                                        val center = root.localPositionOf(
-                                            coords,
-                                            Offset(coords.size.width / 2f, coords.size.height / 2f)
-                                        )
-                                        ishareAnchorXPx = center.x
-                                        ishareAnchorYPx = center.y
+                                )
+                            } else {
+                                val participantCount = ishareSession?.let { room ->
+                                    room.participantList.size.coerceAtLeast(room.participants).coerceAtLeast(1)
+                                } ?: 0
+                                AirbudsIShareSplitCapsule(
+                                    outputIconRes = audioOutputState.capsuleIconRes,
+                                    accentColor = playerAccentColor,
+                                    isOutputPopupOpen = isAudioOutputPopupOpen,
+                                    ishareActive = ishareSession != null,
+                                    participantCount = participantCount,
+                                    isPopupOpen = isISharePopupOpen,
+                                    onAirbudsClick = {
+                                        lastLyricsInteractionTime = System.currentTimeMillis()
+                                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                        isMoreMenuOpen = false
+                                        isISharePopupOpen = false
+                                        isAudioEnginePopupOpen = false
+                                        isAudioOutputPopupOpen = !isAudioOutputPopupOpen
+                                    },
+                                    onAirbudsPositioned = { coords ->
+                                        val root = rootBoxCoords
+                                        if (root != null && root.isAttached && coords.isAttached) {
+                                            val center = root.localPositionOf(
+                                                coords,
+                                                Offset(coords.size.width / 2f, coords.size.height / 2f),
+                                            )
+                                            airbudsAnchorXPx = center.x
+                                            airbudsAnchorYPx = center.y
+                                        }
+                                    },
+                                    onIShareClick = {
+                                        lastLyricsInteractionTime = System.currentTimeMillis()
+                                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                        isMoreMenuOpen = false
+                                        isAudioOutputPopupOpen = false
+                                        isAudioEnginePopupOpen = false
+                                        isISharePopupOpen = !isISharePopupOpen
+                                    },
+                                    onISharePositioned = { coords ->
+                                        val root = rootBoxCoords
+                                        if (root != null && root.isAttached && coords.isAttached) {
+                                            val center = root.localPositionOf(
+                                                coords,
+                                                Offset(coords.size.width / 2f, coords.size.height / 2f)
+                                            )
+                                            ishareAnchorXPx = center.x
+                                            ishareAnchorYPx = center.y
+                                        }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
+
+                    // 3. Right: Queue Button
+                    BottomPanelToggleButton(
+                        iconRes = R.drawable.queue_music,
+                        contentDescription = "Queue",
+                        iconSize = 26.dp,
+                        active = isQueueOpen,
+                        accentColor = playerAccentColor,
+                        onClick = {
+                            onLyricsInteraction()
+                            if (isQueueOpen) {
+                                MusicPlayerState.queueOpen = false
+                            } else {
+                                MusicPlayerState.lyricsOpen = false
+                                MusicPlayerState.queueOpen = true
+                            }
+                        }
+                    )
                 }
 
-                // 3. Right: Queue Button
-                BottomPanelToggleButton(
-                    iconRes = R.drawable.queue_music,
-                    contentDescription = "Queue",
-                    iconSize = 26.dp,
-                    active = isQueueOpen,
-                    onClick = {
-                        onLyricsInteraction()
-                        if (isQueueOpen) {
-                            MusicPlayerState.queueOpen = false
-                        } else {
-                            MusicPlayerState.lyricsOpen = false
-                            MusicPlayerState.queueOpen = true
-                        }
+                val activeOutput = audioOutputState.activeDevice
+                val outputName = activeOutput?.name?.takeIf { it.isNotBlank() } ?: "Phone Speaker"
+                val visibleBattery = activeOutput?.batteryPercent?.takeIf {
+                    audioOutputState.hasBluetoothPermission && it in 0..100
+                }
+                Row(
+                    modifier = Modifier
+                        .widthIn(max = 190.dp)
+                        .height(18.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Image(
+                        painter = painterResource(activeOutput?.iconRes ?: R.drawable.ic_output_speaker),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.58f)),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .size(12.dp)
+                            .alignBy { it.measuredHeight },
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = outputName,
+                        color = Color.White.copy(alpha = 0.68f),
+                        fontFamily = SFProDisplay,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.alignByBaseline(),
+                    )
+                    if (visibleBattery != null) {
+                        Spacer(Modifier.width(5.dp))
+                        AppleBatteryIndicator(
+                            percent = visibleBattery,
+                            modifier = Modifier.alignBy { it.measuredHeight },
+                        )
+                        Spacer(Modifier.width(3.dp))
+                        Text(
+                            text = "$visibleBattery%",
+                            color = if (visibleBattery <= 20) Color(0xFFFF6961) else Color.White.copy(alpha = 0.70f),
+                            fontFamily = SFProDisplay,
+                            fontSize = 10.5.sp,
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 1,
+                            modifier = Modifier.alignByBaseline(),
+                        )
                     }
-                )
+                }
             }
         }
 
@@ -1567,6 +1728,7 @@ private fun InPlayerQueueContent(
     isPlaying: Boolean,
     onTrackClick: (MusicTrack) -> Unit,
     onRemoveTrack: (Int) -> Unit,
+    onMoveTrack: (Int, Int) -> Unit,
     onUserInteraction: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -1588,12 +1750,31 @@ private fun InPlayerQueueContent(
 
     LazyColumn(
         state = listState,
-        modifier = modifier.clickable(
-            indication = null,
-            interactionSource = remember { MutableInteractionSource() }
-        ) {
-            onUserInteraction()
-        },
+        modifier = modifier
+            .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+            .drawWithContent {
+                drawContent()
+                val fadeHeight = 96.dp.toPx().coerceAtMost(size.height)
+                val fadeStartFraction = if (size.height > 0f) {
+                    ((size.height - fadeHeight) / size.height).coerceIn(0f, 1f)
+                } else 1f
+                drawRect(
+                    brush = Brush.verticalGradient(
+                        colorStops = arrayOf(
+                            0f to Color.White,
+                            fadeStartFraction to Color.White,
+                            1f to Color.Transparent,
+                        ),
+                    ),
+                    blendMode = BlendMode.DstIn,
+                )
+            }
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                onUserInteraction()
+            },
         contentPadding = PaddingValues(start = 22.dp, end = 22.dp, top = 8.dp, bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
@@ -1763,19 +1944,25 @@ private fun InPlayerQueueContent(
                 key = { idx, item -> "upcoming_${item.id}_$idx" }
             ) { relativeIdx, item ->
                 val actualIdx = currentIndex + 1 + relativeIdx
+                var dragOffsetPx by remember(item.id) { mutableFloatStateOf(0f) }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .graphicsLayer { translationY = dragOffsetPx }
                         .clip(RoundedCornerShape(10.dp))
                         .clickable { onTrackClick(item) }
                         .padding(vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Rounded.DragHandle,
-                        contentDescription = "Reorder",
-                        tint = Color.White.copy(alpha = 0.40f),
-                        modifier = Modifier.size(20.dp)
+                    ReorderDragHandle(
+                        index = relativeIdx,
+                        itemCount = upcomingItems.size,
+                        onMove = onMoveTrack,
+                        itemStep = 68.dp,
+                        tint = Color.White.copy(alpha = 0.48f),
+                        modifier = Modifier.size(28.dp),
+                        onDragDistance = { dragOffsetPx += it },
+                        onDragFinished = { dragOffsetPx = 0f },
                     )
 
                     Spacer(Modifier.width(10.dp))
@@ -2177,7 +2364,8 @@ fun FastHoldPill(
 @Composable
 private fun AppleSplitCapsuleFrame(
     capsuleWidth: Dp,
-    capsuleHeight: Dp = 36.dp,
+    capsuleHeight: Dp = 40.dp,
+    segmentCount: Int = 2,
     modifier: Modifier = Modifier,
     content: @Composable androidx.compose.foundation.layout.RowScope.() -> Unit,
 ) {
@@ -2189,12 +2377,15 @@ private fun AppleSplitCapsuleFrame(
             .drawWithContent {
                 drawContent()
                 val gapPx = 1.5.dp.toPx()
-                drawRect(
-                    color = Color.Transparent,
-                    topLeft = Offset((size.width - gapPx) / 2f, 0f),
-                    size = androidx.compose.ui.geometry.Size(gapPx, size.height),
-                    blendMode = BlendMode.Clear
-                )
+                for (divider in 1 until segmentCount) {
+                    val x = size.width * divider / segmentCount
+                    drawRect(
+                        color = Color.Transparent,
+                        topLeft = Offset(x - gapPx / 2f, 0f),
+                        size = androidx.compose.ui.geometry.Size(gapPx, size.height),
+                        blendMode = BlendMode.Clear
+                    )
+                }
             }
             .clip(CircleShape)
             .border(
@@ -2219,6 +2410,7 @@ private fun AppleSplitCapsuleFrame(
 @Composable
 private fun AirbudsIShareSplitCapsule(
     @DrawableRes outputIconRes: Int,
+    accentColor: Color,
     isOutputPopupOpen: Boolean,
     ishareActive: Boolean,
     participantCount: Int,
@@ -2229,14 +2421,9 @@ private fun AirbudsIShareSplitCapsule(
     onISharePositioned: (LayoutCoordinates) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val capsuleWidth by animateDpAsState(
-        targetValue = if (ishareActive) 122.dp else 104.dp,
-        animationSpec = spring(dampingRatio = 0.85f, stiffness = 360f),
-        label = "ishareCapsuleWidth",
-    )
     AppleSplitCapsuleFrame(
-        capsuleWidth = capsuleWidth,
-        capsuleHeight = 36.dp,
+        capsuleWidth = 144.dp,
+        capsuleHeight = 40.dp,
         modifier = modifier,
     ) {
         Box(
@@ -2244,7 +2431,7 @@ private fun AirbudsIShareSplitCapsule(
                 .weight(1f)
                 .fillMaxHeight()
                 .onGloballyPositioned(onAirbudsPositioned)
-                .background(Color.White.copy(alpha = if (isOutputPopupOpen) 0.28f else 0.18f))
+                .background(accentColor.copy(alpha = if (isOutputPopupOpen) 0.30f else 0.20f))
                 .clickable(onClick = onAirbudsClick)
                 .padding(start = 2.dp),
             contentAlignment = Alignment.Center,
@@ -2262,7 +2449,7 @@ private fun AirbudsIShareSplitCapsule(
                 .weight(1f)
                 .fillMaxHeight()
                 .onGloballyPositioned(onISharePositioned)
-                .background(Color.White.copy(alpha = if (ishareActive || isPopupOpen) 0.28f else 0.18f))
+                .background(accentColor.copy(alpha = if (ishareActive || isPopupOpen) 0.30f else 0.20f))
                 .clickable(onClick = onIShareClick)
                 .padding(end = 2.dp),
             horizontalArrangement = Arrangement.Center,
@@ -2296,6 +2483,7 @@ private fun ShuffleRepeatSplitCapsule(
     shuffleEnabled: Boolean,
     repeatMode: Int,
     endlessQueueEnabled: Boolean,
+    accentColor: Color,
     onToggleEndlessQueue: () -> Unit,
     onToggleShuffle: () -> Unit,
     onToggleRepeat: () -> Unit,
@@ -2308,14 +2496,16 @@ private fun ShuffleRepeatSplitCapsule(
     }
 
     AppleSplitCapsuleFrame(
-        capsuleWidth = 138.dp,
-        capsuleHeight = 34.dp,
+        capsuleWidth = 144.dp,
+        capsuleHeight = 40.dp,
+        segmentCount = 3,
         modifier = modifier,
     ) {
         SplitCapsuleSegment(
             iconRes = if (shuffleEnabled) R.drawable.shuffle_on else R.drawable.shuffle,
             contentDescription = "Shuffle",
             active = shuffleEnabled,
+            accentColor = accentColor,
             opticalOffsetStart = 2.dp,
             opticalOffsetEnd = 0.dp,
             onClick = onToggleShuffle,
@@ -2327,6 +2517,7 @@ private fun ShuffleRepeatSplitCapsule(
             iconRes = R.drawable.ic_infinite_queue,
             contentDescription = "Endless Queue",
             active = endlessQueueEnabled,
+            accentColor = accentColor,
             opticalOffsetStart = 0.dp,
             opticalOffsetEnd = 0.dp,
             onClick = onToggleEndlessQueue,
@@ -2338,6 +2529,7 @@ private fun ShuffleRepeatSplitCapsule(
             iconRes = repeatIcon,
             contentDescription = "Repeat",
             active = repeatMode != Player.REPEAT_MODE_OFF,
+            accentColor = accentColor,
             opticalOffsetStart = 0.dp,
             opticalOffsetEnd = 2.dp,
             onClick = onToggleRepeat,
@@ -2353,6 +2545,7 @@ private fun SplitCapsuleSegment(
     iconRes: Int,
     contentDescription: String,
     active: Boolean,
+    accentColor: Color,
     opticalOffsetStart: Dp,
     opticalOffsetEnd: Dp,
     onClick: () -> Unit,
@@ -2360,7 +2553,7 @@ private fun SplitCapsuleSegment(
 ) {
     Box(
         modifier = modifier
-            .background(Color.White.copy(alpha = if (active) 0.28f else 0.18f))
+            .background(accentColor.copy(alpha = if (active) 0.30f else 0.20f))
             .clickable(onClick = onClick)
             .padding(start = opticalOffsetStart, end = opticalOffsetEnd),
         contentAlignment = Alignment.Center
@@ -2380,6 +2573,7 @@ private fun BottomPanelToggleButton(
     contentDescription: String,
     iconSize: Dp,
     active: Boolean,
+    accentColor: Color = Color.White,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -2387,7 +2581,7 @@ private fun BottomPanelToggleButton(
         modifier = modifier
             .size(44.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(if (active) Color.White.copy(alpha = 0.22f) else Color.Transparent)
+            .background(if (active) accentColor.copy(alpha = 0.22f) else Color.Transparent)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
@@ -2395,7 +2589,7 @@ private fun BottomPanelToggleButton(
             painter = painterResource(iconRes),
             contentDescription = contentDescription,
             colorFilter = ColorFilter.tint(
-                Color.White.copy(alpha = if (active) 1f else 0.90f)
+                accentColor.copy(alpha = if (active) 1f else 0.90f)
             ),
             modifier = Modifier.size(iconSize)
         )
