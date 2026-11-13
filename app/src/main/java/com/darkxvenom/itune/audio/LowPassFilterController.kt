@@ -1,10 +1,12 @@
 package com.darkxvenom.itune.audio
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import com.darkxvenom.itune.backend.LyricsLine
 import com.darkxvenom.itune.backend.MusicPlayerState
+import com.darkxvenom.itune.data.library.SettingsStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -15,7 +17,6 @@ import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 /**
  * Controller for the "Low-Pass Filtering" dynamic audio effect.
@@ -36,13 +37,21 @@ import kotlin.random.Random
  */
 @OptIn(UnstableApi::class)
 object LowPassFilterController {
+    private const val TAG = "LowPassFilter"
+    private const val FALLBACK_TARGET_LABEL = "Instrumental passage"
+    private const val FALLBACK_TARGET_FRACTION = 0.42f
+    private const val FALLBACK_TARGET_LEAD_MS = 12_000L
+
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var scanJob: Job? = null
     private var effectJob: Job? = null
 
     private var currentTrackId: String? = null
     private var targetTimeMs: Long? = null
-    private var hasTriggeredForTrack: Boolean = false
+    private var triggeredForTrack = false
+    private var afterglowTriggeredForTrack = false
+    private var afterglowRestartPending = false
+    private var untimedFallbackTriggered: Boolean = false
     private var lastPositionMs: Long = 0L
     var targetLyricLineText: String = ""
         private set
@@ -53,6 +62,7 @@ object LowPassFilterController {
         val bandsMb: List<Int>,
     )
     private var savedEqState: SavedEq? = null
+    private var lastScanErrorAtMs = 0L
 
     // Exact preset from user screenshot:
     // 60 Hz: +0.3 dB (+30 mB), 230 Hz: +15.0 dB (+1500 mB), 910 Hz: -15.0 dB (-1500 mB), 3 kHz: -15.0 dB (-1500 mB), 14 kHz: -15.0 dB (-1500 mB)
@@ -69,19 +79,23 @@ object LowPassFilterController {
                 delay(200)
                 try {
                     tick()
-                } catch (_: Exception) {
-                    // Protect scan loop
+                } catch (error: Exception) {
+                    val now = System.currentTimeMillis()
+                    if (now - lastScanErrorAtMs >= 5_000L) {
+                        lastScanErrorAtMs = now
+                        Log.e(TAG, "Lyrics scan failed", error)
+                    }
                 }
             }
         }
     }
 
     private fun tick() {
-        val enabled = AudioEngineManager.state.value.lowPassFilterEnabled
-        if (!enabled) {
-            if (AudioEngineManager.state.value.lowPassFilterActive) {
-                cancelActiveEffect()
-            }
+        val engineState = AudioEngineManager.state.value
+        val locked = engineState.bypassAllEffects || (engineState.bitPerfectEnabled && engineState.bitPerfectActive)
+        if (locked) {
+            if (engineState.lowPassFilterActive) cancelActiveEffect()
+            targetTimeMs = null
             return
         }
 
@@ -97,57 +111,123 @@ object LowPassFilterController {
 
         if (currentTrackId != trackId) {
             resetForNewTrack(trackId)
+            Log.d(TAG, "Monitoring track ${track.title} (${track.id})")
         }
 
         val lyrics = MusicPlayerState.lyrics
         val positionMs = MusicPlayerState.positionMs
+        val lyricsPositionMs = (positionMs + MusicPlayerState.lyricsOffsetMs).coerceAtLeast(0L)
         val isPlaying = MusicPlayerState.isPlaying
+
+        val afterglowMs = SettingsStore.normalizeAfterglowDuration(SettingsStore.state.value.afterglowDuration)
+            .removeSuffix(" sec").toLongOrNull()?.times(1000L) ?: 0L
+        if (afterglowMs > 0L) {
+            targetTimeMs = null
+            if (afterglowRestartPending) {
+                // Player position can still report the outgoing end position for one progress
+                // tick after ExoPlayer loops the same item. Wait for the actual rewind before
+                // rearming, otherwise the final-seconds condition immediately fires again.
+                if (positionMs > 2_000L) return
+                afterglowRestartPending = false
+            }
+            if (AudioEngineManager.state.value.lowPassFilterActive || afterglowTriggeredForTrack) return
+            val duration = MusicPlayerState.durationMs.takeIf { it > 0L }
+                ?: (track.durationSec.takeIf { it > 0L }?.times(1000L) ?: 0L)
+            val remainingMs = duration - positionMs
+            if (isPlaying && duration > 0L && remainingMs in 1L..afterglowMs) {
+                targetLyricLineText = "Afterglow"
+                afterglowTriggeredForTrack = true
+                triggerEffect(holdUntilTrackChange = true)
+            }
+            return
+        }
+        afterglowTriggeredForTrack = false
+
+        val enabled = engineState.lowPassFilterEnabled
+        if (!enabled) {
+            if (AudioEngineManager.state.value.lowPassFilterActive) cancelActiveEffect()
+            targetTimeMs = null
+            return
+        }
+
+        // One hook sweep per track. Keep this latched through later chorus repeats and seeks;
+        // the next track (or explicitly toggling the feature off/on) rearms it.
+        if (triggeredForTrack) return
 
         // Track rewind / loop replay detection: reset if song looped to beginning or user scrubbed back
         val isLoopedToStart = (positionMs <= 2000L && lastPositionMs > 4000L)
         val isSeekedBack = (positionMs < lastPositionMs - 3500L)
         if (isLoopedToStart || isSeekedBack) {
-            hasTriggeredForTrack = false
+            untimedFallbackTriggered = false
             targetTimeMs = null
         }
         lastPositionMs = positionMs
 
-        if (hasTriggeredForTrack) {
+        // Do not stack sweeps. This track's single trigger is latched even after restoration.
+        if (AudioEngineManager.state.value.lowPassFilterActive) {
             return
         }
 
-        // If lyrics not loaded yet, keep scanning until last
-        if (lyrics.isEmpty()) {
-            return
+        // Only timestamped lyrics can schedule the repeated hook. Plain/untimed lyric text
+        // uses a timed fallback too, so it never fires immediately at timestamp zero.
+        val hasSyncedLyrics = lyrics.any { it.timeMs > 0L }
+        if (!hasSyncedLyrics) {
+            if (MusicPlayerState.lyricsLoading || untimedFallbackTriggered) return
+            if (targetLyricLineText != FALLBACK_TARGET_LABEL) {
+                targetTimeMs = null
+            }
+            if (targetTimeMs == null) {
+                val durationMs = MusicPlayerState.durationMs.takeIf { it > 0L }
+                    ?: ((track.durationSec * 1000L).takeIf { it > 0L } ?: 0L)
+                val fallbackTarget = if (durationMs > 0L) {
+                    (durationMs * FALLBACK_TARGET_FRACTION).toLong()
+                        .coerceAtLeast(positionMs + 1_000L)
+                        .coerceAtMost(durationMs)
+                } else {
+                    positionMs + FALLBACK_TARGET_LEAD_MS
+                }
+                targetTimeMs = minOf(fallbackTarget, positionMs + FALLBACK_TARGET_LEAD_MS)
+                targetLyricLineText = FALLBACK_TARGET_LABEL
+            }
+        } else if (targetLyricLineText == FALLBACK_TARGET_LABEL) {
+            // Lyrics can arrive after the fallback is scheduled; prefer the real hook when available.
+            targetTimeMs = null
+            targetLyricLineText = ""
         }
 
-        // If target timestamp is not selected yet, scan lyrics and select the hook line occurrence
-        if (targetTimeMs == null) {
-            val candidate = findTargetLyricOccurrence(lyrics, positionMs)
+        // If target timestamp is not selected yet, scan lyrics and select the hook occurrence.
+        if (targetTimeMs == null && hasSyncedLyrics) {
+            val candidate = findTargetLyricOccurrence(lyrics, lyricsPositionMs)
             if (candidate != null) {
                 targetTimeMs = candidate.timeMs
                 targetLyricLineText = candidate.text
+                Log.d(TAG, "Selected hook at ${candidate.timeMs}ms: ${candidate.text}")
             }
         }
 
         val target = targetTimeMs ?: return
-        val delta = target - positionMs
+        val delta = target - if (hasSyncedLyrics) lyricsPositionMs else positionMs
 
         // Check if playback reached target timestamp (triggers right as line starts singing)
-        if (isPlaying && !hasTriggeredForTrack) {
-            if (delta in -2500L..400L) {
-                hasTriggeredForTrack = true
+        if (isPlaying) {
+            if (delta in -600L..400L) {
+                if (!hasSyncedLyrics) untimedFallbackTriggered = true
+                targetTimeMs = null
                 triggerEffect()
             } else if (delta < -2500L) {
                 // User scrubbed/jumped forward past the target, pick another future occurrence if available
-                val nextCandidate = findTargetLyricOccurrence(lyrics, positionMs)
-                if (nextCandidate != null && nextCandidate.timeMs > positionMs) {
+                val nextCandidate = if (hasSyncedLyrics) findTargetLyricOccurrence(lyrics, lyricsPositionMs) else null
+                if (nextCandidate != null && nextCandidate.timeMs > lyricsPositionMs) {
                     targetTimeMs = nextCandidate.timeMs
                     targetLyricLineText = nextCandidate.text
                 } else {
-                    // Near end of song or scrubbed past all occurrences: trigger now on current line
-                    hasTriggeredForTrack = true
-                    triggerEffect()
+                    // If playback starts after all hook occurrences, allow one late-song
+                    // fallback sweep, then wait for a rewind or the next track.
+                    targetTimeMs = null
+                    if (!untimedFallbackTriggered) {
+                        untimedFallbackTriggered = true
+                        triggerEffect()
+                    }
                 }
             }
         }
@@ -182,7 +262,7 @@ object LowPassFilterController {
                 // Tier 1: Highest exact repetition count (hook/chorus)
                 val maxCount = repeated.maxOf { it.value.size }
                 val topCandidates = repeated.filter { it.value.size == maxCount }
-                topCandidates.values.random()
+                topCandidates.values.flatten().sortedBy { it.timeMs }
             }
             candidateLines.size >= 4 -> {
                 // Tier 2: Repeating 3+ word phrase matches
@@ -239,8 +319,9 @@ object LowPassFilterController {
             .trim()
             .lowercase()
             .replace(Regex("""\[.*?\]"""), "") // Remove bracketed tags like [Chorus], [Verse]
-            .replace(Regex("""[()[\]{}<>"'.,!?:;~`*#^&_+=/\\|-]"""), " ")
-            .replace(Regex("""[^\p{L}\p{Nd}\s]"""), "")
+            // The old nested character class is rejected by Android ICU (PatternSyntaxException),
+            // which aborted every scan tick before a target lyric could be selected.
+            .replace(Regex("""[^\p{L}\p{Nd}\s]"""), " ")
             .replace(Regex("""\s+"""), " ")
             .trim()
     }
@@ -256,7 +337,7 @@ object LowPassFilterController {
         return norm !in noiseMarkers
     }
 
-    private fun triggerEffect() {
+    private fun triggerEffect(holdUntilTrackChange: Boolean = false) {
         effectJob?.cancel()
         effectJob = scope.launch {
             // 1. Capture current EQ state
@@ -269,32 +350,52 @@ object LowPassFilterController {
 
             // 2. Instantly apply Low-Pass preset: [30, 1500, -1500, -1500, -1500]
             // "starts set instantly this settings take no smoothness no pause at a time"
-            AudioEngineManager.applyLowPassInstant(LOW_PASS_BANDS)
+            if (!AudioEngineManager.applyLowPassInstant(LOW_PASS_BANDS)) {
+                savedEqState = null
+                targetTimeMs = null
+                untimedFallbackTriggered = false
+                Log.w(TAG, "Filter application deferred because audio effects are locked")
+                return@launch
+            }
+            Log.i(TAG, "Applied Low-Pass EQ immediately for '$targetLyricLineText'")
+            triggeredForTrack = true
+
+            if (holdUntilTrackChange) {
+                // Afterglow is held through the tail of this song. The player calls
+                // onPlaybackStarted for the next item, which restores the captured EQ.
+                while (isActive &&
+                    MusicPlayerState.currentTrack?.id == currentTrackId &&
+                    SettingsStore.state.value.afterglowDuration != "Off") {
+                    delay(100L)
+                }
+                return@launch
+            }
 
             // 3. Hold for 10 to 12 seconds (~11.0s)
-            val holdDurationMs = Random.nextLong(10_500L, 11_500L)
-            val holdStart = System.currentTimeMillis()
-            while (System.currentTimeMillis() - holdStart < holdDurationMs) {
-                if (!isActive) return@launch
-                if (!AudioEngineManager.state.value.lowPassFilterEnabled) {
-                    restoreSavedEq(immediate = true)
-                    return@launch
-                }
-                if (MusicPlayerState.currentTrack?.id != currentTrackId) {
-                    restoreSavedEq(immediate = true)
-                    return@launch
-                }
-                delay(80)
+            val holdDurationMs = 11_000L
+            delay(holdDurationMs)
+            if (!isActive) return@launch
+            if (!AudioEngineManager.state.value.lowPassFilterEnabled || MusicPlayerState.currentTrack?.id != currentTrackId) {
+                restoreSavedEq(immediate = true)
+                return@launch
             }
 
             // 4. "when reaches 10 12 sec set the old settings back means disbake the effecy but smootly slowly"
-            // Smoothly release over 4.2 seconds using Cosine ease-in-out S-curve and 60ms steps
-            val fadeDurationMs = 4200L
-            val steps = 70
-            val stepDelay = fadeDurationMs / steps // 60ms per step
+            // Update the actual EQ bands and UI state throughout the fade. Do not gate these
+            // writes on isPlaying: that made the sweep jump straight to the final restore when
+            // the player's observable state briefly lagged or playback was paused.
+            val fadeDurationMs = 8_000L
+            val steps = 100
+            val stepDelay = fadeDurationMs / steps
             val saved = savedEqState ?: SavedEq(false, "Flat", listOf(0, 0, 0, 0, 0))
+            val activeBands = AudioEngineManager.state.value.eqBandsMb.toList()
+            // When the user's EQ was originally off, its saved sliders are dormant. Fade the
+            // active hardware EQ to neutral first, then switch it off; fading to dormant custom
+            // values and toggling off afterward creates the audible end-of-sweep snap.
+            val audibleRestoreBands = if (saved.wasEnabled) saved.bandsMb else saved.bandsMb.map { 0 }
 
-            for (step in 1..steps) {
+            var step = 1
+            while (step <= steps) {
                 if (!isActive) return@launch
                 if (!AudioEngineManager.state.value.lowPassFilterEnabled ||
                     MusicPlayerState.currentTrack?.id != currentTrackId) {
@@ -303,16 +404,16 @@ object LowPassFilterController {
                 }
 
                 val progress = step.toFloat() / steps.toFloat()
-                // True Cosine S-curve: starts slowly with 0 slope, accelerates gently, settles with 0 slope
+                // Cosine S-curve gives the EQ a gradual start and finish.
                 val factor = (1f - cos(progress * PI.toFloat())) / 2f
-
-                val interpolatedBands = (0 until 5).map { idx ->
-                    val startLevel = LOW_PASS_BANDS.getOrElse(idx) { 0 }
-                    val targetLevel = saved.bandsMb.getOrElse(idx) { 0 }
+                val interpolatedBands = saved.bandsMb.indices.map { idx ->
+                    val startLevel = activeBands.getOrElse(idx) { LOW_PASS_BANDS.getOrElse(idx) { 0 } }
+                    val targetLevel = audibleRestoreBands.getOrElse(idx) { 0 }
                     (startLevel + (targetLevel - startLevel) * factor).roundToInt()
                 }
-
                 AudioEngineManager.applyLowPassInterpolated(interpolatedBands)
+                AudioEngineManager.setLowPassProcessorMix(1f - factor)
+                step++
                 delay(stepDelay)
             }
 
@@ -321,16 +422,18 @@ object LowPassFilterController {
 
             // 5. Finalize restore
             restoreSavedEq(immediate = false)
+            Log.i(TAG, "Restored previous EQ after the filter sweep")
         }
     }
 
-    private fun restoreSavedEq(@Suppress("UNUSED_PARAMETER") immediate: Boolean) {
+    private fun restoreSavedEq(immediate: Boolean) {
         val saved = savedEqState ?: return
         savedEqState = null
         AudioEngineManager.restoreEqAfterLowPass(
             originalEnabled = saved.wasEnabled,
             originalPreset = saved.preset,
             originalBands = saved.bandsMb,
+            bandsAlreadyRestoredGradually = !immediate,
         )
     }
 
@@ -340,20 +443,32 @@ object LowPassFilterController {
         restoreSavedEq(immediate = true)
     }
 
-    fun onPlaybackStarted(newTrackId: String?) {
+    fun onPlaybackStarted(newTrackId: String?, forceRestart: Boolean = false) {
+        // ExoPlayer can emit a transition/discontinuity for repeats and output rebuilds of the
+        // same item. Ordinary same-item callbacks must not rearm lyric filtering, but a repeat-one
+        // seek from the end to the beginning is a new Afterglow cycle even though the media ID is unchanged.
+        if (newTrackId == currentTrackId && !forceRestart) return
         resetForNewTrack(newTrackId)
+        afterglowRestartPending = forceRestart
     }
 
     fun onEffectToggledOn() {
         targetTimeMs = null
-        hasTriggeredForTrack = false
+        triggeredForTrack = false
+        afterglowTriggeredForTrack = false
+        afterglowRestartPending = false
+        untimedFallbackTriggered = false
+        Log.i(TAG, "Enabled; scanning synced lyrics or scheduling an untimed fallback")
     }
 
     fun resetForNewTrack(newTrackId: String?) {
         cancelActiveEffect()
         currentTrackId = newTrackId
         targetTimeMs = null
-        hasTriggeredForTrack = false
+        triggeredForTrack = false
+        afterglowTriggeredForTrack = false
+        afterglowRestartPending = false
+        untimedFallbackTriggered = false
         lastPositionMs = 0L
         targetLyricLineText = ""
     }
