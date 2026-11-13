@@ -1,6 +1,8 @@
 package com.darkxvenom.itune.backend
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.Log
 import com.darkxvenom.itune.data.artist.ArtistInnertubeClient
@@ -53,6 +55,7 @@ object MusicBackend {
     private val explorePlaylistsCache = ConcurrentHashMap<String, List<MusicPlaylistRef>>()
 
     private var initialized = false
+    private var appContext: Context? = null
 
     fun clearLocalizedCaches() {
         suggestionCache.clear()
@@ -61,6 +64,7 @@ object MusicBackend {
     }
 
     fun init(context: Context) {
+        appContext = context.applicationContext
         if (initialized) return
         try {
             NewPipe.init(NewPipeDownloader.instance)
@@ -819,8 +823,23 @@ object MusicBackend {
                 return@withContext null
             }
 
-            val isLossless = forceLossless ?: SettingsStore.state.value.losslessAudio
-            val userQuality = targetQuality ?: SettingsStore.state.value.audioQuality
+            val settings = SettingsStore.state.value
+            val onCellular = appContext?.let(::isCellularConnection) == true
+            val cellularMode = settings.cellularStreaming
+            if (onCellular && cellularMode.equals("Off", ignoreCase = true)) {
+                Log.i(TAG, "Cellular streaming blocked by user setting for $videoId")
+                return@withContext null
+            }
+            val isLossless = forceLossless ?: if (onCellular) {
+                cellularMode.equals("Lossless", ignoreCase = true)
+            } else settings.losslessAudio
+            val userQuality = targetQuality ?: if (onCellular) {
+                when (cellularMode) {
+                    "High Efficiency" -> "Low"
+                    "High Quality" -> "High"
+                    else -> settings.audioQuality
+                }
+            } else settings.audioQuality
 
             val chosen = pickAudioStream(candidates, isLossless, userQuality) ?: candidates.firstOrNull()
             val effectiveQuality = if (isLossless) "Lossless (Max)" else userQuality
@@ -830,6 +849,12 @@ object MusicBackend {
             Log.e(TAG, "Failed to resolve stream for $videoId: ${e.message}", e)
             return@withContext null
         }
+    }
+
+    private fun isCellularConnection(context: Context): Boolean {
+        val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager ?: return false
+        val network = manager.activeNetwork ?: return false
+        return manager.getNetworkCapabilities(network)?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true
     }
 
     suspend fun resolveAudioStreamUrl(
