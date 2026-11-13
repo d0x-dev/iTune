@@ -53,6 +53,7 @@ fun rememberArtworkPalette(
     dark: Boolean = MaterialTheme.colorScheme.background.luminance() < 0.5f,
     artPx: Int = CARD_ART_PX,
     keyColors: ArtworkKeyColors? = null,
+    fallbackAccent: Color? = null,
 ): ArtworkPalette {
     val scheme = MaterialTheme.colorScheme
     val reduceAnimation = LocalReduceAnimation.current
@@ -64,7 +65,7 @@ fun rememberArtworkPalette(
         background = scheme.background,
         wash = scheme.background,
         elevated = scheme.surfaceVariant,
-        accent = scheme.primary,
+        accent = fallbackAccent ?: scheme.primary,
         onBackground = scheme.onBackground,
         onBackgroundVariant = scheme.onSurfaceVariant,
         divider = scheme.outline,
