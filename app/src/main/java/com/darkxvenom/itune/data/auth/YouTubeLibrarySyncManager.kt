@@ -9,6 +9,7 @@ import com.darkxvenom.itune.data.artist.ArtistInnertubeParser
 import com.darkxvenom.itune.data.artist.ArtistRepository
 import com.darkxvenom.itune.data.artist.ArtistStateStore
 import com.darkxvenom.itune.data.library.LibraryStore
+import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.library.PersonalizedHomeRepository
 import com.darkxvenom.itune.data.library.SavedCollectionEntry
 import com.darkxvenom.itune.data.library.SavedSongMetadata
@@ -49,6 +50,7 @@ object YouTubeLibrarySyncManager {
     private var syncJob: Job? = null
 
     fun launchFullSync(context: Context) {
+        if (!SettingsStore.state.value.syncLibrary) return
         val app = context.applicationContext
         syncJob?.cancel()
         syncJob = scope.launch { performFullSync(app) }
@@ -58,6 +60,7 @@ object YouTubeLibrarySyncManager {
     private val NOT_EDITABLE_PLAYLIST_PREFIXES = listOf("LM", "SE", "NE", "SS", "SR", "LL", "WL", "RD", "OLAK", "MPRE")
 
     suspend fun performFullSync(context: Context) = withContext(Dispatchers.IO) {
+        if (!SettingsStore.state.value.syncLibrary) return@withContext
         GoogleAuthStore.ensureInit(context)
         if (!GoogleAuthStore.isSignedIn) return@withContext
         val app = context.applicationContext
@@ -511,7 +514,7 @@ object YouTubeLibrarySyncManager {
     }
 
     fun pushSongLikeAsync(trackId: String, liked: Boolean) {
-        if (!GoogleAuthStore.isSignedIn || trackId.isBlank()) return
+        if (!SettingsStore.state.value.syncLibrary || !GoogleAuthStore.isSignedIn || trackId.isBlank()) return
         val sessionKey = GoogleAuthStore.activeSessionKey()
         scope.launch {
             try {
@@ -528,7 +531,7 @@ object YouTubeLibrarySyncManager {
     }
 
     fun pushArtistSubscriptionAsync(channelId: String, subscribed: Boolean) {
-        if (!GoogleAuthStore.isSignedIn || channelId.isBlank()) return
+        if (!SettingsStore.state.value.syncLibrary || !GoogleAuthStore.isSignedIn || channelId.isBlank()) return
         val sessionKey = GoogleAuthStore.activeSessionKey()
         scope.launch {
             try {
@@ -542,7 +545,7 @@ object YouTubeLibrarySyncManager {
     }
 
     fun pushReleaseSavedAsync(browseId: String, playlistIdHint: String?, saved: Boolean) {
-        if (!GoogleAuthStore.isSignedIn || browseId.isBlank()) return
+        if (!SettingsStore.state.value.syncLibrary || !GoogleAuthStore.isSignedIn || browseId.isBlank()) return
         val sessionKey = GoogleAuthStore.activeSessionKey()
         scope.launch {
             try {
