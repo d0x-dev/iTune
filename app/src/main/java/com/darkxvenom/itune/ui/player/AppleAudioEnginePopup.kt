@@ -797,29 +797,6 @@ private fun EqualizerOptionsPage(state: AudioEngineUiState) {
             },
         )
 
-        EngineToggleCardRow(
-            iconRes = R.drawable.ic_fx_low_pass,
-            title = "Low-Pass Filtering (Chorus Hook)",
-            subtitle = if (state.lowPassFilterActive) {
-                "Active now on song hook line"
-            } else if (state.lowPassFilterEnabled) {
-                "Auto-triggers +15dB bass / -15dB treble cut on chorus hook"
-            } else {
-                "Auto-applies low-pass EQ curve on highest repeated lyric"
-            },
-            checked = state.lowPassFilterEnabled,
-            switchEnabled = true,
-            onCardClick = {
-                val next = !state.lowPassFilterEnabled
-                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                AudioEngineManager.setLowPassFilterEnabled(next)
-            },
-            onCheckedChange = {
-                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                AudioEngineManager.setLowPassFilterEnabled(it)
-            },
-        )
-
         // Apple-styled black segmented mode switcher: Both / Dot Curve / Seekbars
         EngineBlackSegmentedBar(
             labels = listOf("Both", "Dot Curve", "Seekbars"),
