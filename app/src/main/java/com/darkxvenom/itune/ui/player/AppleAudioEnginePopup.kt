@@ -421,6 +421,29 @@ private fun MainAudioEngineList(
         )
 
         EngineToggleCardRow(
+            iconRes = R.drawable.ic_fx_low_pass,
+            title = "Low-Pass Filtering",
+            subtitle = if (state.lowPassFilterActive && !effectsDisabled) {
+                "Active on hook line (11s) • Bass filter"
+            } else if (state.lowPassFilterEnabled && !effectsDisabled) {
+                "On • Scanning lyrics for repeated hook line"
+            } else {
+                "Off • Auto-applies low-pass filter on chorus hook"
+            },
+            checked = state.lowPassFilterEnabled && !effectsDisabled,
+            switchEnabled = !effectsDisabled,
+            onCardClick = {
+                val next = !state.lowPassFilterEnabled
+                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                AudioEngineManager.setLowPassFilterEnabled(next)
+            },
+            onCheckedChange = {
+                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                AudioEngineManager.setLowPassFilterEnabled(it)
+            },
+        )
+
+        EngineToggleCardRow(
             iconRes = R.drawable.ic_dj_console,
             title = "DJ Studio Panel",
             subtitle = if (state.djEnabled && !effectsDisabled) {
@@ -771,6 +794,29 @@ private fun EqualizerOptionsPage(state: AudioEngineUiState) {
             onCheckedChange = {
                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                 AudioEngineManager.setEqualizerEnabled(it)
+            },
+        )
+
+        EngineToggleCardRow(
+            iconRes = R.drawable.ic_fx_low_pass,
+            title = "Low-Pass Filtering (Chorus Hook)",
+            subtitle = if (state.lowPassFilterActive) {
+                "Active now on song hook line"
+            } else if (state.lowPassFilterEnabled) {
+                "Auto-triggers +15dB bass / -15dB treble cut on chorus hook"
+            } else {
+                "Auto-applies low-pass EQ curve on highest repeated lyric"
+            },
+            checked = state.lowPassFilterEnabled,
+            switchEnabled = true,
+            onCardClick = {
+                val next = !state.lowPassFilterEnabled
+                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                AudioEngineManager.setLowPassFilterEnabled(next)
+            },
+            onCheckedChange = {
+                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                AudioEngineManager.setLowPassFilterEnabled(it)
             },
         )
 

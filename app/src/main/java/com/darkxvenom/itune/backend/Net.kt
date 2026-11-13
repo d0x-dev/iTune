@@ -15,6 +15,8 @@ object Net {
 
     val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
+            .proxySelector(AppProxyManager.proxySelector)
+            .proxyAuthenticator(AppProxyManager.proxyAuthenticator)
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .connectionPool(okhttp3.ConnectionPool(8, 5, TimeUnit.MINUTES))

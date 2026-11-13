@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -46,6 +47,7 @@ import coil.size.Size
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.highQualityThumbnail
 import com.darkxvenom.itune.data.model.Track
+import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
 import com.darkxvenom.itune.ui.theme.AppleGlassBorder
 import com.darkxvenom.itune.ui.theme.AppleGlassMiniPlayer
 import com.darkxvenom.itune.ui.theme.AppleTextPrimary
@@ -59,6 +61,7 @@ fun FloatingMiniPlayer(
     onNextClick: () -> Unit,
     onClick: () -> Unit,
     realTrack: MusicTrack? = null,
+    isLoading: Boolean = false,
     showEmptyPlaceholder: Boolean = false,
     modifier: Modifier = Modifier
 ) {
@@ -153,14 +156,27 @@ fun FloatingMiniPlayer(
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(
-                        text = realTrack?.title ?: currentTrack?.title ?: "Not Playing",
-                        color = AppleTextPrimary,
-                        fontSize = if (hasActiveTrack) 14.sp else 15.sp,
-                        fontWeight = if (hasActiveTrack) FontWeight.SemiBold else FontWeight.Medium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    val isExplicit = realTrack?.isExplicit == true || currentTrack?.isExplicit == true
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        if (isExplicit) {
+                            ExplicitBadge(
+                                color = AppleTextSecondary.copy(alpha = 0.90f),
+                                modifier = Modifier.padding(end = 5.dp)
+                            )
+                        }
+                        Text(
+                            text = realTrack?.title ?: currentTrack?.title ?: "Not Playing",
+                            color = AppleTextPrimary,
+                            fontSize = if (hasActiveTrack) 14.sp else 15.sp,
+                            fontWeight = if (hasActiveTrack) FontWeight.SemiBold else FontWeight.Medium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false)
+                        )
+                    }
                     if (hasActiveTrack) {
                         Text(
                             text = realTrack?.artists ?: currentTrack?.artist.orEmpty(),
@@ -177,17 +193,25 @@ fun FloatingMiniPlayer(
                     onClick = onPlayPauseClick,
                     modifier = Modifier.size(36.dp)
                 ) {
-                    AnimatedContent(
-                        targetState = isPlaying,
-                        transitionSpec = { fadeIn() togetherWith fadeOut() },
-                        label = "PlayPause"
-                    ) { playing ->
-                        Icon(
-                            imageVector = if (playing) Icons.Default.Pause else Icons.Default.PlayArrow,
-                            contentDescription = if (playing) "Pause" else "Play",
-                            tint = AppleTextPrimary,
-                            modifier = Modifier.size(24.dp)
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            color = AppleTextPrimary,
+                            strokeWidth = 2.2.dp,
+                            modifier = Modifier.size(20.dp)
                         )
+                    } else {
+                        AnimatedContent(
+                            targetState = isPlaying,
+                            transitionSpec = { fadeIn() togetherWith fadeOut() },
+                            label = "PlayPause"
+                        ) { playing ->
+                            Icon(
+                                imageVector = if (playing) Icons.Default.Pause else Icons.Default.PlayArrow,
+                                contentDescription = if (playing) "Pause" else "Play",
+                                tint = AppleTextPrimary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
                 }
 

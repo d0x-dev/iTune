@@ -81,9 +81,11 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.darkxvenom.itune.R
+import com.darkxvenom.itune.backend.AudioTranscoder
 import com.darkxvenom.itune.backend.MusicBackend
 import com.darkxvenom.itune.backend.MusicCacheManager
 import com.darkxvenom.itune.backend.MusicTrack
+import com.darkxvenom.itune.backend.Net
 import com.darkxvenom.itune.ui.theme.AppleMusicRed
 import com.darkxvenom.itune.ui.theme.AppleTextPrimary
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
@@ -623,6 +625,15 @@ internal fun PlayerToolsDialog(
                                             "Added to ${selectedRingtoneTarget.label.lowercase()}s. Choose it in Sound settings.",
                                             Toast.LENGTH_LONG
                                         ).show()
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.System.canWrite(context)) {
+                                            runCatching {
+                                                val manageIntent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
+                                                    data = Uri.parse("package:" + context.packageName)
+                                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                }
+                                                context.startActivity(manageIntent)
+                                            }
+                                        }
                                         runCatching {
                                             context.startActivity(
                                                 Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
@@ -733,11 +744,6 @@ internal fun PlayerToolsDialog(
 }
 
 private object PlayerToolsAudio {
-    private val http = OkHttpClient.Builder()
-        .connectTimeout(20, TimeUnit.SECONDS)
-        .readTimeout(60, TimeUnit.SECONDS)
-        .build()
-
     suspend fun prepareSource(context: Context, videoId: String): File = withContext(Dispatchers.IO) {
         // 1. Check if cached audio file already exists via MusicCacheManager
         val cached = runCatching { MusicCacheManager.getCachedAudioFile(videoId) }.getOrNull()
@@ -754,8 +760,11 @@ private object PlayerToolsAudio {
         // 3. Otherwise resolve and download
         val url = MusicBackend.resolveAudioStream(videoId, targetQuality = "medium")
             ?: throw IllegalStateException("Could not resolve this song's audio stream")
-        val request = Request.Builder().url(url).header("User-Agent", "Mozilla/5.0").build()
-        http.newCall(request).execute().use { response ->
+        val request = Request.Builder()
+            .url(url)
+            .header("User-Agent", Net.USER_AGENT)
+            .build()
+        Net.client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw IllegalStateException("Audio download failed: HTTP ${response.code}")
             val body = response.body ?: throw IllegalStateException("Empty audio response")
             if (body.contentLength() > 150L * 1024L * 1024L) throw IllegalStateException("Audio file is too large")
@@ -783,9 +792,24 @@ private object PlayerToolsAudio {
     }
 
     fun trim(source: File, startMs: Long, endMs: Long, cacheDir: File): File? {
+        val out = File(cacheDir, "itune_clip_${System.currentTimeMillis()}.m4a")
+
+        // 1. High-fidelity transcode trim (PCM slicing & AAC re-encoding)
+        // This universally supports Opus, Vorbis, AAC, WebM, MP3 without MediaMuxer container errors.
+        val transcodeSuccess = AudioTranscoder.trimAndTranscodeToAac(
+            input = source,
+            output = out,
+            startMs = startMs,
+            endMs = endMs,
+            targetBitrateBps = 192_000
+        )
+        if (transcodeSuccess && out.exists() && out.length() > 0L) {
+            return out
+        }
+
+        // 2. Fallback to direct bitstream muxing if transcode was skipped
         val extractor = MediaExtractor()
         var muxer: MediaMuxer? = null
-        val out = File(cacheDir, "itune_clip_${System.currentTimeMillis()}.m4a")
         return try {
             extractor.setDataSource(source.absolutePath)
             val audioTrack = (0 until extractor.trackCount).firstOrNull {

@@ -109,7 +109,8 @@ private enum class SearchUiMode {
 fun SearchScreen(
     modifier: Modifier = Modifier,
     onCategoryClick: (SearchCategory) -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    onOpenIRecognition: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -127,6 +128,8 @@ fun SearchScreen(
     val searchQuery = searchInput.text
     var submittedQuery by remember { mutableStateOf("") }
     var isEditing by remember { mutableStateOf(false) }
+    var showVoiceOptionsPopup by remember { mutableStateOf(false) }
+    var showVoiceSearchDialog by remember { mutableStateOf(false) }
 
     var searchResults by remember { mutableStateOf(UnifiedSearchResults()) }
     var isSearching by remember { mutableStateOf(false) }
@@ -388,7 +391,9 @@ fun SearchScreen(
                             keyboardController?.show()
                         },
                         onMicClick = {
-                            Toast.makeText(context, "Voice Search listening...", Toast.LENGTH_SHORT).show()
+                            keyboardController?.hide()
+                            focusManager.clearFocus(force = true)
+                            showVoiceOptionsPopup = true
                         },
                         modifier = Modifier.weight(1f)
                     )
@@ -595,12 +600,7 @@ fun SearchScreen(
                                                 is TopResultItem.Song -> {
                                                     focusManager.clearFocus(force = true)
                                                     keyboardController?.hide()
-                                                    val queue = if (songsList.any { it.id == topResult.track.id }) {
-                                                        songsList
-                                                    } else {
-                                                        listOf(topResult.track) + songsList
-                                                    }
-                                                    MusicPlayerState.play(topResult.track, queue)
+                                                    MusicPlayerState.playWithRadioQueue(topResult.track, expandPlayer = true)
                                                 }
                                                 is TopResultItem.Album -> openCollectionDetail(
                                                     SearchDetailState(
@@ -705,14 +705,8 @@ fun SearchScreen(
                                         onPlayClick = {
                                             when (topResult) {
                                                 is TopResultItem.Song -> {
-                                                    val queue = if (songsList.any { it.id == topResult.track.id }) {
-                                                        songsList
-                                                    } else {
-                                                        listOf(topResult.track) + songsList
-                                                    }
-                                                    MusicPlayerState.play(
+                                                    MusicPlayerState.playWithRadioQueue(
                                                         topResult.track,
-                                                        queue,
                                                         expandPlayer = false
                                                     )
                                                 }
@@ -815,7 +809,7 @@ fun SearchScreen(
                                         onClick = {
                                             focusManager.clearFocus(force = true)
                                             keyboardController?.hide()
-                                            MusicPlayerState.play(track, songsList)
+                                            MusicPlayerState.playWithRadioQueue(track, expandPlayer = false)
                                         },
                                         onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Song(track), pos) }
                                     )
@@ -1035,6 +1029,32 @@ fun SearchScreen(
                 }
             },
             onDismiss = { moreRequest = null }
+        )
+    }
+
+    if (showVoiceOptionsPopup) {
+        AppleVoiceOptionsDialog(
+            onVoiceSearch = {
+                showVoiceSearchDialog = true
+            },
+            onIRecognition = {
+                onOpenIRecognition()
+                com.darkxvenom.itune.recognition.MusicRecognitionController.requestOpen()
+            },
+            onDismiss = {
+                showVoiceOptionsPopup = false
+            }
+        )
+    }
+
+    if (showVoiceSearchDialog) {
+        AppleVoiceSearchDialog(
+            onQueryRecognized = { query ->
+                submitSearch(query)
+            },
+            onDismiss = {
+                showVoiceSearchDialog = false
+            }
         )
     }
 }

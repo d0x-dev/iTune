@@ -71,6 +71,7 @@ object ListeningProfileStore {
 
     fun recordPlay(context: Context, track: MusicTrack) {
         ensureInit(context)
+        if (SettingsStore.isPauseListeningHistory()) return
         if (track.id.isBlank() || track.isVideo && track.artists.isBlank()) return
         val now = System.currentTimeMillis()
         synchronized(this) {
@@ -152,6 +153,15 @@ object ListeningProfileStore {
         if (score == null || lastMs == null) return 0.0
         val days = ((now - lastMs).coerceAtLeast(0L)) / 86_400_000.0
         return score * exp(-DECAY_PER_DAY * days)
+    }
+
+    fun clear(context: Context) {
+        ensureInit(context)
+        synchronized(this) {
+            _songs.value = emptyList()
+            _artists.value = emptyList()
+            prefs?.edit()?.remove(KEY_SONGS)?.remove(KEY_ARTISTS)?.apply()
+        }
     }
 
     private fun persist() {

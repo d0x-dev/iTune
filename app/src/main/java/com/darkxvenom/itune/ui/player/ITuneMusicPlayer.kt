@@ -705,11 +705,11 @@ fun ITuneMusicPlayer(
                 },
             contentAlignment = Alignment.Center
         ) {
-            if (isLoading && !isPlaying && sp > 0.4f) {
+            if (isLoading && !isPlaying) {
                 CircularProgressIndicator(
                     color = Color.White,
-                    strokeWidth = 3.dp,
-                    modifier = Modifier.size(curPlayIconSizeDp * 0.9f)
+                    strokeWidth = lerpDp(2.dp, 3.dp, sp),
+                    modifier = Modifier.size(curPlayIconSizeDp * 0.85f)
                 )
             } else {
                 Image(

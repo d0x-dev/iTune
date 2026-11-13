@@ -156,7 +156,8 @@ fun LibraryScreenOverlayContent(
                     onBack = { controller.pop() },
                     onExploreClick = onExploreClick,
                 )
-                LibraryDestination.SONGS -> LibrarySongsScreen(
+                LibraryDestination.SONGS,
+                LibraryDestination.HISTORY -> LibraryHistoryScreen(
                     controller = controller,
                     hasMiniPlayer = hasMiniPlayer,
                     onBack = { controller.pop() },

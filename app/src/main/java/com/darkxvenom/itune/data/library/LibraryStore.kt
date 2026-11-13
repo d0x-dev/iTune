@@ -30,6 +30,7 @@ enum class LibraryDestination {
     ARTISTS,
     ALBUMS,
     SONGS,
+    HISTORY,
     LIKED_SONGS,
     USER_PLAYLIST,
     NEW_RELEASES,
@@ -408,12 +409,21 @@ object LibraryStore {
 
     fun recordRecentSong(context: Context, track: MusicTrack) {
         ensureInit(context)
+        if (SettingsStore.isPauseListeningHistory()) return
         val entry = SavedSongMetadata.fromTrack(track)
         synchronized(this) {
             val current = _recentSongs.value.filterNot { it.id == track.id }
             val updated = (listOf(entry) + current).take(MAX_RECENT_SONGS)
             _recentSongs.value = updated
             persistSongs(KEY_RECENT_SONGS, updated)
+        }
+    }
+
+    fun clearRecentSongs(context: Context) {
+        ensureInit(context)
+        synchronized(this) {
+            _recentSongs.value = emptyList()
+            persistSongs(KEY_RECENT_SONGS, emptyList())
         }
     }
 

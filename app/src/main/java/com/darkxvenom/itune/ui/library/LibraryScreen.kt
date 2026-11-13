@@ -211,9 +211,6 @@ fun LibraryScreen(
                     LibraryTimeTravelCard(
                         onClick = onTimeTravelClick
                     )
-                    LibraryRedRecognitionCard(
-                        onClick = onRecognizeClick
-                    )
                     LibraryGreenSpotifyCard(
                         onClick = {
                             showSpotifyImportDialog = true

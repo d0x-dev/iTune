@@ -48,8 +48,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Dedicated music playback controller and state machine for iTune.
@@ -417,6 +419,19 @@ object MusicPlayerState : Player.Listener {
         fromEngine: Boolean = false,
         preResolvedUrl: String? = null,
     ) {
+        if (AutoSleepTimerManager.isSleepWindowActive()) {
+            appContext?.let {
+                android.widget.Toast.makeText(it, "Auto Sleep Timer active · Playback paused", android.widget.Toast.LENGTH_SHORT).show()
+            }
+            pause()
+            return
+        }
+
+        if (com.darkxvenom.itune.data.library.SettingsStore.isPermanentShuffleEnabled()) {
+            shuffleEnabled = true
+            exoPlayer?.shuffleModeEnabled = true
+        }
+
         // Any manual track change cancels a running crossfade; the engine's own hand-off must not.
         if (!fromEngine) TransitionEngine.cancel()
         plannedNext = null
@@ -446,6 +461,7 @@ object MusicPlayerState : Player.Listener {
             else -> 0L
         }
         currentTrack = track
+        com.darkxvenom.itune.audio.LowPassFilterController.onPlaybackStarted(track.id)
         appContext?.let { LibraryStore.recordRecentSong(it, track) }
         if (autoPlay) {
             appContext?.let {
@@ -765,9 +781,49 @@ object MusicPlayerState : Player.Listener {
     }
 
     fun toggleShuffle() {
+        if (com.darkxvenom.itune.data.library.SettingsStore.isPermanentShuffleEnabled()) {
+            shuffleEnabled = true
+            exoPlayer?.shuffleModeEnabled = true
+            appContext?.let {
+                android.widget.Toast.makeText(it, "Shuffle is locked by Permanent Shuffle in Settings", android.widget.Toast.LENGTH_SHORT).show()
+            }
+            return
+        }
         shuffleEnabled = !shuffleEnabled
         exoPlayer?.shuffleModeEnabled = shuffleEnabled
         savePlaybackSession(sync = false)
+    }
+
+    /**
+     * Plays [track] immediately, and seeds the playback queue with algorithmic recommendations
+     * fetched from YouTube Music's Next/Radio endpoint ("Because you listened to...").
+     */
+    fun playWithRadioQueue(
+        track: MusicTrack,
+        expandPlayer: Boolean = false,
+    ) {
+        play(
+            track = track,
+            newQueue = listOf(track),
+            expandPlayer = expandPlayer,
+        )
+
+        scope.launch(Dispatchers.IO) {
+            val radioTracks = runCatching {
+                MusicBackend.fetchRadioQueue(track.id)
+            }.getOrDefault(emptyList()).filter { it.id != track.id }
+
+            if (radioTracks.isNotEmpty() && currentTrack?.id == track.id) {
+                withContext(Dispatchers.Main) {
+                    if (currentTrack?.id == track.id) {
+                        val existingIds = queue.map { it.id }.toSet()
+                        val newItems = radioTracks.filter { it.id !in existingIds }
+                        queue.addAll(newItems)
+                        savePlaybackSession(sync = false)
+                    }
+                }
+            }
+        }
     }
 
     fun toggleRepeat() {
@@ -1064,7 +1120,7 @@ object MusicPlayerState : Player.Listener {
     override fun onPlaybackStateChanged(playbackState: Int) {
         when (playbackState) {
             Player.STATE_BUFFERING -> {
-                isLoading = !isPlaying
+                isLoading = true
             }
             Player.STATE_READY -> {
                 isLoading = false
@@ -1083,6 +1139,22 @@ object MusicPlayerState : Player.Listener {
             Player.STATE_IDLE -> {
                 isLoading = false
             }
+        }
+    }
+
+    override fun onMediaItemTransition(mediaItem: androidx.media3.common.MediaItem?, reason: Int) {
+        com.darkxvenom.itune.audio.LowPassFilterController.onPlaybackStarted(currentTrack?.id)
+    }
+
+    override fun onPositionDiscontinuity(
+        oldPosition: Player.PositionInfo,
+        newPosition: Player.PositionInfo,
+        reason: Int
+    ) {
+        if (reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION ||
+            (newPosition.positionMs < 2000L && oldPosition.positionMs > 5000L)
+        ) {
+            com.darkxvenom.itune.audio.LowPassFilterController.onPlaybackStarted(currentTrack?.id)
         }
     }
 

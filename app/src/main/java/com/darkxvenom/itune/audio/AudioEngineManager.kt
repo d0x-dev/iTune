@@ -43,6 +43,7 @@ val AirBeatsEqPresets: List<EqPresetSpec> = listOf(
     EqPresetSpec("Jazz", listOf(350, 150, 250, 450, 300)),
     EqPresetSpec("Classical", listOf(300, 200, 150, 350, 550)),
     EqPresetSpec("Night", listOf(-350, -150, 150, 250, 100)),
+    EqPresetSpec("Low-Pass", listOf(30, 1500, -1500, -1500, -1500)),
 )
 
 enum class NormalizationProfile(val label: String, val targetLufs: Float, val baseGainMb: Int) {
@@ -75,6 +76,8 @@ data class AudioEngineUiState(
     val eqFrequenciesHz: List<Int> = listOf(60, 230, 910, 3600, 14000),
     val eqMinMb: Int = -1500,
     val eqMaxMb: Int = 1500,
+    val lowPassFilterEnabled: Boolean = false,
+    val lowPassFilterActive: Boolean = false,
     val djEnabled: Boolean = false,
     val djBoostEnabled: Boolean = false,
     val djBoostPercent: Int = 100,
@@ -154,6 +157,7 @@ object AudioEngineManager {
                 }
             }
         }
+        LowPassFilterController.init(ctx)
         reconcileAllEffects()
     }
 
@@ -241,6 +245,9 @@ object AudioEngineManager {
     }
 
     fun setEqualizerBandLevel(bandIndex: Int, levelMb: Int) {
+        if (_state.value.lowPassFilterActive) {
+            LowPassFilterController.cancelActiveEffect()
+        }
         val cur = _state.value
         if (bandIndex !in cur.eqBandsMb.indices) return
         val clamped = levelMb.coerceIn(cur.eqMinMb, cur.eqMaxMb)
@@ -260,6 +267,9 @@ object AudioEngineManager {
     }
 
     fun applyEqPreset(preset: EqPresetSpec) {
+        if (_state.value.lowPassFilterActive) {
+            LowPassFilterController.cancelActiveEffect()
+        }
         val cur = _state.value
         val mapped = cur.eqBandsMb.indices.map { idx ->
             preset.levelsMb.getOrElse(idx) { 0 }.coerceIn(cur.eqMinMb, cur.eqMaxMb)
@@ -276,6 +286,87 @@ object AudioEngineManager {
             eqBandsMb = mapped,
         )
         reconcileAllEffects()
+    }
+
+    fun setLowPassFilterEnabled(enabled: Boolean) {
+        updateAndSave { cur ->
+            prefs?.edit()?.putBoolean("low_pass_filter_enabled", enabled)?.apply()
+            cur.copy(lowPassFilterEnabled = enabled)
+        }
+        if (enabled) {
+            LowPassFilterController.onEffectToggledOn()
+        } else {
+            LowPassFilterController.cancelActiveEffect()
+        }
+        appContext?.let { SettingsStore.setBoolean(it, SettingsStore.KEY_LOW_PASS_FILTER, enabled) }
+    }
+
+    fun applyLowPassInstant(bands: List<Int>) {
+        val cur = _state.value
+        val sid = sessionIdProvider?.invoke() ?: C.AUDIO_SESSION_ID_UNSET
+        if (hardwareEq == null && sid > 0) {
+            setupHardwareEqualizer(sid)
+        }
+        hardwareEq?.let { eq ->
+            runCatching {
+                eq.enabled = true
+                bands.forEachIndexed { idx, mb ->
+                    if (idx < eq.numberOfBands) {
+                        eq.setBandLevel(idx.toShort(), mb.coerceIn(cur.eqMinMb, cur.eqMaxMb).toShort())
+                    }
+                }
+            }
+        }
+        _state.value = cur.copy(
+            eqEnabled = true,
+            eqPreset = "Low-Pass",
+            eqBandsMb = bands,
+            lowPassFilterActive = true,
+        )
+    }
+
+    fun applyLowPassInterpolated(bands: List<Int>) {
+        val cur = _state.value
+        var eq = hardwareEq
+        if (eq == null) {
+            val sid = sessionIdProvider?.invoke() ?: C.AUDIO_SESSION_ID_UNSET
+            if (sid > 0) {
+                setupHardwareEqualizer(sid)
+                eq = hardwareEq
+            }
+        }
+        eq?.let { e ->
+            runCatching {
+                bands.forEachIndexed { idx, mb ->
+                    if (idx < e.numberOfBands) {
+                        e.setBandLevel(idx.toShort(), mb.coerceIn(cur.eqMinMb, cur.eqMaxMb).toShort())
+                    }
+                }
+            }
+        }
+        _state.value = cur.copy(
+            eqBandsMb = bands,
+        )
+    }
+
+    fun restoreEqAfterLowPass(originalEnabled: Boolean, originalPreset: String, originalBands: List<Int>) {
+        val cur = _state.value
+        hardwareEq?.let { eq ->
+            runCatching {
+                originalBands.forEachIndexed { idx, mb ->
+                    if (idx < eq.numberOfBands) {
+                        eq.setBandLevel(idx.toShort(), mb.coerceIn(cur.eqMinMb, cur.eqMaxMb).toShort())
+                    }
+                }
+                eq.enabled = originalEnabled && !cur.bypassAllEffects
+            }
+        }
+        _state.value = cur.copy(
+            eqEnabled = originalEnabled,
+            eqPreset = originalPreset,
+            eqBandsMb = originalBands,
+            lowPassFilterActive = false,
+        )
     }
 
     fun resetEqualizer() {
@@ -573,11 +664,12 @@ object AudioEngineManager {
         // 4. Hardware Equalizer
         val eq = hardwareEq
         val sid = sessionIdProvider?.invoke() ?: C.AUDIO_SESSION_ID_UNSET
-        if (eq == null && sid > 0 && !locked && s.eqEnabled) {
+        val eqActive = !locked && (s.eqEnabled || s.lowPassFilterActive)
+        if (eq == null && sid > 0 && eqActive) {
             setupHardwareEqualizer(sid)
         } else if (eq != null) {
             runCatching {
-                eq.enabled = !locked && s.eqEnabled
+                eq.enabled = eqActive
                 s.eqBandsMb.forEachIndexed { i, lvl ->
                     if (i < eq.numberOfBands) {
                         eq.setBandLevel(i.toShort(), lvl.coerceIn(s.eqMinMb, s.eqMaxMb).toShort())
@@ -694,6 +786,7 @@ object AudioEngineManager {
             normalizationProfile = profile,
             normalizationOffsetMb = p.getInt("norm_offset_mb", 0).coerceIn(-1200, 1200),
             bypassAllEffects = p.getBoolean("bypass_all", false),
+            lowPassFilterEnabled = p.getBoolean("low_pass_filter_enabled", false),
         )
     }
 }

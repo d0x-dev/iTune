@@ -1,7 +1,12 @@
 package com.darkxvenom.itune.audio
 
 import android.Manifest
+import android.bluetooth.BluetoothA2dp
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothHeadset
 import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -77,6 +82,28 @@ object AudioOutputManager {
     private var preferredDevice: AudioDeviceInfo? = null
     private var dualSecondaryDevice: AudioDeviceInfo? = null
 
+    private var bluetoothAdapter: BluetoothAdapter? = null
+    private var a2dpProfile: BluetoothA2dp? = null
+    private var headsetProfile: BluetoothHeadset? = null
+
+    private val profileListener = object : BluetoothProfile.ServiceListener {
+        override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
+            when (profile) {
+                BluetoothProfile.A2DP -> a2dpProfile = proxy as? BluetoothA2dp
+                BluetoothProfile.HEADSET -> headsetProfile = proxy as? BluetoothHeadset
+            }
+            refreshDevices()
+        }
+
+        override fun onServiceDisconnected(profile: Int) {
+            when (profile) {
+                BluetoothProfile.A2DP -> a2dpProfile = null
+                BluetoothProfile.HEADSET -> headsetProfile = null
+            }
+            refreshDevices()
+        }
+    }
+
     private val _state = MutableStateFlow(AudioOutputUiState())
     val state: StateFlow<AudioOutputUiState> = _state.asStateFlow()
 
@@ -112,6 +139,14 @@ object AudioOutputManager {
 
         val mgr = ctx.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
         audioManager = mgr
+
+        runCatching {
+            val bm = ctx.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+            val adapter = bm?.adapter ?: BluetoothAdapter.getDefaultAdapter()
+            bluetoothAdapter = adapter
+            adapter?.getProfileProxy(ctx, profileListener, BluetoothProfile.A2DP)
+            adapter?.getProfileProxy(ctx, profileListener, BluetoothProfile.HEADSET)
+        }
 
         val prefs = ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val savedBitPerfect = prefs.getBoolean(KEY_BIT_PERFECT, false)
@@ -261,6 +296,13 @@ object AudioOutputManager {
         callbackRegistered = false
         usbBitPerfect?.clear()
         usbBitPerfect = null
+
+        bluetoothAdapter?.let { adapter ->
+            a2dpProfile?.let { proxy -> adapter.closeProfileProxy(BluetoothProfile.A2DP, proxy) }
+            headsetProfile?.let { proxy -> adapter.closeProfileProxy(BluetoothProfile.HEADSET, proxy) }
+        }
+        a2dpProfile = null
+        headsetProfile = null
     }
 
     internal fun resolveCapsuleIconForCategory(
@@ -287,7 +329,14 @@ object AudioOutputManager {
     }
 
     private fun toEntry(dev: AudioDeviceInfo, btBatteries: Map<String, Int>): OutputDeviceEntry {
-        val name = dev.outputName()
+        val isBt = dev.isBluetoothOutput()
+        val realBtName = if (isBt) getConnectedBluetoothDeviceName(dev) else null
+        val rawName = dev.outputName()
+        val name = if (isBt && !realBtName.isNullOrBlank()) {
+            realBtName
+        } else {
+            rawName
+        }
         val category = classify(dev)
         val iconRes = resolveListIconForCategory(category)
         val subtitle = when {
@@ -372,6 +421,76 @@ object AudioOutputManager {
         else -> 6
     }
 
+    fun getConnectedBluetoothDeviceName(dev: AudioDeviceInfo? = null): String? {
+        val ctx = appContext ?: return null
+        val hasBtPerm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            ContextCompat.checkSelfPermission(ctx, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
+        if (!hasBtPerm) return null
+
+        val devAddress = dev?.addressCompat().orEmpty()
+
+        // 1. If dev has address, find matching device in active profiles or bonded devices
+        if (devAddress.isNotBlank()) {
+            runCatching {
+                val connectedProfiles = (a2dpProfile?.connectedDevices.orEmpty() + headsetProfile?.connectedDevices.orEmpty())
+                val matchedProfileDev = connectedProfiles.firstOrNull { it.address.equals(devAddress, ignoreCase = true) }
+                if (matchedProfileDev != null) {
+                    val name = getFriendlyDeviceName(matchedProfileDev)
+                    if (name.isNotBlank()) return name
+                }
+
+                val bondedMatch = bluetoothAdapter?.bondedDevices?.firstOrNull { it.address.equals(devAddress, ignoreCase = true) }
+                if (bondedMatch != null) {
+                    val name = getFriendlyDeviceName(bondedMatch)
+                    if (name.isNotBlank()) return name
+                }
+            }
+        }
+
+        // 2. Check active connected A2DP device
+        runCatching {
+            val a2dpDev = a2dpProfile?.connectedDevices?.firstOrNull()
+            if (a2dpDev != null) {
+                val name = getFriendlyDeviceName(a2dpDev)
+                if (name.isNotBlank()) return name
+            }
+        }
+
+        // 3. Check active connected Headset device
+        runCatching {
+            val hsDev = headsetProfile?.connectedDevices?.firstOrNull()
+            if (hsDev != null) {
+                val name = getFriendlyDeviceName(hsDev)
+                if (name.isNotBlank()) return name
+            }
+        }
+
+        // 4. Fallback: check bonded devices if only one is bonded or if device name is known
+        runCatching {
+            val bonded = bluetoothAdapter?.bondedDevices.orEmpty()
+            if (bonded.size == 1) {
+                val name = getFriendlyDeviceName(bonded.first())
+                if (name.isNotBlank()) return name
+            }
+        }
+
+        return null
+    }
+
+    private fun getFriendlyDeviceName(device: BluetoothDevice): String {
+        return runCatching {
+            val alias = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                device.alias
+            } else {
+                null
+            }
+            alias?.takeIf { it.isNotBlank() } ?: device.name.orEmpty()
+        }.getOrDefault("").trim()
+    }
+
     private fun queryBondedBatteryMap(context: Context): Map<String, Int> {
         val result = mutableMapOf<String, Int>()
         runCatching {
@@ -432,15 +551,23 @@ private fun isBleHeadsetOrSpeaker(dev: AudioDeviceInfo): Boolean {
 
 fun AudioDeviceInfo.outputName(): String {
     val raw = productName?.toString()?.trim().orEmpty()
-    if (raw.isNotBlank() && !raw.equals(Build.MODEL, ignoreCase = true)) {
+    val isGeneric = raw.isBlank() ||
+        raw.equals(Build.MODEL, ignoreCase = true) ||
+        raw.equals("bluedevice", ignoreCase = true) ||
+        raw.equals("bluetooth", ignoreCase = true) ||
+        raw.equals("bluetooth device", ignoreCase = true) ||
+        raw.equals("bluetooth audio", ignoreCase = true) ||
+        raw.equals("bluetooth a2dp", ignoreCase = true)
+
+    if (raw.isNotBlank() && !isGeneric) {
         return raw
     }
     return when (type) {
         AudioDeviceInfo.TYPE_BUILTIN_SPEAKER -> "Phone Speaker"
         AudioDeviceInfo.TYPE_WIRED_HEADPHONES -> "Wired Headphones"
         AudioDeviceInfo.TYPE_WIRED_HEADSET -> "Wired Headset"
-        AudioDeviceInfo.TYPE_BLUETOOTH_A2DP -> "Bluetooth Buds / Audio"
-        AudioDeviceInfo.TYPE_BLUETOOTH_SCO -> "Bluetooth Headset"
+        AudioDeviceInfo.TYPE_BLUETOOTH_A2DP,
+        AudioDeviceInfo.TYPE_BLUETOOTH_SCO -> "Bluetooth Audio"
         AudioDeviceInfo.TYPE_USB_DEVICE -> "USB-C DAC"
         AudioDeviceInfo.TYPE_USB_HEADSET -> "USB-C Headset"
         AudioDeviceInfo.TYPE_USB_ACCESSORY -> "USB Audio"

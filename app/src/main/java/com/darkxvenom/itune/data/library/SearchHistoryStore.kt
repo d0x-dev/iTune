@@ -35,6 +35,7 @@ object SearchHistoryStore {
         val trimmed = query.trim()
         if (trimmed.isEmpty()) return
         ensureInit(context)
+        if (SettingsStore.isPauseSearchHistory()) return
         val updated = buildList {
             add(trimmed)
             for (existing in _history.value) {

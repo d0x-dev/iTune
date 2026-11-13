@@ -1,0 +1,49 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Wrench head and handle -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M14.7,6.3 C13.9,4.8 14.3,2.9 15.6,2 C16.9,2.8 17.5,4.4 16.9,5.8 L18.8,7.7 C20.2,7.1 21.8,7.7 22.6,9 C21.7,10.3 19.8,10.7 18.3,9.9 L10.8,17.4 C10.2,18 9.3,18 8.7,17.4 L7.2,15.9 C6.6,15.3 6.6,14.4 7.2,13.8 Z" />
+
+    <!-- Screwdriver / adjustment slider element -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M4.5,19.5 L2.5,21.5" />
+
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M9.5,14.5 L3.5,20.5" />
+
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M2,9 L6,9" />
+
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M4,7 L4,11" />
+
+</vector>

@@ -1,5 +1,7 @@
 package com.darkxvenom.itune.ui.player
 
+import com.darkxvenom.itune.ui.aod.AlwaysOnDisplayManager
+
 import android.Manifest
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -772,11 +774,22 @@ fun AppleMoreOptionsPopup(
                                         PopupMenuDivider()
 
                                         MorePopupOptionRow(
-                                            iconRes = R.drawable.ic_menu_details,
+                                            iconRes = R.drawable.ic_player_tools,
                                             title = "Tools",
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 activePage = MorePopupPage.TOOLS
+                                            }
+                                        )
+                                        PopupMenuDivider()
+
+                                        MorePopupOptionRow(
+                                            iconRes = R.drawable.ic_menu_aod,
+                                            title = "Always On Display",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                onDismiss()
+                                                AlwaysOnDisplayManager.activate()
                                             }
                                         )
                                     }
@@ -803,6 +816,16 @@ fun AppleMoreOptionsPopup(
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 playerToolMode = PlayerToolMode.SNIPPET
                                                 showPlayerToolsDialog = true
+                                            }
+                                        )
+                                        PopupMenuDivider()
+                                        MorePopupOptionRow(
+                                            iconRes = R.drawable.ic_menu_aod,
+                                            title = "Always On Display",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                onDismiss()
+                                                AlwaysOnDisplayManager.activate()
                                             }
                                         )
                                     }

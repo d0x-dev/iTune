@@ -309,6 +309,13 @@ fun AppleSettingsScreen(
     var showDeveloperNews by rememberSaveable { mutableStateOf(false) }
     var showNameDialog by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
+    var showAutoSleepTimerDialog by remember { mutableStateOf(false) }
+    var showProxySettingsDialog by remember { mutableStateOf(false) }
+    var showAodSettings by rememberSaveable { mutableStateOf(false) }
+
+    BackHandler(enabled = showAodSettings && !showLyricsSettings && !showDeveloperNews && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
+        showAodSettings = false
+    }
 
     BackHandler(enabled = showDeveloperNews && !showLyricsSettings && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
         showDeveloperNews = false
@@ -374,7 +381,15 @@ fun AppleSettingsScreen(
                 SearchHistoryStore.clearAll(context)
                 Toast.makeText(context, "Search history cleared", Toast.LENGTH_SHORT).show()
             },
+            onClearListeningHistory = {
+                com.darkxvenom.itune.data.library.ListeningProfileStore.clear(context)
+                com.darkxvenom.itune.data.library.LibraryStore.clearRecentSongs(context)
+                Toast.makeText(context, "Listening history cleared", Toast.LENGTH_SHORT).show()
+            },
             onOpenAbout = { showAboutDialog = true },
+            onOpenAutoSleepTimer = { showAutoSleepTimerDialog = true },
+            onOpenProxySettings = { showProxySettingsDialog = true },
+            onOpenAodSettings = { showAodSettings = true },
         )
     }
 
@@ -711,6 +726,16 @@ fun AppleSettingsScreen(
                         onBack = { showDeveloperNews = false },
                     )
                 }
+
+                AnimatedVisibility(
+                    visible = showAodSettings,
+                    enter = fadeIn(tween(200)) + slideInHorizontally(tween(260)) { it / 8 },
+                    exit = fadeOut(tween(180)) + slideOutHorizontally(tween(220)) { it / 8 },
+                ) {
+                    AlwaysOnDisplaySettingsScreen(
+                        onBack = { showAodSettings = false },
+                    )
+                }
             }
         }
     }
@@ -753,6 +778,14 @@ fun AppleSettingsScreen(
             },
             onDismiss = { showAboutDialog = false },
         )
+    }
+
+    if (showAutoSleepTimerDialog) {
+        AutoSleepTimerDialog(onDismiss = { showAutoSleepTimerDialog = false })
+    }
+
+    if (showProxySettingsDialog) {
+        ProxySettingsDialog(onDismiss = { showProxySettingsDialog = false })
     }
 
     if (showClearSongCacheDialog) {
@@ -1751,13 +1784,17 @@ private fun buildSettingsSections(
     onClearSongCache: () -> Unit,
     onEditName: () -> Unit,
     onClearSearchHistory: () -> Unit,
+    onClearListeningHistory: () -> Unit,
     onOpenAbout: () -> Unit,
+    onOpenAutoSleepTimer: () -> Unit,
+    onOpenProxySettings: () -> Unit,
+    onOpenAodSettings: () -> Unit,
 ): List<SettingsSection> {
     val effectsDisabled = audioEngine.bypassAllEffects || (audioEngine.bitPerfectEnabled && bitPerfectActive)
     return listOf(
         SettingsSection(
             id = "ishare_together",
-            title = "iShare & Dynamic Island",
+            title = "iShare, Dynamic Island & StandBy",
             entries = listOf(
                 SettingsEntry.Action(
                     id = "ishare",
@@ -1792,6 +1829,19 @@ private fun buildSettingsSections(
                     ),
                     trailingValue = if (dynamicIslandEnabled) "On" else "Off",
                     onAction = onOpenDynamicIsland,
+                ),
+                SettingsEntry.Action(
+                    id = "always_on_display",
+                    title = "Always On Display",
+                    subtitle = if (state.aodEnabled) {
+                        "Auto-activates on idle (${if (state.aodTimeoutSeconds > 0) "${state.aodTimeoutSeconds}s" else "Manual"}) • OLED StandBy"
+                    } else {
+                        "StandBy OLED widget with water bubble glass"
+                    },
+                    iconRes = R.drawable.ic_menu_aod,
+                    keywords = listOf("aod", "always on display", "standby", "oled", "screen", "black", "idle", "timeout"),
+                    trailingValue = if (state.aodEnabled) "On" else "Off",
+                    onAction = onOpenAodSettings,
                 ),
             ),
         ),
@@ -1858,6 +1908,21 @@ private fun buildSettingsSections(
                     switchEnabled = !effectsDisabled,
                     onToggle = { AudioEngineManager.setEqualizerEnabled(it) },
                     onOpenDetails = { onOpenAudioEffect(EnginePopupPage.EQUALIZER) },
+                ),
+                SettingsEntry.Toggle(
+                    id = "engine_low_pass_filter",
+                    title = "Low-Pass Filtering",
+                    subtitle = if (audioEngine.lowPassFilterActive && !effectsDisabled) {
+                        "Active on hook line (11s) • Bass filter"
+                    } else if (audioEngine.lowPassFilterEnabled && !effectsDisabled) {
+                        "Auto-applies low-pass EQ curve on most repeated hook for 10-12s"
+                    } else {
+                        "Triggers muffled party EQ on most repeated synced lyric line"
+                    },
+                    iconRes = R.drawable.ic_fx_low_pass,
+                    keywords = listOf("low-pass", "filter", "eq", "lyrics", "hook", "chorus", "bass", "audio"),
+                    checked = audioEngine.lowPassFilterEnabled && !effectsDisabled,
+                    onToggle = { AudioEngineManager.setLowPassFilterEnabled(it) },
                 ),
                 SettingsEntry.EffectToggleAction(
                     id = "engine_dj_console",
@@ -2003,6 +2068,24 @@ private fun buildSettingsSections(
                     keywords = listOf("automix", "auto mix", "smart", "dj", "blend", "transition", "crossfade", "level", "loudness"),
                     checked = state.autoMix,
                     onToggle = { onToggleBool(SettingsStore.KEY_AUTOMIX, it) },
+                ),
+                SettingsEntry.Toggle(
+                    id = "permanent_shuffle",
+                    title = "Permanent Shuffle",
+                    subtitle = "Keep shuffle permanently locked on in player",
+                    iconRes = R.drawable.shuffle,
+                    keywords = listOf("shuffle", "permanent", "lock", "random", "playback"),
+                    checked = state.permanentShuffle,
+                    onToggle = { onToggleBool(SettingsStore.KEY_PERMANENT_SHUFFLE, it) },
+                ),
+                SettingsEntry.Toggle(
+                    id = "pause_on_zero_volume",
+                    title = "Pause at Volume 0",
+                    subtitle = "Automatically pause playback when volume reaches zero",
+                    iconRes = R.drawable.volume_off,
+                    keywords = listOf("pause", "volume", "zero", "mute", "playback", "silence"),
+                    checked = state.pauseOnZeroVolume,
+                    onToggle = { onToggleBool(SettingsStore.KEY_PAUSE_ON_ZERO_VOLUME, it) },
                 ),
             ),
         ),
@@ -2349,23 +2432,35 @@ private fun buildSettingsSections(
                 checked = state.stopMusicOnTaskClear,
                 onToggle = { onToggleBool(SettingsStore.KEY_STOP_MUSIC_ON_TASK_CLEAR, it) },
             ),
-            SettingsEntry.Picker(
-                id = "sleep_timer",
-                title = "Sleep Timer",
-                subtitle = "Automatically fade out playback",
+            SettingsEntry.Action(
+                id = "auto_sleep_timer",
+                title = "Auto Sleep Timer",
+                subtitle = if (state.autoSleepTimerEnabled) {
+                    val sH = if (state.autoSleepStartHour == 0) 12 else if (state.autoSleepStartHour > 12) state.autoSleepStartHour - 12 else state.autoSleepStartHour
+                    val sAm = if (state.autoSleepStartHour >= 12) "PM" else "AM"
+                    val eH = if (state.autoSleepEndHour == 0) 12 else if (state.autoSleepEndHour > 12) state.autoSleepEndHour - 12 else state.autoSleepEndHour
+                    val eAm = if (state.autoSleepEndHour >= 12) "PM" else "AM"
+                    "Active · %d:%02d %s – %d:%02d %s".format(sH, state.autoSleepStartMinute, sAm, eH, state.autoSleepEndMinute, eAm)
+                } else {
+                    "Off · Schedule recurring sleep hours"
+                },
                 iconRes = R.drawable.ic_settings_sleep_timer,
-                keywords = listOf("bedtime", "night", "stop", "timer", "countdown"),
-                currentValue = state.sleepTimer,
-                description = "Stop audio gently after a set duration or when the current track finishes.",
-                options = listOf(
-                    SettingsOptionChoice("Off", "Keep playback active continuously"),
-                    SettingsOptionChoice("15 min", "Fade out gently after 15 minutes"),
-                    SettingsOptionChoice("30 min", "Fade out gently after 30 minutes"),
-                    SettingsOptionChoice("45 min", "Fade out gently after 45 minutes"),
-                    SettingsOptionChoice("60 min", "Fade out gently after 1 hour"),
-                    SettingsOptionChoice("End of Track", "Pause automatically when current track ends"),
-                ),
-                onSelect = { onSelectString(SettingsStore.KEY_SLEEP_TIMER, it) },
+                keywords = listOf("sleep", "auto", "timer", "schedule", "night", "bedtime"),
+                trailingValue = if (state.autoSleepTimerEnabled) "On" else "Off",
+                onAction = onOpenAutoSleepTimer,
+            ),
+            SettingsEntry.Action(
+                id = "network_proxy",
+                title = "Network Proxy",
+                subtitle = if (state.proxyEnabled && state.proxyHost.isNotBlank()) {
+                    "${state.proxyType} · ${state.proxyHost}:${state.proxyPort}"
+                } else {
+                    "Off · Route via HTTP / SOCKS proxy"
+                },
+                iconRes = R.drawable.ic_settings_proxy,
+                keywords = listOf("proxy", "socks", "socks5", "socks4", "http", "network", "vpn"),
+                trailingValue = if (state.proxyEnabled) "On" else "Off",
+                onAction = onOpenProxySettings,
             ),
             SettingsEntry.Action(
                 id = "display_name",
@@ -2375,15 +2470,6 @@ private fun buildSettingsSections(
                 keywords = listOf("name", "profile", "account", "rename", "user"),
                 trailingValue = state.displayName,
                 onAction = onEditName,
-            ),
-            SettingsEntry.Action(
-                id = "clear_search_history",
-                title = "Clear Search History",
-                subtitle = "Remove recent queries from Search",
-                iconRes = R.drawable.ic_settings_clear_history,
-                keywords = listOf("search", "recent", "queries", "clear", "delete", "privacy"),
-                trailingValue = if (searchHistoryCount == 0) "Empty" else "$searchHistoryCount saved",
-                onAction = onClearSearchHistory,
             ),
             SettingsEntry.Action(
                 id = "developer_news",
@@ -2403,6 +2489,57 @@ private fun buildSettingsSections(
                 trailingValue = "v2.4",
                 badgeCount = 1,
                 onAction = onOpenAbout,
+            ),
+        ),
+    ),
+    SettingsSection(
+        id = "privacy_card",
+        title = "Privacy",
+        entries = listOf(
+            SettingsEntry.Toggle(
+                id = "pause_search_history",
+                title = "Pause Search History",
+                subtitle = "Do not save new search queries to history",
+                iconRes = R.drawable.ic_settings_clear_history,
+                keywords = listOf("pause", "search", "history", "private", "queries"),
+                checked = state.pauseSearchHistory,
+                onToggle = { onToggleBool(SettingsStore.KEY_PAUSE_SEARCH_HISTORY, it) },
+            ),
+            SettingsEntry.Action(
+                id = "clear_search_history",
+                title = "Clear Search History",
+                subtitle = "Remove recent queries from Search",
+                iconRes = R.drawable.ic_settings_clear_history,
+                keywords = listOf("search", "recent", "queries", "clear", "delete", "privacy"),
+                trailingValue = if (searchHistoryCount == 0) "Empty" else "$searchHistoryCount saved",
+                onAction = onClearSearchHistory,
+            ),
+            SettingsEntry.Toggle(
+                id = "pause_listening_history",
+                title = "Pause Listening History",
+                subtitle = "Do not record played songs or update recommendations",
+                iconRes = R.drawable.ic_settings_history,
+                keywords = listOf("pause", "listening", "history", "playback", "privacy"),
+                checked = state.pauseListeningHistory,
+                onToggle = { onToggleBool(SettingsStore.KEY_PAUSE_LISTENING_HISTORY, it) },
+            ),
+            SettingsEntry.Action(
+                id = "clear_listening_history",
+                title = "Clear Listening History",
+                subtitle = "Remove playback history and reset taste profile",
+                iconRes = R.drawable.ic_settings_history,
+                keywords = listOf("clear", "listening", "history", "reset", "privacy", "taste"),
+                trailingValue = "Clear",
+                onAction = onClearListeningHistory,
+            ),
+            SettingsEntry.Toggle(
+                id = "disable_screenshot",
+                title = "Disable Screenshot",
+                subtitle = "Block screenshots and screen recording across app",
+                iconRes = R.drawable.ic_settings_explicit,
+                keywords = listOf("screenshot", "capture", "record", "security", "flag_secure", "block"),
+                checked = state.disableScreenshot,
+                onToggle = { onToggleBool(SettingsStore.KEY_DISABLE_SCREENSHOT, it) },
             ),
         ),
     ),

@@ -324,7 +324,7 @@ object MusicRepository {
         LibraryMenuItem("lm1", "Playlists", R.drawable.ic_lib_playlists),
         LibraryMenuItem("lm2", "Artists", R.drawable.ic_lib_artists),
         LibraryMenuItem("lm3", "Albums", R.drawable.ic_lib_albums),
-        LibraryMenuItem("lm4", "Songs", R.drawable.ic_lib_songs)
+        LibraryMenuItem("lm4", "History", R.drawable.ic_settings_history)
     )
 
     val libraryRecentAlbums = listOf(

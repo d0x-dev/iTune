@@ -442,10 +442,19 @@ class ArtistHostController internal constructor(
             }
             withAlbum.toMusicTrack()
         }
+        val targetIndex = if (shuffle) 0 else index.coerceIn(normalized.indices)
+        val selectedTrack = normalized[targetIndex]
+
+        // When playing a specific song from an Artist screen, seed queue using the
+        // algorithmic Next/Radio backend ("Because you listened to..."), keeping albums/playlists playing normally.
+        if (page?.type == BrowseType.ARTIST && !shuffle) {
+            MusicPlayerState.playWithRadioQueue(selectedTrack, expandPlayer = false)
+            return
+        }
+
         val playQueue = if (shuffle) normalized.shuffled() else normalized
-        val targetIndex = if (shuffle) 0 else index.coerceIn(playQueue.indices)
         MusicPlayerState.play(
-            track = playQueue[targetIndex],
+            track = if (shuffle) playQueue.first() else selectedTrack,
             newQueue = playQueue,
             expandPlayer = false,
         )

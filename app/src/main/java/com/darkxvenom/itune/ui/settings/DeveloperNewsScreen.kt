@@ -81,6 +81,7 @@ import com.darkxvenom.itune.R
 import com.darkxvenom.itune.data.news.DeveloperNewsItem
 import com.darkxvenom.itune.data.news.DeveloperNewsManager
 import com.darkxvenom.itune.ui.artist.components.FrostedTopBar
+import com.darkxvenom.itune.ui.artist.components.FrostedTopBarTitlePill
 import com.darkxvenom.itune.ui.artist.icons.SfIcons
 import com.darkxvenom.itune.ui.player.SFProDisplay
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
@@ -222,15 +223,17 @@ private fun DeveloperNewsListContent(
             artworkPageChrome = true,
             onBack = onBack,
             centerContent = {
-                Text(
-                    text = "News from dev",
-                    style = TextStyle(
-                        fontFamily = SFProDisplay,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 17.sp
-                    ),
-                    color = Color.White
-                )
+                FrostedTopBarTitlePill(hazeState = null) {
+                    Text(
+                        text = "News from dev",
+                        style = TextStyle(
+                            fontFamily = SFProDisplay,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp
+                        ),
+                        color = Color.White
+                    )
+                }
             },
             actions = {
                 IconButton(onClick = onSearchToggle) {
@@ -606,17 +609,19 @@ private fun DeveloperNewsDetailContent(
             artworkPageChrome = true,
             onBack = onBack,
             centerContent = {
-                Text(
-                    text = item.tag?.takeIf { it.isNotBlank() } ?: "Announcement",
-                    style = TextStyle(
-                        fontFamily = SFProDisplay,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 16.sp
-                    ),
-                    color = Color.White,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                FrostedTopBarTitlePill(hazeState = null) {
+                    Text(
+                        text = item.tag?.takeIf { it.isNotBlank() } ?: "Announcement",
+                        style = TextStyle(
+                            fontFamily = SFProDisplay,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp
+                        ),
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             },
             actions = {
                 if (!item.actionUrl.isNullOrBlank()) {

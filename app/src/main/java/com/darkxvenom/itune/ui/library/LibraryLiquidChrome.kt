@@ -227,7 +227,7 @@ class LibraryHostController internal constructor(
             "lm1" -> LibraryDestination.PLAYLISTS
             "lm2" -> LibraryDestination.ARTISTS
             "lm3" -> LibraryDestination.ALBUMS
-            "lm4" -> LibraryDestination.SONGS
+            "lm4" -> LibraryDestination.HISTORY
             "lm5" -> LibraryDestination.LIKED_SONGS
             "lm_cached" -> LibraryDestination.CACHED_SONGS
             else -> return

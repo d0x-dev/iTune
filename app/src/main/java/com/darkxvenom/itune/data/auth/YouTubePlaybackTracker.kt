@@ -53,6 +53,7 @@ object YouTubePlaybackTracker {
         if (!VIDEO_ID.matches(videoId)) return
         if (!GoogleAuthStore.isSignedIn) return
         if (!SettingsStore.state.value.useListeningHistory) return
+        if (SettingsStore.isPauseListeningHistory()) return
         if (session?.videoId == videoId || opening == videoId) return
 
         opening = videoId

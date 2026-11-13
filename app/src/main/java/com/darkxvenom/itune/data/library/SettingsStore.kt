@@ -57,6 +57,28 @@ data class SettingsUiState(
     val lyricsTranslateLanguage: String = "hi-Latn",
     val lyricsTranslateMode: String = "Literal",
     val stopMusicOnTaskClear: Boolean = false,
+    val permanentShuffle: Boolean = false,
+    val autoSleepTimerEnabled: Boolean = false,
+    val autoSleepStartHour: Int = 23,
+    val autoSleepStartMinute: Int = 0,
+    val autoSleepEndHour: Int = 7,
+    val autoSleepEndMinute: Int = 0,
+    val autoSleepDays: Set<String> = setOf("All"),
+    val proxyEnabled: Boolean = false,
+    val proxyType: String = "HTTP",
+    val proxyHost: String = "",
+    val proxyPort: Int = 8080,
+    val proxyUser: String = "",
+    val proxyPass: String = "",
+    val pauseSearchHistory: Boolean = false,
+    val pauseListeningHistory: Boolean = false,
+    val disableScreenshot: Boolean = false,
+    val pauseOnZeroVolume: Boolean = false,
+    val lowPassFilterEnabled: Boolean = false,
+    val aodEnabled: Boolean = false,
+    val aodTimeoutSeconds: Int = 10,
+    val aodImmersive: Boolean = true,
+    val aodKeepScreenOn: Boolean = true,
 )
 
 /**
@@ -140,6 +162,36 @@ object SettingsStore {
     )
     const val KEY_STOP_MUSIC_ON_TASK_CLEAR = "stop_music_on_task_clear"
 
+    // Permanent Shuffle
+    const val KEY_PERMANENT_SHUFFLE = "permanent_shuffle"
+
+    // Auto Sleep Timer
+    const val KEY_AUTO_SLEEP_ENABLED = "auto_sleep_enabled"
+    const val KEY_AUTO_SLEEP_START_HOUR = "auto_sleep_start_hour"
+    const val KEY_AUTO_SLEEP_START_MINUTE = "auto_sleep_start_minute"
+    const val KEY_AUTO_SLEEP_END_HOUR = "auto_sleep_end_hour"
+    const val KEY_AUTO_SLEEP_END_MINUTE = "auto_sleep_end_minute"
+    const val KEY_AUTO_SLEEP_DAYS = "auto_sleep_days"
+
+    // Proxy Settings
+    const val KEY_PROXY_ENABLED = "proxy_enabled"
+    const val KEY_PROXY_TYPE = "proxy_type"
+    const val KEY_PROXY_HOST = "proxy_host"
+    const val KEY_PROXY_PORT = "proxy_port"
+    const val KEY_PROXY_USER = "proxy_user"
+    const val KEY_PROXY_PASS = "proxy_pass"
+
+    // Privacy & Security
+    const val KEY_PAUSE_SEARCH_HISTORY = "pause_search_history"
+    const val KEY_PAUSE_LISTENING_HISTORY = "pause_listening_history"
+    const val KEY_DISABLE_SCREENSHOT = "disable_screenshot"
+    const val KEY_PAUSE_ON_ZERO_VOLUME = "pause_on_zero_volume"
+    const val KEY_LOW_PASS_FILTER = "low_pass_filter_enabled"
+    const val KEY_AOD_ENABLED = "aod_enabled"
+    const val KEY_AOD_TIMEOUT = "aod_timeout_seconds"
+    const val KEY_AOD_IMMERSIVE = "aod_immersive_mode"
+    const val KEY_AOD_KEEP_SCREEN_ON = "aod_keep_screen_on"
+
     @Volatile
     private var prefs: SharedPreferences? = null
 
@@ -162,6 +214,15 @@ object SettingsStore {
     }
 
     fun isHapticsEnabled(): Boolean = _state.value.tactileHaptics
+    fun isPauseSearchHistory(): Boolean = _state.value.pauseSearchHistory
+    fun isPauseListeningHistory(): Boolean = _state.value.pauseListeningHistory
+    fun isDisableScreenshot(): Boolean = _state.value.disableScreenshot
+    fun isPauseOnZeroVolume(): Boolean = _state.value.pauseOnZeroVolume
+    fun isLowPassFilterEnabled(): Boolean = _state.value.lowPassFilterEnabled
+    fun isAodEnabled(): Boolean = _state.value.aodEnabled
+    fun getAodTimeoutSeconds(): Int = _state.value.aodTimeoutSeconds
+    fun isAodImmersive(): Boolean = _state.value.aodImmersive
+    fun isAodKeepScreenOn(): Boolean = _state.value.aodKeepScreenOn
 
     fun effectiveHl(): String = ContentLocaleCatalog.resolveEffectiveHl(_state.value.contentLanguage)
 
@@ -210,6 +271,27 @@ object SettingsStore {
             KEY_NEW_MUSIC_ALERTS -> cur.copy(newMusicAlerts = value)
             KEY_OFFLINE_MODE -> cur.copy(offlineMode = value)
             KEY_STOP_MUSIC_ON_TASK_CLEAR -> cur.copy(stopMusicOnTaskClear = value)
+            KEY_PERMANENT_SHUFFLE -> cur.copy(permanentShuffle = value)
+            KEY_AUTO_SLEEP_ENABLED -> cur.copy(autoSleepTimerEnabled = value)
+            KEY_PROXY_ENABLED -> cur.copy(proxyEnabled = value)
+            KEY_PAUSE_SEARCH_HISTORY -> cur.copy(pauseSearchHistory = value)
+            KEY_PAUSE_LISTENING_HISTORY -> cur.copy(pauseListeningHistory = value)
+            KEY_DISABLE_SCREENSHOT -> cur.copy(disableScreenshot = value)
+            KEY_PAUSE_ON_ZERO_VOLUME -> cur.copy(pauseOnZeroVolume = value)
+            KEY_LOW_PASS_FILTER -> cur.copy(lowPassFilterEnabled = value)
+            KEY_AOD_ENABLED -> cur.copy(aodEnabled = value)
+            KEY_AOD_IMMERSIVE -> cur.copy(aodImmersive = value)
+            KEY_AOD_KEEP_SCREEN_ON -> cur.copy(aodKeepScreenOn = value)
+            else -> cur
+        }
+    }
+
+    fun setInt(context: Context, key: String, value: Int) {
+        ensureInit(context)
+        prefs?.edit()?.putInt(key, value)?.apply()
+        val cur = _state.value
+        _state.value = when (key) {
+            KEY_AOD_TIMEOUT -> cur.copy(aodTimeoutSeconds = value)
             else -> cur
         }
     }
@@ -377,6 +459,64 @@ object SettingsStore {
         _state.value = _state.value.copy(playerType = valid)
     }
 
+    fun isPermanentShuffleEnabled(): Boolean = _state.value.permanentShuffle
+
+    fun setAutoSleepConfig(
+        context: Context,
+        enabled: Boolean,
+        startH: Int,
+        startM: Int,
+        endH: Int,
+        endM: Int,
+        days: Set<String>
+    ) {
+        ensureInit(context)
+        prefs?.edit()
+            ?.putBoolean(KEY_AUTO_SLEEP_ENABLED, enabled)
+            ?.putInt(KEY_AUTO_SLEEP_START_HOUR, startH)
+            ?.putInt(KEY_AUTO_SLEEP_START_MINUTE, startM)
+            ?.putInt(KEY_AUTO_SLEEP_END_HOUR, endH)
+            ?.putInt(KEY_AUTO_SLEEP_END_MINUTE, endM)
+            ?.putStringSet(KEY_AUTO_SLEEP_DAYS, days)
+            ?.apply()
+        _state.value = _state.value.copy(
+            autoSleepTimerEnabled = enabled,
+            autoSleepStartHour = startH,
+            autoSleepStartMinute = startM,
+            autoSleepEndHour = endH,
+            autoSleepEndMinute = endM,
+            autoSleepDays = days
+        )
+    }
+
+    fun setProxyConfig(
+        context: Context,
+        enabled: Boolean,
+        type: String,
+        host: String,
+        port: Int,
+        user: String,
+        pass: String
+    ) {
+        ensureInit(context)
+        prefs?.edit()
+            ?.putBoolean(KEY_PROXY_ENABLED, enabled)
+            ?.putString(KEY_PROXY_TYPE, type)
+            ?.putString(KEY_PROXY_HOST, host)
+            ?.putInt(KEY_PROXY_PORT, port)
+            ?.putString(KEY_PROXY_USER, user)
+            ?.putString(KEY_PROXY_PASS, pass)
+            ?.apply()
+        _state.value = _state.value.copy(
+            proxyEnabled = enabled,
+            proxyType = type,
+            proxyHost = host,
+            proxyPort = port,
+            proxyUser = user,
+            proxyPass = pass
+        )
+    }
+
     private fun loadFromPrefs(p: SharedPreferences): SettingsUiState {
         val defaults = SettingsUiState()
         val legacyExplicit = p.getString(KEY_EXPLICIT_CONTENT, defaults.explicitContent) ?: defaults.explicitContent
@@ -448,6 +588,28 @@ object SettingsStore {
             lyricsTranslateLanguage = p.getString(KEY_LYRICS_TRANSLATE_LANGUAGE, defaults.lyricsTranslateLanguage) ?: defaults.lyricsTranslateLanguage,
             lyricsTranslateMode = p.getString(KEY_LYRICS_TRANSLATE_MODE, defaults.lyricsTranslateMode) ?: defaults.lyricsTranslateMode,
             stopMusicOnTaskClear = p.getBoolean(KEY_STOP_MUSIC_ON_TASK_CLEAR, defaults.stopMusicOnTaskClear),
+            permanentShuffle = p.getBoolean(KEY_PERMANENT_SHUFFLE, defaults.permanentShuffle),
+            autoSleepTimerEnabled = p.getBoolean(KEY_AUTO_SLEEP_ENABLED, defaults.autoSleepTimerEnabled),
+            autoSleepStartHour = p.getInt(KEY_AUTO_SLEEP_START_HOUR, defaults.autoSleepStartHour),
+            autoSleepStartMinute = p.getInt(KEY_AUTO_SLEEP_START_MINUTE, defaults.autoSleepStartMinute),
+            autoSleepEndHour = p.getInt(KEY_AUTO_SLEEP_END_HOUR, defaults.autoSleepEndHour),
+            autoSleepEndMinute = p.getInt(KEY_AUTO_SLEEP_END_MINUTE, defaults.autoSleepEndMinute),
+            autoSleepDays = p.getStringSet(KEY_AUTO_SLEEP_DAYS, defaults.autoSleepDays) ?: defaults.autoSleepDays,
+            proxyEnabled = p.getBoolean(KEY_PROXY_ENABLED, defaults.proxyEnabled),
+            proxyType = p.getString(KEY_PROXY_TYPE, defaults.proxyType) ?: defaults.proxyType,
+            proxyHost = p.getString(KEY_PROXY_HOST, defaults.proxyHost) ?: defaults.proxyHost,
+            proxyPort = p.getInt(KEY_PROXY_PORT, defaults.proxyPort),
+            proxyUser = p.getString(KEY_PROXY_USER, defaults.proxyUser) ?: defaults.proxyUser,
+            proxyPass = p.getString(KEY_PROXY_PASS, defaults.proxyPass) ?: defaults.proxyPass,
+            pauseSearchHistory = p.getBoolean(KEY_PAUSE_SEARCH_HISTORY, defaults.pauseSearchHistory),
+            pauseListeningHistory = p.getBoolean(KEY_PAUSE_LISTENING_HISTORY, defaults.pauseListeningHistory),
+            disableScreenshot = p.getBoolean(KEY_DISABLE_SCREENSHOT, defaults.disableScreenshot),
+            pauseOnZeroVolume = p.getBoolean(KEY_PAUSE_ON_ZERO_VOLUME, defaults.pauseOnZeroVolume),
+            lowPassFilterEnabled = p.getBoolean(KEY_LOW_PASS_FILTER, defaults.lowPassFilterEnabled),
+            aodEnabled = p.getBoolean(KEY_AOD_ENABLED, defaults.aodEnabled),
+            aodTimeoutSeconds = p.getInt(KEY_AOD_TIMEOUT, defaults.aodTimeoutSeconds),
+            aodImmersive = p.getBoolean(KEY_AOD_IMMERSIVE, defaults.aodImmersive),
+            aodKeepScreenOn = p.getBoolean(KEY_AOD_KEEP_SCREEN_ON, defaults.aodKeepScreenOn),
         )
     }
 }

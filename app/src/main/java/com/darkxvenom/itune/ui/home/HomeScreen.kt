@@ -776,6 +776,9 @@ fun HomeScreen(
                     onCategoryClick = {},
                     onProfileClick = {
                         showSettings = true
+                    },
+                    onOpenIRecognition = {
+                        showIRecognition = true
                     }
                 )
             }
@@ -1049,6 +1052,7 @@ fun HomeScreen(
                     currentTrack = currentTrack,
                     realTrack = realTrack,
                     isPlaying = MusicPlayerState.isPlaying,
+                    isLoading = MusicPlayerState.isLoading,
                     showEmptyPlaceholder = sheetMorph.progress.value > 0.001f,
                     onPlayPauseClick = {
                         MusicPlayerState.togglePlayPause()
