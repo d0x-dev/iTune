@@ -59,7 +59,7 @@ import androidx.compose.ui.window.DialogWindowProvider
 import coil.compose.AsyncImage
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.data.news.DeveloperNewsManager
-import com.darkxvenom.itune.ui.player.SFProDisplay
+import com.darkxvenom.itune.ui.theme.LocalAppFontFamily
 import com.darkxvenom.itune.ui.theme.AppleMusicRed
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.AppleTextPrimary
@@ -192,7 +192,7 @@ fun DeveloperNewsPopupDialog(
                                 Text(
                                     text = tagText,
                                     style = TextStyle(
-                                        fontFamily = SFProDisplay,
+                                        fontFamily = LocalAppFontFamily.current,
                                         fontWeight = FontWeight.SemiBold,
                                         fontSize = 11.sp,
                                         letterSpacing = 0.3.sp
@@ -239,7 +239,7 @@ fun DeveloperNewsPopupDialog(
                             Text(
                                 text = tagText,
                                 style = TextStyle(
-                                    fontFamily = SFProDisplay,
+                                    fontFamily = LocalAppFontFamily.current,
                                     fontWeight = FontWeight.SemiBold,
                                     fontSize = 11.5.sp
                                 ),
@@ -265,7 +265,7 @@ fun DeveloperNewsPopupDialog(
                         Text(
                             text = authorDateStr,
                             style = TextStyle(
-                                fontFamily = SFProDisplay,
+                                fontFamily = LocalAppFontFamily.current,
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 12.sp
                             ),
@@ -279,7 +279,7 @@ fun DeveloperNewsPopupDialog(
                         Text(
                             text = item.title,
                             style = TextStyle(
-                                fontFamily = SFProDisplay,
+                                fontFamily = LocalAppFontFamily.current,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 19.sp,
                                 letterSpacing = (-0.3).sp,
@@ -295,7 +295,7 @@ fun DeveloperNewsPopupDialog(
                         MarkdownText(
                             markdown = item.message,
                             style = TextStyle(
-                                fontFamily = SFProDisplay,
+                                fontFamily = LocalAppFontFamily.current,
                                 color = Color.White.copy(alpha = 0.90f),
                                 fontSize = 14.sp,
                                 lineHeight = 21.sp
@@ -332,7 +332,7 @@ fun DeveloperNewsPopupDialog(
                                 color = AppleMusicRed,
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                fontFamily = SFProDisplay,
+                                fontFamily = LocalAppFontFamily.current,
                                 letterSpacing = (-0.2).sp
                             )
                             Spacer(Modifier.width(6.dp))
@@ -367,7 +367,7 @@ fun DeveloperNewsPopupDialog(
                         color = AppleMusicRed,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.SemiBold,
-                        fontFamily = SFProDisplay,
+                        fontFamily = LocalAppFontFamily.current,
                         letterSpacing = (-0.2).sp
                     )
                 }
@@ -392,7 +392,7 @@ fun DeveloperNewsPopupDialog(
                         color = Color(0xFF8E8E93),
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Normal,
-                        fontFamily = SFProDisplay,
+                        fontFamily = LocalAppFontFamily.current,
                         letterSpacing = (-0.2).sp
                     )
                 }
