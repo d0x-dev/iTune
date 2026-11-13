@@ -2,10 +2,13 @@ package com.darkxvenom.itune.backend
 
 import android.content.Context
 import android.net.Uri
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -41,6 +44,7 @@ import com.darkxvenom.itune.data.artist.ArtistStateStore
 import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.auth.YouTubePlaybackTracker
 import com.darkxvenom.itune.data.library.LibraryStore
+import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.model.PendingArtistNav
 import com.darkxvenom.itune.ishare.IShareSyncManager
 import kotlinx.coroutines.CoroutineScope
@@ -73,6 +77,8 @@ object MusicPlayerState : Player.Listener {
     private var restoredPendingStream = false
     private var lastPersistedAtMs = 0L
     private var isApplyingRemoteSync = false
+    private var lastPlaybackFailureTrackId: String? = null
+    private var lastPlaybackFailureAtMs: Long = 0L
 
     // ── Observable UI States ──
     var currentTrack by mutableStateOf<MusicTrack?>(null)
@@ -161,8 +167,10 @@ object MusicPlayerState : Player.Listener {
             nowLiked = false
         } else {
             favoriteIds.add(track.id)
-            // Always persist with savedLocally = true so liked tracks stay viewable even after logout
-            ctx?.let { LibraryStore.saveLikedSong(it, track, savedLocally = true, isYtmSynced = true) }
+            ctx?.let {
+                LibraryStore.saveLikedSong(it, track, savedLocally = SettingsStore.state.value.addFavoriteSongs, isYtmSynced = true)
+                if (SettingsStore.state.value.automaticDownloads) enqueueAutomaticDownload(track)
+            }
             nowLiked = true
         }
         YouTubeLibrarySyncManager.pushSongLikeAsync(track.id, nowLiked)
@@ -170,6 +178,49 @@ object MusicPlayerState : Player.Listener {
             ?.edit()
             ?.putStringSet("favorite_track_ids", favoriteIds.toSet())
             ?.apply()
+    }
+
+    private fun enqueueAutomaticDownload(track: MusicTrack) {
+        scope.launch(Dispatchers.IO) {
+            val context = appContext ?: return@launch
+            while (SettingsStore.state.value.automaticDownloads && !MusicCacheManager.isTrackCached(track.id)) {
+                if (!SettingsStore.state.value.downloadOverWifiOnly || isWifiConnected(context)) {
+                    MusicCacheManager.cacheTrackOnDemand(track, force = true)
+                    return@launch
+                }
+                delay(15_000)
+            }
+        }
+    }
+
+    fun enqueueAutoDownloadForSettings(track: MusicTrack) = enqueueAutomaticDownload(track)
+
+    private fun isWifiConnected(context: Context): Boolean {
+        val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager ?: return false
+        val network = manager.activeNetwork ?: return false
+        return manager.getNetworkCapabilities(network)?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
+    }
+
+    fun setPcmOutputFormat(format: String) {
+        val context = appContext ?: return
+        val normalized = if (format == "32-bit float PCM") format else "16-bit PCM"
+        if (SettingsStore.state.value.pcmOutputFormat == normalized) return
+        SettingsStore.setString(context, SettingsStore.KEY_PCM_OUTPUT_FORMAT, normalized)
+
+        val oldPlayer = exoPlayer ?: return
+        val position = oldPlayer.currentPosition.coerceAtLeast(0L)
+        val wasPlaying = oldPlayer.isPlaying || oldPlayer.playWhenReady
+        val wasExpanded = expanded
+        val queueSnapshot = queue.toList()
+        val track = currentTrack
+        oldPlayer.removeListener(this)
+        oldPlayer.release()
+        exoPlayer = buildExoPlayer(context, simultaneousProcessor ?: SimultaneousAudioProcessor(context))
+        exoPlayer?.shuffleModeEnabled = shuffleEnabled
+        exoPlayer?.repeatMode = repeatMode
+        if (track != null) {
+            play(track, newQueue = queueSnapshot, startPositionMs = position, expandPlayer = wasExpanded, autoPlay = wasPlaying)
+        }
     }
 
     fun toggleFavorite(trackId: String) {
@@ -221,6 +272,8 @@ object MusicPlayerState : Player.Listener {
         if (exoPlayer != null) return
         val appContext = context.applicationContext
         this.appContext = appContext
+        com.darkxvenom.itune.data.discord.DiscordPresenceManager.initialize(appContext)
+        SettingsStore.ensureInit(appContext)
         MusicBackend.init(appContext)
         LibraryStore.ensureInit(appContext)
         com.darkxvenom.itune.data.library.ListeningProfileStore.ensureInit(appContext)
@@ -247,48 +300,9 @@ object MusicPlayerState : Player.Listener {
             Coil.setImageLoader(customLoader)
         } catch (_: Exception) {}
 
-        val httpDataSourceFactory = OkHttpDataSource.Factory(Net.client)
-            .setUserAgent(Net.USER_AGENT)
-        val dataSourceFactory = DefaultDataSource.Factory(appContext, httpDataSourceFactory)
-
         val dualProc = SimultaneousAudioProcessor(appContext)
         simultaneousProcessor = dualProc
-        val renderersFactory = object : DefaultRenderersFactory(appContext) {
-            override fun buildAudioSink(
-                context: Context,
-                enableFloatOutput: Boolean,
-                enableAudioTrackPlaybackParams: Boolean,
-            ): AudioSink = DefaultAudioSink.Builder(context)
-                .setEnableFloatOutput(enableFloatOutput)
-                .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
-                .setAudioProcessors(
-                    arrayOf(
-                        TransitionEngine.probe,
-                        AudioEngineManager.djProcessor,
-                        AudioEngineManager.spatialProcessor,
-                        AudioEngineManager.eightDProcessor,
-                        dualProc,
-                    ),
-                )
-                .build()
-        }
-
-        exoPlayer = ExoPlayer.Builder(appContext, renderersFactory)
-            .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
-            .setLooper(Looper.getMainLooper())
-            .setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(C.USAGE_MEDIA)
-                    .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-                    .build(),
-                /* handleAudioFocus = */ true,
-            )
-            .setHandleAudioBecomingNoisy(true)
-            .build()
-            .apply {
-                addListener(this@MusicPlayerState)
-                volume = this@MusicPlayerState.volume
-            }
+        exoPlayer = buildExoPlayer(appContext, dualProc)
 
         TransitionEngine.init(appContext)
         AudioOutputManager.init(appContext, dualProc) { targetDevice ->
@@ -311,6 +325,57 @@ object MusicPlayerState : Player.Listener {
         startProgressLoop()
         IShareSyncManager.start(appContext)
         MusicCacheManager.init(appContext)
+        if (SettingsStore.state.value.automaticDownloads) {
+            LibraryStore.likedSongs.value.forEach { enqueueAutomaticDownload(it.toMusicTrack()) }
+        }
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun buildExoPlayer(context: Context, dualProc: SimultaneousAudioProcessor): ExoPlayer {
+        val httpDataSourceFactory = OkHttpDataSource.Factory(Net.client).setUserAgent(Net.USER_AGENT)
+        val dataSourceFactory = DefaultDataSource.Factory(context, httpDataSourceFactory)
+        val floatOutput = SettingsStore.state.value.pcmOutputFormat == "32-bit float PCM"
+        val renderersFactory = object : DefaultRenderersFactory(context) {
+            override fun buildAudioSink(
+                context: Context,
+                enableFloatOutput: Boolean,
+                enableAudioTrackPlaybackParams: Boolean,
+            ): AudioSink = DefaultAudioSink.Builder(context)
+                .setEnableFloatOutput(floatOutput)
+                .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
+                .setAudioProcessors(
+                    arrayOf(
+                        TransitionEngine.probe,
+                        AudioEngineManager.djProcessor,
+                        AudioEngineManager.spatialProcessor,
+                        AudioEngineManager.eightDProcessor,
+                        AudioEngineManager.lowPassProcessor,
+                        dualProc,
+                    ),
+                )
+                .build()
+        }
+
+        return ExoPlayer.Builder(context, renderersFactory)
+            .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
+            .setLooper(Looper.getMainLooper())
+            .setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(C.USAGE_MEDIA)
+                    .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                    .build(),
+                /* handleAudioFocus = */ true,
+            )
+            .setHandleAudioBecomingNoisy(true)
+            .build().apply {
+                addListener(this@MusicPlayerState)
+                volume = this@MusicPlayerState.volume
+                val preferredId = AudioOutputManager.state.value.preferredDeviceId
+                val preferred = AudioOutputManager.state.value.devices.firstOrNull { it.id == preferredId }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && preferred != null) {
+                    setPreferredAudioDevice(preferred.info)
+                }
+            }
     }
 
     private fun prewarmTrackThumbnail(ctx: Context, track: MusicTrack) {
@@ -401,7 +466,18 @@ object MusicPlayerState : Player.Listener {
                         isLoading = !player.isPlaying && player.playbackState == Player.STATE_BUFFERING
                         val active = currentTrack
                         if (player.isPlaying && active != null) {
+                            com.darkxvenom.itune.data.discord.DiscordPresenceManager.onTrackProgress(
+                                active, positionMs, durationMs, playbackSpeed
+                            )
                             YouTubePlaybackTracker.onProgress(active.id, positionMs / 1000L)
+                            com.darkxvenom.itune.data.lastfm.LastFmIntegration.onPlayback(
+                                trackId = active.id,
+                                title = active.title,
+                                artists = active.artists,
+                                album = active.album,
+                                durationMs = durationMs,
+                                positionMs = positionMs,
+                            )
                             maybeExtendEndlessQueue()
                         }
 
@@ -516,11 +592,17 @@ object MusicPlayerState : Player.Listener {
                 val cachedFile = MusicCacheManager.getCachedAudioFile(track.id)
                 val streamUrl = preResolvedUrl ?: if (cachedFile != null) {
                     Uri.fromFile(cachedFile).toString()
+                } else if (SettingsStore.state.value.offlineMode) {
+                    null
                 } else {
                     MusicBackend.resolveAudioStreamUrl(track.id)
                 }
                 if (streamUrl.isNullOrBlank()) {
                     Log.e(TAG, "Failed to resolve stream URL for track: ${track.id}")
+                    if (SettingsStore.state.value.offlineMode && cachedFile == null) {
+                        appContext?.let { Toast.makeText(it, "Offline mode: this song is not downloaded", Toast.LENGTH_SHORT).show() }
+                    }
+                    showPlaybackFailure(track.id, null)
                     resolvingStream = false
                     isLoading = false
                     return@launch
@@ -556,6 +638,7 @@ object MusicPlayerState : Player.Listener {
             } catch (e: Exception) {
                 if (e is kotlinx.coroutines.CancellationException) throw e
                 Log.e(TAG, "Error playing music track", e)
+                showPlaybackFailure(track.id, e)
                 if (currentTrack?.id == track.id) {
                     resolvingStream = false
                     isLoading = false
@@ -965,6 +1048,7 @@ object MusicPlayerState : Player.Listener {
     }
 
     fun close() {
+        com.darkxvenom.itune.data.discord.DiscordPresenceManager.clearActivity()
         TransitionEngine.cancel()
         YouTubePlaybackTracker.onPlaybackFinished(positionMs / 1000L)
         loadJob?.cancel()
@@ -1028,6 +1112,7 @@ object MusicPlayerState : Player.Listener {
                 YouTubePlaybackTracker.onPlaying(ctx, active)
             }
         } else {
+            com.darkxvenom.itune.data.discord.DiscordPresenceManager.clearActivity()
             simultaneousProcessor?.onPause()
             if (!restoredPendingStream && !resolvingStream) {
                 savePlaybackSession(sync = false)
@@ -1205,17 +1290,58 @@ object MusicPlayerState : Player.Listener {
         newPosition: Player.PositionInfo,
         reason: Int
     ) {
-        if (reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION ||
-            (newPosition.positionMs < 2000L && oldPosition.positionMs > 5000L)
-        ) {
-            com.darkxvenom.itune.audio.LowPassFilterController.onPlaybackStarted(currentTrack?.id)
+        val loopedToBeginning = newPosition.positionMs < 2_000L && oldPosition.positionMs > 5_000L
+        if (reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION || loopedToBeginning) {
+            com.darkxvenom.itune.audio.LowPassFilterController.onPlaybackStarted(
+                newTrackId = currentTrack?.id,
+                forceRestart = loopedToBeginning && repeatMode == Player.REPEAT_MODE_ONE,
+            )
         }
     }
 
     override fun onPlayerError(error: PlaybackException) {
         Log.e(TAG, "ExoPlayer error: ${error.errorCodeName} - ${error.message}", error)
+        showPlaybackFailure(currentTrack?.id, error)
         resolvingStream = false
         isLoading = false
+    }
+
+    private fun showPlaybackFailure(trackId: String?, error: Throwable?) {
+        val context = appContext ?: return
+        val now = android.os.SystemClock.elapsedRealtime()
+        if (trackId != null && trackId == lastPlaybackFailureTrackId && now - lastPlaybackFailureAtMs < 2_500L) return
+        lastPlaybackFailureTrackId = trackId
+        lastPlaybackFailureAtMs = now
+
+        val errorText = buildString {
+            var cause = error
+            var depth = 0
+            while (cause != null && depth++ < 8) {
+                append(' ').append(cause.message.orEmpty())
+                cause = cause.cause
+            }
+        }.lowercase()
+        val isBotChallenge = listOf(
+            "sign in to confirm you're not a bot",
+            "sign in to confirm you’re not a bot",
+            "confirm you're not a bot",
+            "confirm you’re not a bot",
+            "prove you're not a robot",
+            "prove you’re not a robot",
+            "login_required",
+            "captcha",
+            "unusual traffic",
+        ).any(errorText::contains) ||
+            (("bot" in errorText || "robot" in errorText) &&
+                ("sign in" in errorText || "login" in errorText || "confirm" in errorText || "prove" in errorText))
+        val message = if (isBotChallenge) {
+            "Please log in with your Google account to avoid this playback issue."
+        } else {
+            "Couldn't play this song. Please try again."
+        }
+        mainHandler.post {
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        }
     }
 
     @OptIn(UnstableApi::class)
