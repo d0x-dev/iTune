@@ -104,6 +104,12 @@ object MusicPlayerState : Player.Listener {
     var repeatMode by mutableIntStateOf(Player.REPEAT_MODE_OFF)
         private set
 
+    var endlessQueueEnabled by mutableStateOf(false)
+        private set
+
+    private var endlessQueueJob: Job? = null
+    private var endlessQueueRequestedForTrackId: String? = null
+
     var playbackSpeed by mutableFloatStateOf(1f)
         private set
 
@@ -396,6 +402,7 @@ object MusicPlayerState : Player.Listener {
                         val active = currentTrack
                         if (player.isPlaying && active != null) {
                             YouTubePlaybackTracker.onProgress(active.id, positionMs / 1000L)
+                            maybeExtendEndlessQueue()
                         }
 
                         val now = System.currentTimeMillis()
@@ -826,6 +833,53 @@ object MusicPlayerState : Player.Listener {
         }
     }
 
+    /**
+     * Extends the active queue with YouTube Music's own Next/Radio recommendations.
+     * Fetches while two or fewer upcoming tracks remain so the next batch is ready
+     * before the listener reaches the end of the current queue.
+     */
+    fun toggleEndlessQueue() {
+        endlessQueueEnabled = !endlessQueueEnabled
+        if (endlessQueueEnabled) {
+            endlessQueueRequestedForTrackId = null
+            maybeExtendEndlessQueue()
+        } else {
+            endlessQueueJob?.cancel()
+            endlessQueueJob = null
+            endlessQueueRequestedForTrackId = null
+        }
+        savePlaybackSession(sync = false)
+    }
+
+    private fun maybeExtendEndlessQueue() {
+        if (!endlessQueueEnabled || endlessQueueJob?.isActive == true) return
+        val track = currentTrack ?: return
+        val upcomingCount = (queue.size - queueIndex - 1).coerceAtLeast(0)
+        if (upcomingCount > 2 || endlessQueueRequestedForTrackId == track.id) return
+
+        endlessQueueRequestedForTrackId = track.id
+        endlessQueueJob = scope.launch {
+            try {
+                val recommendations = withContext(Dispatchers.IO) {
+                    MusicBackend.fetchRadioQueue(track.id)
+                }
+                if (!endlessQueueEnabled || currentTrack?.id != track.id) return@launch
+
+                val existingIds = queue.mapTo(mutableSetOf()) { it.id }
+                val newTracks = recommendations.filter { existingIds.add(it.id) }
+                if (newTracks.isNotEmpty()) {
+                    queue.addAll(newTracks)
+                    appContext?.let { prewarmTrackThumbnail(it, newTracks.first()) }
+                    savePlaybackSession(sync = false)
+                }
+            } catch (error: Exception) {
+                Log.w(TAG, "Endless queue extension failed: ${error.message}")
+                endlessQueueRequestedForTrackId = null
+            } finally {
+                endlessQueueJob = null
+            }
+        }
+    }
     fun toggleRepeat() {
         repeatMode = when (repeatMode) {
             Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ALL
