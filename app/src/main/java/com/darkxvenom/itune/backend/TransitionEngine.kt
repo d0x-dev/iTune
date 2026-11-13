@@ -170,6 +170,7 @@ object TransitionEngine {
     private fun currentMode(): Mode {
         val state = SettingsStore.state.value
         return when {
+            state.afterglowDuration != "Off" -> Mode.OFF
             state.autoMix -> Mode.AUTOMIX
             crossfadeMs(state) > 0L -> Mode.CROSSFADE
             else -> Mode.OFF
@@ -201,6 +202,12 @@ object TransitionEngine {
     }
 
     private fun tick() {
+        // If Afterglow is selected while a transition is already in progress, stop the
+        // secondary tail immediately and return volume to the main song.
+        if (SettingsStore.state.value.afterglowDuration != "Off") {
+            if (active) cancel()
+            return
+        }
         if (active) return
         val mode = currentMode()
         if (mode == Mode.OFF) return
