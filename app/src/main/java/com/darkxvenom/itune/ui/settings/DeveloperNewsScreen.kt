@@ -83,7 +83,7 @@ import com.darkxvenom.itune.data.news.DeveloperNewsManager
 import com.darkxvenom.itune.ui.artist.components.FrostedTopBar
 import com.darkxvenom.itune.ui.artist.components.FrostedTopBarTitlePill
 import com.darkxvenom.itune.ui.artist.icons.SfIcons
-import com.darkxvenom.itune.ui.player.SFProDisplay
+import com.darkxvenom.itune.ui.theme.LocalAppFontFamily
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.delay
@@ -154,7 +154,15 @@ fun DeveloperNewsScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppleOledBlack)
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF202023),
+                        Color(0xFF111113),
+                        AppleOledBlack,
+                    )
+                )
+            )
     ) {
         AnimatedContent(
             targetState = selectedNewsItem,
@@ -227,7 +235,7 @@ private fun DeveloperNewsListContent(
                     Text(
                         text = "News from dev",
                         style = TextStyle(
-                            fontFamily = SFProDisplay,
+                            fontFamily = LocalAppFontFamily.current,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp
                         ),
@@ -289,7 +297,7 @@ private fun DeveloperNewsListContent(
                         modifier = Modifier.weight(1f),
                         singleLine = true,
                         textStyle = TextStyle(
-                            fontFamily = SFProDisplay,
+                            fontFamily = LocalAppFontFamily.current,
                             color = Color.White,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Normal
@@ -301,7 +309,7 @@ private fun DeveloperNewsListContent(
                                     text = "Search announcements…",
                                     color = Color.White.copy(alpha = 0.45f),
                                     fontSize = 15.sp,
-                                    fontFamily = SFProDisplay
+                                    fontFamily = LocalAppFontFamily.current
                                 )
                             }
                             innerTextField()
@@ -346,7 +354,7 @@ private fun DeveloperNewsListContent(
                         Text(
                             text = "Loading announcements…",
                             style = TextStyle(
-                                fontFamily = SFProDisplay,
+                                fontFamily = LocalAppFontFamily.current,
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 14.sp
                             ),
@@ -422,7 +430,7 @@ private fun AnnouncementsHeroCard(
                 Text(
                     text = "Developer Announcements",
                     style = TextStyle(
-                        fontFamily = SFProDisplay,
+                        fontFamily = LocalAppFontFamily.current,
                         fontWeight = FontWeight.Bold,
                         fontSize = 17.sp,
                         letterSpacing = (-0.2).sp
@@ -433,7 +441,7 @@ private fun AnnouncementsHeroCard(
                 Text(
                     text = if (articleCount == 1) "1 active release & update" else "$articleCount active releases & updates",
                     style = TextStyle(
-                        fontFamily = SFProDisplay,
+                        fontFamily = LocalAppFontFamily.current,
                         fontWeight = FontWeight.Medium,
                         fontSize = 13.sp
                     ),
@@ -506,7 +514,7 @@ private fun DeveloperNewsListItemCard(
                     Text(
                         text = pillText,
                         style = TextStyle(
-                            fontFamily = SFProDisplay,
+                            fontFamily = LocalAppFontFamily.current,
                             fontWeight = FontWeight.Medium,
                             fontSize = 11.sp,
                             letterSpacing = 0.2.sp
@@ -521,7 +529,7 @@ private fun DeveloperNewsListItemCard(
                 Text(
                     text = item.title,
                     style = TextStyle(
-                        fontFamily = SFProDisplay,
+                        fontFamily = LocalAppFontFamily.current,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
                         letterSpacing = (-0.3).sp
@@ -535,7 +543,7 @@ private fun DeveloperNewsListItemCard(
                 Text(
                     text = teaser,
                     style = TextStyle(
-                        fontFamily = SFProDisplay,
+                        fontFamily = LocalAppFontFamily.current,
                         fontSize = 13.sp,
                         lineHeight = 19.sp
                     ),
@@ -563,7 +571,7 @@ private fun DeveloperNewsListItemCard(
                             Text(
                                 text = "Read More",
                                 style = TextStyle(
-                                    fontFamily = SFProDisplay,
+                                    fontFamily = LocalAppFontFamily.current,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 12.sp
                                 ),
@@ -613,7 +621,7 @@ private fun DeveloperNewsDetailContent(
                     Text(
                         text = item.tag?.takeIf { it.isNotBlank() } ?: "Announcement",
                         style = TextStyle(
-                            fontFamily = SFProDisplay,
+                            fontFamily = LocalAppFontFamily.current,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp
                         ),
@@ -655,7 +663,7 @@ private fun DeveloperNewsDetailContent(
             Text(
                 text = item.title,
                 style = TextStyle(
-                    fontFamily = SFProDisplay,
+                    fontFamily = LocalAppFontFamily.current,
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,
                     letterSpacing = (-0.5).sp
@@ -679,7 +687,7 @@ private fun DeveloperNewsDetailContent(
                 Text(
                     text = pillText,
                     style = TextStyle(
-                        fontFamily = SFProDisplay,
+                        fontFamily = LocalAppFontFamily.current,
                         fontWeight = FontWeight.Medium,
                         fontSize = 12.sp,
                         letterSpacing = 0.2.sp
@@ -735,7 +743,7 @@ private fun DeveloperNewsDetailContent(
                     Text(
                         text = item.actionText?.takeIf { it.isNotBlank() } ?: "Open Link",
                         style = TextStyle(
-                            fontFamily = SFProDisplay,
+                            fontFamily = LocalAppFontFamily.current,
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
                         )
@@ -860,7 +868,7 @@ fun GitHubMarkdownContent(
             MarkdownText(
                 markdown = trimmed,
                 style = TextStyle(
-                    fontFamily = SFProDisplay,
+                    fontFamily = LocalAppFontFamily.current,
                     color = Color.White.copy(alpha = 0.90f),
                     fontSize = 14.sp,
                     lineHeight = 22.sp
@@ -896,7 +904,7 @@ private fun RenderGitHubHeading(title: String, level: Int) {
         Text(
             text = title,
             style = TextStyle(
-                fontFamily = SFProDisplay,
+                fontFamily = LocalAppFontFamily.current,
                 fontWeight = FontWeight.Bold,
                 fontSize = fontSize,
                 letterSpacing = (-0.3).sp
@@ -959,7 +967,7 @@ private fun RenderBlockQuote(quote: String) {
         MarkdownText(
             markdown = quote,
             style = TextStyle(
-                fontFamily = SFProDisplay,
+                fontFamily = LocalAppFontFamily.current,
                 fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
                 color = Color.White.copy(alpha = 0.75f),
                 fontSize = 13.5.sp
@@ -991,7 +999,7 @@ private fun RenderMarkdownList(items: List<String>) {
                 MarkdownText(
                     markdown = item,
                     style = TextStyle(
-                        fontFamily = SFProDisplay,
+                        fontFamily = LocalAppFontFamily.current,
                         color = Color.White.copy(alpha = 0.88f),
                         fontSize = 13.5.sp,
                         lineHeight = 20.sp
@@ -1074,7 +1082,7 @@ private fun DeveloperNewsEmptyState(isSyncing: Boolean, hasQuery: Boolean = fals
         Text(
             text = if (isSyncing) "Checking for News…" else if (hasQuery) "No Announcements Match" else "No News Yet",
             style = TextStyle(
-                fontFamily = SFProDisplay,
+                fontFamily = LocalAppFontFamily.current,
                 fontWeight = FontWeight.Bold,
                 fontSize = 17.sp
             ),
@@ -1091,7 +1099,7 @@ private fun DeveloperNewsEmptyState(isSyncing: Boolean, hasQuery: Boolean = fals
             else
                 "Stay tuned! Announcements and updates from the developers will appear here.",
             style = TextStyle(
-                fontFamily = SFProDisplay,
+                fontFamily = LocalAppFontFamily.current,
                 fontSize = 13.5.sp,
                 lineHeight = 19.sp
             ),
