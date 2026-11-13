@@ -6,6 +6,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import com.darkxvenom.itune.ui.theme.LocalAppFontFamily
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -83,9 +84,10 @@ fun ITubeArtistTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
+    val appTypography = ITubeArtistTypography.withFamily(LocalAppFontFamily.current)
     MaterialTheme(
         colorScheme = if (darkTheme) ITubeDarkColors else ITubeLightColors,
-        typography = ITubeArtistTypography,
+        typography = appTypography,
         content = content,
     )
 }
