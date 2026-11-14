@@ -108,9 +108,9 @@
     .track-actions { display:flex; gap:12px; }
     .like-button,.more-button { display:grid; width:40px; height:40px; flex:none; place-items:center; border:1px solid #ffffff30; border-radius:50%; background:#ffffff0b; color:#fff; font-size:1.3rem; }
     .lyrics-stage { display:flex; min-height:420px; height:420px; flex:none; align-items:flex-start; justify-content:flex-start; overflow:hidden; margin:34px 0 15px; padding:12px 8px; text-align:left; }
-    .lyrics-stack { display:flex; width:100%; flex-direction:column; align-items:flex-start; gap:19px; }
-    .lyric-line { max-width:100%; margin:0; color:#ffffff70; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:clamp(1.1rem,1.45vw,1.38rem); font-weight:700; line-height:1.36; opacity:.48; filter:blur(1.5px); transform:translateY(0) scale(.985); transition:opacity .72s ease,filter .72s ease,transform .78s cubic-bezier(.22,.72,.2,1),color .72s ease; }
-    .lyric-line.active { color:#fff; font-size:clamp(1.45rem,2vw,1.82rem); opacity:1; filter:none; transform:translateY(0) scale(1); text-shadow:0 2px 24px #fff3; animation:lyric-focus .78s cubic-bezier(.22,.72,.2,1) both; }
+    .lyrics-stack { display:flex; width:100%; flex-direction:column; align-items:flex-start; gap:23px; }
+    .lyric-line { max-width:100%; margin:0; color:#ffffff70; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:clamp(1.45rem,2.2vw,1.7rem); font-weight:700; line-height:1.3; opacity:.48; filter:blur(1.5px); transform:translateY(0) scale(.985); transition:opacity .72s ease,filter .72s ease,transform .78s cubic-bezier(.22,.72,.2,1),color .72s ease; }
+    .lyric-line.active { color:#fff; font-size:clamp(1.8rem,3vw,2rem); opacity:1; filter:none; transform:translateY(0) scale(1); text-shadow:0 2px 24px #fff3; animation:lyric-focus .78s cubic-bezier(.22,.72,.2,1) both; }
     .lyric-line.below-1 { opacity:.72; filter:blur(.45px); animation:lyric-follow .62s .05s ease both; }
     .lyric-line.below-2 { opacity:.54; filter:blur(.9px); animation:lyric-follow .68s .1s ease both; }
     .lyric-line.below-3 { opacity:.38; filter:blur(1.45px); animation:lyric-follow .74s .15s ease both; }
@@ -174,9 +174,9 @@
       .track-artist { font-size:.82rem; }
       .track-actions { gap:7px; }
       .like-button,.more-button { width:9.1cqw; height:9.1cqw; font-size:3.7cqw; }
-      .lyric-line { font-size:clamp(.85rem,4.6cqw,1.1rem); }
-      .lyric-line.active { font-size:clamp(1rem,6.1cqw,1.42rem); }
-      .lyrics-stack { gap:4.3cqw; }
+      .lyric-line { font-size:clamp(1.1rem,7.5cqw,1.7rem); }
+      .lyric-line.active { font-size:clamp(1.35rem,9cqw,2rem); }
+      .lyrics-stack { gap:5.2cqw; }
       .content { padding:58px 0; }
       .grid { grid-template-columns:1fr; }
       .card { min-height:0; }
@@ -441,7 +441,7 @@
           return;
         }
         const center = active < 0 ? 0 : active;
-        for (let index = center; index <= Math.min(cues.length - 1, center + 5); index++) {
+        for (let index = center; index <= Math.min(cues.length - 1, center + 4); index++) {
           const line = document.createElement("p");
           const distance = index - center;
           line.className = `lyric-line${distance === 0 ? " active" : ` below-${distance}`}`;
