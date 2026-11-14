@@ -63,6 +63,7 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -1877,6 +1878,11 @@ private fun SettingsAboutDialog(
     onReplayWelcome: () -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val updateDownloadState by AppUpdateManager.downloadState.collectAsStateWithLifecycle()
+    val downloading = updateDownloadState as? com.darkxvenom.itune.data.updates.UpdateDownloadState.Downloading
+    val downloaded = updateDownloadState as? com.darkxvenom.itune.data.updates.UpdateDownloadState.Completed
+    val downloadError = updateDownloadState as? com.darkxvenom.itune.data.updates.UpdateDownloadState.Failed
     SettingsModalFrame(onDismiss = onDismiss) {
         Spacer(Modifier.height(22.dp))
         Image(
@@ -1921,6 +1927,43 @@ private fun SettingsAboutDialog(
 
         if (release != null && updateAvailable) {
             Spacer(Modifier.height(12.dp))
+            downloading?.let { state ->
+                val total = state.totalBytes.takeIf { it > 0L }
+                val status = when {
+                    state.downloadedBytes == 0L && total == null -> "Connecting to GitHub…"
+                    state.downloadedBytes == 0L -> "Connected · preparing download…"
+                    total == null -> "Downloading update · ${formatAboutBytes(state.downloadedBytes)}"
+                    else -> "Downloading update · ${formatAboutBytes(state.downloadedBytes)} of ${formatAboutBytes(total)}"
+                }
+                Text(
+                    text = status,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.72f),
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth(),
+                )
+                if (state.progressPercent < 0) {
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp).height(4.dp).clip(RoundedCornerShape(3.dp)),
+                        color = Color.White,
+                        trackColor = Color.White.copy(alpha = 0.16f),
+                    )
+                } else {
+                    LinearProgressIndicator(
+                        progress = { state.progressPercent / 100f },
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp).height(4.dp).clip(RoundedCornerShape(3.dp)),
+                        color = Color.White,
+                        trackColor = Color.White.copy(alpha = 0.16f),
+                    )
+                }
+            }
+            downloadError?.let { error ->
+                Text(
+                    text = error.message,
+                    color = Color(0xFFFF6961),
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth(),
+                )
+            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1929,11 +1972,23 @@ private fun SettingsAboutDialog(
                     .clip(RoundedCornerShape(13.dp))
                     .background(Color(0xFF0A84FF).copy(alpha = 0.18f))
                     .border(0.7.dp, Color(0xFF0A84FF).copy(alpha = 0.30f), RoundedCornerShape(13.dp))
-                    .clickable { onOpenRelease(release) },
+                    .clickable {
+                        when {
+                            downloading != null -> Unit
+                            downloaded != null -> AppUpdateManager.launchInstallerFlow(context, downloaded.apkFile)
+                            else -> onOpenRelease(release)
+                        }
+                    },
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = if (release.hasApkAsset) "Download iTune ${release.tag}" else "View iTune ${release.tag} Release",
+                    text = when {
+                        downloading != null -> "Downloading ${downloading.progressPercent.takeIf { it >= 0 }?.let { "$it%" } ?: "…"}"
+                        downloaded != null -> "Install iTune ${release.tag}"
+                        downloadError != null -> "Retry iTune ${release.tag} Download"
+                        release.hasApkAsset -> "Download iTune ${release.tag}"
+                        else -> "View iTune ${release.tag} Release"
+                    },
                     color = Color(0xFF64AFFF),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -1973,6 +2028,13 @@ private fun SettingsAboutDialog(
             )
         }
     }
+}
+
+private fun formatAboutBytes(bytes: Long): String = when {
+    bytes < 1024L -> "$bytes B"
+    bytes < 1024L * 1024L -> "%.1f KB".format(bytes / 1024f)
+    bytes < 1024L * 1024L * 1024L -> "%.1f MB".format(bytes / (1024f * 1024f))
+    else -> "%.2f GB".format(bytes / (1024f * 1024f * 1024f))
 }
 
 @Composable

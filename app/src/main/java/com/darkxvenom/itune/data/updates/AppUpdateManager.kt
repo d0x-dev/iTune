@@ -2,10 +2,13 @@ package com.darkxvenom.itune.data.updates
 
 import android.content.Context
 import android.content.Intent
-import android.app.DownloadManager
+import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Environment
+import android.os.Build
+import androidx.core.content.FileProvider
+import androidx.core.content.ContextCompat
 import com.darkxvenom.itune.BuildConfig
+import com.darkxvenom.itune.ui.update.UpdateInstallActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -17,6 +20,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -32,6 +36,17 @@ data class GithubReleaseInfo(
     val downloadUrl: String,
     val hasApkAsset: Boolean,
 )
+
+sealed interface UpdateDownloadState {
+    data object Idle : UpdateDownloadState
+    data class Downloading(
+        val progressPercent: Int,
+        val downloadedBytes: Long,
+        val totalBytes: Long,
+    ) : UpdateDownloadState
+    data class Completed(val apkFile: File) : UpdateDownloadState
+    data class Failed(val message: String) : UpdateDownloadState
+}
 
 object AppUpdateManager {
     private const val RELEASE_URL = "https://api.github.com/repos/d0x-dev/itune/releases/latest"
@@ -51,6 +66,9 @@ object AppUpdateManager {
 
     private val _isChecking = MutableStateFlow(false)
     val isChecking: StateFlow<Boolean> = _isChecking.asStateFlow()
+
+    private val _downloadState = MutableStateFlow<UpdateDownloadState>(UpdateDownloadState.Idle)
+    val downloadState: StateFlow<UpdateDownloadState> = _downloadState.asStateFlow()
 
     val installedVersion: String get() = BuildConfig.VERSION_NAME
     val installedVersionCode: Int get() = BuildConfig.VERSION_CODE
@@ -137,20 +155,73 @@ object AppUpdateManager {
             openRelease(context, release.pageUrl)
             return
         }
+        val intent = Intent(context, AppUpdateDownloadService::class.java).apply {
+            action = AppUpdateDownloadService.ACTION_DOWNLOAD
+            putExtra(AppUpdateDownloadService.EXTRA_URL, release.downloadUrl)
+            putExtra(AppUpdateDownloadService.EXTRA_TAG, release.tag)
+        }
+        // The request may spend a few seconds following GitHub's asset redirect.
+        // Keep the UI indeterminate until the first bytes arrive instead of implying 0%.
+        _downloadState.value = UpdateDownloadState.Downloading(-1, 0L, -1L)
         runCatching {
-            val fileVersion = release.tag.replace(Regex("[^A-Za-z0-9._-]"), "_")
-            val request = DownloadManager.Request(Uri.parse(release.downloadUrl))
-                .setTitle("iTune update ${release.tag}")
-                .setDescription("Downloading iTune APK")
-                .setMimeType("application/vnd.android.package-archive")
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setDestinationInExternalFilesDir(
-                    context,
-                    Environment.DIRECTORY_DOWNLOADS,
-                    "iTune-$fileVersion.apk",
-                )
-            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            downloadManager.enqueue(request)
+            ContextCompat.startForegroundService(context.applicationContext, intent)
+        }.onFailure {
+            _downloadState.value = UpdateDownloadState.Failed(it.localizedMessage ?: "Could not start the APK download")
+        }
+    }
+
+    internal fun publishDownloadState(state: UpdateDownloadState) {
+        _downloadState.value = state
+    }
+
+    fun canRequestPackageInstalls(context: Context): Boolean =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.O || runCatching {
+            context.packageManager.canRequestPackageInstalls()
+        }.getOrDefault(false)
+
+    fun launchInstallerFlow(context: Context, apkFile: File) {
+        if (!apkFile.isFile || apkFile.length() <= 0L) {
+            _downloadState.value = UpdateDownloadState.Failed("The downloaded APK is missing or empty")
+            return
+        }
+        runCatching {
+            context.startActivity(Intent(context, UpdateInstallActivity::class.java).apply {
+                putExtra(UpdateInstallActivity.EXTRA_APK_PATH, apkFile.absolutePath)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            })
+        }.onFailure {
+            _downloadState.value = UpdateDownloadState.Failed(it.localizedMessage ?: "Could not open the installer")
+        }
+    }
+
+    internal fun createApkUri(context: Context, apkFile: File): Uri =
+        FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", apkFile)
+
+    internal fun isSignedLikeInstalledApp(context: Context, apk: File): Boolean {
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            PackageManager.GET_SIGNING_CERTIFICATES
+        } else {
+            @Suppress("DEPRECATION")
+            PackageManager.GET_SIGNATURES
+        }
+        val downloaded = runCatching { context.packageManager.getPackageArchiveInfo(apk.absolutePath, flags) }
+            .getOrNull() ?: return false
+        if (downloaded.packageName != context.packageName) return false
+        if (BuildConfig.DEBUG) return true
+
+        @Suppress("DEPRECATION")
+        val installed = runCatching { context.packageManager.getPackageInfo(context.packageName, flags) }.getOrNull()
+            ?: return false
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val installedSigners = installed.signingInfo?.apkContentsSigners ?: return false
+            val downloadedSigners = downloaded.signingInfo?.apkContentsSigners ?: return false
+            installedSigners.any { current -> downloadedSigners.any { candidate -> current.toByteArray().contentEquals(candidate.toByteArray()) } }
+        } else {
+            @Suppress("DEPRECATION")
+            val installedSigners = installed.signatures ?: return false
+            @Suppress("DEPRECATION")
+            val downloadedSigners = downloaded.signatures ?: return false
+            installedSigners.any { current -> downloadedSigners.any { candidate -> current.toByteArray().contentEquals(candidate.toByteArray()) } }
         }
     }
 

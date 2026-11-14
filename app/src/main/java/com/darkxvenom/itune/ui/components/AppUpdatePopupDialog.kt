@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,12 +45,15 @@ import android.os.Build
 import android.view.WindowManager
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.data.updates.AppUpdateManager
 import com.darkxvenom.itune.data.updates.GithubReleaseInfo
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.LocalAppFontFamily
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.darkxvenom.itune.data.updates.UpdateDownloadState
 
 @Composable
 fun AppUpdatePopupDialog(
@@ -56,6 +61,18 @@ fun AppUpdatePopupDialog(
     onDismiss: () -> Unit,
 ) {
     val context = LocalContext.current
+    val downloadState by AppUpdateManager.downloadState.collectAsStateWithLifecycle()
+    val downloading = downloadState as? UpdateDownloadState.Downloading
+    val completed = downloadState as? UpdateDownloadState.Completed
+    val failed = downloadState as? UpdateDownloadState.Failed
+
+    LaunchedEffect(completed?.apkFile) {
+        val apk = completed?.apkFile ?: return@LaunchedEffect
+        if (!AppUpdateManager.canRequestPackageInstalls(context)) {
+            AppUpdateManager.launchInstallerFlow(context, apk)
+        }
+    }
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -149,12 +166,62 @@ fun AppUpdatePopupDialog(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 22.dp, vertical = 14.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
+                downloading?.let { state ->
+                    val downloaded = formatUpdateBytes(state.downloadedBytes)
+                    val total = state.totalBytes.takeIf { it > 0L }?.let(::formatUpdateBytes)
+                    Text(
+                        text = when {
+                            state.downloadedBytes == 0L && total == null -> "Connecting to GitHub…"
+                            state.downloadedBytes == 0L -> "Connected · preparing download…"
+                            total == null -> "Downloading update · $downloaded"
+                            else -> "Downloading update · $downloaded of $total"
+                        },
+                        color = Color.White.copy(alpha = 0.72f),
+                        fontFamily = LocalAppFontFamily.current,
+                        fontSize = 12.sp,
+                    )
+                    if (state.progressPercent < 0) {
+                        LinearProgressIndicator(
+                            modifier = Modifier.fillMaxWidth().height(4.dp).clip(RoundedCornerShape(2.dp)),
+                            color = Color.White,
+                            trackColor = Color.White.copy(alpha = 0.14f),
+                        )
+                    } else {
+                        LinearProgressIndicator(
+                            progress = { state.progressPercent / 100f },
+                            modifier = Modifier.fillMaxWidth().height(4.dp).clip(RoundedCornerShape(2.dp)),
+                            color = Color.White,
+                            trackColor = Color.White.copy(alpha = 0.14f),
+                        )
+                    }
+                }
+                failed?.let { state ->
+                    Text(
+                        text = state.message,
+                        color = Color(0xFFFF6961),
+                        fontFamily = LocalAppFontFamily.current,
+                        fontSize = 12.sp,
+                    )
+                }
                 UpdateActionButton(
-                    title = if (release.hasApkAsset) "Download APK" else "View Release",
+                    title = when {
+                        downloading != null -> "Downloading ${downloading.progressPercent.takeIf { it >= 0 }?.let { "$it%" } ?: "…"}"
+                        completed != null && !AppUpdateManager.canRequestPackageInstalls(context) -> "Allow Install Permission"
+                        completed != null -> "Install Update"
+                        failed != null -> "Retry Download"
+                        release.hasApkAsset -> "Download APK"
+                        else -> "View Release"
+                    },
                     tint = Color(0xFF0A84FF),
                     onClick = {
-                        AppUpdateManager.downloadApk(context, release)
-                        onDismiss()
+                        when {
+                            downloading != null -> Unit
+                            completed != null -> AppUpdateManager.launchInstallerFlow(context, completed.apkFile)
+                            else -> {
+                                AppUpdateManager.downloadApk(context, release)
+                                if (!release.hasApkAsset) onDismiss()
+                            }
+                        }
                     },
                 )
                 UpdateActionButton(title = "Later", tint = Color.White.copy(alpha = 0.70f), onClick = onDismiss)
@@ -162,6 +229,13 @@ fun AppUpdatePopupDialog(
         }
     }
 }
+}
+
+private fun formatUpdateBytes(bytes: Long): String = when {
+    bytes < 1024L -> "$bytes B"
+    bytes < 1024L * 1024L -> "%.1f KB".format(bytes / 1024f)
+    bytes < 1024L * 1024L * 1024L -> "%.1f MB".format(bytes / (1024f * 1024f))
+    else -> "%.2f GB".format(bytes / (1024f * 1024f * 1024f))
 }
 
 @Composable
