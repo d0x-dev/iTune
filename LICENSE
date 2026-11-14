@@ -1,11 +1,9 @@
-# iTune Open Source Attribution & Non-Commercial License (iTune-OANCL)
-**Version 1.0 — 2026**
+ITUNE OPEN SOURCE ATTRIBUTION & NON-COMMERCIAL LICENSE (ITUNE-OANCL)
+VERSION 1.0 — 2026
 
 Copyright © 2026 iTune Project. All Rights Reserved.
 
----
-
-## 1. Introduction and Purpose
+1. INTRODUCTION AND PURPOSE
 
 This license governs the use, reproduction, modification, distribution, and redistribution of the iTune software project, including its source code, application architecture, original implementations, documentation, and other materials distributed under this license.
 
@@ -19,27 +17,27 @@ Making the source code publicly available does not constitute permission to comm
 
 By accessing, copying, modifying, incorporating, or distributing any portion of the software, you agree to comply with the terms of this license.
 
-## 2. Definitions
+2. DEFINITIONS
 
 For the purposes of this license:
 
-**2.1. Original Software:** Refers to the original iTune application, its source code, associated resources, documentation, and other materials explicitly released under this license.
+2.1. Original Software: Refers to the original iTune application, its source code, associated resources, documentation, and other materials explicitly released under this license.
 
-**2.2. Original Project:** Refers to the official iTune software project and its officially maintained source repository.
+2.2. Original Project: Refers to the official iTune software project and its officially maintained source repository.
 
-**2.3. Licensee:** Refers to any individual, organization, developer, contributor, or entity accessing or using the software.
+2.3. Licensee: Refers to any individual, organization, developer, contributor, or entity accessing or using the software.
 
-**2.4. Derivative Work:** Refers to any software, application, project, or product that incorporates, reproduces, adapts, modifies, or substantially uses any portion of the original software.
+2.4. Derivative Work: Refers to any software, application, project, or product that incorporates, reproduces, adapts, modifies, or substantially uses any portion of the original software.
 
-**2.5. Substantial Portion:** Refers to any significant part of the original source code, architecture, implementation, or other copyrightable material that constitutes a meaningful reproduction or adaptation of the original software.
+2.5. Substantial Portion: Refers to any significant part of the original source code, architecture, implementation, or other copyrightable material that constitutes a meaningful reproduction or adaptation of the original software.
 
-**2.6. Open-Source Project:** Refers to a project whose source code is publicly accessible and distributed under a license that permits inspection, modification, and redistribution, subject to its applicable terms.
+2.6. Open-Source Project: Refers to a project whose source code is publicly accessible and distributed under a license that permits inspection, modification, and redistribution, subject to its applicable terms.
 
-**2.7. Commercial Use:** Refers to using, distributing, licensing, selling, sublicensing, monetizing, or otherwise exploiting the original software or derivative works for commercial or monetary benefit.
+2.7. Commercial Use: Refers to using, distributing, licensing, selling, sublicensing, monetizing, or otherwise exploiting the original software or derivative works for commercial or monetary benefit.
 
-**2.8. Attribution:** Refers to clearly acknowledging the iTune project as the original source of the incorporated software and preserving the applicable copyright and license notices.
+2.8. Attribution: Refers to clearly acknowledging the iTune project as the original source of the incorporated software and preserving the applicable copyright and license notices.
 
-## 3. Permissions Granted
+3. PERMISSIONS GRANTED
 
 Subject to the conditions of this license, the copyright holder grants every licensee a worldwide, non-exclusive, royalty-free, revocable (only as provided under this license), limited permission to:
 
@@ -58,7 +56,7 @@ These permissions are granted only for uses that comply with the restrictions an
 
 No permission to commercially exploit the software is granted by default.
 
-## 4. Mandatory Attribution and Copyright Recognition
+4. MANDATORY ATTRIBUTION AND COPYRIGHT RECOGNITION
 
 Attribution is a fundamental and mandatory condition of using the iTune software.
 
@@ -82,7 +80,7 @@ Attribution must not be hidden, removed, altered, or presented in a manner that 
 
 Providing attribution does not grant permission to commercially exploit the software.
 
-## 5. Open-Source and Public Availability Requirement
+5. OPEN-SOURCE AND PUBLIC AVAILABILITY REQUIREMENT
 
 Any project that incorporates a substantial portion of the iTune source code must remain publicly accessible as an open-source project.
 
@@ -96,7 +94,7 @@ Accordingly:
 
 This requirement does not automatically apply to independent software that does not incorporate copyrightable portions of the original iTune software.
 
-## 6. Prohibition of Unauthorized Commercial Use
+6. PROHIBITION OF UNAUTHORIZED COMMERCIAL USE
 
 Commercial exploitation of the original iTune software and substantial derivative works is strictly prohibited without prior written authorization from the copyright holder.
 
@@ -117,7 +115,7 @@ Commercial permission may be granted separately through an explicit written agre
 
 Merely providing attribution, publishing the source code, or retaining this license does not authorize commercial use.
 
-## 7. Prohibition of Misleading Rebranding and False Ownership
+7. PROHIBITION OF MISLEADING REBRANDING AND FALSE OWNERSHIP
 
 The iTune project and its original identity must not be misrepresented.
 
@@ -135,7 +133,7 @@ Non-commercial forks and derivative projects may use independent names and brand
 
 This section does not transfer ownership of independently created material to the iTune project.
 
-## 8. Modification and Distribution Requirements
+8. MODIFICATION AND DISTRIBUTION REQUIREMENTS
 
 Licensees may modify and redistribute the software for permitted non-commercial purposes.
 
@@ -152,7 +150,7 @@ However, every distributed derivative work must:
 
 A derivative project may contain independently developed components, provided that incorporating iTune material does not violate this license.
 
-## 9. Contributions to the Original Project
+9. CONTRIBUTIONS TO THE ORIGINAL PROJECT
 
 Contributions to the official iTune repository are encouraged.
 
@@ -165,7 +163,7 @@ By submitting a contribution, including source code, patches, bug fixes, documen
 
 Unless separately agreed in writing, contributors retain copyright ownership of their independently authored contributions.
 
-## 10. Third-Party Components and Dependencies
+10. THIRD-PARTY COMPONENTS AND DEPENDENCIES
 
 This license applies only to materials owned by or properly licensed to the iTune project.
 
@@ -177,7 +175,7 @@ Nothing in this license grants permission to disregard third-party licensing obl
 
 Licensees are responsible for identifying and complying with applicable third-party terms before redistributing the software or derivative works.
 
-## 11. Trademark and Brand Protection
+11. TRADEMARK AND BRAND PROTECTION
 
 The name "iTune", its associated project identity, logos, and original branding elements are not automatically licensed for unrestricted commercial or promotional use.
 
@@ -187,7 +185,7 @@ Independent non-commercial derivative projects must distinguish their branding f
 
 Any commercial use of the iTune name, logo, or associated branding requires separate written authorization where applicable.
 
-## 12. No Transfer of Ownership
+12. NO TRANSFER OF OWNERSHIP
 
 Access to the source code does not transfer ownership of the original software.
 
@@ -197,7 +195,7 @@ Copying, modifying, incorporating, or distributing the software does not establi
 
 No licensee may claim exclusive ownership of the original iTune implementations or prevent the copyright holder from continuing to develop, maintain, modify, or distribute the original project.
 
-## 13. License Compliance and Termination
+13. LICENSE COMPLIANCE AND TERMINATION
 
 Any violation of the terms of this license constitutes unauthorized use of the software.
 
@@ -213,7 +211,7 @@ Where permitted by applicable law, rights may be reinstated if the violation is 
 
 Termination of one licensee's permissions does not automatically terminate the rights of other compliant recipients.
 
-## 14. No Warranty
+14. NO WARRANTY
 
 THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE", WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED, OR STATUTORY.
 
@@ -223,23 +221,23 @@ THE COPYRIGHT HOLDER DOES NOT GUARANTEE THAT THE SOFTWARE WILL BE ERROR-FREE, SE
 
 THE ENTIRE RISK ARISING FROM THE USE OR PERFORMANCE OF THE SOFTWARE RESTS WITH THE LICENSEE.
 
-## 15. Limitation of Liability
+15. LIMITATION OF LIABILITY
 
 TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE COPYRIGHT HOLDER, PROJECT MAINTAINERS, AND CONTRIBUTORS SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES ARISING FROM THE USE, MODIFICATION, DISTRIBUTION, OR INABILITY TO USE THE SOFTWARE.
 
 THIS INCLUDES, WITHOUT LIMITATION:
 
-- LOSS OF DATA.
-- LOSS OF PROFITS OR REVENUE.
-- BUSINESS INTERRUPTION.
-- SOFTWARE FAILURE.
-- DEVICE DAMAGE.
-- SECURITY INCIDENTS.
-- THIRD-PARTY CLAIMS.
+    LOSS OF DATA.
+    LOSS OF PROFITS OR REVENUE.
+    BUSINESS INTERRUPTION.
+    SOFTWARE FAILURE.
+    DEVICE DAMAGE.
+    SECURITY INCIDENTS.
+    THIRD-PARTY CLAIMS.
 
 NOTHING IN THIS SECTION EXCLUDES LIABILITY THAT CANNOT LEGALLY BE EXCLUDED UNDER APPLICABLE LAW.
 
-## 16. No Endorsement or Official Support
+16. NO ENDORSEMENT OR OFFICIAL SUPPORT
 
 The existence of a derivative project does not imply that the original iTune project supports, endorses, maintains, or guarantees that project.
 
@@ -247,7 +245,7 @@ Independent developers are solely responsible for their modifications, releases,
 
 The official project is not obligated to provide support, maintenance, updates, or assistance for unofficial forks.
 
-## 17. Separate Commercial Licensing
+17. SEPARATE COMMERCIAL LICENSING
 
 The copyright holder reserves the right to grant separate commercial permissions.
 
@@ -255,24 +253,24 @@ Individuals or organizations seeking to use iTune or substantial portions of its
 
 Commercial agreements may establish separate terms concerning:
 
-- Commercial distribution.
-- Proprietary modifications.
-- Paid applications.
-- Subscription services.
-- Advertising-supported products.
-- Commercial sublicensing.
-- Branding and trademark usage.
-- Other forms of commercial exploitation.
+    Commercial distribution.
+    Proprietary modifications.
+    Paid applications.
+    Subscription services.
+    Advertising-supported products.
+    Commercial sublicensing.
+    Branding and trademark usage.
+    Other forms of commercial exploitation.
 
 No commercial permission should be assumed unless expressly granted in writing.
 
-## 18. Severability
+18. SEVERABILITY
 
 If any provision of this license is found invalid, unlawful, or unenforceable by a competent court, the remaining provisions shall continue to apply to the maximum extent permitted by applicable law.
 
 An invalid provision shall be interpreted or modified only to the extent necessary to make it enforceable while preserving its original purpose as closely as legally possible.
 
-## 19. Entire Agreement
+19. ENTIRE AGREEMENT
 
 This license constitutes the terms governing the permissions granted for the iTune materials covered by it.
 
@@ -280,20 +278,18 @@ No verbal statement, informal discussion, repository description, or unofficial 
 
 Any separate agreement must clearly identify the permissions or exceptions being granted.
 
-## 20. Acceptance of Terms
+20. ACCEPTANCE OF TERMS
 
 By accessing, copying, modifying, incorporating, distributing, or otherwise using the iTune software, the licensee acknowledges that they have read, understood, and agreed to comply with the terms and conditions of this license.
 
 Individuals who do not agree to these conditions are not granted permission to copy, modify, distribute, or otherwise exercise rights over the software beyond what applicable law independently permits.
 
----
+END OF LICENSE
 
-**END OF LICENSE**
+Project: iTune
 
-**Project:** iTune
+License: iTune Open Source Attribution & Non-Commercial License (iTune-OANCL) v1.0
 
-**License:** iTune Open Source Attribution & Non-Commercial License (iTune-OANCL) v1.0
+Copyright: © 2026 iTune Project
 
-**Copyright:** © 2026 iTune Project
-
-**All Rights Reserved, subject to the permissions expressly granted above.**
+All Rights Reserved, subject to the permissions expressly granted above.
