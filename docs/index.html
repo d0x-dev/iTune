@@ -94,7 +94,6 @@
     .phone-status,.phone-indicators { display:none; }
     .phone-camera { position:absolute; z-index:3; top:25px; left:50%; display:grid; width:24px; height:24px; transform:translateX(-50%); place-items:center; border:1px solid #222; border-radius:50%; background:radial-gradient(circle at 58% 40%,#0a2947 0 5%,#050506 19% 56%,#000 62%); box-shadow:0 0 0 3px #020203; }
     .phone-camera::after { content:""; width:4px; height:4px; border-radius:50%; background:#06162b; box-shadow:0 0 5px #2677bd; }
-    .phone-speaker { position:absolute; z-index:3; top:103px; left:50%; width:58px; height:6px; transform:translateX(-50%); border-radius:999px; background:#d8d7d5; box-shadow:0 1px 4px #0009; }
     .music-player { position:relative; display:flex; min-height:0; height:100%; flex-direction:column; overflow:hidden; padding:96px 34px 24px; border:0; border-radius:45px; background:transparent; box-shadow:none; backdrop-filter:none; }
     .music-player::before { content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at 80% 70%,rgba(255,184,0,.11),transparent 55%); }
     .player-top,.lyrics-stage,.timeline,.player-controls,.local-files,.player-status,.lyrics-provider { position:relative; z-index:1; }
@@ -204,7 +203,6 @@
           <div class="device-screen">
             <div class="phone-status" aria-hidden="true">9:41</div>
             <div class="phone-camera" aria-hidden="true"></div>
-            <div class="phone-speaker" aria-hidden="true"></div>
             <div class="phone-indicators" aria-hidden="true">5G&nbsp; ◖&nbsp; ▰</div>
           <section class="music-player" aria-label="Sunflower music player with synchronized lyrics">
           <div class="player-top">
