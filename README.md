@@ -3,6 +3,8 @@
 **iTune** is an Android music player built with Kotlin and Jetpack Compose. It brings online music discovery, a full-screen player, synchronized lyrics, audio processing, offline downloads, internet radio, and account/library tools into one app with an Apple-inspired dark interface.
 
 - **Repository:** [d0x-dev/iTune](https://github.com/d0x-dev/iTune)
+- **Project site:** [iTune for Android](https://d0x-dev.github.io/iTune/)
+- **Downloads:** [GitHub Releases](https://github.com/d0x-dev/iTune/releases)
 - **Application ID:** `com.darkxvenom.itune`
 - **Current app version:** `1.0` (`versionCode` 1)
 - **Minimum Android version:** Android 7.0 (API 24)
