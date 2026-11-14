@@ -53,4 +53,4 @@ Use GitHub Issues for ordinary bugs and feature requests. Include app version, A
 
 ## License for contributions
 
-By submitting a contribution, you agree that your contribution is made available under the repository's [MIT License](LICENSE). You retain copyright to your contribution.
+By submitting a contribution, you retain copyright to your independently authored work and grant the project the permissions described in the iTune-OANCL License (LICENSE) for its inclusion and distribution with iTune.
