@@ -43,6 +43,14 @@ internal object EncryptedAuthPrefs {
         p.edit().putString(key, stored).apply()
     }
 
+    /** Stores a secret only when Android Keystore encryption succeeds (never plaintext fallback). */
+    fun putEncryptedStrict(context: Context, key: String, value: String): Boolean {
+        val encrypted = encryptString(value) ?: return false
+        if (!encrypted.startsWith(PREFIX_ENC)) return false
+        open(context).edit().putString(key, encrypted).commit()
+        return open(context).getString(key, null)?.startsWith(PREFIX_ENC) == true
+    }
+
     fun getDecrypted(context: Context, key: String): String? {
         val raw = open(context).getString(key, null) ?: return null
         if (!raw.startsWith(PREFIX_ENC)) return raw

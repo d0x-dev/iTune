@@ -79,6 +79,7 @@ object MusicPlayerState : Player.Listener {
     private var isApplyingRemoteSync = false
     private var lastPlaybackFailureTrackId: String? = null
     private var lastPlaybackFailureAtMs: Long = 0L
+    private val autoSkipFailedTrackIds = mutableSetOf<String>()
 
     // ── Observable UI States ──
     var currentTrack by mutableStateOf<MusicTrack?>(null)
@@ -322,6 +323,7 @@ object MusicPlayerState : Player.Listener {
         )
 
         restorePlaybackSession(appContext)
+        com.darkxvenom.itune.widget.ITuneWidgetUpdater.ensureObserving(appContext)
         startProgressLoop()
         IShareSyncManager.start(appContext)
         MusicCacheManager.init(appContext)
@@ -502,6 +504,7 @@ object MusicPlayerState : Player.Listener {
         fromEngine: Boolean = false,
         preResolvedUrl: String? = null,
     ) {
+        autoSkipFailedTrackIds.remove(track.id)
         if (AutoSleepTimerManager.isSleepWindowActive()) {
             appContext?.let {
                 android.widget.Toast.makeText(it, "Auto Sleep Timer active · Playback paused", android.widget.Toast.LENGTH_SHORT).show()
@@ -605,6 +608,7 @@ object MusicPlayerState : Player.Listener {
                     showPlaybackFailure(track.id, null)
                     resolvingStream = false
                     isLoading = false
+                    autoSkipAfterFailure(track.id)
                     return@launch
                 }
 
@@ -643,6 +647,7 @@ object MusicPlayerState : Player.Listener {
                     resolvingStream = false
                     isLoading = false
                 }
+                autoSkipAfterFailure(track.id)
             }
         }
     }
@@ -1264,6 +1269,7 @@ object MusicPlayerState : Player.Listener {
             Player.STATE_READY -> {
                 isLoading = false
                 durationMs = exoPlayer?.duration?.coerceAtLeast(0L) ?: 0L
+                autoSkipFailedTrackIds.clear()
             }
             Player.STATE_ENDED -> {
                 com.darkxvenom.itune.data.timetravel.TimeTravelPlaybackTracker.onTrackCompleted()
@@ -1304,6 +1310,32 @@ object MusicPlayerState : Player.Listener {
         showPlaybackFailure(currentTrack?.id, error)
         resolvingStream = false
         isLoading = false
+        currentTrack?.id?.let(::autoSkipAfterFailure)
+    }
+
+    private fun autoSkipAfterFailure(failedTrackId: String) {
+        if (!SettingsStore.state.value.autoSkipOnError || !autoSkipFailedTrackIds.add(failedTrackId)) return
+        val currentIndex = queueIndex
+        val currentQueue = queue.toList()
+        val candidateIndices = if (shuffleEnabled && currentQueue.size > 1) {
+            currentQueue.indices.filter { it != currentIndex && currentQueue[it].id !in autoSkipFailedTrackIds }.shuffled()
+        } else {
+            buildList {
+                for (index in (currentIndex + 1) until currentQueue.size) add(index)
+                if (repeatMode == Player.REPEAT_MODE_ALL) for (index in 0 until currentIndex) add(index)
+            }.filter { currentQueue[it].id !in autoSkipFailedTrackIds }
+        }
+        val nextIndex = candidateIndices.firstOrNull() ?: return
+        val nextTrack = currentQueue.getOrNull(nextIndex) ?: return
+        Log.i(TAG, "Auto-skipping failed track $failedTrackId to ${nextTrack.id}")
+        scope.launch {
+            delay(250L)
+            if (currentTrack?.id == failedTrackId && queueIndex == currentIndex) {
+                plannedNext = null
+                queueIndex = nextIndex
+                play(nextTrack, expandPlayer = expanded)
+            }
+        }
     }
 
     private fun showPlaybackFailure(trackId: String?, error: Throwable?) {

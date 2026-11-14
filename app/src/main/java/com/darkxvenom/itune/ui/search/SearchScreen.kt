@@ -1,5 +1,7 @@
 package com.darkxvenom.itune.ui.search
 
+import androidx.compose.material3.MaterialTheme
+
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -328,14 +330,14 @@ fun SearchScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(AppleOledBlack)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Stationary Search Header ensures BasicTextField never drops focus across Explore/History/Suggestions/Results
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(AppleOledBlack)
+                    .background(MaterialTheme.colorScheme.background)
                     .statusBarsPadding()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
@@ -985,7 +987,7 @@ fun SearchScreen(
                 .graphicsLayer { alpha = topShadeAlpha * 0.45f }
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(AppleOledBlack, Color.Transparent)
+                        colors = listOf(MaterialTheme.colorScheme.background, Color.Transparent)
                     )
                 )
         )
@@ -1124,7 +1126,7 @@ fun AppleSearchBar(
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = { onSubmit() }),
                     textStyle = TextStyle(
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal
                     ),
@@ -1210,7 +1212,7 @@ fun SearchCategoryCardItem(
 
         Text(
             text = category.title,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = (-0.3).sp,

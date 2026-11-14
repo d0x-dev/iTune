@@ -23,9 +23,12 @@ android {
 
     buildTypes {
         release {
-            optimization {
-                enable = false
-            }
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
     compileOptions {
@@ -67,6 +70,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation("io.coil-kt:coil-svg:2.7.0")
     implementation("androidx.palette:palette-ktx:1.0.0")
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
     implementation("com.github.jeziellago:compose-markdown:0.5.4")
     implementation("dev.chrisbanes.haze:haze:1.3.1")
     implementation("dev.chrisbanes.haze:haze-materials:1.3.1")

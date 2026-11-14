@@ -88,7 +88,7 @@ class MainActivity : ComponentActivity() {
             ITuneTheme(appFont = settingsState.appFont) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = AppleOledBlack
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.background
                 ) {
                     val splashEnabled = settingsState.splashScreenEnabled
                     var showSplash by rememberSaveable { mutableStateOf(splashEnabled) }

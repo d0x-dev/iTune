@@ -1,10 +1,8 @@
 package com.darkxvenom.itune.ui.artist.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import com.darkxvenom.itune.ui.theme.LocalAppFontFamily
 import androidx.compose.ui.graphics.Color
@@ -27,18 +25,6 @@ private val ITubeDarkColors = darkColorScheme(
     surfaceVariant = Color(0xFF1C1C1E),
     onSurfaceVariant = Color(0xFF8E8E93),
     outline = Color(0xFF2C2C2E),
-)
-
-private val ITubeLightColors = lightColorScheme(
-    primary = Color.Black,
-    onPrimary = Color.White,
-    background = Color.White,
-    onBackground = Color.Black,
-    surface = Color(0xFFF7F7F9),
-    onSurface = Color.Black,
-    surfaceVariant = Color(0xFFF2F2F7),
-    onSurfaceVariant = Color(0xFF6E6E73),
-    outline = Color(0xFFE5E5EA),
 )
 
 val SFProDisplay = FontFamily(
@@ -80,13 +66,10 @@ private fun Typography.withFamily(family: FontFamily) = Typography(
 )
 
 @Composable
-fun ITubeArtistTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit,
-) {
+fun ITubeArtistTheme(content: @Composable () -> Unit) {
     val appTypography = ITubeArtistTypography.withFamily(LocalAppFontFamily.current)
     MaterialTheme(
-        colorScheme = if (darkTheme) ITubeDarkColors else ITubeLightColors,
+        colorScheme = ITubeDarkColors,
         typography = appTypography,
         content = content,
     )

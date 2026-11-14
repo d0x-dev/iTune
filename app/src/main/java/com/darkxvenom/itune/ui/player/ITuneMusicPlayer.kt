@@ -149,6 +149,9 @@ import com.darkxvenom.itune.R
 import com.darkxvenom.itune.audio.AudioEngineManager
 import com.darkxvenom.itune.audio.AudioOutputManager
 import com.darkxvenom.itune.backend.MusicPlayerState
+import com.darkxvenom.itune.backend.lyrics.LyricsTranslationHelper
+import com.darkxvenom.itune.data.model.BrowseType
+import com.darkxvenom.itune.data.model.PendingArtistNav
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.WordTiming
 import com.darkxvenom.itune.backend.highQualityThumbnail
@@ -162,7 +165,9 @@ import com.darkxvenom.itune.ui.components.ReorderDragHandle
 import com.darkxvenom.itune.ui.components.WavySlider
 import com.darkxvenom.itune.ui.welcome.WelcomeMeshBackground
 import com.darkxvenom.itune.ui.welcome.sampleWelcomeAmbientFrame
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import kotlin.math.PI
 import kotlin.math.roundToInt
 
@@ -374,7 +379,14 @@ fun ITuneMusicPlayer(
     val isPanelOpen = isLyricsOpen || isQueueOpen
 
     val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
+    val translationsBySong by LyricsTranslationHelper.currentSongTranslations.collectAsStateWithLifecycle()
     val isStaticPlayer = settingsState.playerType == "Static"
+
+    LaunchedEffect(track.id, settingsState.lyricsTranslateLanguage) {
+        withContext(Dispatchers.IO) {
+            LyricsTranslationHelper.getTranslationsForSong(context, track.id, settingsState.lyricsTranslateLanguage)
+        }
+    }
 
     val panelProgress by animateFloatAsState(
         targetValue = if (isPanelOpen) 1f else 0f,
@@ -849,7 +861,16 @@ fun ITuneMusicPlayer(
                     color = playerAccentColor.copy(alpha = curArtistAlpha),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.basicMarquee()
+                    modifier = Modifier.clickable {
+                        val name = track.artists.substringBefore(",").trim().ifBlank { track.artists }
+                        MusicPlayerState.pendingArtistNav = PendingArtistNav(
+                            browseId = track.artistId,
+                            name = name,
+                            thumbnailUrl = track.thumbnailUrl,
+                            initialType = BrowseType.ARTIST,
+                        )
+                        MusicPlayerState.expanded = false
+                    }.basicMarquee()
                 )
 
                 // Send lyrics line a little bit below the artist
@@ -867,6 +888,13 @@ fun ITuneMusicPlayer(
                     }
                     val activeLyric = remember(lyricLines, activeLyricIndex) {
                         buildPlayerLyricPreviewLine(activeLyricIndex, lyricLines)
+                    }
+                    val translatedPreview = translationsBySong[track.id]?.getOrNull(activeLyricIndex)
+                        ?.takeIf { it.isNotBlank() }
+                    val displayLyric = remember(activeLyric, translatedPreview) {
+                        if (activeLyric != null && translatedPreview != null) {
+                            activeLyric.copy(text = translatedPreview, words = emptyList())
+                        } else activeLyric
                     }
 
                     Box(
@@ -892,7 +920,7 @@ fun ITuneMusicPlayer(
                                 .padding(vertical = 4.dp),
                         ) {
                             AnimatedContent(
-                                targetState = activeLyric,
+                                targetState = displayLyric,
                                 transitionSpec = {
                                     (slideInVertically(animationSpec = spring(dampingRatio = 0.82f, stiffness = 380f)) { (it * 0.75f).toInt() } + fadeIn(tween(350)))
                                         .togetherWith(

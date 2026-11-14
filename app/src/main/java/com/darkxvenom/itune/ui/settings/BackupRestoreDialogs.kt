@@ -48,12 +48,12 @@ internal fun BackupOptionsDialog(
     var library by remember { mutableStateOf(true) }
     var confirmation by remember { mutableStateOf("") }
     BackupDialogFrame(title = "Back Up iTune", subtitle = "Choose what to include. Your backup is encrypted with a password you choose.", onDismiss = onDismiss) {
-        BackupChoiceRow("All", "Accounts, playlists, history, albums and stats", account && library) {
+        BackupChoiceRow("All", "Accounts, every app setting, audio effects and library data", account && library) {
             account = !account || !library
             library = account
         }
         BackupChoiceRow("Account", "Google, Last.fm and Discord sign-in data", account) { account = !account }
-        BackupChoiceRow("Playlists, History, Albums & Stats", "Your music library and listening data", library) { library = !library }
+        BackupChoiceRow("Settings, Audio Effects & Library", "Lyrics APIs, EQ, effect toggles, playlists, history, albums and stats", library) { library = !library }
         BackupPasswordField(password, onPasswordChange, "Encryption password")
         BackupPasswordField(confirmation, { confirmation = it }, "Confirm password")
         if (confirmation.isNotEmpty() && password != confirmation) {
@@ -101,10 +101,56 @@ internal fun RestoreOptionsDialog(
             }
         }
         if ("account" in available) BackupChoiceRow("Account", accountDescription, account) { account = !account }
-        if ("library" in available) BackupChoiceRow("Playlists, History, Albums & Stats", libraryDescription, library) { library = !library }
+        if ("library" in available) BackupChoiceRow("Settings, Audio Effects & Library", libraryDescription, library) { library = !library }
         BackupAction("Restore Selected", enabled = account || library) {
             onRestore(buildSet { if (account) add("account"); if (library) add("library") })
         }
+        BackupAction("Cancel", enabled = true, primary = false, onClick = onDismiss)
+    }
+}
+
+@Composable
+internal fun AutoBackupDialog(
+    initiallyEnabled: Boolean,
+    savedPassword: String,
+    onDismiss: () -> Unit,
+    onSave: (Boolean, String) -> Unit,
+) {
+    var enabled by remember { mutableStateOf(initiallyEnabled) }
+    var password by remember { mutableStateOf(savedPassword) }
+    BackupDialogFrame(
+        title = "Automatic Backup",
+        subtitle = "Create an encrypted backup of your account, settings, audio effects and library once every day.",
+        onDismiss = onDismiss,
+    ) {
+        Row(
+            Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(Color(0xFF171719))
+                .clickable { enabled = !enabled }.padding(horizontal = 14.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(if (enabled) "On" else "Off", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            androidx.compose.foundation.layout.Box(
+                Modifier.size(width = 48.dp, height = 28.dp).clip(CircleShape)
+                    .background(if (enabled) Color(0xFF30D158) else Color(0xFF48484A)),
+                contentAlignment = if (enabled) Alignment.CenterEnd else Alignment.CenterStart,
+            ) {
+                androidx.compose.foundation.layout.Box(Modifier.padding(3.dp).size(22.dp).clip(CircleShape).background(Color.White))
+            }
+        }
+        if (enabled) {
+            Spacer(Modifier.size(12.dp))
+            BackupPasswordField(password, { password = it }, "Backup password")
+            Text(
+                "Saved using Android Keystore. Backup files use PBKDF2-HMAC-SHA256 (310,000 rounds) and AES-256-GCM.",
+                color = BackupSecondary, fontSize = 11.sp, lineHeight = 15.sp,
+                modifier = Modifier.padding(top = 2.dp, bottom = 8.dp),
+            )
+        }
+        Text("Saves to  Downloads/itune/backups", color = Color.White, fontSize = 13.sp,
+            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(13.dp)).background(Color(0xFF171719))
+                .padding(horizontal = 14.dp, vertical = 14.dp))
+        BackupAction("Save", enabled = !enabled || password.length >= 8) { onSave(enabled, password) }
         BackupAction("Cancel", enabled = true, primary = false, onClick = onDismiss)
     }
 }

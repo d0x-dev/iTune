@@ -113,6 +113,7 @@ import com.darkxvenom.itune.R
 import com.darkxvenom.itune.backend.AudioDownloadOption
 import com.darkxvenom.itune.backend.AudioDownloader
 import com.darkxvenom.itune.backend.MusicBackend
+import com.darkxvenom.itune.backend.MusicArtist
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.data.model.BrowseType
@@ -133,6 +134,7 @@ private enum class MorePopupPage {
     LYRICS_OFFSET,
     LYRICS_TRANSLATE,
     DETAILS,
+    ARTISTS,
     SLEEP_TIMER,
     TOOLS
 }
@@ -589,6 +591,7 @@ fun AppleMoreOptionsPopup(
     val context = LocalContext.current
     val view = LocalView.current
     var activePage by remember { mutableStateOf(MorePopupPage.MAIN) }
+    var artistProfiles by remember(track.id) { mutableStateOf<Map<String, MusicArtist>>(emptyMap()) }
     var showPlayerToolsDialog by remember { mutableStateOf(false) }
     var playerToolMode by remember { mutableStateOf(PlayerToolMode.RINGTONE) }
 
@@ -602,6 +605,20 @@ fun AppleMoreOptionsPopup(
 
     LaunchedEffect(visible) {
         if (visible) activePage = MorePopupPage.MAIN
+    }
+
+    LaunchedEffect(track.id, activePage) {
+        if (activePage == MorePopupPage.ARTISTS) {
+            val names = track.artists.split(Regex("\\s*,\\s*|\\s*&\\s*|\\s+feat\\.?\\s+|\\s+ft\\.?\\s+|\\s+x\\s+", RegexOption.IGNORE_CASE))
+                .map(String::trim).filter(String::isNotBlank).distinct()
+            val profiles = linkedMapOf<String, MusicArtist>()
+            names.forEach { name ->
+                val results = runCatching { MusicBackend.searchAllCategories(name).artists }.getOrNull().orEmpty()
+                val result = results.firstOrNull { it.name.trim().equals(name, ignoreCase = true) } ?: results.firstOrNull()
+                if (result != null) profiles[name] = result
+            }
+            artistProfiles = profiles
+        }
     }
 
     // Let the menu bloom to the full space above the navigation area. The old title-row-based
@@ -733,21 +750,10 @@ fun AppleMoreOptionsPopup(
 
                                         MorePopupOptionRow(
                                             iconRes = R.drawable.ic_menu_artist,
-                                            title = "Go to artist",
+                                            title = "Artists",
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                                val primaryArtist = track.artists.substringBefore(",").trim()
-                                                    .ifBlank { track.artists }
-                                                onDismiss()
-                                                MusicPlayerState.lyricsOpen = false
-                                                MusicPlayerState.queueOpen = false
-                                                MusicPlayerState.expanded = false
-                                                MusicPlayerState.pendingArtistNav = PendingArtistNav(
-                                                    browseId = track.artistId,
-                                                    name = primaryArtist,
-                                                    thumbnailUrl = track.thumbnailUrl?.ifBlank { null },
-                                                    initialType = BrowseType.ARTIST,
-                                                )
+                                                activePage = MorePopupPage.ARTISTS
                                             }
                                         )
                                         PopupMenuDivider()
@@ -826,6 +832,54 @@ fun AppleMoreOptionsPopup(
                                                 AlwaysOnDisplayManager.activate()
                                             }
                                         )
+                                    }
+                                }
+
+                                MorePopupPage.ARTISTS -> {
+                                    val names = track.artists.split(Regex("\\s*,\\s*|\\s*&\\s*|\\s+feat\\.?\\s+|\\s+ft\\.?\\s+|\\s+x\\s+", RegexOption.IGNORE_CASE))
+                                        .map(String::trim).filter(String::isNotBlank).distinct()
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        PopupSubPageHeader(title = "Artists", onBack = { activePage = MorePopupPage.MAIN })
+                                        if (names.isEmpty()) {
+                                            Text("No artist information available", color = Color.White.copy(alpha = 0.65f), modifier = Modifier.padding(18.dp))
+                                        }
+                                        names.forEachIndexed { index, name ->
+                                            val profile = artistProfiles[name]
+                                            Row(
+                                                Modifier.fillMaxWidth().clickable {
+                                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                    onDismiss()
+                                                    MusicPlayerState.lyricsOpen = false
+                                                    MusicPlayerState.queueOpen = false
+                                                    MusicPlayerState.expanded = false
+                                                    val browseId = profile?.id ?: track.artistId.takeIf { index == 0 }
+                                                    if (browseId != null) {
+                                                        MusicPlayerState.pendingArtistNav = PendingArtistNav(
+                                                            browseId = browseId,
+                                                            name = profile?.name ?: name,
+                                                            thumbnailUrl = profile?.thumbnailUrl,
+                                                            initialType = BrowseType.ARTIST,
+                                                        )
+                                                    } else {
+                                                        MusicPlayerState.pendingArtistSearch = name
+                                                    }
+                                                }.padding(horizontal = 15.dp, vertical = 10.dp),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                            ) {
+                                                AsyncImage(
+                                                    model = profile?.thumbnailUrl ?: track.thumbnailUrl,
+                                                    contentDescription = "$name profile",
+                                                    contentScale = ContentScale.Crop,
+                                                    modifier = Modifier.size(42.dp).clip(CircleShape),
+                                                )
+                                                Spacer(Modifier.width(12.dp))
+                                                Column(Modifier.weight(1f)) {
+                                                    Text(profile?.name ?: name, color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                                                    Text(profile?.subscribers ?: "Artist", color = Color.White.copy(alpha = 0.62f), fontSize = 12.sp)
+                                                }
+                                            }
+                                            if (index < names.lastIndex) PopupMenuDivider()
+                                        }
                                     }
                                 }
 

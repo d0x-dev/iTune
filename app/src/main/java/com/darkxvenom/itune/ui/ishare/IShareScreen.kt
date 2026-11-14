@@ -249,7 +249,7 @@ fun IShareScreen(
         }
     }
 
-    ITubeArtistTheme(darkTheme = true) {
+    ITubeArtistTheme {
         CompositionLocalProvider(
             LocalAppBackdrop provides appBackdrop,
             LocalLiquidGlassEnabled provides glassActive,

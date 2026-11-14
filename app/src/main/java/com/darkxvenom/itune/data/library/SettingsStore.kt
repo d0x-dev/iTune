@@ -18,6 +18,7 @@ data class SettingsUiState(
     val dolbyAtmos: Boolean = true,
     val losslessAudio: Boolean = true,
     val audioQuality: String = "Extreme",
+    val downloadQuality: String = "Best Available",
     val pcmOutputFormat: String = "16-bit PCM",
     val eqPreset: String = "Late Night",
     val crossfadeDuration: String = "Off",
@@ -61,6 +62,7 @@ data class SettingsUiState(
     val lyricsTranslateLanguage: String = "hi-Latn",
     val lyricsTranslateMode: String = "Literal",
     val stopMusicOnTaskClear: Boolean = false,
+    val autoSkipOnError: Boolean = true,
     val permanentShuffle: Boolean = false,
     val autoSleepTimerEnabled: Boolean = false,
     val autoSleepStartHour: Int = 23,
@@ -98,6 +100,7 @@ object SettingsStore {
     const val KEY_DOLBY_ATMOS = "dolby_atmos"
     const val KEY_LOSSLESS_AUDIO = "lossless_audio"
     const val KEY_AUDIO_QUALITY = "audio_quality"
+    const val KEY_DOWNLOAD_QUALITY = "download_quality"
     const val KEY_PCM_OUTPUT_FORMAT = "pcm_output_format"
 
     const val QUALITY_EXTREME = "Extreme"
@@ -176,6 +179,7 @@ object SettingsStore {
         "youtube_music"
     )
     const val KEY_STOP_MUSIC_ON_TASK_CLEAR = "stop_music_on_task_clear"
+    const val KEY_AUTO_SKIP_ON_ERROR = "auto_skip_on_error"
 
     // Permanent Shuffle
     const val KEY_PERMANENT_SHUFFLE = "permanent_shuffle"
@@ -219,8 +223,15 @@ object SettingsStore {
             if (prefs != null) return
             val p = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             prefs = p
+            // Remove the retired light/system theme preference so old installs stay Dark-only too.
+            p.edit().remove("app_theme").apply()
             _state.value = loadFromPrefs(p)
         }
+    }
+
+    fun reloadBackupState(context: Context) {
+        ensureInit(context)
+        prefs?.let { _state.value = loadFromPrefs(it) }
     }
 
     fun isStopMusicOnTaskClearEnabled(context: Context): Boolean {
@@ -287,6 +298,7 @@ object SettingsStore {
             KEY_NEW_MUSIC_ALERTS -> cur.copy(newMusicAlerts = value)
             KEY_OFFLINE_MODE -> cur.copy(offlineMode = value)
             KEY_STOP_MUSIC_ON_TASK_CLEAR -> cur.copy(stopMusicOnTaskClear = value)
+            KEY_AUTO_SKIP_ON_ERROR -> cur.copy(autoSkipOnError = value)
             KEY_PERMANENT_SHUFFLE -> cur.copy(permanentShuffle = value)
             KEY_AUTO_SLEEP_ENABLED -> cur.copy(autoSleepTimerEnabled = value)
             KEY_PROXY_ENABLED -> cur.copy(proxyEnabled = value)
@@ -332,6 +344,7 @@ object SettingsStore {
             KEY_APP_FONT -> cur.copy(appFont = normalized)
             KEY_SPATIAL_AUDIO -> cur.copy(spatialAudioMode = normalized)
             KEY_AUDIO_QUALITY -> cur.copy(audioQuality = normalizeAudioQuality(normalized))
+            KEY_DOWNLOAD_QUALITY -> cur.copy(downloadQuality = normalized.takeIf { it in setOf("Best Available", "Maximum", "High", "Standard", "Data Saver") } ?: "Best Available")
             KEY_PCM_OUTPUT_FORMAT -> cur.copy(pcmOutputFormat = if (normalized == "32-bit float PCM") normalized else "16-bit PCM")
             KEY_EQ_PRESET -> cur.copy(eqPreset = normalized)
             KEY_CROSSFADE -> cur.copy(crossfadeDuration = normalized)
@@ -563,6 +576,7 @@ object SettingsStore {
             dolbyAtmos = p.getBoolean(KEY_DOLBY_ATMOS, defaults.dolbyAtmos),
             losslessAudio = p.getBoolean(KEY_LOSSLESS_AUDIO, defaults.losslessAudio),
             audioQuality = normalizeAudioQuality(p.getString(KEY_AUDIO_QUALITY, defaults.audioQuality)),
+            downloadQuality = p.getString(KEY_DOWNLOAD_QUALITY, defaults.downloadQuality)?.takeIf { it in setOf("Best Available", "Maximum", "High", "Standard", "Data Saver") } ?: defaults.downloadQuality,
             pcmOutputFormat = p.getString(KEY_PCM_OUTPUT_FORMAT, defaults.pcmOutputFormat) ?: defaults.pcmOutputFormat,
             eqPreset = p.getString(KEY_EQ_PRESET, defaults.eqPreset) ?: defaults.eqPreset,
             crossfadeDuration = p.getString(KEY_CROSSFADE, defaults.crossfadeDuration) ?: defaults.crossfadeDuration,
@@ -611,6 +625,7 @@ object SettingsStore {
             lyricsTranslateLanguage = p.getString(KEY_LYRICS_TRANSLATE_LANGUAGE, defaults.lyricsTranslateLanguage) ?: defaults.lyricsTranslateLanguage,
             lyricsTranslateMode = p.getString(KEY_LYRICS_TRANSLATE_MODE, defaults.lyricsTranslateMode) ?: defaults.lyricsTranslateMode,
             stopMusicOnTaskClear = p.getBoolean(KEY_STOP_MUSIC_ON_TASK_CLEAR, defaults.stopMusicOnTaskClear),
+            autoSkipOnError = p.getBoolean(KEY_AUTO_SKIP_ON_ERROR, defaults.autoSkipOnError),
             permanentShuffle = p.getBoolean(KEY_PERMANENT_SHUFFLE, defaults.permanentShuffle),
             autoSleepTimerEnabled = p.getBoolean(KEY_AUTO_SLEEP_ENABLED, defaults.autoSleepTimerEnabled),
             autoSleepStartHour = p.getInt(KEY_AUTO_SLEEP_START_HOUR, defaults.autoSleepStartHour),

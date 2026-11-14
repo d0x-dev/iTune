@@ -53,6 +53,15 @@ object ArtistStateStore {
         }
     }
 
+    fun reloadBackupState(context: Context) {
+        ensureInit(context)
+        val p = prefs ?: return
+        _subscribedArtists.value = p.getStringSet(KEY_SUBSCRIBED, emptySet()).orEmpty().toSet()
+        _savedReleases.value = p.getStringSet(KEY_SAVED_RELEASES, emptySet()).orEmpty().toSet()
+        _signatureApiEnabled.value = p.getBoolean(KEY_SIG_ENABLED, false)
+        _signatureApiUrl.value = ArtistSignatureRepository.normalizeBaseUrl(p.getString(KEY_SIG_URL, "").orEmpty())
+    }
+
     fun isSubscribed(browseId: String): Boolean = browseId in _subscribedArtists.value
 
     fun toggleSubscription(

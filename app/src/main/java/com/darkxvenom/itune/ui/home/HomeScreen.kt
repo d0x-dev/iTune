@@ -132,6 +132,7 @@ import com.darkxvenom.itune.ui.components.DeveloperNewsPopupDialog
 import com.darkxvenom.itune.data.updates.AppUpdateManager
 import com.darkxvenom.itune.ui.components.AppUpdatePopupDialog
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
@@ -469,7 +470,7 @@ fun HomeScreen(
     BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
-            .background(com.darkxvenom.itune.ui.theme.AppleOledBlack)
+            .background(MaterialTheme.colorScheme.background)
             .onGloballyPositioned { rootBoxCoords = it }
     ) {
         val hasMiniPlayer = showRadioMiniPlayer || MusicPlayerState.currentTrack != null
@@ -639,10 +640,10 @@ fun HomeScreen(
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(
-                                AppleOledBlack,
-                                AppleOledBlack.copy(alpha = 0.94f),
-                                AppleOledBlack.copy(alpha = 0.65f),
-                                AppleOledBlack.copy(alpha = 0.25f),
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.94f),
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.65f),
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.25f),
                                 Color.Transparent
                             )
                         )
@@ -899,9 +900,9 @@ fun HomeScreen(
                         Brush.verticalGradient(
                             colors = listOf(
                                 Color.Transparent,
-                                AppleOledBlack.copy(alpha = 0.70f),
-                                AppleOledBlack.copy(alpha = 0.94f),
-                                AppleOledBlack
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.70f),
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.94f),
+                                MaterialTheme.colorScheme.background
                             )
                         )
                     )

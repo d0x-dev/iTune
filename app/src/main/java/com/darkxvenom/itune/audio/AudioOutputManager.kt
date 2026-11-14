@@ -268,6 +268,14 @@ object AudioOutputManager {
         refreshDevices()
     }
 
+    fun reloadBackupState() {
+        val context = appContext ?: return
+        val enabled = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getBoolean(KEY_BIT_PERFECT, false)
+        usbBitPerfect?.setEnabled(enabled)
+        refreshDevices()
+    }
+
     fun openSystemMediaOutputOrBluetooth(context: Context, preferBluetoothSettings: Boolean = false) {
         val candidates = buildList {
             if (!preferBluetoothSettings) {

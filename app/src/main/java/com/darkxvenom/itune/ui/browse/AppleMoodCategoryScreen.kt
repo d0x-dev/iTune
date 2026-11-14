@@ -270,7 +270,7 @@ fun AppleMoodCategoryScreen(
         }
     }
 
-    ITubeArtistTheme(darkTheme = true) {
+    ITubeArtistTheme {
         val artworkPalette = rememberArtworkPalette(imageUrl = category.imageUrl, dark = true)
         val topGlowColor = artworkPalette.accent.copy(alpha = 0.22f)
         val topPad = topBarContentPadding()

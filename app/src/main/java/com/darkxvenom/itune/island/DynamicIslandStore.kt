@@ -138,6 +138,11 @@ object DynamicIslandStore {
         }
     }
 
+    fun reloadBackupState(context: Context) {
+        synchronized(this) { initialized = false }
+        ensureInit(context)
+    }
+
     fun update(context: Context, transform: (DynamicIslandConfig) -> DynamicIslandConfig) {
         ensureInit(context)
         val updated = transform(_state.value)

@@ -493,7 +493,7 @@ class LibraryHostController internal constructor(
                 val options = withContext(Dispatchers.IO) {
                     MusicBackend.extractAudioQualities(song.videoId)
                 }
-                val best = options.firstOrNull()
+                val best = MusicBackend.selectDownloadOption(options)
                 if (best != null) {
                     AudioDownloader.download(context, song.toMusicTrack(), best)
                     showToast("Downloading ${song.title}")
@@ -753,7 +753,7 @@ fun LibraryFrostedScreenScaffold(
         bottom = if (hasMiniPlayer) 210.dp else 140.dp,
     )
 
-    ITubeArtistTheme(darkTheme = true) {
+    ITubeArtistTheme {
         CompositionLocalProvider(
             LocalAppBackdrop provides controller.appBackdrop,
             LocalLiquidGlassEnabled provides glassActive,
@@ -1165,7 +1165,7 @@ fun LibraryScreenOverlayPopups(
         }
     }
 
-    ITubeArtistTheme(darkTheme = true) {
+    ITubeArtistTheme {
         CompositionLocalProvider(
             LocalAppBackdrop provides controller.appBackdrop,
             LocalLiquidGlassEnabled provides glassActive,

@@ -187,7 +187,7 @@ fun DynamicIslandScreen(
     val curW = if (isLandscapeTab) cfg.landscapeWidth else cfg.portraitWidth
     val curH = if (isLandscapeTab) cfg.landscapeHeight else cfg.portraitHeight
 
-    ITubeArtistTheme(darkTheme = true) {
+    ITubeArtistTheme {
         CompositionLocalProvider(
             LocalAppBackdrop provides appBackdrop,
             LocalLiquidGlassEnabled provides isGlassSupported(),

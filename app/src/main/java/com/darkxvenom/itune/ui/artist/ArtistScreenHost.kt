@@ -718,7 +718,7 @@ fun ArtistScreenOverlayContent(
             ?.let { AppleArtistArtRepository.cached(it.browseId) }
     }
 
-    ITubeArtistTheme(darkTheme = true) {
+    ITubeArtistTheme {
         val detailPalette = rememberArtworkPalette(
             imageUrl = topApple?.heroUrl ?: effectivePage.thumbnailUrl,
             keyColors = topApple?.keyColors(),
@@ -1013,7 +1013,7 @@ fun ArtistScreenOverlayPopups(
         }
     }
 
-    ITubeArtistTheme(darkTheme = true) {
+    ITubeArtistTheme {
         CompositionLocalProvider(
             LocalAppBackdrop provides controller.appBackdrop,
             LocalLiquidGlassEnabled provides glassActive,

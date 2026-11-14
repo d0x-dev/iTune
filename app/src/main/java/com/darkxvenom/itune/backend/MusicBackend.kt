@@ -740,6 +740,16 @@ object MusicBackend {
         result
     }
 
+    fun selectDownloadOption(options: List<AudioDownloadOption>, quality: String = SettingsStore.state.value.downloadQuality): AudioDownloadOption? {
+        if (options.isEmpty()) return null
+        return when (quality) {
+            "High" -> options.minByOrNull { kotlin.math.abs(it.bitrateKbps - 160) }
+            "Standard" -> options.minByOrNull { kotlin.math.abs(it.bitrateKbps - 128) }
+            "Data Saver" -> options.minByOrNull { kotlin.math.abs(it.bitrateKbps - 64) }
+            else -> options.maxByOrNull { it.bitrateKbps }
+        }
+    }
+
     /**
      * Resolves the best audio stream candidate matching the user's Lossless Audio and Streaming Quality settings.
      * - When Lossless Audio is ON: selects the maximum fidelity, highest-bitrate stream available (favoring M4A if equal).

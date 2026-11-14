@@ -147,7 +147,7 @@ fun SettingsAudioEffectScreen(
         trackTitle = currentTrack?.title,
     )
 
-    ITubeArtistTheme(darkTheme = true) {
+    ITubeArtistTheme {
         CompositionLocalProvider(
             LocalAppBackdrop provides appBackdrop,
             LocalLiquidGlassEnabled provides isGlassSupported(),

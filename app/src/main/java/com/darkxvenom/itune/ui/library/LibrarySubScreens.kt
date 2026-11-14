@@ -1187,7 +1187,7 @@ fun UserPlaylistDetailScreen(
         )
     }
 
-    ITubeArtistTheme(darkTheme = true) {
+    ITubeArtistTheme {
         val detailPalette = rememberArtworkPalette(imageUrl = playlist.leadArtwork)
         val pageColor = detailPalette.background
 

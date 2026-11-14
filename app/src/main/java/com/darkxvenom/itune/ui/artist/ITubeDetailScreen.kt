@@ -1986,7 +1986,7 @@ private fun List<Song>.playtime(): String? {
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
 private fun ITubeArtistPreview() {
-    ITubeArtistTheme(darkTheme = true) {
+    ITubeArtistTheme {
         val sampleSongs = (1..6).map { i ->
             Song(
                 videoId = "id_$i",

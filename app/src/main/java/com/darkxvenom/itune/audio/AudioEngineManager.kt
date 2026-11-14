@@ -177,6 +177,12 @@ object AudioEngineManager {
         }
     }
 
+    fun reloadBackupState() {
+        if (prefs == null) return
+        loadPersistedState()
+        reconcileAllEffects()
+    }
+
     fun updatePlayingState(isPlaying: Boolean) {
         visualizerManager.isPlaying = isPlaying
         val sid = sessionIdProvider?.invoke() ?: C.AUDIO_SESSION_ID_UNSET

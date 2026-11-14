@@ -340,6 +340,9 @@ object AudioDownloader {
             val finalFileName = "$cleanTitle [${task.option.bitrateKbps}kbps].$actualExt"
             val savedUri = saveToDownloads(context, sourceToSave, finalFileName, actualMime)
                 ?: throw IOException("Could not save audio to Downloads")
+            task.albumArtBitmap?.let { bitmap ->
+                saveArtworkToDownloads(context, bitmap, finalFileName)
+            }
 
             showCompleteNotification(
                 context = context,
@@ -643,6 +646,7 @@ object AudioDownloader {
                     sourceFile.inputStream().use { inputStream -> inputStream.copyTo(outputStream) }
                 }
                 values.clear()
+                values.clear()
                 values.put(MediaStore.Downloads.IS_PENDING, 0)
                 resolver.update(uri, values, null, null)
                 uri
@@ -658,6 +662,47 @@ object AudioDownloader {
             sourceFile.copyTo(destFile, overwrite = true)
             MediaScannerConnection.scanFile(context, arrayOf(destFile.absolutePath), arrayOf(mimeType), null)
             Uri.fromFile(destFile)
+        }
+    }
+
+    private fun saveArtworkToDownloads(context: Context, bitmap: Bitmap, audioFileName: String): String? {
+        val imageName = audioFileName.substringBeforeLast('.') + "-cover.jpg"
+        val temp = File(context.cacheDir, "itune_cover_${System.currentTimeMillis()}.jpg")
+        return try {
+            temp.outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 92, it) }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val values = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, imageName)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/iTune")
+                    put(MediaStore.MediaColumns.IS_PENDING, 1)
+                }
+                val uri = context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values) ?: return null
+                try {
+                    context.contentResolver.openOutputStream(uri)?.use { output -> temp.inputStream().use { it.copyTo(output) } }
+                        ?: throw IOException("Could not save artwork")
+                    context.contentResolver.update(uri, ContentValues().apply {
+                        put(MediaStore.MediaColumns.IS_PENDING, 0)
+                    }, null, null)
+                } catch (error: Exception) {
+                    context.contentResolver.delete(uri, null, null)
+                    throw error
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "iTune")
+                dir.mkdirs()
+                val artworkFile = File(dir, imageName)
+                temp.copyTo(artworkFile, overwrite = true)
+                MediaScannerConnection.scanFile(context, arrayOf(artworkFile.absolutePath), arrayOf("image/jpeg"), null)
+            }
+            @Suppress("DEPRECATION")
+            File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "iTune/$imageName").absolutePath
+        } catch (error: Exception) {
+            Log.w(TAG, "Could not save download artwork", error)
+            null
+        } finally {
+            temp.delete()
         }
     }
 

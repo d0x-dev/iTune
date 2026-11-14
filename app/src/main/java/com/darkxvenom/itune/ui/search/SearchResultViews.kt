@@ -41,6 +41,7 @@ import androidx.compose.material.icons.automirrored.rounded.QueueMusic
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarBorder
@@ -55,6 +56,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -79,12 +81,17 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.backend.MusicArtist
+import com.darkxvenom.itune.backend.AudioDownloader
+import com.darkxvenom.itune.backend.MusicBackend
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicPlaylistRef
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.highQualityThumbnail
 import com.darkxvenom.itune.data.artist.ArtistStateStore
 import com.darkxvenom.itune.data.library.SavedSongMetadata
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import com.darkxvenom.itune.data.model.BrowseType
 import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
 import com.darkxvenom.itune.ui.components.AnimatedEqualizer
@@ -274,6 +281,7 @@ internal fun AppleSearchMorePopup(
 ) {
     val context = LocalContext.current
     val view = LocalView.current
+    val coroutineScope = rememberCoroutineScope()
 
     var displayedRequest by remember { mutableStateOf<SearchMoreRequest?>(null) }
     var popupVisible by remember { mutableStateOf(false) }
@@ -320,6 +328,7 @@ internal fun AppleSearchMorePopup(
     val artUrl = (thumbUrl as String?)?.highQualityThumbnail() ?: thumbUrl
     val safeShareUrl = shareUrl as String
     var popupStep by remember(activeRequest) { mutableStateOf(PopupPlaylistStep.MENU) }
+    var startingDownload by remember(activeRequest) { mutableStateOf(false) }
     val playlistPayload: PendingPlaylistPayload? = remember(target, artUrl) {
         if (target is SearchMoreTarget.Song) {
             PendingPlaylistPayload(
@@ -548,6 +557,33 @@ internal fun AppleSearchMorePopup(
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 popupStep = PopupPlaylistStep.ADD_TO_PLAYLIST
+                                            }
+                                        )
+                                        PopupMenuDivider()
+                                        MorePopupVectorOptionRow(
+                                            icon = Icons.Rounded.Download,
+                                            title = if (startingDownload) "Preparing Download…" else "Download",
+                                            onClick = {
+                                                if (startingDownload) return@MorePopupVectorOptionRow
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                startingDownload = true
+                                                coroutineScope.launch {
+                                                    val result = runCatching {
+                                                        val options = withContext(Dispatchers.IO) {
+                                                            MusicBackend.extractAudioQualities(target.track.id)
+                                                        }
+                                                        val selected = MusicBackend.selectDownloadOption(options)
+                                                            ?: error("No downloadable audio stream found")
+                                                        AudioDownloader.download(context, target.track, selected)
+                                                    }
+                                                    if (result.isSuccess) {
+                                                        Toast.makeText(context, "Download started · Check notifications", Toast.LENGTH_SHORT).show()
+                                                        closeSmoothly()
+                                                    } else {
+                                                        startingDownload = false
+                                                        Toast.makeText(context, result.exceptionOrNull()?.message ?: "Download failed", Toast.LENGTH_LONG).show()
+                                                    }
+                                                }
                                             }
                                         )
                                         PopupMenuDivider()

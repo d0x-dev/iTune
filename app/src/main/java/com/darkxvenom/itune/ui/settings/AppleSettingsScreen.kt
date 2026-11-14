@@ -1,5 +1,7 @@
 package com.darkxvenom.itune.ui.settings
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Build
 import android.net.Uri
 import android.provider.OpenableColumns
@@ -61,6 +63,7 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -84,6 +87,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -118,6 +122,8 @@ import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.SearchHistoryStore
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.backup.BackupRestoreManager
+import com.darkxvenom.itune.data.backup.AutoBackupScheduler
+import com.darkxvenom.itune.data.auth.EncryptedAuthPrefs
 import com.darkxvenom.itune.data.updates.AppUpdateManager
 import com.darkxvenom.itune.data.updates.GithubReleaseInfo
 import com.darkxvenom.itune.data.library.SettingsStore
@@ -241,6 +247,7 @@ private sealed interface SettingsEntry {
         val selectedOption: String,
         val onSelect: (String) -> Unit,
     ) : SettingsEntry
+
 }
 
 private data class SettingsSection(
@@ -292,6 +299,7 @@ fun AppleSettingsScreen(
         SearchHistoryStore.ensureInit(context)
         IShareSyncManager.start(context)
         DynamicIslandStore.ensureInit(context)
+        AutoBackupScheduler.ensureScheduled(context)
     }
 
     val state by SettingsStore.state.collectAsStateWithLifecycle()
@@ -330,9 +338,13 @@ fun AppleSettingsScreen(
     var showAutoSleepTimerDialog by remember { mutableStateOf(false) }
     var showProxySettingsDialog by remember { mutableStateOf(false) }
     var showAodSettings by rememberSaveable { mutableStateOf(false) }
+    var showWidgetSettings by rememberSaveable { mutableStateOf(false) }
 
     BackHandler(enabled = showAodSettings && !showLyricsSettings && !showDeveloperNews && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
         showAodSettings = false
+    }
+    BackHandler(enabled = showWidgetSettings && !showLyricsSettings && !showDeveloperNews && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
+        showWidgetSettings = false
     }
 
     BackHandler(enabled = showDeveloperNews && !showLyricsSettings && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
@@ -358,6 +370,8 @@ fun AppleSettingsScreen(
 
     var clearAction by remember { mutableStateOf<SettingsClearAction?>(null) }
     var showBackupDialog by remember { mutableStateOf(false) }
+    var showAutoBackupDialog by remember { mutableStateOf(false) }
+    var autoBackupEnabled by remember { mutableStateOf(AutoBackupScheduler.settings(context).getBoolean(AutoBackupScheduler.KEY_ENABLED, false)) }
     var backupPassword by remember { mutableStateOf("") }
     var backupPendingPassword by remember { mutableStateOf("") }
     var backupPendingSelection by remember { mutableStateOf(setOf("account", "library")) }
@@ -367,6 +381,23 @@ fun AppleSettingsScreen(
     var restoreBusy by remember { mutableStateOf(false) }
     var restoreError by remember { mutableStateOf<String?>(null) }
     var scannedBackup by remember { mutableStateOf<BackupRestoreManager.ScannedBackup?>(null) }
+    var pendingAutoBackupConfig by remember { mutableStateOf<Pair<Boolean, String>?>(null) }
+    val saveAutoBackup: (Boolean, String) -> Unit = { enabled, password ->
+        val saved = AutoBackupScheduler.configure(context, enabled, password)
+        if (saved) {
+            autoBackupEnabled = enabled
+            showAutoBackupDialog = false
+            Toast.makeText(context, if (enabled) "Daily encrypted backup enabled" else "Automatic backup disabled", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "Could not encrypt the password securely. Automatic backup was not changed.", Toast.LENGTH_LONG).show()
+        }
+    }
+    val legacyStoragePermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        val pending = pendingAutoBackupConfig
+        pendingAutoBackupConfig = null
+        if (granted && pending != null) saveAutoBackup(pending.first, pending.second)
+        else if (!granted) Toast.makeText(context, "Storage permission is needed to save backups in Downloads", Toast.LENGTH_LONG).show()
+    }
 
     val createBackupLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
         if (uri == null) {
@@ -481,10 +512,12 @@ fun AppleSettingsScreen(
             },
             onOpenAbout = { showAboutDialog = true },
             onOpenBackup = { showBackupDialog = true },
+            onOpenAutoBackup = { showAutoBackupDialog = true },
             onOpenRestore = { restoreBackupLauncher.launch(arrayOf("*/*")) },
             onOpenAutoSleepTimer = { showAutoSleepTimerDialog = true },
             onOpenProxySettings = { showProxySettingsDialog = true },
             onOpenAodSettings = { showAodSettings = true },
+            onOpenWidgetSettings = { showWidgetSettings = true },
         )
     }
 
@@ -526,7 +559,7 @@ fun AppleSettingsScreen(
         bottom = if (hasMiniPlayer) 210.dp else 140.dp,
     )
 
-    ITubeArtistTheme(darkTheme = true) {
+    ITubeArtistTheme {
         CompositionLocalProvider(
             LocalAppBackdrop provides appBackdrop,
             LocalLiquidGlassEnabled provides glassActive,
@@ -535,12 +568,12 @@ fun AppleSettingsScreen(
             Box(
                 modifier = modifier
                     .fillMaxSize()
-                    .background(AppleOledBlack),
+                    .background(MaterialTheme.colorScheme.background),
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .snapshotBackdropSource(pageBackdrop, floor = AppleOledBlack)
+                        .snapshotBackdropSource(pageBackdrop, floor = MaterialTheme.colorScheme.background)
                         .hazeSource(state = hazeState),
                 ) {
                     SettingsBlackGlassBackdrop(
@@ -571,7 +604,7 @@ fun AppleSettingsScreen(
                                 ) {
                                     Text(
                                         text = "Settings",
-                                        color = Color.White,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontSize = 34.sp,
                                         fontWeight = FontWeight.Bold,
                                         letterSpacing = (-0.6).sp,
@@ -690,16 +723,16 @@ fun AppleSettingsScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
                                     Text(
-                                        text = "v${AppUpdateManager.installedVersion} (${AppUpdateManager.installedVersionCode})",
-                                        color = Color.White.copy(alpha = 0.38f),
-                                        fontSize = 11.5.sp,
+                                        text = "Version ${AppUpdateManager.installedVersion} (${AppUpdateManager.installedVersionCode})",
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                                        fontSize = 11.sp,
                                         textAlign = TextAlign.Center,
                                     )
-                                    Spacer(Modifier.height(8.dp))
+                                    Spacer(Modifier.height(5.dp))
                                     Text(
-                                        text = "GitHub · Open source",
+                                        text = "GitHub repository · Open source",
                                         color = Color(0xFF0A84FF),
-                                        fontSize = 12.5.sp,
+                                        fontSize = 12.sp,
                                         fontWeight = FontWeight.Medium,
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier.clickable {
@@ -740,7 +773,7 @@ fun AppleSettingsScreen(
                             FrostedTopBarTitlePill(hazeState = hazeState) {
                                 Text(
                                     text = "Settings",
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     maxLines = 1,
@@ -838,6 +871,17 @@ fun AppleSettingsScreen(
                         onBack = { showAodSettings = false },
                     )
                 }
+
+                AnimatedVisibility(
+                    visible = showWidgetSettings,
+                    enter = fadeIn(tween(200)) + slideInHorizontally(tween(260)) { it / 8 },
+                    exit = fadeOut(tween(180)) + slideOutHorizontally(tween(220)) { it / 8 },
+                ) {
+                    WidgetSettingsScreen(
+                        hasMiniPlayer = hasMiniPlayer,
+                        onBack = { showWidgetSettings = false },
+                    )
+                }
             }
         }
     }
@@ -907,6 +951,24 @@ fun AppleSettingsScreen(
         )
     }
 
+    if (showAutoBackupDialog) {
+        AutoBackupDialog(
+            initiallyEnabled = autoBackupEnabled,
+            savedPassword = EncryptedAuthPrefs.getDecrypted(context, AutoBackupScheduler.PASSWORD_KEY).orEmpty(),
+            onDismiss = { showAutoBackupDialog = false },
+            onSave = { enabled, password ->
+                if (enabled && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
+                    context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    pendingAutoBackupConfig = enabled to password
+                    legacyStoragePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                } else {
+                    saveAutoBackup(enabled, password)
+                }
+            },
+        )
+    }
+
     val pendingRestoreUri = restoreUri
     if (pendingRestoreUri != null && scannedBackup == null) {
         RestorePasswordDialog(
@@ -945,7 +1007,10 @@ fun AppleSettingsScreen(
             onRestore = { selected ->
                 restoreBusy = true
                 coroutineScope.launch {
-                    val result = runCatching { withContext(Dispatchers.IO) { BackupRestoreManager.restore(context, scanned, selected) } }
+                    val result = runCatching {
+                        withContext(Dispatchers.IO) { BackupRestoreManager.restore(context, scanned, selected) }
+                        BackupRestoreManager.refreshRestoredState(context, selected)
+                    }
                     restoreBusy = false
                     scannedBackup = null
                     restoreUri = null
@@ -1012,7 +1077,7 @@ fun AppleSettingsScreen(
 private fun SettingsBlackGlassBackdrop(
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier.background(SettingsScreenBlack))
+    Box(modifier = modifier.background(MaterialTheme.colorScheme.background))
 }
 
 @Composable
@@ -1025,7 +1090,7 @@ internal fun SettingsUniformGreyCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(cornerRadius))
-            .background(SettingsCardGrey),
+            .background(MaterialTheme.colorScheme.surface),
     ) {
         content()
     }
@@ -1104,7 +1169,7 @@ private fun SettingsAccountQuickSwitchRow(
                 }
                 Text(
                     text = prof.name.ifBlank { acc.name.ifBlank { "Account" } },
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 12.5.sp,
                     fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
                     maxLines = 1,
@@ -1117,7 +1182,7 @@ private fun SettingsAccountQuickSwitchRow(
             Row(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .background(SettingsCardGrey)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .border(0.6.dp, Color.White.copy(alpha = 0.14f), CircleShape)
                     .clickable(onClick = onManageAll)
                     .padding(horizontal = 12.dp, vertical = 7.dp),
@@ -1176,7 +1241,7 @@ private fun SettingsAccountCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = displayName,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.3).sp,
@@ -1198,7 +1263,7 @@ private fun SettingsAccountCard(
             Icon(
                 imageVector = SfIcons.ChevronRight,
                 contentDescription = "Choose Avatar",
-                tint = Color.White.copy(alpha = 0.42f),
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.42f),
                 modifier = Modifier.size(14.dp),
             )
         }
@@ -1216,7 +1281,7 @@ private fun SettingsGroupBlock(
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = section.title.uppercase(),
-            color = Color.White.copy(alpha = 0.50f),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.50f),
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = 0.65.sp,
@@ -1320,7 +1385,7 @@ private fun SettingsEntryRow(
             Image(
                 painter = painterResource(id = entry.iconRes),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(Color.White),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.size(21.dp),
             )
@@ -1335,7 +1400,7 @@ private fun SettingsEntryRow(
             ) {
                 Text(
                     text = entry.title,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 15.5.sp,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1,
@@ -1346,7 +1411,7 @@ private fun SettingsEntryRow(
                     Icon(
                         imageVector = SfIcons.ChevronRight,
                         contentDescription = "Open ${entry.title} options",
-                        tint = Color.White.copy(alpha = 0.42f),
+                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.42f),
                         modifier = Modifier.size(12.dp),
                     )
                 }
@@ -1412,7 +1477,7 @@ private fun SettingsEntryRow(
                 Icon(
                     imageVector = SfIcons.ChevronRight,
                     contentDescription = null,
-                    tint = Color.White.copy(alpha = 0.36f),
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.36f),
                     modifier = Modifier.size(13.dp),
                 )
             }
@@ -1427,7 +1492,7 @@ private fun SettingsEntryRow(
                     ) {
                         Text(
                             text = count.toString(),
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                         )
@@ -1447,7 +1512,7 @@ private fun SettingsEntryRow(
                 Icon(
                     imageVector = SfIcons.ChevronRight,
                     contentDescription = null,
-                    tint = Color.White.copy(alpha = 0.36f),
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.36f),
                     modifier = Modifier.size(13.dp),
                 )
             }
@@ -1528,7 +1593,7 @@ fun AppleSegmentedSwitch(
             .background(Color.White.copy(alpha = 0.12f))
             .border(
                 width = 0.5.dp,
-                color = Color.White.copy(alpha = 0.18f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.18f),
                 shape = RoundedCornerShape(16.dp),
             )
             .padding(2.dp),
@@ -1597,7 +1662,7 @@ private fun SettingsOptionPickerDialog(
         Spacer(Modifier.height(18.dp))
         Text(
             text = picker.title,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center,
@@ -1622,7 +1687,7 @@ private fun SettingsOptionPickerDialog(
         ) {
             picker.options.forEachIndexed { idx, option ->
                 val selected = option.label == picker.currentValue
-                HorizontalDivider(thickness = 0.5.dp, color = Color.White.copy(alpha = 0.10f))
+                HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.10f))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1644,7 +1709,7 @@ private fun SettingsOptionPickerDialog(
                         Spacer(Modifier.height(1.dp))
                         Text(
                             text = option.detail,
-                            color = Color.White.copy(alpha = 0.50f),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.50f),
                             fontSize = 12.sp,
                         )
                     }
@@ -1658,7 +1723,7 @@ private fun SettingsOptionPickerDialog(
                     }
                 }
                 if (idx == picker.options.lastIndex) {
-                    HorizontalDivider(thickness = 0.5.dp, color = Color.White.copy(alpha = 0.10f))
+                    HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.10f))
                 }
             }
         }
@@ -1706,7 +1771,7 @@ private fun SettingsDisplayNameDialog(
         Spacer(Modifier.height(20.dp))
         Text(
             text = "Display Name",
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
         )
@@ -1732,7 +1797,7 @@ private fun SettingsDisplayNameDialog(
             if (fieldValue.text.isEmpty()) {
                 Text(
                     text = "Enter your name",
-                    color = Color.White.copy(alpha = 0.38f),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
                     fontSize = 15.5.sp,
                 )
             }
@@ -1742,7 +1807,7 @@ private fun SettingsDisplayNameDialog(
                 singleLine = true,
                 cursorBrush = SolidColor(AppleMusicRed),
                 textStyle = TextStyle(
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 15.5.sp,
                     fontWeight = FontWeight.Medium,
                 ),
@@ -1765,7 +1830,7 @@ private fun SettingsDisplayNameDialog(
         }
 
         Spacer(Modifier.height(18.dp))
-        HorizontalDivider(thickness = 0.5.dp, color = Color.White.copy(alpha = 0.12f))
+        HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
 
         Box(
             modifier = Modifier
@@ -1785,7 +1850,7 @@ private fun SettingsDisplayNameDialog(
             )
         }
 
-        HorizontalDivider(thickness = 0.5.dp, color = Color.White.copy(alpha = 0.12f))
+        HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
 
         Box(
             modifier = Modifier
@@ -1822,7 +1887,7 @@ private fun SettingsAboutDialog(
         Spacer(Modifier.height(7.dp))
         Text(
             text = "iTune",
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 21.sp,
             fontWeight = FontWeight.Bold,
         )
@@ -1877,7 +1942,7 @@ private fun SettingsAboutDialog(
         }
 
         Spacer(Modifier.height(16.dp))
-        HorizontalDivider(thickness = 0.5.dp, color = Color.White.copy(alpha = 0.12f))
+        HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1887,12 +1952,12 @@ private fun SettingsAboutDialog(
         ) {
             Text(
                 text = "Replay Welcome Screen",
-                color = Color.White.copy(alpha = 0.9f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
                 fontSize = 15.5.sp,
                 fontWeight = FontWeight.Medium,
             )
         }
-        HorizontalDivider(thickness = 0.5.dp, color = Color.White.copy(alpha = 0.12f))
+        HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1918,12 +1983,12 @@ private fun AboutInfoLine(label: String, value: String) {
     ) {
         Text(
             text = label,
-            color = Color.White.copy(alpha = 0.56f),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.56f),
             fontSize = 13.sp,
         )
         Text(
             text = value,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
         )
@@ -1972,8 +2037,8 @@ internal fun SettingsModalFrame(
                     ) {}
                     .shadow(28.dp, RoundedCornerShape(22.dp), ambientColor = Color.Black, spotColor = Color.Black)
                     .clip(RoundedCornerShape(22.dp))
-                    .background(SettingsDialogBg)
-                    .border(0.75.dp, Color.White.copy(alpha = 0.14f), RoundedCornerShape(22.dp)),
+                    .background(MaterialTheme.colorScheme.surface)
+                    .border(0.75.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(22.dp)),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 content()
@@ -2009,10 +2074,12 @@ private fun buildSettingsSections(
     onClearListeningHistory: () -> Unit,
     onOpenAbout: () -> Unit,
     onOpenBackup: () -> Unit,
+    onOpenAutoBackup: () -> Unit,
     onOpenRestore: () -> Unit,
     onOpenAutoSleepTimer: () -> Unit,
     onOpenProxySettings: () -> Unit,
     onOpenAodSettings: () -> Unit,
+    onOpenWidgetSettings: () -> Unit,
 ): List<SettingsSection> {
     val effectsDisabled = audioEngine.bypassAllEffects || (audioEngine.bitPerfectEnabled && bitPerfectActive)
     return listOf(
@@ -2224,6 +2291,32 @@ private fun buildSettingsSections(
             id = "audio_playback",
             title = "Audio & Playback",
             entries = listOf(
+                SettingsEntry.Toggle(
+                    id = "auto_skip_on_error",
+                    title = "Auto Skip When Error Occurs",
+                    subtitle = "Move to the next queued song if playback fails",
+                    iconRes = R.drawable.skip_next,
+                    keywords = listOf("auto skip", "skip", "error", "failed playback", "next track"),
+                    checked = state.autoSkipOnError,
+                    onToggle = { onToggleBool(SettingsStore.KEY_AUTO_SKIP_ON_ERROR, it) },
+                ),
+                SettingsEntry.Picker(
+                    id = "download_quality",
+                    title = "Download Quality",
+                    subtitle = "Default quality used by song download actions",
+                    iconRes = R.drawable.ic_settings_streaming_quality,
+                    keywords = listOf("download", "quality", "audio", "maximum", "standard", "data saver"),
+                    currentValue = state.downloadQuality,
+                    description = "Choose the default audio quality for downloads across the app.",
+                    options = listOf(
+                        SettingsOptionChoice("Best Available", "Use the highest available source quality"),
+                        SettingsOptionChoice("Maximum", "Choose the highest bitrate stream"),
+                        SettingsOptionChoice("High", "Target about 160 kbps"),
+                        SettingsOptionChoice("Standard", "Target about 128 kbps"),
+                        SettingsOptionChoice("Data Saver", "Target about 64 kbps"),
+                    ),
+                    onSelect = { onSelectString(SettingsStore.KEY_DOWNLOAD_QUALITY, it) },
+                ),
                 SettingsEntry.Toggle(
                     id = "lossless_audio",
                     title = "Lossless Audio",
@@ -2754,13 +2847,37 @@ private fun buildSettingsSections(
         ),
     ),
     SettingsSection(
+        id = "home_screen_widget",
+        title = "Home Screen Widget",
+        entries = listOf(
+            SettingsEntry.Action(
+                id = "widget_customization",
+                title = "Widget Customization",
+                subtitle = "Choose a size preview, artwork, controls and widget style",
+                iconRes = R.drawable.ic_settings_about,
+                keywords = listOf("widget", "home screen", "player", "artwork", "controls", "style", "customize"),
+                trailingValue = "Customize",
+                onAction = onOpenWidgetSettings,
+            ),
+        ),
+    ),
+    SettingsSection(
         id = "backup_restore",
         title = "Backup & Restore",
         entries = listOf(
             SettingsEntry.Action(
+                id = "auto_backup_itune",
+                title = "Automatic Daily Backup",
+                subtitle = "Encrypted daily backups • Downloads/iTune/Backups",
+                iconRes = R.drawable.ic_settings_storage,
+                keywords = listOf("automatic", "daily", "backup", "password", "encrypted"),
+                trailingValue = "Configure",
+                onAction = onOpenAutoBackup,
+            ),
+            SettingsEntry.Action(
                 id = "backup_itune",
                 title = "Back Up iTune",
-                subtitle = "Save encrypted accounts, playlists, history, albums and stats",
+                subtitle = "Save accounts, all settings, audio effects, library data and stats encrypted",
                 iconRes = R.drawable.ic_settings_storage,
                 keywords = listOf("backup", "export", "save", "encrypted", "account", "playlist", "history", "stats"),
                 trailingValue = "Create",
@@ -2769,7 +2886,7 @@ private fun buildSettingsSections(
             SettingsEntry.Action(
                 id = "restore_itune",
                 title = "Restore from Backup",
-                subtitle = "Import selected data from an encrypted .itune file",
+                subtitle = "Restore settings, audio effects, accounts or library data from .itune",
                 iconRes = R.drawable.ic_settings_history,
                 keywords = listOf("restore", "import", "backup", "itune", "account", "library"),
                 trailingValue = "Choose File",

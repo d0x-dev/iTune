@@ -83,4 +83,5 @@
     <string name="unpin">Unpin</string>
     <string name="tile_identify_music">Identify Music</string>
     <string name="tile_identify_music_desc">Identify songs playing around you with iTune</string>
+    <string name="widget_itune_description">Control iTune playback from your home screen</string>
 </resources>

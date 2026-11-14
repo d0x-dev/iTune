@@ -14,6 +14,7 @@ import com.darkxvenom.itune.data.timetravel.TimeTravelDatabaseHelper
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.SecretKeyFactory
@@ -32,9 +33,15 @@ object BackupRestoreManager {
     private const val IV_BYTES = 12
     private const val KEY_BITS = 256
     private const val PBKDF2_ITERATIONS = 310_000
-    private val accountPrefs = listOf("itune_auth_store", "itune_auth_meta", "lastfm_integration", "itune_discord_presence")
+    private val accountPrefs = listOf(
+        "itune_auth_store", "itune_auth_meta", "lastfm_integration", "itune_discord_presence", "itune_avatar_prefs",
+    )
     private val libraryPrefs = listOf(
+        // App settings and every independent settings surface must travel with the library backup.
+        "itune_settings_prefs", "itune_audio_engine_prefs", "itune_audio_output_prefs",
         "itune_library_metadata", "itune_listening_profile", "itune_search_history_prefs", "itune_playback_session",
+        "itune_lyrics_overrides", "itune_artist_store", "itune_dynamic_island_prefs", "itune_favorites",
+        "music_cache_settings", "itune_online_radio_store", "itune_developer_news",
     )
 
     data class ScannedBackup(
@@ -53,7 +60,7 @@ object BackupRestoreManager {
                 .put("createdAt", System.currentTimeMillis())
             val data = JSONObject()
             categories.forEach { category ->
-                val names = if (category == CATEGORY_ACCOUNT) accountPrefs else libraryPrefs
+                val names = if (category == CATEGORY_ACCOUNT) accountPrefs else libraryPreferenceNames(context)
                 val group = JSONObject()
                 names.forEach { name ->
                     val prefs = context.applicationContext.getSharedPreferences(name, Context.MODE_PRIVATE)
@@ -93,7 +100,7 @@ object BackupRestoreManager {
         val data = scanned.payload.getJSONObject("data")
         categories.forEach { category ->
             val group = data.optJSONObject(category) ?: return@forEach
-            val names = if (category == CATEGORY_ACCOUNT) accountPrefs else libraryPrefs
+            val names = if (category == CATEGORY_ACCOUNT) accountPrefs else libraryNamesInBackup(group)
             names.forEach { name -> group.optJSONObject(name)?.let { restorePrefs(app, name, it) } }
             if (category == CATEGORY_LIBRARY) {
                 TimeTravelDatabaseHelper.getInstance(app).restorePlaybackHistory(data.optJSONArray("playbackHistory") ?: JSONArray())
@@ -101,10 +108,24 @@ object BackupRestoreManager {
                 com.darkxvenom.itune.data.timetravel.TimeTravelRepository.refresh()
             }
         }
+    }
+
+    /** Rebind runtime caches and Compose state after the file and database writes complete. */
+    fun refreshRestoredState(context: Context, selected: Set<String>) {
+        val app = context.applicationContext
+        val categories = expand(selected)
+        AutoBackupScheduler.ensureScheduled(app)
         if (CATEGORY_LIBRARY in categories) {
+            com.darkxvenom.itune.data.library.SettingsStore.reloadBackupState(app)
             LibraryStore.reloadBackupState(app)
             SearchHistoryStore.reloadBackupState(app)
             ListeningProfileStore.reloadBackupState(app)
+            com.darkxvenom.itune.audio.AudioOutputManager.reloadBackupState()
+            com.darkxvenom.itune.audio.AudioEngineManager.reloadBackupState()
+            com.darkxvenom.itune.island.DynamicIslandStore.reloadBackupState(app)
+            com.darkxvenom.itune.island.DynamicIslandStore.syncServiceState(app)
+            com.darkxvenom.itune.data.artist.ArtistStateStore.reloadBackupState(app)
+            com.darkxvenom.itune.backend.MusicCacheManager.init(app)
         }
         if (CATEGORY_ACCOUNT in categories) {
             GoogleAuthStore.refreshAfterBackupRestore(app)
@@ -115,6 +136,8 @@ object BackupRestoreManager {
 
     private fun encodePrefs(context: Context, name: String, prefs: SharedPreferences): JSONObject = JSONObject().apply {
         prefs.all.forEach { (key, value) ->
+            // Never embed the key used to unlock the backup inside that same backup file.
+            if (name == "itune_auth_store" && key == AutoBackupScheduler.PASSWORD_KEY) return@forEach
             val actual = if (name == "itune_auth_store" && value is String) {
                 EncryptedAuthPrefs.getDecrypted(context, key) ?: value
             } else value
@@ -168,6 +191,7 @@ object BackupRestoreManager {
         if (group.optJSONObject("lastfm_integration")?.length()?.let { it > 0 } == true) chunks += "Last.fm account"
         if (group.optJSONObject("itune_discord_presence")?.length()?.let { it > 0 } == true) chunks += "Discord account"
         if (group.optJSONObject("itune_auth_store")?.length()?.let { it > 0 } == true) chunks += "Google sign-in data"
+        if (group.optJSONObject("itune_avatar_prefs")?.length()?.let { it > 0 } == true) chunks += "Profile"
         return chunks.distinct().joinToString(" · ").ifBlank { "No linked account details found" }
     }
 
@@ -183,12 +207,34 @@ object BackupRestoreManager {
         val history = size(prefs, "recent_songs_json") + size(prefs, "ytm_history_songs_json")
         val profile = group.optJSONObject("itune_listening_profile")
         val stats = size(profile, "songs_v1") + size(profile, "artists_v1")
-        return "$playlists playlists · $likes liked songs · $albums albums · ${history + playbackHistoryCount} history entries · $stats stats records"
+        val settingsCount = group.optJSONObject("itune_settings_prefs")?.length() ?: 0
+        val effectCount = group.optJSONObject("itune_audio_engine_prefs")?.length() ?: 0
+        val lyricsSettings = group.optJSONObject("itune_settings_prefs")?.let { values ->
+            values.keys().asSequence().count { it.startsWith("lyrics_") }
+        } ?: 0
+        return "$settingsCount settings · $effectCount audio controls · $lyricsSettings lyrics settings · $playlists playlists · $likes liked songs · $albums albums · ${history + playbackHistoryCount} history entries · $stats stats records"
     }
 
     private fun expand(selected: Set<String>): Set<String> = when {
         CATEGORY_ALL in selected -> setOf(CATEGORY_ACCOUNT, CATEGORY_LIBRARY)
         else -> selected.intersect(setOf(CATEGORY_ACCOUNT, CATEGORY_LIBRARY))
+    }
+
+    private fun libraryPreferenceNames(context: Context): List<String> {
+        val discovered = File(context.applicationInfo.dataDir, "shared_prefs").listFiles()
+            .orEmpty()
+            .map { it.name.removeSuffix(".xml") }
+            .filter(::isRestorableLibraryPreference)
+        return (libraryPrefs + discovered).distinct().sorted()
+    }
+
+    private fun libraryNamesInBackup(group: JSONObject): List<String> =
+        group.keys().asSequence().filter(::isRestorableLibraryPreference).toList()
+
+    private fun isRestorableLibraryPreference(name: String): Boolean {
+        if (name in accountPrefs) return false
+        if (name in setOf("music_cache_settings")) return true
+        return name.matches(Regex("itune_[A-Za-z0-9_.-]+"))
     }
 
     private fun encrypt(plain: ByteArray, password: CharArray): ByteArray {
