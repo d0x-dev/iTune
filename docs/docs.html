@@ -13,6 +13,12 @@
     :root { color-scheme:dark; --bg:#050506; --panel:#101012; --line:#ffffff16; --text:#f5f5f7; --muted:#a1a1aa; --gold:#dfc56f; }
     * { box-sizing:border-box; }
     html { scroll-behavior:smooth; scroll-padding-top:90px; }
+    html { scrollbar-color:#ffffff35 transparent; scrollbar-width:thin; }
+    ::-webkit-scrollbar { width:8px; height:8px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { border:2px solid transparent; border-radius:999px; background:#ffffff35; background-clip:padding-box; }
+    ::-webkit-scrollbar-thumb:hover { background:#ffffff66; background-clip:padding-box; }
+    ::-webkit-scrollbar-corner { background:transparent; }
     body { margin:0; min-height:100vh; background:var(--bg); color:var(--text); font:15px/1.65 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif; }
     a { color:inherit; }
     .topbar { position:sticky; z-index:10; top:0; display:flex; height:72px; align-items:center; gap:23px; padding:0 30px; border-bottom:1px solid var(--line); background:#050506eF; backdrop-filter:blur(26px); }

@@ -13,6 +13,12 @@
     @font-face { font-family:"iTune SF"; src:url("./fonts/sf-pro-display-bold.woff2") format("woff2"); font-weight:700 900; font-display:swap; }
     :root { color-scheme:dark; --gold:#ffc400; --white:#f7f7f8; --muted:#a7a7ad; }
     * { box-sizing:border-box; }
+    html { scrollbar-color:#ffffff35 transparent; scrollbar-width:thin; }
+    ::-webkit-scrollbar { width:8px; height:8px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { border:2px solid transparent; border-radius:999px; background:#ffffff35; background-clip:padding-box; }
+    ::-webkit-scrollbar-thumb:hover { background:#ffffff66; background-clip:padding-box; }
+    ::-webkit-scrollbar-corner { background:transparent; }
     body { min-height:100vh; margin:0; overflow-x:hidden; background:#000; color:var(--white); font:16px/1.55 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif; }
     body::before { position:fixed; z-index:-1; inset:0; background:radial-gradient(ellipse at 72% 15%,#20202455,transparent 42%),#000; content:""; }
     a { color:inherit; }
