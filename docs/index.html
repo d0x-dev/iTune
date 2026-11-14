@@ -100,13 +100,13 @@
     .music-player::before { content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at 80% 70%,rgba(255,184,0,.11),transparent 55%); }
     .player-top,.lyrics-stage,.timeline,.player-controls,.local-files,.player-status,.lyrics-provider { position:relative; z-index:1; }
     .player-top { display:flex; align-items:center; gap:17px; }
-    .album-cover { width:78px; height:78px; flex:none; border-radius:16px; object-fit:cover; box-shadow:0 8px 28px #0008; background:#171717; }
+    .album-cover { width:64px; height:64px; flex:none; border-radius:14px; object-fit:cover; box-shadow:0 8px 28px #0008; background:#171717; }
     .track-info { min-width:0; flex:1; }
     .track-eyebrow { margin:0 0 4px; color:#ffffff8c; font-size:.69rem; font-weight:800; letter-spacing:.14em; }
-    .track-title { overflow:hidden; margin:0; color:#fff; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:1.45rem; line-height:1.15; text-overflow:ellipsis; white-space:nowrap; }
+    .track-title { overflow:hidden; margin:0; color:#fff; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:1.2rem; line-height:1.15; text-overflow:ellipsis; white-space:nowrap; }
     .track-artist { overflow:hidden; margin:4px 0 0; color:#ffffffb8; font-size:.93rem; text-overflow:ellipsis; white-space:nowrap; }
     .track-actions { display:flex; gap:12px; }
-    .like-button,.more-button { display:grid; width:44px; height:44px; flex:none; place-items:center; border:1px solid #ffffff30; border-radius:50%; background:#ffffff0b; color:#fff; font-size:1.45rem; }
+    .like-button,.more-button { display:grid; width:40px; height:40px; flex:none; place-items:center; border:1px solid #ffffff30; border-radius:50%; background:#ffffff0b; color:#fff; font-size:1.3rem; }
     .lyrics-stage { display:flex; min-height:420px; height:420px; flex:none; align-items:flex-start; justify-content:flex-start; overflow:hidden; margin:34px 0 15px; padding:12px 8px; text-align:left; }
     .lyrics-stack { display:flex; width:100%; flex-direction:column; align-items:flex-start; gap:19px; }
     .lyric-line { max-width:100%; margin:0; color:#ffffff70; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:clamp(1.1rem,1.45vw,1.38rem); font-weight:700; line-height:1.36; opacity:.48; filter:blur(1.5px); transform:translateY(0) scale(.985); transition:opacity .72s ease,filter .72s ease,transform .78s cubic-bezier(.22,.72,.2,1),color .72s ease; }
@@ -168,12 +168,12 @@
       .music-player { width:100%; margin:0; padding:22cqw 4.8cqw 4.5cqw; border-radius:inherit; }
       .lyrics-stage { min-height:95cqw; height:95cqw; flex:none; margin:6cqw 0 2cqw; padding-inline:1.8cqw; }
       .phone-camera { top:5.7cqw; width:5.5cqw; height:5.5cqw; }
-      .album-cover { width:16cqw; height:16cqw; border-radius:3.3cqw; }
+      .album-cover { width:14.5cqw; height:14.5cqw; border-radius:3cqw; }
       .player-top { gap:12px; }
-      .track-title { font-size:1.08rem; }
+      .track-title { font-size:1rem; }
       .track-artist { font-size:.82rem; }
       .track-actions { gap:7px; }
-      .like-button,.more-button { width:8.2cqw; height:8.2cqw; font-size:4cqw; }
+      .like-button,.more-button { width:9.1cqw; height:9.1cqw; font-size:3.7cqw; }
       .lyric-line { font-size:clamp(.85rem,4.6cqw,1.1rem); }
       .lyric-line.active { font-size:clamp(1rem,6.1cqw,1.42rem); }
       .lyrics-stack { gap:4.3cqw; }
