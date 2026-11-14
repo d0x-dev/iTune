@@ -38,7 +38,7 @@
 | [Code of Conduct](CODE_OF_CONDUCT.md) | Community participation standards |
 | [Security](SECURITY.md) | Private vulnerability reporting and secret handling |
 | [Copyright](COPYRIGHT.md) | Copyright ownership and third-party notices |
-| [iTune-OANCL License](LICENSE) | Attribution, non-commercial use, and redistribution terms |
+| [GNU GPL v3 License](LICENSE) | GNU General Public License version 3 or later |
 
 ## What iTune does
 
@@ -288,14 +288,10 @@ For large changes, describe the user-visible behavior, settings involved, permis
 Copyright © 2026 iTune Project.
 
 This project is licensed under the
-[iTune Open Source Attribution & Non-Commercial License (iTune-OANCL)](LICENSE).
+[GNU General Public License v3.0 or later](LICENSE).
 
-You may copy, modify, and incorporate this software into other qualifying
-open-source projects with proper attribution, subject to the license terms.
+You may use, study, modify, and redistribute this software, including for commercial purposes, under the GNU GPL v3.0 or (at your option) any later version. If you distribute a modified or combined covered work, you must comply with the GPL's source-code, notice, and same-license requirements.
 
-Unauthorized commercial use, resale, and misleading rebranding are prohibited
-without prior written permission.
-
-See [LICENSE](LICENSE) for the complete terms and [COPYRIGHT.md](COPYRIGHT.md)
-for copyright ownership and third-party notices. Third-party libraries,
-assets, media, and services remain subject to their own licenses and terms.
+See [LICENSE](LICENSE) for the complete license and [COPYRIGHT.md](COPYRIGHT.md)
+for copyright ownership and third-party notices. Third-party libraries, assets,
+media, and services remain subject to their own licenses and terms.
