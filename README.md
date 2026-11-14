@@ -38,6 +38,7 @@
 | [Code of Conduct](CODE_OF_CONDUCT.md) | Community participation standards |
 | [Security](SECURITY.md) | Private vulnerability reporting and secret handling |
 | [Copyright](COPYRIGHT.md) | Copyright ownership and third-party notices |
+| [Licensing guide](LICENSING.md) | Detailed explanation of GPL permissions, distribution duties, contributions, and third-party materials |
 | [GNU GPL v3 License](LICENSE) | GNU General Public License version 3 or later |
 
 ## What iTune does
