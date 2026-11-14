@@ -145,6 +145,29 @@
     .project-item { padding:18px 0; border-top:1px solid #ffffff20; }
     .project-item strong { display:block; margin-bottom:4px; }
     .project-item p { margin:0; color:#b7bac4; }
+    .release-section { display:grid; grid-template-columns:minmax(0,.72fr) minmax(0,1fr); align-items:center; gap:40px; margin-top:78px; padding:34px; border:1px solid #ffffff1c; border-radius:30px; background:radial-gradient(ellipse at 86% 20%,#7a3b142b,transparent 50%),linear-gradient(145deg,#ffffff0d,#ffffff04); }
+    .release-section .eyebrow { margin:0 0 10px; color:var(--gold); font-size:.75rem; font-weight:800; letter-spacing:.15em; text-transform:uppercase; }
+    .release-section h2 { margin:0 0 9px; }
+    .release-section .lead { margin:0; }
+    .release-card { padding:23px; border:1px solid #ffffff1e; border-radius:22px; background:#08090bbf; box-shadow:0 18px 50px #0005; }
+    .release-label { display:inline-flex; align-items:center; min-height:23px; margin-bottom:11px; padding:3px 9px; border:1px solid #ffc40055; border-radius:999px; color:#ffd95c; font-size:.7rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .release-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+    .release-version { margin:0; color:#fff; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:1.45rem; }
+    .release-name { margin:2px 0 0; color:#b8bac3; }
+    .release-date { color:#9b9da6; font-size:.82rem; white-space:nowrap; }
+    .release-notes { display:-webkit-box; overflow:hidden; margin:15px 0; color:#bfc1c8; font-size:.9rem; line-height:1.55; -webkit-box-orient:vertical; -webkit-line-clamp:4; }
+    .release-note-paragraph,.release-note-item { margin:0 0 6px; }
+    .release-note-link { color:#ffda56; text-underline-offset:3px; }
+    .release-asset-meta { margin:12px 0 0; color:#92949d; font-size:.76rem; }
+    .release-actions { display:flex; flex-wrap:wrap; gap:8px; }
+    .release-download,.release-secondary { display:inline-flex; min-height:40px; align-items:center; justify-content:center; padding:8px 13px; border:1px solid #ffffff30; border-radius:999px; background:#ffffff0b; color:#fff; font-size:.84rem; font-weight:750; text-decoration:none; }
+    .release-download { border-color:var(--gold); background:var(--gold); color:#17120a; }
+    .release-assets { display:flex; flex-wrap:wrap; gap:8px; }
+    .release-loading,.release-error,.release-empty { color:#b7bac4; }
+    .repo-facts { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:25px; }
+    .repo-fact { padding:15px; border:1px solid #ffffff18; border-radius:16px; background:#ffffff08; }
+    .repo-fact strong { display:block; color:#fff; font-size:1.15rem; }
+    .repo-fact span { color:#9b9da6; font-size:.79rem; }
     footer { padding:25px 0 36px; border-top:1px solid #ffffff17; color:#a5aab5; font-size:.9rem; }
     footer .links { display:flex; gap:18px; flex-wrap:wrap; margin-top:8px; }
     footer a { text-underline-offset:4px; }
@@ -181,6 +204,8 @@
       .grid { grid-template-columns:1fr; }
       .card { min-height:0; }
       .project { grid-template-columns:1fr; gap:0; margin-top:40px; }
+      .release-section { grid-template-columns:1fr; gap:22px; margin-top:45px; padding:20px; }
+      .repo-facts { grid-template-columns:repeat(2,minmax(0,1fr)); }
     }
     @media(prefers-reduced-motion:reduce) {
       html { scroll-behavior:auto; }
@@ -249,6 +274,10 @@
             <div class="project-item"><strong>For Android 7.0 and later</strong><p>Built with Kotlin, Jetpack Compose, and Media3.</p></div>
             <div class="project-item"><strong>Open source under MIT</strong><p><a href="https://github.com/d0x-dev/iTune/blob/main/LICENSE">Read the license</a> or <a href="https://github.com/d0x-dev/iTune/blob/main/CONTRIBUTING.md">contribute on GitHub</a>.</p></div>
           </div>
+          <section class="release-section" id="latest-release" aria-labelledby="release-heading">
+            <div><p class="eyebrow">Live from GitHub</p><h2 id="release-heading">Get the latest iTune</h2><p class="lead">Release versions, notes, and APK downloads are pulled directly from the project’s public releases.</p><a class="release-secondary" href="./downloads.html">All releases &amp; app details</a></div>
+            <div id="release-feed" data-release-mode="featured"><p class="release-loading">Loading the latest release…</p></div>
+          </section>
         </div>
       </section>
     </main>
@@ -506,5 +535,6 @@
       restoreAudio();
     })();
   </script>
+  <script src="./js/github-releases.js" defer></script>
 </body>
 </html>

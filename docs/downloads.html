@@ -36,8 +36,36 @@
     .action:hover { transform:translateY(-2px); border-color:#ffffff90; }
     .action.primary { border-color:var(--gold); background:var(--gold); color:#17120a; }
     .note { margin:24px 0 0; color:#8d8d94; font-size:.86rem; }
+    .live-releases,.about-app { margin-top:74px; }
+    .section-kicker { margin:0 0 9px; color:var(--gold); font-size:.74rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
+    .section-title { margin:0; font-size:clamp(2rem,5vw,3.6rem); }
+    .section-copy { max-width:650px; margin:12px 0 27px; color:#b7b7bf; }
+    .release-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:15px; }
+    .release-card { min-width:0; padding:22px; border:1px solid #ffffff20; border-radius:23px; background:linear-gradient(145deg,#ffffff10,#ffffff04); box-shadow:0 18px 52px #0005,inset 0 1px #ffffff0c; }
+    .release-card.latest { border-color:#ffc4007d; background:radial-gradient(ellipse at 90% 0%,#ffc40018,transparent 50%),linear-gradient(145deg,#ffffff12,#ffffff04); }
+    .release-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+    .release-version { margin:0; font-family:"iTune SF",system-ui,sans-serif; font-size:1.4rem; letter-spacing:-.035em; }
+    .release-name { margin:3px 0 0; color:#b7b7bf; }
+    .release-date { color:#92929a; font-size:.79rem; white-space:nowrap; }
+    .release-notes { max-height:130px; overflow:auto; margin:17px 0; color:#c3c3ca; font-size:.9rem; line-height:1.62; white-space:pre-line; scrollbar-color:#ffffff35 transparent; }
+    .release-note-paragraph,.release-note-item { margin:0 0 8px; }
+    .release-note-link { color:#ffda56; text-underline-offset:3px; }
+    .release-actions,.release-assets { display:flex; flex-wrap:wrap; gap:8px; }
+    .release-download,.release-secondary { display:inline-flex; min-height:42px; align-items:center; justify-content:center; padding:9px 14px; border:1px solid #ffffff30; border-radius:999px; background:#ffffff0b; color:#fff; font-size:.84rem; font-weight:750; text-decoration:none; transition:transform .18s ease,border-color .18s ease; }
+    .release-download:hover,.release-secondary:hover { transform:translateY(-2px); border-color:#ffffff91; }
+    .release-download { border-color:var(--gold); background:var(--gold); color:#17120a; }
+    .release-label { display:inline-flex; align-items:center; min-height:23px; margin-bottom:11px; padding:3px 9px; border:1px solid #ffc40055; border-radius:999px; color:#ffd95c; font-size:.7rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .release-loading,.release-error,.release-empty { padding:23px; border:1px solid #ffffff20; border-radius:20px; color:#b7b7bf; }
+    .facts { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:25px 0 34px; }
+    .fact { padding:17px; border:1px solid #ffffff19; border-radius:18px; background:#ffffff08; }
+    .fact strong { display:block; font-size:1.15rem; }
+    .fact span { color:#9999a1; font-size:.78rem; }
+    .feature-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .feature { padding:20px; border:1px solid #ffffff17; border-radius:19px; background:linear-gradient(145deg,#ffffff0b,#ffffff04); }
+    .feature strong { display:block; margin-bottom:6px; }
+    .feature span { color:#aaaab2; font-size:.9rem; }
     footer { padding:23px 0 30px; border-top:1px solid #ffffff17; color:#888891; font-size:.87rem; }
-    @media(max-width:680px) { .cards { grid-template-columns:1fr; } .card { min-height:255px; } main { padding-top:50px; } }
+    @media(max-width:760px) { .cards,.release-grid { grid-template-columns:1fr; } .card { min-height:255px; } main { padding-top:50px; } .live-releases,.about-app { margin-top:54px; } .facts { grid-template-columns:repeat(2,minmax(0,1fr)); } .feature-grid { grid-template-columns:1fr; } }
     @media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; } }
   </style>
 </head>
@@ -64,8 +92,26 @@
         <a class="action" href="https://github.com/d0x-dev/iTune">View source on GitHub</a>
       </section>
     </div>
-    <p class="note">Release availability and installation details are listed on GitHub. iTune is an independent open-source Android music player.</p>
+    <p class="note">Downloads come directly from GitHub. Check each release’s notes and asset name before installing.</p>
+    <section class="live-releases" aria-labelledby="releases-heading">
+      <p class="section-kicker">Live release feed</p>
+      <h2 class="section-title" id="releases-heading">Versions &amp; downloads</h2>
+      <p class="section-copy">This list is loaded from GitHub at page open. APK buttons link straight to the attached release files.</p>
+      <div class="release-grid" id="release-feed" data-release-mode="all"><p class="release-loading">Fetching releases…</p></div>
+    </section>
+    <section class="about-app" aria-labelledby="about-heading">
+      <p class="section-kicker">About iTune</p>
+      <h2 class="section-title" id="about-heading">Made for the way you listen.</h2>
+      <p class="section-copy">An open-source Android music player built with Kotlin, Jetpack Compose, and Media3. Follow lyrics, tune your sound, and manage your listening library in one place.</p>
+      <div class="facts" id="repo-facts"><div class="fact"><strong>Android</strong><span>Platform</span></div><div class="fact"><strong>Kotlin</strong><span>Primary language</span></div><div class="fact"><strong>MIT</strong><span>License</span></div><div class="fact"><strong>Open source</strong><span>Build from source</span></div></div>
+      <div class="feature-grid">
+        <div class="feature"><strong>Live lyrics</strong><span>Timed lyrics, translation, and shareable lyric cards.</span></div>
+        <div class="feature"><strong>Audio controls</strong><span>Equalizer, sound effects, output routing, and playback tools.</span></div>
+        <div class="feature"><strong>Your library</strong><span>Offline listening, queue, history, playlists, and encrypted backups.</span></div>
+      </div>
+    </section>
   </main>
   <footer><div class="wrap">iTune · <a href="https://github.com/d0x-dev/iTune/blob/main/LICENSE">Open-source license</a></div></footer>
+  <script src="./js/github-releases.js" defer></script>
 </body>
 </html>
