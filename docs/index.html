@@ -89,14 +89,13 @@
     .button:hover { transform:translateY(-2px); border-color:#ffffffa0; }
     .button.primary { border-color:var(--gold); background:var(--gold); color:#17120a; }
     .availability { margin:14px 0 0; color:#ffffffa6; font-size:.82rem; }
-    .device-frame { position:relative; justify-self:center; width:min(100%,650px); padding:9px; border:1px solid #f5f1e8; border-radius:55px; background:linear-gradient(145deg,#e7e2d7 0%,#514e4b 9%,#0c0b0a 34%,#bbb4a6 73%,#242220 100%); box-shadow:0 30px 100px #000c,0 0 0 2px #050506,inset 0 1px 2px #fff9; }
+    .device-frame { position:relative; justify-self:center; width:min(100%,520px); padding:9px; border:1px solid #f5f1e8; border-radius:55px; background:linear-gradient(145deg,#e7e2d7 0%,#514e4b 9%,#0c0b0a 34%,#bbb4a6 73%,#242220 100%); box-shadow:0 30px 100px #000c,0 0 0 2px #050506,inset 0 1px 2px #fff9; }
     .device-screen { position:relative; display:flex; height:min(1040px,calc(100svh + 120px)); min-height:900px; flex-direction:column; overflow:hidden; border:1px solid #ffffff26; border-radius:45px; background:radial-gradient(ellipse 62% 42% at 73% 59%,rgba(198,119,0,.74),rgba(130,73,0,.42) 43%,transparent 100%),radial-gradient(ellipse 48% 50% at 82% 72%,rgba(245,166,0,.53),transparent 78%),#050403; }
-    .phone-status { position:absolute; z-index:3; top:15px; left:29px; color:#fff; font-size:.72rem; font-weight:650; letter-spacing:.02em; }
-    .phone-indicators { position:absolute; z-index:3; top:15px; right:29px; color:#fff; font-size:.68rem; letter-spacing:.06em; }
+    .phone-status,.phone-indicators { display:none; }
     .phone-camera { position:absolute; z-index:3; top:25px; left:50%; display:grid; width:24px; height:24px; transform:translateX(-50%); place-items:center; border:1px solid #222; border-radius:50%; background:radial-gradient(circle at 58% 40%,#0a2947 0 5%,#050506 19% 56%,#000 62%); box-shadow:0 0 0 3px #020203; }
     .phone-camera::after { content:""; width:4px; height:4px; border-radius:50%; background:#06162b; box-shadow:0 0 5px #2677bd; }
     .phone-speaker { position:absolute; z-index:3; top:103px; left:50%; width:58px; height:6px; transform:translateX(-50%); border-radius:999px; background:#d8d7d5; box-shadow:0 1px 4px #0009; }
-    .music-player { position:relative; display:flex; min-height:0; height:100%; flex-direction:column; overflow:hidden; padding:128px 34px 24px; border:0; border-radius:45px; background:transparent; box-shadow:none; backdrop-filter:none; }
+    .music-player { position:relative; display:flex; min-height:0; height:100%; flex-direction:column; overflow:hidden; padding:96px 34px 24px; border:0; border-radius:45px; background:transparent; box-shadow:none; backdrop-filter:none; }
     .music-player::before { content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at 80% 70%,rgba(255,184,0,.11),transparent 55%); }
     .player-top,.lyrics-stage,.timeline,.player-controls,.local-files,.player-status,.lyrics-provider { position:relative; z-index:1; }
     .player-top { display:flex; align-items:center; gap:17px; }
@@ -107,7 +106,7 @@
     .track-artist { overflow:hidden; margin:4px 0 0; color:#ffffffb8; font-size:.93rem; text-overflow:ellipsis; white-space:nowrap; }
     .track-actions { display:flex; gap:12px; }
     .like-button,.more-button { display:grid; width:44px; height:44px; flex:none; place-items:center; border:1px solid #ffffff30; border-radius:50%; background:#ffffff0b; color:#fff; font-size:1.45rem; }
-    .lyrics-stage { display:flex; min-height:470px; flex:1; align-items:center; justify-content:center; overflow:hidden; margin:34px 0 15px; padding:12px 8px; text-align:left; }
+    .lyrics-stage { display:flex; min-height:300px; height:300px; flex:none; align-items:center; justify-content:center; overflow:hidden; margin:34px 0 15px; padding:12px 8px; text-align:left; }
     .lyrics-stack { display:flex; width:100%; flex-direction:column; align-items:flex-start; gap:19px; }
     .lyric-line { max-width:100%; margin:0; color:#ffffff70; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:clamp(1.1rem,1.45vw,1.38rem); line-height:1.36; opacity:.48; filter:blur(1.5px); transform:translateY(0) scale(.985); transition:opacity .72s ease,filter .72s ease,transform .78s cubic-bezier(.22,.72,.2,1),color .72s ease; }
     .lyric-line.active { color:#fff; font-size:clamp(1.45rem,2vw,1.82rem); opacity:1; filter:none; transform:translateY(0) scale(1); text-shadow:0 2px 24px #fff3; animation:lyric-focus .78s cubic-bezier(.22,.72,.2,1) both; }
@@ -157,10 +156,8 @@
       .availability { font-size:.75rem; }
       .device-frame { order:2; width:min(100%,430px); margin:18px auto 0; }
       .device-screen { height:min(920px,calc(100svh + 100px)); min-height:760px; }
-      .music-player { width:100%; margin:0; padding:128px 21px 20px; border-radius:45px; }
-      .lyrics-stage { min-height:410px; flex:1; margin:27px 0 10px; padding-inline:8px; }
-      .phone-status { left:24px; }
-      .phone-indicators { right:24px; }
+      .music-player { width:100%; margin:0; padding:96px 21px 20px; border-radius:45px; }
+      .lyrics-stage { min-height:300px; height:300px; flex:none; margin:27px 0 10px; padding-inline:8px; }
       .album-cover { width:68px; height:68px; border-radius:14px; }
       .player-top { gap:12px; }
       .track-title { font-size:1.08rem; }
