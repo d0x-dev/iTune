@@ -38,7 +38,7 @@
 | [Code of Conduct](CODE_OF_CONDUCT.md) | Community participation standards |
 | [Security](SECURITY.md) | Private vulnerability reporting and secret handling |
 | [Copyright](COPYRIGHT.md) | Copyright ownership and third-party notices |
-| [MIT License](LICENSE) | Reuse and redistribution terms for original project code |
+| [iTune-OANCL License](LICENSE) | Attribution, non-commercial use, and redistribution terms |
 
 ## What iTune does
 
