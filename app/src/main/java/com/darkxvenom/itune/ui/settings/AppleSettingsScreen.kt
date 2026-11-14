@@ -2093,6 +2093,12 @@ private fun SettingsLicenseDialog(onDismiss: () -> Unit) {
             color = AppleTextSecondary,
             fontSize = 12.sp,
         )
+        Spacer(Modifier.height(6.dp))
+        Text(
+            text = "Copyright © 2026 iTune Project. This software is provided without warranty. You may redistribute and modify it under the GNU GPL terms shown below.",
+            color = AppleTextSecondary,
+            fontSize = 11.sp,
+        )
         Spacer(Modifier.height(12.dp))
         Column(
             modifier = Modifier
