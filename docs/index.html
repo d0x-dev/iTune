@@ -91,7 +91,7 @@
     .button:hover { transform:translateY(-2px); border-color:#ffffffa0; }
     .button.primary { border-color:var(--gold); background:var(--gold); color:#17120a; }
     .availability { margin:14px 0 0; color:#ffffffa6; font-size:.82rem; }
-    .device-frame { position:relative; justify-self:center; width:min(100%,440px); height:660px; min-height:0; overflow:hidden; margin-top:44px; padding:8px; border:0; border-radius:48px 48px 0 0; background:linear-gradient(145deg,#e7e2d7 0%,#514e4b 9%,#0c0b0a 34%,#bbb4a6 73%,#242220 100%); box-shadow:0 30px 100px #000c,0 0 0 2px #050506,inset 0 1px 2px #fff9; }
+    .device-frame { position:relative; justify-self:center; width:min(100%,440px); height:660px; min-height:0; overflow:hidden; margin-top:0; padding:8px; border:0; border-radius:48px 48px 0 0; background:linear-gradient(145deg,#e7e2d7 0%,#514e4b 9%,#0c0b0a 34%,#bbb4a6 73%,#242220 100%); box-shadow:0 30px 100px #000c,0 0 0 2px #050506,inset 0 1px 2px #fff9; transform:translateY(120px); }
     .device-screen { position:relative; display:flex; width:100%; height:880px; min-height:880px; flex-direction:column; overflow:hidden; border:1px solid #ffffff26; border-radius:39px; background:radial-gradient(ellipse 62% 42% at 73% 59%,rgba(198,119,0,.74),rgba(130,73,0,.42) 43%,transparent 100%),radial-gradient(ellipse 48% 50% at 82% 72%,rgba(245,166,0,.53),transparent 78%),#050403; }
     .phone-status,.phone-indicators { display:none; }
     .phone-camera { position:absolute; z-index:3; top:25px; left:50%; display:grid; width:24px; height:24px; transform:translateX(-50%); place-items:center; border:1px solid #222; border-radius:50%; background:radial-gradient(circle at 58% 40%,#0a2947 0 5%,#050506 19% 56%,#000 62%); box-shadow:0 0 0 3px #020203; }
@@ -158,7 +158,7 @@
       .actions { gap:9px; margin-top:21px; }
       .button { min-height:44px; padding:9px 14px; font-size:.9rem; }
       .availability { font-size:.75rem; }
-      .device-frame { order:2; width:min(100%,430px); margin:28px auto 0; }
+      .device-frame { order:2; width:min(100%,430px); margin:28px auto 0; transform:none; }
       .device-screen { height:880px; min-height:880px; }
       .music-player { width:100%; margin:0; padding:96px 21px 20px; border-radius:45px; }
       .lyrics-stage { min-height:300px; height:300px; flex:none; margin:27px 0 10px; padding-inline:8px; }
