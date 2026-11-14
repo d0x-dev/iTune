@@ -4,18 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#08090c">
-  <title>iTune — Open-Source Android Music Player with Lyrics</title>
-  <meta name="description" content="Meet iTune, an open-source Android music player with synchronized lyrics, an equalizer, offline downloads, radio, queue controls, and a customizable player. Explore features, source code, and releases.">
+  <title>iTune — Android Music Player with Synchronized Lyrics</title>
+  <meta name="description" content="Discover iTune, an open-source Android music player with synchronized lyrics, offline listening, an equalizer, radio, and a customizable full-screen player.">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://d0x-dev.github.io/iTune/">
+  <link rel="preload" href="./fonts/sf-pro-display-bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./images/itune-lyrics-player-preview.jpg" as="image" fetchpriority="high">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="iTune">
-  <meta property="og:title" content="iTune — Open-Source Android Music Player with Lyrics">
-  <meta property="og:description" content="An Android music player with synchronized lyrics, audio controls, offline downloads, radio, and a customizable player.">
+  <meta property="og:title" content="iTune — Android Music Player with Synchronized Lyrics">
+  <meta property="og:description" content="Your music, your moments. Explore iTune for Android: synced lyrics, audio controls, downloads, and a customizable player.">
   <meta property="og:url" content="https://d0x-dev.github.io/iTune/">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://d0x-dev.github.io/iTune/images/itune-lyrics-player-preview.jpg">
+  <meta property="og:image:width" content="1600">
+  <meta property="og:image:height" content="900">
+  <meta property="og:image:alt" content="iTune Android music player with synchronized lyrics on a phone">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="iTune — Android Music Player">
-  <meta name="twitter:description" content="Explore iTune: open-source Android music playback, synchronized lyrics, an equalizer, offline downloads, and more.">
+  <meta name="twitter:description" content="Your music, your moments. Synchronized lyrics, audio controls, offline listening, and more.">
+  <meta name="twitter:image" content="https://d0x-dev.github.io/iTune/images/itune-lyrics-player-preview.jpg">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -32,88 +39,206 @@
   }
   </script>
   <style>
-    :root { color-scheme: dark; --bg:#08090c; --panel:#111318; --line:#242832; --text:#f5f6f8; --muted:#a5aab5; --accent:#fa3446; --teal:#63d6bd; }
+    @font-face { font-family: "iTune SF"; src: url("./fonts/sf-pro-display-bold.woff2") format("woff2"); font-style: normal; font-weight: 700 900; font-display: swap; }
+    @property --base { syntax: "<color>"; inherits: true; initial-value: #0a031d; }
+    @property --center { syntax: "<color>"; inherits: true; initial-value: #280659; }
+    @property --top-glow { syntax: "<color>"; inherits: true; initial-value: #ff0080; }
+    @property --left-glow { syntax: "<color>"; inherits: true; initial-value: #ff8800; }
+    @property --right-glow { syntax: "<color>"; inherits: true; initial-value: #130533; }
+    :root { color-scheme: dark; --ink:#f7f7f8; --muted:#d1d2d7; --gold:#ffc400; --red:#f21e3e; }
     * { box-sizing:border-box; }
     html { scroll-behavior:smooth; }
-    body { margin:0; background:radial-gradient(ellipse at 80% 4%,#3d101b 0,transparent 34rem),var(--bg); color:var(--text); font:16px/1.65 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
+    body { margin:0; min-height:100vh; overflow-x:hidden; background:#08090c; color:var(--ink); font:16px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
     a { color:inherit; }
-    .wrap { width:min(1080px,calc(100% - 40px)); margin:auto; }
-    header { display:flex; justify-content:space-between; align-items:center; padding:24px 0; border-bottom:1px solid #ffffff12; }
-    .brand { display:flex; gap:12px; align-items:center; font-weight:750; font-size:1.2rem; letter-spacing:-.04em; text-decoration:none; }
-    .mark { display:grid; place-items:center; width:38px; height:38px; border:1px solid #ffffff25; border-radius:13px; background:linear-gradient(145deg,#333944,#17191f); color:#fff; font-size:20px; }
-    nav { display:flex; gap:22px; color:var(--muted); font-size:.92rem; }
-    nav a { text-decoration:none; } nav a:hover,.text-link:hover { color:#fff; }
-    .hero { padding:86px 0 76px; max-width:850px; }
-    .eyebrow { color:var(--teal); text-transform:uppercase; letter-spacing:.16em; font-size:.76rem; font-weight:750; }
-    h1 { font-size:clamp(2.7rem,7vw,5.6rem); line-height:1.02; letter-spacing:-.07em; margin:18px 0 22px; }
-    .hero p { color:#c3c7d0; max-width:690px; font-size:1.15rem; }
-    .actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:30px; }
-    .button { display:inline-flex; align-items:center; justify-content:center; border:1px solid #ffffff20; border-radius:999px; padding:11px 19px; text-decoration:none; font-weight:680; background:#ffffff09; }
-    .button.primary { background:var(--accent); border-color:var(--accent); color:white; }
-    .button:hover { filter:brightness(1.12); }
-    .note { margin-top:14px; color:var(--muted); font-size:.85rem!important; }
-    section { padding:34px 0 56px; }
-    h2 { font-size:clamp(1.7rem,4vw,2.3rem); line-height:1.15; letter-spacing:-.04em; margin:0 0 12px; }
-    .lead { color:var(--muted); max-width:720px; margin:0 0 24px; }
-    .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-    .card { padding:22px; background:linear-gradient(150deg,#151820,#0d0f13); border:1px solid var(--line); border-radius:20px; }
-    .card .icon { color:var(--teal); font-size:1.25rem; }
+    .ambient { position:fixed; z-index:-2; inset:-8%; overflow:hidden; background:var(--base); animation:ambient-colors 35s linear infinite; }
+    .ambient::before,.ambient::after { content:""; position:absolute; inset:0; pointer-events:none; }
+    .ambient::before { background:radial-gradient(ellipse at 50% 48%,color-mix(in srgb,var(--center) 62%,transparent),transparent 58%),radial-gradient(ellipse at 94% 4%,var(--top-glow),transparent 55%),radial-gradient(ellipse at 4% 96%,var(--left-glow),transparent 55%); background-size:100% 100%; animation:ambient-orbit-a 15s linear infinite; }
+    .ambient::after { background:radial-gradient(ellipse at 92% 90%,var(--right-glow),transparent 52%); animation:ambient-orbit-b 21s linear infinite; opacity:.9; }
+    @keyframes ambient-colors {
+      0%,100% { --base:#0a031d; --center:#280659; --top-glow:#ff0080; --left-glow:#ff8800; --right-glow:#130533; }
+      14.2857% { --base:#030304; --center:#140204; --top-glow:#df0024; --left-glow:#ce001e; --right-glow:#040406; }
+      28.5714% { --base:#020309; --center:#040b22; --top-glow:#0047ff; --left-glow:#0043ff; --right-glow:#02050e; }
+      42.8571% { --base:#63264d; --center:#532149; --top-glow:#ff629c; --left-glow:#ffb26b; --right-glow:#663d7f; }
+      57.1428% { --base:#fffdfd; --center:#fff6f9; --top-glow:#ff9bbe; --left-glow:#ffdf9b; --right-glow:#fff2f7; }
+      71.4285% { --base:#fff; --center:#fdfbff; --top-glow:#ff96be; --left-glow:#ffe3a2; --right-glow:#d6c3ff; }
+      85.7142% { --base:#281040; --center:#331350; --top-glow:#ff3a88; --left-glow:#ff9a38; --right-glow:#231144; }
+    }
+    @keyframes ambient-orbit-a { 0% { transform:translate3d(0,0,0) scale(1); } 50% { transform:translate3d(-2.8%,3%,0) scale(1.06); } 100% { transform:translate3d(0,0,0) scale(1); } }
+    @keyframes ambient-orbit-b { 0% { transform:translate3d(0,0,0) scale(1); } 50% { transform:translate3d(2.8%,-3%,0) scale(1.06); } 100% { transform:translate3d(0,0,0) scale(1); } }
+    .page { position:relative; isolation:isolate; }
+    .page::before { content:""; position:fixed; z-index:-1; inset:0; pointer-events:none; background:linear-gradient(90deg,rgba(0,0,0,.54),rgba(0,0,0,.22) 53%,rgba(0,0,0,.08)),linear-gradient(0deg,rgba(0,0,0,.26),transparent 52%); }
+    .shell { width:min(1500px,calc(100% - 9vw)); margin-inline:auto; }
+    .masthead { position:absolute; z-index:3; inset:0 0 auto; padding-top:clamp(23px,5vh,54px); pointer-events:none; }
+    .brand { display:inline-flex; align-items:center; gap:15px; color:white; text-decoration:none; pointer-events:auto; }
+    .brand img { width:clamp(48px,5.5vw,78px); height:clamp(48px,5.5vw,78px); filter:drop-shadow(0 2px 12px #0009); }
+    .brand-word { font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:clamp(38px,5vw,67px); font-weight:800; letter-spacing:-.055em; text-shadow:0 3px 22px #0009; }
+    .brand-word .i { color:var(--gold); }
+    .hero { min-height:100svh; display:grid; grid-template-columns:minmax(0,1fr) minmax(340px,.92fr); align-items:center; gap:1vw; padding-top:90px; padding-bottom:24px; }
+    .hero-copy { z-index:1; padding:42px 0; }
+    h1 { margin:0; color:#fff; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:clamp(3.35rem,7.1vw,7.4rem); font-weight:800; letter-spacing:-.065em; line-height:1.02; text-shadow:0 4px 28px #0006; }
+    .line { display:block; min-height:1.03em; white-space:nowrap; }
+    .line.second { color:var(--gold); }
+    .caret { display:inline-block; width:.065em; height:.78em; margin-left:.045em; vertical-align:-.04em; border-radius:3px; background:var(--red); opacity:0; }
+    .typing .caret { opacity:1; animation:none; }
+    .typing.idle .caret { animation:caret-blink .88s steps(1,end) infinite; }
+    .caret.hidden { opacity:0; animation:none!important; }
+    @keyframes caret-blink { 0%,48% { opacity:1; } 49%,100% { opacity:0; } }
+    .tagline { max-width:490px; margin:26px 0 0; color:rgba(255,255,255,.78); font-size:clamp(1rem,1.4vw,1.22rem); }
+    .actions { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:34px; }
+    .button { display:inline-flex; min-height:48px; align-items:center; justify-content:center; border:1px solid #ffffff3b; border-radius:999px; padding:10px 18px; background:#09090bd1; text-decoration:none; font-weight:700; backdrop-filter:blur(20px); transition:transform .2s ease,border-color .2s ease; }
+    .button:hover { transform:translateY(-2px); border-color:#ffffffa0; }
+    .button.primary { border-color:var(--gold); background:var(--gold); color:#17120a; }
+    .availability { margin:14px 0 0; color:#ffffffa6; font-size:.82rem; }
+    .hero-art { position:relative; justify-self:end; width:100%; height:min(88svh,900px); min-height:460px; overflow:hidden; -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 11%,#000 100%); mask-image:linear-gradient(90deg,transparent 0%,#000 11%,#000 100%); }
+    .hero-art img { display:block; width:100%; height:100%; object-fit:cover; object-position:100% center; }
+    .hero-art::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent 66%,rgba(0,0,0,.08)),linear-gradient(0deg,rgba(0,0,0,.25),transparent 24%); pointer-events:none; }
+    .content { padding:86px 0; background:linear-gradient(180deg,rgba(8,9,12,.88),rgba(8,9,12,.96)); border-top:1px solid #ffffff12; }
+    .content h2 { margin:0 0 12px; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:clamp(2rem,4vw,3.2rem); letter-spacing:-.045em; }
+    .lead { max-width:760px; margin:0 0 28px; color:#c1c3ca; font-size:1.05rem; }
+    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+    .card { min-height:148px; padding:22px; border:1px solid #ffffff17; border-radius:21px; background:linear-gradient(145deg,#ffffff0e,#ffffff05); backdrop-filter:blur(24px); }
+    .card .icon { color:var(--gold); font-size:1.3rem; }
     h3 { margin:8px 0 5px; font-size:1.06rem; }
-    .card p { color:var(--muted); margin:0; font-size:.94rem; }
-    .details { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-    .detail { border-top:1px solid var(--line); padding:18px 0; }
-    .detail strong { display:block; margin-bottom:4px; }
-    .detail p { color:var(--muted); margin:0; }
-    .text-link { color:#fff; text-decoration-color:#ffffff60; text-underline-offset:4px; }
-    footer { padding:28px 0 42px; border-top:1px solid var(--line); color:var(--muted); font-size:.9rem; }
-    footer .links { display:flex; gap:18px; flex-wrap:wrap; margin-top:10px; }
-    @media(max-width:700px) { .wrap{width:min(100% - 28px,1080px)} header{align-items:flex-start}.hero{padding:64px 0 48px}nav{gap:12px;font-size:.82rem}.grid{grid-template-columns:1fr}.details{grid-template-columns:1fr}.card{padding:18px} }
-    @media(prefers-reduced-motion:reduce) { html{scroll-behavior:auto} *{animation-duration:.01ms!important;transition-duration:.01ms!important} }
+    .card p { margin:0; color:#b7bac4; font-size:.94rem; }
+    .project { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:58px; }
+    .project-item { padding:18px 0; border-top:1px solid #ffffff20; }
+    .project-item strong { display:block; margin-bottom:4px; }
+    .project-item p { margin:0; color:#b7bac4; }
+    footer { padding:25px 0 36px; border-top:1px solid #ffffff17; color:#a5aab5; font-size:.9rem; }
+    footer .links { display:flex; gap:18px; flex-wrap:wrap; margin-top:8px; }
+    footer a { text-underline-offset:4px; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    @media(max-width:760px) {
+      .shell { width:calc(100% - 40px); }
+      .masthead { padding-top:22px; }
+      .brand { gap:10px; }
+      .brand img { width:47px; height:47px; }
+      .brand-word { font-size:43px; }
+      .hero { min-height:100svh; display:flex; flex-direction:column; align-items:stretch; justify-content:flex-start; gap:0; padding-top:clamp(125px,20vh,175px); padding-bottom:28px; }
+      .hero-copy { padding:12px 0 0; }
+      h1 { font-size:clamp(3rem,11.7vw,5.3rem); }
+      .tagline { margin-top:15px; font-size:1rem; }
+      .actions { gap:9px; margin-top:21px; }
+      .button { min-height:44px; padding:9px 14px; font-size:.9rem; }
+      .availability { font-size:.75rem; }
+      .hero-art { order:2; justify-self:auto; height:min(54svh,560px); min-height:330px; width:calc(100% + 40px); margin:16px -20px 0; -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 86%,transparent 100%); mask-image:linear-gradient(180deg,#000 0%,#000 86%,transparent 100%); }
+      .hero-art img { object-position:100% center; }
+      .content { padding:58px 0; }
+      .grid { grid-template-columns:1fr; }
+      .card { min-height:0; }
+      .project { grid-template-columns:1fr; gap:0; margin-top:40px; }
+    }
+    @media(prefers-reduced-motion:reduce) {
+      html { scroll-behavior:auto; }
+      *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
+      .ambient { animation:none; --base:#08090c; --center:#201212; --top-glow:#69331a; --left-glow:#291911; --right-glow:#15100e; }
+    }
   </style>
 </head>
 <body>
-  <header class="wrap">
-    <a class="brand" href="./" aria-label="iTune home"><span class="mark" aria-hidden="true">♫</span><span>iTune</span></a>
-    <nav aria-label="Main navigation"><a href="#features">Features</a><a href="https://github.com/d0x-dev/iTune">Source</a><a href="https://github.com/d0x-dev/iTune/releases">Releases</a></nav>
-  </header>
-  <main class="wrap">
-    <section class="hero" aria-labelledby="page-title">
-      <div class="eyebrow">Open-source Android music player</div>
-      <h1 id="page-title">Your music.<br>In your own flow.</h1>
-      <p>iTune brings music discovery, synchronized lyrics, a detailed audio toolkit, and a customizable full-screen player together in one Android app.</p>
-      <div class="actions"><a class="button primary" href="https://github.com/d0x-dev/iTune/releases">See Android releases</a><a class="button" href="https://github.com/d0x-dev/iTune">Explore the source</a><a class="button" href="https://github.com/d0x-dev/iTune/blob/main/FEATURES.md">All features</a></div>
-      <p class="note">No release APK is currently published. Check Releases for the next installable build; source code and build instructions are available now.</p>
-    </section>
-    <section id="features" aria-labelledby="features-title">
-      <div class="eyebrow">Made for listening</div>
-      <h2 id="features-title">A capable music player for Android</h2>
-      <p class="lead">Find tracks, shape playback, follow lyrics, and keep your library close. Feature availability can depend on your device, region, selected provider, and account.</p>
-      <div class="grid">
-        <article class="card"><span class="icon" aria-hidden="true">♫</span><h3>Music discovery</h3><p>Search and browse songs, artists, albums, playlists, charts, and radio stations from supported sources.</p></article>
-        <article class="card"><span class="icon" aria-hidden="true">“</span><h3>Synchronized lyrics</h3><p>Find lyrics across configurable providers, follow timed lines, translate supported lyrics, and share lyric cards.</p></article>
-        <article class="card"><span class="icon" aria-hidden="true">◖</span><h3>Audio controls</h3><p>Adjust the equalizer and supported effects, including low-pass filtering, spatial modes, normalization, and more.</p></article>
-        <article class="card"><span class="icon" aria-hidden="true">⇩</span><h3>Offline listening</h3><p>Download available streams, cache music, manage storage, and configure download quality and network behavior.</p></article>
-        <article class="card"><span class="icon" aria-hidden="true">⤴</span><h3>Player your way</h3><p>Customize the player, artwork colors, widget, queue, output-device view, and optional floating playback surfaces.</p></article>
-        <article class="card"><span class="icon" aria-hidden="true">◉</span><h3>Library and integrations</h3><p>Keep favorites and listening history, make encrypted backups, and optionally connect Last.fm, Discord, and iShare.</p></article>
-      </div>
-    </section>
-    <section aria-labelledby="project-title">
-      <div class="eyebrow">Project details</div>
-      <h2 id="project-title">Open source, built for Android</h2>
-      <div class="details">
-        <div class="detail"><strong>Platform</strong><p>Android 7.0 and later (API 24+)</p></div>
-        <div class="detail"><strong>Built with</strong><p>Kotlin, Jetpack Compose, and Media3</p></div>
-        <div class="detail"><strong>License</strong><p><a class="text-link" href="https://github.com/d0x-dev/iTune/blob/main/LICENSE">MIT License</a></p></div>
-        <div class="detail"><strong>Want to help?</strong><p><a class="text-link" href="https://github.com/d0x-dev/iTune/blob/main/CONTRIBUTING.md">Read the contribution guide</a> or report an issue on GitHub.</p></div>
-      </div>
-    </section>
-    <section aria-labelledby="download-title">
-      <div class="eyebrow">Get iTune</div>
-      <h2 id="download-title">Follow the project and get the next build</h2>
-      <p class="lead">The source repository includes build instructions. When an installable Android package is published, it will be listed in GitHub Releases.</p>
-      <div class="actions"><a class="button primary" href="https://github.com/d0x-dev/iTune/releases">Check releases</a><a class="button" href="https://github.com/d0x-dev/iTune">Star or follow on GitHub</a></div>
-    </section>
-  </main>
-  <footer><div class="wrap">iTune is an independent open-source Android music player. Third-party sources and audio capabilities vary by region, device, and service.<div class="links"><a href="https://github.com/d0x-dev/iTune">GitHub repository</a><a href="https://github.com/d0x-dev/iTune/blob/main/FEATURES.md">Feature catalog</a><a href="https://github.com/d0x-dev/iTune/blob/main/SECURITY.md">Security policy</a></div></div></footer>
+  <div class="ambient" aria-hidden="true"></div>
+  <div class="page">
+    <header class="masthead shell">
+      <a class="brand" href="./" aria-label="iTune home">
+        <img src="./images/ic-itune-waves.svg" alt="">
+        <span class="brand-word"><span class="i">i</span>Tune</span>
+      </a>
+    </header>
+    <main>
+      <section class="hero shell" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <h1 id="hero-title" aria-label="Your Music. Your Moments.">
+            <span class="line typing" id="typing-line-one"><span id="typed-one">Your Music.</span><span class="caret" id="caret-one" aria-hidden="true"></span></span>
+            <span class="line second typing" id="typing-line-two"><span id="typed-two">Your Moments.</span><span class="caret hidden" id="caret-two" aria-hidden="true"></span></span>
+          </h1>
+          <p class="tagline">An open-source Android music player with synchronized lyrics, expressive audio controls, and a player made to feel like yours.</p>
+          <div class="actions">
+            <a class="button primary" href="https://github.com/d0x-dev/iTune/releases">Explore Android releases</a>
+            <a class="button" href="https://github.com/d0x-dev/iTune">View source</a>
+          </div>
+          <p class="availability">No installable APK is published yet. Source code and build instructions are available on GitHub.</p>
+        </div>
+        <figure class="hero-art">
+          <img src="./images/itune-lyrics-player-preview.jpg" width="1600" height="901" alt="iTune full-screen Android music player displaying synchronized lyrics" fetchpriority="high">
+          <figcaption class="sr-only">Preview of iTune's Android music player and synchronized lyrics.</figcaption>
+        </figure>
+      </section>
+      <section class="content" id="features" aria-labelledby="features-title">
+        <div class="shell">
+          <h2 id="features-title">Music playback shaped around you</h2>
+          <p class="lead">Find music, follow timed lyrics, tune your sound, and take your library with you. Availability depends on the Android device, region, account, and provider.</p>
+          <div class="grid">
+            <article class="card"><span class="icon" aria-hidden="true">♫</span><h3>Discover music</h3><p>Search songs, artists, albums, and playlists, or explore charts, collections, and internet radio.</p></article>
+            <article class="card"><span class="icon" aria-hidden="true">“</span><h3>Follow synchronized lyrics</h3><p>Find lyrics from configurable providers, follow timed lines, translate supported lyrics, and share lyric cards.</p></article>
+            <article class="card"><span class="icon" aria-hidden="true">◖</span><h3>Shape the sound</h3><p>Use the equalizer and supported effects, including low-pass filtering, spatial audio, and normalization.</p></article>
+            <article class="card"><span class="icon" aria-hidden="true">⇩</span><h3>Listen offline</h3><p>Download available audio, cache tracks, manage storage, and set preferred quality and network behavior.</p></article>
+            <article class="card"><span class="icon" aria-hidden="true">⤴</span><h3>Make the player yours</h3><p>Customize artwork colors, queue controls, output details, the home-screen widget, and floating player surfaces.</p></article>
+            <article class="card"><span class="icon" aria-hidden="true">◉</span><h3>Keep your listening connected</h3><p>Manage favorites and history, make encrypted backups, and optionally connect Last.fm, Discord, or iShare.</p></article>
+          </div>
+          <div class="project">
+            <div class="project-item"><strong>For Android 7.0 and later</strong><p>Built with Kotlin, Jetpack Compose, and Media3.</p></div>
+            <div class="project-item"><strong>Open source under MIT</strong><p><a href="https://github.com/d0x-dev/iTune/blob/main/LICENSE">Read the license</a> or <a href="https://github.com/d0x-dev/iTune/blob/main/CONTRIBUTING.md">contribute on GitHub</a>.</p></div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer><div class="shell">iTune is an independent open-source Android music player. Third-party sources and audio features vary by region, device, and service.<div class="links"><a href="https://github.com/d0x-dev/iTune">GitHub repository</a><a href="https://github.com/d0x-dev/iTune/blob/main/FEATURES.md">Feature catalog</a><a href="https://github.com/d0x-dev/iTune/releases">Releases</a><a href="https://github.com/d0x-dev/iTune/blob/main/SECURITY.md">Security policy</a></div></div></footer>
+  </div>
+  <script>
+    (() => {
+      const first = "Your Music.";
+      const second = "Your Moments.";
+      const complete = `${first} ${second}`;
+      const one = document.getElementById("typed-one");
+      const two = document.getElementById("typed-two");
+      const caretOne = document.getElementById("caret-one");
+      const caretTwo = document.getElementById("caret-two");
+      const lineOne = document.getElementById("typing-line-one");
+      const lineTwo = document.getElementById("typing-line-two");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) return;
+      one.textContent = "";
+      two.textContent = "";
+      const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      const typeDelay = (text, index) => {
+        const char = text[index] || "";
+        const previous = text[index - 1];
+        const boundary = previous === " " ? 74 : (/[A-Z]/.test(char) && index > 0 ? 48 : (char === " " ? 38 : 0));
+        return 62 + ((index * 23) % 32) + boundary;
+      };
+      const eraseDelay = (deleted) => deleted === 0 ? 86 : (deleted === 1 ? 62 : (deleted === 2 ? 48 : 34 + (deleted % 3) * 4));
+      const draw = (text) => {
+        const split = Math.min(text.length, first.length);
+        one.textContent = text.slice(0, split);
+        two.textContent = text.length > first.length ? text.slice(first.length + 1) : "";
+        const onSecond = text.length > first.length + 1;
+        caretOne.classList.toggle("hidden", onSecond);
+        caretTwo.classList.toggle("hidden", !onSecond);
+      };
+      (async () => {
+        while (true) {
+          lineOne.classList.add("typing"); lineTwo.classList.add("typing");
+          lineOne.classList.remove("idle"); lineTwo.classList.remove("idle");
+          draw("");
+          await pause(700);
+          for (let i = 0; i < complete.length; i++) {
+            await pause(typeDelay(complete, i));
+            draw(complete.slice(0, i + 1));
+          }
+          lineOne.classList.remove("typing"); lineTwo.classList.remove("typing");
+          lineOne.classList.add("idle"); lineTwo.classList.add("idle");
+          await pause(5500);
+          lineOne.classList.remove("idle"); lineTwo.classList.remove("idle");
+          lineOne.classList.add("typing"); lineTwo.classList.add("typing");
+          await pause(750);
+          for (let deleted = 0; deleted < complete.length; deleted++) {
+            await pause(eraseDelay(deleted));
+            draw(complete.slice(0, complete.length - deleted - 1));
+          }
+          await pause(520);
+        }
+      })();
+    })();
+  </script>
 </body>
 </html>
