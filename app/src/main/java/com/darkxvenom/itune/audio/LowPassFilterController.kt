@@ -122,6 +122,24 @@ object LowPassFilterController {
         val afterglowMs = SettingsStore.normalizeAfterglowDuration(SettingsStore.state.value.afterglowDuration)
             .removeSuffix(" sec").toLongOrNull()?.times(1000L) ?: 0L
         if (afterglowMs > 0L) {
+            // Repeat-one restarts the same MediaItem, so neither the media ID nor every
+            // ExoPlayer transition callback is guaranteed to change. Detect the actual
+            // end-to-start position rewind here as a second, callback-independent signal.
+            // This also catches the case where a discontinuity callback arrives while the
+            // observable player position still reports the old end position.
+            val repeatedToStart = MusicPlayerState.repeatMode == androidx.media3.common.Player.REPEAT_MODE_ONE &&
+                positionMs <= 2_000L &&
+                lastPositionMs > 5_000L
+            if (repeatedToStart) {
+                if (afterglowTriggeredForTrack || AudioEngineManager.state.value.lowPassFilterActive) {
+                    cancelActiveEffect()
+                }
+                afterglowTriggeredForTrack = false
+                afterglowRestartPending = false
+                targetTimeMs = null
+                Log.i(TAG, "Repeat-one rewound '${track.title}'; restored EQ and armed the next Afterglow cycle")
+            }
+            lastPositionMs = positionMs
             targetTimeMs = null
             if (afterglowRestartPending) {
                 // Player position can still report the outgoing end position for one progress
