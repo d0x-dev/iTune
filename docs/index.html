@@ -9,6 +9,7 @@
   <meta name="description" content="Discover iTune, an open-source Android music player with synchronized lyrics, offline listening, an equalizer, radio, and a customizable full-screen player.">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://d0x-dev.github.io/iTune/">
+  <link rel="icon" href="./images/ic-itune-waves.svg" type="image/svg+xml">
   <link rel="preload" href="./fonts/sf-pro-display-bold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="https://i.scdn.co/image/ab67616d0000b273e2e352d89826aef6dbd5ff8f" as="image" fetchpriority="high">
   <meta property="og:type" content="website">
@@ -133,23 +134,25 @@
     .file-button input { position:absolute; width:1px; height:1px; opacity:0; }
     .file-button:focus-within { outline:2px solid var(--gold); outline-offset:2px; }
     .player-status { margin:9px 0 0; color:#ffffff85; text-align:center; font-size:.75rem; }
-    .content { content-visibility:auto; contain-intrinsic-size:auto 900px; padding:86px 0; background:linear-gradient(180deg,rgba(8,9,12,.88),rgba(8,9,12,.96)); border-top:1px solid #ffffff12; }
-    .content h2 { margin:0 0 12px; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:clamp(2rem,4vw,3.2rem); letter-spacing:-.045em; }
-    .lead { max-width:760px; margin:0 0 28px; color:#c1c3ca; font-size:1.05rem; }
+    .content { content-visibility:auto; contain-intrinsic-size:auto 900px; padding:96px 0; background:#050506; border-top:1px solid #ffffff14; }
+    .content h2 { margin:0 0 12px; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:clamp(2.2rem,4.5vw,3.7rem); letter-spacing:-.055em; }
+    .lead { max-width:760px; margin:0 0 32px; color:#a5a5ad; font-size:1.05rem; }
     .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
-    .card { min-height:148px; padding:22px; border:1px solid #ffffff17; border-radius:21px; background:linear-gradient(145deg,#ffffff0e,#ffffff05); backdrop-filter:blur(24px); }
-    .card .icon { color:var(--gold); font-size:1.3rem; }
+    .card { min-height:178px; padding:25px; border:1px solid #ffffff17; border-radius:27px; background:linear-gradient(145deg,#1b1b1eaa,#101012ad 70%); box-shadow:inset 0 1px #ffffff09,0 18px 50px #0004; backdrop-filter:blur(28px); transition:transform .24s ease,border-color .24s ease,background .24s ease; }
+    .card:hover { transform:translateY(-3px); border-color:#ffffff30; background:linear-gradient(145deg,#222225,#111113 70%); }
+    .card .icon { color:#e7c66a; font-size:1.3rem; }
     h3 { margin:8px 0 5px; font-size:1.06rem; }
     .card p { margin:0; color:#b7bac4; font-size:.94rem; }
-    .project { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:58px; }
-    .project-item { padding:18px 0; border-top:1px solid #ffffff20; }
+    .project { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:68px; }
+    .project-item { padding:22px 0; border-top:1px solid #ffffff19; }
     .project-item strong { display:block; margin-bottom:4px; }
-    .project-item p { margin:0; color:#b7bac4; }
-    .release-section { display:grid; grid-template-columns:minmax(0,.72fr) minmax(0,1fr); align-items:center; gap:40px; margin-top:78px; padding:34px; border:1px solid #ffffff1c; border-radius:30px; background:radial-gradient(ellipse at 86% 20%,#7a3b142b,transparent 50%),linear-gradient(145deg,#ffffff0d,#ffffff04); }
+    .project-item p { margin:0; color:#a5a5ad; }
+    .project-item a { color:#f0d477; text-underline-offset:4px; }
+    .release-section { display:grid; grid-template-columns:minmax(0,.72fr) minmax(0,1fr); align-items:center; gap:40px; margin-top:78px; padding:34px; border:1px solid #ffffff18; border-radius:32px; background:linear-gradient(145deg,#171719,#0b0b0d 72%); box-shadow:inset 0 1px #ffffff0a,0 25px 70px #0006; }
     .release-section .eyebrow { margin:0 0 10px; color:var(--gold); font-size:.75rem; font-weight:800; letter-spacing:.15em; text-transform:uppercase; }
     .release-section h2 { margin:0 0 9px; }
     .release-section .lead { margin:0; }
-    .release-card { padding:23px; border:1px solid #ffffff1e; border-radius:22px; background:#08090bbf; box-shadow:0 18px 50px #0005; }
+    .release-card { padding:24px; border:1px solid #ffffff1b; border-radius:24px; background:linear-gradient(145deg,#202023,#111113); box-shadow:inset 0 1px #ffffff0a,0 18px 50px #0005; backdrop-filter:blur(26px); }
     .release-label { display:inline-flex; align-items:center; min-height:23px; margin-bottom:11px; padding:3px 9px; border:1px solid #ffc40055; border-radius:999px; color:#ffd95c; font-size:.7rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
     .release-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
     .release-version { margin:0; color:#fff; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:1.45rem; }
@@ -160,15 +163,16 @@
     .release-note-link { color:#ffda56; text-underline-offset:3px; }
     .release-asset-meta { margin:12px 0 0; color:#92949d; font-size:.76rem; }
     .release-actions { display:flex; flex-wrap:wrap; gap:8px; }
-    .release-download,.release-secondary { display:inline-flex; min-height:40px; align-items:center; justify-content:center; padding:8px 13px; border:1px solid #ffffff30; border-radius:999px; background:#ffffff0b; color:#fff; font-size:.84rem; font-weight:750; text-decoration:none; }
-    .release-download { border-color:var(--gold); background:var(--gold); color:#17120a; }
+    .release-download,.release-secondary { display:inline-flex; min-height:42px; align-items:center; justify-content:center; padding:9px 15px; border:1px solid #ffffff25; border-radius:999px; background:#ffffff09; color:#f3f3f5; font-size:.84rem; font-weight:700; text-decoration:none; transition:transform .2s ease,background .2s ease,border-color .2s ease; }
+    .release-download:hover,.release-secondary:hover { transform:translateY(-2px); border-color:#ffffff50; background:#ffffff14; }
+    .release-download { border-color:#f0cf66; background:#f0cf66; color:#17140b; }
     .release-assets { display:flex; flex-wrap:wrap; gap:8px; }
     .release-loading,.release-error,.release-empty { color:#b7bac4; }
     .repo-facts { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:25px; }
-    .repo-fact { padding:15px; border:1px solid #ffffff18; border-radius:16px; background:#ffffff08; }
+    .repo-fact { padding:17px; border:1px solid #ffffff17; border-radius:19px; background:linear-gradient(145deg,#1b1b1e,#101012); }
     .repo-fact strong { display:block; color:#fff; font-size:1.15rem; }
     .repo-fact span { color:#9b9da6; font-size:.79rem; }
-    footer { padding:25px 0 36px; border-top:1px solid #ffffff17; color:#a5aab5; font-size:.9rem; }
+    footer { padding:27px 0 38px; border-top:1px solid #ffffff14; background:#050506; color:#92929a; font-size:.9rem; }
     footer .links { display:flex; gap:18px; flex-wrap:wrap; margin-top:8px; }
     footer a { text-underline-offset:4px; }
     .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
