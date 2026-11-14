@@ -2078,6 +2078,7 @@ private fun SettingsAboutDialog(
 
 @Composable
 private fun SettingsLicenseDialog(onDismiss: () -> Unit) {
+    val context = LocalContext.current
     SettingsModalFrame(onDismiss = onDismiss) {
         Spacer(Modifier.height(20.dp))
         Text(
@@ -2415,7 +2416,7 @@ All Rights Reserved, subject to the permissions expressly granted above.
                         android.content.Intent.ACTION_VIEW,
                         Uri.parse("https://github.com/d0x-dev/iTune"),
                     )
-                    LocalContext.current.startActivity(intent)
+                    context.startActivity(intent)
                 }
                 .padding(horizontal = 20.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.Center,
