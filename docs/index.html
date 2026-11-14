@@ -107,12 +107,17 @@
     .track-artist { overflow:hidden; margin:4px 0 0; color:#ffffffb8; font-size:.93rem; text-overflow:ellipsis; white-space:nowrap; }
     .track-actions { display:flex; gap:12px; }
     .like-button,.more-button { display:grid; width:44px; height:44px; flex:none; place-items:center; border:1px solid #ffffff30; border-radius:50%; background:#ffffff0b; color:#fff; font-size:1.45rem; }
-    .lyrics-stage { display:flex; min-height:300px; height:300px; flex:none; align-items:center; justify-content:center; overflow:hidden; margin:34px 0 15px; padding:12px 8px; text-align:left; }
+    .lyrics-stage { display:flex; min-height:420px; height:420px; flex:none; align-items:flex-start; justify-content:flex-start; overflow:hidden; margin:34px 0 15px; padding:12px 8px; text-align:left; }
     .lyrics-stack { display:flex; width:100%; flex-direction:column; align-items:flex-start; gap:19px; }
-    .lyric-line { max-width:100%; margin:0; color:#ffffff70; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:clamp(1.1rem,1.45vw,1.38rem); line-height:1.36; opacity:.48; filter:blur(1.5px); transform:translateY(0) scale(.985); transition:opacity .72s ease,filter .72s ease,transform .78s cubic-bezier(.22,.72,.2,1),color .72s ease; }
+    .lyric-line { max-width:100%; margin:0; color:#ffffff70; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:clamp(1.1rem,1.45vw,1.38rem); font-weight:700; line-height:1.36; opacity:.48; filter:blur(1.5px); transform:translateY(0) scale(.985); transition:opacity .72s ease,filter .72s ease,transform .78s cubic-bezier(.22,.72,.2,1),color .72s ease; }
     .lyric-line.active { color:#fff; font-size:clamp(1.45rem,2vw,1.82rem); opacity:1; filter:none; transform:translateY(0) scale(1); text-shadow:0 2px 24px #fff3; animation:lyric-focus .78s cubic-bezier(.22,.72,.2,1) both; }
-    .lyric-line.near { opacity:.76; filter:blur(.4px); transform:scale(.98); }
+    .lyric-line.below-1 { opacity:.72; filter:blur(.45px); animation:lyric-follow .62s .05s ease both; }
+    .lyric-line.below-2 { opacity:.54; filter:blur(.9px); animation:lyric-follow .68s .1s ease both; }
+    .lyric-line.below-3 { opacity:.38; filter:blur(1.45px); animation:lyric-follow .74s .15s ease both; }
+    .lyric-line.below-4 { opacity:.27; filter:blur(2px); animation:lyric-follow .8s .2s ease both; }
+    .lyric-line.below-5 { opacity:.19; filter:blur(2.7px); animation:lyric-follow .86s .25s ease both; }
     @keyframes lyric-focus { from { opacity:.18; filter:blur(10px); transform:translateY(13px) scale(.97); } to { opacity:1; filter:none; transform:translateY(0) scale(1); } }
+    @keyframes lyric-follow { from { opacity:0; transform:translateY(9px); } to { transform:translateY(0); } }
     .lyric-empty { max-width:430px; color:#ffffffa0; font-size:1.08rem; line-height:1.7; }
     .lyrics-provider { margin:-7px 0 16px; color:#ffffff72; font-size:.76rem; text-align:center; }
     .device-screen .lyrics-provider,.device-screen .timeline,.device-screen .player-controls,.device-screen .local-files,.device-screen .player-status { display:none!important; }
@@ -161,7 +166,7 @@
       .device-frame { order:2; width:min(100%,430px); margin:28px auto 0; transform:translateY(24px); border-radius:clamp(32px,12.6cqw,48px) clamp(32px,12.6cqw,48px) 0 0; }
       .device-screen { height:133.333%; min-height:133.333%; border-radius:clamp(29px,10.2cqw,39px); }
       .music-player { width:100%; margin:0; padding:22cqw 4.8cqw 4.5cqw; border-radius:inherit; }
-      .lyrics-stage { min-height:68cqw; height:68cqw; flex:none; margin:6cqw 0 2cqw; padding-inline:1.8cqw; }
+      .lyrics-stage { min-height:95cqw; height:95cqw; flex:none; margin:6cqw 0 2cqw; padding-inline:1.8cqw; }
       .phone-camera { top:5.7cqw; width:5.5cqw; height:5.5cqw; }
       .album-cover { width:16cqw; height:16cqw; border-radius:3.3cqw; }
       .player-top { gap:12px; }
@@ -436,9 +441,10 @@
           return;
         }
         const center = active < 0 ? 0 : active;
-        for (let index = Math.max(0, center - 2); index <= Math.min(cues.length - 1, center + 2); index++) {
+        for (let index = center; index <= Math.min(cues.length - 1, center + 5); index++) {
           const line = document.createElement("p");
-          line.className = `lyric-line${index === active ? " active" : Math.abs(index - center) === 1 ? " near" : ""}`;
+          const distance = index - center;
+          line.className = `lyric-line${distance === 0 ? " active" : ` below-${distance}`}`;
           line.textContent = cues[index].text;
           stack.append(line);
         }
