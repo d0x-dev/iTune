@@ -9,20 +9,20 @@
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://d0x-dev.github.io/iTune/">
   <link rel="preload" href="./fonts/sf-pro-display-bold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="./images/itune-lyrics-player-preview.jpg" as="image" fetchpriority="high">
+  <link rel="preload" href="https://i.scdn.co/image/ab67616d0000b273e2e352d89826aef6dbd5ff8f" as="image" fetchpriority="high">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="iTune">
   <meta property="og:title" content="iTune — Android Music Player with Synchronized Lyrics">
   <meta property="og:description" content="Your music, your moments. Explore iTune for Android: synced lyrics, audio controls, downloads, and a customizable player.">
   <meta property="og:url" content="https://d0x-dev.github.io/iTune/">
-  <meta property="og:image" content="https://d0x-dev.github.io/iTune/images/itune-lyrics-player-preview.jpg">
-  <meta property="og:image:width" content="1600">
-  <meta property="og:image:height" content="900">
-  <meta property="og:image:alt" content="iTune Android music player with synchronized lyrics on a phone">
+  <meta property="og:image" content="https://i.scdn.co/image/ab67616d0000b273e2e352d89826aef6dbd5ff8f">
+  <meta property="og:image:width" content="640">
+  <meta property="og:image:height" content="640">
+  <meta property="og:image:alt" content="Sunflower by Post Malone and Swae Lee album artwork">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="iTune — Android Music Player">
   <meta name="twitter:description" content="Your music, your moments. Synchronized lyrics, audio controls, offline listening, and more.">
-  <meta name="twitter:image" content="https://d0x-dev.github.io/iTune/images/itune-lyrics-player-preview.jpg">
+  <meta name="twitter:image" content="https://i.scdn.co/image/ab67616d0000b273e2e352d89826aef6dbd5ff8f">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -89,9 +89,34 @@
     .button:hover { transform:translateY(-2px); border-color:#ffffffa0; }
     .button.primary { border-color:var(--gold); background:var(--gold); color:#17120a; }
     .availability { margin:14px 0 0; color:#ffffffa6; font-size:.82rem; }
-    .hero-art { position:relative; justify-self:end; width:100%; height:min(88svh,900px); min-height:460px; overflow:hidden; -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 11%,#000 100%); mask-image:linear-gradient(90deg,transparent 0%,#000 11%,#000 100%); }
-    .hero-art img { display:block; width:100%; height:100%; object-fit:cover; object-position:100% center; }
-    .hero-art::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent 66%,rgba(0,0,0,.08)),linear-gradient(0deg,rgba(0,0,0,.25),transparent 24%); pointer-events:none; }
+    .music-player { position:relative; justify-self:end; width:min(100%,600px); overflow:hidden; padding:22px; border:1px solid #ffffff36; border-radius:34px; background:linear-gradient(155deg,rgba(34,29,24,.84),rgba(8,9,12,.82)); box-shadow:0 28px 90px #0008,inset 0 1px #ffffff18; backdrop-filter:blur(32px); }
+    .music-player::before { content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at 80% 70%,rgba(255,184,0,.19),transparent 55%); }
+    .player-top,.lyrics-stage,.timeline,.player-controls,.local-files,.player-status { position:relative; z-index:1; }
+    .player-top { display:flex; align-items:center; gap:16px; }
+    .album-cover { width:84px; height:84px; flex:none; border-radius:20px; object-fit:cover; box-shadow:0 8px 28px #0008; background:#171717; }
+    .track-info { min-width:0; flex:1; }
+    .track-eyebrow { margin:0 0 4px; color:#ffffff8c; font-size:.69rem; font-weight:800; letter-spacing:.14em; }
+    .track-title { overflow:hidden; margin:0; color:#fff; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:1.45rem; line-height:1.15; text-overflow:ellipsis; white-space:nowrap; }
+    .track-artist { overflow:hidden; margin:4px 0 0; color:#ffffffb8; font-size:.93rem; text-overflow:ellipsis; white-space:nowrap; }
+    .like-button { display:grid; width:44px; height:44px; flex:none; place-items:center; border:1px solid #ffffff24; border-radius:50%; background:#ffffff0b; color:#fff; font-size:1.35rem; }
+    .lyrics-stage { display:flex; min-height:245px; align-items:center; justify-content:center; overflow:hidden; margin:21px 0 14px; padding:12px 10px; text-align:center; }
+    .lyrics-stack { display:flex; width:100%; flex-direction:column; align-items:center; gap:13px; }
+    .lyric-line { max-width:100%; margin:0; color:#ffffff78; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:clamp(1rem,1.55vw,1.26rem); line-height:1.3; opacity:.62; filter:blur(1.2px); transform:scale(.96); transition:opacity .36s ease,filter .36s ease,transform .36s cubic-bezier(.2,.8,.2,1),color .36s ease; }
+    .lyric-line.active { color:#fff; font-size:clamp(1.25rem,2vw,1.7rem); opacity:1; filter:none; transform:scale(1); text-shadow:0 2px 24px #fff3; animation:lyric-focus .46s cubic-bezier(.2,.8,.2,1) both; }
+    .lyric-line.near { opacity:.76; filter:blur(.4px); transform:scale(.98); }
+    @keyframes lyric-focus { from { opacity:.2; filter:blur(8px); transform:translateY(12px) scale(.93); } to { opacity:1; filter:none; transform:translateY(0) scale(1); } }
+    .lyric-empty { max-width:330px; color:#ffffffa0; font-size:.98rem; line-height:1.6; }
+    .timeline input[type=range] { width:100%; height:5px; accent-color:#fff; cursor:pointer; }
+    .time-labels { display:flex; justify-content:space-between; margin-top:5px; color:#ffffffa3; font-variant-numeric:tabular-nums; font-size:.82rem; }
+    .player-controls { display:flex; align-items:center; justify-content:center; gap:clamp(32px,5vw,62px); margin:17px 0 22px; }
+    .control { display:grid; width:42px; height:42px; place-items:center; border:0; background:transparent; color:#fff; font-size:1.55rem; cursor:pointer; }
+    .control:disabled { color:#ffffff45; cursor:not-allowed; }
+    .control.play { width:66px; height:66px; border-radius:50%; background:#fff; color:#111; font-size:1.65rem; box-shadow:0 6px 24px #0005; }
+    .local-files { display:flex; justify-content:center; flex-wrap:wrap; gap:9px; padding-top:14px; border-top:1px solid #ffffff1c; }
+    .file-button { position:relative; display:inline-flex; min-height:40px; align-items:center; justify-content:center; overflow:hidden; border:1px solid #ffffff30; border-radius:999px; padding:8px 13px; background:#ffffff0b; color:#fff; font-size:.82rem; font-weight:700; cursor:pointer; }
+    .file-button input { position:absolute; width:1px; height:1px; opacity:0; }
+    .file-button:focus-within { outline:2px solid var(--gold); outline-offset:2px; }
+    .player-status { margin:9px 0 0; color:#ffffff85; text-align:center; font-size:.75rem; }
     .content { padding:86px 0; background:linear-gradient(180deg,rgba(8,9,12,.88),rgba(8,9,12,.96)); border-top:1px solid #ffffff12; }
     .content h2 { margin:0 0 12px; font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:clamp(2rem,4vw,3.2rem); letter-spacing:-.045em; }
     .lead { max-width:760px; margin:0 0 28px; color:#c1c3ca; font-size:1.05rem; }
@@ -121,8 +146,11 @@
       .actions { gap:9px; margin-top:21px; }
       .button { min-height:44px; padding:9px 14px; font-size:.9rem; }
       .availability { font-size:.75rem; }
-      .hero-art { order:2; justify-self:auto; height:min(54svh,560px); min-height:330px; width:calc(100% + 40px); margin:16px -20px 0; -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 86%,transparent 100%); mask-image:linear-gradient(180deg,#000 0%,#000 86%,transparent 100%); }
-      .hero-art img { object-position:100% center; }
+      .music-player { order:2; justify-self:auto; width:100%; margin:16px 0 0; padding:17px; border-radius:28px; }
+      .lyrics-stage { min-height:200px; margin:15px 0 10px; }
+      .album-cover { width:70px; height:70px; border-radius:16px; }
+      .track-title { font-size:1.2rem; }
+      .like-button { width:39px; height:39px; }
       .content { padding:58px 0; }
       .grid { grid-template-columns:1fr; }
       .card { min-height:0; }
@@ -158,10 +186,24 @@
           </div>
           <p class="availability">No installable APK is published yet. Source code and build instructions are available on GitHub.</p>
         </div>
-        <figure class="hero-art">
-          <img src="./images/itune-lyrics-player-preview.jpg" width="1600" height="901" alt="iTune full-screen Android music player displaying synchronized lyrics" fetchpriority="high">
-          <figcaption class="sr-only">Preview of iTune's Android music player and synchronized lyrics.</figcaption>
-        </figure>
+        <section class="music-player" aria-label="Sunflower local audio and synchronized lyrics player">
+          <div class="player-top">
+            <img class="album-cover" src="https://i.scdn.co/image/ab67616d0000b273e2e352d89826aef6dbd5ff8f" width="168" height="168" alt="Sunflower album artwork" fetchpriority="high">
+            <div class="track-info"><p class="track-eyebrow">NOW PLAYING</p><h2 class="track-title">Sunflower</h2><p class="track-artist">Post Malone &amp; Swae Lee</p></div>
+            <button class="like-button" type="button" aria-label="Favorite Sunflower">☆</button>
+          </div>
+          <div class="lyrics-stage" aria-live="polite" aria-atomic="true">
+            <div class="lyrics-stack" id="lyrics-stack"><p class="lyric-empty">Choose the Sunflower audio and a synced .LRC file to see the lyrics follow playback.</p></div>
+          </div>
+          <audio id="local-audio" preload="metadata"></audio>
+          <div class="timeline"><input id="seek" type="range" min="0" max="1000" value="0" aria-label="Seek through Sunflower"><div class="time-labels"><span id="elapsed">0:00</span><span id="remaining">-0:00</span></div></div>
+          <div class="player-controls"><button class="control" type="button" disabled aria-label="Previous track">|◀</button><button class="control play" id="play-toggle" type="button" disabled aria-label="Play Sunflower">▶</button><button class="control" type="button" disabled aria-label="Next track">▶|</button></div>
+          <div class="local-files">
+            <label class="file-button">Choose Sunflower audio<input id="audio-file" type="file" accept="audio/*,.m4a,.mp3,.aac,.ogg,.wav"></label>
+            <label class="file-button">Load synced .LRC<input id="lyrics-file" type="file" accept=".lrc,text/plain"></label>
+          </div>
+          <p class="player-status" id="player-status">Your audio and lyrics stay in this browser; the files aren’t uploaded.</p>
+        </section>
       </section>
       <section class="content" id="features" aria-labelledby="features-title">
         <div class="shell">
@@ -238,6 +280,144 @@
           await pause(520);
         }
       })();
+    })();
+    (() => {
+      const audio = document.getElementById("local-audio");
+      const audioPicker = document.getElementById("audio-file");
+      const lyricsPicker = document.getElementById("lyrics-file");
+      const playButton = document.getElementById("play-toggle");
+      const seek = document.getElementById("seek");
+      const elapsed = document.getElementById("elapsed");
+      const remaining = document.getElementById("remaining");
+      const stack = document.getElementById("lyrics-stack");
+      const status = document.getElementById("player-status");
+      let currentAudioUrl = null;
+      let cues = [];
+      let lastCueIndex = -2;
+
+      const formatTime = (seconds) => {
+        if (!Number.isFinite(seconds) || seconds < 0) seconds = 0;
+        const whole = Math.floor(seconds);
+        return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, "0")}`;
+      };
+
+      function updateTimeline() {
+        const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
+        const current = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
+        seek.value = duration > 0 ? String(Math.round((current / duration) * 1000)) : "0";
+        elapsed.textContent = formatTime(current);
+        remaining.textContent = `-${formatTime(Math.max(0, duration - current))}`;
+      }
+
+      function parseLrc(source) {
+        const offsetMatch = source.match(/^\[offset:([+-]?\d+)\]/im);
+        const offset = offsetMatch ? Number(offsetMatch[1]) : 0;
+        const result = [];
+        const timestamp = /\[(\d{1,2}):(\d{2})(?:[.:](\d{1,3}))?\]/g;
+        for (const rawLine of source.split(/\r?\n/)) {
+          const times = [...rawLine.matchAll(timestamp)];
+          if (!times.length) continue;
+          const text = rawLine.replace(timestamp, "").replace(/\[[^\]]*\]/g, "").trim();
+          if (!text) continue;
+          for (const match of times) {
+            const fractional = (match[3] || "0").padEnd(3, "0").slice(0, 3);
+            const timeMs = (Number(match[1]) * 60 + Number(match[2])) * 1000 + Number(fractional) + offset;
+            result.push({ time: Math.max(0, timeMs) / 1000, text });
+          }
+        }
+        return result.sort((a, b) => a.time - b.time);
+      }
+
+      function renderLyrics(force = false) {
+        const now = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
+        let low = 0;
+        let high = cues.length - 1;
+        let active = -1;
+        while (low <= high) {
+          const middle = (low + high) >> 1;
+          if (cues[middle].time <= now) { active = middle; low = middle + 1; }
+          else high = middle - 1;
+        }
+        if (active === lastCueIndex && !force) return;
+        lastCueIndex = active;
+        stack.replaceChildren();
+        if (!cues.length) {
+          const empty = document.createElement("p");
+          empty.className = "lyric-empty";
+          empty.textContent = "Load a synced .LRC file to follow the lyrics with the music.";
+          stack.append(empty);
+          return;
+        }
+        const center = active < 0 ? 0 : active;
+        for (let index = Math.max(0, center - 2); index <= Math.min(cues.length - 1, center + 2); index++) {
+          const line = document.createElement("p");
+          line.className = `lyric-line${index === active ? " active" : Math.abs(index - center) === 1 ? " near" : ""}`;
+          line.textContent = cues[index].text;
+          stack.append(line);
+        }
+      }
+
+      audioPicker.addEventListener("change", () => {
+        const file = audioPicker.files && audioPicker.files[0];
+        if (!file) return;
+        if (currentAudioUrl) URL.revokeObjectURL(currentAudioUrl);
+        currentAudioUrl = URL.createObjectURL(file);
+        audio.src = currentAudioUrl;
+        audio.load();
+        playButton.disabled = false;
+        playButton.textContent = "▶";
+        playButton.setAttribute("aria-label", "Play Sunflower");
+        status.textContent = `Loaded ${file.name}. Press play; the audio stays on this device.`;
+        updateTimeline();
+        renderLyrics(true);
+      });
+
+      lyricsPicker.addEventListener("change", async () => {
+        const file = lyricsPicker.files && lyricsPicker.files[0];
+        if (!file) return;
+        const parsed = parseLrc(await file.text());
+        if (!parsed.length) {
+          status.textContent = "That file has no timestamped LRC lines. Choose a synced .lrc file.";
+          return;
+        }
+        cues = parsed;
+        lastCueIndex = -2;
+        status.textContent = `Loaded ${cues.length} timed lyric lines from ${file.name}.`;
+        renderLyrics(true);
+      });
+
+      playButton.addEventListener("click", async () => {
+        if (!audio.src) return;
+        if (audio.paused) {
+          try { await audio.play(); }
+          catch { status.textContent = "Playback could not start. Try selecting the audio file again."; }
+        } else audio.pause();
+      });
+
+      audio.addEventListener("play", () => {
+        playButton.textContent = "Ⅱ";
+        playButton.setAttribute("aria-label", "Pause Sunflower");
+      });
+      audio.addEventListener("pause", () => {
+        playButton.textContent = "▶";
+        playButton.setAttribute("aria-label", "Play Sunflower");
+      });
+      audio.addEventListener("loadedmetadata", updateTimeline);
+      audio.addEventListener("durationchange", updateTimeline);
+      audio.addEventListener("timeupdate", () => { updateTimeline(); renderLyrics(); });
+      audio.addEventListener("seeked", () => renderLyrics(true));
+      audio.addEventListener("ended", () => { updateTimeline(); renderLyrics(true); });
+      audio.addEventListener("error", () => {
+        if (audio.src) status.textContent = "This audio format could not be played by the browser.";
+      });
+      seek.addEventListener("input", () => {
+        if (Number.isFinite(audio.duration) && audio.duration > 0) {
+          audio.currentTime = (Number(seek.value) / 1000) * audio.duration;
+          updateTimeline();
+          renderLyrics(true);
+        }
+      });
+      renderLyrics(true);
     })();
   </script>
 </body>
