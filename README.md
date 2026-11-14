@@ -285,4 +285,17 @@ For large changes, describe the user-visible behavior, settings involved, permis
 
 ## License
 
-Original iTune source code and documentation are available under the [MIT License](LICENSE). See [COPYRIGHT.md](COPYRIGHT.md) for the scope of that license and notes about third-party code, assets, and services. The MIT license does not grant rights to third-party media or services.
+Copyright © 2026 iTune Project.
+
+This project is licensed under the
+[iTune Open Source Attribution & Non-Commercial License (iTune-OANCL)](LICENSE).
+
+You may copy, modify, and incorporate this software into other qualifying
+open-source projects with proper attribution, subject to the license terms.
+
+Unauthorized commercial use, resale, and misleading rebranding are prohibited
+without prior written permission.
+
+See [LICENSE](LICENSE) for the complete terms and [COPYRIGHT.md](COPYRIGHT.md)
+for copyright ownership and third-party notices. Third-party libraries,
+assets, media, and services remain subject to their own licenses and terms.
