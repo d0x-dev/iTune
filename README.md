@@ -1,6 +1,6 @@
 <img width="1671" height="941" alt="image" src="https://github.com/user-attachments/assets/62749dee-2da9-4d1c-83b3-1b1f7aa378dd" />
 
-# iTune for Android
+<h1 align="center">iTune for Android</h1>
 
 **iTune** is an Android music player built with Kotlin and Jetpack Compose. It brings online music discovery, a full-screen player, synchronized lyrics, audio processing, offline downloads, internet radio, and account/library tools into one app with an Apple-inspired dark interface.
 
