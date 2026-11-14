@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050506">
+  <title>iTune Docs — Features, Privacy, Security &amp; License</title>
+  <meta name="description" content="Explore iTune for Android: music discovery, synchronized lyrics, audio controls, downloads, privacy, security, licensing, and build instructions.">
+  <link rel="canonical" href="https://d0x-dev.github.io/iTune/docs.html">
+  <link rel="icon" href="./images/ic-itune-waves.svg" type="image/svg+xml">
+  <style>
+    @font-face { font-family:"iTune SF"; src:url("./fonts/sf-pro-display-bold.woff2") format("woff2"); font-weight:700 900; font-display:swap; }
+    :root { color-scheme:dark; --bg:#050506; --panel:#101012; --line:#ffffff16; --text:#f5f5f7; --muted:#a1a1aa; --gold:#dfc56f; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:90px; }
+    body { margin:0; min-height:100vh; background:var(--bg); color:var(--text); font:15px/1.65 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif; }
+    a { color:inherit; }
+    .topbar { position:sticky; z-index:10; top:0; display:flex; height:72px; align-items:center; gap:23px; padding:0 30px; border-bottom:1px solid var(--line); background:#050506eF; backdrop-filter:blur(26px); }
+    .brand { display:flex; flex:none; align-items:center; gap:9px; color:#fff; text-decoration:none; }
+    .brand img { width:29px; height:29px; }
+    .brand-name { font-family:"iTune SF",system-ui,sans-serif; font-size:25px; letter-spacing:-.06em; }
+    .brand-name i { color:var(--gold); font-style:normal; }
+    .top-divider { height:25px; border-left:1px solid #ffffff23; }
+    .docs-label { flex:none; color:#e8e8ec; font-weight:700; }
+    .search-wrap { position:relative; width:min(400px,34vw); margin-left:2px; }
+    .search-wrap input { width:100%; height:42px; padding:0 43px 0 41px; border:1px solid #ffffff21; border-radius:13px; outline:0; background:#111113; color:#fff; font:inherit; }
+    .search-wrap input:focus { border-color:#bca95d; box-shadow:0 0 0 3px #dfc56f21; }
+    .search-symbol { position:absolute; top:10px; left:14px; color:#aaaab1; font-size:17px; }
+    .search-shortcut { position:absolute; top:9px; right:10px; display:grid; width:24px; height:24px; place-items:center; border:1px solid #ffffff23; border-radius:6px; color:#9c9ca4; font-size:.76rem; }
+    .top-spacer { flex:1; }
+    .top-link { color:#aaaab2; font-size:.9rem; font-weight:600; text-decoration:none; white-space:nowrap; }
+    .top-link:hover { color:#fff; }
+    .mobile-jump { display:none; }
+    .layout { display:grid; grid-template-columns:238px minmax(0,1fr) 170px; gap:clamp(28px,4vw,70px); width:min(1450px,100%); min-height:calc(100vh - 72px); margin:0 auto; padding:30px 38px 90px; }
+    .sidebar { position:sticky; top:95px; align-self:start; max-height:calc(100vh - 118px); overflow:auto; padding:4px 8px 22px 0; scrollbar-color:#ffffff27 transparent; }
+    .nav-group { margin:10px 0 26px; }
+    .nav-heading { margin:0 0 9px; color:#f0f0f2; font-size:.81rem; font-weight:750; }
+    .nav-link { display:block; margin:2px 0; padding:7px 10px; border-radius:10px; color:#94949c; font-size:.86rem; line-height:1.35; text-decoration:none; transition:background .15s,color .15s; }
+    .nav-link:hover,.nav-link.active { background:#ffffff0e; color:#fff; }
+    .article { min-width:0; padding:27px 0 0; }
+    .eyebrow { margin:0 0 10px; color:var(--gold); font-size:.75rem; font-weight:750; letter-spacing:.14em; text-transform:uppercase; }
+    h1,h2,h3 { font-family:"iTune SF",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; letter-spacing:-.04em; }
+    h1 { margin:0; font-size:clamp(2.8rem,6vw,5rem); line-height:1.02; }
+    .intro { max-width:790px; margin:20px 0 24px; color:#b8b8c0; font-size:1.14rem; line-height:1.65; }
+    .chips { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 38px; }
+    .chip { padding:6px 11px; border:1px solid #ffffff1a; border-radius:999px; background:#ffffff06; color:#b5b5bd; font-size:.78rem; }
+    .callout { margin:0 0 38px; padding:20px 22px; border:1px solid #ffffff19; border-left:3px solid var(--gold); border-radius:18px; background:linear-gradient(135deg,#171719,#0c0c0e); color:#bcbcc3; }
+    .callout strong { color:#f4f4f6; }
+    .callout a,.article a { color:#dfc96f; text-underline-offset:3px; }
+    .doc-section { padding:35px 0 40px; border-top:1px solid var(--line); scroll-margin-top:90px; }
+    .section-kicker { margin:0 0 7px; color:#85858e; font-size:.73rem; font-weight:750; letter-spacing:.13em; text-transform:uppercase; }
+    h2 { margin:0 0 13px; color:#f6f6f8; font-size:clamp(1.75rem,3.5vw,2.5rem); line-height:1.16; }
+    h3 { margin:23px 0 7px; color:#f1f1f3; font-size:1.13rem; }
+    .doc-section p { max-width:850px; margin:10px 0; color:#b0b0b8; }
+    .doc-section ul,.doc-section ol { max-width:850px; margin:12px 0; padding-left:23px; color:#b0b0b8; }
+    .doc-section li { margin:7px 0; padding-left:4px; }
+    .doc-section li::marker { color:#c9b260; }
+    .inline-cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:22px 0; }
+    .info-card { padding:19px; border:1px solid #ffffff16; border-radius:20px; background:linear-gradient(145deg,#171719,#0c0c0e); }
+    .info-card strong { display:block; margin-bottom:5px; color:#f4f4f6; }
+    .info-card span { color:#a6a6ae; font-size:.9rem; }
+    .code-block { display:block; max-width:850px; overflow:auto; margin:16px 0; padding:16px 18px; border:1px solid #ffffff16; border-radius:15px; background:#0c0c0e; color:#e4e4e8; font: .88rem/1.6 ui-monospace,SFMono-Regular,Consolas,monospace; white-space:pre; }
+    .doc-links { display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+    .doc-button { display:inline-flex; min-height:42px; align-items:center; padding:9px 15px; border:1px solid #ffffff21; border-radius:999px; background:#ffffff08; color:#ededf0!important; font-size:.86rem; font-weight:650; text-decoration:none; }
+    .doc-button:hover { border-color:#ffffff43; background:#ffffff12; }
+    .right-toc { position:sticky; top:106px; align-self:start; padding-top:35px; }
+    .right-toc h2 { margin:0 0 12px; color:#e5e5e9; font:700 .81rem/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; letter-spacing:0; }
+    .right-toc a { display:block; padding:6px 0 6px 12px; border-left:1px solid #ffffff1c; color:#92929a; font-size:.8rem; line-height:1.4; text-decoration:none; }
+    .right-toc a:hover,.right-toc a.active { border-left-color:#d9c36d; color:#fff; }
+    .no-results { display:none; margin:30px 0; padding:22px; border:1px solid #ffffff18; border-radius:18px; color:#a5a5ad; }
+    footer { padding:23px 30px; border-top:1px solid var(--line); color:#85858e; font-size:.84rem; }
+    footer .footer-inner { display:flex; max-width:1370px; align-items:center; justify-content:space-between; gap:18px; margin:auto; }
+    @media(max-width:1120px) { .layout { grid-template-columns:210px minmax(0,1fr); gap:32px; padding-inline:25px; } .right-toc { display:none; } }
+    @media(max-width:760px) {
+      .topbar { height:auto; min-height:66px; flex-wrap:wrap; gap:11px; padding:12px 16px; }
+      .brand img { width:26px; height:26px; } .brand-name { font-size:22px; }
+      .top-divider { height:22px; } .docs-label { font-size:.9rem; }
+      .search-wrap { order:5; width:100%; margin:0; }
+      .top-spacer { min-width:0; }
+      .top-link { font-size:.78rem; }
+      .layout { display:block; min-height:0; padding:16px 20px 55px; }
+      .sidebar { display:none; }
+      .mobile-jump { display:block; width:100%; height:42px; margin:3px 0 15px; padding:0 12px; border:1px solid #ffffff1c; border-radius:12px; background:#111113; color:#e6e6e9; font:inherit; }
+      .article { padding-top:17px; }
+      .inline-cards { grid-template-columns:1fr; }
+      .doc-section { padding:29px 0 34px; }
+      footer .footer-inner { align-items:flex-start; flex-direction:column; }
+    }
+    @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { transition:none!important; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="iTune home"><img src="./images/ic-itune-waves.svg" alt=""><span class="brand-name"><i>i</i>Tune</span></a>
+    <span class="top-divider" aria-hidden="true"></span>
+    <span class="docs-label">Docs</span>
+    <label class="search-wrap" aria-label="Search documentation">
+      <span class="search-symbol" aria-hidden="true">⌕</span>
+      <input id="doc-search" type="search" placeholder="Search docs" autocomplete="off" aria-label="Search documentation">
+      <span class="search-shortcut" aria-hidden="true">/</span>
+    </label>
+    <span class="top-spacer"></span>
+    <a class="top-link" href="https://github.com/d0x-dev/iTune">GitHub</a>
+    <a class="top-link" href="./">← Back to site</a>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" id="doc-sidebar" aria-label="Documentation sections">
+      <div class="nav-group"><p class="nav-heading">Overview</p><a class="nav-link active" href="#overview">Introduction</a><a class="nav-link" href="#how-it-works">How the app works</a></div>
+      <div class="nav-group"><p class="nav-heading">Features</p><a class="nav-link" href="#discover">Discover &amp; search</a><a class="nav-link" href="#player-lyrics">Player &amp; lyrics</a><a class="nav-link" href="#audio">Audio &amp; output</a><a class="nav-link" href="#downloads-library">Downloads &amp; library</a><a class="nav-link" href="#connected">Accounts &amp; listening</a><a class="nav-link" href="#surfaces">Widgets &amp; appearance</a></div>
+      <div class="nav-group"><p class="nav-heading">Trust &amp; project</p><a class="nav-link" href="#privacy">Privacy &amp; security</a><a class="nav-link" href="#permissions">Permissions</a><a class="nav-link" href="#license">License &amp; media rights</a><a class="nav-link" href="#build">Build from source</a><a class="nav-link" href="#contribute">Contribute</a></div>
+    </nav>
+    <select id="mobile-jump" class="mobile-jump" aria-label="Jump to a documentation section">
+      <option value="#overview">Introduction</option><option value="#how-it-works">How the app works</option><option value="#discover">Discover &amp; search</option><option value="#player-lyrics">Player &amp; lyrics</option><option value="#audio">Audio &amp; output</option><option value="#downloads-library">Downloads &amp; library</option><option value="#connected">Accounts &amp; listening</option><option value="#surfaces">Widgets &amp; appearance</option><option value="#privacy">Privacy &amp; security</option><option value="#permissions">Permissions</option><option value="#license">License &amp; media rights</option><option value="#build">Build from source</option><option value="#contribute">Contribute</option>
+    </select>
+    <main class="article" id="doc-content">
+      <section class="doc-section" id="overview" data-doc-section>
+        <p class="eyebrow">iTune for Android</p>
+        <h1>Music, with room to make it yours.</h1>
+        <p class="intro">iTune is an open-source Android music player built with Kotlin, Jetpack Compose, and Media3. It brings music discovery, synchronized lyrics, audio controls, offline library tools, radio, and a customizable player into one app.</p>
+        <div class="chips"><span class="chip">Android 7.0+</span><span class="chip">Kotlin</span><span class="chip">Jetpack Compose</span><span class="chip">Media3</span><span class="chip">MIT-licensed source</span></div>
+        <div class="callout"><strong>Availability depends on your device and services.</strong> Music catalogs, artwork, lyrics, radio, account connections, and audio processing rely on upstream providers, Android behavior, and compatible hardware. Use sources and downloads only for content you are authorized to access.</div>
+      </section>
+      <section class="doc-section" id="how-it-works" data-doc-section>
+        <p class="section-kicker">Architecture</p><h2>How the app works</h2>
+        <p>Jetpack Compose renders the screens. App state coordinates playback, settings, and the library, while Media3 handles core playback. Separate packages manage lyrics, downloads, audio effects, radio, backups, and Android surfaces such as notifications and widgets.</p>
+        <div class="inline-cards"><div class="info-card"><strong>App interface</strong><span>Home, search, library, artists, albums, player, queue, lyrics, account, and settings screens.</span></div><div class="info-card"><strong>Playback &amp; services</strong><span>Media3 playback state with app backends for music discovery, lyrics, caching, downloads, and integrations.</span></div></div>
+        <p>The project has an Android app module and a Kotlin/JVM Discord RPC module. The repository’s <a href="https://github.com/d0x-dev/iTune">source tree</a> shows the current package layout.</p>
+      </section>
+      <section class="doc-section" id="discover" data-doc-section>
+        <p class="section-kicker">Find something to play</p><h2>Discover &amp; search</h2>
+        <p>Search and browse supported songs, artists, albums, playlists, charts, moods, genres, and radio collections. Open artist or album pages to explore artwork, track lists, and related releases. Search types, content region, and language can be configured in settings.</p>
+        <ul><li>Browse catalog shelves and supported music collections.</li><li>Open artist and album details, then add or play tracks.</li><li>Import supported playlist links and use compatible share intents.</li><li>Keep search history locally, pause new history entries, or clear saved searches.</li></ul>
+        <p>Results and playback availability can change when an upstream catalog changes, rate-limits access, or is unavailable in a region.</p>
+      </section>
+      <section class="doc-section" id="player-lyrics" data-doc-section>
+        <p class="section-kicker">Playback &amp; words</p><h2>Player, queue &amp; lyrics</h2>
+        <p>The full-screen player presents artwork, track and artist details, playback progress, the active output route, queue tools, and lyrics. Queue tracks can be added, removed, reordered, or played directly.</p>
+        <h3>Timed lyrics and translation</h3><p>Lyrics can be searched through an ordered set of providers. When timing data is available, lines follow playback. Open the full lyrics view to follow more lines, adjust supported timing, translate through a configured provider, or share selected lines as a card.</p>
+        <h3>Playback behavior</h3><p>Playback settings include repeat, shuffle, crossfade, AutoMix, Afterglow, persistent shuffle, automatic skip after playback errors, and recurring sleep schedules. Availability and behavior may depend on the active source and current player state.</p>
+      </section>
+      <section class="doc-section" id="audio" data-doc-section>
+        <p class="section-kicker">Sound &amp; hardware</p><h2>Audio engine &amp; output</h2>
+        <p>Audio tools include the in-app equalizer and supported processing modes such as low-pass filtering, spatial/8D audio, normalization, and DJ processing. The app can show the active output route and offers USB/bit-perfect configuration for compatible devices.</p>
+        <ul><li>Effect availability depends on the current route and audio session.</li><li>Bluetooth codecs, vendor audio frameworks, USB DACs, and Android versions can limit or bypass processing.</li><li>Bit-perfect output requires a compatible device and output path; selecting an option cannot make unsupported hardware bit-perfect.</li><li>Pure-audio bypass can intentionally skip app processing.</li></ul>
+      </section>
+      <section class="doc-section" id="downloads-library" data-doc-section>
+        <p class="section-kicker">Your offline library</p><h2>Downloads, cache &amp; history</h2>
+        <p>Save available audio from supported song actions, choose a preferred quality, and receive progress and completion notifications. Playback caching can keep eligible tracks available offline, with configurable quality and storage limits.</p>
+        <ul><li>Choose Wi-Fi and cellular behavior and configure automatic downloads for supported liked or added tracks.</li><li>Manage favorites, playlists, listening history, and supported profile statistics.</li><li>Clear cached songs and temporary artwork or network-buffer data from settings.</li><li>Use offline mode to require a local copy when playing music.</li></ul>
+        <p>Download options depend on the upstream source and Android media-storage rules. Follow source terms and local copyright requirements.</p>
+      </section>
+      <section class="doc-section" id="connected" data-doc-section>
+        <p class="section-kicker">Optional connections</p><h2>Accounts, radio &amp; shared listening</h2>
+        <p>Sign-in and connected services are optional. Supported account features can sync selected library information; Last.fm can scrobble listening; Discord can show Rich Presence. iShare supports creating or joining listening sessions when network and connection modes permit.</p>
+        <div class="inline-cards"><div class="info-card"><strong>Radio</strong><span>Browse and search supported internet stations, choose a region, play stations, and save favorites.</span></div><div class="info-card"><strong>External accounts</strong><span>Connect only the services you choose. Their own availability and privacy terms apply.</span></div></div>
+        <p>Translation may use a provider endpoint, model, and API key configured by the user. Review that provider’s terms and any usage costs before enabling it.</p>
+      </section>
+      <section class="doc-section" id="surfaces" data-doc-section>
+        <p class="section-kicker">Make it feel personal</p><h2>Widgets, overlays &amp; appearance</h2>
+        <p>Appearance settings cover player presentation, artwork-driven color, app fonts, splash screen, animated cover art, haptics, and liquid-glass surfaces. The player can keep its own SF-style type regardless of the app font choice.</p>
+        <ul><li>Android home-screen widget with playback controls, favorite action, layout sizes, artwork options, and optional artwork blur.</li><li>Optional floating playback surface and Always-On Display player.</li><li>Android media notifications and lock-screen controls.</li><li>Dynamic or static player presentation and artwork-derived colors.</li></ul>
+      </section>
+      <section class="doc-section" id="privacy" data-doc-section>
+        <p class="section-kicker">Trust &amp; safety</p><h2>Privacy &amp; security</h2>
+        <p>Network features communicate with their selected providers. Account sessions, translation credentials, and backup files are sensitive. Only connect accounts and providers you trust, and avoid sharing logs or screenshots that expose tokens or personal data.</p>
+        <h3>Backups and credentials</h3><ul><li>Portable <code>.itune</code> backups are password-encrypted; the restore flow scans the chosen file and lets you select categories.</li><li>A password-protected backup cannot be restored without its password. Keep the password separate from the file.</li><li>Android Keystore-backed encryption is used for supported account secrets; platform support can vary.</li><li>Never commit signing keys, API tokens, cookies, account data, backups, or passwords to the repository.</li></ul>
+        <h3>Report a vulnerability privately</h3><p>Do not post suspected security issues publicly. Use <a href="https://github.com/d0x-dev/iTune/security/advisories/new">GitHub private vulnerability reporting</a> when available, or contact the maintainer privately through GitHub. Include sanitized reproduction details and remove secrets. The project makes a best effort to investigate; no fixed response deadline is promised.</p>
+        <p>Read the complete <a href="https://github.com/d0x-dev/iTune/blob/main/SECURITY.md">security policy</a>.</p>
+      </section>
+      <section class="doc-section" id="permissions" data-doc-section>
+        <p class="section-kicker">Android access</p><h2>Permissions &amp; why they exist</h2>
+        <p>Android permissions support specific app functions. Some are requested only when you use the associated feature; basic playback does not require every optional permission.</p>
+        <ul><li><strong>Network:</strong> music discovery, streams, artwork, lyrics, radio, account services, and release/news checks.</li><li><strong>Notifications and foreground playback:</strong> playback controls and ongoing downloads.</li><li><strong>Bluetooth connect:</strong> active Bluetooth output information when available.</li><li><strong>Microphone/audio capture:</strong> recognition or features that explicitly analyze input.</li><li><strong>System overlay:</strong> optional floating player surface.</li><li><strong>Audio settings and legacy storage:</strong> supported routing/effects and downloads on older Android versions.</li></ul>
+        <p>Android, the device vendor, and Android version determine the exact permission prompts and behavior.</p>
+      </section>
+      <section class="doc-section" id="license" data-doc-section>
+        <p class="section-kicker">Open source</p><h2>License, copyright &amp; media rights</h2>
+        <p>The original iTune source code and documentation are offered under the <strong>MIT License</strong>. You may use, modify, and redistribute the covered material subject to the license’s notice and disclaimer terms.</p>
+        <p>The MIT license does not grant rights to third-party songs, artwork, lyrics, service APIs, trademarks, or other external content. Those remain subject to their owners’ rights and service terms. Use music sources and save content only when authorized.</p>
+        <div class="doc-links"><a class="doc-button" href="https://github.com/d0x-dev/iTune/blob/main/LICENSE">Read MIT License</a><a class="doc-button" href="https://github.com/d0x-dev/iTune/blob/main/COPYRIGHT.md">Copyright notes</a><a class="doc-button" href="https://github.com/d0x-dev/iTune/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a></div>
+      </section>
+      <section class="doc-section" id="build" data-doc-section>
+        <p class="section-kicker">Developers</p><h2>Build iTune from source</h2>
+        <p>Use Android Studio, JDK 21, and the Android SDK platform and build tools requested by the project. The Gradle wrapper is included; use it instead of installing Gradle globally.</p>
+        <h3>Windows PowerShell</h3><code class="code-block">.\gradlew.bat :app:assembleDebug
+.\gradlew.bat :app:installDebug
+.\gradlew.bat :app:testDebugUnitTest</code>
+        <h3>Release build</h3><p>Release builds enable R8 and resource shrinking. Configure signing with a private keystore in local, untracked configuration or CI secrets. Never commit release signing material.</p>
+        <div class="doc-links"><a class="doc-button" href="https://github.com/d0x-dev/iTune">Browse source</a><a class="doc-button" href="https://github.com/d0x-dev/iTune/releases">Browse releases</a><a class="doc-button" href="https://github.com/d0x-dev/iTune/blob/main/README.md">Full README</a></div>
+      </section>
+      <section class="doc-section" id="contribute" data-doc-section>
+        <p class="section-kicker">Community</p><h2>Contribute</h2>
+        <p>Focused issues and pull requests help keep changes reviewable. Include the user-visible impact, Android version and device, relevant permissions or network requirements, and sanitized logs for platform-specific problems.</p>
+        <ul><li>Keep UI, playback, data, and platform work in their relevant packages.</li><li>Update documentation when behavior, setup, permissions, or limitations change.</li><li>Keep tokens, cookies, signing keys, local SDK paths, and personal account data out of commits.</li><li>Follow the repository’s Code of Conduct and contribution guide.</li></ul>
+        <div class="doc-links"><a class="doc-button" href="https://github.com/d0x-dev/iTune/blob/main/CONTRIBUTING.md">Contribution guide</a><a class="doc-button" href="https://github.com/d0x-dev/iTune/issues">Report an issue</a></div>
+      </section>
+      <p class="no-results" id="no-results">No documentation sections match that search.</p>
+    </main>
+    <aside class="right-toc" aria-label="On this page"><h2>On this page</h2><div id="page-toc"></div></aside>
+  </div>
+  <footer><div class="footer-inner"><span>iTune documentation · Open-source Android music player</span><span><a href="./downloads.html">Releases</a> · <a href="https://github.com/d0x-dev/iTune">GitHub</a> · <a href="https://github.com/d0x-dev/iTune/blob/main/SECURITY.md">Security</a></span></div></footer>
+  <script>
+    (() => {
+      const search = document.getElementById("doc-search");
+      const sections = [...document.querySelectorAll("[data-doc-section]")];
+      const links = [...document.querySelectorAll(".nav-link")];
+      const toc = document.getElementById("page-toc");
+      const noResults = document.getElementById("no-results");
+      const mobileJump = document.getElementById("mobile-jump");
+      const titles = sections.map((section) => ({ section, title: section.querySelector("h1,h2")?.textContent.trim() || section.id }));
+
+      function filter(query) {
+        const term = query.trim().toLowerCase();
+        let shown = 0;
+        for (const { section } of titles) {
+          const match = !term || section.textContent.toLowerCase().includes(term);
+          section.hidden = !match;
+          if (match) shown++;
+        }
+        for (const link of links) {
+          const section = document.querySelector(link.getAttribute("href"));
+          link.hidden = Boolean(term && (!section || section.hidden));
+        }
+        noResults.style.display = shown ? "none" : "block";
+      }
+
+      for (const { section, title } of titles) {
+        const link = document.createElement("a");
+        link.href = `#${section.id}`;
+        link.textContent = title;
+        toc.append(link);
+      }
+      search.addEventListener("input", () => filter(search.value));
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "/" && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { event.preventDefault(); search.focus(); }
+        if (event.key === "Escape" && document.activeElement === search) { search.value = ""; filter(""); search.blur(); }
+      });
+      mobileJump.addEventListener("change", () => { location.hash = mobileJump.value; });
+
+      const navObserver = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          for (const link of links) link.classList.toggle("active", link.hash === `#${entry.target.id}`);
+          for (const link of toc.querySelectorAll("a")) link.classList.toggle("active", link.hash === `#${entry.target.id}`);
+        }
+      }, { rootMargin: "-15% 0px -70% 0px" });
+      sections.forEach((section) => navObserver.observe(section));
+    })();
+  </script>
+</body>
+</html>
