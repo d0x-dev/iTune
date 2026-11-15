@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
@@ -31,7 +32,8 @@ class MusicRecognitionTrampolineActivity : ComponentActivity() {
     private val requestOverlayPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
-        if (Settings.canDrawOverlays(this)) {
+        val hasOverlay = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)
+        if (hasOverlay) {
             checkPermissionsAndLaunch()
         } else {
             Toast.makeText(this, "Display over other apps permission is required for the recognition popup", Toast.LENGTH_SHORT).show()
@@ -56,7 +58,7 @@ class MusicRecognitionTrampolineActivity : ComponentActivity() {
             return
         }
 
-        if (!Settings.canDrawOverlays(this)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             val intent = Intent(
                 Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                 Uri.parse("package:$packageName")

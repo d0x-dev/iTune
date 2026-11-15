@@ -69,6 +69,13 @@ object DynamicIslandForegroundTracker {
  * Reactive store & SharedPreferences persistence for Dynamic Island geometry, water-drop
  * elasticity physics, visual effects, and overlay service lifecycle.
  */
+fun canDrawOverlaysCompat(context: Context): Boolean =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        Settings.canDrawOverlays(context)
+    } else {
+        true
+    }
+
 object DynamicIslandStore {
     private const val PREFS = "itune_dynamic_island_prefs"
 
@@ -177,7 +184,7 @@ object DynamicIslandStore {
         ensureInit(context)
         val appCtx = context.applicationContext
         val cfg = _state.value
-        val canDraw = Settings.canDrawOverlays(appCtx)
+        val canDraw = canDrawOverlaysCompat(appCtx)
         val intent = Intent(appCtx, DynamicIslandService::class.java)
         runCatching {
             if (cfg.enabled && canDraw) {

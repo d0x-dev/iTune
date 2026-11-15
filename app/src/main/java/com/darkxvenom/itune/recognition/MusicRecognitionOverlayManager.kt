@@ -62,7 +62,8 @@ object MusicRecognitionOverlayManager {
     @SuppressLint("ClickableViewAccessibility")
     fun show(context: Context) {
         mainHandler.post {
-            if (!Settings.canDrawOverlays(context)) {
+            val canDraw = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) Settings.canDrawOverlays(context) else true
+            if (!canDraw) {
                 Log.w(TAG, "Cannot draw overlay: permission not granted")
                 return@post
             }

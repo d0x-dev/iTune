@@ -193,7 +193,7 @@ class DynamicIslandService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForegroundCompat()
         config = DynamicIslandStore.state.value
-        if (!config.enabled || !Settings.canDrawOverlays(this)) {
+        if (!config.enabled || !canDrawOverlaysCompat(this)) {
             stopSelf()
             return START_NOT_STICKY
         }
@@ -303,7 +303,7 @@ class DynamicIslandService : Service() {
     }
 
     private fun syncVisibilityAndContent() {
-        if (!config.enabled || !Settings.canDrawOverlays(this)) {
+        if (!config.enabled || !canDrawOverlaysCompat(this)) {
             hideIslandImmediate()
             return
         }

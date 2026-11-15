@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -138,13 +139,13 @@ fun DynamicIslandScreen(
     }
 
     val cfg by DynamicIslandStore.state.collectAsStateWithLifecycle()
-    var hasOverlayPermission by remember { mutableStateOf(Settings.canDrawOverlays(context)) }
+    var hasOverlayPermission by remember { mutableStateOf(Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context)) }
     var orientationTab by rememberSaveable { mutableIntStateOf(0) } // 0 = Portrait, 1 = Landscape
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                hasOverlayPermission = Settings.canDrawOverlays(context)
+                hasOverlayPermission = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context)
                 if (hasOverlayPermission && cfg.enabled) {
                     DynamicIslandStore.syncServiceState(context)
                 }
@@ -169,11 +170,20 @@ fun DynamicIslandScreen(
 
     val openOverlaySettings = {
         runCatching {
-            val intent = Intent(
-                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:${context.packageName}"),
-            ).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:${context.packageName}"),
+                ).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+            } else {
+                Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.parse("package:${context.packageName}")
+                ).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
             }
             context.startActivity(intent)
         }.onFailure {
@@ -280,7 +290,7 @@ fun DynamicIslandScreen(
                                 subtitle = "Show floating water-bubble player controller",
                                 checked = cfg.enabled && hasOverlayPermission,
                                 onCheckedChange = { wantEnable ->
-                                    if (wantEnable && !Settings.canDrawOverlays(context)) {
+                                    if (wantEnable && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
                                         haptics.play(Haptic.Tap)
                                         openOverlaySettings()
                                     } else {

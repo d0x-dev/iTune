@@ -475,7 +475,7 @@ fun AppleSettingsScreen(
             isCheckingForUpdate = isCheckingForUpdate,
             iShareSession = iShareSession,
             iShareIsLan = iShareMode == IShareConnectionMode.LAN,
-            dynamicIslandEnabled = dynamicIslandConfig.enabled && android.provider.Settings.canDrawOverlays(context),
+            dynamicIslandEnabled = dynamicIslandConfig.enabled && (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || android.provider.Settings.canDrawOverlays(context)),
             onOpenIShare = onOpenIShare,
             onOpenDynamicIsland = onOpenDynamicIsland,
             onOpenAudioEffect = { page -> activeAudioEffectPage = page },
