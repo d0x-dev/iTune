@@ -18,6 +18,7 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Immutable
 import androidx.core.content.ContextCompat
 import com.darkxvenom.itune.R
@@ -43,7 +44,7 @@ data class OutputDeviceEntry(
     @param:DrawableRes val iconRes: Int,
     val sampleRateLabel: String?,
     val batteryPercent: Int?,
-    val info: AudioDeviceInfo,
+    val info: AudioDeviceInfo? = null,
 )
 
 @Immutable
@@ -107,23 +108,46 @@ object AudioOutputManager {
     private val _state = MutableStateFlow(AudioOutputUiState())
     val state: StateFlow<AudioOutputUiState> = _state.asStateFlow()
 
-    private val deviceCallback = object : AudioDeviceCallback() {
-        override fun onAudioDevicesAdded(addedDevices: Array<out AudioDeviceInfo>?) {
-            refreshDevices()
+    private var deviceCallback: Any? = null
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private object Api23Helper {
+        fun createDeviceCallback(): AudioDeviceCallback {
+            return object : AudioDeviceCallback() {
+                override fun onAudioDevicesAdded(addedDevices: Array<out AudioDeviceInfo>?) {
+                    refreshDevices()
+                }
+
+                override fun onAudioDevicesRemoved(removedDevices: Array<out AudioDeviceInfo>?) {
+                    val currentPref = preferredDevice
+                    if (currentPref != null && removedDevices?.any { it.id == currentPref.id } == true) {
+                        preferredDevice = null
+                        onRouteDeviceChanged?.invoke(null)
+                    }
+                    val currentSec = dualSecondaryDevice
+                    if (currentSec != null && removedDevices?.any { it.id == currentSec.id } == true) {
+                        dualSecondaryDevice = null
+                        simultaneousProcessor?.setTargetDevice(null)
+                    }
+                    refreshDevices()
+                }
+            }
         }
 
-        override fun onAudioDevicesRemoved(removedDevices: Array<out AudioDeviceInfo>?) {
-            val currentPref = preferredDevice
-            if (currentPref != null && removedDevices?.any { it.id == currentPref.id } == true) {
-                preferredDevice = null
-                onRouteDeviceChanged?.invoke(null)
+        fun register(mgr: AudioManager, callback: Any?, handler: Handler) {
+            (callback as? AudioDeviceCallback)?.let {
+                runCatching { mgr.registerAudioDeviceCallback(it, handler) }
             }
-            val currentSec = dualSecondaryDevice
-            if (currentSec != null && removedDevices?.any { it.id == currentSec.id } == true) {
-                dualSecondaryDevice = null
-                simultaneousProcessor?.setTargetDevice(null)
+        }
+
+        fun unregister(mgr: AudioManager, callback: Any?) {
+            (callback as? AudioDeviceCallback)?.let {
+                runCatching { mgr.unregisterAudioDeviceCallback(it) }
             }
-            refreshDevices()
+        }
+
+        fun getOutputDevices(mgr: AudioManager): List<AudioDeviceInfo> {
+            return mgr.getDevices(AudioManager.GET_DEVICES_OUTPUTS).toList()
         }
     }
 
@@ -159,9 +183,10 @@ object AudioOutputManager {
             usbBitPerfect?.setEnabled(savedBitPerfect)
         }
 
-        if (mgr != null && !callbackRegistered) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mgr != null && !callbackRegistered) {
             callbackRegistered = true
-            runCatching { mgr.registerAudioDeviceCallback(deviceCallback, mainHandler) }
+            val cb = deviceCallback ?: Api23Helper.createDeviceCallback().also { deviceCallback = it }
+            Api23Helper.register(mgr, cb, mainHandler)
         }
 
         refreshDevices()
@@ -171,6 +196,34 @@ object AudioOutputManager {
         val ctx = appContext ?: return
         val mgr = audioManager ?: return
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            val fallbackEntry = OutputDeviceEntry(
+                id = 0,
+                name = "Phone Speaker / Headset",
+                subtitle = "System Default Output",
+                category = AudioDeviceCategory.BUILTIN_SPEAKER,
+                iconRes = R.drawable.ic_output_speaker,
+                sampleRateLabel = null,
+                batteryPercent = null,
+                info = null
+            )
+            _state.value = AudioOutputUiState(
+                devices = listOf(fallbackEntry),
+                preferredDeviceId = 0,
+                activeDevice = fallbackEntry,
+                capsuleIconRes = R.drawable.ic_output_speaker,
+                activeSummary = "Phone Speaker",
+                dualAudioEnabled = false,
+                dualSecondaryDeviceId = null,
+                dualSecondaryVolume = 1.0f,
+                bitPerfectEnabled = false,
+                bitPerfectActive = false,
+                usbDevicePresent = false,
+                hasBluetoothPermission = true,
+            )
+            return
+        }
+
         val hasBtPerm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             ContextCompat.checkSelfPermission(ctx, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
         } else {
@@ -178,7 +231,7 @@ object AudioOutputManager {
         }
 
         val btBatteries = if (hasBtPerm) queryBondedBatteryMap(ctx) else emptyMap()
-        val rawDevices = mgr.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+        val rawDevices = Api23Helper.getOutputDevices(mgr)
             .filter { isSupportedOutputDevice(it) }
             .distinctBy { "${it.type}_${it.productName}_${it.addressCompat()}" }
             .sortedBy { sortPriority(it) }
@@ -197,7 +250,7 @@ object AudioOutputManager {
 
         // Sync USB DAC bit-perfect target
         val usbDeviceInfo = entries.firstOrNull {
-            it.info.type == AudioDeviceInfo.TYPE_USB_DEVICE || it.info.type == AudioDeviceInfo.TYPE_USB_HEADSET
+            it.info?.type == AudioDeviceInfo.TYPE_USB_DEVICE || it.info?.type == AudioDeviceInfo.TYPE_USB_HEADSET
         }?.info
         usbBitPerfect?.setDevice(usbDeviceInfo)
 
@@ -298,9 +351,11 @@ object AudioOutputManager {
 
     fun release() {
         val mgr = audioManager
-        if (mgr != null && callbackRegistered) {
-            runCatching { mgr.unregisterAudioDeviceCallback(deviceCallback) }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mgr != null && callbackRegistered) {
+            val cb = deviceCallback
+            if (cb != null) Api23Helper.unregister(mgr, cb)
         }
+        deviceCallback = null
         callbackRegistered = false
         usbBitPerfect?.clear()
         usbBitPerfect = null

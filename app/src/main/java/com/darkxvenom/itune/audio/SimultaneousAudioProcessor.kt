@@ -95,6 +95,10 @@ class SimultaneousAudioProcessor(
     }
 
     fun setEnabled(isEnabled: Boolean) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            enabled = false
+            return
+        }
         if (enabled == isEnabled) return
         enabled = isEnabled
         synchronized(trackLock) {
@@ -141,6 +145,7 @@ class SimultaneousAudioProcessor(
 
     private fun recreateSecondaryTrackLocked() {
         releaseTrackLocked()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
         if (!enabled || sampleRate <= 0) return
 
         runCatching {
@@ -202,6 +207,7 @@ class SimultaneousAudioProcessor(
     }
 
     private fun getSpeakerDevice(): AudioDeviceInfo? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return null
         val mgr = audioManager ?: return null
         return mgr.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
             .firstOrNull { it.type == AudioDeviceInfo.TYPE_BUILTIN_SPEAKER }
