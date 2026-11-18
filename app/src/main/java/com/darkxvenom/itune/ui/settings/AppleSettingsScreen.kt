@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.ui.settings
 
 import android.Manifest
@@ -159,6 +170,7 @@ import com.darkxvenom.itune.ui.library.LibraryCrimsonAccent
 import com.darkxvenom.itune.ui.library.LibraryFilterBar
 import com.darkxvenom.itune.ui.library.LibraryGlassEmptyCard
 import com.darkxvenom.itune.ui.player.EnginePopupPage
+import com.darkxvenom.itune.ui.spotify.SpotifyIntegrationScreen
 import com.darkxvenom.itune.ui.theme.LocalAppFontFamily
 import com.darkxvenom.itune.ui.theme.AppleMusicRed
 import com.darkxvenom.itune.ui.theme.AppFont
@@ -341,8 +353,12 @@ fun AppleSettingsScreen(
     var showProxySettingsDialog by remember { mutableStateOf(false) }
     var showAodSettings by rememberSaveable { mutableStateOf(false) }
     var showWidgetSettings by rememberSaveable { mutableStateOf(false) }
+    var showSpotifyIntegration by rememberSaveable { mutableStateOf(false) }
 
-    BackHandler(enabled = showAodSettings && !showLyricsSettings && !showDeveloperNews && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
+    BackHandler(enabled = showSpotifyIntegration && !showLyricsSettings && !showDeveloperNews && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
+        showSpotifyIntegration = false
+    }
+    BackHandler(enabled = showAodSettings && !showSpotifyIntegration && !showLyricsSettings && !showDeveloperNews && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
         showAodSettings = false
     }
     BackHandler(enabled = showWidgetSettings && !showLyricsSettings && !showDeveloperNews && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
@@ -520,6 +536,7 @@ fun AppleSettingsScreen(
             onOpenProxySettings = { showProxySettingsDialog = true },
             onOpenAodSettings = { showAodSettings = true },
             onOpenWidgetSettings = { showWidgetSettings = true },
+            onOpenSpotifyIntegration = { showSpotifyIntegration = true },
         )
     }
 
@@ -839,6 +856,10 @@ fun AppleSettingsScreen(
                         hasMiniPlayer = hasMiniPlayer,
                         onBack = { showProfileAccount = false },
                         onOpenAvatarPopup = onAccountClick,
+                        onOpenSpotify = {
+                            showProfileAccount = false
+                            showSpotifyIntegration = true
+                        },
                     )
                 }
 
@@ -850,6 +871,17 @@ fun AppleSettingsScreen(
                     LyricsSettingsScreen(
                         hasMiniPlayer = hasMiniPlayer,
                         onBack = { showLyricsSettings = false },
+                    )
+                }
+
+                AnimatedVisibility(
+                    visible = showSpotifyIntegration,
+                    enter = fadeIn(tween(200)) + slideInHorizontally(tween(260)) { it / 8 },
+                    exit = fadeOut(tween(180)) + slideOutHorizontally(tween(220)) { it / 8 },
+                ) {
+                    SpotifyIntegrationScreen(
+                        hasMiniPlayer = hasMiniPlayer,
+                        onBack = { showSpotifyIntegration = false },
                     )
                 }
 
@@ -1392,7 +1424,7 @@ private fun SettingsEntryRow(
             Image(
                 painter = painterResource(id = entry.iconRes),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                colorFilter = if (entry.iconRes == R.drawable.ic_spotify) null else ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.size(21.dp),
             )
@@ -1658,6 +1690,7 @@ fun AppleSegmentedSwitch(
         }
     }
 }
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 @Composable
 private fun SettingsOptionPickerDialog(
@@ -2489,6 +2522,7 @@ private fun buildSettingsSections(
     onOpenProxySettings: () -> Unit,
     onOpenAodSettings: () -> Unit,
     onOpenWidgetSettings: () -> Unit,
+    onOpenSpotifyIntegration: () -> Unit,
 ): List<SettingsSection> {
     val effectsDisabled = audioEngine.bypassAllEffects || (audioEngine.bitPerfectEnabled && bitPerfectActive)
     return listOf(
@@ -2911,11 +2945,60 @@ private fun buildSettingsSections(
             SettingsEntry.Toggle(
                 id = "animated_artwork",
                 title = "Animated Cover Art",
-                subtitle = "Motion canvas on artist & album views",
+                subtitle = "Spotify Canvas, Apple Music, Tidal & Community motion covers",
                 iconRes = R.drawable.ic_settings_animated_art,
-                keywords = listOf("motion", "canvas", "video", "cover", "artwork", "animation"),
+                keywords = listOf("motion", "canvas", "video", "cover", "artwork", "animation", "spotify", "apple", "tidal"),
                 checked = state.animatedArtwork,
                 onToggle = { onToggleBool(SettingsStore.KEY_ANIMATED_ARTWORK, it) },
+            ),
+            SettingsEntry.Action(
+                id = "spotify_integration",
+                title = "Spotify & Canvas Setup",
+                subtitle = if (state.spotifySpdcToken.isNotBlank()) {
+                    "Connected • Canvas, Playlists & Import"
+                } else {
+                    "Sign in to Spotify for Canvas, playlists & import"
+                },
+                iconRes = R.drawable.ic_spotify,
+                keywords = listOf("spotify", "canvas", "sp_dc", "token", "playlist", "import", "motion", "video"),
+                trailingValue = if (state.spotifySpdcToken.isNotBlank()) "Connected" else "Set Up",
+                onAction = onOpenSpotifyIntegration,
+            ),
+            SettingsEntry.Toggle(
+                id = "canvas_auto_hide",
+                title = "Auto-Hide Canvas Controls",
+                subtitle = "Minimize controls after 5s while Canvas plays (tap Canvas to toggle)",
+                iconRes = R.drawable.ic_settings_animated_art,
+                keywords = listOf("canvas", "spotify", "auto", "hide", "minimize", "controls", "player"),
+                checked = state.spotifyCanvasAutoHide,
+                onToggle = { onToggleBool(SettingsStore.KEY_SPOTIFY_CANVAS_AUTO_HIDE, it) },
+            ),
+            SettingsEntry.Toggle(
+                id = "show_synced_lyrics_over_canvas",
+                title = "Show Synced Lyrics Over Canvas",
+                subtitle = "Display animated synced lyrics above the song name when Canvas controls hide",
+                iconRes = R.drawable.lyrics,
+                keywords = listOf("canvas", "synced", "lyrics", "kinetic", "overlay", "words", "animation"),
+                checked = state.showSyncedLyricsOverCanvas,
+                onToggle = { onToggleBool(SettingsStore.KEY_SHOW_SYNCED_LYRICS_OVER_CANVAS, it) },
+            ),
+            SettingsEntry.Toggle(
+                id = "prioritize_spotify_canvas",
+                title = "Prioritize Spotify Canvas",
+                subtitle = "Try Spotify Canvas before Apple Music, Tidal & Community",
+                iconRes = R.drawable.ic_spotify,
+                keywords = listOf("spotify", "canvas", "priority", "first", "apple", "tidal"),
+                checked = state.prioritizeSpotifyCanvas,
+                onToggle = { onToggleBool(SettingsStore.KEY_PRIORITIZE_SPOTIFY_CANVAS, it) },
+            ),
+            SettingsEntry.Toggle(
+                id = "canvas_over_cellular",
+                title = "Play Animated Cover Over Cellular",
+                subtitle = "Allow looping Canvas videos over mobile data",
+                iconRes = R.drawable.ic_settings_animated_art,
+                keywords = listOf("canvas", "cellular", "mobile", "data", "video", "cover"),
+                checked = state.canvasOverCellular,
+                onToggle = { onToggleBool(SettingsStore.KEY_CANVAS_OVER_CELLULAR, it) },
             ),
             SettingsEntry.SegmentedToggle(
                 id = "player_type",
