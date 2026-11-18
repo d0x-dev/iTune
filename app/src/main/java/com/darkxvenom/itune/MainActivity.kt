@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune
 
 import android.os.Bundle
@@ -26,8 +37,11 @@ import com.darkxvenom.itune.backend.MusicBackend
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
+import com.darkxvenom.itune.data.canvas.SpotifyToken
 import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.lastfm.LastFmIntegration
+import com.darkxvenom.itune.data.spotify.SpotifyLibrary
+import com.darkxvenom.itune.data.spotify.SpotifyPlaylistAutoSyncManager
 import com.darkxvenom.itune.data.news.DeveloperNewsManager
 import com.darkxvenom.itune.data.updates.AppUpdateManager
 import com.darkxvenom.itune.data.repository.AvatarManager
@@ -55,6 +69,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         AvatarManager.init(this)
         SettingsStore.ensureInit(this)
+        SpotifyToken.init(this)
+        SpotifyLibrary.auth = SpotifyLibrary.Auth {
+            SpotifyToken.accessToken()?.let { SpotifyLibrary.Tokens(it, SpotifyToken.clientToken()) }
+        }
         LastFmIntegration.initialize(this)
         handleLastFmCallback(intent)
         AutoSleepTimerManager.start(this)
@@ -260,6 +278,8 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         DynamicIslandForegroundTracker.setForeground(true)
         AppleVolumeManager.setForeground(true)
+        SpotifyPlaylistAutoSyncManager.launchSyncOnAppOpen(this)
+        com.darkxvenom.itune.data.spotify.SpotifyLibrarySyncManager.launchSync(this)
     }
 
     override fun onResume() {
@@ -296,6 +316,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
