@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.ui.artist
 
 import android.os.Build
@@ -124,6 +135,7 @@ import com.darkxvenom.itune.data.artist.ArtistSignature
 import com.darkxvenom.itune.data.artist.ArtistSignatureRepository
 import com.darkxvenom.itune.data.artist.ArtistStateStore
 import com.darkxvenom.itune.data.artist.CanvasArtwork
+import com.darkxvenom.itune.data.canvas.CanvasRepository
 import com.darkxvenom.itune.data.artist.SignatureInkTransformation
 import com.darkxvenom.itune.data.artist.appleCatalogue
 import com.darkxvenom.itune.data.artist.keyColors
@@ -344,10 +356,26 @@ fun ITubeDetailScreen(
     val downloadedTint = palette.accent
 
     val artistVideo = appleArt?.videoUrl
+    val detailContext = LocalContext.current
+    val detailSettings by com.darkxvenom.itune.data.library.SettingsStore.state.collectAsStateWithLifecycle()
+    val canvasOverCellular = detailSettings.canvasOverCellular
+    val prioritizeSpotifyCanvas = detailSettings.prioritizeSpotifyCanvas
     var canvas by remember(page.browseId) { mutableStateOf<CanvasArtwork?>(null) }
-    LaunchedEffect(isArtist, artistVideo, animatedCanvasEnabled) {
+    LaunchedEffect(isArtist, artistVideo, animatedCanvasEnabled, canvasOverCellular, prioritizeSpotifyCanvas, page.title, page.subtitle) {
+        if (!animatedCanvasEnabled) {
+            canvas = null
+            return@LaunchedEffect
+        }
+        val cm = detailContext.getSystemService(android.content.Context.CONNECTIVITY_SERVICE) as? android.net.ConnectivityManager
+        val metered = cm?.isActiveNetworkMetered == true
+        if (metered && !canvasOverCellular) {
+            canvas = null
+            return@LaunchedEffect
+        }
         if (isArtist) {
-            canvas = artistVideo?.takeIf { animatedCanvasEnabled }?.let { CanvasArtwork(url = it) }
+            canvas = artistVideo?.let { CanvasArtwork(url = it) }
+        } else if (page.type == BrowseType.ALBUM) {
+            canvas = CanvasRepository.canvasForAlbum(page.title, page.subtitle)
         }
     }
 
@@ -998,6 +1026,7 @@ private fun List<Song>.useTrackTags(): Boolean {
     val numbered = count { (it.trackNumber ?: 0) > 0 }
     return numbered > 0 && numbered >= size / 2
 }
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 @Composable
 private fun ArtistHeader(
