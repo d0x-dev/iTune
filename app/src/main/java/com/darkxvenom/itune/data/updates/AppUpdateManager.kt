@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.data.updates
 
 import android.content.Context
@@ -47,6 +58,7 @@ sealed interface UpdateDownloadState {
     data class Completed(val apkFile: File) : UpdateDownloadState
     data class Failed(val message: String) : UpdateDownloadState
 }
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 object AppUpdateManager {
     private const val RELEASE_URL = "https://api.github.com/repos/d0x-dev/itune/releases/latest"
