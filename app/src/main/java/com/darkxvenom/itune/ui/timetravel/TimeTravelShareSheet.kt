@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.ui.timetravel
 
 import android.content.ContentValues
@@ -246,6 +257,7 @@ fun TimeTravelShareSheet(
         }
     }
 }
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 private suspend fun shareBitmap(context: Context, bitmap: Bitmap, periodLabel: String) = withContext(Dispatchers.IO) {
     try {
@@ -303,7 +315,7 @@ private suspend fun saveBitmapToGallery(context: Context, bitmap: Bitmap, title:
 }
 
 /**
- * Renders high-quality 1080x1920 poster matching BitChord's poster layout.
+ * Renders high-quality 1080x1920 poster for iTune's Time Travel share card.
  */
 suspend fun renderReplayPoster(
     context: Context,

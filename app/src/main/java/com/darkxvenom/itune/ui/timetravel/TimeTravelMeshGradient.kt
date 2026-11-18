@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.ui.timetravel
 
 import android.content.Context
@@ -58,7 +69,7 @@ val FallbackMeshColors = listOf(
 data class MeshPalette(val colors: List<Color>)
 
 /**
- * The Apple Music / BitChord backdrop: four luminous colour blobs sampled
+ * The luminous Time Travel backdrop: four luminous colour blobs sampled
  * from album art, drawn as soft radial gradients and blurred into a mesh.
  */
 @Composable
@@ -183,6 +194,7 @@ fun rememberArtworkColors(imageUrl: String?): MeshPalette {
     }
     return palette
 }
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 private fun paletteFromBitmap(bitmap: Bitmap): List<Color> {
     val p = Palette.from(bitmap).maximumColorCount(24).generate()

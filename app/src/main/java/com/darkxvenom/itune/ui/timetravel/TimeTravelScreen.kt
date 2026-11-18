@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.ui.timetravel
 
 import androidx.compose.animation.animateColorAsState
@@ -112,7 +123,7 @@ fun TimeTravelScreen(
             .fillMaxSize()
             .background(AppleOledBlack),
     ) {
-        // 1. BitChord Mesh Backdrop
+        // 1. Time Travel Mesh Backdrop
         MeshGradientBackground(
             palette = palette,
             trackKey = leadArtwork,
@@ -413,7 +424,7 @@ private fun HeadingSection(
         )
         Spacer(Modifier.height(14.dp))
 
-        // BitChord 4-Segment Period Picker
+        // Time Travel 4-Segment Period Picker
         PeriodPicker(
             selected = period,
             onSelect = onPeriodSelect,
@@ -421,6 +432,7 @@ private fun HeadingSection(
         Spacer(Modifier.height(18.dp))
     }
 }
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 @Composable
 private fun PeriodPicker(
