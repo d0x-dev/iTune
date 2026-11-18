@@ -1,6 +1,20 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.ui.library
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -10,6 +24,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -41,6 +56,9 @@ import androidx.compose.material.icons.automirrored.rounded.QueueMusic
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.PhoneAndroid
+import androidx.compose.material.icons.rounded.Public
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -65,6 +83,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -74,12 +93,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.darkxvenom.itune.R
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.auth.PlaylistStorageTarget
 import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.library.SavedSongMetadata
+import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.library.UserPlaylist
+import com.darkxvenom.itune.data.spotify.SpotifyLibrarySyncManager
 import com.darkxvenom.itune.data.model.CARD_ART_PX
 import com.darkxvenom.itune.data.model.ROW_ART_PX
 import com.darkxvenom.itune.data.model.Song
@@ -281,6 +303,89 @@ internal fun rememberResolvedPayloadSongs(payload: PendingPlaylistPayload?): Pai
     return resolved to loading
 }
 
+/**
+ * Corner source badge rendered on playlist cards & list rows:
+ * - YouTube Music / Google Account -> Google G logo
+ * - Spotify Account -> Untinted Spotify logo
+ * - Local Device -> Local device icon
+ */
+@Composable
+fun PlaylistSourceCornerBadge(
+    isGoogleAccount: Boolean,
+    isSpotifyAccount: Boolean,
+    modifier: Modifier = Modifier,
+    badgeSize: Dp = 22.dp,
+) {
+    when {
+        isGoogleAccount -> {
+            Box(
+                modifier = modifier
+                    .size(badgeSize)
+                    .clip(CircleShape)
+                    .background(Color.White),
+                contentAlignment = Alignment.Center,
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_google_logo),
+                    contentDescription = "Google Account Playlist",
+                    modifier = Modifier.size(badgeSize * 0.64f),
+                )
+            }
+        }
+        isSpotifyAccount -> {
+            Box(
+                modifier = modifier
+                    .size(badgeSize)
+                    .clip(CircleShape)
+                    .background(Color(0xDD0E0E12)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_spotify),
+                    contentDescription = "Spotify Playlist",
+                    modifier = Modifier.size(badgeSize * 0.86f),
+                )
+            }
+        }
+        else -> {
+            Box(
+                modifier = modifier
+                    .size(badgeSize)
+                    .clip(CircleShape)
+                    .background(Color(0xCC18181E))
+                    .border(0.7.dp, Color.White.copy(alpha = 0.24f), CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.PhoneAndroid,
+                    contentDescription = "Local Playlist",
+                    tint = Color.White,
+                    modifier = Modifier.size(badgeSize * 0.58f),
+                )
+            }
+        }
+    }
+}
+
+fun copyPlaylistShareLink(context: Context, playlistName: String, url: String) {
+    val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+    cm?.setPrimaryClip(ClipData.newPlainText(playlistName, url))
+}
+
+fun sharePlaylistLink(context: Context, playlistName: String, url: String) {
+    val sendIntent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_SUBJECT, playlistName)
+        putExtra(Intent.EXTRA_TEXT, url)
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    runCatching {
+        context.startActivity(Intent.createChooser(sendIntent, "Share \"$playlistName\"").apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        })
+    }
+}
+
 private suspend fun resolveAndAddToPlaylist(
     context: Context,
     target: UserPlaylist,
@@ -298,19 +403,25 @@ private suspend fun resolveAndAddToPlaylist(
     }
     return try {
         val added = YouTubeLibrarySyncManager.addSongsToPlaylist(context, target.id, songs)
+        val suffix = if (target.isSpotifyAccount) " (Spotify)" else ""
         val msg = when {
             added == 0 -> "Already in \"${target.name}\""
-            added == 1 -> "Added to \"${target.name}\""
-            else -> "Added $added songs to \"${target.name}\""
+            added == 1 -> "Added to \"${target.name}\"$suffix"
+            else -> "Added $added songs to \"${target.name}\"$suffix"
         }
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
         true
     } catch (e: CancellationException) {
         throw e
     } catch (e: Throwable) {
+        val fallback = if (target.isSpotifyAccount) {
+            "Could not add to Spotify playlist"
+        } else {
+            "Could not update playlist on YouTube Music"
+        }
         Toast.makeText(
             context,
-            e.message ?: "Could not update playlist on YouTube Music",
+            e.message ?: fallback,
             Toast.LENGTH_LONG,
         ).show()
         false
@@ -321,6 +432,7 @@ private suspend fun resolveAndCreatePlaylist(
     context: Context,
     name: String,
     target: PlaylistStorageTarget,
+    isPublic: Boolean,
     payload: PendingPlaylistPayload?,
     preloadedSongs: List<SavedSongMetadata>,
 ): UserPlaylist {
@@ -331,16 +443,32 @@ private suspend fun resolveAndCreatePlaylist(
     } else {
         payload.lazyLoader.invoke()
     }
-    val created = YouTubeLibrarySyncManager.createPlaylist(context, name, target, songs)
-    val where = if (created.isGoogleAccount) " on YouTube Music" else " locally"
-    val msg = if (songs.isEmpty()) {
-        "Created \"${created.name}\"$where"
-    } else if (songs.size == 1) {
-        "Created \"${created.name}\"$where & added track"
-    } else {
-        "Created \"${created.name}\"$where (${songs.size} songs)"
+    val created = YouTubeLibrarySyncManager.createPlaylist(
+        context = context,
+        name = name,
+        target = target,
+        initialSongs = songs,
+        isPublic = isPublic,
+    )
+    val visibility = if (isPublic) "Public" else "Private"
+    val where = when {
+        created.isSpotifyAccount -> " on Spotify ($visibility)"
+        created.isGoogleAccount -> " on YouTube Music ($visibility)"
+        else -> " locally"
     }
-    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+    val shareLink = created.shareUrl
+    if (isPublic && !shareLink.isNullOrBlank()) {
+        copyPlaylistShareLink(context, created.name, shareLink)
+    }
+    val linkNote = if (isPublic && !shareLink.isNullOrBlank()) " • Share link copied" else ""
+    val msg = if (songs.isEmpty()) {
+        "Created \"${created.name}\"$where$linkNote"
+    } else if (songs.size == 1) {
+        "Created \"${created.name}\"$where & added track$linkNote"
+    } else {
+        "Created \"${created.name}\"$where (${songs.size} songs)$linkNote"
+    }
+    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
     return created
 }
 
@@ -432,7 +560,10 @@ fun IosAddToPlaylistMenuView(
     val scope = rememberCoroutineScope()
     val colors = iosMenuColors()
     val accent = MaterialTheme.colorScheme.primary
-    LaunchedEffect(Unit) { LibraryStore.ensureInit(context) }
+    LaunchedEffect(Unit) {
+        LibraryStore.ensureInit(context)
+        SpotifyLibrarySyncManager.launchSync(context)
+    }
     val userPlaylists by LibraryStore.userPlaylists.collectAsStateWithLifecycle()
     val (resolvedSongs, loading) = rememberResolvedPayloadSongs(payload)
     var busy by remember(payload) { mutableStateOf(false) }
@@ -521,11 +652,21 @@ fun IosAddToPlaylistMenuView(
                         .padding(horizontal = 10.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    PlaylistCollageAvatar(
-                        artworkUrls = pl.artworkUrls,
-                        size = 38.dp,
-                        cornerRadius = 9.dp,
-                    )
+                    Box(Modifier.size(38.dp)) {
+                        PlaylistCollageAvatar(
+                            artworkUrls = pl.artworkUrls,
+                            size = 38.dp,
+                            cornerRadius = 9.dp,
+                        )
+                        PlaylistSourceCornerBadge(
+                            isGoogleAccount = pl.isGoogleAccount,
+                            isSpotifyAccount = pl.isSpotifyAccount,
+                            badgeSize = 16.dp,
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(1.dp),
+                        )
+                    }
                     Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f)) {
                         Text(
@@ -537,8 +678,16 @@ fun IosAddToPlaylistMenuView(
                             overflow = TextOverflow.Ellipsis,
                         )
                         val meta = buildString {
-                            append(if (pl.songs.size == 1) "1 song" else "${pl.songs.size} songs")
-                            if (pl.isGoogleAccount) append(" • Google Account")
+                            if (pl.isSpotifyAccount && pl.songs.isEmpty()) {
+                                append("Spotify")
+                            } else {
+                                append(if (pl.songs.size == 1) "1 song" else "${pl.songs.size} songs")
+                                when {
+                                    pl.isGoogleAccount -> append(" • Google Account")
+                                    pl.isSpotifyAccount -> append(" • Spotify")
+                                    else -> append(" • Local")
+                                }
+                            }
                         }
                         Text(
                             text = meta,
@@ -587,20 +736,27 @@ fun IosCreatePlaylistMenuView(
     val (resolvedSongs, loading) = rememberResolvedPayloadSongs(payload)
 
     val ytAccount by GoogleAuthStore.state.collectAsStateWithLifecycle()
+    val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
+    val isSpotifySignedIn = settingsState.spotifySpdcToken.isNotBlank()
     var nameInput by remember(renameTarget, payload) {
         mutableStateOf(renameTarget?.name.orEmpty())
     }
-    var storageTarget by remember(renameTarget, ytAccount.isSignedIn) {
+    var storageTarget by remember(renameTarget, ytAccount.isSignedIn, isSpotifySignedIn) {
         mutableStateOf(
-            if (ytAccount.isSignedIn) PlaylistStorageTarget.GOOGLE_ACCOUNT
-            else PlaylistStorageTarget.LOCAL,
+            when {
+                ytAccount.isSignedIn -> PlaylistStorageTarget.GOOGLE_ACCOUNT
+                isSpotifySignedIn -> PlaylistStorageTarget.SPOTIFY_ACCOUNT
+                else -> PlaylistStorageTarget.LOCAL
+            },
         )
     }
+    var isPublicPlaylist by remember(renameTarget) { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
         GoogleAuthStore.ensureInit(context)
+        SettingsStore.ensureInit(context)
         focusRequester.requestFocus()
     }
 
@@ -642,7 +798,14 @@ fun IosCreatePlaylistMenuView(
         busy = true
         scope.launch {
             try {
-                val created = resolveAndCreatePlaylist(context, clean, storageTarget, payload, resolvedSongs)
+                val created = resolveAndCreatePlaylist(
+                    context = context,
+                    name = clean,
+                    target = storageTarget,
+                    isPublic = isPublicPlaylist,
+                    payload = payload,
+                    preloadedSongs = resolvedSongs,
+                )
                 onDone(created)
             } catch (e: CancellationException) {
                 throw e
@@ -768,21 +931,45 @@ fun IosCreatePlaylistMenuView(
             }
         }
 
-        if (renameTarget == null && ytAccount.isSignedIn) {
+        if (renameTarget == null && (ytAccount.isSignedIn || isSpotifySignedIn)) {
             PlaylistTargetSelectorRow(
                 selected = storageTarget,
+                showGoogle = ytAccount.isSignedIn,
+                showSpotify = isSpotifySignedIn,
                 onSelect = { storageTarget = it },
                 labelColor = colors.label,
                 secondaryColor = colors.secondaryLabel,
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
             )
+            if (storageTarget == PlaylistStorageTarget.GOOGLE_ACCOUNT ||
+                storageTarget == PlaylistStorageTarget.SPOTIFY_ACCOUNT
+            ) {
+                PlaylistPrivacySelectorRow(
+                    isPublic = isPublicPlaylist,
+                    accentColor = if (storageTarget == PlaylistStorageTarget.SPOTIFY_ACCOUNT) Color(0xFF1DB954) else LibraryCrimsonAccent,
+                    onSelectPublic = { isPublicPlaylist = it },
+                    labelColor = colors.label,
+                    secondaryColor = colors.secondaryLabel,
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
+                )
+            }
         }
 
         Text(
             text = when {
                 renameTarget != null -> "Updates playlist title across Library."
+                storageTarget == PlaylistStorageTarget.SPOTIFY_ACCOUNT && isSpotifySignedIn ->
+                    if (isPublicPlaylist) {
+                        "Creates a public Spotify playlist and copies its share link automatically."
+                    } else {
+                        "Creates a private Spotify playlist and syncs with your Spotify account."
+                    }
                 storageTarget == PlaylistStorageTarget.GOOGLE_ACCOUNT && ytAccount.isSignedIn ->
-                    "Creates on your Google / YouTube Music account and syncs in real time."
+                    if (isPublicPlaylist) {
+                        "Creates a public YouTube Music playlist and copies its share link."
+                    } else {
+                        "Creates a private playlist on your Google / YouTube Music account."
+                    }
                 payload != null -> "Saves locally on this device."
                 else -> "Creates an empty local playlist in Library."
             },
@@ -792,10 +979,13 @@ fun IosCreatePlaylistMenuView(
         )
     }
 }
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 @Composable
 private fun PlaylistTargetSelectorRow(
     selected: PlaylistStorageTarget,
+    showGoogle: Boolean,
+    showSpotify: Boolean,
     onSelect: (PlaylistStorageTarget) -> Unit,
     labelColor: Color,
     secondaryColor: Color,
@@ -809,28 +999,110 @@ private fun PlaylistTargetSelectorRow(
             .padding(3.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        val options = listOf(
-            PlaylistStorageTarget.LOCAL to "Create Locally",
-            PlaylistStorageTarget.GOOGLE_ACCOUNT to "Google Account",
-        )
+        val options = buildList {
+            add(PlaylistStorageTarget.LOCAL to "Local")
+            if (showGoogle) add(PlaylistStorageTarget.GOOGLE_ACCOUNT to "YouTube")
+            if (showSpotify) add(PlaylistStorageTarget.SPOTIFY_ACCOUNT to "Spotify")
+        }
         options.forEach { (option, title) ->
             val isSelected = selected == option
-            Box(
+            val selectedBg = if (option == PlaylistStorageTarget.SPOTIFY_ACCOUNT) Color(0xFF1DB954) else LibraryCrimsonAccent
+            Row(
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(if (isSelected) LibraryCrimsonAccent else Color.Transparent)
+                    .background(if (isSelected) selectedBg else Color.Transparent)
                     .clickable { onSelect(option) }
-                    .padding(vertical = 7.dp, horizontal = 8.dp),
-                contentAlignment = Alignment.Center,
+                    .padding(vertical = 7.dp, horizontal = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
             ) {
+                when (option) {
+                    PlaylistStorageTarget.LOCAL -> Icon(
+                        imageVector = Icons.Rounded.PhoneAndroid,
+                        contentDescription = null,
+                        tint = if (isSelected) Color.White else secondaryColor.takeIf { it != Color.Unspecified } ?: labelColor,
+                        modifier = Modifier.size(13.dp),
+                    )
+                    PlaylistStorageTarget.GOOGLE_ACCOUNT -> Box(
+                        modifier = Modifier
+                            .size(14.dp)
+                            .clip(CircleShape)
+                            .background(Color.White),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_google_logo),
+                            contentDescription = null,
+                            modifier = Modifier.size(10.dp),
+                        )
+                    }
+                    PlaylistStorageTarget.SPOTIFY_ACCOUNT -> Image(
+                        painter = painterResource(R.drawable.ic_spotify),
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                    )
+                }
+                Spacer(Modifier.width(4.dp))
                 Text(
                     text = title,
                     color = if (isSelected) Color.White else secondaryColor.takeIf { it != Color.Unspecified } ?: labelColor,
-                    fontSize = 12.5.sp,
+                    fontSize = 12.sp,
                     fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PlaylistPrivacySelectorRow(
+    isPublic: Boolean,
+    accentColor: Color,
+    onSelectPublic: (Boolean) -> Unit,
+    labelColor: Color,
+    secondaryColor: Color,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(11.dp))
+            .background(Color.White.copy(alpha = 0.08f))
+            .padding(3.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        val options = listOf(
+            false to "Private",
+            true to "Public",
+        )
+        options.forEach { (pub, label) ->
+            val isSelected = isPublic == pub
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(if (isSelected) accentColor.copy(alpha = 0.88f) else Color.Transparent)
+                    .clickable { onSelectPublic(pub) }
+                    .padding(vertical = 6.5.dp, horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Icon(
+                    imageVector = if (pub) Icons.Rounded.Public else Icons.Rounded.Lock,
+                    contentDescription = null,
+                    tint = if (isSelected) Color.White else secondaryColor.takeIf { it != Color.Unspecified } ?: labelColor,
+                    modifier = Modifier.size(13.dp),
+                )
+                Spacer(Modifier.width(5.dp))
+                Text(
+                    text = label,
+                    color = if (isSelected) Color.White else secondaryColor.takeIf { it != Color.Unspecified } ?: labelColor,
+                    fontSize = 12.sp,
+                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                    maxLines = 1,
                 )
             }
         }
@@ -848,7 +1120,10 @@ fun AppleSheetAddToPlaylistContent(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    LaunchedEffect(Unit) { LibraryStore.ensureInit(context) }
+    LaunchedEffect(Unit) {
+        LibraryStore.ensureInit(context)
+        SpotifyLibrarySyncManager.launchSync(context)
+    }
     val userPlaylists by LibraryStore.userPlaylists.collectAsStateWithLifecycle()
     val (resolvedSongs, loading) = rememberResolvedPayloadSongs(payload)
     var busy by remember(payload) { mutableStateOf(false) }
@@ -907,11 +1182,21 @@ fun AppleSheetAddToPlaylistContent(
                         .padding(horizontal = 20.dp, vertical = 11.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    PlaylistCollageAvatar(
-                        artworkUrls = pl.artworkUrls,
-                        size = 42.dp,
-                        cornerRadius = 10.dp,
-                    )
+                    Box(Modifier.size(42.dp)) {
+                        PlaylistCollageAvatar(
+                            artworkUrls = pl.artworkUrls,
+                            size = 42.dp,
+                            cornerRadius = 10.dp,
+                        )
+                        PlaylistSourceCornerBadge(
+                            isGoogleAccount = pl.isGoogleAccount,
+                            isSpotifyAccount = pl.isSpotifyAccount,
+                            badgeSize = 16.dp,
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(1.dp),
+                        )
+                    }
                     Spacer(Modifier.width(14.dp))
                     Column(Modifier.weight(1f)) {
                         Text(
@@ -923,8 +1208,16 @@ fun AppleSheetAddToPlaylistContent(
                             overflow = TextOverflow.Ellipsis,
                         )
                         val meta = buildString {
-                            append(if (pl.songs.size == 1) "1 song" else "${pl.songs.size} songs")
-                            if (pl.isGoogleAccount) append(" • Google Account")
+                            if (pl.isSpotifyAccount && pl.songs.isEmpty()) {
+                                append("Spotify")
+                            } else {
+                                append(if (pl.songs.size == 1) "1 song" else "${pl.songs.size} songs")
+                                when {
+                                    pl.isGoogleAccount -> append(" • Google Account")
+                                    pl.isSpotifyAccount -> append(" • Spotify")
+                                    else -> append(" • Local")
+                                }
+                            }
                         }
                         Text(
                             text = meta,
@@ -963,19 +1256,26 @@ fun AppleSheetCreatePlaylistContent(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val ytAccount by GoogleAuthStore.state.collectAsStateWithLifecycle()
+    val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
+    val isSpotifySignedIn = settingsState.spotifySpdcToken.isNotBlank()
     val (resolvedSongs, loading) = rememberResolvedPayloadSongs(payload)
     var nameInput by remember(payload) { mutableStateOf("") }
-    var storageTarget by remember(ytAccount.isSignedIn) {
+    var storageTarget by remember(ytAccount.isSignedIn, isSpotifySignedIn) {
         mutableStateOf(
-            if (ytAccount.isSignedIn) PlaylistStorageTarget.GOOGLE_ACCOUNT
-            else PlaylistStorageTarget.LOCAL,
+            when {
+                ytAccount.isSignedIn -> PlaylistStorageTarget.GOOGLE_ACCOUNT
+                isSpotifySignedIn -> PlaylistStorageTarget.SPOTIFY_ACCOUNT
+                else -> PlaylistStorageTarget.LOCAL
+            },
         )
     }
+    var isPublicPlaylist by remember { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
         GoogleAuthStore.ensureInit(context)
+        SettingsStore.ensureInit(context)
         focusRequester.requestFocus()
     }
 
@@ -989,7 +1289,14 @@ fun AppleSheetCreatePlaylistContent(
         busy = true
         scope.launch {
             try {
-                resolveAndCreatePlaylist(context, clean, storageTarget, payload, resolvedSongs)
+                resolveAndCreatePlaylist(
+                    context = context,
+                    name = clean,
+                    target = storageTarget,
+                    isPublic = isPublicPlaylist,
+                    payload = payload,
+                    preloadedSongs = resolvedSongs,
+                )
                 onCompleted()
             } catch (e: CancellationException) {
                 throw e
@@ -1058,21 +1365,45 @@ fun AppleSheetCreatePlaylistContent(
 
         Spacer(Modifier.height(10.dp))
 
-        if (ytAccount.isSignedIn) {
+        if (ytAccount.isSignedIn || isSpotifySignedIn) {
             PlaylistTargetSelectorRow(
                 selected = storageTarget,
+                showGoogle = ytAccount.isSignedIn,
+                showSpotify = isSpotifySignedIn,
                 onSelect = { storageTarget = it },
                 labelColor = Color.White,
                 secondaryColor = Color.White.copy(alpha = 0.72f),
             )
             Spacer(Modifier.height(8.dp))
+            if (storageTarget == PlaylistStorageTarget.GOOGLE_ACCOUNT ||
+                storageTarget == PlaylistStorageTarget.SPOTIFY_ACCOUNT
+            ) {
+                PlaylistPrivacySelectorRow(
+                    isPublic = isPublicPlaylist,
+                    accentColor = if (storageTarget == PlaylistStorageTarget.SPOTIFY_ACCOUNT) Color(0xFF1DB954) else LibraryCrimsonAccent,
+                    onSelectPublic = { isPublicPlaylist = it },
+                    labelColor = Color.White,
+                    secondaryColor = Color.White.copy(alpha = 0.72f),
+                )
+                Spacer(Modifier.height(8.dp))
+            }
         }
 
         Text(
             text = when {
                 loading -> "Preparing tracks..."
+                storageTarget == PlaylistStorageTarget.SPOTIFY_ACCOUNT && isSpotifySignedIn ->
+                    if (isPublicPlaylist) {
+                        "Creates a public Spotify playlist, converts tracks to Spotify & copies the share link."
+                    } else {
+                        "Creates a private Spotify playlist and converts tracks to Spotify automatically."
+                    }
                 storageTarget == PlaylistStorageTarget.GOOGLE_ACCOUNT && ytAccount.isSignedIn ->
-                    "Creates on your Google / YouTube Music account and syncs automatically."
+                    if (isPublicPlaylist) {
+                        "Creates a public YouTube Music playlist and copies the share link."
+                    } else {
+                        "Creates a private playlist on your Google / YouTube Music account."
+                    }
                 else -> "Saves locally on this device."
             },
             color = Color.White.copy(alpha = 0.58f),
