@@ -74,6 +74,7 @@ class PlaybackService : Service() {
         val durationMs: Long,
         val station: OnlineRadioStation?,
         val radioPlaying: Boolean,
+        val liked: Boolean = false,
     ) {
         val radioMode: Boolean get() = radioPlaying || (track == null && station != null)
         val hasContent: Boolean get() = track != null || station != null
@@ -86,10 +87,26 @@ class PlaybackService : Service() {
     private var foreground = false
     private var commandReceived = false
 
-    private var artworkUrl: String? = null
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private var stopping = false
+
+    // Artwork is keyed by track identity so state changes never restart / cancel a running load.
+    private var artworkIdentity: String? = null
     private var artworkBitmap: Bitmap? = null
     private var artworkJob: Job? = null
     private var metadataKey: String? = null
+
+    private val idleDetach = Runnable {
+        // Paused for a long time: let the notification be swiped away while keeping it visible.
+        if (foreground && lastSnap?.isPlaying == false) {
+            ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_DETACH)
+            foreground = false
+        }
+    }
+    private val stopIfEmpty = Runnable {
+        val snap = currentSnap()
+        if (!snap.hasContent) shutDown()
+    }
 
     private var stateAnchorPos = 0L
     private var stateAnchorRealtime = 0L
@@ -119,6 +136,7 @@ class PlaybackService : Service() {
                     durationMs = MusicPlayerState.durationMs,
                     station = null,
                     radioPlaying = false,
+                    liked = MusicPlayerState.currentTrack?.let { MusicPlayerState.isFavorite(it.id) } == true,
                 )
             }
             val radioFlow = OnlineRadioController.state
@@ -145,9 +163,15 @@ class PlaybackService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val action = intent?.action
         if (action != null) {
+            // Notification buttons can arrive at a freshly (re)created service: re-arm it first,
+            // otherwise state changes would be ignored and the notification would go stale.
+            commandReceived = true
+            stopping = false
             handleAction(action)
+            refresh(currentSnap(), forceForeground = false)
             return START_NOT_STICKY
         }
+        stopping = false
         // Started by PlaybackService.sync(): must call startForeground promptly
         commandReceived = true
         refresh(currentSnap(), forceForeground = true)
@@ -156,24 +180,33 @@ class PlaybackService : Service() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         if (SettingsStore.isStopMusicOnTaskClearEnabled(applicationContext)) {
-            scope.cancel()
             MusicPlayerState.savePlaybackSession(sync = true)
             MusicPlayerState.pause()
             OnlineRadioController.pauseIfPlaying()
-            ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
-            getSystemService(NotificationManager::class.java)?.cancel(NOTIFICATION_ID)
-            stopSelf()
+            shutDown()
         }
         super.onTaskRemoved(rootIntent)
     }
 
     override fun onDestroy() {
+        mainHandler.removeCallbacksAndMessages(null)
         scope.cancel()
         runCatching { session?.isActive = false }
         runCatching { session?.release() }
         session = null
-        getSystemService(NotificationManager::class.java)?.cancel(NOTIFICATION_ID)
+        // Only remove the notification on an intentional stop. If the system merely reclaims an
+        // idle service the paused notification must stay so the user can resume from it.
+        if (stopping) getSystemService(NotificationManager::class.java)?.cancel(NOTIFICATION_ID)
         super.onDestroy()
+    }
+
+    private fun shutDown() {
+        stopping = true
+        mainHandler.removeCallbacksAndMessages(null)
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
+        foreground = false
+        getSystemService(NotificationManager::class.java)?.cancel(NOTIFICATION_ID)
+        stopSelf()
     }
 
     // ── Controls ──────────────────────────────────────────────────────────────────────────────
@@ -206,6 +239,7 @@ class PlaybackService : Service() {
             ACTION_PREVIOUS -> if (radio) OnlineRadioController.skipPreviousStation() else MusicPlayerState.skipPrevious()
             ACTION_SHUFFLE -> if (!radio) MusicPlayerState.toggleShuffle()
             ACTION_REPEAT -> if (!radio) MusicPlayerState.toggleRepeat()
+            ACTION_STAR -> if (!radio) MusicPlayerState.currentTrack?.let { MusicPlayerState.toggleFavorite(it) }
         }
     }
 
@@ -221,6 +255,7 @@ class PlaybackService : Service() {
             durationMs = MusicPlayerState.durationMs,
             station = radio.currentStation,
             radioPlaying = radio.isPlaying,
+            liked = MusicPlayerState.currentTrack?.let { MusicPlayerState.isFavorite(it.id) } == true,
         )
     }
     // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
@@ -228,23 +263,33 @@ class PlaybackService : Service() {
     private fun refresh(snap: Snap, forceForeground: Boolean) {
         lastSnap = snap
         if (!snap.hasContent) {
-            if (forceForeground) postForeground(buildNotification(snap))
-            ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
-            foreground = false
-            stopSelf()
+            if (forceForeground && !foreground) postForeground(buildNotification(snap))
+            // Debounced: the track briefly becomes null while the next song is being resolved,
+            // which previously tore the notification down mid-playback.
+            mainHandler.removeCallbacks(stopIfEmpty)
+            mainHandler.postDelayed(stopIfEmpty, EMPTY_STOP_DELAY_MS)
             return
         }
+        mainHandler.removeCallbacks(stopIfEmpty)
         updateMetadata(snap)
         updatePlaybackState(snap)
         val notif = buildNotification(snap)
-        if (snap.isPlaying || (forceForeground && !foreground)) {
+        val nm = getSystemService(NotificationManager::class.java)
+        if (snap.isPlaying) {
+            mainHandler.removeCallbacks(idleDetach)
             postForeground(notif)
+        } else if (foreground) {
+            // Stay a foreground service while paused so the system can't reap it (and drop the
+            // controls); release it to a swipeable notification after a long idle period.
+            nm?.notify(NOTIFICATION_ID, notif)
+            mainHandler.removeCallbacks(idleDetach)
+            mainHandler.postDelayed(idleDetach, IDLE_DETACH_MS)
+        } else if (forceForeground) {
+            postForeground(notif)
+            mainHandler.removeCallbacks(idleDetach)
+            mainHandler.postDelayed(idleDetach, IDLE_DETACH_MS)
         } else {
-            if (foreground) {
-                ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_DETACH)
-                foreground = false
-            }
-            getSystemService(NotificationManager::class.java)?.notify(NOTIFICATION_ID, notif)
+            nm?.notify(NOTIFICATION_ID, notif)
         }
     }
 
@@ -255,6 +300,10 @@ class PlaybackService : Service() {
             } else 0
             ServiceCompat.startForeground(this, NOTIFICATION_ID, notif, type)
             foreground = true
+        }.onFailure {
+            // Still show the notification even if promotion to foreground was refused.
+            android.util.Log.w("PlaybackService", "startForeground failed", it)
+            getSystemService(NotificationManager::class.java)?.notify(NOTIFICATION_ID, notif)
         }
     }
 
@@ -264,23 +313,27 @@ class PlaybackService : Service() {
         val artist: String
         val album: String?
         val duration: Long
-        val art: String?
+        val identity: String
+        val candidates: List<String>
         val key: String
         if (snap.radioMode) {
             val st = snap.station ?: return
             title = st.name; artist = "Online Radio"; album = null; duration = -1L
-            art = st.faviconUrl
-            key = "radio:${st.uuid}"
+            identity = "radio:${st.uuid}"
+            candidates = listOfNotNull(st.faviconUrl?.takeIf { it.isNotBlank() })
+            key = identity
         } else {
             val t = snap.track ?: return
             title = t.title; artist = t.artists; album = t.album; duration = snap.durationMs
-            art = t.thumbnailUrl?.highQualityThumbnail() ?: t.thumbnailUrl
-            key = "track:${t.id}:$duration"
+            identity = "track:${t.id}"
+            candidates = artworkCandidates(t)
+            key = "$identity:$duration"
         }
-        if (artworkUrl != art) {
+        if (artworkIdentity != identity) {
+            artworkIdentity = identity
             artworkBitmap = null
-            artworkUrl = null
-            if (!art.isNullOrBlank()) loadArtwork(art)
+            artworkJob?.cancel()
+            if (candidates.isNotEmpty()) loadArtwork(identity, candidates)
         }
         val fullKey = "$key:${artworkBitmap != null}"
         if (fullKey == metadataKey) return
@@ -291,25 +344,63 @@ class PlaybackService : Service() {
                 .putString(MediaMetadata.METADATA_KEY_ARTIST, artist)
                 .putString(MediaMetadata.METADATA_KEY_ALBUM, album)
                 .putLong(MediaMetadata.METADATA_KEY_DURATION, duration)
-                .apply { artworkBitmap?.let { putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, it) } }
+                .apply {
+                    artworkBitmap?.let {
+                        putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, it)
+                        putBitmap(MediaMetadata.METADATA_KEY_ART, it)
+                        putBitmap(MediaMetadata.METADATA_KEY_DISPLAY_ICON, it)
+                    }
+                }
                 .build(),
         )
     }
 
-    private fun loadArtwork(url: String) {
-        artworkJob?.cancel()
+    /**
+     * Ordered artwork URLs to try. The in-app "max quality" rewrite points at `maxresdefault.jpg`,
+     * which does not exist for most videos (404) — that is why many songs had no thumbnail here.
+     */
+    private fun artworkCandidates(t: MusicTrack): List<String> {
+        val out = LinkedHashSet<String>()
+        val raw = t.thumbnailUrl?.takeIf { it.isNotBlank() }
+        if (raw != null) {
+            val hq = runCatching { raw.highQualityThumbnail() }.getOrNull()
+            // Prefer the URL the app itself already displays, then the upscaled variant.
+            out += raw
+            if (hq != null && !hq.contains("maxresdefault")) out += hq
+        }
+        if (Regex("^[A-Za-z0-9_-]{11}$").matches(t.id)) {
+            out += "https://i.ytimg.com/vi/${t.id}/hq720.jpg"
+            out += "https://i.ytimg.com/vi/${t.id}/hqdefault.jpg"
+            out += "https://i.ytimg.com/vi/${t.id}/mqdefault.jpg"
+        }
+        return out.toList()
+    }
+
+    private fun loadArtwork(identity: String, urls: List<String>) {
         artworkJob = scope.launch {
-            val req = ImageRequest.Builder(this@PlaybackService)
-                .data(url)
-                .allowHardware(false)
-                .size(512)
-                .build()
-            val res = Coil.imageLoader(this@PlaybackService).execute(req)
-            if (res is SuccessResult) {
-                val bmp = (res.drawable as? BitmapDrawable)?.bitmap ?: res.drawable.toBitmap()
-                artworkBitmap = bmp
-                artworkUrl = url
-                lastSnap?.let { refresh(it, forceForeground = false) }
+            val loader = Coil.imageLoader(this@PlaybackService)
+            for (url in urls) {
+                val res = runCatching {
+                    loader.execute(
+                        ImageRequest.Builder(this@PlaybackService)
+                            .data(url)
+                            .allowHardware(false)
+                            .size(512)
+                            .build(),
+                    )
+                }.getOrNull()
+                if (res is SuccessResult) {
+                    val bmp = runCatching {
+                        (res.drawable as? BitmapDrawable)?.bitmap ?: res.drawable.toBitmap()
+                    }.getOrNull() ?: continue
+                    // Ignore YouTube's 120x90 grey "not found" placeholder.
+                    if (bmp.width <= 120 && bmp.height <= 90 && url.contains("ytimg.com")) continue
+                    if (artworkIdentity == identity) {
+                        artworkBitmap = bmp
+                        lastSnap?.let { refresh(it, forceForeground = false) }
+                    }
+                    return@launch
+                }
             }
         }
     }
@@ -332,6 +423,9 @@ class PlaybackService : Service() {
             )
         if (!snap.radioMode) {
             b.addCustomAction(
+                PlaybackState.CustomAction.Builder(ACTION_STAR, if (snap.liked) "Unstar" else "Star", starIcon(snap.liked)).build(),
+            )
+            b.addCustomAction(
                 PlaybackState.CustomAction.Builder(ACTION_SHUFFLE, "Shuffle", shuffleIcon(snap.shuffle)).build(),
             )
             b.addCustomAction(
@@ -343,6 +437,8 @@ class PlaybackService : Service() {
         stateAnchorRealtime = SystemClock.elapsedRealtime()
         stateAnchorPlaying = playing
     }
+
+    private fun starIcon(on: Boolean) = if (on) R.drawable.ic_star_filled else R.drawable.ic_star_outline
 
     private fun shuffleIcon(on: Boolean) = if (on) R.drawable.shuffle_on else R.drawable.shuffle
 
@@ -394,6 +490,7 @@ class PlaybackService : Service() {
             .setCategory(Notification.CATEGORY_TRANSPORT)
             .setVisibility(Notification.VISIBILITY_PUBLIC)
         artworkBitmap?.let { builder.setLargeIcon(it) }
+        builder.setWhen(0L)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             builder.setForegroundServiceBehavior(Notification.FOREGROUND_SERVICE_IMMEDIATE)
         }
@@ -412,7 +509,7 @@ class PlaybackService : Service() {
             builder.addAction(action(R.drawable.skip_previous, "Previous", ACTION_PREVIOUS, 1))
             builder.addAction(action(playPauseIcon, playPauseTitle, ACTION_TOGGLE, 2))
             builder.addAction(action(R.drawable.skip_next, "Next", ACTION_NEXT, 3))
-            builder.addAction(action(repeatIcon(snap.repeat), "Repeat", ACTION_REPEAT, 4))
+            builder.addAction(action(starIcon(snap.liked), if (snap.liked) "Unstar" else "Star", ACTION_STAR, 4))
             style.setShowActionsInCompactView(1, 2, 3)
         }
         builder.setStyle(style)
@@ -443,11 +540,22 @@ class PlaybackService : Service() {
         private const val ACTION_PREVIOUS = "com.darkxvenom.itune.action.PREVIOUS"
         private const val ACTION_SHUFFLE = "com.darkxvenom.itune.action.SHUFFLE"
         private const val ACTION_REPEAT = "com.darkxvenom.itune.action.REPEAT"
+        private const val ACTION_STAR = "com.darkxvenom.itune.action.STAR"
+        private const val EMPTY_STOP_DELAY_MS = 3_000L
+        private const val IDLE_DETACH_MS = 10 * 60_000L
 
         /**
          * Starts the service while music or radio plays. The service keeps itself alive (paused
          * notification stays so playback can be resumed) and stops itself once nothing is loaded.
          */
+        /** Starts the service for a requested song; it shows controls immediately, even while buffering. */
+        fun start(context: Context) {
+            val ctx = context.applicationContext
+            runCatching {
+                ContextCompat.startForegroundService(ctx, Intent(ctx, PlaybackService::class.java))
+            }
+        }
+
         fun sync(context: Context) {
             val ctx = context.applicationContext
             val active = MusicPlayerState.isPlaying || OnlineRadioController.state.value.isPlaying

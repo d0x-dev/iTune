@@ -558,6 +558,9 @@ object MusicPlayerState : Player.Listener {
             else -> 0L
         }
         currentTrack = track
+        // Make sure the media notification exists as soon as a song is requested (not only once
+        // the stream has resolved), so it shows up for every song.
+        if (autoPlay) appContext?.let { PlaybackService.start(it) }
         com.darkxvenom.itune.audio.LowPassFilterController.onPlaybackStarted(track.id)
         appContext?.let { LibraryStore.recordRecentSong(it, track) }
         if (autoPlay) {
