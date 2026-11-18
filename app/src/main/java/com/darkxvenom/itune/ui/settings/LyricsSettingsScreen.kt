@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.ui.settings
 
 import android.widget.Toast
@@ -220,6 +231,60 @@ fun LyricsSettingsScreen(
                                 onCheckedChange = { checked ->
                                     haptics.play(if (checked) Haptic.ToggleOn else Haptic.ToggleOff)
                                     SettingsStore.setBoolean(context, SettingsStore.KEY_TIME_SYNCED_LYRICS, checked)
+                                },
+                            )
+                        }
+                        HorizontalDivider(
+                            color = LyricsCardDivider,
+                            thickness = 0.6.dp,
+                            modifier = Modifier.padding(start = 62.dp),
+                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 13.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(LyricsIconContainerBg),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.lyrics),
+                                    contentDescription = null,
+                                    tint = Color(0xFFEC1717),
+                                    modifier = Modifier.size(18.dp),
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(14.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Show Synced Lyrics Over Canvas",
+                                    color = Color.White,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = "Display animated synced lyrics above the song title while Canvas controls are hidden",
+                                    color = AppleTextSecondary,
+                                    fontSize = 12.sp,
+                                    lineHeight = 15.sp,
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            AppleGlassSwitch(
+                                checked = settingsState.showSyncedLyricsOverCanvas,
+                                onCheckedChange = { checked ->
+                                    haptics.play(if (checked) Haptic.ToggleOn else Haptic.ToggleOff)
+                                    SettingsStore.setBoolean(
+                                        context,
+                                        SettingsStore.KEY_SHOW_SYNCED_LYRICS_OVER_CANVAS,
+                                        checked,
+                                    )
                                 },
                             )
                         }
@@ -885,6 +950,7 @@ private fun LyricsActionRow(
         )
     }
 }
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 @Composable
 private fun AiProviderPickerDialog(
