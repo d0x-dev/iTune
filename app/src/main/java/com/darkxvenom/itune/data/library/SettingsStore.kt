@@ -1,9 +1,22 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.data.library
 
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.runtime.Immutable
 import com.darkxvenom.itune.backend.MusicBackend
+import com.darkxvenom.itune.data.auth.EncryptedAuthPrefs
+import com.darkxvenom.itune.data.canvas.SpotifyToken
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +40,11 @@ data class SettingsUiState(
     val afterglowDuration: String = "Off",
     val soundCheck: Boolean = true,
     val animatedArtwork: Boolean = true,
+    val canvasOverCellular: Boolean = false,
+    val spotifySpdcToken: String = "",
+    val spotifyCanvasAutoHide: Boolean = true,
+    val prioritizeSpotifyCanvas: Boolean = false,
+    val showSyncedLyricsOverCanvas: Boolean = true,
     val timeSyncedLyrics: Boolean = true,
     val playerType: String = "Dynamic",
     val playerDynamicColoring: Boolean = true,
@@ -128,6 +146,11 @@ object SettingsStore {
     const val KEY_AFTERGLOW_DURATION = "afterglow_duration"
     const val KEY_SOUND_CHECK = "sound_check"
     const val KEY_ANIMATED_ARTWORK = "animated_artwork"
+    const val KEY_CANVAS_OVER_CELLULAR = "canvas_over_cellular"
+    const val KEY_SPOTIFY_SPDC_TOKEN = "spotify_spdc_token"
+    const val KEY_SPOTIFY_CANVAS_AUTO_HIDE = "spotify_canvas_auto_hide"
+    const val KEY_PRIORITIZE_SPOTIFY_CANVAS = "prioritize_spotify_canvas"
+    const val KEY_SHOW_SYNCED_LYRICS_OVER_CANVAS = "show_synced_lyrics_over_canvas"
     const val KEY_TIME_SYNCED_LYRICS = "time_synced_lyrics"
     const val KEY_PLAYER_TYPE = "player_type"
     const val KEY_PLAYER_DYNAMIC_COLORING = "player_dynamic_coloring"
@@ -225,13 +248,13 @@ object SettingsStore {
             prefs = p
             // Remove the retired light/system theme preference so old installs stay Dark-only too.
             p.edit().remove("app_theme").apply()
-            _state.value = loadFromPrefs(p)
+            _state.value = loadFromPrefs(context.applicationContext, p)
         }
     }
 
     fun reloadBackupState(context: Context) {
         ensureInit(context)
-        prefs?.let { _state.value = loadFromPrefs(it) }
+        prefs?.let { _state.value = loadFromPrefs(context.applicationContext, it) }
     }
 
     fun isStopMusicOnTaskClearEnabled(context: Context): Boolean {
@@ -281,6 +304,10 @@ object SettingsStore {
             KEY_LOSSLESS_AUDIO -> cur.copy(losslessAudio = value)
             KEY_SOUND_CHECK -> cur.copy(soundCheck = value)
             KEY_ANIMATED_ARTWORK -> cur.copy(animatedArtwork = value)
+            KEY_CANVAS_OVER_CELLULAR -> cur.copy(canvasOverCellular = value)
+            KEY_SPOTIFY_CANVAS_AUTO_HIDE -> cur.copy(spotifyCanvasAutoHide = value)
+            KEY_PRIORITIZE_SPOTIFY_CANVAS -> cur.copy(prioritizeSpotifyCanvas = value)
+            KEY_SHOW_SYNCED_LYRICS_OVER_CANVAS -> cur.copy(showSyncedLyricsOverCanvas = value)
             KEY_PLAYER_DYNAMIC_COLORING -> cur.copy(playerDynamicColoring = value)
             KEY_TIME_SYNCED_LYRICS -> cur.copy(timeSyncedLyrics = value)
             KEY_LIQUID_GLASS -> cur.copy(liquidGlassChrome = value)
@@ -323,6 +350,7 @@ object SettingsStore {
             else -> cur
         }
     }
+    // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
     fun setString(context: Context, key: String, value: String) {
         ensureInit(context)
@@ -484,6 +512,24 @@ object SettingsStore {
         _state.value = _state.value.copy(lyricsTranslateMode = mode)
     }
 
+    fun setSpotifySpdcToken(context: Context, token: String) {
+        ensureInit(context)
+        val trimmed = token.trim()
+        EncryptedAuthPrefs.putEncrypted(
+            context,
+            KEY_SPOTIFY_SPDC_TOKEN,
+            trimmed.ifBlank { null },
+        )
+        _state.value = _state.value.copy(spotifySpdcToken = trimmed)
+        SpotifyToken.invalidate()
+        com.darkxvenom.itune.data.canvas.CanvasRepository.clearCache()
+        if (trimmed.isBlank()) {
+            LibraryStore.clearSpotifyAccountDataOnSignOut(context)
+        } else {
+            com.darkxvenom.itune.data.spotify.SpotifyLibrarySyncManager.launchSync(context, force = true)
+        }
+    }
+
     fun setPlayerType(context: Context, type: String) {
         ensureInit(context)
         val valid = if (type.equals("Static", ignoreCase = true)) "Static" else "Dynamic"
@@ -549,7 +595,7 @@ object SettingsStore {
         )
     }
 
-    private fun loadFromPrefs(p: SharedPreferences): SettingsUiState {
+    private fun loadFromPrefs(context: Context, p: SharedPreferences): SettingsUiState {
         val defaults = SettingsUiState()
         val legacyExplicit = p.getString(KEY_EXPLICIT_CONTENT, defaults.explicitContent) ?: defaults.explicitContent
         val hideExplicit = if (p.contains(KEY_HIDE_EXPLICIT)) {
@@ -585,6 +631,11 @@ object SettingsStore {
             automixEnabled = p.getBoolean(KEY_AUTOMIX, defaults.automixEnabled),
             soundCheck = p.getBoolean(KEY_SOUND_CHECK, defaults.soundCheck),
             animatedArtwork = p.getBoolean(KEY_ANIMATED_ARTWORK, defaults.animatedArtwork),
+            canvasOverCellular = p.getBoolean(KEY_CANVAS_OVER_CELLULAR, defaults.canvasOverCellular),
+            spotifySpdcToken = EncryptedAuthPrefs.getDecrypted(context, KEY_SPOTIFY_SPDC_TOKEN).orEmpty(),
+            spotifyCanvasAutoHide = p.getBoolean(KEY_SPOTIFY_CANVAS_AUTO_HIDE, defaults.spotifyCanvasAutoHide),
+            prioritizeSpotifyCanvas = p.getBoolean(KEY_PRIORITIZE_SPOTIFY_CANVAS, defaults.prioritizeSpotifyCanvas),
+            showSyncedLyricsOverCanvas = p.getBoolean(KEY_SHOW_SYNCED_LYRICS_OVER_CANVAS, defaults.showSyncedLyricsOverCanvas),
             timeSyncedLyrics = p.getBoolean(KEY_TIME_SYNCED_LYRICS, defaults.timeSyncedLyrics),
             playerType = p.getString(KEY_PLAYER_TYPE, defaults.playerType) ?: defaults.playerType,
             playerDynamicColoring = p.getBoolean(KEY_PLAYER_DYNAMIC_COLORING, defaults.playerDynamicColoring),
