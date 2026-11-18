@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.ui.settings
 
 import android.widget.Toast
@@ -146,6 +157,7 @@ fun SettingsProfileAccountScreen(
     hasMiniPlayer: Boolean,
     onBack: () -> Unit,
     onOpenAvatarPopup: () -> Unit,
+    onOpenSpotify: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -818,6 +830,44 @@ fun SettingsProfileAccountScreen(
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth().clickable {
+                                    haptics.play(Haptic.Tap)
+                                    onOpenSpotify()
+                                }.padding(horizontal = 16.dp, vertical = 15.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(30.dp)
+                                        .clip(CircleShape)
+                                        .background(Color.White),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Image(
+                                        painter = painterResource(R.drawable.ic_spotify),
+                                        contentDescription = "Spotify",
+                                        modifier = Modifier.size(22.dp),
+                                    )
+                                }
+                                Spacer(Modifier.width(12.dp))
+                                Column(Modifier.weight(1f)) {
+                                    Text("Spotify & Canvas", color = Color.White, fontSize = 15.5.sp, fontWeight = FontWeight.Medium)
+                                    val spotifySub = if (settingsState.spotifySpdcToken.isNotBlank()) {
+                                        "Connected · Canvas, Playlists & Import"
+                                    } else {
+                                        "Optional · Spotify Canvas, playlists & import"
+                                    }
+                                    Text(spotifySub, color = AppleTextSecondary, fontSize = 12.5.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                }
+                                Text(
+                                    if (settingsState.spotifySpdcToken.isNotBlank()) "Manage" else "Connect",
+                                    color = if (settingsState.spotifySpdcToken.isNotBlank()) Color(0xFF1DB954) else AppleMusicRed,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                )
+                            }
+                            HorizontalDivider(modifier = Modifier.padding(start = 58.dp), thickness = 0.5.dp, color = ProfileDivider)
+                            Row(
+                                modifier = Modifier.fillMaxWidth().clickable {
                                     if (LastFmIntegration.username.isNotBlank()) {
                                         LastFmIntegration.signOut(context)
                                     } else {
@@ -1059,6 +1109,7 @@ fun SettingsProfileAccountScreen(
         }
     }
 }
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
