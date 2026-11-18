@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.data.model
 
 import java.text.Normalizer
@@ -61,6 +72,7 @@ fun creditSegments(text: String, credits: List<ArtistCredit>): List<CreditSegmen
 
 private fun String.startsWithIgnoringCase(prefix: String, at: Int): Boolean =
     regionMatches(at, prefix, 0, prefix.length, ignoreCase = true)
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 object ArtistNameIndex {
     private val channels = ConcurrentHashMap<String, MutableSet<String>>()
