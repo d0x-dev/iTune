@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.data.auth
 
 import android.content.Context
@@ -16,6 +27,7 @@ import com.darkxvenom.itune.data.library.SavedSongMetadata
 import com.darkxvenom.itune.data.library.UserPlaylist
 import com.darkxvenom.itune.data.model.BrowseType
 import com.darkxvenom.itune.data.model.LikeStatus
+import com.darkxvenom.itune.data.spotify.SpotifyLibrary
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +38,9 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 
 /**
@@ -473,6 +487,7 @@ object YouTubeLibrarySyncManager {
         val mergedPlIds = LibraryStore.mergeRemoteSavedPlaylists(context, bookmarked)
         ArtistStateStore.mergeSavedReleaseIdsFromSync(context, mergedPlIds)
     }
+    // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
     private suspend fun fetchAllLibraryCards(
         browseId: String,
@@ -565,20 +580,45 @@ object YouTubeLibrarySyncManager {
         }
     }
 
+    private suspend fun convertSongsToSpotifyUris(
+        songs: List<SavedSongMetadata>,
+    ): List<Pair<SavedSongMetadata, String>> = coroutineScope {
+        val sem = Semaphore(4)
+        songs.map { song ->
+            async(Dispatchers.IO) {
+                sem.withPermit {
+                    val uri = song.spotifyTrackUri?.takeIf { it.startsWith("spotify:track:") }
+                        ?: SpotifyLibrary.findSpotifyTrackUri(
+                            title = song.title,
+                            artist = song.artists,
+                            album = song.album,
+                        )
+                    uri?.let { song.copy(spotifyTrackUri = it) to it }
+                }
+            }
+        }.awaitAll().filterNotNull()
+    }
+
     suspend fun createPlaylist(
         context: Context,
         name: String,
         target: PlaylistStorageTarget,
         initialSongs: List<SavedSongMetadata> = emptyList(),
+        isPublic: Boolean = false,
     ): UserPlaylist {
         if (target == PlaylistStorageTarget.GOOGLE_ACCOUNT && !GoogleAuthStore.isSignedIn) {
             error("Sign in with Google before creating a YouTube Music playlist")
+        }
+        if (target == PlaylistStorageTarget.SPOTIFY_ACCOUNT &&
+            SettingsStore.state.value.spotifySpdcToken.isBlank()
+        ) {
+            error("Sign in to Spotify before creating a Spotify playlist")
         }
         if (target == PlaylistStorageTarget.GOOGLE_ACCOUNT) {
             val ytId = withContext(Dispatchers.IO) {
                 ArtistInnertubeClient.createPlaylist(
                     title = name.trim().ifBlank { "New Playlist" },
-                    privacyStatus = "PRIVATE",
+                    privacyStatus = if (isPublic) "PUBLIC" else "PRIVATE",
                     videoIds = initialSongs.map { it.id }.distinct(),
                 )
             }
@@ -588,6 +628,7 @@ object YouTubeLibrarySyncManager {
                 initialSongs = initialSongs,
                 isGoogleAccount = true,
                 ytPlaylistId = ytId,
+                isPublic = isPublic,
             )
             // Fetch initial setVideoIds in background so individual tracks can be removed immediately
             if (initialSongs.isNotEmpty()) {
@@ -603,12 +644,44 @@ object YouTubeLibrarySyncManager {
             }
             return created
         }
+        if (target == PlaylistStorageTarget.SPOTIFY_ACCOUNT) {
+            val spCreated = withContext(Dispatchers.IO) {
+                SpotifyLibrary.createPlaylist(
+                    name = name.trim().ifBlank { "New Playlist" },
+                    isPublic = isPublic,
+                )
+            }
+            val matchedPairs = if (initialSongs.isNotEmpty()) {
+                convertSongsToSpotifyUris(initialSongs)
+            } else {
+                emptyList()
+            }
+            if (matchedPairs.isNotEmpty()) {
+                SpotifyLibrary.addTracksToPlaylist(
+                    playlistId = spCreated.id,
+                    trackUris = matchedPairs.map { it.second },
+                )
+            }
+            return LibraryStore.createUserPlaylist(
+                context = context,
+                name = spCreated.name,
+                initialSongs = matchedPairs.map { it.first },
+                isGoogleAccount = false,
+                ytPlaylistId = null,
+                isSpotifyAccount = true,
+                spotifyPlaylistId = spCreated.id,
+                isPublic = spCreated.isPublic,
+            )
+        }
         return LibraryStore.createUserPlaylist(
             context = context,
             name = name,
             initialSongs = initialSongs,
             isGoogleAccount = false,
             ytPlaylistId = null,
+            isSpotifyAccount = false,
+            spotifyPlaylistId = null,
+            isPublic = false,
         )
     }
 
@@ -622,6 +695,28 @@ object YouTubeLibrarySyncManager {
         val existingIds = playlist.songs.mapTo(HashSet()) { it.id }
         val freshSongs = songs.distinctBy { it.id }.filterNot { it.id in existingIds }
         if (freshSongs.isEmpty()) return@withContext 0
+
+        if (playlist.isSpotifyAccount) {
+            if (SettingsStore.state.value.spotifySpdcToken.isBlank()) {
+                error("Sign in to Spotify before editing this Spotify playlist")
+            }
+            val spId = playlist.spotifyPlaylistId?.takeIf { it.isNotBlank() }
+                ?: error("This Spotify playlist is missing its Spotify playlist ID")
+            // Convert YouTube Music song(s) -> Spotify track URI(s) and add to Spotify remotely first
+            val matchedPairs = convertSongsToSpotifyUris(freshSongs)
+            if (matchedPairs.isEmpty()) {
+                error("Could not find matching track on Spotify")
+            }
+            val existingSpUris = playlist.songs.mapNotNull { it.spotifyTrackUri }.toHashSet()
+            val uniquePairs = matchedPairs.filterNot { it.second in existingSpUris }
+            if (uniquePairs.isEmpty()) return@withContext 0
+            SpotifyLibrary.addTracksToPlaylist(spId, uniquePairs.map { it.second })
+            return@withContext LibraryStore.addSongsToUserPlaylist(
+                context,
+                playlistId,
+                uniquePairs.map { it.first },
+            )
+        }
 
         var resultMap: Map<String, String> = emptyMap()
         if (playlist.isGoogleAccount) {
@@ -670,7 +765,21 @@ object YouTubeLibrarySyncManager {
                     ?: error("Playlist no longer exists")
                 val targetSong = playlist.songs.firstOrNull { it.id == songId }
                     ?: error("Track is no longer in this playlist")
-                if (playlist.isGoogleAccount) {
+                if (playlist.isSpotifyAccount) {
+                    if (SettingsStore.state.value.spotifySpdcToken.isBlank()) {
+                        error("Sign in to Spotify before editing this Spotify playlist")
+                    }
+                    val spId = playlist.spotifyPlaylistId?.takeIf { it.isNotBlank() }
+                        ?: error("This Spotify playlist is missing its Spotify playlist ID")
+                    val uri = targetSong.spotifyTrackUri?.takeIf { it.startsWith("spotify:track:") }
+                        ?: SpotifyLibrary.findSpotifyTrackUri(
+                            title = targetSong.title,
+                            artist = targetSong.artists,
+                            album = targetSong.album,
+                        )
+                        ?: error("Could not resolve Spotify track URI for removal")
+                    SpotifyLibrary.removeTracksFromPlaylist(spId, listOf(uri))
+                } else if (playlist.isGoogleAccount) {
                     if (!GoogleAuthStore.isSignedIn) {
                         error("Sign in with Google before editing this YouTube Music playlist")
                     }
@@ -700,7 +809,14 @@ object YouTubeLibrarySyncManager {
             if (cleanName.isBlank()) error("Enter a playlist name")
             val playlist = LibraryStore.userPlaylists.value.firstOrNull { it.id == playlistId }
                 ?: error("Playlist no longer exists")
-            if (playlist.isGoogleAccount) {
+            if (playlist.isSpotifyAccount) {
+                if (SettingsStore.state.value.spotifySpdcToken.isBlank()) {
+                    error("Sign in to Spotify before renaming this Spotify playlist")
+                }
+                val spId = playlist.spotifyPlaylistId?.takeIf { it.isNotBlank() }
+                    ?: error("This Spotify playlist is missing its Spotify playlist ID")
+                SpotifyLibrary.renamePlaylist(spId, cleanName)
+            } else if (playlist.isGoogleAccount) {
                 if (!GoogleAuthStore.isSignedIn) {
                     error("Sign in with Google before renaming this YouTube Music playlist")
                 }
@@ -720,7 +836,14 @@ object YouTubeLibrarySyncManager {
             val result = try {
                 val playlist = LibraryStore.userPlaylists.value.firstOrNull { it.id == playlistId }
                     ?: error("Playlist no longer exists")
-                if (playlist.isGoogleAccount) {
+                if (playlist.isSpotifyAccount) {
+                    if (SettingsStore.state.value.spotifySpdcToken.isBlank()) {
+                        error("Sign in to Spotify before deleting this Spotify playlist")
+                    }
+                    val spId = playlist.spotifyPlaylistId?.takeIf { it.isNotBlank() }
+                        ?: error("This Spotify playlist is missing its Spotify playlist ID")
+                    SpotifyLibrary.unfollowPlaylist(spId)
+                } else if (playlist.isGoogleAccount) {
                     if (!GoogleAuthStore.isSignedIn) {
                         error("Sign in with Google before deleting this YouTube Music playlist")
                     }
