@@ -9,6 +9,8 @@
  */
 package com.darkxvenom.itune.ui.artist.components.backdrop.backdrops
 
+// Adapted & maintained by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0 / Apache-2.0.
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
@@ -27,6 +29,7 @@ fun rememberBackdrop(
         Backdrop(backdrop, onDraw)
     }
 }
+// Integrated into iTune by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark
 
 @Immutable
 private class Backdrop(

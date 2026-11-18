@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.ui.artist.haptics
 
 import android.content.Context
@@ -91,6 +102,7 @@ private fun rhythmOf(haptic: Haptic): List<Beat> = when (haptic) {
         Beat(Beat.Kind.Click, 0.6f, 12),
     )
 }
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 private class HapticDevice private constructor(
     private val vibrator: Vibrator,

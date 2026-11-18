@@ -9,6 +9,8 @@
  */
 package com.darkxvenom.itune.ui.artist.components.backdrop
 
+// Adapted & maintained by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0 / Apache-2.0.
+
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.Color
@@ -29,6 +31,7 @@ fun RuntimeShader.asComposeShader(): Shader {
 fun RuntimeShader.asAndroidRuntimeShader(): android.graphics.RuntimeShader {
     return (this as AndroidRuntimeShader).shader
 }
+// Integrated into iTune by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 internal class AndroidRuntimeShader(val shader: android.graphics.RuntimeShader) : RuntimeShader {

@@ -25,6 +25,8 @@
 
 package com.darkxvenom.itune.ui.artist.components.backdrop.internal
 
+// Adapted & maintained by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0 / Apache-2.0.
+
 import org.intellij.lang.annotations.Language
 
 @Language("AGSL")
@@ -91,6 +93,7 @@ half4 main(float2 coord) {
     float2 refractedCoord = coord + d * grad;
     return content.eval(refractedCoord);
 }"""
+// Integrated into iTune by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark
 
 @Language("AGSL")
 internal val RoundedRectRefractionWithDispersionShaderString = """

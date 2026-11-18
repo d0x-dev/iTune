@@ -9,6 +9,8 @@
  */
 package com.darkxvenom.itune.ui.artist.components.backdrop.shadow
 
+// Adapted & maintained by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0 / Apache-2.0.
+
 import androidx.annotation.FloatRange
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
@@ -27,6 +29,7 @@ data class Shadow(
     @param:FloatRange(from = 0.0, to = 1.0) val alpha: Float = 1f,
     val blendMode: BlendMode = DrawScope.DefaultBlendMode
 ) {
+    // Integrated into iTune by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark
 
     companion object {
 

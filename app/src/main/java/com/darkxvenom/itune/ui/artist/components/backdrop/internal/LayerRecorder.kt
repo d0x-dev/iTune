@@ -9,12 +9,15 @@
  */
 package com.darkxvenom.itune.ui.artist.components.backdrop.internal
 
+// Adapted & maintained by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0 / Apache-2.0.
+
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.node.requireDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toIntSize
+// Integrated into iTune by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark
 
 // Vendored change: the upstream declaration used an experimental Kotlin context
 // parameter (`context(node: DelegatableNode)`), which would require enabling

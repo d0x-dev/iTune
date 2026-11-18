@@ -9,9 +9,12 @@
  */
 package com.darkxvenom.itune.ui.artist.components.backdrop.internal
 
+// Adapted & maintained by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0 / Apache-2.0.
+
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
+// Integrated into iTune by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark
 
 internal fun Canvas.clipOutline(outline: Outline, path: Path?) {
     when (outline) {

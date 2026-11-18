@@ -9,6 +9,8 @@
  */
 package com.darkxvenom.itune.ui.artist.components.backdrop.shadow
 
+// Adapted & maintained by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0 / Apache-2.0.
+
 import androidx.annotation.FloatRange
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
@@ -37,6 +39,7 @@ data class InnerShadow(
         val Default: InnerShadow = InnerShadow()
     }
 }
+// Integrated into iTune by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark
 
 @Stable
 fun lerp(start: InnerShadow, stop: InnerShadow, fraction: Float): InnerShadow {

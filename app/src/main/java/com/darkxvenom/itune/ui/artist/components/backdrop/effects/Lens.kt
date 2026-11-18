@@ -9,6 +9,8 @@
  */
 package com.darkxvenom.itune.ui.artist.components.backdrop.effects
 
+// Adapted & maintained by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0 / Apache-2.0.
+
 import androidx.annotation.FloatRange
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.CornerBasedShape
@@ -113,6 +115,7 @@ private val BackdropEffectScope.cornerRadii: FloatArray?
 
         else -> null
     }
+// Integrated into iTune by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark
 
 private fun throwUnsupportedSDFException(): Nothing {
     throw UnsupportedOperationException(

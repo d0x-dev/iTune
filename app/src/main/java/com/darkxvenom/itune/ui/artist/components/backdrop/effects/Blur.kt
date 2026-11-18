@@ -9,6 +9,8 @@
  */
 package com.darkxvenom.itune.ui.artist.components.backdrop.effects
 
+// Adapted & maintained by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0 / Apache-2.0.
+
 import androidx.annotation.FloatRange
 import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.TileMode
@@ -21,6 +23,7 @@ fun BackdropEffectScope.blur(
 ) {
     if (!isRenderEffectSupported()) return
     if (radius <= 0f) return
+    // Integrated into iTune by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark
 
     if (edgeTreatment != TileMode.Clamp || renderEffect != null) {
         if (radius > padding) {

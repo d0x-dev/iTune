@@ -9,6 +9,8 @@
  */
 package com.darkxvenom.itune.ui.artist.components.backdrop.internal
 
+// Adapted & maintained by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0 / Apache-2.0.
+
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
@@ -24,6 +26,7 @@ internal class ShapeProvider(val shapeBlock: () -> Shape) {
     private var _size: Size = Size.Unspecified
     private var _layoutDirection: LayoutDirection? = null
     private var _density: Float? = null
+    // Integrated into iTune by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark
 
     val innerShape
         get() = shapeBlock()

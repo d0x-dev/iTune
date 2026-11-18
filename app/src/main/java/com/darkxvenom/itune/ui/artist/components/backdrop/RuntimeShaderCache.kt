@@ -9,12 +9,15 @@
  */
 package com.darkxvenom.itune.ui.artist.components.backdrop
 
+// Adapted & maintained by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0 / Apache-2.0.
+
 import org.intellij.lang.annotations.Language
 
 sealed interface RuntimeShaderCache {
 
     fun obtainRuntimeShader(key: String, @Language("AGSL") string: String): RuntimeShader
 }
+// Integrated into iTune by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark
 
 internal class RuntimeShaderCacheImpl : RuntimeShaderCache {
 
