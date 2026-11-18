@@ -35,3 +35,8 @@
 -dontwarn org.conscrypt.**
 -dontwarn org.openjsse.**
 -dontwarn org.slf4j.impl.StaticLoggerBinder
+
+# Keep WebView JavaScriptInterface bridge for Spotify token minting.
+-keepclassmembers class com.darkxvenom.itune.data.canvas.SpotifyToken$TokenBridge {
+    @android.webkit.JavascriptInterface <methods>;
+}
