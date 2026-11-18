@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.data.auth
 
 import androidx.compose.runtime.Immutable
@@ -17,6 +28,7 @@ enum class WebSessionMode {
 enum class PlaylistStorageTarget {
     LOCAL,
     GOOGLE_ACCOUNT,
+    SPOTIFY_ACCOUNT,
 }
 
 @Immutable
@@ -212,6 +224,7 @@ fun mergeSetCookies(existingCookieHeader: String?, setCookieHeaders: List<String
     if (!changed || jar.isEmpty()) return null
     return jar.entries.joinToString("; ") { (k, v) -> "$k=$v" }
 }
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 internal fun sessionId(cookie: String, dataSyncId: String?): String =
     dataSyncId?.takeIf { it.isNotBlank() } ?: sha256Hex(cookie).take(24)
