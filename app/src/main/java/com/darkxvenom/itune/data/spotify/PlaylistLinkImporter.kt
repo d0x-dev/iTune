@@ -1,8 +1,20 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.data.spotify
 
 import android.util.Log
 import com.darkxvenom.itune.backend.MusicBackend
 import com.darkxvenom.itune.backend.MusicTrack
+import com.darkxvenom.itune.data.library.SettingsStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -25,7 +37,10 @@ data class PlaylistImportResult(
     val title: String,
     val tracks: List<MusicTrack>,
     val unmatched: List<PlaylistImportTrack>,
+    val playlistId: String = "",
+    val sourceTracks: List<PlaylistImportTrack> = emptyList(),
 )
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 object PlaylistLinkImporter {
     private const val TAG = "PlaylistLinkImporter"
@@ -45,6 +60,13 @@ object PlaylistLinkImporter {
     fun extractPlaylistId(input: String): String? {
         val trimmed = input.trim()
         if (trimmed.isEmpty()) return null
+        if (trimmed.equals(SpotifyLibrary.LIKED_ID, ignoreCase = true) ||
+            trimmed.equals("spotify:collection:tracks", ignoreCase = true) ||
+            trimmed.contains("open.spotify.com/collection/tracks", ignoreCase = true)
+        ) {
+            return SpotifyLibrary.LIKED_ID
+        }
+        if (playlistIdPattern.matches(trimmed)) return trimmed
 
         if (trimmed.startsWith("spotify:playlist:")) {
             val id = trimmed.removePrefix("spotify:playlist:")
@@ -65,16 +87,73 @@ object PlaylistLinkImporter {
         return null
     }
 
-    suspend fun importPlaylist(
-        playlistIdOrUrl: String,
-        language: String? = null,
-        onProgress: suspend (completed: Int, total: Int) -> Unit,
-    ): PlaylistImportResult {
-        val playlistId = extractPlaylistId(playlistIdOrUrl)
-            ?: playlistIdOrUrl.trim().takeIf(playlistIdPattern::matches)
-            ?: error("Invalid Spotify playlist link or ID")
+    fun canonicalUrl(playlistId: String, rawInput: String? = null): String {
+        val cleaned = rawInput?.trim().orEmpty()
+        if (cleaned.startsWith("https://", ignoreCase = true) || cleaned.startsWith("http://", ignoreCase = true)) {
+            return cleaned
+        }
+        return if (playlistId == SpotifyLibrary.LIKED_ID) {
+            "https://open.spotify.com/collection/tracks"
+        } else {
+            "https://open.spotify.com/playlist/$playlistId"
+        }
+    }
 
-        val (title, sourceTracks) = fetchPublicPlaylist(playlistId)
+    /**
+     * Fetches a Spotify playlist's title and track list.
+     * Supports both public playlists and private playlists (when signed in to Spotify).
+     */
+    suspend fun fetchPlaylistTracks(playlistId: String): Pair<String, List<PlaylistImportTrack>> {
+        val isSpotifySignedIn = SettingsStore.state.value.spotifySpdcToken.isNotBlank()
+
+        if (playlistId == SpotifyLibrary.LIKED_ID) {
+            if (!isSpotifySignedIn) {
+                error("Sign in to Spotify in Settings → Spotify & Canvas Setup to import your Liked Songs.")
+            }
+            val (title, authTracks) = SpotifyLibrary.fetchPlaylistDetails(SpotifyLibrary.LIKED_ID)
+            val mapped = authTracks.map { PlaylistImportTrack(it.title, it.artist) }
+            if (mapped.isEmpty()) error("No liked songs found on this Spotify account.")
+            return title to mapped
+        }
+
+        val publicAttempt = runCatching { fetchPublicPlaylist(playlistId) }
+        val publicResult = publicAttempt.getOrNull()
+        // If public embed succeeded and didn't truncate at 100 tracks, use it directly.
+        if (publicResult != null && publicResult.second.isNotEmpty() &&
+            (publicResult.second.size != PAGE_SIZE || !isSpotifySignedIn)
+        ) {
+            return publicResult
+        }
+
+        // Fall back to authenticated Pathfinder (works for private playlists and 100+ track playlists).
+        if (isSpotifySignedIn) {
+            val authAttempt = runCatching { SpotifyLibrary.fetchPlaylistDetails(playlistId) }
+            authAttempt.onSuccess { (title, authTracks) ->
+                val mapped = authTracks.map { PlaylistImportTrack(it.title, it.artist) }
+                if (mapped.isNotEmpty()) return title to mapped
+            }.onFailure { err ->
+                Log.w(TAG, "Authenticated Spotify playlist fetch failed for $playlistId: ${err.message}")
+            }
+        }
+
+        // If public embed had 100 tracks and auth fallback wasn't available/failed, return what public got.
+        if (publicResult != null && publicResult.second.isNotEmpty()) {
+            return publicResult
+        }
+
+        val rootError = publicAttempt.exceptionOrNull()?.message
+        if (!isSpotifySignedIn) {
+            error("Playlist is private or unavailable. Sign in to Spotify in Settings → Spotify & Canvas Setup to import private playlists.")
+        }
+        error(rootError ?: "Could not load Spotify playlist. Make sure your Spotify session is signed in.")
+    }
+
+    suspend fun matchTracks(
+        sourceTracks: List<PlaylistImportTrack>,
+        language: String? = null,
+        onProgress: suspend (completed: Int, total: Int) -> Unit = { _, _ -> },
+    ): Pair<List<MusicTrack>, List<PlaylistImportTrack>> {
+        if (sourceTracks.isEmpty()) return emptyList<MusicTrack>() to emptyList()
         val matched = mutableListOf<MusicTrack>()
         val unmatched = mutableListOf<PlaylistImportTrack>()
         val semaphore = Semaphore(4)
@@ -86,7 +165,7 @@ object PlaylistLinkImporter {
                 it.isNotBlank()
         }
 
-        val results = coroutineScope {
+        coroutineScope {
             sourceTracks.map { source ->
                 async(Dispatchers.IO) {
                     semaphore.withPermit {
@@ -121,8 +200,27 @@ object PlaylistLinkImporter {
                 }
             }
         }
+        return matched.distinctBy { it.id } to unmatched
+    }
 
-        return PlaylistImportResult(title, matched.distinctBy { it.id }, unmatched)
+    suspend fun importPlaylist(
+        playlistIdOrUrl: String,
+        language: String? = null,
+        onProgress: suspend (completed: Int, total: Int) -> Unit,
+    ): PlaylistImportResult {
+        val playlistId = extractPlaylistId(playlistIdOrUrl)
+            ?: playlistIdOrUrl.trim().takeIf(playlistIdPattern::matches)
+            ?: error("Invalid Spotify playlist link or ID")
+
+        val (title, sourceTracks) = fetchPlaylistTracks(playlistId)
+        val (matched, unmatched) = matchTracks(sourceTracks, language, onProgress)
+        return PlaylistImportResult(
+            title = title,
+            tracks = matched,
+            unmatched = unmatched,
+            playlistId = playlistId,
+            sourceTracks = sourceTracks,
+        )
     }
 
     private suspend fun fetchPublicPlaylist(id: String): Pair<String, List<PlaylistImportTrack>> =
