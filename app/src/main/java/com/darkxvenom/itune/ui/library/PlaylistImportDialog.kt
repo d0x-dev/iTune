@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.ui.library
 
 import android.os.Build
@@ -27,10 +38,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.ContentPaste
 import androidx.compose.material.icons.rounded.WarningAmber
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,6 +52,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +64,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -62,17 +77,24 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.library.SavedSongMetadata
+import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.spotify.PlaylistImportResult
 import com.darkxvenom.itune.data.spotify.PlaylistLinkImporter
+import com.darkxvenom.itune.data.spotify.SpotifyLibrary
+import com.darkxvenom.itune.data.spotify.SpotifyPlaylist
+import com.darkxvenom.itune.data.spotify.SpotifyPlaylistAutoSyncManager
 import com.darkxvenom.itune.ui.theme.AppleTextPrimary
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 private val SPOTIFY_GREEN = Color(0xFF1DB954)
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 private val IMPORT_LANGUAGES = listOf(
     "No Preference",
@@ -86,9 +108,8 @@ private val IMPORT_LANGUAGES = listOf(
 )
 
 /**
- * iOS-styled Apple Music modal pop-up dialog for importing Spotify playlists,
- * matching [AvatarSelectionDialog] with frosted dark card, Apple alert dividers,
- * Spotify icon, language filter chips, and progress feedback.
+ * iOS-styled Apple Music modal pop-up dialog for importing public & private Spotify playlists,
+ * with Spotify account playlist picker, language filter chips, and automatic future-song sync.
  */
 @Composable
 internal fun PlaylistImportDialog(
@@ -98,20 +119,46 @@ internal fun PlaylistImportDialog(
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
     val scope = rememberCoroutineScope()
+    val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
+    val isSpotifySignedIn = settingsState.spotifySpdcToken.isNotBlank()
+
     var link by remember { mutableStateOf(initialLink) }
     var selectedLanguage by remember { mutableStateOf("No Preference") }
+    var autoAddFutureSongs by remember { mutableStateOf(true) }
     var loading by remember { mutableStateOf(false) }
     var status by remember { mutableStateOf<String?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
     var progress by remember { mutableStateOf(0 to 0) }
     var result by remember { mutableStateOf<PlaylistImportResult?>(null) }
 
+    // Connected Spotify account playlists (includes private playlists & Liked Songs)
+    var myPlaylists by remember { mutableStateOf<List<SpotifyPlaylist>>(emptyList()) }
+    var myPlaylistsLoading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isSpotifySignedIn) {
+        if (!isSpotifySignedIn) {
+            myPlaylists = emptyList()
+            myPlaylistsLoading = false
+            return@LaunchedEffect
+        }
+        myPlaylistsLoading = true
+        runCatching { SpotifyLibrary.playlists() }
+            .onSuccess { myPlaylists = it }
+            .onFailure { myPlaylists = emptyList() }
+        myPlaylistsLoading = false
+    }
+
     fun startImport() {
         val extractedId = PlaylistLinkImporter.extractPlaylistId(link)
         if (extractedId == null) {
-            error = "Enter a valid public Spotify playlist link."
+            error = if (isSpotifySignedIn) {
+                "Enter a valid Spotify playlist link or pick one of your playlists above."
+            } else {
+                "Enter a valid Spotify playlist link."
+            }
             return
         }
+        val storedUrl = PlaylistLinkImporter.canonicalUrl(extractedId, link)
         loading = true
         error = null
         status = "Fetching playlist from Spotify…"
@@ -128,16 +175,32 @@ internal fun PlaylistImportDialog(
                 }
 
                 if (imported.tracks.isEmpty()) {
-                    error = "No tracks could be matched. Check that the playlist is public."
+                    error = if (isSpotifySignedIn) {
+                        "No tracks could be matched from this Spotify playlist."
+                    } else {
+                        "No tracks could be matched. If it is private, sign in to Spotify in Settings first."
+                    }
                 } else {
                     LibraryStore.ensureInit(context)
-                    LibraryStore.createUserPlaylist(
+                    val created = LibraryStore.createUserPlaylist(
                         context = context,
                         name = imported.title,
                         initialSongs = imported.tracks.map { SavedSongMetadata.fromTrack(it) },
                     )
+                    if (autoAddFutureSongs) {
+                        SpotifyPlaylistAutoSyncManager.registerAutoSync(
+                            context = context,
+                            localPlaylistId = created.id,
+                            playlistName = created.name,
+                            spotifyPlaylistId = imported.playlistId.ifBlank { extractedId },
+                            spotifyUrl = storedUrl,
+                            languagePreference = effectiveLanguage,
+                            initialSourceTracks = imported.sourceTracks,
+                        )
+                    }
                     result = imported
-                    status = "Imported ${imported.tracks.size} of ${imported.tracks.size + imported.unmatched.size} tracks."
+                    val syncNote = if (autoAddFutureSongs) " • Auto-sync ON" else ""
+                    status = "Imported ${imported.tracks.size} of ${imported.tracks.size + imported.unmatched.size} tracks$syncNote"
                 }
             } catch (cancelled: CancellationException) {
                 throw cancelled
@@ -180,8 +243,8 @@ internal fun PlaylistImportDialog(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(0.88f)
-                    .widthIn(max = 350.dp)
+                    .fillMaxWidth(0.90f)
+                    .widthIn(max = 364.dp)
                     .clickable(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
@@ -235,8 +298,10 @@ internal fun PlaylistImportDialog(
                 Text(
                     text = if (completed) {
                         result?.title.orEmpty()
+                    } else if (isSpotifySignedIn) {
+                        "Paste any public or private playlist link, or pick one of your Spotify playlists below."
                     } else {
-                        "Paste a public playlist link to match and save songs into your iTune library."
+                        "Paste a public playlist link (sign in to Spotify in Settings to import private playlists too)."
                     },
                     color = AppleTextSecondary,
                     fontSize = 12.5.sp,
@@ -252,11 +317,86 @@ internal fun PlaylistImportDialog(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .heightIn(max = 380.dp)
                         .padding(horizontal = 18.dp)
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     if (!completed) {
+                        // Connected Spotify Playlists Quick Picker (Public & Private)
+                        if (isSpotifySignedIn) {
+                            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                ) {
+                                    Text(
+                                        text = "Your Spotify Playlists (Public & Private)",
+                                        fontSize = 11.5.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        color = SPOTIFY_GREEN,
+                                    )
+                                    if (myPlaylistsLoading) {
+                                        CircularProgressIndicator(
+                                            color = SPOTIFY_GREEN,
+                                            strokeWidth = 1.6.dp,
+                                            modifier = Modifier.size(12.dp),
+                                        )
+                                    }
+                                }
+                                if (myPlaylists.isNotEmpty()) {
+                                    LazyRow(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        modifier = Modifier.fillMaxWidth(),
+                                    ) {
+                                        items(myPlaylists, key = { it.id }) { pl ->
+                                            val plUrl = PlaylistLinkImporter.canonicalUrl(pl.id)
+                                            val isSelected = PlaylistLinkImporter.extractPlaylistId(link) == pl.id
+                                            Row(
+                                                modifier = Modifier
+                                                    .clip(RoundedCornerShape(12.dp))
+                                                    .background(
+                                                        if (isSelected) SPOTIFY_GREEN.copy(alpha = 0.22f)
+                                                        else Color(0xFF141416),
+                                                    )
+                                                    .border(
+                                                        width = 1.dp,
+                                                        color = if (isSelected) SPOTIFY_GREEN else Color.White.copy(alpha = 0.10f),
+                                                        shape = RoundedCornerShape(12.dp),
+                                                    )
+                                                    .clickable(enabled = !loading) {
+                                                        link = plUrl
+                                                        error = null
+                                                    }
+                                                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(7.dp),
+                                            ) {
+                                                AsyncImage(
+                                                    model = pl.imageUrl,
+                                                    contentDescription = pl.name,
+                                                    contentScale = ContentScale.Crop,
+                                                    modifier = Modifier
+                                                        .size(28.dp)
+                                                        .clip(RoundedCornerShape(6.dp))
+                                                        .background(Color.White.copy(alpha = 0.08f)),
+                                                )
+                                                Text(
+                                                    text = pl.name,
+                                                    color = if (isSelected) SPOTIFY_GREEN else Color.White,
+                                                    fontSize = 12.sp,
+                                                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                    modifier = Modifier.widthIn(max = 130.dp),
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         OutlinedTextField(
                             value = link,
                             onValueChange = {
@@ -308,6 +448,61 @@ internal fun PlaylistImportDialog(
                                 }
                             },
                         )
+
+                        // Checkbox: Add Future Songs Automatically
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color(0xFF141416))
+                                .border(
+                                    width = 0.8.dp,
+                                    color = if (autoAddFutureSongs) SPOTIFY_GREEN.copy(alpha = 0.55f) else Color.White.copy(alpha = 0.10f),
+                                    shape = RoundedCornerShape(12.dp),
+                                )
+                                .clickable(enabled = !loading) {
+                                    autoAddFutureSongs = !autoAddFutureSongs
+                                }
+                                .padding(horizontal = 12.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(22.dp)
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(if (autoAddFutureSongs) SPOTIFY_GREEN else Color.Transparent)
+                                    .border(
+                                        width = 1.6.dp,
+                                        color = if (autoAddFutureSongs) SPOTIFY_GREEN else Color.White.copy(alpha = 0.42f),
+                                        shape = RoundedCornerShape(6.dp),
+                                    ),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                if (autoAddFutureSongs) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Check,
+                                        contentDescription = "Checked",
+                                        tint = Color.Black,
+                                        modifier = Modifier.size(16.dp),
+                                    )
+                                }
+                            }
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Add Future Songs Automatically",
+                                    color = Color.White,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                )
+                                Text(
+                                    text = "Stores this link and auto-adds any new songs on app open",
+                                    color = AppleTextSecondary,
+                                    fontSize = 11.sp,
+                                    lineHeight = 14.5.sp,
+                                )
+                            }
+                        }
 
                         // Language chips
                         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -474,7 +669,7 @@ internal fun PlaylistImportDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Apple alert-style stacked action buttons matching AvatarSelectionDialog
+                // Apple alert-style stacked action buttons
                 HorizontalDivider(
                     thickness = 0.5.dp,
                     color = Color.White.copy(alpha = 0.12f),
