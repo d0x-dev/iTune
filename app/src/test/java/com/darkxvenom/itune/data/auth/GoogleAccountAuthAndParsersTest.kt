@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.data.auth
 
 import com.darkxvenom.itune.data.model.BrowseType
@@ -70,9 +81,9 @@ class GoogleAccountAuthAndParsersTest {
                     "multiPageMenuRenderer": {
                       "header": {
                         "activeAccountHeaderRenderer": {
-                          "accountName": { "runs": [{ "text": "Kushagra" }] },
-                          "email": { "simpleText": "kushagra@example.com" },
-                          "channelHandle": { "runs": [{ "text": "@kushagra" }] },
+                          "accountName": { "runs": [{ "text": "Dark" }] },
+                          "email": { "simpleText": "dark@example.com" },
+                          "channelHandle": { "runs": [{ "text": "@dark" }] },
                           "accountPhoto": {
                             "thumbnails": [
                               { "url": "https://example.com/a64.jpg", "width": 64 },
@@ -90,9 +101,9 @@ class GoogleAccountAuthAndParsersTest {
         )
         val info = YouTubeAccountParsers.parseAccountInfo(response)
         assertNotNull(info)
-        assertEquals("Kushagra", info?.name)
-        assertEquals("kushagra@example.com", info?.email)
-        assertEquals("@kushagra", info?.handle)
+        assertEquals("Dark", info?.name)
+        assertEquals("dark@example.com", info?.email)
+        assertEquals("@dark", info?.handle)
         assertEquals("https://example.com/a256.jpg", info?.avatarUrl)
     }
 
@@ -261,6 +272,7 @@ class GoogleAccountAuthAndParsersTest {
         assertEquals("SAPISID3PHASH", pairs[2].groupValues[1])
         assertFalse(pairs[0].groupValues[2] == pairs[1].groupValues[2])
     }
+    // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
     @Test
     fun buildFullSapisidAuthorization_bindsUserSessionIdIntoHash() {
