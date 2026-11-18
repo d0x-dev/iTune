@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2026 DxV Studio ~~ Dark
+ *
+ * Originally created by DxV Studio ~~ Dark.
+ * Credits: DxV Studio, AirBeats, and Dark.
+ *
+ * This file is part of iTune and is licensed under the GNU General Public License v3.0 (GPL-3.0).
+ * Any copying, modification, or redistribution of this code must strictly comply with the
+ * terms of the project LICENSE file and retain full author credit.
+ */
+
 package com.darkxvenom.itune.ui.auth
 
 import android.annotation.SuppressLint
@@ -71,6 +82,7 @@ import org.json.JSONObject
 private const val MUSIC_ORIGIN = "https://music.youtube.com"
 private const val LOGIN_URL =
     "https://accounts.google.com/ServiceLogin?ltmpl=music&service=youtube&prompt=select_account&continue=https%3A%2F%2Fmusic.youtube.com%2F"
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 private const val YTCFG_PROBE = """
 (function () {
