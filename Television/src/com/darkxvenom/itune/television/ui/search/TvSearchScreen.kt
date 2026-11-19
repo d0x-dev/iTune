@@ -16,6 +16,8 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -235,18 +237,21 @@ private fun TvSearchResultRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(60.dp)
             .tvFocusable(
                 shape = RoundedCornerShape(14.dp),
-                focusedBorderColor = Color.White,
                 scaleOnFocus = 1.02f,
+                interactionSource = interactionSource,
                 onClick = onClick,
             )
             .clip(RoundedCornerShape(14.dp))
-            .background(Color(0x14FFFFFF))
+            .background(if (isFocused) Color.White.copy(alpha = 0.22f) else Color(0x14FFFFFF))
             .padding(horizontal = 16.dp),
         contentAlignment = Alignment.CenterStart,
     ) {

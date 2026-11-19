@@ -14,6 +14,8 @@ package com.darkxvenom.itune.television.ui.artist
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -236,18 +238,21 @@ private fun TvArtistTrackRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(58.dp)
             .tvFocusable(
                 shape = RoundedCornerShape(12.dp),
-                focusedBorderColor = Color.White,
                 scaleOnFocus = 1.02f,
+                interactionSource = interactionSource,
                 onClick = onClick,
             )
             .clip(RoundedCornerShape(12.dp))
-            .background(Color(0x12FFFFFF))
+            .background(if (isFocused) Color.White.copy(alpha = 0.22f) else Color(0x12FFFFFF))
             .padding(horizontal = 16.dp),
         contentAlignment = Alignment.CenterStart,
     ) {

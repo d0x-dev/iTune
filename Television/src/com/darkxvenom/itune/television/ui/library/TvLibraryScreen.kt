@@ -13,6 +13,8 @@ package com.darkxvenom.itune.television.ui.library
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +38,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -122,21 +125,24 @@ fun TvLibraryScreen(
             ) {
                 itemsIndexed(displayList, key = { _, track -> track.id }) { index, track ->
                     val musicTrack = track.toMusicTrack()
+                    val interactionSource = remember { MutableInteractionSource() }
+                    val isFocused by interactionSource.collectIsFocusedAsState()
+
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(60.dp)
                             .tvFocusable(
                                 shape = RoundedCornerShape(14.dp),
-                                focusedBorderColor = Color.White,
                                 scaleOnFocus = 1.02f,
+                                interactionSource = interactionSource,
                                 onClick = {
                                     val list = displayList.mapNotNull { it.toMusicTrack() }
                                     musicTrack?.let { MusicPlayerState.play(it, list, expandPlayer = false) }
                                 },
                             )
                             .clip(RoundedCornerShape(14.dp))
-                            .background(Color(0x14FFFFFF))
+                            .background(if (isFocused) Color.White.copy(alpha = 0.22f) else Color(0x14FFFFFF))
                             .padding(horizontal = 16.dp),
                         contentAlignment = Alignment.CenterStart,
                     ) {

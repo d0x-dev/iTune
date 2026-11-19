@@ -53,6 +53,7 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -260,17 +261,17 @@ object TvDeviceUtils {
 }
 
 /**
- * Universal TV focus modifier that equips any Compose component with:
- * 1. Prominent animated focus border / outline (visible from 10 feet away)
- * 2. Subtle spring scale magnification on focus
- * 3. Elevated glowing shadow when highlighted
+ * Universal TV focus modifier matching tvOS / Apple TV:
+ * 1. Smooth spring scale magnification on focus ("zoom out a little bit")
+ * 2. Soft black depth shadow (never an intrusive white glow)
+ * 3. Never an outline / border by default
  * 4. Hardware DPAD_CENTER / ENTER key event handling for Android TV remotes
  */
 fun Modifier.tvFocusable(
     shape: Shape = RoundedCornerShape(12.dp),
-    focusedBorderColor: Color = Color.White,
+    focusedBorderColor: Color = Color.Transparent,
     unfocusedBorderColor: Color = Color.Transparent,
-    focusedBorderWidth: Dp = 2.5.dp,
+    focusedBorderWidth: Dp = 0.dp,
     unfocusedBorderWidth: Dp = 0.dp,
     scaleOnFocus: Float = 1.05f,
     focusRequester: FocusRequester? = null,
@@ -283,11 +284,11 @@ fun Modifier.tvFocusable(
 
     val scale by animateFloatAsState(
         targetValue = when {
-            isPressed -> 0.97f
+            isPressed -> 0.98f
             isFocused -> scaleOnFocus
             else -> 1.0f
         },
-        animationSpec = spring(dampingRatio = 0.72f, stiffness = 400f),
+        animationSpec = spring(dampingRatio = 0.72f, stiffness = 420f),
         label = "tvFocusScale",
     )
 
@@ -304,8 +305,8 @@ fun Modifier.tvFocusable(
     )
 
     val shadowElevation by animateDpAsState(
-        targetValue = if (isFocused) 18.dp else 0.dp,
-        animationSpec = tween(durationMillis = 180),
+        targetValue = if (isFocused) 16.dp else 0.dp,
+        animationSpec = spring(dampingRatio = 1f, stiffness = 420f),
         label = "tvFocusShadow",
     )
 
@@ -315,6 +316,7 @@ fun Modifier.tvFocusable(
     }
 
     mod
+        .zIndex(if (isFocused) 10f else 1f)
         .graphicsLayer {
             scaleX = scale
             scaleY = scale
@@ -324,17 +326,24 @@ fun Modifier.tvFocusable(
                 Modifier.shadow(
                     elevation = shadowElevation,
                     shape = shape,
-                    ambientColor = focusedBorderColor.copy(alpha = 0.35f),
-                    spotColor = focusedBorderColor.copy(alpha = 0.45f),
+                    clip = false,
+                    ambientColor = Color.Black.copy(alpha = 0.45f),
+                    spotColor = Color.Black.copy(alpha = 0.60f),
                 )
             } else {
                 Modifier
             }
         )
-        .border(
-            width = currentBorderWidth,
-            color = currentBorderColor,
-            shape = shape,
+        .then(
+            if (currentBorderWidth > 0.dp && currentBorderColor != Color.Transparent) {
+                Modifier.border(
+                    width = currentBorderWidth,
+                    color = currentBorderColor,
+                    shape = shape,
+                )
+            } else {
+                Modifier
+            }
         )
         .then(
             if (onClick != null) {
@@ -362,15 +371,16 @@ fun Modifier.tvFocusable(
 }
 
 /**
- * Reusable TV Card container with smooth focus zoom and glowing border.
+ * Reusable TV Card container with smooth focus zoom (no glow, no border outline, tvOS style).
  */
 @Composable
 fun TvCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(16.dp),
-    focusedBorderColor: Color = Color.White,
-    scaleOnFocus: Float = 1.04f,
+    focusedBorderColor: Color = Color.Transparent,
+    focusedBorderWidth: Dp = 0.dp,
+    scaleOnFocus: Float = 1.05f,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     content: @Composable BoxScope.(isFocused: Boolean) -> Unit,
 ) {
@@ -381,6 +391,7 @@ fun TvCard(
             .tvFocusable(
                 shape = shape,
                 focusedBorderColor = focusedBorderColor,
+                focusedBorderWidth = focusedBorderWidth,
                 scaleOnFocus = scaleOnFocus,
                 interactionSource = interactionSource,
                 onClick = onClick,

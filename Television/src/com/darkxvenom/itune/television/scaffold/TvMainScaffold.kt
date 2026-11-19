@@ -232,7 +232,7 @@ private fun TvAppleTopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 48.dp, vertical = 20.dp),
+            .padding(horizontal = 40.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -248,7 +248,7 @@ private fun TvAppleTopBar(
                 contentDescription = "iTune Brand Waves",
                 colorFilter = ColorFilter.tint(Color.White),
                 modifier = Modifier
-                    .size(34.dp)
+                    .size(26.dp)
                     .onGloballyPositioned { coords ->
                         if (coords.isAttached) {
                             iconBounds = coords.boundsInRoot()
@@ -257,15 +257,15 @@ private fun TvAppleTopBar(
                     },
             )
 
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
             Text(
                 text = "iTune",
                 color = Color.White,
                 fontFamily = SFProDisplay,
-                fontSize = 24.sp,
+                fontSize = 19.sp,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = (-0.4).sp,
+                letterSpacing = (-0.3).sp,
                 modifier = Modifier.onGloballyPositioned { coords ->
                     if (coords.isAttached) {
                         titleBounds = coords.boundsInRoot()
@@ -278,11 +278,11 @@ private fun TvAppleTopBar(
         // Center: Apple TV Pill Tab Bar (Listen Now, Browse, Radio, Library, Now Playing)
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier
                 .clip(CircleShape)
                 .background(Color.White.copy(alpha = 0.08f))
-                .padding(horizontal = 6.dp, vertical = 5.dp),
+                .padding(horizontal = 4.dp, vertical = 3.dp),
         ) {
             TvTopTabPill(
                 label = "Listen Now",
@@ -319,7 +319,7 @@ private fun TvAppleTopBar(
         // Top Right: Search and Settings Circle Buttons
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             TvTopIconButton(
                 icon = Icons.Rounded.Search,
@@ -386,7 +386,7 @@ private fun TvTopTabPill(
             .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
             .then(
                 if (isSelected) {
-                    Modifier.shadow(elevation = 8.dp, shape = CircleShape)
+                    Modifier.shadow(elevation = 4.dp, shape = CircleShape)
                 } else Modifier
             )
             .clip(CircleShape)
@@ -412,14 +412,14 @@ private fun TvTopTabPill(
                 indication = null,
                 onClick = onClick,
             )
-            .padding(horizontal = 20.dp, vertical = 9.dp),
+            .padding(horizontal = 14.dp, vertical = 6.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = label,
             color = textColor,
             fontFamily = SFProDisplay,
-            fontSize = 15.sp,
+            fontSize = 13.sp,
             fontWeight = if (isSelected || isFocused) FontWeight.Bold else FontWeight.SemiBold,
         )
     }
@@ -461,14 +461,14 @@ private fun TvTopIconButton(
 
     Box(
         modifier = modifier
-            .size(42.dp)
+            .size(34.dp)
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
             }
             .then(
                 if (isSelected) {
-                    Modifier.shadow(elevation = 8.dp, shape = CircleShape)
+                    Modifier.shadow(elevation = 4.dp, shape = CircleShape)
                 } else Modifier
             )
             .clip(CircleShape)
@@ -500,7 +500,7 @@ private fun TvTopIconButton(
             imageVector = icon,
             contentDescription = contentDescription,
             tint = iconTint,
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier.size(17.dp),
         )
     }
 }
