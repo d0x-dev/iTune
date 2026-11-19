@@ -114,23 +114,47 @@ class MainActivity : ComponentActivity() {
                     color = androidx.compose.material3.MaterialTheme.colorScheme.background
                 ) {
                     if (isTv) {
-                        if (!settingsState.welcomeCompleted) {
-                            TvWelcomeScreen(
-                                initialName = "",
-                                fromSplash = false,
-                                homeIconBounds = null,
-                                homeTitleBounds = null,
-                                onRevealHomeUnderlay = { enteredName: String ->
-                                    SettingsStore.setDisplayName(this@MainActivity, enteredName)
-                                    IShareSyncManager.setDisplayName(enteredName)
-                                },
-                                onContinue = { enteredName: String ->
-                                    SettingsStore.completeWelcome(this@MainActivity, enteredName)
-                                    IShareSyncManager.setDisplayName(enteredName)
-                                },
-                            )
-                        } else {
-                            TvMainScaffold()
+                        var revealHomeUnderlay by remember(settingsState.welcomeCompleted) {
+                            mutableStateOf(settingsState.welcomeCompleted)
+                        }
+                        var showWelcomeFlow by remember(settingsState.welcomeCompleted) {
+                            mutableStateOf(!settingsState.welcomeCompleted)
+                        }
+                        var homeBrandVisible by remember(settingsState.welcomeCompleted) {
+                            mutableStateOf(settingsState.welcomeCompleted)
+                        }
+                        var homeIconBounds by remember { mutableStateOf<Rect?>(null) }
+                        var homeTitleBounds by remember { mutableStateOf<Rect?>(null) }
+
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            if (revealHomeUnderlay || settingsState.welcomeCompleted) {
+                                TvMainScaffold(
+                                    showTopBarBrand = homeBrandVisible,
+                                    onTopBarBrandBoundsChanged = { iconR, titleR ->
+                                        homeIconBounds = iconR
+                                        homeTitleBounds = titleR
+                                    },
+                                )
+                            }
+                            if (showWelcomeFlow) {
+                                TvWelcomeScreen(
+                                    initialName = "",
+                                    fromSplash = false,
+                                    homeIconBounds = homeIconBounds,
+                                    homeTitleBounds = homeTitleBounds,
+                                    onRevealHomeUnderlay = { enteredName: String ->
+                                        SettingsStore.setDisplayName(this@MainActivity, enteredName)
+                                        IShareSyncManager.setDisplayName(enteredName)
+                                        revealHomeUnderlay = true
+                                    },
+                                    onContinue = { enteredName: String ->
+                                        homeBrandVisible = true
+                                        showWelcomeFlow = false
+                                        SettingsStore.completeWelcome(this@MainActivity, enteredName)
+                                        IShareSyncManager.setDisplayName(enteredName)
+                                    },
+                                )
+                            }
                         }
                     } else {
                         val splashEnabled = settingsState.splashScreenEnabled
