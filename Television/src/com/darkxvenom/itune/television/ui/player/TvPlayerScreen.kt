@@ -15,7 +15,9 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -53,7 +55,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.util.lerp
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
@@ -141,13 +145,19 @@ fun TvPlayerScreen(
         }
     }
 
-    // Lyrics screen hides its controls after idle seconds; any interaction shows them again.
-    LaunchedEffect(mode, popupOpen, lastInteraction) {
-        if (mode == TvPlayerMode.LYRICS && !popupOpen) {
-            delay(CONTROLS_HIDE_DELAY_MS)
+    // Immediately hide controls when entering lyrics; show when user interacts and auto-hide after 3.5s.
+    LaunchedEffect(mode) {
+        if (mode == TvPlayerMode.LYRICS) {
             controlsVisible = false
         } else {
             controlsVisible = true
+        }
+    }
+
+    LaunchedEffect(mode, popupOpen, lastInteraction) {
+        if (mode == TvPlayerMode.LYRICS && !popupOpen && controlsVisible) {
+            delay(3500L)
+            controlsVisible = false
         }
     }
 
@@ -167,11 +177,12 @@ fun TvPlayerScreen(
                     true
                 }
                 Key.DirectionUp, Key.DirectionDown, Key.DirectionLeft, Key.DirectionRight,
-                Key.DirectionCenter, Key.Enter, Key.NumPadEnter ->
+                Key.DirectionCenter, Key.Enter, Key.NumPadEnter -> {
                     if (mode == TvPlayerMode.LYRICS && !controlsVisible && !popupOpen) {
                         controlsVisible = true
                         true
                     } else false
+                }
                 else -> false
             }
         } else false
@@ -185,44 +196,38 @@ fun TvPlayerScreen(
     ) {
         TvAmbientBackground(Modifier.fillMaxSize())
 
-        Crossfade(targetState = mode, animationSpec = tween(280), label = "tvPlayerMode") { m ->
-            when (m) {
-                TvPlayerMode.NOW_PLAYING -> NowPlayingPane(
-                    track = track,
-                    canvas = canvas,
-                    popupOpen = popupOpen,
-                    onShowLyrics = { mode = TvPlayerMode.LYRICS },
-                    onShowQueue = { mode = TvPlayerMode.QUEUE },
-                    onOpenPopup = { popupOpen = true },
-                    onOpenArtist = {
-                        track?.let {
-                            onOpenArtist(it.artistId, it.artists.substringBefore(",").trim(), it.thumbnailUrl)
-                        }
-                    },
-                )
-                TvPlayerMode.QUEUE -> QueuePane(
-                    track = track,
-                    canvas = canvas,
-                    popupOpen = popupOpen,
-                    onShowNowPlaying = { mode = TvPlayerMode.NOW_PLAYING },
-                    onShowLyrics = { mode = TvPlayerMode.LYRICS },
-                    onOpenPopup = { popupOpen = true },
-                    onOpenArtist = {
-                        track?.let {
-                            onOpenArtist(it.artistId, it.artists.substringBefore(",").trim(), it.thumbnailUrl)
-                        }
-                    },
-                )
-                TvPlayerMode.LYRICS -> LyricsPane(
-                    track = track,
-                    canvas = canvas,
-                    controlsVisible = controlsVisible,
-                    popupOpen = popupOpen,
-                    onShowNowPlaying = { mode = TvPlayerMode.NOW_PLAYING },
-                    onShowQueue = { mode = TvPlayerMode.QUEUE },
-                    onOpenPopup = { popupOpen = true },
-                )
-            }
+        if (mode == TvPlayerMode.QUEUE) {
+            QueuePane(
+                track = track,
+                canvas = canvas,
+                popupOpen = popupOpen,
+                onShowNowPlaying = { mode = TvPlayerMode.NOW_PLAYING },
+                onShowLyrics = { mode = TvPlayerMode.LYRICS },
+                onOpenPopup = { popupOpen = true },
+                onOpenArtist = {
+                    track?.let {
+                        onOpenArtist(it.artistId, it.artists.substringBefore(",").trim(), it.thumbnailUrl)
+                    }
+                },
+            )
+        } else {
+            NowPlayingWithLyricsPane(
+                track = track,
+                canvas = canvas,
+                isLyrics = mode == TvPlayerMode.LYRICS,
+                controlsVisible = controlsVisible,
+                popupOpen = popupOpen,
+                onToggleLyrics = {
+                    mode = if (mode == TvPlayerMode.LYRICS) TvPlayerMode.NOW_PLAYING else TvPlayerMode.LYRICS
+                },
+                onShowQueue = { mode = TvPlayerMode.QUEUE },
+                onOpenPopup = { popupOpen = true },
+                onOpenArtist = {
+                    track?.let {
+                        onOpenArtist(it.artistId, it.artists.substringBefore(",").trim(), it.thumbnailUrl)
+                    }
+                },
+            )
         }
 
         if (popupOpen && track != null) {
@@ -298,14 +303,16 @@ private fun TvArtworkTile(
     }
 }
 
-// ── Now Playing View (Initial View - Apple Music TV) ───────────────────────────────────────────
+// ── Unified Now Playing + Lyrics View (Sliding Avatar + Realtime Synced Lyrics) ─────────────────
 
 @Composable
-private fun NowPlayingPane(
+private fun NowPlayingWithLyricsPane(
     track: MusicTrack?,
     canvas: CanvasArtwork?,
+    isLyrics: Boolean,
+    controlsVisible: Boolean,
     popupOpen: Boolean,
-    onShowLyrics: () -> Unit,
+    onToggleLyrics: () -> Unit,
     onShowQueue: () -> Unit,
     onOpenPopup: () -> Unit,
     onOpenArtist: () -> Unit,
@@ -314,46 +321,66 @@ private fun NowPlayingPane(
     val index = MusicPlayerState.queueIndex
     val isPlaying = MusicPlayerState.isPlaying
 
+    val lyricsProgress by animateFloatAsState(
+        targetValue = if (isLyrics) 1f else 0f,
+        animationSpec = spring(dampingRatio = 0.82f, stiffness = 280f),
+        label = "lyricsProgress",
+    )
+
+    val horizontalBias = lerp(0f, -0.70f, lyricsProgress)
+    val verticalBias = lerp(-0.06f, 0f, lyricsProgress)
+    val avatarWidth by animateDpAsState(
+        targetValue = if (isLyrics) 230.dp else 420.dp,
+        animationSpec = spring(dampingRatio = 0.82f, stiffness = 280f),
+        label = "avatarWidth",
+    )
+
     val centerFocus = remember { FocusRequester() }
     val topControlsFocus = remember { FocusRequester() }
     val quickActionsFocus = remember { FocusRequester() }
     val progressBarFocus = remember { FocusRequester() }
     val lyricsFocus = remember { FocusRequester() }
 
-    LaunchedEffect(popupOpen) {
-        if (!popupOpen) runCatching { centerFocus.requestFocus() }
+    LaunchedEffect(isLyrics, popupOpen) {
+        if (!popupOpen && !isLyrics) {
+            runCatching { centerFocus.requestFocus() }
+        }
     }
 
     Box(
-        Modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 40.dp, vertical = 20.dp),
     ) {
-        // Top Left: iTune Brand Waves + Name
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.align(Alignment.TopStart),
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_itune_waves),
-                contentDescription = "iTune",
-                colorFilter = ColorFilter.tint(Color.White),
-                modifier = Modifier.size(22.dp),
-            )
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text = "iTune",
-                color = Color.White,
-                fontSize = 18.sp,
-                fontFamily = SFProDisplay,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = (-0.3).sp,
-            )
+        // ── Top Left: iTune Brand (Fades out when in Lyrics mode) ─────────
+        if (lyricsProgress < 0.99f) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .graphicsLayer { alpha = 1f - lyricsProgress },
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_itune_waves),
+                    contentDescription = "iTune",
+                    colorFilter = ColorFilter.tint(Color.White),
+                    modifier = Modifier.size(22.dp),
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = "iTune",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontFamily = SFProDisplay,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = (-0.3).sp,
+                )
+            }
         }
 
-        // Top Center: Album Title (Apple Music TV style)
+        // ── Top Center: Album Title (Only in Now Playing) ─────────────────
         val albumName = track?.album?.takeIf { it.isNotBlank() }
-        if (!albumName.isNullOrBlank()) {
+        if (!albumName.isNullOrBlank() && lyricsProgress < 0.99f) {
             Text(
                 text = albumName,
                 color = Color.White.copy(alpha = 0.60f),
@@ -365,239 +392,342 @@ private fun NowPlayingPane(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .width(420.dp),
+                    .width(420.dp)
+                    .graphicsLayer { alpha = 1f - lyricsProgress },
             )
         }
 
-        // Top Right: Playback Options (Shuffle, Repeat, Endless Queue)
-        Row(
-            modifier = Modifier.align(Alignment.TopEnd),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            val shuffleActive = MusicPlayerState.shuffleEnabled
-            TvDrawableButton(
-                drawableRes = if (shuffleActive) R.drawable.shuffle_on else R.drawable.shuffle,
-                contentDescription = "Shuffle",
-                onClick = { MusicPlayerState.toggleShuffle() },
-                active = shuffleActive,
-                size = 32.dp,
-                iconSize = 16.dp,
-                focusRequester = topControlsFocus,
-                modifier = Modifier.focusProperties { down = centerFocus },
-            )
-
-            val repeatMode = MusicPlayerState.repeatMode
-            val repeatRes = when (repeatMode) {
-                Player.REPEAT_MODE_ONE -> R.drawable.repeat_one_on
-                Player.REPEAT_MODE_ALL -> R.drawable.repeat_on
-                else -> R.drawable.repeat
-            }
-            TvDrawableButton(
-                drawableRes = repeatRes,
-                contentDescription = "Repeat",
-                onClick = { MusicPlayerState.toggleRepeat() },
-                active = repeatMode != Player.REPEAT_MODE_OFF,
-                size = 32.dp,
-                iconSize = 16.dp,
-                modifier = Modifier.focusProperties { down = centerFocus },
-            )
-
-            val endlessActive = MusicPlayerState.endlessQueueEnabled
-            TvDrawableButton(
-                drawableRes = R.drawable.ic_infinite_queue,
-                contentDescription = "Endless queue",
-                onClick = { MusicPlayerState.toggleEndlessQueue() },
-                active = endlessActive,
-                size = 32.dp,
-                iconSize = 16.dp,
-                modifier = Modifier.focusProperties { down = centerFocus },
-            )
-        }
-
-        // Center: Single Centered Artwork + Track Info
-        Column(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(bottom = 36.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            val interaction = remember { MutableInteractionSource() }
-            Box(
+        // ── Top Right: Playback Options (Shuffle, Repeat, Endless) ────────
+        if (lyricsProgress < 0.99f) {
+            Row(
                 modifier = Modifier
-                    .tvFocusable(
-                        shape = RoundedCornerShape(16.dp),
-                        scaleOnFocus = 1.04f,
-                        focusRequester = centerFocus,
-                        interactionSource = interaction,
-                        onClick = { MusicPlayerState.togglePlayPause() },
-                    )
-                    .focusProperties {
-                        up = topControlsFocus
-                        down = quickActionsFocus
-                    },
+                    .align(Alignment.TopEnd)
+                    .graphicsLayer { alpha = 1f - lyricsProgress },
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                TvArtworkTile(track, canvas, 195.dp)
-                if (!isPlaying) {
-                    Box(
-                        modifier = Modifier
-                            .size(195.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(Color(0x55000000)),
-                        contentAlignment = Alignment.Center,
-                    ) {
+                val shuffleActive = MusicPlayerState.shuffleEnabled
+                TvDrawableButton(
+                    drawableRes = if (shuffleActive) R.drawable.shuffle_on else R.drawable.shuffle,
+                    contentDescription = "Shuffle",
+                    onClick = { MusicPlayerState.toggleShuffle() },
+                    active = shuffleActive,
+                    size = 32.dp,
+                    iconSize = 16.dp,
+                    focusRequester = topControlsFocus,
+                    modifier = Modifier.focusProperties { down = centerFocus },
+                )
+
+                val repeatMode = MusicPlayerState.repeatMode
+                val repeatRes = when (repeatMode) {
+                    Player.REPEAT_MODE_ONE -> R.drawable.repeat_one_on
+                    Player.REPEAT_MODE_ALL -> R.drawable.repeat_on
+                    else -> R.drawable.repeat
+                }
+                TvDrawableButton(
+                    drawableRes = repeatRes,
+                    contentDescription = "Repeat",
+                    onClick = { MusicPlayerState.toggleRepeat() },
+                    active = repeatMode != Player.REPEAT_MODE_OFF,
+                    size = 32.dp,
+                    iconSize = 16.dp,
+                    modifier = Modifier.focusProperties { down = centerFocus },
+                )
+
+                val endlessActive = MusicPlayerState.endlessQueueEnabled
+                TvDrawableButton(
+                    drawableRes = R.drawable.ic_infinite_queue,
+                    contentDescription = "Endless queue",
+                    onClick = { MusicPlayerState.toggleEndlessQueue() },
+                    active = endlessActive,
+                    size = 32.dp,
+                    iconSize = 16.dp,
+                    modifier = Modifier.focusProperties { down = centerFocus },
+                )
+            }
+        }
+
+        // ── Shared Center / Left Avatar + Name Block (Slides smoothly!) ───
+        Box(
+            modifier = Modifier
+                .align(BiasAlignment(horizontalBias, verticalBias))
+                .width(avatarWidth),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                val interaction = remember { MutableInteractionSource() }
+                Box(
+                    modifier = Modifier
+                        .tvFocusable(
+                            shape = RoundedCornerShape(16.dp),
+                            scaleOnFocus = 1.04f,
+                            focusRequester = centerFocus,
+                            interactionSource = interaction,
+                            onClick = { MusicPlayerState.togglePlayPause() },
+                        )
+                        .focusProperties {
+                            up = topControlsFocus
+                            down = quickActionsFocus
+                        },
+                ) {
+                    TvArtworkTile(track, canvas, 205.dp)
+                    if (!isPlaying) {
+                        Box(
+                            modifier = Modifier
+                                .size(205.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(Color(0x55000000)),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.play),
+                                contentDescription = "Play",
+                                colorFilter = ColorFilter.tint(Color.White),
+                                modifier = Modifier.size(46.dp),
+                            )
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(14.dp))
+
+                // Metadata: Waves Icon + Track Title + Explicit Badge
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    if (isPlaying) {
                         Image(
-                            painter = painterResource(id = R.drawable.play),
-                            contentDescription = "Play",
-                            colorFilter = ColorFilter.tint(Color.White),
-                            modifier = Modifier.size(46.dp),
+                            painter = painterResource(id = R.drawable.ic_itune_waves),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.85f)),
+                            modifier = Modifier.size(14.dp),
+                        )
+                        Spacer(Modifier.width(6.dp))
+                    }
+                    Text(
+                        text = track?.title ?: "Not Playing",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontFamily = SFProDisplay,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                    )
+                    if (track?.isExplicit == true) {
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = "E",
+                            color = Color.White.copy(alpha = 0.70f),
+                            fontSize = 10.sp,
+                            fontFamily = SFProDisplay,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .background(Color.White.copy(alpha = 0.20f), RoundedCornerShape(3.dp))
+                                .padding(horizontal = 4.dp, vertical = 1.dp),
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(3.dp))
+
+                Text(
+                    text = track?.artists ?: "",
+                    color = Color.White.copy(alpha = 0.60f),
+                    fontSize = 13.sp,
+                    fontFamily = SFProDisplay,
+                    fontWeight = FontWeight.Normal,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                // Quick Center Actions (Favorite + More): Only in Now Playing
+                if (lyricsProgress < 0.99f) {
+                    Spacer(Modifier.height(10.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.graphicsLayer { alpha = 1f - lyricsProgress },
+                    ) {
+                        val fav = track?.let { MusicPlayerState.isFavorite(it.id) } == true
+                        TvDrawableButton(
+                            drawableRes = if (fav) R.drawable.ic_star_filled else R.drawable.ic_star_outline,
+                            contentDescription = "Favorite",
+                            onClick = { track?.let { MusicPlayerState.toggleFavorite(it) } },
+                            active = fav,
+                            size = 32.dp,
+                            iconSize = 16.dp,
+                            focusRequester = quickActionsFocus,
+                            modifier = Modifier.focusProperties {
+                                up = centerFocus
+                                down = progressBarFocus
+                            },
+                        )
+
+                        TvDrawableButton(
+                            drawableRes = R.drawable.more_horiz,
+                            contentDescription = "More",
+                            onClick = onOpenPopup,
+                            size = 32.dp,
+                            iconSize = 16.dp,
+                            modifier = Modifier.focusProperties {
+                                up = centerFocus
+                                down = progressBarFocus
+                            },
                         )
                     }
                 }
             }
+        }
 
-            Spacer(Modifier.height(14.dp))
+        // ── Right Side: Apple Music TV Lyrics Typography ─────────────────
+        if (lyricsProgress > 0.01f) {
+            val lines = MusicPlayerState.lyrics
+            val position = MusicPlayerState.positionMs
+            val activeIndex = remember(position, lines) {
+                val pos = position + MusicPlayerState.lyricsOffsetMs
+                lines.indexOfLast { it.timeMs <= pos }
+            }
+            val listState = rememberLazyListState()
 
-            // Metadata Row: Playing waves + Title
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.width(420.dp),
-            ) {
-                if (isPlaying) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_itune_waves),
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.85f)),
-                        modifier = Modifier.size(14.dp),
-                    )
-                    Spacer(Modifier.width(6.dp))
+            LaunchedEffect(activeIndex, lines.size) {
+                if (activeIndex >= 0) {
+                    val offset = -(listState.layoutInfo.viewportSize.height * 0.36f).toInt()
+                    listState.animateScrollToItem(activeIndex, offset)
                 }
-                Text(
-                    text = track?.title ?: "Not Playing",
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontFamily = SFProDisplay,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center,
-                )
             }
 
-            Spacer(Modifier.height(3.dp))
-
-            Text(
-                text = track?.artists ?: "",
-                color = Color.White.copy(alpha = 0.60f),
-                fontSize = 13.sp,
-                fontFamily = SFProDisplay,
-                fontWeight = FontWeight.Normal,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.width(420.dp),
-            )
-
-            Spacer(Modifier.height(10.dp))
-
-            // Quick Center Actions: Favorite + More options
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .fillMaxHeight()
+                    .fillMaxWidth(0.60f)
+                    .padding(end = 36.dp, top = 20.dp, bottom = 20.dp)
+                    .graphicsLayer {
+                        alpha = lyricsProgress
+                        translationX = (1f - lyricsProgress) * 90.dp.toPx()
+                    },
             ) {
-                val fav = track?.let { MusicPlayerState.isFavorite(it.id) } == true
-                TvDrawableButton(
-                    drawableRes = if (fav) R.drawable.ic_star_filled else R.drawable.ic_star_outline,
-                    contentDescription = "Favorite",
-                    onClick = { track?.let { MusicPlayerState.toggleFavorite(it) } },
-                    active = fav,
-                    size = 32.dp,
-                    iconSize = 16.dp,
-                    focusRequester = quickActionsFocus,
-                    modifier = Modifier.focusProperties {
-                        up = centerFocus
-                        down = progressBarFocus
-                    },
-                )
-
-                TvDrawableButton(
-                    drawableRes = R.drawable.more_horiz,
-                    contentDescription = "More",
-                    onClick = onOpenPopup,
-                    size = 32.dp,
-                    iconSize = 16.dp,
-                    modifier = Modifier.focusProperties {
-                        up = centerFocus
-                        down = progressBarFocus
-                    },
-                )
+                if (lines.isEmpty()) {
+                    Text(
+                        text = if (MusicPlayerState.lyricsLoading) "Loading lyrics…" else "Lyrics not available for this song",
+                        color = Color.White.copy(alpha = 0.55f),
+                        fontSize = 22.sp,
+                        fontFamily = SFProDisplay,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.align(Alignment.CenterStart),
+                    )
+                } else {
+                    LazyColumn(
+                        state = listState,
+                        contentPadding = PaddingValues(top = 80.dp, bottom = 220.dp),
+                        verticalArrangement = Arrangement.spacedBy(22.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+                            .drawWithContent {
+                                drawContent()
+                                drawRect(
+                                    Brush.verticalGradient(
+                                        0f to Color.Transparent,
+                                        0.12f to Color.Black,
+                                        0.80f to Color.Black,
+                                        1f to Color.Transparent,
+                                    ),
+                                    blendMode = BlendMode.DstIn,
+                                )
+                            },
+                    ) {
+                        itemsIndexed(lines) { i, line ->
+                            TvLyricLine(
+                                line = line,
+                                state = i - activeIndex,
+                                positionMs = position + MusicPlayerState.lyricsOffsetMs,
+                                onClick = { MusicPlayerState.seekTo(line.timeMs) },
+                            )
+                        }
+                    }
+                }
             }
         }
 
-        // Bottom Controls and Scrubber Bar
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+        // ── Auto-Hiding Bottom Controls & Scrubber Bar ───────────────────
+        val showBottomControls = if (isLyrics) controlsVisible else true
+        AnimatedVisibility(
+            visible = showBottomControls,
+            enter = fadeIn(tween(200)),
+            exit = fadeOut(tween(350)),
+            modifier = Modifier.align(Alignment.BottomCenter),
         ) {
-            TvProgressBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(progressBarFocus)
-                    .focusProperties {
-                        up = quickActionsFocus
-                        down = lyricsFocus
-                    },
-            )
-
-            Row(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+                verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Text(
-                    text = if (queue.isNotEmpty()) "${index + 1} of ${queue.size}" else "",
-                    color = Color.White.copy(alpha = 0.45f),
-                    fontSize = 12.sp,
-                    fontFamily = SFProDisplay,
-                    fontWeight = FontWeight.Medium,
+                TvProgressBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(progressBarFocus)
+                        .focusProperties {
+                            up = quickActionsFocus
+                            down = lyricsFocus
+                        },
                 )
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    TvDrawableButton(
-                        drawableRes = R.drawable.ic_menu_artist,
-                        contentDescription = "Artist Info",
-                        onClick = onOpenArtist,
-                        size = 34.dp,
-                        iconSize = 17.dp,
-                        modifier = Modifier.focusProperties { up = progressBarFocus },
+                    Text(
+                        text = if (queue.isNotEmpty()) "${index + 1} of ${queue.size}" else "",
+                        color = Color.White.copy(alpha = 0.45f),
+                        fontSize = 12.sp,
+                        fontFamily = SFProDisplay,
+                        fontWeight = FontWeight.Medium,
                     )
 
-                    TvDrawableButton(
-                        drawableRes = R.drawable.lyrics,
-                        contentDescription = "Lyrics",
-                        onClick = onShowLyrics,
-                        active = false,
-                        size = 34.dp,
-                        iconSize = 17.dp,
-                        focusRequester = lyricsFocus,
-                        modifier = Modifier.focusProperties { up = progressBarFocus },
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        TvDrawableButton(
+                            drawableRes = R.drawable.ic_menu_artist,
+                            contentDescription = "Artist Info",
+                            onClick = onOpenArtist,
+                            size = 34.dp,
+                            iconSize = 17.dp,
+                            modifier = Modifier.focusProperties { up = progressBarFocus },
+                        )
 
-                    TvDrawableButton(
-                        drawableRes = R.drawable.queue_music,
-                        contentDescription = "Queue",
-                        onClick = onShowQueue,
-                        active = false,
-                        size = 34.dp,
-                        iconSize = 17.dp,
-                        modifier = Modifier.focusProperties { up = progressBarFocus },
-                    )
+                        TvDrawableButton(
+                            drawableRes = R.drawable.lyrics,
+                            contentDescription = "Lyrics",
+                            onClick = onToggleLyrics,
+                            active = isLyrics,
+                            size = 34.dp,
+                            iconSize = 17.dp,
+                            focusRequester = lyricsFocus,
+                            modifier = Modifier.focusProperties { up = progressBarFocus },
+                        )
+
+                        TvDrawableButton(
+                            drawableRes = R.drawable.queue_music,
+                            contentDescription = "Queue",
+                            onClick = onShowQueue,
+                            active = false,
+                            size = 34.dp,
+                            iconSize = 17.dp,
+                            modifier = Modifier.focusProperties { up = progressBarFocus },
+                        )
+                    }
                 }
             }
         }
@@ -905,189 +1035,19 @@ private fun NeighbourCover(track: MusicTrack?, label: String, onClick: () -> Uni
     }
 }
 
-// ── Lyrics View (Split Artwork + Realtime Synced Lyrics) ────────────────────────────────────────
-
-@Composable
-private fun LyricsPane(
-    track: MusicTrack?,
-    canvas: CanvasArtwork?,
-    controlsVisible: Boolean,
-    popupOpen: Boolean,
-    onShowNowPlaying: () -> Unit,
-    onShowQueue: () -> Unit,
-    onOpenPopup: () -> Unit,
-) {
-    val lines = MusicPlayerState.lyrics
-    val position = MusicPlayerState.positionMs
-    val activeIndex = remember(position, lines) {
-        val pos = position + MusicPlayerState.lyricsOffsetMs
-        lines.indexOfLast { it.timeMs <= pos }
-    }
-    val listState = rememberLazyListState()
-    LaunchedEffect(activeIndex, lines.size) {
-        if (activeIndex >= 0) {
-            val offset = -(listState.layoutInfo.viewportSize.height * 0.30f).toInt()
-            listState.animateScrollToItem(activeIndex, offset)
-        }
-    }
-
-    val catcher = remember { FocusRequester() }
-    val firstControl = remember { FocusRequester() }
-    LaunchedEffect(controlsVisible, popupOpen) {
-        if (popupOpen) return@LaunchedEffect
-        runCatching { if (controlsVisible) firstControl.requestFocus() else catcher.requestFocus() }
-    }
-
-    Box(
-        Modifier
-            .fillMaxSize()
-            .focusRequester(catcher)
-            .focusable()
-            .padding(horizontal = 40.dp, vertical = 24.dp),
-    ) {
-        Row(
-            Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(40.dp),
-        ) {
-            // Left: Artwork and Metadata
-            Column(
-                Modifier
-                    .width(200.dp)
-                    .fillMaxHeight()
-                    .padding(top = 28.dp),
-            ) {
-                TvArtworkTile(track, canvas, 200.dp)
-                Spacer(Modifier.height(14.dp))
-                Text(
-                    text = track?.title ?: "",
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontFamily = SFProDisplay,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = track?.artists ?: "",
-                    color = Color.White.copy(alpha = 0.60f),
-                    fontSize = 13.sp,
-                    fontFamily = SFProDisplay,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-
-            // Right: Apple Music TV typography lyrics
-            Box(Modifier.weight(1f).fillMaxHeight()) {
-                if (lines.isEmpty()) {
-                    Text(
-                        text = if (MusicPlayerState.lyricsLoading) "Loading lyrics…" else "Lyrics not available for this song",
-                        color = Color.White.copy(alpha = 0.5f),
-                        fontSize = 20.sp,
-                        fontFamily = SFProDisplay,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.align(Alignment.Center),
-                    )
-                } else {
-                    LazyColumn(
-                        state = listState,
-                        contentPadding = PaddingValues(top = 40.dp, bottom = 260.dp),
-                        verticalArrangement = Arrangement.spacedBy(20.dp),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-                            .drawWithContent {
-                                drawContent()
-                                drawRect(
-                                    Brush.verticalGradient(
-                                        0f to Color.Transparent,
-                                        0.10f to Color.Black,
-                                        0.80f to Color.Black,
-                                        1f to Color.Transparent,
-                                    ),
-                                    blendMode = BlendMode.DstIn,
-                                )
-                            },
-                    ) {
-                        itemsIndexed(lines) { i, line ->
-                            TvLyricLine(line, i - activeIndex, position + MusicPlayerState.lyricsOffsetMs)
-                        }
-                    }
-                }
-            }
-        }
-
-        // Auto-hiding Bottom Controls Bar
-        AnimatedVisibility(
-            visible = controlsVisible,
-            enter = fadeIn(tween(200)),
-            exit = fadeOut(tween(350)),
-            modifier = Modifier.align(Alignment.BottomCenter),
-        ) {
-            Column(
-                Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                TvProgressBar(Modifier.fillMaxWidth())
-
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    val fav = track?.let { MusicPlayerState.isFavorite(it.id) } == true
-                    TvDrawableButton(
-                        drawableRes = if (fav) R.drawable.ic_star_filled else R.drawable.ic_star_outline,
-                        contentDescription = "Favorite",
-                        onClick = { track?.let { MusicPlayerState.toggleFavorite(it) } },
-                        active = fav,
-                        size = 34.dp,
-                        iconSize = 17.dp,
-                        focusRequester = firstControl,
-                    )
-                    Spacer(Modifier.width(10.dp))
-
-                    TvDrawableButton(
-                        drawableRes = R.drawable.more_horiz,
-                        contentDescription = "More",
-                        onClick = onOpenPopup,
-                        size = 34.dp,
-                        iconSize = 17.dp,
-                    )
-                    Spacer(Modifier.width(10.dp))
-
-                    TvDrawableButton(
-                        drawableRes = R.drawable.lyrics,
-                        contentDescription = "Hide lyrics",
-                        onClick = onShowNowPlaying,
-                        active = true,
-                        size = 34.dp,
-                        iconSize = 17.dp,
-                    )
-                    Spacer(Modifier.width(10.dp))
-
-                    TvDrawableButton(
-                        drawableRes = R.drawable.queue_music,
-                        contentDescription = "Queue",
-                        onClick = onShowQueue,
-                        active = false,
-                        size = 34.dp,
-                        iconSize = 17.dp,
-                    )
-                }
-            }
-        }
-    }
-}
-
 /** state: negative = already sung, 0 = active, positive = upcoming. */
 @Composable
-private fun TvLyricLine(line: LyricsLine, state: Int, positionMs: Long) {
+private fun TvLyricLine(
+    line: LyricsLine,
+    state: Int,
+    positionMs: Long,
+    onClick: () -> Unit,
+) {
     val alpha by animateFloatAsState(
         targetValue = when {
             state == 0 -> 1f
-            state < 0 -> 0.42f
-            else -> 0.28f
+            state < 0 -> 0.38f
+            else -> 0.30f
         },
         animationSpec = tween(300),
         label = "lyricAlpha",
@@ -1109,13 +1069,14 @@ private fun TvLyricLine(line: LyricsLine, state: Int, positionMs: Long) {
     Text(
         text = text,
         color = Color.White,
-        fontSize = 26.sp,
-        lineHeight = 34.sp,
+        fontSize = if (state == 0) 27.sp else 21.sp,
+        lineHeight = if (state == 0) 35.sp else 28.sp,
         fontFamily = SFProDisplay,
-        fontWeight = FontWeight.Bold,
+        fontWeight = if (state == 0) FontWeight.Bold else FontWeight.SemiBold,
         modifier = Modifier
             .fillMaxWidth()
-            .alpha(alpha),
+            .alpha(alpha)
+            .clickable(onClick = onClick),
     )
 }
 
