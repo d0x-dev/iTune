@@ -19,6 +19,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -38,20 +39,32 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.CloudDownload
+import androidx.compose.material.icons.rounded.CloudUpload
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.GraphicEq
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Security
+import androidx.compose.material.icons.rounded.Speed
+import androidx.compose.material.icons.rounded.Sync
 import androidx.compose.material.icons.rounded.Timer
+import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material.icons.rounded.Tv
+import androidx.compose.material.icons.rounded.Wifi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,13 +77,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -80,14 +99,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.Coil
 import com.darkxvenom.itune.BuildConfig
 import com.darkxvenom.itune.R
+import com.darkxvenom.itune.backend.lyrics.LyricsHelper
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.auth.WebSessionMode
+import com.darkxvenom.itune.data.backup.BackupRestoreManager
 import com.darkxvenom.itune.data.library.SettingsStore
+import com.darkxvenom.itune.ishare.IShareSyncManager
 import com.darkxvenom.itune.television.focus.SFProDisplay
 import com.darkxvenom.itune.television.focus.tvFocusable
 import com.darkxvenom.itune.television.ui.common.TvAmbientBackground
 import com.darkxvenom.itune.ui.auth.GoogleLoginScreen
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
+import java.io.File
 
 // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
@@ -112,6 +135,13 @@ fun TvSettingsScreen(
 
     var blurb by remember { mutableStateOf(DEFAULT_BLURB) }
     var loginMode by remember { mutableStateOf<WebSessionMode?>(null) }
+    var showBackupDialog by remember { mutableStateOf(false) }
+    var showRestoreDialog by remember { mutableStateOf(false) }
+    var showLyricsProvidersDialog by remember { mutableStateOf(false) }
+
+    val ishareSession by IShareSyncManager.session.collectAsStateWithLifecycle()
+    val ishareIsHost by IShareSyncManager.isHost.collectAsStateWithLifecycle()
+    val localIp by IShareSyncManager.localIp.collectAsStateWithLifecycle()
 
     Box(modifier = modifier.fillMaxSize().background(AppleOledBlack)) {
         TvAmbientBackground(Modifier.fillMaxSize(), dim = 0.35f)
@@ -167,6 +197,27 @@ fun TvSettingsScreen(
                         leadingIcon = Icons.Rounded.AccountCircle,
                         onFocused = { blurb = "Your YouTube Music library, playlists and personalized recommendations come from this account." },
                         onClick = { loginMode = WebSessionMode.SIGN_IN },
+                    )
+                }
+                item {
+                    TvListRow(
+                        title = "Spotify Account",
+                        value = if (settingsState.spotifySpdcToken.isNotBlank()) "Connected" else "Not Connected",
+                        leadingIcon = Icons.Rounded.Sync,
+                        onFocused = { blurb = "Connects Spotify to fetch Canvas motion video artwork and synchronize your Spotify playlists." },
+                        onClick = {
+                            Toast.makeText(context, if (settingsState.spotifySpdcToken.isNotBlank()) "Spotify is connected" else "Sign into Spotify via Settings or Web", Toast.LENGTH_SHORT).show()
+                        },
+                    )
+                }
+                item {
+                    TvListRow(
+                        title = "Spotify Canvas Auto-Hide",
+                        value = onOff(settingsState.spotifyCanvasAutoHide),
+                        onFocused = { blurb = "Hides Spotify Canvas motion artwork when navigating to lyrics." },
+                        onClick = {
+                            SettingsStore.setBoolean(context, SettingsStore.KEY_SPOTIFY_CANVAS_AUTO_HIDE, !settingsState.spotifyCanvasAutoHide)
+                        },
                     )
                 }
                 item {
@@ -405,19 +456,55 @@ fun TvSettingsScreen(
                     TvListRow(
                         title = "Lyrics Providers",
                         value = "${settingsState.lyricsProviderOrder.size - settingsState.disabledLyricsProviders.size} Active",
-                        onFocused = { blurb = "Multiple lyric sources: LRCLIB, Kugou, Paxsenix, BetterLyrics in priority order." },
-                        onClick = {
-                            Toast.makeText(context, "All ${settingsState.lyricsProviderOrder.size} providers active", Toast.LENGTH_SHORT).show()
-                        },
+                        leadingIcon = Icons.Rounded.Tune,
+                        onFocused = { blurb = "Configure multiple lyric sources: LRCLIB, KuGou, Paxsenix, BetterLyrics, and more in custom priority order." },
+                        onClick = { showLyricsProvidersDialog = true },
                     )
                 }
                 item {
                     TvListRow(
                         title = "AI Lyrics Translation",
                         value = onOff(settingsState.lyricsTranslationEnabled),
+                        leadingIcon = Icons.Rounded.Language,
                         onFocused = { blurb = "Real-time AI machine translation for international and multilingual song lyrics." },
                         onClick = {
                             SettingsStore.setLyricsTranslationEnabled(context, !settingsState.lyricsTranslationEnabled)
+                        },
+                    )
+                }
+                item {
+                    TvListRow(
+                        title = "AI Translation Provider",
+                        value = settingsState.lyricsTranslationProvider,
+                        onFocused = { blurb = "Choose AI provider for synchronized lyrics translation." },
+                        onClick = {
+                            val providers = listOf("OpenRouter", "Gemini", "OpenAI", "Claude")
+                            val curIdx = providers.indexOf(settingsState.lyricsTranslationProvider).coerceAtLeast(0)
+                            val next = providers[(curIdx + 1) % providers.size]
+                            SettingsStore.setLyricsTranslationProvider(context, next)
+                        },
+                    )
+                }
+                item {
+                    TvListRow(
+                        title = "Translation Target Language",
+                        value = settingsState.lyricsTranslateLanguage.ifBlank { "English" },
+                        onFocused = { blurb = "Target language for AI translated lyrics. Select to cycle through languages." },
+                        onClick = {
+                            val languages = listOf("English", "Spanish", "French", "German", "Japanese", "Korean", "Hindi", "Italian", "Chinese")
+                            val curIdx = languages.indexOf(settingsState.lyricsTranslateLanguage).coerceAtLeast(0)
+                            val next = languages[(curIdx + 1) % languages.size]
+                            SettingsStore.setString(context, SettingsStore.KEY_LYRICS_TRANSLATE_LANGUAGE, next)
+                        },
+                    )
+                }
+                item {
+                    TvListRow(
+                        title = "Replace Original Lyrics",
+                        value = onOff(settingsState.lyricsReplaceOriginal),
+                        onFocused = { blurb = "Replaces the original song lyrics with translated lines instead of showing both." },
+                        onClick = {
+                            SettingsStore.setBoolean(context, SettingsStore.KEY_LYRICS_REPLACE_ORIGINAL, !settingsState.lyricsReplaceOriginal)
                         },
                     )
                 }
@@ -502,7 +589,57 @@ fun TvSettingsScreen(
                     )
                 }
 
-                // 7. General & Maintenance
+                // 8. iShare (Listen Together)
+                item { TvListHeader("iShare (Listen Together)") }
+                item {
+                    TvListRow(
+                        title = if (ishareSession != null) "Leave iShare Session" else "Host Local Wi-Fi Session",
+                        value = if (ishareSession != null) "Connected: ${ishareSession?.code}" else "Start Host",
+                        leadingIcon = Icons.Rounded.Wifi,
+                        onFocused = { blurb = "Synchronizes music playback across TVs, phones and tablets on your local Wi-Fi network." },
+                        onClick = {
+                            if (ishareSession != null) {
+                                IShareSyncManager.leaveSession()
+                                Toast.makeText(context, "Left iShare Session", Toast.LENGTH_SHORT).show()
+                            } else {
+                                IShareSyncManager.start(context)
+                                IShareSyncManager.startLanHost()
+                                Toast.makeText(context, "iShare LAN Host Started!", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                    )
+                }
+                item {
+                    TvListRow(
+                        title = "Local TV IP",
+                        value = localIp ?: "Wi-Fi Not Connected",
+                        onFocused = { blurb = "IP address used by other devices to connect to this TV." },
+                        onClick = { IShareSyncManager.refreshLocalIp() },
+                    )
+                }
+
+                // 9. Backup & Restore (Password Encrypted)
+                item { TvListHeader("Backup & Restore (Password Encrypted)") }
+                item {
+                    TvListRow(
+                        title = "Back Up iTune (Encrypted)",
+                        value = "Save",
+                        leadingIcon = Icons.Rounded.CloudUpload,
+                        onFocused = { blurb = "Exports your complete library, playlists, settings and audio configuration encrypted with AES-256." },
+                        onClick = { showBackupDialog = true },
+                    )
+                }
+                item {
+                    TvListRow(
+                        title = "Restore from Encrypted Backup",
+                        value = "Restore",
+                        leadingIcon = Icons.Rounded.CloudDownload,
+                        onFocused = { blurb = "Restores your library and settings from a password-protected .itune backup file." },
+                        onClick = { showRestoreDialog = true },
+                    )
+                }
+
+                // 10. General & Maintenance
                 item { TvListHeader("General") }
                 item {
                     TvListRow(
@@ -559,6 +696,27 @@ fun TvSettingsScreen(
                     )
                 }
             }
+        }
+
+        // TV Lyrics Providers modal
+        if (showLyricsProvidersDialog) {
+            TvLyricsProvidersModal(
+                onDismiss = { showLyricsProvidersDialog = false },
+            )
+        }
+
+        // TV Password Backup modal
+        if (showBackupDialog) {
+            TvPasswordBackupModal(
+                onDismiss = { showBackupDialog = false },
+            )
+        }
+
+        // TV Password Restore modal
+        if (showRestoreDialog) {
+            TvPasswordRestoreModal(
+                onDismiss = { showRestoreDialog = false },
+            )
         }
 
         // TV Google Login overlay when requested
@@ -709,3 +867,412 @@ fun TvListHeader(title: String, modifier: Modifier = Modifier) {
 }
 
 private fun onOff(value: Boolean): String = if (value) "On" else "Off"
+
+// ── Modals: Lyrics Providers, Password Backup & Restore ────────────────────────────────────────
+
+@Composable
+private fun TvLyricsProvidersModal(
+    onDismiss: () -> Unit,
+) {
+    val context = LocalContext.current
+    val settings by SettingsStore.state.collectAsStateWithLifecycle()
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0x99000000))
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onDismiss,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .width(440.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .background(Color(0xF01C1C1E))
+                .border(1.dp, Color.White.copy(alpha = 0.16f), RoundedCornerShape(24.dp))
+                .padding(24.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Lyrics Providers",
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontFamily = SFProDisplay,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = "Close",
+                    color = Color(0xFF007AFF),
+                    fontSize = 15.sp,
+                    fontFamily = SFProDisplay,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.clickable(onClick = onDismiss),
+                )
+            }
+
+            LazyColumn(
+                modifier = Modifier.heightIn(max = 380.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                items(LyricsHelper.PROVIDER_METADATA) { provider ->
+                    val isEnabled = !settings.disabledLyricsProviders.contains(provider.id)
+                    val interaction = remember { MutableInteractionSource() }
+                    val focused by interaction.collectIsFocusedAsState()
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .tvFocusable(
+                                shape = RoundedCornerShape(12.dp),
+                                scaleOnFocus = 1.02f,
+                                elevationOnFocus = 0.dp,
+                                interactionSource = interaction,
+                                onClick = {
+                                    SettingsStore.setLyricsProviderEnabled(context, provider.id, !isEnabled)
+                                },
+                            )
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(if (focused) Color.White else Color.White.copy(alpha = 0.06f))
+                            .padding(horizontal = 14.dp, vertical = 9.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        val c = if (focused) Color.Black else Color.White
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = provider.displayName,
+                                color = c,
+                                fontSize = 14.5.sp,
+                                fontFamily = SFProDisplay,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Text(
+                                text = provider.description,
+                                color = c.copy(alpha = 0.60f),
+                                fontSize = 11.5.sp,
+                                fontFamily = SFProDisplay,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                        if (isEnabled) {
+                            Icon(
+                                imageVector = Icons.Rounded.Check,
+                                contentDescription = "Active",
+                                tint = if (focused) Color.Black else Color(0xFF30D158),
+                                modifier = Modifier.size(18.dp),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TvPasswordBackupModal(
+    onDismiss: () -> Unit,
+) {
+    val context = LocalContext.current
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        runCatching { focusRequester.requestFocus() }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0x99000000))
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onDismiss,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .width(440.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .background(Color(0xF01C1C1E))
+                .border(1.dp, Color.White.copy(alpha = 0.16f), RoundedCornerShape(24.dp))
+                .padding(26.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = "Back Up iTune (AES-256)",
+                color = Color.White,
+                fontSize = 20.sp,
+                fontFamily = SFProDisplay,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = "Your library, playlists and settings will be encrypted with a password of at least 8 characters.",
+                color = Color.White.copy(alpha = 0.60f),
+                fontSize = 12.5.sp,
+                fontFamily = SFProDisplay,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 16.dp),
+            )
+
+            // Password Field
+            BasicTextField(
+                value = password,
+                onValueChange = { password = it },
+                textStyle = TextStyle(color = Color.White, fontSize = 15.sp, fontFamily = SFProDisplay),
+                cursorBrush = SolidColor(Color.White),
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(46.dp)
+                    .focusRequester(focusRequester)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.White.copy(alpha = 0.10f))
+                    .border(1.dp, Color.White.copy(alpha = 0.20f), RoundedCornerShape(12.dp))
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                decorationBox = { inner ->
+                    if (password.isEmpty()) {
+                        Text("Encryption password (min 8 chars)", color = Color.White.copy(alpha = 0.38f), fontSize = 14.sp)
+                    }
+                    inner()
+                },
+            )
+
+            Spacer(Modifier.height(10.dp))
+
+            // Confirm Password Field
+            BasicTextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                textStyle = TextStyle(color = Color.White, fontSize = 15.sp, fontFamily = SFProDisplay),
+                cursorBrush = SolidColor(Color.White),
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(46.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.White.copy(alpha = 0.10f))
+                    .border(1.dp, Color.White.copy(alpha = 0.20f), RoundedCornerShape(12.dp))
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                decorationBox = { inner ->
+                    if (confirmPassword.isEmpty()) {
+                        Text("Confirm password", color = Color.White.copy(alpha = 0.38f), fontSize = 14.sp)
+                    }
+                    inner()
+                },
+            )
+
+            Spacer(Modifier.height(20.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                TvModalActionButton(
+                    label = "Cancel",
+                    isPrimary = false,
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                )
+
+                val valid = password.length >= 8 && password == confirmPassword
+                TvModalActionButton(
+                    label = "Save Backup",
+                    isPrimary = true,
+                    onClick = {
+                        if (valid) {
+                            try {
+                                val bytes = BackupRestoreManager.createEncryptedBackup(context, setOf("all"), password.toCharArray())
+                                val target = File(context.filesDir, "itune_tv_backup.itune")
+                                target.writeBytes(bytes)
+                                runCatching {
+                                    val ext = File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "itune_tv_backup.itune")
+                                    ext.writeBytes(bytes)
+                                }
+                                Toast.makeText(context, "Encrypted Backup Saved (${bytes.size / 1024} KB)!", Toast.LENGTH_LONG).show()
+                                onDismiss()
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Backup failed: ${e.message}", Toast.LENGTH_LONG).show()
+                            }
+                        } else {
+                            Toast.makeText(context, "Passwords must match and have at least 8 characters", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TvPasswordRestoreModal(
+    onDismiss: () -> Unit,
+) {
+    val context = LocalContext.current
+    var password by remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        runCatching { focusRequester.requestFocus() }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0x99000000))
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onDismiss,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .width(440.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .background(Color(0xF01C1C1E))
+                .border(1.dp, Color.White.copy(alpha = 0.16f), RoundedCornerShape(24.dp))
+                .padding(26.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = "Restore iTune Backup",
+                color = Color.White,
+                fontSize = 20.sp,
+                fontFamily = SFProDisplay,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = "Enter the password used when your .itune backup was created.",
+                color = Color.White.copy(alpha = 0.60f),
+                fontSize = 12.5.sp,
+                fontFamily = SFProDisplay,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 16.dp),
+            )
+
+            BasicTextField(
+                value = password,
+                onValueChange = { password = it },
+                textStyle = TextStyle(color = Color.White, fontSize = 15.sp, fontFamily = SFProDisplay),
+                cursorBrush = SolidColor(Color.White),
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(46.dp)
+                    .focusRequester(focusRequester)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.White.copy(alpha = 0.10f))
+                    .border(1.dp, Color.White.copy(alpha = 0.20f), RoundedCornerShape(12.dp))
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                decorationBox = { inner ->
+                    if (password.isEmpty()) {
+                        Text("Backup password", color = Color.White.copy(alpha = 0.38f), fontSize = 14.sp)
+                    }
+                    inner()
+                },
+            )
+
+            Spacer(Modifier.height(20.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                TvModalActionButton(
+                    label = "Cancel",
+                    isPrimary = false,
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                )
+
+                TvModalActionButton(
+                    label = "Restore",
+                    isPrimary = true,
+                    onClick = {
+                        if (password.isNotBlank()) {
+                            try {
+                                val target = File(context.filesDir, "itune_tv_backup.itune").takeIf { it.exists() }
+                                    ?: File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "itune_tv_backup.itune").takeIf { it.exists() }
+
+                                if (target == null || !target.exists()) {
+                                    Toast.makeText(context, "No backup file found in storage", Toast.LENGTH_LONG).show()
+                                } else {
+                                    val bytes = target.readBytes()
+                                    val scanned = BackupRestoreManager.scanEncryptedBackup(bytes, password.toCharArray())
+                                    BackupRestoreManager.restore(context, scanned, setOf("all"))
+                                    Toast.makeText(context, "Library & Settings Restored!", Toast.LENGTH_LONG).show()
+                                    onDismiss()
+                                }
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Restore failed: ${e.message}", Toast.LENGTH_LONG).show()
+                            }
+                        } else {
+                            Toast.makeText(context, "Enter your backup password", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TvModalActionButton(
+    label: String,
+    isPrimary: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+
+    val bg = when {
+        focused -> Color.White
+        isPrimary -> Color(0xFF007AFF)
+        else -> Color.White.copy(alpha = 0.12f)
+    }
+    val textC = if (focused) Color.Black else Color.White
+
+    Box(
+        modifier = modifier
+            .height(44.dp)
+            .tvFocusable(
+                shape = RoundedCornerShape(12.dp),
+                scaleOnFocus = 1.04f,
+                elevationOnFocus = 4.dp,
+                interactionSource = interaction,
+                onClick = onClick,
+            )
+            .clip(RoundedCornerShape(12.dp))
+            .background(bg),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = label,
+            color = textC,
+            fontSize = 15.sp,
+            fontFamily = SFProDisplay,
+            fontWeight = if (focused || isPrimary) FontWeight.Bold else FontWeight.SemiBold,
+        )
+    }
+}

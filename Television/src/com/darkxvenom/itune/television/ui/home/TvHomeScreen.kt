@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -65,6 +66,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -87,8 +89,11 @@ import com.darkxvenom.itune.data.model.HomeHeroCard
 import com.darkxvenom.itune.data.model.HomeItemKind
 import com.darkxvenom.itune.data.repository.MusicRepository
 import com.darkxvenom.itune.television.focus.SFProDisplay
+import com.darkxvenom.itune.television.focus.TvAppleSilverBg
+import com.darkxvenom.itune.television.focus.TvAppleSilverGradient
 import com.darkxvenom.itune.television.focus.TvCard
 import com.darkxvenom.itune.television.focus.tvFocusable
+import com.darkxvenom.itune.ui.artist.theme.rememberArtworkPalette
 import com.darkxvenom.itune.ui.home.orderHomeShelves
 import com.darkxvenom.itune.ui.theme.AppleMusicRed
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
@@ -99,8 +104,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun TvHomeScreen(
     onArtistClick: (browseId: String?, name: String, thumb: String?) -> Unit,
+    onReleaseClick: (browseId: String?, playlistId: String?, title: String, subtitle: String?, thumb: String?) -> Unit = { _, _, _, _, _ -> },
     onOpenPlayer: () -> Unit,
     topBarFocusRequester: FocusRequester? = null,
+    topBar: (@Composable () -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -185,19 +192,22 @@ fun TvHomeScreen(
                 onArtistClick(item.browseId, item.title, item.thumbnailUrl)
             }
             HomeItemKind.PLAYLIST, HomeItemKind.ALBUM -> {
-                val watchId = item.watchPlaylistId
-                if (!watchId.isNullOrBlank()) {
-                    coroutineScope.launch {
-                        val tracks = HomeFeedRepository.loadWatchPlaylist(watchId, item.videoId)
-                        if (tracks.isNotEmpty()) {
-                            MusicPlayerState.play(tracks.first(), tracks)
-                            onOpenPlayer()
-                        } else {
-                            Toast.makeText(context, "Couldn't load ${item.title}", Toast.LENGTH_SHORT).show()
+                val releaseId = item.browseId ?: item.watchPlaylistId
+                if (!releaseId.isNullOrBlank()) {
+                    onReleaseClick(releaseId, null, item.title, item.subtitle, item.thumbnailUrl)
+                } else {
+                    val watchId = item.watchPlaylistId
+                    if (!watchId.isNullOrBlank()) {
+                        coroutineScope.launch {
+                            val tracks = HomeFeedRepository.loadWatchPlaylist(watchId, item.videoId)
+                            if (tracks.isNotEmpty()) {
+                                MusicPlayerState.play(tracks.first(), tracks)
+                                onOpenPlayer()
+                            } else {
+                                Toast.makeText(context, "Couldn't load ${item.title}", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
-                } else if (!item.browseId.isNullOrBlank()) {
-                    onArtistClick(item.browseId, item.title, item.thumbnailUrl)
                 }
             }
             else -> {}
@@ -207,33 +217,40 @@ fun TvHomeScreen(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(AppleOledBlack),
-        contentPadding = PaddingValues(top = 4.dp, bottom = 32.dp),
+            .background(TvAppleSilverBg),
+        contentPadding = PaddingValues(top = 0.dp, bottom = 48.dp),
     ) {
+        // Top Navigation Bar scrolling with content
+        if (topBar != null) {
+            item(key = "home_top_bar") {
+                topBar()
+            }
+        }
+
         // Section 1: "Top Picks" with Apple Music TV Portrait Cards
         item(key = "home_top_picks_section") {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = "Top Picks",
                     color = Color.White,
-                    fontSize = 19.sp,
+                    fontSize = 21.sp,
                     fontFamily = SFProDisplay,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 40.dp, vertical = 4.dp),
+                    modifier = Modifier.padding(horizontal = 40.dp, vertical = 6.dp),
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = 40.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(18.dp),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     items(heroCards, key = { it.id }) { card ->
                         Column(
                             horizontalAlignment = Alignment.Start,
                             modifier = Modifier
-                                .width(172.dp)
+                                .width(210.dp)
                                 .then(
                                     if (topBarFocusRequester != null) {
                                         Modifier.focusProperties { up = topBarFocusRequester }
@@ -242,13 +259,13 @@ fun TvHomeScreen(
                         ) {
                             Text(
                                 text = card.category.ifBlank { "Top Pick" },
-                                color = Color.White.copy(alpha = 0.50f),
-                                fontSize = 11.5.sp,
+                                color = Color.White.copy(alpha = 0.55f),
+                                fontSize = 12.5.sp,
                                 fontFamily = SFProDisplay,
-                                fontWeight = FontWeight.SemiBold,
+                                fontWeight = FontWeight.Medium,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.padding(bottom = 4.dp, start = 2.dp),
+                                modifier = Modifier.padding(bottom = 6.dp, start = 2.dp),
                             )
 
                             TvPortraitHeroCard(
@@ -337,7 +354,8 @@ fun TvHomeScreen(
 }
 
 /**
- * 10-Foot Television Tall Portrait Hero Card matching Apple Music on Apple TV.
+ * 10-Foot Television Tall Portrait Hero Card matching Apple Music on Apple TV (tvOS 17/18).
+ * Not too much curved corners (14.dp), 30% below blurred/palette wash with centered title and subtitle.
  */
 @Composable
 private fun TvPortraitHeroCard(
@@ -348,96 +366,97 @@ private fun TvPortraitHeroCard(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
+    // Artwork palette wash for the bottom 30% panel
+    val palette = rememberArtworkPalette(imageUrl = card.imageUrl)
+
     Box(
         modifier = modifier
-            .width(172.dp)
-            .height(246.dp)
+            .width(210.dp)
+            .height(285.dp)
             .tvFocusable(
-                shape = RoundedCornerShape(16.dp),
-                scaleOnFocus = 1.04f,
+                shape = RoundedCornerShape(14.dp),
+                scaleOnFocus = 1.05f,
+                elevationOnFocus = 16.dp,
                 interactionSource = interactionSource,
                 onClick = onClick,
             )
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFF1A1A1E)),
+            .clip(RoundedCornerShape(14.dp))
+            .background(Color(0xFF1E1E22)),
     ) {
-        // Background Artwork Layer
-        if (!card.imageUrl.isNullOrBlank()) {
-            AsyncImage(
-                model = card.imageUrl,
-                contentDescription = card.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-            )
-        } else {
-            TvAmbientCardArtwork(title = card.title, category = card.category)
-        }
-
-        // Top subtle gradient scrim
+        // Upper ~70%: Artwork
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
-                .align(Alignment.TopCenter)
-                .background(
-                    Brush.verticalGradient(
-                        listOf(Color.Black.copy(alpha = 0.40f), Color.Transparent)
-                    )
-                ),
-        )
-
-        // Top-right iTune Badge
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top = 10.dp, end = 10.dp),
+                .fillMaxHeight(0.69f)
+                .align(Alignment.TopCenter),
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_itune_waves),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.95f)),
-                modifier = Modifier.size(12.dp),
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = "iTune",
-                color = Color.White.copy(alpha = 0.95f),
-                fontFamily = SFProDisplay,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = (-0.3).sp,
-            )
+            if (!card.imageUrl.isNullOrBlank()) {
+                AsyncImage(
+                    model = card.imageUrl,
+                    contentDescription = card.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            } else {
+                TvAmbientCardArtwork(title = card.title, category = card.category)
+            }
+
+            // Top-right Apple Music / iTune Badge
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 8.dp, end = 8.dp),
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_itune_waves),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(Color.White),
+                    modifier = Modifier.size(11.dp),
+                )
+                Spacer(modifier = Modifier.width(3.dp))
+                Text(
+                    text = "iTune",
+                    color = Color.White,
+                    fontFamily = SFProDisplay,
+                    fontSize = 10.5.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = (-0.2).sp,
+                )
+            }
         }
 
-        // Bottom Liquid Glass Scrim with Metadata
+        // Lower ~30%: Tinted Blurred Palette Wash with Centered Title & Subtitle
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight(0.31f)
                 .align(Alignment.BottomCenter)
-                .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
+                .clip(RoundedCornerShape(bottomStart = 14.dp, bottomEnd = 14.dp))
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
-                            Color.Transparent,
-                            Color(0xDD0D0D10),
-                            Color(0xF80D0D10),
-                            Color(0xFF0D0D10),
+                            palette.wash.copy(alpha = 0.90f),
+                            palette.background.copy(alpha = 0.98f),
                         )
                     )
                 )
-                .padding(start = 12.dp, end = 12.dp, top = 22.dp, bottom = 10.dp),
+                .padding(horizontal = 10.dp, vertical = 6.dp),
+            contentAlignment = Alignment.Center,
         ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
                 Text(
                     text = card.title,
                     color = Color.White,
-                    fontSize = 14.sp,
+                    fontSize = 14.5.sp,
                     fontFamily = SFProDisplay,
                     fontWeight = FontWeight.Bold,
-                    lineHeight = 17.sp,
-                    letterSpacing = (-0.3).sp,
-                    maxLines = 1,
+                    maxLines = 2,
+                    textAlign = TextAlign.Center,
                     overflow = TextOverflow.Ellipsis,
                 )
                 val desc = card.subtitle.ifBlank { card.caption }
@@ -445,12 +464,12 @@ private fun TvPortraitHeroCard(
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = desc,
-                        color = Color.White.copy(alpha = 0.72f),
-                        fontSize = 11.sp,
+                        color = Color.White.copy(alpha = 0.70f),
+                        fontSize = 11.5.sp,
                         fontFamily = SFProDisplay,
                         fontWeight = FontWeight.Normal,
-                        lineHeight = 14.sp,
                         maxLines = 2,
+                        textAlign = TextAlign.Center,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
@@ -524,6 +543,7 @@ private fun TvSquareShelfCard(
                 .tvFocusable(
                     shape = RoundedCornerShape(12.dp),
                     scaleOnFocus = 1.06f,
+                    elevationOnFocus = 16.dp,
                     interactionSource = interactionSource,
                     onClick = onClick,
                 )
@@ -606,6 +626,7 @@ private fun TvArtistCircleCard(
                 .tvFocusable(
                     shape = CircleShape,
                     scaleOnFocus = 1.06f,
+                    elevationOnFocus = 16.dp,
                     interactionSource = interactionSource,
                     onClick = onClick,
                 )

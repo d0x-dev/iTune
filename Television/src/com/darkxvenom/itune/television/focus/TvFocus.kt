@@ -76,6 +76,18 @@ import com.darkxvenom.itune.ui.theme.AppleMusicRed
 
 val SFProDisplay = com.darkxvenom.itune.ui.artist.theme.SFProDisplay
 
+/** Apple TV Dark Titanium / Silver Matte background matching tvOS 17/18 */
+val TvAppleSilverBg = Color(0xFF222225)
+
+/** Apple TV Dark Silver vertical wash gradient */
+val TvAppleSilverGradient = Brush.verticalGradient(
+    colors = listOf(
+        Color(0xFF29292E),
+        Color(0xFF222225),
+        Color(0xFF1B1B1E),
+    )
+)
+
 @Composable
 fun TvBigButton(
     text: String,
@@ -273,7 +285,8 @@ fun Modifier.tvFocusable(
     unfocusedBorderColor: Color = Color.Transparent,
     focusedBorderWidth: Dp = 0.dp,
     unfocusedBorderWidth: Dp = 0.dp,
-    scaleOnFocus: Float = 1.05f,
+    scaleOnFocus: Float = 1.08f,
+    elevationOnFocus: Dp = 14.dp,
     focusRequester: FocusRequester? = null,
     interactionSource: MutableInteractionSource? = null,
     onClick: (() -> Unit)? = null,
@@ -305,7 +318,7 @@ fun Modifier.tvFocusable(
     )
 
     val shadowElevation by animateDpAsState(
-        targetValue = if (isFocused) 16.dp else 0.dp,
+        targetValue = if (isFocused) elevationOnFocus else 0.dp,
         animationSpec = spring(dampingRatio = 1f, stiffness = 420f),
         label = "tvFocusShadow",
     )

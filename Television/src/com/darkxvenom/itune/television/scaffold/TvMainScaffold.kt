@@ -75,6 +75,8 @@ import com.darkxvenom.itune.R
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.radio.OnlineRadioController
 import com.darkxvenom.itune.television.focus.SFProDisplay
+import com.darkxvenom.itune.television.focus.TvAppleSilverBg
+import com.darkxvenom.itune.television.ui.album.TvAlbumPlaylistScreen
 import com.darkxvenom.itune.television.ui.artist.TvArtistScreen
 import com.darkxvenom.itune.television.ui.browse.TvBrowseScreen
 import com.darkxvenom.itune.television.ui.home.TvHomeScreen
@@ -99,6 +101,13 @@ enum class TvNavDestination(val label: String) {
 sealed class TvScreenState {
     object Main : TvScreenState()
     data class Artist(val browseId: String?, val name: String, val thumb: String?) : TvScreenState()
+    data class Release(
+        val browseId: String?,
+        val playlistId: String?,
+        val title: String,
+        val subtitle: String?,
+        val thumb: String?,
+    ) : TvScreenState()
     object Player : TvScreenState()
 }
 
@@ -119,7 +128,7 @@ fun TvMainScaffold(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(AppleOledBlack),
+            .background(TvAppleSilverBg),
     ) {
         when (val state = screenState) {
             is TvScreenState.Player -> {
@@ -128,16 +137,36 @@ fun TvMainScaffold(
                     onOpenArtist = { id, name, thumb -> screenState = TvScreenState.Artist(id, name, thumb) },
                 )
             }
+            is TvScreenState.Release -> {
+                TvAlbumPlaylistScreen(
+                    browseId = state.browseId,
+                    playlistId = state.playlistId,
+                    initialTitle = state.title,
+                    initialSubtitle = state.subtitle,
+                    initialThumb = state.thumb,
+                    onArtistClick = { id, name, thumb ->
+                        screenState = TvScreenState.Artist(id, name, thumb)
+                    },
+                    onOpenPlayer = { screenState = TvScreenState.Player },
+                    onBack = { screenState = TvScreenState.Main },
+                )
+            }
             is TvScreenState.Artist -> {
                 TvArtistScreen(
                     artistName = state.name,
                     artistThumb = state.thumb,
+                    artistBrowseId = state.browseId,
+                    onNavigateArtist = { id, name, thumb ->
+                        screenState = TvScreenState.Artist(id, name, thumb)
+                    },
+                    onReleaseClick = { browseId, playlistId, title, subtitle, thumb ->
+                        screenState = TvScreenState.Release(browseId, playlistId, title, subtitle, thumb)
+                    },
                     onBack = { screenState = TvScreenState.Main },
                 )
             }
             is TvScreenState.Main -> {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    // Apple TV Style Top Navigation Bar
+                val topBarContent: @Composable () -> Unit = {
                     TvAppleTopBar(
                         selectedDestination = selectedNav,
                         onDestinationSelected = { dest -> selectedNav = dest },
@@ -146,55 +175,73 @@ fun TvMainScaffold(
                         onOpenPlayer = { screenState = TvScreenState.Player },
                         topBarFocusRequester = topBarFocusRequester,
                     )
+                }
 
-                    // Main TV Content Container
-                    Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                        AnimatedContent(
-                            targetState = selectedNav,
-                            transitionSpec = { fadeIn() togetherWith fadeOut() },
-                            label = "tvScreenTransition",
-                            modifier = Modifier.fillMaxSize(),
-                        ) { dest ->
-                            when (dest) {
-                                TvNavDestination.HOME -> {
-                                    TvHomeScreen(
-                                        onArtistClick = { browseId, name, thumb ->
-                                            screenState = TvScreenState.Artist(browseId, name, thumb)
-                                        },
-                                        onOpenPlayer = { screenState = TvScreenState.Player },
-                                        topBarFocusRequester = topBarFocusRequester,
-                                    )
-                                }
-                                TvNavDestination.BROWSE -> {
-                                    TvBrowseScreen(
-                                        onCategoryClick = { /* mood explore */ },
-                                        onBack = { selectedNav = TvNavDestination.HOME },
-                                    )
-                                }
-                                TvNavDestination.RADIO -> {
-                                    TvRadioScreen(
-                                        onStationClick = { station ->
-                                            OnlineRadioController.playStation(station)
-                                        },
-                                    )
-                                }
-                                TvNavDestination.LIBRARY -> {
-                                    TvLibraryScreen(
-                                        onBack = { selectedNav = TvNavDestination.HOME },
-                                    )
-                                }
-                                TvNavDestination.SEARCH -> {
-                                    TvSearchScreen(
-                                        onArtistClick = { browseId, name, thumb ->
-                                            screenState = TvScreenState.Artist(browseId, name, thumb)
-                                        },
-                                        onBack = { selectedNav = TvNavDestination.HOME },
-                                    )
-                                }
-                                TvNavDestination.SETTINGS -> {
-                                    TvSettingsScreen(
-                                        onBack = { selectedNav = TvNavDestination.HOME },
-                                    )
+                if (selectedNav == TvNavDestination.HOME) {
+                    TvHomeScreen(
+                        onArtistClick = { browseId, name, thumb ->
+                            screenState = TvScreenState.Artist(browseId, name, thumb)
+                        },
+                        onReleaseClick = { browseId, playlistId, title, subtitle, thumb ->
+                            screenState = TvScreenState.Release(browseId, playlistId, title, subtitle, thumb)
+                        },
+                        onOpenPlayer = { screenState = TvScreenState.Player },
+                        topBarFocusRequester = topBarFocusRequester,
+                        topBar = topBarContent,
+                    )
+                } else {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        topBarContent()
+
+                        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                            AnimatedContent(
+                                targetState = selectedNav,
+                                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                                label = "tvScreenTransition",
+                                modifier = Modifier.fillMaxSize(),
+                            ) { dest ->
+                                when (dest) {
+                                    TvNavDestination.HOME -> {} // Handled above
+                                    TvNavDestination.BROWSE -> {
+                                        TvBrowseScreen(
+                                            onCategoryClick = { /* mood explore */ },
+                                            onBack = { selectedNav = TvNavDestination.HOME },
+                                        )
+                                    }
+                                    TvNavDestination.RADIO -> {
+                                        TvRadioScreen(
+                                            onStationClick = { station ->
+                                                OnlineRadioController.playStation(station)
+                                            },
+                                        )
+                                    }
+                                    TvNavDestination.LIBRARY -> {
+                                        TvLibraryScreen(
+                                            onArtistClick = { id, name, thumb ->
+                                                screenState = TvScreenState.Artist(id, name, thumb)
+                                            },
+                                            onReleaseClick = { browseId, playlistId, title, subtitle, thumb ->
+                                                screenState = TvScreenState.Release(browseId, playlistId, title, subtitle, thumb)
+                                            },
+                                            onBack = { selectedNav = TvNavDestination.HOME },
+                                        )
+                                    }
+                                    TvNavDestination.SEARCH -> {
+                                        TvSearchScreen(
+                                            onArtistClick = { browseId, name, thumb ->
+                                                screenState = TvScreenState.Artist(browseId, name, thumb)
+                                            },
+                                            onReleaseClick = { browseId, playlistId, title, subtitle, thumb ->
+                                                screenState = TvScreenState.Release(browseId, playlistId, title, subtitle, thumb)
+                                            },
+                                            onBack = { selectedNav = TvNavDestination.HOME },
+                                        )
+                                    }
+                                    TvNavDestination.SETTINGS -> {
+                                        TvSettingsScreen(
+                                            onBack = { selectedNav = TvNavDestination.HOME },
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -275,7 +322,7 @@ private fun TvAppleTopBar(
             )
         }
 
-        // Center: Apple TV Pill Tab Bar (Listen Now, Browse, Radio, Library, Now Playing)
+        // Center-Right: Apple TV Unified Pill Tab Bar (Listen Now, Browse, Radio, Library, Now Playing, Search, Settings)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -314,21 +361,19 @@ private fun TvAppleTopBar(
                 isSelected = false,
                 onClick = onOpenPlayer,
             )
-        }
 
-        // Top Right: Search and Settings Circle Buttons
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            TvTopIconButton(
+            Spacer(Modifier.width(2.dp))
+
+            // Search Icon Tab
+            TvTopTabIconButton(
                 icon = Icons.Rounded.Search,
                 contentDescription = "Search",
                 isSelected = selectedDestination == TvNavDestination.SEARCH,
                 onClick = { onDestinationSelected(TvNavDestination.SEARCH) },
             )
 
-            TvTopIconButton(
+            // Settings Icon Tab
+            TvTopTabIconButton(
                 icon = Icons.Rounded.Settings,
                 contentDescription = "Settings",
                 isSelected = selectedDestination == TvNavDestination.SETTINGS,
@@ -426,7 +471,7 @@ private fun TvTopTabPill(
 }
 
 @Composable
-private fun TvTopIconButton(
+private fun TvTopTabIconButton(
     icon: ImageVector,
     contentDescription: String,
     isSelected: Boolean,
@@ -439,29 +484,28 @@ private fun TvTopIconButton(
 
     val scale by animateFloatAsState(
         targetValue = when {
-            isPressed -> 0.95f
+            isPressed -> 0.94f
             isFocused -> 1.08f
             else -> 1.0f
         },
         animationSpec = spring(dampingRatio = 0.72f, stiffness = 420f),
-        label = "iconBtnScale",
+        label = "tabIconScale",
     )
 
     val backgroundColor = when {
         isSelected -> Color.White
-        isFocused -> Color.White.copy(alpha = 0.28f)
-        else -> Color.White.copy(alpha = 0.08f)
+        isFocused -> Color.White.copy(alpha = 0.22f)
+        else -> Color.Transparent
     }
 
     val iconTint = when {
         isSelected -> Color.Black
         isFocused -> Color.White
-        else -> Color.White.copy(alpha = 0.78f)
+        else -> Color.White.copy(alpha = 0.75f)
     }
 
     Box(
         modifier = modifier
-            .size(34.dp)
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
@@ -493,7 +537,8 @@ private fun TvTopIconButton(
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = onClick,
-            ),
+            )
+            .padding(horizontal = 10.dp, vertical = 7.dp),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -504,3 +549,12 @@ private fun TvTopIconButton(
         )
     }
 }
+
+@Composable
+private fun TvTopIconButton(
+    icon: ImageVector,
+    contentDescription: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) = TvTopTabIconButton(icon, contentDescription, isSelected, onClick, modifier)

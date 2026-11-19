@@ -11,10 +11,16 @@
 
 package com.darkxvenom.itune.television.ui.player
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -38,14 +44,29 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.ContentCopy
+import androidx.compose.material.icons.rounded.Equalizer
+import androidx.compose.material.icons.rounded.Language
+import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material.icons.rounded.Speed
+import androidx.compose.material.icons.rounded.Tune
+import androidx.compose.material.icons.rounded.Wifi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,8 +78,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.util.lerp
+import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
@@ -70,6 +94,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
@@ -97,15 +122,22 @@ import com.darkxvenom.itune.backend.LyricsLine
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.highQualityThumbnail
+import com.darkxvenom.itune.backend.lyrics.LyricsHelper
 import com.darkxvenom.itune.data.artist.CanvasArtwork
 import com.darkxvenom.itune.data.canvas.CanvasRepository
+import com.darkxvenom.itune.data.library.LibraryStore
+import com.darkxvenom.itune.data.library.SavedSongMetadata
 import com.darkxvenom.itune.data.library.SettingsStore
+import com.darkxvenom.itune.ishare.IShareSyncManager
 import com.darkxvenom.itune.television.focus.SFProDisplay
 import com.darkxvenom.itune.television.focus.tvFocusable
 import com.darkxvenom.itune.television.ui.common.TvAmbientBackground
 import com.darkxvenom.itune.ui.artist.canvas.CanvasArtworkPlayer
+import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
+import com.darkxvenom.itune.ui.components.AnimatedEqualizer
 import com.darkxvenom.itune.ui.artist.canvas.CanvasContentMode
 import kotlinx.coroutines.delay
+import kotlin.math.abs
 import kotlin.math.ceil
 
 // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
@@ -145,7 +177,7 @@ fun TvPlayerScreen(
         }
     }
 
-    // Immediately hide controls when entering lyrics; show when user interacts and auto-hide after 3.5s.
+    // Controls auto-hide in lyrics mode after 3.5s; reappear on remote interaction
     LaunchedEffect(mode) {
         if (mode == TvPlayerMode.LYRICS) {
             controlsVisible = false
@@ -352,30 +384,26 @@ private fun NowPlayingWithLyricsPane(
             .fillMaxSize()
             .padding(horizontal = 40.dp, vertical = 20.dp),
     ) {
-        // ── Top Left: iTune Brand (Fades out when in Lyrics mode) ─────────
-        if (lyricsProgress < 0.99f) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .graphicsLayer { alpha = 1f - lyricsProgress },
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_itune_waves),
-                    contentDescription = "iTune",
-                    colorFilter = ColorFilter.tint(Color.White),
-                    modifier = Modifier.size(22.dp),
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = "iTune",
-                    color = Color.White,
-                    fontSize = 18.sp,
-                    fontFamily = SFProDisplay,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = (-0.3).sp,
-                )
-            }
+        // ── Top Left: iTune Brand (ALWAYS visible in both Now Playing and Lyrics!) ─────────
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.align(Alignment.TopStart),
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_itune_waves),
+                contentDescription = "iTune",
+                colorFilter = ColorFilter.tint(Color.White),
+                modifier = Modifier.size(22.dp),
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = "iTune",
+                color = Color.White,
+                fontSize = 18.sp,
+                fontFamily = SFProDisplay,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = (-0.3).sp,
+            )
         }
 
         // ── Top Center: Album Title (Only in Now Playing) ─────────────────
@@ -501,18 +529,17 @@ private fun NowPlayingWithLyricsPane(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     if (isPlaying) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_itune_waves),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.85f)),
-                            modifier = Modifier.size(14.dp),
+                        AnimatedEqualizer(
+                            isPlaying = isPlaying,
+                            color = Color.White,
+                            size = 18.dp,
                         )
-                        Spacer(Modifier.width(6.dp))
+                        Spacer(Modifier.width(8.dp))
                     }
                     Text(
                         text = track?.title ?: "Not Playing",
                         color = Color.White,
-                        fontSize = 16.sp,
+                        fontSize = 17.sp,
                         fontFamily = SFProDisplay,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
@@ -521,16 +548,7 @@ private fun NowPlayingWithLyricsPane(
                     )
                     if (track?.isExplicit == true) {
                         Spacer(Modifier.width(6.dp))
-                        Text(
-                            text = "E",
-                            color = Color.White.copy(alpha = 0.70f),
-                            fontSize = 10.sp,
-                            fontFamily = SFProDisplay,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .background(Color.White.copy(alpha = 0.20f), RoundedCornerShape(3.dp))
-                                .padding(horizontal = 4.dp, vertical = 1.dp),
-                        )
+                        ExplicitBadge(color = Color.White.copy(alpha = 0.85f))
                     }
                 }
 
@@ -587,7 +605,7 @@ private fun NowPlayingWithLyricsPane(
             }
         }
 
-        // ── Right Side: Apple Music TV Lyrics Typography ─────────────────
+        // ── Right Side: Apple Music TV Lyrics Typography (with Blur Falloff) ──
         if (lyricsProgress > 0.01f) {
             val lines = MusicPlayerState.lyrics
             val position = MusicPlayerState.positionMs
@@ -659,7 +677,7 @@ private fun NowPlayingWithLyricsPane(
             }
         }
 
-        // ── Auto-Hiding Bottom Controls & Scrubber Bar ───────────────────
+        // ── Auto-Hiding Bottom Controls & Scrubber Bar (Clean, no glass capsule) ──
         val showBottomControls = if (isLyrics) controlsVisible else true
         AnimatedVisibility(
             visible = showBottomControls,
@@ -676,7 +694,7 @@ private fun NowPlayingWithLyricsPane(
                         .fillMaxWidth()
                         .focusRequester(progressBarFocus)
                         .focusProperties {
-                            up = quickActionsFocus
+                            up = if (isLyrics) lyricsFocus else quickActionsFocus
                             down = lyricsFocus
                         },
                 )
@@ -854,9 +872,9 @@ private fun QueuePane(
                         if (!isPlaying) {
                             Box(
                                 modifier = Modifier
-                                    .size(185.dp)
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(Color(0x55000000)),
+                                .size(185.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(Color(0x55000000)),
                                 contentAlignment = Alignment.Center,
                             ) {
                                 Image(
@@ -923,7 +941,7 @@ private fun QueuePane(
             }
         }
 
-        // Bottom Scrubber Bar & Mode Switchers
+        // Bottom Scrubber Bar & Controls (Clean, no glass capsule)
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -1035,6 +1053,10 @@ private fun NeighbourCover(track: MusicTrack?, label: String, onClick: () -> Uni
     }
 }
 
+private val TV_LINE_FALLOFF_BLUR = arrayOf(0.dp, 1.4.dp, 2.5.dp, 3.8.dp, 5.0.dp)
+private val TV_LINE_FALLOFF_ALPHA = floatArrayOf(1f, 0.65f, 0.44f, 0.30f, 0.20f)
+private val TV_LYRIC_EASING = CubicBezierEasing(0.41f, 0f, 0.12f, 0.99f)
+
 /** state: negative = already sung, 0 = active, positive = upcoming. */
 @Composable
 private fun TvLyricLine(
@@ -1043,15 +1065,34 @@ private fun TvLyricLine(
     positionMs: Long,
     onClick: () -> Unit,
 ) {
-    val alpha by animateFloatAsState(
-        targetValue = when {
-            state == 0 -> 1f
-            state < 0 -> 0.38f
-            else -> 0.30f
-        },
-        animationSpec = tween(300),
-        label = "lyricAlpha",
+    val dist = abs(state)
+    val blurStep = dist.coerceAtMost(TV_LINE_FALLOFF_BLUR.lastIndex)
+    val alphaStep = dist.coerceAtMost(TV_LINE_FALLOFF_ALPHA.lastIndex)
+
+    val targetAlpha = if (state == 0) 1f else TV_LINE_FALLOFF_ALPHA[alphaStep]
+    val targetBlur = if (state == 0 || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+        0.dp
+    } else {
+        TV_LINE_FALLOFF_BLUR[blurStep]
+    }
+    val targetScale = if (state == 0) 1.05f else 0.98f
+
+    val animatedAlpha by animateFloatAsState(
+        targetValue = targetAlpha,
+        animationSpec = tween(durationMillis = 350, easing = TV_LYRIC_EASING),
+        label = "tvLyricAlpha",
     )
+    val animatedBlur by animateDpAsState(
+        targetValue = targetBlur,
+        animationSpec = tween(durationMillis = 350, easing = TV_LYRIC_EASING),
+        label = "tvLyricBlur",
+    )
+    val animatedScale by animateFloatAsState(
+        targetValue = targetScale,
+        animationSpec = spring(dampingRatio = 0.82f, stiffness = 380f),
+        label = "tvLyricScale",
+    )
+
     val text: AnnotatedString = remember(line, state == 0, if (state == 0) positionMs / 90 else 0L) {
         if (state == 0 && line.words.isNotEmpty() &&
             line.words.joinToString("") { it.text }.replace(" ", "") == line.text.replace(" ", "")
@@ -1066,21 +1107,48 @@ private fun TvLyricLine(
             }
         } else AnnotatedString(line.text)
     }
-    Text(
-        text = text,
-        color = Color.White,
-        fontSize = if (state == 0) 27.sp else 21.sp,
-        lineHeight = if (state == 0) 35.sp else 28.sp,
-        fontFamily = SFProDisplay,
-        fontWeight = if (state == 0) FontWeight.Bold else FontWeight.SemiBold,
+
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .alpha(alpha)
-            .clickable(onClick = onClick),
-    )
+            .graphicsLayer {
+                alpha = animatedAlpha
+                scaleX = animatedScale
+                scaleY = animatedScale
+                transformOrigin = TransformOrigin(0f, 0.5f)
+            }
+            .then(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && animatedBlur > 0.05.dp) {
+                    Modifier.blur(animatedBlur, BlurredEdgeTreatment.Unbounded)
+                } else {
+                    Modifier
+                }
+            )
+            .clickable(onClick = onClick)
+            .padding(vertical = 3.dp),
+    ) {
+        Text(
+            text = text,
+            color = Color.White,
+            fontSize = if (state == 0) 28.sp else 22.sp,
+            lineHeight = if (state == 0) 36.sp else 29.sp,
+            fontFamily = SFProDisplay,
+            fontWeight = if (state == 0) FontWeight.Bold else FontWeight.SemiBold,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
 }
 
-// ── TV Options Popup ───────────────────────────────────────────────────────────────────────────
+// ── TV Options Popup (Multi-Page Apple TV Modal) ───────────────────────────────────────────────
+
+private enum class TvPopupPage {
+    MAIN,
+    LYRICS_OPTIONS,
+    LYRICS_OFFSET,
+    LYRICS_PROVIDERS,
+    ISHARE_LAN,
+    ADD_TO_PLAYLIST,
+}
 
 @Composable
 private fun TvOptionsPopup(
@@ -1090,9 +1158,18 @@ private fun TvOptionsPopup(
     onShowQueue: () -> Unit,
     onOpenArtist: () -> Unit,
 ) {
-    val first = remember { FocusRequester() }
-    LaunchedEffect(Unit) { runCatching { first.requestFocus() } }
+    val context = LocalContext.current
+    var currentPage by remember { mutableStateOf(TvPopupPage.MAIN) }
+    val firstFocus = remember { FocusRequester() }
+    LaunchedEffect(currentPage) { runCatching { firstFocus.requestFocus() } }
+
     val fav = MusicPlayerState.isFavorite(track.id)
+    val settings by SettingsStore.state.collectAsStateWithLifecycle()
+    val playlists by LibraryStore.userPlaylists.collectAsStateWithLifecycle()
+    val ishareSession by IShareSyncManager.session.collectAsStateWithLifecycle()
+    val ishareIsHost by IShareSyncManager.isHost.collectAsStateWithLifecycle()
+    val discoveredHosts by IShareSyncManager.discoveredHosts.collectAsStateWithLifecycle()
+
     val sleepLabel = when {
         MusicPlayerState.sleepTimerEndOfTrack -> "End of track"
         MusicPlayerState.sleepTimerRemainingMs > 0 -> "${ceil(MusicPlayerState.sleepTimerRemainingMs / 60_000.0).toInt()} min left"
@@ -1111,71 +1188,495 @@ private fun TvOptionsPopup(
     ) {
         Column(
             Modifier
-                .width(360.dp)
+                .width(420.dp)
                 .clip(RoundedCornerShape(24.dp))
-                .background(Color(0xE61C1C1E))
-                .border(1.dp, Color.White.copy(alpha = 0.14f), RoundedCornerShape(24.dp))
-                .padding(vertical = 16.dp, horizontal = 12.dp),
+                .background(Color(0xF01C1C1E))
+                .border(1.dp, Color.White.copy(alpha = 0.16f), RoundedCornerShape(24.dp))
+                .padding(vertical = 18.dp, horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
+            when (currentPage) {
+                TvPopupPage.MAIN -> {
+                    Text(
+                        text = track.title,
+                        color = Color.White,
+                        fontSize = 17.sp,
+                        fontFamily = SFProDisplay,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                    )
+                    Text(
+                        text = track.artists,
+                        color = Color.White.copy(alpha = 0.6f),
+                        fontSize = 13.sp,
+                        fontFamily = SFProDisplay,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                    )
+                    Spacer(Modifier.height(8.dp))
+
+                    PopupDrawableRow(
+                        drawableRes = if (fav) R.drawable.ic_star_filled else R.drawable.ic_star_outline,
+                        label = if (fav) "Remove from Favorites" else "Add to Favorites",
+                        trailing = null,
+                        focusRequester = firstFocus,
+                    ) { MusicPlayerState.toggleFavorite(track) }
+
+                    PopupDrawableRow(
+                        drawableRes = R.drawable.lyrics,
+                        label = "Lyrics View",
+                        trailing = null,
+                        focusRequester = null,
+                        onClick = onShowLyrics,
+                    )
+
+                    PopupDrawableRow(
+                        drawableRes = R.drawable.queue_music,
+                        label = "Playing Next (Queue)",
+                        trailing = "${MusicPlayerState.queue.size}",
+                        focusRequester = null,
+                        onClick = onShowQueue,
+                    )
+
+                    PopupDrawableRow(
+                        drawableRes = R.drawable.ic_menu_artist,
+                        label = "Go to Artist",
+                        trailing = null,
+                        focusRequester = null,
+                        onClick = onOpenArtist,
+                    )
+
+                    PopupVectorRow(
+                        icon = Icons.Rounded.Tune,
+                        label = "Lyrics Settings",
+                        trailing = "${MusicPlayerState.lyricsOffsetMs}ms",
+                        focusRequester = null,
+                        onClick = { currentPage = TvPopupPage.LYRICS_OPTIONS },
+                    )
+
+                    PopupVectorRow(
+                        icon = Icons.Rounded.Add,
+                        label = "Add to Playlist",
+                        trailing = "${playlists.size}",
+                        focusRequester = null,
+                        onClick = { currentPage = TvPopupPage.ADD_TO_PLAYLIST },
+                    )
+
+                    PopupVectorRow(
+                        icon = Icons.Rounded.Wifi,
+                        label = "iShare (Listen Together)",
+                        trailing = if (ishareSession != null) "Connected" else "Off",
+                        focusRequester = null,
+                        onClick = { currentPage = TvPopupPage.ISHARE_LAN },
+                    )
+
+                    PopupVectorRow(
+                        icon = Icons.Rounded.ContentCopy,
+                        label = "Copy Song Link",
+                        trailing = null,
+                        focusRequester = null,
+                        onClick = {
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                            val clip = ClipData.newPlainText("iTune Link", "https://music.youtube.com/watch?v=${track.id}")
+                            clipboard?.setPrimaryClip(clip)
+                            Toast.makeText(context, "Song link copied to clipboard", Toast.LENGTH_SHORT).show()
+                            onDismiss()
+                        },
+                    )
+
+                    PopupDrawableRow(
+                        drawableRes = R.drawable.ic_menu_sleep_timer,
+                        label = "Sleep Timer",
+                        trailing = sleepLabel,
+                        focusRequester = null,
+                    ) { cycleSleepTimer() }
+                }
+
+                TvPopupPage.LYRICS_OPTIONS -> {
+                    PopupBackRow(title = "Lyrics Settings") { currentPage = TvPopupPage.MAIN }
+                    Spacer(Modifier.height(6.dp))
+
+                    PopupVectorRow(
+                        icon = Icons.Rounded.Speed,
+                        label = "Adjust Lyrics Offset",
+                        trailing = "${MusicPlayerState.lyricsOffsetMs}ms",
+                        focusRequester = firstFocus,
+                        onClick = { currentPage = TvPopupPage.LYRICS_OFFSET },
+                    )
+
+                    PopupVectorRow(
+                        icon = Icons.Rounded.Tune,
+                        label = "Select Lyrics Provider",
+                        trailing = "${settings.lyricsProviderOrder.size - settings.disabledLyricsProviders.size} Active",
+                        focusRequester = null,
+                        onClick = { currentPage = TvPopupPage.LYRICS_PROVIDERS },
+                    )
+
+                    PopupVectorRow(
+                        icon = Icons.Rounded.Language,
+                        label = "AI Lyrics Translation",
+                        trailing = if (settings.lyricsTranslationEnabled) "On" else "Off",
+                        focusRequester = null,
+                        onClick = {
+                            SettingsStore.setLyricsTranslationEnabled(context, !settings.lyricsTranslationEnabled)
+                        },
+                    )
+                }
+
+                TvPopupPage.LYRICS_OFFSET -> {
+                    PopupBackRow(title = "Lyrics Timing Offset") { currentPage = TvPopupPage.LYRICS_OPTIONS }
+                    Spacer(Modifier.height(8.dp))
+
+                    Text(
+                        text = "Current Offset: ${MusicPlayerState.lyricsOffsetMs} ms",
+                        color = Color.White.copy(alpha = 0.85f),
+                        fontSize = 16.sp,
+                        fontFamily = SFProDisplay,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
+                    )
+
+                    val steps = listOf(
+                        "-500 ms" to -500L,
+                        "-100 ms" to -100L,
+                        "-50 ms" to -50L,
+                        "Reset (0 ms)" to 0L,
+                        "+50 ms" to 50L,
+                        "+100 ms" to 100L,
+                        "+500 ms" to 500L,
+                    )
+
+                    steps.forEachIndexed { idx, (label, delta) ->
+                        PopupOffsetRow(
+                            label = label,
+                            isReset = delta == 0L,
+                            focusRequester = if (idx == 3) firstFocus else null,
+                            onClick = {
+                                val target = if (delta == 0L) 0L else (MusicPlayerState.lyricsOffsetMs + delta)
+                                MusicPlayerState.setLyricsOffset(target)
+                            },
+                        )
+                    }
+                }
+
+                TvPopupPage.LYRICS_PROVIDERS -> {
+                    PopupBackRow(title = "Lyrics Providers") { currentPage = TvPopupPage.LYRICS_OPTIONS }
+                    Spacer(Modifier.height(6.dp))
+
+                    LazyColumn(
+                        modifier = Modifier.heightIn(max = 340.dp),
+                        verticalArrangement = Arrangement.spacedBy(2.dp),
+                    ) {
+                        items(LyricsHelper.PROVIDER_METADATA) { provider ->
+                            val isEnabled = !settings.disabledLyricsProviders.contains(provider.id)
+                            PopupProviderRow(
+                                name = provider.displayName,
+                                description = provider.description,
+                                isEnabled = isEnabled,
+                                onClick = {
+                                    SettingsStore.setLyricsProviderEnabled(context, provider.id, !isEnabled)
+                                },
+                            )
+                        }
+                    }
+                }
+
+                TvPopupPage.ISHARE_LAN -> {
+                    PopupBackRow(title = "iShare (Listen Together)") { currentPage = TvPopupPage.MAIN }
+                    Spacer(Modifier.height(6.dp))
+
+                    val session = ishareSession
+                    if (session != null) {
+                        Text(
+                            text = "Connected Session: ${session.code}",
+                            color = Color(0xFF30D158),
+                            fontSize = 15.sp,
+                            fontFamily = SFProDisplay,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 14.dp),
+                        )
+                        Text(
+                            text = "Role: ${if (ishareIsHost) "Host" else "Guest"} · ${session.participants} device(s)",
+                            color = Color.White.copy(alpha = 0.60f),
+                            fontSize = 13.sp,
+                            fontFamily = SFProDisplay,
+                            modifier = Modifier.padding(horizontal = 14.dp),
+                        )
+                        Spacer(Modifier.height(8.dp))
+
+                        PopupVectorRow(
+                            icon = Icons.Rounded.Wifi,
+                            label = "Leave Session",
+                            trailing = null,
+                            focusRequester = firstFocus,
+                            onClick = {
+                                IShareSyncManager.leaveSession()
+                                Toast.makeText(context, "Left iShare Session", Toast.LENGTH_SHORT).show()
+                            },
+                        )
+                    } else {
+                        PopupVectorRow(
+                            icon = Icons.Rounded.Wifi,
+                            label = "Host Local Wi-Fi Session",
+                            trailing = "LAN",
+                            focusRequester = firstFocus,
+                            onClick = {
+                                IShareSyncManager.start(context)
+                                IShareSyncManager.startLanHost()
+                                Toast.makeText(context, "iShare LAN Host Started!", Toast.LENGTH_SHORT).show()
+                            },
+                        )
+
+                        PopupVectorRow(
+                            icon = Icons.Rounded.Speed,
+                            label = "Scan Nearby Hosts",
+                            trailing = "${discoveredHosts.size} found",
+                            focusRequester = null,
+                            onClick = {
+                                IShareSyncManager.start(context)
+                                IShareSyncManager.scanLanHosts()
+                                Toast.makeText(context, "Scanning LAN for sessions…", Toast.LENGTH_SHORT).show()
+                            },
+                        )
+
+                        discoveredHosts.forEach { host ->
+                            PopupVectorRow(
+                                icon = Icons.Rounded.Wifi,
+                                label = "Join ${host.hostName}",
+                                trailing = host.address,
+                                focusRequester = null,
+                                onClick = {
+                                    IShareSyncManager.start(context)
+                                    IShareSyncManager.joinLanSession(host.address)
+                                    Toast.makeText(context, "Joining ${host.hostName}…", Toast.LENGTH_SHORT).show()
+                                },
+                            )
+                        }
+                    }
+                }
+
+                TvPopupPage.ADD_TO_PLAYLIST -> {
+                    PopupBackRow(title = "Add to Playlist") { currentPage = TvPopupPage.MAIN }
+                    Spacer(Modifier.height(6.dp))
+
+                    if (playlists.isEmpty()) {
+                        Text(
+                            text = "No user playlists found. Create one in Library!",
+                            color = Color.White.copy(alpha = 0.50f),
+                            fontSize = 14.sp,
+                            fontFamily = SFProDisplay,
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+                        )
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.heightIn(max = 300.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                        ) {
+                            items(playlists) { p ->
+                                PopupVectorRow(
+                                    icon = Icons.Rounded.Add,
+                                    label = p.name,
+                                    trailing = "${p.songs.size} songs",
+                                    focusRequester = null,
+                                    onClick = {
+                                        val metadata = SavedSongMetadata(
+                                            id = track.id,
+                                            title = track.title,
+                                            artists = track.artists,
+                                            album = track.album,
+                                            thumbnailUrl = track.thumbnailUrl ?: "",
+                                            durationSec = track.durationSec,
+                                            isExplicit = track.isExplicit,
+                                            artistId = track.artistId,
+                                        )
+                                        LibraryStore.addSongsToUserPlaylist(context, p.id, listOf(metadata))
+                                        Toast.makeText(context, "Added to ${p.name}", Toast.LENGTH_SHORT).show()
+                                        onDismiss()
+                                    },
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PopupBackRow(
+    title: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 6.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+            contentDescription = "Back",
+            tint = Color.White,
+            modifier = Modifier.size(20.dp),
+        )
+        Spacer(Modifier.width(10.dp))
+        Text(
+            text = title,
+            color = Color.White,
+            fontSize = 17.sp,
+            fontFamily = SFProDisplay,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+}
+
+@Composable
+private fun PopupOffsetRow(
+    label: String,
+    isReset: Boolean,
+    focusRequester: FocusRequester?,
+    onClick: () -> Unit,
+) {
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .tvFocusable(
+                shape = RoundedCornerShape(12.dp),
+                scaleOnFocus = 1.02f,
+                elevationOnFocus = 0.dp,
+                focusRequester = focusRequester,
+                interactionSource = interaction,
+                onClick = onClick,
+            )
+            .clip(RoundedCornerShape(12.dp))
+            .background(if (focused) Color.White else Color.Transparent)
+            .padding(horizontal = 14.dp, vertical = 7.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val c = if (focused) Color.Black else Color.White
+        Text(
+            text = label,
+            color = if (isReset && !focused) Color(0xFF007AFF) else c,
+            fontSize = 14.sp,
+            fontFamily = SFProDisplay,
+            fontWeight = if (isReset || focused) FontWeight.Bold else FontWeight.Medium,
+        )
+    }
+}
+
+@Composable
+private fun PopupProviderRow(
+    name: String,
+    description: String,
+    isEnabled: Boolean,
+    onClick: () -> Unit,
+) {
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .tvFocusable(
+                shape = RoundedCornerShape(12.dp),
+                scaleOnFocus = 1.02f,
+                elevationOnFocus = 0.dp,
+                interactionSource = interaction,
+                onClick = onClick,
+            )
+            .clip(RoundedCornerShape(12.dp))
+            .background(if (focused) Color.White else Color.Transparent)
+            .padding(horizontal = 14.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val c = if (focused) Color.Black else Color.White
+        Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = track.title,
-                color = Color.White,
-                fontSize = 17.sp,
+                text = name,
+                color = c,
+                fontSize = 14.5.sp,
                 fontFamily = SFProDisplay,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 12.dp),
+                fontWeight = FontWeight.SemiBold,
             )
             Text(
-                text = track.artists,
-                color = Color.White.copy(alpha = 0.6f),
+                text = description,
+                color = c.copy(alpha = 0.60f),
+                fontSize = 11.5.sp,
+                fontFamily = SFProDisplay,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        if (isEnabled) {
+            Icon(
+                imageVector = Icons.Rounded.Check,
+                contentDescription = "Enabled",
+                tint = if (focused) Color.Black else Color(0xFF30D158),
+                modifier = Modifier.size(18.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun PopupVectorRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    trailing: String?,
+    focusRequester: FocusRequester?,
+    onClick: () -> Unit,
+) {
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .tvFocusable(
+                shape = RoundedCornerShape(14.dp),
+                focusedBorderWidth = 0.dp,
+                scaleOnFocus = 1.02f,
+                focusRequester = focusRequester,
+                interactionSource = interaction,
+                onClick = onClick,
+            )
+            .clip(RoundedCornerShape(14.dp))
+            .background(if (focused) Color.White else Color.Transparent)
+            .padding(horizontal = 14.dp, vertical = 9.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val c = if (focused) Color.Black else Color.White
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = c,
+            modifier = Modifier.size(20.dp),
+        )
+        Spacer(Modifier.width(14.dp))
+        Text(
+            text = label,
+            color = c,
+            fontSize = 15.sp,
+            fontFamily = SFProDisplay,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(1f),
+        )
+        if (trailing != null) {
+            Text(
+                text = trailing,
+                color = c.copy(alpha = 0.6f),
                 fontSize = 13.sp,
                 fontFamily = SFProDisplay,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 12.dp),
             )
-            Spacer(Modifier.height(8.dp))
-
-            PopupDrawableRow(
-                drawableRes = if (fav) R.drawable.ic_star_filled else R.drawable.ic_star_outline,
-                label = if (fav) "Remove from Favorites" else "Add to Favorites",
-                trailing = null,
-                focusRequester = first,
-            ) { MusicPlayerState.toggleFavorite(track) }
-
-            PopupDrawableRow(
-                drawableRes = R.drawable.lyrics,
-                label = "Lyrics",
-                trailing = null,
-                focusRequester = null,
-                onClick = onShowLyrics,
-            )
-
-            PopupDrawableRow(
-                drawableRes = R.drawable.queue_music,
-                label = "Playing Next",
-                trailing = "${MusicPlayerState.queue.size}",
-                focusRequester = null,
-                onClick = onShowQueue,
-            )
-
-            PopupDrawableRow(
-                drawableRes = R.drawable.ic_menu_artist,
-                label = "Go to Artist",
-                trailing = null,
-                focusRequester = null,
-                onClick = onOpenArtist,
-            )
-
-            PopupDrawableRow(
-                drawableRes = R.drawable.ic_menu_sleep_timer,
-                label = "Sleep Timer",
-                trailing = sleepLabel,
-                focusRequester = null,
-            ) { cycleSleepTimer() }
         }
     }
 }
@@ -1308,6 +1809,7 @@ private fun TvProgressBar(modifier: Modifier = Modifier) {
                 shape = RoundedCornerShape(8.dp),
                 focusedBorderWidth = 0.dp,
                 scaleOnFocus = 1.0f,
+                elevationOnFocus = 0.dp,
                 interactionSource = interaction,
             )
             .padding(vertical = 4.dp),
