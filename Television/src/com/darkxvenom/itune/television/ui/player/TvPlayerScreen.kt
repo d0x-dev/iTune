@@ -377,11 +377,7 @@ private fun NowPlayingWithLyricsPane(
     val topControlsFocus = remember { FocusRequester() }
     val quickActionsFocus = remember { FocusRequester() }
     val progressBarFocus = remember { FocusRequester() }
-    val starFocus = remember { FocusRequester() }
-    val moreFocus = remember { FocusRequester() }
-    val artistFocus = remember { FocusRequester() }
     val lyricsFocus = remember { FocusRequester() }
-    val queueFocus = remember { FocusRequester() }
 
     LaunchedEffect(isLyrics, popupOpen) {
         if (!popupOpen && !isLyrics) {
@@ -687,308 +683,82 @@ private fun NowPlayingWithLyricsPane(
             }
         }
 
-        // ── Floating Apple TV Frosted Glass Scrubber & Controls Capsule (Exact Apple TV tvOS HUD) ──
+        // ── Auto-Hiding Bottom Controls & Scrubber Bar (Clean, no glass capsule) ──
         val showBottomControls = if (isLyrics) controlsVisible else true
         AnimatedVisibility(
             visible = showBottomControls,
             enter = fadeIn(tween(200)),
             exit = fadeOut(tween(350)),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 12.dp),
+            modifier = Modifier.align(Alignment.BottomCenter),
         ) {
-            TvPlayerBottomCapsule(
-                track = track,
-                queue = queue,
-                queueIndex = index,
-                isLyrics = isLyrics,
-                onToggleLyrics = onToggleLyrics,
-                onShowQueue = onShowQueue,
-                onOpenPopup = onOpenPopup,
-                onOpenArtist = onOpenArtist,
-                progressBarFocus = progressBarFocus,
-                starFocus = starFocus,
-                moreFocus = moreFocus,
-                artistFocus = artistFocus,
-                lyricsFocus = lyricsFocus,
-                queueFocus = queueFocus,
-                upFocusRequester = if (isLyrics) lyricsFocus else centerFocus,
-            )
-        }
-    }
-}
-
-/**
- * Floating Apple TV Player Scrubber & Controls Capsule HUD (Matching Screenshot 1):
- * - Rounded frosted capsule with thin outline: RoundedCornerShape(22.dp)
- * - Top: Full-width Scrubber Progress line
- * - Bottom Left: Elapsed Time ("0:24") & Queue count ("2 of 16")
- * - Bottom Right: Remaining Time ("-1:57") + [Star] [•••] [Artist] [Lyrics] [Queue]
- */
-@Composable
-private fun TvPlayerBottomCapsule(
-    track: MusicTrack?,
-    queue: List<MusicTrack>,
-    queueIndex: Int,
-    isLyrics: Boolean,
-    onToggleLyrics: () -> Unit,
-    onShowQueue: () -> Unit,
-    onOpenPopup: () -> Unit,
-    onOpenArtist: () -> Unit,
-    progressBarFocus: FocusRequester,
-    starFocus: FocusRequester,
-    moreFocus: FocusRequester,
-    artistFocus: FocusRequester,
-    lyricsFocus: FocusRequester,
-    queueFocus: FocusRequester,
-    upFocusRequester: FocusRequester,
-    modifier: Modifier = Modifier,
-) {
-    val position = MusicPlayerState.positionMs
-    val duration = MusicPlayerState.durationMs.coerceAtLeast(1L)
-    val progress = (position.toFloat() / duration).coerceIn(0f, 1f)
-
-    val interaction = remember { MutableInteractionSource() }
-    val focused by interaction.collectIsFocusedAsState()
-    val barHeight by animateFloatAsState(if (focused) 6.5f else 3.5f, tween(150), label = "capsuleBarH")
-
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(22.dp))
-            .background(Color.White.copy(alpha = 0.12f))
-            .border(1.dp, Color.White.copy(alpha = 0.16f), RoundedCornerShape(22.dp))
-            .padding(horizontal = 22.dp, vertical = 12.dp),
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            // Top: Full-width Scrubber line
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(progressBarFocus)
-                    .focusProperties {
-                        up = upFocusRequester
-                        down = lyricsFocus
-                    }
-                    .onPreviewKeyEvent { e ->
-                        if (e.type == KeyEventType.KeyDown) {
-                            when (e.key) {
-                                Key.DirectionLeft -> {
-                                    MusicPlayerState.seekTo((position - SEEK_STEP_MS).coerceAtLeast(0L))
-                                    true
-                                }
-                                Key.DirectionRight -> {
-                                    MusicPlayerState.seekTo((position + SEEK_STEP_MS).coerceAtMost(duration))
-                                    true
-                                }
-                                Key.DirectionDown -> {
-                                    lyricsFocus.requestFocus()
-                                    true
-                                }
-                                Key.DirectionUp -> {
-                                    upFocusRequester.requestFocus()
-                                    true
-                                }
-                                else -> false
-                            }
-                        } else false
-                    }
-                    .tvFocusable(
-                        shape = RoundedCornerShape(6.dp),
-                        focusedBorderWidth = 0.dp,
-                        scaleOnFocus = 1.0f,
-                        elevationOnFocus = 0.dp,
-                        interactionSource = interaction,
-                    )
-                    .padding(vertical = 3.dp),
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Box(
+                TvProgressBar(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(barHeight.dp)
-                        .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.28f)),
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(progress)
-                            .fillMaxHeight()
-                            .background(Color.White),
-                    )
-                }
-            }
+                        .focusRequester(progressBarFocus)
+                        .focusProperties {
+                            up = if (isLyrics) lyricsFocus else quickActionsFocus
+                            down = lyricsFocus
+                        },
+                )
 
-            // Bottom row: Time & Track count on Left, Remaining Time & Buttons on Right
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                // Left: Elapsed time & "2 of 16"
-                Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Text(
-                        text = formatTime(position),
-                        color = Color.White,
-                        fontSize = 13.5.sp,
-                        fontFamily = SFProDisplay,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                    Text(
-                        text = if (queue.isNotEmpty()) "${queueIndex + 1} of ${queue.size}" else "",
-                        color = Color.White.copy(alpha = 0.55f),
-                        fontSize = 11.5.sp,
+                        text = if (queue.isNotEmpty()) "${index + 1} of ${queue.size}" else "",
+                        color = Color.White.copy(alpha = 0.45f),
+                        fontSize = 12.sp,
                         fontFamily = SFProDisplay,
                         fontWeight = FontWeight.Medium,
                     )
-                }
 
-                // Right: Remaining time & Action Buttons (Star, 3-dots, Artist, Lyrics, Queue)
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    Text(
-                        text = "-" + formatTime((duration - position).coerceAtLeast(0L)),
-                        color = Color.White.copy(alpha = 0.75f),
-                        fontSize = 13.sp,
-                        fontFamily = SFProDisplay,
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        TvDrawableButton(
+                            drawableRes = R.drawable.ic_menu_artist,
+                            contentDescription = "Artist Info",
+                            onClick = onOpenArtist,
+                            size = 34.dp,
+                            iconSize = 17.dp,
+                            modifier = Modifier.focusProperties { up = progressBarFocus },
+                        )
 
-                    Spacer(Modifier.width(6.dp))
+                        TvDrawableButton(
+                            drawableRes = R.drawable.lyrics,
+                            contentDescription = "Lyrics",
+                            onClick = onToggleLyrics,
+                            active = isLyrics,
+                            size = 34.dp,
+                            iconSize = 17.dp,
+                            focusRequester = lyricsFocus,
+                            modifier = Modifier.focusProperties { up = progressBarFocus },
+                        )
 
-                    val fav = track?.let { MusicPlayerState.isFavorite(it.id) } == true
-                    TvDrawableButton(
-                        drawableRes = if (fav) R.drawable.ic_star_filled else R.drawable.ic_star_outline,
-                        contentDescription = "Favorite",
-                        onClick = { track?.let { MusicPlayerState.toggleFavorite(it) } },
-                        active = fav,
-                        size = 32.dp,
-                        iconSize = 16.dp,
-                        focusRequester = starFocus,
-                        modifier = Modifier
-                            .focusProperties {
-                                up = progressBarFocus
-                                right = moreFocus
-                            }
-                            .onPreviewKeyEvent { e ->
-                                if (e.type == KeyEventType.KeyDown) {
-                                    when (e.key) {
-                                        Key.DirectionUp -> { progressBarFocus.requestFocus(); true }
-                                        Key.DirectionRight -> { moreFocus.requestFocus(); true }
-                                        else -> false
-                                    }
-                                } else false
-                            },
-                    )
-
-                    TvDrawableButton(
-                        drawableRes = R.drawable.more_horiz,
-                        contentDescription = "More Options",
-                        onClick = onOpenPopup,
-                        size = 32.dp,
-                        iconSize = 16.dp,
-                        focusRequester = moreFocus,
-                        modifier = Modifier
-                            .focusProperties {
-                                up = progressBarFocus
-                                left = starFocus
-                                right = artistFocus
-                            }
-                            .onPreviewKeyEvent { e ->
-                                if (e.type == KeyEventType.KeyDown) {
-                                    when (e.key) {
-                                        Key.DirectionUp -> { progressBarFocus.requestFocus(); true }
-                                        Key.DirectionLeft -> { starFocus.requestFocus(); true }
-                                        Key.DirectionRight -> { artistFocus.requestFocus(); true }
-                                        else -> false
-                                    }
-                                } else false
-                            },
-                    )
-
-                    TvDrawableButton(
-                        drawableRes = R.drawable.ic_menu_artist,
-                        contentDescription = "Artist Info",
-                        onClick = onOpenArtist,
-                        size = 32.dp,
-                        iconSize = 16.dp,
-                        focusRequester = artistFocus,
-                        modifier = Modifier
-                            .focusProperties {
-                                up = progressBarFocus
-                                left = moreFocus
-                                right = lyricsFocus
-                            }
-                            .onPreviewKeyEvent { e ->
-                                if (e.type == KeyEventType.KeyDown) {
-                                    when (e.key) {
-                                        Key.DirectionUp -> { progressBarFocus.requestFocus(); true }
-                                        Key.DirectionLeft -> { moreFocus.requestFocus(); true }
-                                        Key.DirectionRight -> { lyricsFocus.requestFocus(); true }
-                                        else -> false
-                                    }
-                                } else false
-                            },
-                    )
-
-                    TvDrawableButton(
-                        drawableRes = R.drawable.lyrics,
-                        contentDescription = "Lyrics",
-                        onClick = onToggleLyrics,
-                        active = isLyrics,
-                        size = 32.dp,
-                        iconSize = 16.dp,
-                        focusRequester = lyricsFocus,
-                        modifier = Modifier
-                            .focusProperties {
-                                up = progressBarFocus
-                                left = artistFocus
-                                right = queueFocus
-                            }
-                            .onPreviewKeyEvent { e ->
-                                if (e.type == KeyEventType.KeyDown) {
-                                    when (e.key) {
-                                        Key.DirectionUp -> { progressBarFocus.requestFocus(); true }
-                                        Key.DirectionLeft -> { artistFocus.requestFocus(); true }
-                                        Key.DirectionRight -> { queueFocus.requestFocus(); true }
-                                        else -> false
-                                    }
-                                } else false
-                            },
-                    )
-
-                    TvDrawableButton(
-                        drawableRes = R.drawable.queue_music,
-                        contentDescription = "Queue",
-                        onClick = onShowQueue,
-                        active = false,
-                        size = 32.dp,
-                        iconSize = 16.dp,
-                        focusRequester = queueFocus,
-                        modifier = Modifier
-                            .focusProperties {
-                                up = progressBarFocus
-                                left = lyricsFocus
-                            }
-                            .onPreviewKeyEvent { e ->
-                                if (e.type == KeyEventType.KeyDown) {
-                                    when (e.key) {
-                                        Key.DirectionUp -> { progressBarFocus.requestFocus(); true }
-                                        Key.DirectionLeft -> { lyricsFocus.requestFocus(); true }
-                                        else -> false
-                                    }
-                                } else false
-                            },
-                    )
+                        TvDrawableButton(
+                            drawableRes = R.drawable.queue_music,
+                            contentDescription = "Queue",
+                            onClick = onShowQueue,
+                            active = false,
+                            size = 34.dp,
+                            iconSize = 17.dp,
+                            modifier = Modifier.focusProperties { up = progressBarFocus },
+                        )
+                    }
                 }
             }
         }
     }
 }
+
+
 
 // ── Queue Carousel View (Toggled via Queue Button - Exact Apple TV Design) ─────────────────────────────
 
