@@ -179,11 +179,18 @@ class PlaybackService : Service() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        if (SettingsStore.isStopMusicOnTaskClearEnabled(applicationContext)) {
+        val stopOnTaskClear = SettingsStore.isStopMusicOnTaskClearEnabled(applicationContext)
+        if (stopOnTaskClear) {
             MusicPlayerState.savePlaybackSession(sync = true)
             MusicPlayerState.pause()
             OnlineRadioController.pauseIfPlaying()
             shutDown()
+        } else if (!MusicPlayerState.isPlaying) {
+            // Task removed while paused / idle: tear down Dynamic Island overlay immediately
+            runCatching {
+                val islandIntent = Intent(applicationContext, com.darkxvenom.itune.island.DynamicIslandService::class.java)
+                applicationContext.stopService(islandIntent)
+            }
         }
         super.onTaskRemoved(rootIntent)
     }
@@ -206,6 +213,10 @@ class PlaybackService : Service() {
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
         foreground = false
         getSystemService(NotificationManager::class.java)?.cancel(NOTIFICATION_ID)
+        runCatching {
+            val islandIntent = Intent(applicationContext, com.darkxvenom.itune.island.DynamicIslandService::class.java)
+            applicationContext.stopService(islandIntent)
+        }
         stopSelf()
     }
 

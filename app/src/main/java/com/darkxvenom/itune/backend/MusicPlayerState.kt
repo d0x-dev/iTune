@@ -36,6 +36,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.HttpDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
@@ -91,6 +92,8 @@ object MusicPlayerState : Player.Listener {
     private var lastPlaybackFailureTrackId: String? = null
     private var lastPlaybackFailureAtMs: Long = 0L
     private val autoSkipFailedTrackIds = mutableSetOf<String>()
+    private var streamRetryAttemptCount = 0
+    private var lastFailedStreamUrl: String? = null
 
     // ── Observable UI States ──
     var currentTrack by mutableStateOf<MusicTrack?>(null)
@@ -105,6 +108,9 @@ object MusicPlayerState : Player.Listener {
         private set
 
     var isLoading by mutableStateOf(false)
+        private set
+
+    var playbackState by mutableIntStateOf(Player.STATE_IDLE)
         private set
 
     var positionMs by mutableLongStateOf(0L)
@@ -476,6 +482,7 @@ object MusicPlayerState : Player.Listener {
                             durationMs = dur
                         }
                         isPlaying = player.isPlaying
+                        playbackState = player.playbackState
                         isLoading = !player.isPlaying && player.playbackState == Player.STATE_BUFFERING
                         val active = currentTrack
                         if (player.isPlaying && active != null) {
@@ -537,6 +544,10 @@ object MusicPlayerState : Player.Listener {
         if (currentTrack != null && currentTrack?.id != track.id) {
             YouTubePlaybackTracker.onTrackChanged(positionMs / 1000L)
             com.darkxvenom.itune.data.timetravel.TimeTravelPlaybackTracker.onTrackChanged()
+        }
+        if (currentTrack?.id != track.id) {
+            streamRetryAttemptCount = 0
+            lastFailedStreamUrl = null
         }
         if (expandPlayer) expanded = true
         loadJob?.cancel()
@@ -765,6 +776,19 @@ object MusicPlayerState : Player.Listener {
 
     fun pause() {
         exoPlayer?.pause()
+        isPlaying = false
+    }
+
+    fun stop() {
+        progressJob?.cancel()
+        loadJob?.cancel()
+        runCatching {
+            exoPlayer?.stop()
+            exoPlayer?.clearMediaItems()
+        }
+        isPlaying = false
+        isLoading = false
+        playbackState = Player.STATE_IDLE
     }
 
     fun togglePlayPause() {
@@ -1277,6 +1301,7 @@ object MusicPlayerState : Player.Listener {
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {
+        this.playbackState = playbackState
         when (playbackState) {
             Player.STATE_BUFFERING -> {
                 isLoading = true
@@ -1285,6 +1310,8 @@ object MusicPlayerState : Player.Listener {
                 isLoading = false
                 durationMs = exoPlayer?.duration?.coerceAtLeast(0L) ?: 0L
                 autoSkipFailedTrackIds.clear()
+                streamRetryAttemptCount = 0
+                lastFailedStreamUrl = null
             }
             Player.STATE_ENDED -> {
                 com.darkxvenom.itune.data.timetravel.TimeTravelPlaybackTracker.onTrackCompleted()
@@ -1322,10 +1349,87 @@ object MusicPlayerState : Player.Listener {
 
     override fun onPlayerError(error: PlaybackException) {
         Log.e(TAG, "ExoPlayer error: ${error.errorCodeName} - ${error.message}", error)
+        val track = currentTrack
+        val trackId = track?.id
+        val currentPos = exoPlayer?.currentPosition?.coerceAtLeast(0L) ?: positionMs
+        val wasActivelyPlaying = currentPos > 3000L
+
+        val httpEx = findCause<HttpDataSource.InvalidResponseCodeException>(error)
+        val isHttp403 = httpEx?.responseCode == 403 ||
+            error.message?.contains("403") == true ||
+            error.cause?.message?.contains("403") == true ||
+            (error.errorCode == PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS && httpEx?.responseCode != null && httpEx.responseCode >= 400)
+
+        if (track != null && trackId != null && (isHttp403 || wasActivelyPlaying) && streamRetryAttemptCount < 2) {
+            streamRetryAttemptCount++
+            Log.w(TAG, "Attempting stream recovery for $trackId (attempt $streamRetryAttemptCount, 403=$isHttp403, pos=${currentPos}ms)...")
+
+            // Invalidate cached stream in MusicBackend so we don't replay the same 403 URL
+            MusicBackend.invalidateStreamCache(trackId)
+
+            val currentMediaUri = exoPlayer?.currentMediaItem?.localConfiguration?.uri?.toString()
+            val excluded = buildSet {
+                currentMediaUri?.let { add(it) }
+                lastFailedStreamUrl?.let { add(it) }
+            }
+            if (currentMediaUri != null) lastFailedStreamUrl = currentMediaUri
+
+            scope.launch {
+                delay(300L)
+                val freshUrl = MusicBackend.resolveAudioStreamUrl(
+                    videoId = trackId,
+                    forceRefresh = true,
+                    excludedUrls = excluded
+                )
+                if (!freshUrl.isNullOrBlank() && currentTrack?.id == trackId) {
+                    Log.i(TAG, "Successfully recovered fresh stream for $trackId! Resuming playback...")
+                    withContext(Dispatchers.Main) {
+                        exoPlayer?.let { player ->
+                            val mediaItem = MediaItem.Builder()
+                                .setMediaId(trackId)
+                                .setUri(Uri.parse(freshUrl))
+                                .setMediaMetadata(
+                                    MediaMetadata.Builder()
+                                        .setTitle(track.title)
+                                        .setArtist(track.artists)
+                                        .setAlbumTitle(track.album)
+                                        .setArtworkUri((track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl)?.let(Uri::parse))
+                                        .build()
+                                )
+                                .build()
+                            player.setMediaItem(mediaItem, currentPos)
+                            player.prepare()
+                            player.playWhenReady = true
+                            player.play()
+                        }
+                    }
+                    return@launch
+                }
+
+                // If recovery failed, proceed to standard failure display and auto-skip
+                withContext(Dispatchers.Main) {
+                    showPlaybackFailure(trackId, error)
+                    resolvingStream = false
+                    isLoading = false
+                    autoSkipAfterFailure(trackId)
+                }
+            }
+            return
+        }
+
         showPlaybackFailure(currentTrack?.id, error)
         resolvingStream = false
         isLoading = false
         currentTrack?.id?.let(::autoSkipAfterFailure)
+    }
+
+    private inline fun <reified T : Throwable> findCause(throwable: Throwable?): T? {
+        var current = throwable
+        while (current != null) {
+            if (current is T) return current
+            current = current.cause
+        }
+        return null
     }
 
     private fun autoSkipAfterFailure(failedTrackId: String) {
@@ -1404,5 +1508,8 @@ object MusicPlayerState : Player.Listener {
         simultaneousProcessor = null
         exoPlayer?.release()
         exoPlayer = null
+        isPlaying = false
+        isLoading = false
+        playbackState = Player.STATE_IDLE
     }
 }

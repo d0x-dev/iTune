@@ -11,6 +11,7 @@
 
 package com.darkxvenom.itune
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
@@ -313,6 +314,9 @@ class MainActivity : ComponentActivity() {
         if (!keepAlive) {
             OnlineRadioController.release()
             MusicPlayerState.release()
+            runCatching {
+                stopService(Intent(this, com.darkxvenom.itune.island.DynamicIslandService::class.java))
+            }
         }
     }
 }
