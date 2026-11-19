@@ -61,6 +61,9 @@ import com.darkxvenom.itune.ui.splash.SplashScreen
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.ITuneTheme
 import com.darkxvenom.itune.ui.welcome.WelcomeScreen
+import com.darkxvenom.itune.television.focus.TvDeviceUtils
+import com.darkxvenom.itune.television.scaffold.TvMainScaffold
+import com.darkxvenom.itune.television.ui.welcome.TvWelcomeScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -104,76 +107,98 @@ class MainActivity : ComponentActivity() {
                     window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
                 }
             }
+            val isTv = remember { TvDeviceUtils.isTv(this@MainActivity) }
             ITuneTheme(appFont = settingsState.appFont) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = androidx.compose.material3.MaterialTheme.colorScheme.background
                 ) {
-                    val splashEnabled = settingsState.splashScreenEnabled
-                    var showSplash by rememberSaveable { mutableStateOf(splashEnabled) }
-                    var revealHomeUnderlay by remember(settingsState.welcomeCompleted, splashEnabled) {
-                        mutableStateOf(settingsState.welcomeCompleted)
-                    }
-                    var showWelcomeFlow by remember(settingsState.welcomeCompleted) {
-                        mutableStateOf(!settingsState.welcomeCompleted)
-                    }
-                    var homeBrandVisible by remember(settingsState.welcomeCompleted, splashEnabled) {
-                        mutableStateOf(settingsState.welcomeCompleted && !showSplash)
-                    }
-                    var homeIconBounds by remember { mutableStateOf<Rect?>(null) }
-                    var homeTitleBounds by remember { mutableStateOf<Rect?>(null) }
-
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        if (revealHomeUnderlay || settingsState.welcomeCompleted) {
-                            HomeScreen(
-                                showTopBarBrand = homeBrandVisible,
-                                deferStartupPrompts = showWelcomeFlow || showSplash,
-                                onTopBarBrandBoundsChanged = { iconR, titleR ->
-                                    homeIconBounds = iconR
-                                    homeTitleBounds = titleR
-                                },
-                            )
-                        }
-                        if (showWelcomeFlow && !showSplash) {
-                            WelcomeScreen(
+                    if (isTv) {
+                        if (!settingsState.welcomeCompleted) {
+                            TvWelcomeScreen(
                                 initialName = "",
-                                fromSplash = splashEnabled,
-                                homeIconBounds = homeIconBounds,
-                                homeTitleBounds = homeTitleBounds,
-                                onRevealHomeUnderlay = { enteredName ->
+                                fromSplash = false,
+                                homeIconBounds = null,
+                                homeTitleBounds = null,
+                                onRevealHomeUnderlay = { enteredName: String ->
                                     SettingsStore.setDisplayName(this@MainActivity, enteredName)
                                     IShareSyncManager.setDisplayName(enteredName)
-                                    revealHomeUnderlay = true
                                 },
-                                onContinue = { enteredName ->
-                                    homeBrandVisible = true
-                                    showWelcomeFlow = false
+                                onContinue = { enteredName: String ->
                                     SettingsStore.completeWelcome(this@MainActivity, enteredName)
                                     IShareSyncManager.setDisplayName(enteredName)
                                 },
                             )
+                        } else {
+                            TvMainScaffold()
                         }
-                        if (showSplash) {
-                            SplashScreen(
-                                isNewUser = !settingsState.welcomeCompleted,
-                                homeIconBounds = homeIconBounds,
-                                homeTitleBounds = homeTitleBounds,
-                                onRevealUnderlay = {
-                                    revealHomeUnderlay = true
-                                },
-                                onSplashFinished = {
-                                    if (settingsState.welcomeCompleted) {
+                    } else {
+                        val splashEnabled = settingsState.splashScreenEnabled
+                        var showSplash by rememberSaveable { mutableStateOf(splashEnabled) }
+                        var revealHomeUnderlay by remember(settingsState.welcomeCompleted, splashEnabled) {
+                            mutableStateOf(settingsState.welcomeCompleted)
+                        }
+                        var showWelcomeFlow by remember(settingsState.welcomeCompleted) {
+                            mutableStateOf(!settingsState.welcomeCompleted)
+                        }
+                        var homeBrandVisible by remember(settingsState.welcomeCompleted, splashEnabled) {
+                            mutableStateOf(settingsState.welcomeCompleted && !showSplash)
+                        }
+                        var homeIconBounds by remember { mutableStateOf<Rect?>(null) }
+                        var homeTitleBounds by remember { mutableStateOf<Rect?>(null) }
+
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            if (revealHomeUnderlay || settingsState.welcomeCompleted) {
+                                HomeScreen(
+                                    showTopBarBrand = homeBrandVisible,
+                                    deferStartupPrompts = showWelcomeFlow || showSplash,
+                                    onTopBarBrandBoundsChanged = { iconR, titleR ->
+                                        homeIconBounds = iconR
+                                        homeTitleBounds = titleR
+                                    },
+                                )
+                            }
+                            if (showWelcomeFlow && !showSplash) {
+                                WelcomeScreen(
+                                    initialName = "",
+                                    fromSplash = splashEnabled,
+                                    homeIconBounds = homeIconBounds,
+                                    homeTitleBounds = homeTitleBounds,
+                                    onRevealHomeUnderlay = { enteredName ->
+                                        SettingsStore.setDisplayName(this@MainActivity, enteredName)
+                                        IShareSyncManager.setDisplayName(enteredName)
+                                        revealHomeUnderlay = true
+                                    },
+                                    onContinue = { enteredName ->
                                         homeBrandVisible = true
-                                        showSplash = false
-                                    } else {
-                                        showSplash = false
-                                        showWelcomeFlow = true
-                                    }
-                                },
-                            )
+                                        showWelcomeFlow = false
+                                        SettingsStore.completeWelcome(this@MainActivity, enteredName)
+                                        IShareSyncManager.setDisplayName(enteredName)
+                                    },
+                                )
+                            }
+                            if (showSplash) {
+                                SplashScreen(
+                                    isNewUser = !settingsState.welcomeCompleted,
+                                    homeIconBounds = homeIconBounds,
+                                    homeTitleBounds = homeTitleBounds,
+                                    onRevealUnderlay = {
+                                        revealHomeUnderlay = true
+                                    },
+                                    onSplashFinished = {
+                                        if (settingsState.welcomeCompleted) {
+                                            homeBrandVisible = true
+                                            showSplash = false
+                                        } else {
+                                            showSplash = false
+                                            showWelcomeFlow = true
+                                        }
+                                    },
+                                )
+                            }
+                            AppleVolumeOverlay()
+                            AppleAlwaysOnDisplayOverlay()
                         }
-                        AppleVolumeOverlay()
-                        AppleAlwaysOnDisplayOverlay()
                     }
                 }
             }
@@ -261,9 +286,45 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            AppleVolumeManager.onVolumeKeyDown(this, keyCode)
-            return true
+        when (keyCode) {
+            KeyEvent.KEYCODE_VOLUME_UP, KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                AppleVolumeManager.onVolumeKeyDown(this, keyCode)
+                return true
+            }
+            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_HEADSETHOOK -> {
+                MusicPlayerState.togglePlayPause()
+                return true
+            }
+            KeyEvent.KEYCODE_MEDIA_PLAY -> {
+                if (!MusicPlayerState.isPlaying) {
+                    MusicPlayerState.togglePlayPause()
+                }
+                return true
+            }
+            KeyEvent.KEYCODE_MEDIA_PAUSE -> {
+                MusicPlayerState.pause()
+                return true
+            }
+            KeyEvent.KEYCODE_MEDIA_NEXT -> {
+                MusicPlayerState.skipNext()
+                return true
+            }
+            KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
+                MusicPlayerState.skipPrevious()
+                return true
+            }
+            KeyEvent.KEYCODE_MEDIA_STOP -> {
+                MusicPlayerState.pause()
+                return true
+            }
+            KeyEvent.KEYCODE_MEDIA_FAST_FORWARD -> {
+                MusicPlayerState.seekTo(MusicPlayerState.positionMs + 10_000L)
+                return true
+            }
+            KeyEvent.KEYCODE_MEDIA_REWIND -> {
+                MusicPlayerState.seekTo((MusicPlayerState.positionMs - 10_000L).coerceAtLeast(0L))
+                return true
+            }
         }
         return super.onKeyDown(keyCode, event)
     }

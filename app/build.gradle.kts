@@ -38,6 +38,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
         isCoreLibraryDesugaringEnabled = true
     }
+    sourceSets {
+        getByName("main") {
+            java.srcDir(file("src/main/java"))
+            java.srcDir(rootProject.file("Television/src"))
+            kotlin.srcDir(file("src/main/java"))
+            kotlin.srcDir(rootProject.file("Television/src"))
+        }
+    }
     buildFeatures {
         compose = true
         buildConfig = true
