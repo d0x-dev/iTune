@@ -205,6 +205,9 @@ fun TvMainScaffold(
                                     TvNavDestination.BROWSE -> {
                                         TvBrowseScreen(
                                             onCategoryClick = { /* mood explore */ },
+                                            onReleaseClick = { browseId, playlistId, title, subtitle, thumb ->
+                                                screenState = TvScreenState.Release(browseId, playlistId, title, subtitle, thumb)
+                                            },
                                             onBack = { selectedNav = TvNavDestination.HOME },
                                         )
                                     }

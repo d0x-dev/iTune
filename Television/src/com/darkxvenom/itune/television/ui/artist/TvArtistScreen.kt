@@ -40,6 +40,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.PlayArrow
@@ -66,19 +68,24 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.backend.MusicBackend
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.backend.highQualityThumbnail
+import com.darkxvenom.itune.data.artist.AppleArtistArt
+import com.darkxvenom.itune.data.artist.AppleArtistArtRepository
 import com.darkxvenom.itune.data.artist.ArtistRepository
+import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.model.ArtistPage
 import com.darkxvenom.itune.data.model.HomeShelf
@@ -89,6 +96,7 @@ import com.darkxvenom.itune.television.focus.SFProDisplay
 import com.darkxvenom.itune.television.focus.tvFocusable
 import com.darkxvenom.itune.television.ui.common.TvAmbientBackground
 import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
+import com.darkxvenom.itune.ui.artist.theme.rememberArtworkPalette
 import com.darkxvenom.itune.ui.components.AnimatedEqualizer
 import com.darkxvenom.itune.ui.theme.AppleMusicRed
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
@@ -117,6 +125,13 @@ fun TvArtistScreen(
 ) {
     BackHandler { onBack() }
 
+    val context = LocalContext.current
+    var resolvedId by remember(artistBrowseId) { mutableStateOf(artistBrowseId) }
+    val likedArtists by LibraryStore.likedArtists.collectAsStateWithLifecycle()
+    val isSubscribed = remember(likedArtists, resolvedId, artistName) {
+        likedArtists.any { it.browseId == resolvedId || it.title.equals(artistName, ignoreCase = true) }
+    }
+
     var artistPage by remember(artistName, artistBrowseId) { mutableStateOf<ArtistPage?>(null) }
     var fallbackTracks by remember(artistName) { mutableStateOf<List<MusicTrack>>(emptyList()) }
     var isLoading by remember(artistName, artistBrowseId) { mutableStateOf(true) }
@@ -131,6 +146,7 @@ fun TvArtistScreen(
             }.getOrNull()
 
             if (!resolvedBrowseId.isNullOrBlank()) {
+                resolvedId = resolvedBrowseId
                 val pageResult = ArtistRepository.artistPage(resolvedBrowseId)
                 if (pageResult.isSuccess) {
                     artistPage = pageResult.getOrNull()
@@ -161,14 +177,31 @@ fun TvArtistScreen(
         page?.songs?.map { it.toMusicTrack() } ?: fallbackTracks
     }
 
+    var appleArt by remember(resolvedId) {
+        mutableStateOf(resolvedId?.let { AppleArtistArtRepository.cached(it) })
+    }
+
+    LaunchedEffect(resolvedId, effectiveName, topSongs) {
+        val bId = resolvedId ?: return@LaunchedEffect
+        if (appleArt == null && topSongs.isNotEmpty()) {
+            val art = AppleArtistArtRepository.artFor(bId, effectiveName) {
+                topSongs.map { it.title }
+            }
+            if (art != null) {
+                appleArt = art
+            }
+        }
+    }
+
+    val heroUrl = appleArt?.heroUrl ?: effectiveThumb
+    val palette = rememberArtworkPalette(imageUrl = heroUrl ?: effectiveThumb)
+    val pageColor = palette.wash
+
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(AppleOledBlack),
+            .background(pageColor),
     ) {
-        // Dynamic Ambient Mesh Gradient reacting to artist artwork
-        TvAmbientBackground(Modifier.fillMaxSize(), dim = 0.38f)
-
         if (isLoading) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -191,132 +224,153 @@ fun TvArtistScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 60.dp),
             ) {
-                // ── Hero Header ──────────────────────────────────────────────
+                // ── Hero Header: Full-bleed cover top page blended like app module PageBackground ──
                 item(key = "artist_hero") {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(320.dp),
+                            .height(480.dp),
                     ) {
-                        // Background banner overlay
-                        if (effectiveThumb != null) {
+                        // Background hero photography - aligned to TopCenter so avatar is fully visible
+                        if (heroUrl != null) {
                             AsyncImage(
-                                model = effectiveThumb.highQualityThumbnail(),
+                                model = heroUrl.highQualityThumbnail(),
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,
+                                alignment = Alignment.TopCenter,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .background(Color.Black),
+                                    .background(pageColor),
                             )
                         }
 
-                        // Gradient fade out
+                        // Gradient blend matching app module PageBackground: smoothly melts into pageColor
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .background(
                                     Brush.verticalGradient(
-                                        colors = listOf(
-                                            Color.Black.copy(alpha = 0.30f),
-                                            Color.Black.copy(alpha = 0.70f),
-                                            AppleOledBlack,
-                                        ),
+                                        0.00f to Color.Black.copy(alpha = 0.20f),
+                                        0.25f to Color.Transparent,
+                                        0.50f to pageColor.copy(alpha = 0.35f),
+                                        0.72f to pageColor.copy(alpha = 0.75f),
+                                        0.88f to pageColor.copy(alpha = 0.94f),
+                                        1.00f to pageColor,
                                     ),
                                 ),
                         )
 
-                        // Artist profile details
-                        Row(
+                        // Artist profile details & Apple-styled action buttons
+                        Column(
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
+                                .fillMaxWidth()
                                 .padding(horizontal = 48.dp, vertical = 24.dp),
-                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            // Circular artist avatar
-                            Box(
-                                modifier = Modifier
-                                    .size(130.dp)
-                                    .shadow(20.dp, CircleShape, ambientColor = Color.Black, spotColor = Color.Black)
-                                    .clip(CircleShape)
-                                    .background(Color(0x33FFFFFF))
-                                    .border(2.dp, Color.White.copy(alpha = 0.30f), CircleShape),
-                            ) {
+                            val logoUrl = appleArt?.logoUrl
+                            if (logoUrl != null) {
                                 AsyncImage(
-                                    model = effectiveThumb?.highQualityThumbnail(),
+                                    model = logoUrl,
                                     contentDescription = effectiveName,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Fit,
+                                    modifier = Modifier
+                                        .height(70.dp)
+                                        .padding(bottom = 12.dp),
                                 )
-                            }
-
-                            Spacer(Modifier.width(28.dp))
-
-                            Column {
+                            } else {
                                 Text(
                                     text = effectiveName,
                                     color = Color.White,
-                                    fontSize = 38.sp,
+                                    fontSize = 44.sp,
                                     fontFamily = SFProDisplay,
                                     fontWeight = FontWeight.Bold,
-                                    letterSpacing = (-0.6).sp,
+                                    letterSpacing = (-0.8).sp,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                 )
+                                Spacer(Modifier.height(4.dp))
+                            }
 
-                                val subtitle = page?.subscriberCountText
-                                    ?: page?.monthlyListenerCount
-                                    ?: "Artist"
-                                Text(
-                                    text = subtitle,
-                                    color = Color.White.copy(alpha = 0.65f),
-                                    fontSize = 15.sp,
-                                    fontFamily = SFProDisplay,
-                                    fontWeight = FontWeight.Medium,
+                            val subtitle = page?.monthlyListenerCount
+                                ?: page?.subscriberCountText
+                                ?: "Artist"
+                            Text(
+                                text = subtitle,
+                                color = Color.White.copy(alpha = 0.70f),
+                                fontSize = 15.sp,
+                                fontFamily = SFProDisplay,
+                                fontWeight = FontWeight.Medium,
+                            )
+
+                            Spacer(Modifier.height(18.dp))
+
+                            // Action Buttons
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                // Play All Button
+                                TvArtistActionButton(
+                                    label = "Play",
+                                    icon = Icons.Rounded.PlayArrow,
+                                    isPrimary = true,
+                                    focusRequester = playButtonFocus,
+                                    onClick = {
+                                        if (topSongs.isNotEmpty()) {
+                                            MusicPlayerState.playWithRadioQueue(topSongs.first(), expandPlayer = false)
+                                        }
+                                    },
                                 )
 
-                                Spacer(Modifier.height(18.dp))
+                                // Shuffle Button
+                                TvArtistActionButton(
+                                    label = "Shuffle",
+                                    icon = Icons.Rounded.Shuffle,
+                                    isPrimary = false,
+                                    onClick = {
+                                        if (topSongs.isNotEmpty()) {
+                                            MusicPlayerState.play(topSongs.shuffled().first(), topSongs.shuffled(), expandPlayer = false)
+                                        }
+                                    },
+                                )
 
-                                // Action Buttons
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(14.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    // Play All Button
-                                    TvArtistActionButton(
-                                        label = "Play",
-                                        icon = Icons.Rounded.PlayArrow,
-                                        isPrimary = true,
-                                        focusRequester = playButtonFocus,
-                                        onClick = {
-                                            if (topSongs.isNotEmpty()) {
-                                                MusicPlayerState.play(topSongs.first(), topSongs, expandPlayer = false)
+                                // Subscribe / Following Button with YouTube Sync
+                                TvArtistActionButton(
+                                    label = if (isSubscribed) "Subscribed" else "Subscribe",
+                                    icon = if (isSubscribed) Icons.Rounded.Check else Icons.Rounded.Add,
+                                    isPrimary = isSubscribed,
+                                    onClick = {
+                                        val id = resolvedId ?: ""
+                                        if (isSubscribed) {
+                                            if (id.isNotBlank()) {
+                                                LibraryStore.removeArtist(context, id)
+                                                YouTubeLibrarySyncManager.pushArtistSubscriptionAsync(id, false)
                                             }
-                                        },
-                                    )
+                                        } else {
+                                            if (id.isNotBlank()) {
+                                                LibraryStore.saveArtist(
+                                                    context = context,
+                                                    browseId = id,
+                                                    title = effectiveName,
+                                                    subtitle = page?.subscriberCountText ?: "Artist",
+                                                    thumbnailUrl = effectiveThumb,
+                                                )
+                                                YouTubeLibrarySyncManager.pushArtistSubscriptionAsync(id, true)
+                                            }
+                                        }
+                                    },
+                                )
 
-                                    // Shuffle Button
-                                    TvArtistActionButton(
-                                        label = "Shuffle",
-                                        icon = Icons.Rounded.Shuffle,
-                                        isPrimary = false,
-                                        onClick = {
-                                            if (topSongs.isNotEmpty()) {
-                                                MusicPlayerState.play(topSongs.shuffled().first(), topSongs.shuffled(), expandPlayer = false)
-                                            }
-                                        },
-                                    )
-
-                                    // Radio Button
-                                    TvArtistCircleIcon(
-                                        icon = Icons.Rounded.Radio,
-                                        contentDescription = "Artist Radio",
-                                        onClick = {
-                                            if (topSongs.isNotEmpty()) {
-                                                MusicPlayerState.play(topSongs.first(), topSongs, expandPlayer = false)
-                                            }
-                                        },
-                                    )
-                                }
+                                // Radio Button
+                                TvArtistCircleIcon(
+                                    icon = Icons.Rounded.Radio,
+                                    contentDescription = "Artist Radio",
+                                    onClick = {
+                                        if (topSongs.isNotEmpty()) {
+                                            MusicPlayerState.playWithRadioQueue(topSongs.first(), expandPlayer = false)
+                                        }
+                                    },
+                                )
                             }
                         }
                     }

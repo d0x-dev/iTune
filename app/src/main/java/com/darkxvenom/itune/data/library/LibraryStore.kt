@@ -17,6 +17,7 @@ import androidx.compose.runtime.Immutable
 import com.darkxvenom.itune.backend.MusicTrack
 import com.darkxvenom.itune.data.artist.AppleArtistArtRepository
 import com.darkxvenom.itune.data.artist.ArtistRepository
+import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.model.ArtistRef
 import com.darkxvenom.itune.data.model.BrowseType
 import com.darkxvenom.itune.data.model.PLAYER_ART_PX
@@ -504,6 +505,9 @@ object LibraryStore {
             _likedSongs.value = updated
             persistSongs(KEY_LIKED_SONGS, updated)
         }
+        if (savedLocally) {
+            YouTubeLibrarySyncManager.pushSongLikeAsync(track.id, true)
+        }
     }
 
     fun removeLikedSong(context: Context, trackId: String) {
@@ -513,6 +517,7 @@ object LibraryStore {
             _likedSongs.value = updated
             persistSongs(KEY_LIKED_SONGS, updated)
         }
+        YouTubeLibrarySyncManager.pushSongLikeAsync(trackId, false)
     }
 
     fun setLikedSongsSavedLocally(context: Context, savedLocally: Boolean) {
@@ -571,6 +576,9 @@ object LibraryStore {
             _likedArtists.value = updated
             persistCollections(KEY_ARTISTS, updated)
         }
+        if (savedLocally) {
+            YouTubeLibrarySyncManager.pushArtistSubscriptionAsync(browseId, true)
+        }
         if (thumbnailUrl.isNullOrBlank()) hydrateArtist(context, browseId)
     }
 
@@ -605,6 +613,7 @@ object LibraryStore {
             _likedArtists.value = updated
             persistCollections(KEY_ARTISTS, updated)
         }
+        YouTubeLibrarySyncManager.pushArtistSubscriptionAsync(browseId, false)
     }
 
     fun saveRelease(
@@ -646,6 +655,9 @@ object LibraryStore {
                 _savedAlbums.value = updated
                 persistCollections(KEY_ALBUMS, updated)
             }
+        }
+        if (savedLocally) {
+            YouTubeLibrarySyncManager.pushReleaseSavedAsync(browseId, playlistId, true)
         }
         if (thumbnailUrl.isNullOrBlank() || title.isBlank()) {
             hydrateRelease(context, browseId, resolvedType)
@@ -705,6 +717,7 @@ object LibraryStore {
                 persistCollections(KEY_PLAYLISTS, playlistsUpdated)
             }
         }
+        YouTubeLibrarySyncManager.pushReleaseSavedAsync(browseId, null, false)
     }
 
     fun syncLegacyIds(

@@ -27,11 +27,13 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +51,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -78,6 +81,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.draw.BlurredEdgeTreatment
@@ -96,6 +100,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
@@ -135,6 +140,7 @@ import com.darkxvenom.itune.television.ui.common.TvAmbientBackground
 import com.darkxvenom.itune.ui.artist.canvas.CanvasArtworkPlayer
 import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
 import com.darkxvenom.itune.ui.components.AnimatedEqualizer
+import com.darkxvenom.itune.ui.theme.AppleMusicRed
 import com.darkxvenom.itune.ui.artist.canvas.CanvasContentMode
 import kotlinx.coroutines.delay
 import kotlin.math.abs
@@ -371,7 +377,11 @@ private fun NowPlayingWithLyricsPane(
     val topControlsFocus = remember { FocusRequester() }
     val quickActionsFocus = remember { FocusRequester() }
     val progressBarFocus = remember { FocusRequester() }
+    val starFocus = remember { FocusRequester() }
+    val moreFocus = remember { FocusRequester() }
+    val artistFocus = remember { FocusRequester() }
     val lyricsFocus = remember { FocusRequester() }
+    val queueFocus = remember { FocusRequester() }
 
     LaunchedEffect(isLyrics, popupOpen) {
         if (!popupOpen && !isLyrics) {
@@ -677,83 +687,312 @@ private fun NowPlayingWithLyricsPane(
             }
         }
 
-        // ── Auto-Hiding Bottom Controls & Scrubber Bar (Clean, no glass capsule) ──
+        // ── Floating Apple TV Frosted Glass Scrubber & Controls Capsule (Exact Apple TV tvOS HUD) ──
         val showBottomControls = if (isLyrics) controlsVisible else true
         AnimatedVisibility(
             visible = showBottomControls,
             enter = fadeIn(tween(200)),
             exit = fadeOut(tween(350)),
-            modifier = Modifier.align(Alignment.BottomCenter),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 12.dp),
         ) {
+            TvPlayerBottomCapsule(
+                track = track,
+                queue = queue,
+                queueIndex = index,
+                isLyrics = isLyrics,
+                onToggleLyrics = onToggleLyrics,
+                onShowQueue = onShowQueue,
+                onOpenPopup = onOpenPopup,
+                onOpenArtist = onOpenArtist,
+                progressBarFocus = progressBarFocus,
+                starFocus = starFocus,
+                moreFocus = moreFocus,
+                artistFocus = artistFocus,
+                lyricsFocus = lyricsFocus,
+                queueFocus = queueFocus,
+                upFocusRequester = if (isLyrics) lyricsFocus else centerFocus,
+            )
+        }
+    }
+}
+
+/**
+ * Floating Apple TV Player Scrubber & Controls Capsule HUD (Matching Screenshot 1):
+ * - Rounded frosted capsule with thin outline: RoundedCornerShape(22.dp)
+ * - Top: Full-width Scrubber Progress line
+ * - Bottom Left: Elapsed Time ("0:24") & Queue count ("2 of 16")
+ * - Bottom Right: Remaining Time ("-1:57") + [Star] [•••] [Artist] [Lyrics] [Queue]
+ */
+@Composable
+private fun TvPlayerBottomCapsule(
+    track: MusicTrack?,
+    queue: List<MusicTrack>,
+    queueIndex: Int,
+    isLyrics: Boolean,
+    onToggleLyrics: () -> Unit,
+    onShowQueue: () -> Unit,
+    onOpenPopup: () -> Unit,
+    onOpenArtist: () -> Unit,
+    progressBarFocus: FocusRequester,
+    starFocus: FocusRequester,
+    moreFocus: FocusRequester,
+    artistFocus: FocusRequester,
+    lyricsFocus: FocusRequester,
+    queueFocus: FocusRequester,
+    upFocusRequester: FocusRequester,
+    modifier: Modifier = Modifier,
+) {
+    val position = MusicPlayerState.positionMs
+    val duration = MusicPlayerState.durationMs.coerceAtLeast(1L)
+    val progress = (position.toFloat() / duration).coerceIn(0f, 1f)
+
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+    val barHeight by animateFloatAsState(if (focused) 6.5f else 3.5f, tween(150), label = "capsuleBarH")
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(22.dp))
+            .background(Color.White.copy(alpha = 0.12f))
+            .border(1.dp, Color.White.copy(alpha = 0.16f), RoundedCornerShape(22.dp))
+            .padding(horizontal = 22.dp, vertical = 12.dp),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            // Top: Full-width Scrubber line
             Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(progressBarFocus)
+                    .focusProperties {
+                        up = upFocusRequester
+                        down = lyricsFocus
+                    }
+                    .onPreviewKeyEvent { e ->
+                        if (e.type == KeyEventType.KeyDown) {
+                            when (e.key) {
+                                Key.DirectionLeft -> {
+                                    MusicPlayerState.seekTo((position - SEEK_STEP_MS).coerceAtLeast(0L))
+                                    true
+                                }
+                                Key.DirectionRight -> {
+                                    MusicPlayerState.seekTo((position + SEEK_STEP_MS).coerceAtMost(duration))
+                                    true
+                                }
+                                Key.DirectionDown -> {
+                                    lyricsFocus.requestFocus()
+                                    true
+                                }
+                                Key.DirectionUp -> {
+                                    upFocusRequester.requestFocus()
+                                    true
+                                }
+                                else -> false
+                            }
+                        } else false
+                    }
+                    .tvFocusable(
+                        shape = RoundedCornerShape(6.dp),
+                        focusedBorderWidth = 0.dp,
+                        scaleOnFocus = 1.0f,
+                        elevationOnFocus = 0.dp,
+                        interactionSource = interaction,
+                    )
+                    .padding(vertical = 3.dp),
             ) {
-                TvProgressBar(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .focusRequester(progressBarFocus)
-                        .focusProperties {
-                            up = if (isLyrics) lyricsFocus else quickActionsFocus
-                            down = lyricsFocus
-                        },
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
+                        .height(barHeight.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.28f)),
                 ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(progress)
+                            .fillMaxHeight()
+                            .background(Color.White),
+                    )
+                }
+            }
+
+            // Bottom row: Time & Track count on Left, Remaining Time & Buttons on Right
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                // Left: Elapsed time & "2 of 16"
+                Column {
                     Text(
-                        text = if (queue.isNotEmpty()) "${index + 1} of ${queue.size}" else "",
-                        color = Color.White.copy(alpha = 0.45f),
-                        fontSize = 12.sp,
+                        text = formatTime(position),
+                        color = Color.White,
+                        fontSize = 13.5.sp,
+                        fontFamily = SFProDisplay,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Text(
+                        text = if (queue.isNotEmpty()) "${queueIndex + 1} of ${queue.size}" else "",
+                        color = Color.White.copy(alpha = 0.55f),
+                        fontSize = 11.5.sp,
                         fontFamily = SFProDisplay,
                         fontWeight = FontWeight.Medium,
                     )
+                }
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        TvDrawableButton(
-                            drawableRes = R.drawable.ic_menu_artist,
-                            contentDescription = "Artist Info",
-                            onClick = onOpenArtist,
-                            size = 34.dp,
-                            iconSize = 17.dp,
-                            modifier = Modifier.focusProperties { up = progressBarFocus },
-                        )
+                // Right: Remaining time & Action Buttons (Star, 3-dots, Artist, Lyrics, Queue)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Text(
+                        text = "-" + formatTime((duration - position).coerceAtLeast(0L)),
+                        color = Color.White.copy(alpha = 0.75f),
+                        fontSize = 13.sp,
+                        fontFamily = SFProDisplay,
+                        fontWeight = FontWeight.SemiBold,
+                    )
 
-                        TvDrawableButton(
-                            drawableRes = R.drawable.lyrics,
-                            contentDescription = "Lyrics",
-                            onClick = onToggleLyrics,
-                            active = isLyrics,
-                            size = 34.dp,
-                            iconSize = 17.dp,
-                            focusRequester = lyricsFocus,
-                            modifier = Modifier.focusProperties { up = progressBarFocus },
-                        )
+                    Spacer(Modifier.width(6.dp))
 
-                        TvDrawableButton(
-                            drawableRes = R.drawable.queue_music,
-                            contentDescription = "Queue",
-                            onClick = onShowQueue,
-                            active = false,
-                            size = 34.dp,
-                            iconSize = 17.dp,
-                            modifier = Modifier.focusProperties { up = progressBarFocus },
-                        )
-                    }
+                    val fav = track?.let { MusicPlayerState.isFavorite(it.id) } == true
+                    TvDrawableButton(
+                        drawableRes = if (fav) R.drawable.ic_star_filled else R.drawable.ic_star_outline,
+                        contentDescription = "Favorite",
+                        onClick = { track?.let { MusicPlayerState.toggleFavorite(it) } },
+                        active = fav,
+                        size = 32.dp,
+                        iconSize = 16.dp,
+                        focusRequester = starFocus,
+                        modifier = Modifier
+                            .focusProperties {
+                                up = progressBarFocus
+                                right = moreFocus
+                            }
+                            .onPreviewKeyEvent { e ->
+                                if (e.type == KeyEventType.KeyDown) {
+                                    when (e.key) {
+                                        Key.DirectionUp -> { progressBarFocus.requestFocus(); true }
+                                        Key.DirectionRight -> { moreFocus.requestFocus(); true }
+                                        else -> false
+                                    }
+                                } else false
+                            },
+                    )
+
+                    TvDrawableButton(
+                        drawableRes = R.drawable.more_horiz,
+                        contentDescription = "More Options",
+                        onClick = onOpenPopup,
+                        size = 32.dp,
+                        iconSize = 16.dp,
+                        focusRequester = moreFocus,
+                        modifier = Modifier
+                            .focusProperties {
+                                up = progressBarFocus
+                                left = starFocus
+                                right = artistFocus
+                            }
+                            .onPreviewKeyEvent { e ->
+                                if (e.type == KeyEventType.KeyDown) {
+                                    when (e.key) {
+                                        Key.DirectionUp -> { progressBarFocus.requestFocus(); true }
+                                        Key.DirectionLeft -> { starFocus.requestFocus(); true }
+                                        Key.DirectionRight -> { artistFocus.requestFocus(); true }
+                                        else -> false
+                                    }
+                                } else false
+                            },
+                    )
+
+                    TvDrawableButton(
+                        drawableRes = R.drawable.ic_menu_artist,
+                        contentDescription = "Artist Info",
+                        onClick = onOpenArtist,
+                        size = 32.dp,
+                        iconSize = 16.dp,
+                        focusRequester = artistFocus,
+                        modifier = Modifier
+                            .focusProperties {
+                                up = progressBarFocus
+                                left = moreFocus
+                                right = lyricsFocus
+                            }
+                            .onPreviewKeyEvent { e ->
+                                if (e.type == KeyEventType.KeyDown) {
+                                    when (e.key) {
+                                        Key.DirectionUp -> { progressBarFocus.requestFocus(); true }
+                                        Key.DirectionLeft -> { moreFocus.requestFocus(); true }
+                                        Key.DirectionRight -> { lyricsFocus.requestFocus(); true }
+                                        else -> false
+                                    }
+                                } else false
+                            },
+                    )
+
+                    TvDrawableButton(
+                        drawableRes = R.drawable.lyrics,
+                        contentDescription = "Lyrics",
+                        onClick = onToggleLyrics,
+                        active = isLyrics,
+                        size = 32.dp,
+                        iconSize = 16.dp,
+                        focusRequester = lyricsFocus,
+                        modifier = Modifier
+                            .focusProperties {
+                                up = progressBarFocus
+                                left = artistFocus
+                                right = queueFocus
+                            }
+                            .onPreviewKeyEvent { e ->
+                                if (e.type == KeyEventType.KeyDown) {
+                                    when (e.key) {
+                                        Key.DirectionUp -> { progressBarFocus.requestFocus(); true }
+                                        Key.DirectionLeft -> { artistFocus.requestFocus(); true }
+                                        Key.DirectionRight -> { queueFocus.requestFocus(); true }
+                                        else -> false
+                                    }
+                                } else false
+                            },
+                    )
+
+                    TvDrawableButton(
+                        drawableRes = R.drawable.queue_music,
+                        contentDescription = "Queue",
+                        onClick = onShowQueue,
+                        active = false,
+                        size = 32.dp,
+                        iconSize = 16.dp,
+                        focusRequester = queueFocus,
+                        modifier = Modifier
+                            .focusProperties {
+                                up = progressBarFocus
+                                left = lyricsFocus
+                            }
+                            .onPreviewKeyEvent { e ->
+                                if (e.type == KeyEventType.KeyDown) {
+                                    when (e.key) {
+                                        Key.DirectionUp -> { progressBarFocus.requestFocus(); true }
+                                        Key.DirectionLeft -> { lyricsFocus.requestFocus(); true }
+                                        else -> false
+                                    }
+                                } else false
+                            },
+                    )
                 }
             }
         }
     }
 }
 
-// ── Queue Carousel View (Toggled via Queue Button) ─────────────────────────────────────────────
+// ── Queue Carousel View (Toggled via Queue Button - Exact Apple TV Design) ─────────────────────────────
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun QueuePane(
     track: MusicTrack?,
@@ -765,21 +1004,48 @@ private fun QueuePane(
     onOpenArtist: () -> Unit,
 ) {
     val queue = MusicPlayerState.queue
-    val index = MusicPlayerState.queueIndex
-    val prev = queue.getOrNull(index - 1)
-    val next = queue.getOrNull(index + 1)
+    val currentTrack = MusicPlayerState.currentTrack
     val isPlaying = MusicPlayerState.isPlaying
-    val centerFocus = remember { FocusRequester() }
+    val currentQueueIndex = MusicPlayerState.queueIndex
+
+    val displayQueue = remember(queue, track) {
+        if (queue.isNotEmpty()) queue else listOfNotNull(track)
+    }
+
+    val lazyListState = rememberLazyListState()
+    val flingBehavior = rememberSnapFlingBehavior(lazyListState = lazyListState)
+
+    // Center the currently playing track on initial open
+    LaunchedEffect(currentQueueIndex) {
+        if (displayQueue.isNotEmpty() && currentQueueIndex in displayQueue.indices) {
+            lazyListState.animateScrollToItem(currentQueueIndex)
+        }
+    }
+
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val cardSize = 240.dp
+    val cardSpacing = 26.dp
+    val horizontalSidePadding = remember(screenWidth, cardSize) {
+        ((screenWidth - cardSize) / 2).coerceAtLeast(40.dp)
+    }
+
+    val topControlsFocus = remember { FocusRequester() }
+    val progressBarFocus = remember { FocusRequester() }
+    val currentCardFocus = remember { FocusRequester() }
+
     LaunchedEffect(popupOpen) {
-        if (!popupOpen) runCatching { centerFocus.requestFocus() }
+        if (!popupOpen) {
+            runCatching { currentCardFocus.requestFocus() }
+        }
     }
 
     Box(
-        Modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 40.dp, vertical = 20.dp),
     ) {
-        // Top Left: iTune Brand
+        // ── Top Left: iTune Brand ──────────────────────────────────────────
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.align(Alignment.TopStart),
@@ -801,7 +1067,7 @@ private fun QueuePane(
             )
         }
 
-        // Top Right: Playback Options (Shuffle, Repeat, Endless)
+        // ── Top Right: Playback Options (Shuffle, Repeat, Endless Queue, Lyrics) ──
         Row(
             modifier = Modifier.align(Alignment.TopEnd),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -813,8 +1079,10 @@ private fun QueuePane(
                 contentDescription = "Shuffle",
                 onClick = { MusicPlayerState.toggleShuffle() },
                 active = shuffleActive,
-                size = 32.dp,
-                iconSize = 16.dp,
+                size = 34.dp,
+                iconSize = 17.dp,
+                focusRequester = topControlsFocus,
+                modifier = Modifier.focusProperties { down = currentCardFocus },
             )
 
             val repeatMode = MusicPlayerState.repeatMode
@@ -828,8 +1096,9 @@ private fun QueuePane(
                 contentDescription = "Repeat",
                 onClick = { MusicPlayerState.toggleRepeat() },
                 active = repeatMode != Player.REPEAT_MODE_OFF,
-                size = 32.dp,
-                iconSize = 16.dp,
+                size = 34.dp,
+                iconSize = 17.dp,
+                modifier = Modifier.focusProperties { down = currentCardFocus },
             )
 
             val endlessActive = MusicPlayerState.endlessQueueEnabled
@@ -838,217 +1107,273 @@ private fun QueuePane(
                 contentDescription = "Endless queue",
                 onClick = { MusicPlayerState.toggleEndlessQueue() },
                 active = endlessActive,
-                size = 32.dp,
-                iconSize = 16.dp,
+                size = 34.dp,
+                iconSize = 17.dp,
+                modifier = Modifier.focusProperties { down = currentCardFocus },
+            )
+
+            TvDrawableButton(
+                drawableRes = R.drawable.lyrics,
+                contentDescription = "Lyrics",
+                onClick = onShowLyrics,
+                active = false,
+                size = 34.dp,
+                iconSize = 17.dp,
+                modifier = Modifier.focusProperties { down = currentCardFocus },
             )
         }
 
-        // Center: 3-Card Carousel (Previous, Current, Next) - Compact proportions
-        Column(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(bottom = 36.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Row(
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.spacedBy(20.dp),
+        // ── Center Content: Same-Sized Queue Cards Carousel with Left-Right Swipe & Remote Navigation ──
+        if (displayQueue.isEmpty()) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = "Queue is empty",
+                    color = Color.White.copy(alpha = 0.50f),
+                    fontSize = 16.sp,
+                    fontFamily = SFProDisplay,
+                )
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center)
+                    .padding(bottom = 28.dp),
+                contentAlignment = Alignment.Center,
             ) {
-                NeighbourCover(prev, "Previous") { MusicPlayerState.skipPrevious() }
+                LazyRow(
+                    state = lazyListState,
+                    flingBehavior = flingBehavior,
+                    contentPadding = PaddingValues(horizontal = horizontalSidePadding),
+                    horizontalArrangement = Arrangement.spacedBy(cardSpacing),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    itemsIndexed(displayQueue, key = { i, t -> "${t.id}_$i" }) { itemIndex, qTrack ->
+                        val isCurrentPlaying = qTrack.id == currentTrack?.id
+                        val interaction = remember { MutableInteractionSource() }
+                        val isCardFocused by interaction.collectIsFocusedAsState()
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    val interaction = remember { MutableInteractionSource() }
-                    Box(
-                        modifier = Modifier
-                            .tvFocusable(
-                                shape = RoundedCornerShape(16.dp),
-                                scaleOnFocus = 1.04f,
-                                focusRequester = centerFocus,
-                                interactionSource = interaction,
-                                onClick = { MusicPlayerState.togglePlayPause() },
-                            ),
-                    ) {
-                        TvArtworkTile(track, canvas, 185.dp)
-                        if (!isPlaying) {
+                        // Auto-scroll to center this card when focused via remote
+                        LaunchedEffect(isCardFocused) {
+                            if (isCardFocused) {
+                                lazyListState.animateScrollToItem(itemIndex)
+                            }
+                        }
+
+                        val cardBoxFocusRequester = remember { FocusRequester() }
+                        val addBtnFocusRequester = remember { FocusRequester() }
+                        val moreBtnFocusRequester = remember { FocusRequester() }
+                        val addBtnInteraction = remember { MutableInteractionSource() }
+                        val isAddBtnFocused by addBtnInteraction.collectIsFocusedAsState()
+                        val moreBtnInteraction = remember { MutableInteractionSource() }
+                        val isMoreBtnFocused by moreBtnInteraction.collectIsFocusedAsState()
+
+                        val isCurrentCard = itemIndex == currentQueueIndex.coerceIn(0, displayQueue.lastIndex)
+                        val effectiveCardFocusRequester = if (isCurrentCard) currentCardFocus else cardBoxFocusRequester
+                        val showControls = isCurrentCard || isCurrentPlaying || isCardFocused || isAddBtnFocused || isMoreBtnFocused
+
+                        Column(
+                            modifier = Modifier.width(cardSize),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            // Cover Artwork - SAME SIZED across every card (240.dp x 240.dp)
                             Box(
                                 modifier = Modifier
-                                .size(185.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Color(0x55000000)),
-                                contentAlignment = Alignment.Center,
+                                    .size(cardSize)
+                                    .focusRequester(effectiveCardFocusRequester)
+                                    .focusProperties {
+                                        up = topControlsFocus
+                                        down = addBtnFocusRequester
+                                    }
+                                    .onPreviewKeyEvent { event ->
+                                        if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown) {
+                                            addBtnFocusRequester.requestFocus()
+                                            true
+                                        } else false
+                                    }
+                                    .tvFocusable(
+                                        shape = RoundedCornerShape(18.dp),
+                                        scaleOnFocus = 1.05f,
+                                        elevationOnFocus = 8.dp,
+                                        interactionSource = interaction,
+                                        onClick = {
+                                            if (isCurrentPlaying) {
+                                                MusicPlayerState.togglePlayPause()
+                                            } else {
+                                                MusicPlayerState.play(qTrack, expandPlayer = false)
+                                            }
+                                        },
+                                    )
+                                    .clip(RoundedCornerShape(18.dp))
+                                    .background(Color(0x22FFFFFF)),
                             ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.play),
-                                    contentDescription = "Play",
-                                    colorFilter = ColorFilter.tint(Color.White),
-                                    modifier = Modifier.size(42.dp),
+                                TvArtworkTile(
+                                    track = qTrack,
+                                    canvas = if (isCurrentPlaying) canvas else null,
+                                    size = cardSize,
+                                    paused = !isPlaying,
+                                )
+
+                                // Play / Pause overlay indicator
+                                if (isCurrentPlaying && !isPlaying) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .background(Color(0x55000000)),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.play),
+                                            contentDescription = "Play",
+                                            colorFilter = ColorFilter.tint(Color.White),
+                                            modifier = Modifier.size(48.dp),
+                                        )
+                                    }
+                                }
+                            }
+
+                            Spacer(Modifier.height(14.dp))
+
+                            // Song Title with Live Equalizer if playing
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                if (isCurrentPlaying && isPlaying) {
+                                    AnimatedEqualizer(
+                                        isPlaying = true,
+                                        color = if (isCardFocused || isAddBtnFocused || isMoreBtnFocused) Color.White else AppleMusicRed,
+                                        size = 14.dp,
+                                    )
+                                    Spacer(Modifier.width(6.dp))
+                                }
+                                Text(
+                                    text = qTrack.title,
+                                    color = Color.White,
+                                    fontSize = 15.sp,
+                                    fontFamily = SFProDisplay,
+                                    fontWeight = FontWeight.SemiBold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.weight(1f, fill = false),
+                                )
+                                if (qTrack.isExplicit) {
+                                    Spacer(Modifier.width(5.dp))
+                                    ExplicitBadge(color = Color.White.copy(alpha = 0.85f))
+                                }
+                            }
+
+                            Spacer(Modifier.height(3.dp))
+
+                            // Artist Subtitle
+                            Text(
+                                text = qTrack.artists,
+                                color = Color.White.copy(alpha = 0.65f),
+                                fontSize = 13.sp,
+                                fontFamily = SFProDisplay,
+                                fontWeight = FontWeight.Normal,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+
+                            Spacer(Modifier.height(8.dp))
+
+                            // Action buttons: '+' and '•••' under the currently playing or active card (Matching Screenshot 7 & 8)
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .height(38.dp)
+                                    .graphicsLayer { alpha = if (showControls) 1f else 0f },
+                            ) {
+                                val isFav = MusicPlayerState.isFavorite(qTrack.id)
+                                TvVectorButton(
+                                    imageVector = if (isFav) Icons.Rounded.Check else Icons.Rounded.Add,
+                                    contentDescription = if (isFav) "Added" else "Add",
+                                    onClick = { MusicPlayerState.toggleFavorite(qTrack) },
+                                    active = isFav,
+                                    size = 36.dp,
+                                    iconSize = 18.dp,
+                                    focusRequester = addBtnFocusRequester,
+                                    interactionSource = addBtnInteraction,
+                                    modifier = Modifier
+                                        .focusProperties {
+                                            up = effectiveCardFocusRequester
+                                            right = moreBtnFocusRequester
+                                            down = progressBarFocus
+                                        }
+                                        .onPreviewKeyEvent { event ->
+                                            if (event.type == KeyEventType.KeyDown) {
+                                                when (event.key) {
+                                                    Key.DirectionUp -> { effectiveCardFocusRequester.requestFocus(); true }
+                                                    Key.DirectionRight -> { moreBtnFocusRequester.requestFocus(); true }
+                                                    Key.DirectionDown -> { progressBarFocus.requestFocus(); true }
+                                                    Key.DirectionCenter, Key.Enter, Key.NumPadEnter -> {
+                                                        MusicPlayerState.toggleFavorite(qTrack)
+                                                        true
+                                                    }
+                                                    else -> false
+                                                }
+                                            } else false
+                                        },
+                                )
+
+                                TvDrawableButton(
+                                    drawableRes = R.drawable.more_horiz,
+                                    contentDescription = "More",
+                                    onClick = onOpenPopup,
+                                    size = 36.dp,
+                                    iconSize = 18.dp,
+                                    focusRequester = moreBtnFocusRequester,
+                                    interactionSource = moreBtnInteraction,
+                                    modifier = Modifier
+                                        .focusProperties {
+                                            up = effectiveCardFocusRequester
+                                            left = addBtnFocusRequester
+                                            down = progressBarFocus
+                                        }
+                                        .onPreviewKeyEvent { event ->
+                                            if (event.type == KeyEventType.KeyDown) {
+                                                when (event.key) {
+                                                    Key.DirectionUp -> { effectiveCardFocusRequester.requestFocus(); true }
+                                                    Key.DirectionLeft -> { addBtnFocusRequester.requestFocus(); true }
+                                                    Key.DirectionDown -> { progressBarFocus.requestFocus(); true }
+                                                    Key.DirectionCenter, Key.Enter, Key.NumPadEnter -> {
+                                                        onOpenPopup()
+                                                        true
+                                                    }
+                                                    else -> false
+                                                }
+                                            } else false
+                                        },
                                 )
                             }
                         }
                     }
-
-                    Spacer(Modifier.height(12.dp))
-
-                    Text(
-                        text = track?.title ?: "Not Playing",
-                        color = Color.White,
-                        fontSize = 15.sp,
-                        fontFamily = SFProDisplay,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.width(260.dp),
-                        textAlign = TextAlign.Center,
-                    )
-                    Spacer(Modifier.height(2.dp))
-                    Text(
-                        text = track?.artists ?: "",
-                        color = Color.White.copy(alpha = 0.60f),
-                        fontSize = 12.5.sp,
-                        fontFamily = SFProDisplay,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.width(260.dp),
-                        textAlign = TextAlign.Center,
-                    )
-
-                    Spacer(Modifier.height(8.dp))
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        val fav = track?.let { MusicPlayerState.isFavorite(it.id) } == true
-                        TvDrawableButton(
-                            drawableRes = if (fav) R.drawable.ic_star_filled else R.drawable.ic_star_outline,
-                            contentDescription = "Favorite",
-                            onClick = { track?.let { MusicPlayerState.toggleFavorite(it) } },
-                            active = fav,
-                            size = 30.dp,
-                            iconSize = 15.dp,
-                        )
-                        TvDrawableButton(
-                            drawableRes = R.drawable.more_horiz,
-                            contentDescription = "More",
-                            onClick = onOpenPopup,
-                            size = 30.dp,
-                            iconSize = 15.dp,
-                        )
-                    }
                 }
-
-                NeighbourCover(next, "Next") { MusicPlayerState.skipNext() }
             }
         }
 
-        // Bottom Scrubber Bar & Controls (Clean, no glass capsule)
-        Column(
+        // ── Bottom Scrubber / Seekbar (Full width, exact like Apple TV screenshot) ──
+        TvProgressBar(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            TvProgressBar(Modifier.fillMaxWidth())
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "${index + 1} of ${queue.size}",
-                    color = Color.White.copy(alpha = 0.45f),
-                    fontSize = 12.sp,
-                    fontFamily = SFProDisplay,
-                    fontWeight = FontWeight.Medium,
-                )
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    TvDrawableButton(
-                        drawableRes = R.drawable.ic_menu_artist,
-                        contentDescription = "Artist Info",
-                        onClick = onOpenArtist,
-                        size = 34.dp,
-                        iconSize = 17.dp,
-                    )
-
-                    TvDrawableButton(
-                        drawableRes = R.drawable.lyrics,
-                        contentDescription = "Lyrics",
-                        onClick = onShowLyrics,
-                        active = false,
-                        size = 34.dp,
-                        iconSize = 17.dp,
-                    )
-
-                    TvDrawableButton(
-                        drawableRes = R.drawable.queue_music,
-                        contentDescription = "Queue Active",
-                        onClick = onShowNowPlaying,
-                        active = true,
-                        size = 34.dp,
-                        iconSize = 17.dp,
-                    )
+                .fillMaxWidth()
+                .focusRequester(progressBarFocus)
+                .focusProperties {
+                    up = currentCardFocus
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun NeighbourCover(track: MusicTrack?, label: String, onClick: () -> Unit) {
-    if (track == null) {
-        Spacer(Modifier.width(135.dp))
-        return
-    }
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(top = 22.dp),
-    ) {
-        Box(
-            Modifier
-                .size(135.dp)
-                .tvFocusable(
-                    shape = RoundedCornerShape(14.dp),
-                    scaleOnFocus = 1.05f,
-                    onClick = onClick,
-                )
-                .clip(RoundedCornerShape(14.dp))
-                .background(Color(0x22FFFFFF)),
-        ) {
-            AsyncImage(
-                model = track.thumbnailUrl?.highQualityThumbnail(),
-                contentDescription = "$label: ${track.title}",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .alpha(0.75f),
-            )
-        }
-        Spacer(Modifier.height(8.dp))
-        Text(
-            text = track.title,
-            color = Color.White.copy(alpha = 0.75f),
-            fontSize = 13.sp,
-            fontFamily = SFProDisplay,
-            fontWeight = FontWeight.Medium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.width(135.dp),
-            textAlign = TextAlign.Center,
-        )
-        Text(
-            text = track.artists,
-            color = Color.White.copy(alpha = 0.45f),
-            fontSize = 11.5.sp,
-            fontFamily = SFProDisplay,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.width(135.dp),
-            textAlign = TextAlign.Center,
+                .onPreviewKeyEvent { event ->
+                    if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionUp) {
+                        currentCardFocus.requestFocus()
+                        true
+                    } else false
+                },
         )
     }
 }
@@ -1757,8 +2082,10 @@ private fun TvDrawableButton(
     size: Dp = 34.dp,
     iconSize: Dp = 17.dp,
     focusRequester: FocusRequester? = null,
+    interactionSource: MutableInteractionSource? = null,
 ) {
-    val interaction = remember { MutableInteractionSource() }
+    val defaultInteraction = remember { MutableInteractionSource() }
+    val interaction = interactionSource ?: defaultInteraction
     val isFocused by interaction.collectIsFocusedAsState()
 
     Box(
@@ -1767,19 +2094,71 @@ private fun TvDrawableButton(
             .tvFocusable(
                 shape = CircleShape,
                 focusedBorderWidth = 0.dp,
-                scaleOnFocus = 1.10f,
+                scaleOnFocus = 1.15f,
                 focusRequester = focusRequester,
                 interactionSource = interaction,
                 onClick = onClick,
             )
             .clip(CircleShape)
-            .background(if (active) Color.White else if (isFocused) Color(0x55FFFFFF) else Color(0x22FFFFFF)),
+            .background(
+                when {
+                    isFocused -> Color.White
+                    active -> Color.White.copy(alpha = 0.40f)
+                    else -> Color(0x22FFFFFF)
+                }
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Image(
             painter = painterResource(id = drawableRes),
             contentDescription = contentDescription,
-            colorFilter = ColorFilter.tint(if (active) Color.Black else Color.White),
+            colorFilter = ColorFilter.tint(if (isFocused) Color.Black else if (active) Color.White else Color.White),
+            modifier = Modifier.size(iconSize),
+        )
+    }
+}
+
+@Composable
+private fun TvVectorButton(
+    imageVector: ImageVector,
+    contentDescription: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    active: Boolean = false,
+    size: Dp = 34.dp,
+    iconSize: Dp = 17.dp,
+    focusRequester: FocusRequester? = null,
+    interactionSource: MutableInteractionSource? = null,
+) {
+    val defaultInteraction = remember { MutableInteractionSource() }
+    val interaction = interactionSource ?: defaultInteraction
+    val isFocused by interaction.collectIsFocusedAsState()
+
+    Box(
+        modifier = modifier
+            .size(size)
+            .tvFocusable(
+                shape = CircleShape,
+                focusedBorderWidth = 0.dp,
+                scaleOnFocus = 1.15f,
+                focusRequester = focusRequester,
+                interactionSource = interaction,
+                onClick = onClick,
+            )
+            .clip(CircleShape)
+            .background(
+                when {
+                    isFocused -> Color.White
+                    active -> Color.White.copy(alpha = 0.40f)
+                    else -> Color(0x22FFFFFF)
+                }
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = contentDescription,
+            tint = if (isFocused) Color.Black else Color.White,
             modifier = Modifier.size(iconSize),
         )
     }

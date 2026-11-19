@@ -11,6 +11,11 @@
 
 package com.darkxvenom.itune.television.ui.settings
 
+import android.graphics.Bitmap
+import android.view.ViewGroup
+import android.webkit.CookieManager
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -95,6 +100,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.Coil
 import com.darkxvenom.itune.BuildConfig
@@ -104,12 +110,12 @@ import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.auth.WebSessionMode
 import com.darkxvenom.itune.data.backup.BackupRestoreManager
 import com.darkxvenom.itune.data.library.SettingsStore
+import com.darkxvenom.itune.data.spotify.SpotifyLibrarySyncManager
 import com.darkxvenom.itune.ishare.IShareSyncManager
 import com.darkxvenom.itune.television.focus.SFProDisplay
+import com.darkxvenom.itune.television.focus.TvAppleSilverBg
 import com.darkxvenom.itune.television.focus.tvFocusable
-import com.darkxvenom.itune.television.ui.common.TvAmbientBackground
 import com.darkxvenom.itune.ui.auth.GoogleLoginScreen
-import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import java.io.File
 
 // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
@@ -135,6 +141,8 @@ fun TvSettingsScreen(
 
     var blurb by remember { mutableStateOf(DEFAULT_BLURB) }
     var loginMode by remember { mutableStateOf<WebSessionMode?>(null) }
+    var showSpotifyDialog by remember { mutableStateOf(false) }
+    var showSpotifyWebLogin by remember { mutableStateOf(false) }
     var showBackupDialog by remember { mutableStateOf(false) }
     var showRestoreDialog by remember { mutableStateOf(false) }
     var showLyricsProvidersDialog by remember { mutableStateOf(false) }
@@ -143,9 +151,7 @@ fun TvSettingsScreen(
     val ishareIsHost by IShareSyncManager.isHost.collectAsStateWithLifecycle()
     val localIp by IShareSyncManager.localIp.collectAsStateWithLifecycle()
 
-    Box(modifier = modifier.fillMaxSize().background(AppleOledBlack)) {
-        TvAmbientBackground(Modifier.fillMaxSize(), dim = 0.35f)
-
+    Box(modifier = modifier.fillMaxSize().background(TvAppleSilverBg)) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -202,12 +208,10 @@ fun TvSettingsScreen(
                 item {
                     TvListRow(
                         title = "Spotify Account",
-                        value = if (settingsState.spotifySpdcToken.isNotBlank()) "Connected" else "Not Connected",
+                        value = if (settingsState.spotifySpdcToken.isNotBlank()) "Connected" else "Connect",
                         leadingIcon = Icons.Rounded.Sync,
                         onFocused = { blurb = "Connects Spotify to fetch Canvas motion video artwork and synchronize your Spotify playlists." },
-                        onClick = {
-                            Toast.makeText(context, if (settingsState.spotifySpdcToken.isNotBlank()) "Spotify is connected" else "Sign into Spotify via Settings or Web", Toast.LENGTH_SHORT).show()
-                        },
+                        onClick = { showSpotifyDialog = true },
                     )
                 }
                 item {
@@ -509,50 +513,13 @@ fun TvSettingsScreen(
                     )
                 }
 
-                // 5. Display & Personalization
+                // 5. Display & Visuals
                 item { TvListHeader("Display & Visuals") }
-                item {
-                    TvListRow(
-                        title = "Player Style",
-                        value = settingsState.playerType,
-                        leadingIcon = Icons.Rounded.Tv,
-                        onFocused = { blurb = "Choose between authentic Apple Music TV layout, Dynamic Liquid Glass, or Minimal." },
-                        onClick = {
-                            val styles = listOf("Apple TV", "Dynamic", "Minimal")
-                            val curIdx = styles.indexOf(settingsState.playerType).coerceAtLeast(0)
-                            val next = styles[(curIdx + 1) % styles.size]
-                            SettingsStore.setPlayerType(context, next)
-                        },
-                    )
-                }
-                item {
-                    TvListRow(
-                        title = "Liquid Glass Chrome",
-                        value = onOff(settingsState.liquidGlassChrome),
-                        onFocused = { blurb = "Applies real-time blurred frosted glass platters to buttons and cards." },
-                        onClick = {
-                            SettingsStore.setBoolean(context, SettingsStore.KEY_LIQUID_GLASS, !settingsState.liquidGlassChrome)
-                        },
-                    )
-                }
-                item {
-                    TvListRow(
-                        title = "Home Hero Cards",
-                        value = settingsState.topCardType,
-                        onFocused = { blurb = "Layout style of the top recommendations shelf on the Home screen." },
-                        onClick = {
-                            val cardTypes = listOf("Portrait", "Square", "Landscape")
-                            val curIdx = cardTypes.indexOf(settingsState.topCardType).coerceAtLeast(0)
-                            val next = cardTypes[(curIdx + 1) % cardTypes.size]
-                            SettingsStore.setString(context, SettingsStore.KEY_TOP_CARD_TYPE, next)
-                        },
-                    )
-                }
                 item {
                     TvListRow(
                         title = "Splash Screen",
                         value = onOff(settingsState.splashScreenEnabled),
-                        onFocused = { blurb = "Shows the branded splash animation on cold start." },
+                        onFocused = { blurb = "Shows the branded splash animation with typed logo gliding into the top bar." },
                         onClick = {
                             SettingsStore.setBoolean(context, SettingsStore.KEY_SPLASH_SCREEN, !settingsState.splashScreenEnabled)
                         },
@@ -716,6 +683,25 @@ fun TvSettingsScreen(
         if (showRestoreDialog) {
             TvPasswordRestoreModal(
                 onDismiss = { showRestoreDialog = false },
+            )
+        }
+
+        // TV Spotify Account modal
+        if (showSpotifyDialog) {
+            TvSpotifyAccountModal(
+                onLaunchWebLogin = {
+                    showSpotifyDialog = false
+                    showSpotifyWebLogin = true
+                },
+                onDismiss = { showSpotifyDialog = false },
+            )
+        }
+
+        // TV Spotify Web Login overlay
+        if (showSpotifyWebLogin) {
+            TvSpotifyLoginScreen(
+                onSignedIn = { showSpotifyWebLogin = false },
+                onClose = { showSpotifyWebLogin = false },
             )
         }
 
@@ -1274,5 +1260,273 @@ private fun TvModalActionButton(
             fontFamily = SFProDisplay,
             fontWeight = if (focused || isPrimary) FontWeight.Bold else FontWeight.SemiBold,
         )
+    }
+}
+
+// ── TV Spotify Account Modal & In-App Web Login ───────────────────────────────────────────────
+
+@Composable
+private fun TvSpotifyAccountModal(
+    onLaunchWebLogin: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val context = LocalContext.current
+    val settings by SettingsStore.state.collectAsStateWithLifecycle()
+    val isConnected = settings.spotifySpdcToken.isNotBlank()
+    var rawSpDcInput by remember { mutableStateOf("") }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0x99000000))
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onDismiss,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .width(460.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .background(Color(0xF01C1C1E))
+                .border(1.dp, Color.White.copy(alpha = 0.16f), RoundedCornerShape(24.dp))
+                .padding(26.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 14.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(10.dp)
+                            .clip(CircleShape)
+                            .background(if (isConnected) Color(0xFF1DB954) else Color(0xFFFF453A)),
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        text = "Spotify Account",
+                        color = Color.White,
+                        fontSize = 20.sp,
+                        fontFamily = SFProDisplay,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+                Text(
+                    text = "Close",
+                    color = Color(0xFF007AFF),
+                    fontSize = 15.sp,
+                    fontFamily = SFProDisplay,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.clickable(onClick = onDismiss),
+                )
+            }
+
+            if (isConnected) {
+                Text(
+                    text = "Spotify is currently connected. Motion artwork (Canvas) and Spotify playlist synchronization are enabled.",
+                    color = Color.White.copy(alpha = 0.70f),
+                    fontSize = 13.5.sp,
+                    fontFamily = SFProDisplay,
+                    lineHeight = 18.sp,
+                )
+
+                Spacer(Modifier.height(20.dp))
+
+                TvModalActionButton(
+                    label = "Sync Spotify Library Now",
+                    isPrimary = true,
+                    onClick = {
+                        SpotifyLibrarySyncManager.launchSync(context, force = true)
+                        Toast.makeText(context, "Syncing Spotify library...", Toast.LENGTH_SHORT).show()
+                        onDismiss()
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                Spacer(Modifier.height(10.dp))
+
+                TvModalActionButton(
+                    label = "Disconnect Spotify Account",
+                    isPrimary = false,
+                    onClick = {
+                        SettingsStore.setSpotifySpdcToken(context, "")
+                        Toast.makeText(context, "Spotify disconnected", Toast.LENGTH_SHORT).show()
+                        onDismiss()
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            } else {
+                Text(
+                    text = "Connect your Spotify account to enable Canvas looping motion video artwork and sync your Spotify library.",
+                    color = Color.White.copy(alpha = 0.70f),
+                    fontSize = 13.5.sp,
+                    fontFamily = SFProDisplay,
+                    lineHeight = 18.sp,
+                )
+
+                Spacer(Modifier.height(18.dp))
+
+                TvModalActionButton(
+                    label = "Sign In with Spotify (Web)",
+                    isPrimary = true,
+                    onClick = onLaunchWebLogin,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                Text(
+                    text = "OR ENTER SP_DC COOKIE",
+                    color = Color.White.copy(alpha = 0.40f),
+                    fontSize = 11.sp,
+                    fontFamily = SFProDisplay,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp,
+                )
+
+                Spacer(Modifier.height(8.dp))
+
+                BasicTextField(
+                    value = rawSpDcInput,
+                    onValueChange = { rawSpDcInput = it },
+                    textStyle = TextStyle(
+                        color = Color.White,
+                        fontSize = 13.5.sp,
+                        fontFamily = SFProDisplay,
+                    ),
+                    singleLine = true,
+                    cursorBrush = SolidColor(Color(0xFF1DB954)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color.White.copy(alpha = 0.08f))
+                        .padding(horizontal = 14.dp, vertical = 10.dp),
+                    decorationBox = { innerTextField ->
+                        if (rawSpDcInput.isEmpty()) {
+                            Text(
+                                text = "Paste sp_dc token here…",
+                                color = Color.White.copy(alpha = 0.35f),
+                                fontSize = 13.5.sp,
+                                fontFamily = SFProDisplay,
+                            )
+                        }
+                        innerTextField()
+                    },
+                )
+
+                Spacer(Modifier.height(14.dp))
+
+                TvModalActionButton(
+                    label = "Save & Connect SP_DC",
+                    isPrimary = false,
+                    onClick = {
+                        val clean = rawSpDcInput.trim().substringAfter("sp_dc=").substringBefore(";").trim()
+                        if (clean.isNotBlank()) {
+                            SettingsStore.setSpotifySpdcToken(context, clean)
+                            Toast.makeText(context, "Spotify Connected!", Toast.LENGTH_SHORT).show()
+                            onDismiss()
+                        } else {
+                            Toast.makeText(context, "Please enter a valid SP_DC cookie", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TvSpotifyLoginScreen(
+    onSignedIn: () -> Unit,
+    onClose: () -> Unit,
+) {
+    val context = LocalContext.current
+    var isFinished by remember { mutableStateOf(false) }
+
+    fun saveSpDcAndFinish(rawCookie: String) {
+        if (isFinished) return
+        val spDc = if (rawCookie.contains("sp_dc=")) {
+            rawCookie.substringAfter("sp_dc=").substringBefore(";").trim()
+        } else {
+            rawCookie.trim()
+        }
+        if (spDc.isNotBlank()) {
+            isFinished = true
+            SettingsStore.setSpotifySpdcToken(context, spDc)
+            Toast.makeText(context, "Spotify Connected!", Toast.LENGTH_SHORT).show()
+            onSignedIn()
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black),
+    ) {
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { ctx ->
+                WebView(ctx).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                    )
+                    settings.javaScriptEnabled = true
+                    settings.domStorageEnabled = true
+                    settings.databaseEnabled = true
+                    val defaultUserAgent = settings.userAgentString
+                    settings.userAgentString = defaultUserAgent.replace("; wv", "")
+
+                    val cookieManager = CookieManager.getInstance()
+                    cookieManager.setAcceptCookie(true)
+                    cookieManager.setAcceptThirdPartyCookies(this, true)
+
+                    fun inspect(url: String?) {
+                        if (url == null || isFinished) return
+                        val cookies = cookieManager.getCookie(url)
+                            ?: cookieManager.getCookie("https://open.spotify.com")
+                            ?: cookieManager.getCookie("https://accounts.spotify.com")
+                            ?: ""
+                        if (cookies.contains("sp_dc=")) {
+                            saveSpDcAndFinish(cookies)
+                        }
+                    }
+
+                    webViewClient = object : WebViewClient() {
+                        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                            super.onPageStarted(view, url, favicon)
+                            inspect(url)
+                        }
+                        override fun onPageFinished(view: WebView?, url: String?) {
+                            super.onPageFinished(view, url)
+                            inspect(url)
+                        }
+                        override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
+                            super.doUpdateVisitedHistory(view, url, isReload)
+                            inspect(url)
+                        }
+                    }
+                    loadUrl("https://accounts.spotify.com/login")
+                }
+            },
+        )
+
+        // Close button at top right
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(24.dp)
+                .clip(CircleShape)
+                .background(Color.Black.copy(alpha = 0.70f))
+                .clickable(onClick = onClose)
+                .padding(12.dp),
+        ) {
+            Icon(Icons.Rounded.Close, contentDescription = "Close", tint = Color.White)
+        }
     }
 }

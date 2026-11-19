@@ -114,14 +114,16 @@ class MainActivity : ComponentActivity() {
                     color = androidx.compose.material3.MaterialTheme.colorScheme.background
                 ) {
                     if (isTv) {
-                        var revealHomeUnderlay by remember(settingsState.welcomeCompleted) {
-                            mutableStateOf(settingsState.welcomeCompleted)
+                        val splashEnabled = settingsState.splashScreenEnabled
+                        var showSplash by rememberSaveable { mutableStateOf(splashEnabled) }
+                        var revealHomeUnderlay by remember(settingsState.welcomeCompleted, splashEnabled) {
+                            mutableStateOf(settingsState.welcomeCompleted && !showSplash)
                         }
                         var showWelcomeFlow by remember(settingsState.welcomeCompleted) {
                             mutableStateOf(!settingsState.welcomeCompleted)
                         }
-                        var homeBrandVisible by remember(settingsState.welcomeCompleted) {
-                            mutableStateOf(settingsState.welcomeCompleted)
+                        var homeBrandVisible by remember(settingsState.welcomeCompleted, splashEnabled) {
+                            mutableStateOf(settingsState.welcomeCompleted && !showSplash)
                         }
                         var homeIconBounds by remember { mutableStateOf<Rect?>(null) }
                         var homeTitleBounds by remember { mutableStateOf<Rect?>(null) }
@@ -136,10 +138,10 @@ class MainActivity : ComponentActivity() {
                                     },
                                 )
                             }
-                            if (showWelcomeFlow) {
+                            if (showWelcomeFlow && !showSplash) {
                                 TvWelcomeScreen(
                                     initialName = "",
-                                    fromSplash = false,
+                                    fromSplash = splashEnabled,
                                     homeIconBounds = homeIconBounds,
                                     homeTitleBounds = homeTitleBounds,
                                     onRevealHomeUnderlay = { enteredName: String ->
@@ -152,6 +154,25 @@ class MainActivity : ComponentActivity() {
                                         showWelcomeFlow = false
                                         SettingsStore.completeWelcome(this@MainActivity, enteredName)
                                         IShareSyncManager.setDisplayName(enteredName)
+                                    },
+                                )
+                            }
+                            if (showSplash) {
+                                SplashScreen(
+                                    isNewUser = !settingsState.welcomeCompleted,
+                                    homeIconBounds = homeIconBounds,
+                                    homeTitleBounds = homeTitleBounds,
+                                    onRevealUnderlay = {
+                                        revealHomeUnderlay = true
+                                    },
+                                    onSplashFinished = {
+                                        if (settingsState.welcomeCompleted) {
+                                            homeBrandVisible = true
+                                            showSplash = false
+                                        } else {
+                                            showSplash = false
+                                            showWelcomeFlow = true
+                                        }
                                     },
                                 )
                             }

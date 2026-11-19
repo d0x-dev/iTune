@@ -104,7 +104,7 @@ internal enum class TopResultBusyAction {
     ARTIST_MIX
 }
 
-internal sealed interface TopResultItem {
+sealed interface TopResultItem {
     val stableKey: String
     val title: String
     val thumbnailUrl: String?
@@ -143,7 +143,7 @@ internal data class SearchSuggestionRowModel(
  * Matches the user's written query across ALL four result categories (Artists, Songs, Albums, Playlists).
  * Exact spelling matches take absolute priority and return strictly ONE hero Top Result card.
  */
-internal fun pickTopResult(query: String, results: UnifiedSearchResults): TopResultItem? {
+fun pickTopResult(query: String, results: UnifiedSearchResults): TopResultItem? {
     val qNorm = normalizeSearchText(query)
     if (qNorm.isEmpty() || results.isEmpty) return null
     val qStripped = stripPunctuation(qNorm)

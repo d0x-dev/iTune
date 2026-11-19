@@ -90,19 +90,27 @@ import coil.compose.AsyncImage
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
+import com.darkxvenom.itune.backend.ReleaseType
 import com.darkxvenom.itune.backend.highQualityThumbnail
+import com.darkxvenom.itune.data.auth.GoogleAuthStore
+import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.LibraryStore
+import com.darkxvenom.itune.data.library.NewReleasesRepository
 import com.darkxvenom.itune.data.library.SavedCollectionEntry
 import com.darkxvenom.itune.data.library.SavedSongMetadata
+import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.library.UserPlaylist
 import com.darkxvenom.itune.data.model.toMusicTrack
 import com.darkxvenom.itune.television.focus.SFProDisplay
+import com.darkxvenom.itune.television.focus.TvAppleSilverBg
 import com.darkxvenom.itune.television.focus.tvFocusable
-import com.darkxvenom.itune.television.ui.common.TvAmbientBackground
 import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
 import com.darkxvenom.itune.ui.components.AnimatedEqualizer
 import com.darkxvenom.itune.ui.theme.AppleMusicRed
-import com.darkxvenom.itune.ui.theme.AppleOledBlack
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
@@ -111,7 +119,7 @@ private enum class LibrarySection(val label: String, val isGenre: Boolean = fals
     PLAYLISTS("Playlists"),
     ARTISTS("Artists"),
     ALBUMS("Albums"),
-    SONGS("Songs"),
+    HISTORY("History"),
     COMPILATIONS("Compilations"),
     GENRE_ALTERNATIVE("Alternative", isGenre = true),
     GENRE_BLUES("Blues", isGenre = true),
@@ -161,7 +169,10 @@ fun TvLibraryScreen(
 
     val likedSongs by LibraryStore.likedSongs.collectAsStateWithLifecycle()
     val recentSongs by LibraryStore.recentSongs.collectAsStateWithLifecycle()
+    val ytmHistorySongs by LibraryStore.ytmHistorySongs.collectAsStateWithLifecycle()
+    val ytAccount by GoogleAuthStore.state.collectAsStateWithLifecycle()
     val playlists by LibraryStore.userPlaylists.collectAsStateWithLifecycle()
+    val savedPlaylists by LibraryStore.savedPlaylists.collectAsStateWithLifecycle()
     val savedAlbums by LibraryStore.savedAlbums.collectAsStateWithLifecycle()
     val likedArtists by LibraryStore.likedArtists.collectAsStateWithLifecycle()
 
@@ -173,95 +184,76 @@ fun TvLibraryScreen(
         }
     }
 
-    // Extract unique artists with their thumbnails
-    val displayArtists = remember(likedArtists, likedSongs, recentSongs) {
-        val map = linkedMapOf<String, TvDisplayArtist>()
-        // 1. Explicitly liked artists
-        likedArtists.forEach { entry ->
-            map[entry.title.lowercase()] = TvDisplayArtist(
+    val newReleases by NewReleasesRepository.releases.collectAsStateWithLifecycle()
+    val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        NewReleasesRepository.ensureLoaded()
+    }
+
+    // Subscribed artists ONLY - no random filler
+    val displayArtists = remember(likedArtists) {
+        likedArtists.map { entry ->
+            TvDisplayArtist(
                 id = entry.browseId,
                 name = entry.title,
                 thumbnailUrl = entry.thumbnailUrl,
             )
         }
-        // 2. Artists from liked songs
-        likedSongs.forEach { s ->
-            val primary = s.artists.substringBefore(",").trim().ifBlank { s.artists }
-            val key = primary.lowercase()
-            if (!map.containsKey(key) && primary.isNotBlank()) {
-                map[key] = TvDisplayArtist(
-                    id = s.artistId,
-                    name = primary,
-                    thumbnailUrl = s.thumbnailUrl,
-                )
-            }
-        }
-        // 3. Artists from recent songs
-        recentSongs.forEach { s ->
-            val primary = s.artists.substringBefore(",").trim().ifBlank { s.artists }
-            val key = primary.lowercase()
-            if (!map.containsKey(key) && primary.isNotBlank()) {
-                map[key] = TvDisplayArtist(
-                    id = s.artistId,
-                    name = primary,
-                    thumbnailUrl = s.thumbnailUrl,
-                )
-            }
-        }
-        // 4. Default fallback artists if library is fresh
-        if (map.isEmpty()) {
-            listOf(
-                TvDisplayArtist(null, "Alkaline Trio", "https://i.ytimg.com/vi/placeholder1/hqdefault.jpg"),
-                TvDisplayArtist(null, "Billy Bragg", "https://i.ytimg.com/vi/placeholder2/hqdefault.jpg"),
-                TvDisplayArtist(null, "Black Sabbath", "https://i.ytimg.com/vi/placeholder3/hqdefault.jpg"),
-                TvDisplayArtist(null, "blink-182", "https://i.ytimg.com/vi/placeholder4/hqdefault.jpg"),
-                TvDisplayArtist(null, "Bob Marley & The Wailers", "https://i.ytimg.com/vi/placeholder5/hqdefault.jpg"),
-                TvDisplayArtist(null, "Dr. Dre", "https://i.ytimg.com/vi/placeholder6/hqdefault.jpg"),
-                TvDisplayArtist(null, "Elvis Presley", "https://i.ytimg.com/vi/placeholder7/hqdefault.jpg"),
-                TvDisplayArtist(null, "The Weeknd", "https://i.ytimg.com/vi/placeholder8/hqdefault.jpg"),
-            )
-        } else {
-            map.values.toList()
-        }
     }
 
-    // Extract unique albums
-    val displayAlbums = remember(savedAlbums, likedSongs, recentSongs) {
-        val map = linkedMapOf<String, TvDisplayAlbum>()
-        savedAlbums.forEach { a ->
-            map[a.title.lowercase()] = TvDisplayAlbum(
+    // Saved albums ONLY - no random filler
+    val displayAlbums = remember(savedAlbums) {
+        savedAlbums.map { a ->
+            TvDisplayAlbum(
                 id = a.browseId,
                 title = a.title,
                 artist = a.subtitle ?: "Various Artists",
                 thumbnailUrl = a.thumbnailUrl,
             )
         }
-        likedSongs.forEach { s ->
-            val album = s.album?.trim()
-            if (!album.isNullOrBlank() && !map.containsKey(album.lowercase())) {
-                map[album.lowercase()] = TvDisplayAlbum(
-                    id = null,
-                    title = album,
-                    artist = s.artists,
-                    thumbnailUrl = s.thumbnailUrl,
-                )
-            }
-        }
-        recentSongs.forEach { s ->
-            val album = s.album?.trim()
-            if (!album.isNullOrBlank() && !map.containsKey(album.lowercase())) {
-                map[album.lowercase()] = TvDisplayAlbum(
-                    id = null,
-                    title = album,
-                    artist = s.artists,
-                    thumbnailUrl = s.thumbnailUrl,
-                )
-            }
-        }
-        map.values.toList()
     }
 
-    // All songs combined
+    // Real Recently Added Albums from NewReleasesRepository + savedAlbums like app module
+    val displayRecentlyAdded = remember(savedAlbums, newReleases, settingsState.hideExplicitContent) {
+        val visibleNew = ContentLocaleCatalog.filterVisible(newReleases, settingsState.hideExplicitContent) {
+            it.isExplicit
+        }
+        val albumsOnly = visibleNew.filter { it.releaseType == ReleaseType.ALBUM }
+        val newReleaseItems = (albumsOnly + visibleNew).distinctBy { it.browseId }.map { nr ->
+            TvDisplayAlbum(
+                id = nr.browseId,
+                title = nr.title,
+                artist = nr.artist,
+                thumbnailUrl = nr.thumbnailUrl,
+            )
+        }
+        val userAlbums = savedAlbums.map { a ->
+            TvDisplayAlbum(
+                id = a.browseId,
+                title = a.title,
+                artist = a.subtitle ?: "Various Artists",
+                thumbnailUrl = a.thumbnailUrl,
+            )
+        }
+        (userAlbums + newReleaseItems).distinctBy { it.id }
+    }
+
+    // Created and saved playlists ONLY
+    val displayPlaylists = remember(playlists, savedPlaylists) {
+        val userList = playlists
+        val savedList = savedPlaylists.map { sp ->
+            UserPlaylist(
+                id = sp.browseId,
+                name = sp.title,
+                coverImageUrl = sp.thumbnailUrl,
+                isEditable = false,
+            )
+        }
+        (userList + savedList).distinctBy { it.id }
+    }
+
+    // All songs combined for genres
     val allSongs = remember(likedSongs, recentSongs) {
         (likedSongs + recentSongs).distinctBy { it.id }
     }
@@ -269,10 +261,8 @@ fun TvLibraryScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(AppleOledBlack),
+            .background(TvAppleSilverBg),
     ) {
-        TvAmbientBackground(Modifier.fillMaxSize(), dim = 0.35f)
-
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -291,7 +281,7 @@ fun TvLibraryScreen(
                     LibrarySection.PLAYLISTS,
                     LibrarySection.ARTISTS,
                     LibrarySection.ALBUMS,
-                    LibrarySection.SONGS,
+                    LibrarySection.HISTORY,
                     LibrarySection.COMPILATIONS,
                 )
 
@@ -380,7 +370,7 @@ fun TvLibraryScreen(
                             onClick = {
                                 val tracks = when {
                                     viewingPlaylist != null -> viewingPlaylist?.songs?.mapNotNull { it.toMusicTrack() }.orEmpty()
-                                    selectedSection == LibrarySection.SONGS -> allSongs.mapNotNull { it.toMusicTrack() }
+                                    selectedSection == LibrarySection.HISTORY -> recentSongs.mapNotNull { it.toMusicTrack() }
                                     selectedSection == LibrarySection.RECENTLY_ADDED -> recentSongs.mapNotNull { it.toMusicTrack() }
                                     else -> likedSongs.mapNotNull { it.toMusicTrack() }
                                 }
@@ -397,7 +387,7 @@ fun TvLibraryScreen(
                             onClick = {
                                 val tracks = when {
                                     viewingPlaylist != null -> viewingPlaylist?.songs?.mapNotNull { it.toMusicTrack() }?.shuffled().orEmpty()
-                                    selectedSection == LibrarySection.SONGS -> allSongs.mapNotNull { it.toMusicTrack() }.shuffled()
+                                    selectedSection == LibrarySection.HISTORY -> recentSongs.mapNotNull { it.toMusicTrack() }.shuffled()
                                     selectedSection == LibrarySection.RECENTLY_ADDED -> recentSongs.mapNotNull { it.toMusicTrack() }.shuffled()
                                     else -> likedSongs.mapNotNull { it.toMusicTrack() }.shuffled()
                                 }
@@ -440,7 +430,7 @@ fun TvLibraryScreen(
                             }
                             LibrarySection.PLAYLISTS -> {
                                 TvPlaylistsGridView(
-                                    playlists = playlists,
+                                    playlists = displayPlaylists,
                                     onCreateNew = { showCreatePlaylistDialog = true },
                                     onSelectPlaylist = { p ->
                                         onReleaseClick(null, p.id, p.name, "${p.songs.size} Songs", p.leadArtwork)
@@ -455,19 +445,21 @@ fun TvLibraryScreen(
                                     },
                                 )
                             }
-                            LibrarySection.SONGS -> {
-                                TvSongsListView(
-                                    songs = allSongs,
+                            LibrarySection.HISTORY -> {
+                                TvHistoryView(
+                                    recentSongs = recentSongs,
+                                    ytmHistorySongs = ytmHistorySongs,
+                                    isYtSignedIn = ytAccount.isSignedIn,
                                     onPlayTrack = { track, list ->
                                         MusicPlayerState.play(track, list, expandPlayer = false)
                                     },
                                 )
                             }
                             LibrarySection.RECENTLY_ADDED -> {
-                                TvSongsListView(
-                                    songs = recentSongs,
-                                    onPlayTrack = { track, list ->
-                                        MusicPlayerState.play(track, list, expandPlayer = false)
+                                TvAlbumsGridView(
+                                    albums = displayRecentlyAdded.ifEmpty { displayAlbums },
+                                    onSelectAlbum = { album ->
+                                        onReleaseClick(album.id, null, album.title, album.artist, album.thumbnailUrl)
                                     },
                                 )
                             }
@@ -1040,6 +1032,241 @@ private fun TvSongsListView(
                 )
             }
         }
+    }
+}
+
+// ── Listening History View with Switch (All, Recent Plays, YouTube Music) ─────────────────
+
+private enum class TvHistoryFilter(val label: String) {
+    ALL("All"),
+    LOCAL("Recent Plays"),
+    YOUTUBE("YouTube Music"),
+}
+
+@Composable
+private fun TvHistoryView(
+    recentSongs: List<SavedSongMetadata>,
+    ytmHistorySongs: List<SavedSongMetadata>,
+    isYtSignedIn: Boolean,
+    onPlayTrack: (MusicTrack, List<MusicTrack>) -> Unit,
+) {
+    var activeFilter by remember { mutableStateOf(TvHistoryFilter.ALL) }
+
+    val filteredList = remember(activeFilter, recentSongs, ytmHistorySongs) {
+        when (activeFilter) {
+            TvHistoryFilter.ALL -> {
+                (recentSongs + ytmHistorySongs)
+                    .distinctBy { it.id }
+                    .sortedByDescending { it.addedAtMs }
+            }
+            TvHistoryFilter.LOCAL -> recentSongs
+            TvHistoryFilter.YOUTUBE -> ytmHistorySongs
+        }
+    }
+
+    val trackList = remember(filteredList) { filteredList.mapNotNull { it.toMusicTrack() } }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        // Tab switch header
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 14.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            TvHistoryFilter.values().forEach { filter ->
+                val interaction = remember { MutableInteractionSource() }
+                val isFocused by interaction.collectIsFocusedAsState()
+                val isSelected = activeFilter == filter
+
+                Box(
+                    modifier = Modifier
+                        .height(34.dp)
+                        .tvFocusable(
+                            shape = RoundedCornerShape(17.dp),
+                            scaleOnFocus = 1.05f,
+                            elevationOnFocus = 0.dp,
+                            interactionSource = interaction,
+                            onClick = { activeFilter = filter },
+                        )
+                        .clip(RoundedCornerShape(17.dp))
+                        .background(
+                            when {
+                                isFocused -> Color.White
+                                isSelected -> Color.White.copy(alpha = 0.28f)
+                                else -> Color.White.copy(alpha = 0.08f)
+                            }
+                        )
+                        .padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = filter.label,
+                        color = if (isFocused) Color.Black else Color.White,
+                        fontSize = 13.5.sp,
+                        fontFamily = SFProDisplay,
+                        fontWeight = if (isSelected || isFocused) FontWeight.Bold else FontWeight.Medium,
+                    )
+                }
+            }
+        }
+
+        if (filteredList.isEmpty()) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = if (activeFilter == TvHistoryFilter.YOUTUBE && !isYtSignedIn) {
+                        "Sign in to Google / YouTube Music in Settings to view YTM history"
+                    } else {
+                        "No history in this section"
+                    },
+                    color = Color.White.copy(alpha = 0.50f),
+                    fontSize = 16.sp,
+                    fontFamily = SFProDisplay,
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(top = 4.dp, bottom = 48.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                itemsIndexed(filteredList, key = { _, s -> s.id }) { index, song ->
+                    val interaction = remember { MutableInteractionSource() }
+                    val isFocused by interaction.collectIsFocusedAsState()
+                    val isCurrentTrack = song.id == MusicPlayerState.currentTrack?.id
+                    val isPlaying = MusicPlayerState.isPlaying && isCurrentTrack
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(58.dp)
+                            .tvFocusable(
+                                shape = RoundedCornerShape(12.dp),
+                                scaleOnFocus = 1.02f,
+                                elevationOnFocus = 0.dp,
+                                interactionSource = interaction,
+                                onClick = {
+                                    val track = song.toMusicTrack()
+                                    if (track != null) {
+                                        onPlayTrack(track, trackList)
+                                    }
+                                },
+                            )
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(if (isFocused) Color.White.copy(alpha = 0.22f) else Color(0x10FFFFFF))
+                            .padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        if (isPlaying) {
+                            Box(
+                                modifier = Modifier.width(28.dp),
+                                contentAlignment = Alignment.CenterStart,
+                            ) {
+                                AnimatedEqualizer(
+                                    isPlaying = true,
+                                    color = if (isFocused) Color.White else AppleMusicRed,
+                                    size = 18.dp,
+                                )
+                            }
+                        } else {
+                            Text(
+                                text = "${index + 1}",
+                                color = Color.White.copy(alpha = 0.40f),
+                                fontSize = 13.sp,
+                                fontFamily = SFProDisplay,
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier.width(28.dp),
+                            )
+                        }
+
+                        AsyncImage(
+                            model = song.thumbnailUrl.highQualityThumbnail(),
+                            contentDescription = song.title,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                        )
+
+                        Spacer(Modifier.width(14.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = song.title,
+                                    color = Color.White,
+                                    fontSize = 14.5.sp,
+                                    fontFamily = SFProDisplay,
+                                    fontWeight = FontWeight.SemiBold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f, fill = false),
+                                )
+                                if (song.isExplicit) {
+                                    Spacer(Modifier.width(6.dp))
+                                    ExplicitBadge(color = if (isFocused) Color.Black else Color.White.copy(alpha = 0.85f))
+                                }
+                            }
+                            Text(
+                                text = song.artists,
+                                color = Color.White.copy(alpha = 0.60f),
+                                fontSize = 12.5.sp,
+                                fontFamily = SFProDisplay,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+
+                        val timeText = formatHistoryTime(song.addedAtMs)
+                        if (timeText.isNotBlank()) {
+                            Text(
+                                text = timeText,
+                                color = Color.White.copy(alpha = 0.40f),
+                                fontSize = 12.sp,
+                                fontFamily = SFProDisplay,
+                                modifier = Modifier.padding(horizontal = 12.dp),
+                            )
+                        }
+
+                        val durationText = remember(song.durationSec) {
+                            val m = song.durationSec / 60
+                            val s = song.durationSec % 60
+                            "%d:%02d".format(m, s)
+                        }
+                        Text(
+                            text = durationText,
+                            color = Color.White.copy(alpha = 0.40f),
+                            fontSize = 13.sp,
+                            fontFamily = SFProDisplay,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun formatHistoryTime(timestampMs: Long): String {
+    if (timestampMs <= 0L) return ""
+    val now = System.currentTimeMillis()
+    val diff = now - timestampMs
+    if (diff < 60_000L) return "Just now"
+    if (diff < 3600_000L) return "${diff / 60_000L}m ago"
+    val calNow = Calendar.getInstance()
+    val calThen = Calendar.getInstance().apply { timeInMillis = timestampMs }
+    val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+    val formattedTime = timeFormat.format(Date(timestampMs))
+    return if (calNow.get(Calendar.YEAR) == calThen.get(Calendar.YEAR)) {
+        if (calNow.get(Calendar.DAY_OF_YEAR) == calThen.get(Calendar.DAY_OF_YEAR)) {
+            "Today, $formattedTime"
+        } else if (calNow.get(Calendar.DAY_OF_YEAR) - calThen.get(Calendar.DAY_OF_YEAR) == 1) {
+            "Yesterday, $formattedTime"
+        } else {
+            SimpleDateFormat("MMM d", Locale.getDefault()).format(Date(timestampMs))
+        }
+    } else {
+        SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(Date(timestampMs))
     }
 }
 
