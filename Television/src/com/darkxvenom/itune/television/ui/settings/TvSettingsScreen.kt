@@ -62,6 +62,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
+import android.widget.Toast
+import androidx.compose.material.icons.automirrored.rounded.Logout
+import androidx.compose.material.icons.rounded.PersonAdd
+import androidx.compose.material.icons.rounded.SwapHoriz
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
+import com.darkxvenom.itune.data.auth.WebSessionMode
+import com.darkxvenom.itune.data.auth.YouTubeAccountUiState
+import com.darkxvenom.itune.television.ui.common.TvAmbientBackground
+import com.darkxvenom.itune.ui.auth.GoogleLoginScreen
 import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.television.focus.SFProDisplay
 import com.darkxvenom.itune.television.focus.TvBigButton
@@ -92,10 +102,13 @@ fun TvSettingsScreen(
 
     var activeTab by remember { mutableStateOf(TvSettingsTab.ACCOUNT) }
 
+    var loginMode by remember { mutableStateOf<WebSessionMode?>(null) }
+
+    Box(modifier = modifier.fillMaxSize().background(AppleOledBlack)) {
+    TvAmbientBackground(Modifier.fillMaxSize(), dim = 0.30f)
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
-            .background(AppleOledBlack)
             .padding(horizontal = 48.dp, vertical = 36.dp),
         horizontalArrangement = Arrangement.spacedBy(40.dp),
     ) {
@@ -183,16 +196,21 @@ fun TvSettingsScreen(
                     )
                     Spacer(modifier = Modifier.height(20.dp))
 
+                    TvAccountPanel(
+                        state = ytAccountState,
+                        onSignIn = { loginMode = WebSessionMode.SIGN_IN },
+                        onSwitchChannel = { loginMode = WebSessionMode.SWITCH_CHANNEL },
+                        onSignOut = {
+                            GoogleAuthStore.signOut(context)
+                            Toast.makeText(context, "Signed out", Toast.LENGTH_SHORT).show()
+                        },
+                    )
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
                     TvSettingCard(
                         title = "Display Name",
                         subtitle = settingsState.displayName.ifBlank { "Dark" },
-                    )
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    TvSettingCard(
-                        title = "YouTube Music Account",
-                        subtitle = if (ytAccountState.isSignedIn) "Signed in as ${ytAccountState.accountName}" else "Not signed in",
                     )
                 }
 
@@ -277,6 +295,107 @@ fun TvSettingsScreen(
                 }
             }
         }
+    }
+
+    loginMode?.let { mode ->
+        GoogleLoginScreen(
+            mode = mode,
+            initialCookie = if (mode == WebSessionMode.SWITCH_CHANNEL) GoogleAuthStore.activeCookie() else null,
+            onSignedIn = {
+                loginMode = null
+                Toast.makeText(
+                    context,
+                    if (mode == WebSessionMode.SWITCH_CHANNEL) "Channel switched • Loading feed..." else "Signed in • Loading feed...",
+                    Toast.LENGTH_SHORT,
+                ).show()
+            },
+            onClose = { loginMode = null },
+            modifier = Modifier.fillMaxSize(),
+        )
+    }
+    }
+}
+
+@Composable
+private fun TvAccountPanel(
+    state: YouTubeAccountUiState,
+    onSignIn: () -> Unit,
+    onSwitchChannel: () -> Unit,
+    onSignOut: () -> Unit,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            Modifier.size(84.dp).clip(CircleShape).background(Color(0x28FFFFFF))
+                .border(1.5.dp, Color.White.copy(alpha = 0.25f), CircleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (state.isSignedIn && !state.avatarUrl.isNullOrBlank()) {
+                AsyncImage(state.avatarUrl, null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+            } else {
+                Icon(Icons.Rounded.AccountCircle, null, tint = Color.White.copy(alpha = 0.8f), modifier = Modifier.size(60.dp))
+            }
+        }
+        Spacer(Modifier.width(20.dp))
+        Column {
+            Text(
+                if (state.isSignedIn) state.accountName.ifBlank { "YouTube Music" } else "Not signed in",
+                color = Color.White, fontSize = 24.sp, fontFamily = SFProDisplay, fontWeight = FontWeight.Bold,
+            )
+            Text(
+                if (state.isSignedIn) state.accountEmail.ifBlank { state.accountHandle } else
+                    "Sign in with Google to get your personalised feed, library and recommendations.",
+                color = Color.White.copy(alpha = 0.65f), fontSize = 15.sp, fontFamily = SFProDisplay,
+            )
+        }
+    }
+    Spacer(Modifier.height(24.dp))
+    if (!state.isSignedIn) {
+        TvAccountButton("Sign in with Google", Icons.Rounded.AccountCircle, primary = true, onClick = onSignIn)
+    } else {
+        TvAccountButton("Switch channel / account", Icons.Rounded.SwapHoriz, primary = false, onClick = onSwitchChannel)
+        Spacer(Modifier.height(12.dp))
+        TvAccountButton("Add another Google account", Icons.Rounded.PersonAdd, primary = false, onClick = onSignIn)
+        Spacer(Modifier.height(12.dp))
+        TvAccountButton("Sign out", Icons.AutoMirrored.Rounded.Logout, primary = false, destructive = true, onClick = onSignOut)
+    }
+}
+
+@Composable
+private fun TvAccountButton(
+    label: String,
+    icon: ImageVector,
+    primary: Boolean,
+    onClick: () -> Unit,
+    destructive: Boolean = false,
+) {
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+    val fg = when {
+        focused -> Color.Black
+        destructive -> Color(0xFFFF453A)
+        else -> Color.White
+    }
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .tvFocusable(
+                shape = RoundedCornerShape(16.dp), focusedBorderWidth = 0.dp, scaleOnFocus = 1.02f,
+                interactionSource = interaction, onClick = onClick,
+            )
+            .clip(RoundedCornerShape(16.dp))
+            .background(
+                when {
+                    focused -> Color.White
+                    primary -> AppleMusicRed
+                    else -> Color(0x22FFFFFF)
+                },
+            )
+            .padding(horizontal = 20.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(icon, null, tint = if (primary && !focused) Color.White else fg, modifier = Modifier.size(24.dp))
+        Spacer(Modifier.width(14.dp))
+        Text(label, color = if (primary && !focused) Color.White else fg, fontSize = 18.sp, fontFamily = SFProDisplay, fontWeight = FontWeight.SemiBold)
     }
 }
 

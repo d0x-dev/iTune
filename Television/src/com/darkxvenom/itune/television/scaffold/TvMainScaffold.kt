@@ -125,6 +125,7 @@ fun TvMainScaffold(
             is TvScreenState.Player -> {
                 TvPlayerScreen(
                     onBack = { screenState = TvScreenState.Main },
+                    onOpenArtist = { id, name, thumb -> screenState = TvScreenState.Artist(id, name, thumb) },
                 )
             }
             is TvScreenState.Artist -> {
