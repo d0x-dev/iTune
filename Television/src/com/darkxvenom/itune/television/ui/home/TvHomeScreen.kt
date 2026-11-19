@@ -369,18 +369,21 @@ private fun TvPortraitHeroCard(
     // Artwork palette wash for the bottom 30% panel
     val palette = rememberArtworkPalette(imageUrl = card.imageUrl)
 
+    val cardCornerRadius = 8.dp
+    val cardShape = RoundedCornerShape(cardCornerRadius)
+
     Box(
         modifier = modifier
             .width(210.dp)
             .height(285.dp)
             .tvFocusable(
-                shape = RoundedCornerShape(14.dp),
+                shape = cardShape,
                 scaleOnFocus = 1.05f,
                 elevationOnFocus = 16.dp,
                 interactionSource = interactionSource,
                 onClick = onClick,
             )
-            .clip(RoundedCornerShape(14.dp))
+            .clip(cardShape)
             .background(Color(0xFF1E1E22)),
     ) {
         // Upper ~70%: Artwork
@@ -432,7 +435,7 @@ private fun TvPortraitHeroCard(
                 .fillMaxWidth()
                 .fillMaxHeight(0.31f)
                 .align(Alignment.BottomCenter)
-                .clip(RoundedCornerShape(bottomStart = 14.dp, bottomEnd = 14.dp))
+                .clip(RoundedCornerShape(bottomStart = cardCornerRadius, bottomEnd = cardCornerRadius))
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
