@@ -79,12 +79,18 @@ object MusicBackend {
         if (initialized) return
         try {
             NewPipe.init(NewPipeDownloader.instance)
-            org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor.setFetchIosClient(false)
+            // Enable iOS client streams to reliably bypass Google CDN 403 Forbidden and bot-check throttling
+            org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor.setFetchIosClient(true)
             initialized = true
-            Log.d(TAG, "NewPipeExtractor initialized successfully")
+            Log.d(TAG, "NewPipeExtractor initialized successfully with iOS client fallback")
         } catch (e: Exception) {
             Log.e(TAG, "Failed initializing NewPipe: ${e.message}", e)
         }
+    }
+
+    fun invalidateStreamCache(videoId: String) {
+        streamCache.remove(videoId)
+        Log.d(TAG, "Invalidated stream cache for videoId: $videoId")
     }
 
     suspend fun searchMusic(query: String): List<MusicTrack> = withContext(Dispatchers.IO) {
@@ -679,11 +685,13 @@ object MusicBackend {
         )
     }
 
-    suspend fun getOrLoadStreamInfo(videoId: String): StreamInfo = withContext(Dispatchers.IO) {
+    suspend fun getOrLoadStreamInfo(videoId: String, forceRefresh: Boolean = false): StreamInfo = withContext(Dispatchers.IO) {
         val now = System.currentTimeMillis()
-        streamCache[videoId]?.let { cached ->
-            if (now - cached.fetchedAtMs < STREAM_CACHE_TTL_MS) {
-                return@withContext cached.info
+        if (!forceRefresh) {
+            streamCache[videoId]?.let { cached ->
+                if (now - cached.fetchedAtMs < STREAM_CACHE_TTL_MS) {
+                    return@withContext cached.info
+                }
             }
         }
         val url = "https://www.youtube.com/watch?v=$videoId"
@@ -820,9 +828,11 @@ object MusicBackend {
         videoId: String,
         forceLossless: Boolean? = null,
         targetQuality: String? = null,
+        forceRefresh: Boolean = false,
+        excludedUrls: Set<String> = emptySet(),
     ): String? = withContext(Dispatchers.IO) {
         try {
-            val info = getOrLoadStreamInfo(videoId)
+            val info = getOrLoadStreamInfo(videoId, forceRefresh = forceRefresh)
 
             val audioStreams = info.audioStreams
             if (audioStreams.isNullOrEmpty()) {
@@ -833,9 +843,13 @@ object MusicBackend {
             val progressiveCandidates = audioStreams.filter {
                 it.deliveryMethod == DeliveryMethod.PROGRESSIVE_HTTP &&
                     it.audioTrackType != AudioTrackType.DUBBED &&
-                    !it.content.isNullOrBlank()
+                    !it.content.isNullOrBlank() &&
+                    it.content !in excludedUrls
             }
             val candidates = progressiveCandidates.ifEmpty {
+                audioStreams.filter { !it.content.isNullOrBlank() && it.content !in excludedUrls }
+            }.ifEmpty {
+                // If all were excluded, fall back to any available candidate
                 audioStreams.filter { !it.content.isNullOrBlank() }
             }
 
@@ -882,7 +896,9 @@ object MusicBackend {
         videoId: String,
         forceLossless: Boolean? = null,
         targetQuality: String? = null,
-    ): String? = resolveAudioStream(videoId, forceLossless, targetQuality)
+        forceRefresh: Boolean = false,
+        excludedUrls: Set<String> = emptySet(),
+    ): String? = resolveAudioStream(videoId, forceLossless, targetQuality, forceRefresh, excludedUrls)
 
     data class CacheStreamChoice(val url: String, val bitrateKbps: Int)
 

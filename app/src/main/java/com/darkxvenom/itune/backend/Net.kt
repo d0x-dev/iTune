@@ -14,6 +14,7 @@ package com.darkxvenom.itune.backend
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.schabi.newpipe.extractor.downloader.Downloader
 import org.schabi.newpipe.extractor.downloader.Request
 import org.schabi.newpipe.extractor.downloader.Response
@@ -33,7 +34,35 @@ object Net {
             .connectionPool(okhttp3.ConnectionPool(8, 5, TimeUnit.MINUTES))
             .addInterceptor { chain ->
                 val request = chain.request()
-                val response = chain.proceed(request)
+                val host = request.url.host
+
+                // Apply YouTube CDN client headers (User-Agent, Origin, Referer) based on stream client parameter
+                val finalRequest = if (StreamClientUtils.isYouTubeMediaHost(host)) {
+                    val builder = request.newBuilder()
+                    StreamClientUtils.applyHeaders(builder, request.url)
+                    builder.build()
+                } else {
+                    request
+                }
+
+                val response = chain.proceed(finalRequest)
+
+                // AirBeats fix: Handle HTTP 416 (Range Not Satisfiable) by returning empty EOF partial content
+                if (response.code == 416) {
+                    val rangeHeader = request.header("Range")
+                    if (rangeHeader != null) {
+                        response.close()
+                        return@addInterceptor okhttp3.Response.Builder()
+                            .request(finalRequest)
+                            .protocol(response.protocol)
+                            .code(206)
+                            .message("Partial Content")
+                            .header("Content-Length", "0")
+                            .body(ByteArray(0).toResponseBody(response.body?.contentType()))
+                            .build()
+                    }
+                }
+
                 if (!response.isSuccessful && response.code == 404) {
                     val urlStr = request.url.toString()
                     if (request.url.host.contains("ytimg.com") && urlStr.contains("/maxresdefault.jpg")) {
