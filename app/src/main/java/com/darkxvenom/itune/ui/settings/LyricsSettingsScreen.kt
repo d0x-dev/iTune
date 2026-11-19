@@ -22,6 +22,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -882,9 +883,9 @@ private fun LyricsSectionHeader(title: String) {
 @Composable
 private fun LyricsUniformCard(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
-    Box(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)

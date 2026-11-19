@@ -115,18 +115,41 @@ fun CanvasKineticLyricsOverlay(
     isPlaying: Boolean,
     visible: Boolean,
     overlayAlpha: Float,
+    translatedLyrics: List<String>? = null,
     modifier: Modifier = Modifier,
 ) {
     if (overlayAlpha <= 0.005f || lyrics.isEmpty()) return
 
-    val isSynced = remember(lyrics) {
-        lyrics.size > 1 && lyrics.any { it.timeMs > 0L }
+    // If translated lyrics are available for this song, substitute each non-blank line with its translation
+    val effectiveLyrics = remember(lyrics, translatedLyrics) {
+        if (!translatedLyrics.isNullOrEmpty()) {
+            var nonBlankIdx = 0
+            lyrics.map { line ->
+                if (line.text.isNotBlank()) {
+                    val translatedText = translatedLyrics.getOrNull(nonBlankIdx)?.trim()
+                    nonBlankIdx++
+                    if (!translatedText.isNullOrEmpty()) {
+                        line.copy(text = translatedText)
+                    } else {
+                        line
+                    }
+                } else {
+                    line
+                }
+            }
+        } else {
+            lyrics
+        }
+    }
+
+    val isSynced = remember(effectiveLyrics) {
+        effectiveLyrics.size > 1 && effectiveLyrics.any { it.timeMs > 0L }
     }
     if (!isSynced) return
 
     // Pre-build deterministic word-level cues for every synced line once per lyrics list.
-    val cues = remember(lyrics, durationMs) {
-        buildKineticCues(lyrics, durationMs)
+    val cues = remember(effectiveLyrics, durationMs) {
+        buildKineticCues(effectiveLyrics, durationMs)
     }
     if (cues.isEmpty()) return
 
