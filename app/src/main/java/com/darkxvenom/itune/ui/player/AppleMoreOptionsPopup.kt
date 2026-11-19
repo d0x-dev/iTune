@@ -66,6 +66,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.QueueMusic
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Headphones
 import androidx.compose.material.icons.rounded.MusicNote
@@ -127,9 +128,14 @@ import com.darkxvenom.itune.backend.MusicBackend
 import com.darkxvenom.itune.backend.MusicArtist
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
+import com.darkxvenom.itune.backend.highQualityThumbnail
+import com.darkxvenom.itune.data.library.SavedSongMetadata
 import com.darkxvenom.itune.data.model.BrowseType
 import com.darkxvenom.itune.data.model.PendingArtistNav
 import com.darkxvenom.itune.backend.formatMusicDuration
+import com.darkxvenom.itune.ui.library.AppleSheetAddToPlaylistContent
+import com.darkxvenom.itune.ui.library.AppleSheetCreatePlaylistContent
+import com.darkxvenom.itune.ui.library.PendingPlaylistPayload
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -139,6 +145,8 @@ import kotlin.math.sin
 private enum class MorePopupPage {
     MAIN,
     DOWNLOAD,
+    ADD_TO_PLAYLIST,
+    CREATE_PLAYLIST,
     LYRICS_MENU,
     LYRICS_SEARCH,
     LYRICS_EDIT,
@@ -652,13 +660,16 @@ fun AppleMoreOptionsPopup(
                 MorePopupPage.LYRICS_SEARCH,
                 MorePopupPage.LYRICS_EDIT,
                 MorePopupPage.LYRICS_OFFSET -> activePage = MorePopupPage.LYRICS_MENU
+                MorePopupPage.CREATE_PLAYLIST -> activePage = MorePopupPage.ADD_TO_PLAYLIST
                 MorePopupPage.MAIN -> onDismiss()
                 else -> activePage = MorePopupPage.MAIN
             }
         },
         isTopAnchored = isPanelOpen,
         bottomClearanceDp = bottomClearanceDp,
-        hasInputFocusPage = activePage == MorePopupPage.LYRICS_SEARCH || activePage == MorePopupPage.LYRICS_EDIT,
+        hasInputFocusPage = activePage == MorePopupPage.LYRICS_SEARCH ||
+            activePage == MorePopupPage.LYRICS_EDIT ||
+            activePage == MorePopupPage.CREATE_PLAYLIST,
         modifier = modifier,
         headerActions = {
             val isFavorite = MusicPlayerState.isFavorite(track.id)
@@ -706,6 +717,7 @@ fun AppleMoreOptionsPopup(
                             targetState = activePage,
                             transitionSpec = {
                                 val navigatingBack = targetState == MorePopupPage.MAIN ||
+                                    (targetState == MorePopupPage.ADD_TO_PLAYLIST && initialState == MorePopupPage.CREATE_PLAYLIST) ||
                                     (targetState == MorePopupPage.LYRICS_MENU &&
                                         (initialState == MorePopupPage.LYRICS_SEARCH ||
                                             initialState == MorePopupPage.LYRICS_EDIT ||
@@ -729,6 +741,16 @@ fun AppleMoreOptionsPopup(
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 activePage = MorePopupPage.DOWNLOAD
+                                            }
+                                        )
+                                        PopupMenuDivider()
+
+                                        MorePopupVectorOptionRow(
+                                            icon = Icons.AutoMirrored.Rounded.QueueMusic,
+                                            title = "Add to Playlist",
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                activePage = MorePopupPage.ADD_TO_PLAYLIST
                                             }
                                         )
                                         PopupMenuDivider()
@@ -954,6 +976,51 @@ fun AppleMoreOptionsPopup(
                                         onBack = { activePage = MorePopupPage.MAIN },
                                         onSelectDone = { onDismiss() }
                                     )
+                                }
+
+                                MorePopupPage.ADD_TO_PLAYLIST -> {
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        PopupSubPageHeader(
+                                            title = "Add to Playlist",
+                                            onBack = { activePage = MorePopupPage.MAIN }
+                                        )
+                                        PopupMenuDivider()
+                                        val playlistPayload = remember(track) {
+                                            PendingPlaylistPayload(
+                                                title = track.title,
+                                                subtitle = track.artists,
+                                                artworkUrl = track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl,
+                                                staticSongs = listOf(SavedSongMetadata.fromTrack(track)),
+                                            )
+                                        }
+                                        AppleSheetAddToPlaylistContent(
+                                            payload = playlistPayload,
+                                            onCreateNewClick = { activePage = MorePopupPage.CREATE_PLAYLIST },
+                                            onCompleted = { onDismiss() },
+                                        )
+                                    }
+                                }
+
+                                MorePopupPage.CREATE_PLAYLIST -> {
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        PopupSubPageHeader(
+                                            title = "New Playlist",
+                                            onBack = { activePage = MorePopupPage.ADD_TO_PLAYLIST }
+                                        )
+                                        PopupMenuDivider()
+                                        val playlistPayload = remember(track) {
+                                            PendingPlaylistPayload(
+                                                title = track.title,
+                                                subtitle = track.artists,
+                                                artworkUrl = track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl,
+                                                staticSongs = listOf(SavedSongMetadata.fromTrack(track)),
+                                            )
+                                        }
+                                        AppleSheetCreatePlaylistContent(
+                                            payload = playlistPayload,
+                                            onCompleted = { onDismiss() },
+                                        )
+                                    }
                                 }
                             }
                         }
