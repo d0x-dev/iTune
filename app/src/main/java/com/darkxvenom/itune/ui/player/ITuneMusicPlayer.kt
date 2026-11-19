@@ -177,6 +177,7 @@ import com.darkxvenom.itune.ishare.IShareSyncManager
 import com.darkxvenom.itune.ui.artist.canvas.CanvasArtworkPlayer
 import com.darkxvenom.itune.ui.artist.canvas.CanvasContentMode
 import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
+import com.darkxvenom.itune.ui.theme.AppleMusicRed
 import androidx.compose.runtime.rememberUpdatedState
 import com.darkxvenom.itune.ui.artist.icons.SfIcons
 import com.darkxvenom.itune.ui.artist.theme.rememberArtworkPalette
@@ -899,6 +900,7 @@ fun ITuneMusicPlayer(
                     isPlaying = isPlaying,
                     visible = showCanvasKineticLyrics,
                     overlayAlpha = effectiveCanvasLyricsAlpha,
+                    translatedLyrics = translationsBySong[track.id],
                 )
             }
         }
@@ -1594,6 +1596,7 @@ fun ITuneMusicPlayer(
                 value = displayPos.toFloat(),
                 valueRange = 0f..safeDuration.toFloat(),
                 isSeeking = isSeeking,
+                isLoading = isLoading,
                 onSeekStart = { targetVal ->
                     onLyricsInteraction()
                     isSeeking = true
@@ -2422,6 +2425,7 @@ internal fun IosCapsuleSeekSlider(
     valueRange: ClosedFloatingPointRange<Float>,
     isSeeking: Boolean,
     enabled: Boolean = true,
+    isLoading: Boolean = false,
     onSeekStart: (Float) -> Unit,
     onSeekChange: (Float) -> Unit,
     onSeekEnd: (Float) -> Unit,
@@ -2440,6 +2444,24 @@ internal fun IosCapsuleSeekSlider(
         targetValue = displayFraction,
         animationSpec = if (isSeeking) snap() else tween(durationMillis = 250, easing = LinearEasing),
         label = "seekSliderFraction"
+    )
+
+    val isActuallyLoading = isLoading && !isSeeking
+    val loadingAlpha by animateFloatAsState(
+        targetValue = if (isActuallyLoading) 1f else 0f,
+        animationSpec = tween(durationMillis = 220),
+        label = "SeekLoadingAlpha"
+    )
+
+    val infiniteTransition = rememberInfiniteTransition(label = "SeekLoadingInfinite")
+    val loadingProgress by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 950, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "SeekLoadingProgress"
     )
 
     BoxWithConstraints(
@@ -2503,15 +2525,65 @@ internal fun IosCapsuleSeekSlider(
                 .background(Color.White.copy(alpha = 0.22f))
         )
 
-        // Active progress capsule track
-        if (animatedFraction > 0.001f) {
+        // Active progress capsule track (normal playback)
+        if (animatedFraction > 0.001f && loadingAlpha < 0.99f) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(animatedFraction)
                     .height(trackHeight)
                     .clip(trackShape)
+                    .graphicsLayer { alpha = 1f - loadingAlpha }
                     .background(Color.White.copy(alpha = if (enabled) 0.85f else 0.45f))
             )
+        }
+
+        // Red loading animation inside seek bar (matching TopSpringLoadingBar)
+        if (loadingAlpha > 0.01f) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(trackHeight)
+                    .clip(trackShape)
+                    .graphicsLayer { alpha = loadingAlpha }
+            ) {
+                // Faint red track guide
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0x28FA2D48))
+                )
+
+                // Constantly moving glowing red beam from left to right
+                Canvas(modifier = Modifier.fillMaxSize()) {
+                    val w = size.width
+                    val h = size.height
+
+                    val beamWidth = w * 0.35f
+                    val travelSpan = w + beamWidth * 2f
+                    val headX = -beamWidth + (loadingProgress * travelSpan)
+                    val tailX = headX + beamWidth
+
+                    val beamBrush = Brush.horizontalGradient(
+                        colors = listOf(
+                            Color.Transparent,
+                            AppleMusicRed.copy(alpha = 0.40f),
+                            AppleMusicRed,
+                            Color.White,
+                            AppleMusicRed,
+                            AppleMusicRed.copy(alpha = 0.40f),
+                            Color.Transparent
+                        ),
+                        startX = headX,
+                        endX = tailX
+                    )
+
+                    drawRect(
+                        brush = beamBrush,
+                        topLeft = Offset(headX, 0f),
+                        size = ComposeSize(beamWidth, h)
+                    )
+                }
+            }
         }
     }
 }
