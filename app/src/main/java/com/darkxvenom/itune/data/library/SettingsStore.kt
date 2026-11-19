@@ -48,6 +48,7 @@ data class SettingsUiState(
     val timeSyncedLyrics: Boolean = true,
     val playerType: String = "Dynamic",
     val playerDynamicColoring: Boolean = true,
+    val fullScreenCoverArt: Boolean = true,
     val topCardType: String = "Portrait",
     val appFont: String = "system",
     val liquidGlassChrome: Boolean = true,
@@ -154,6 +155,7 @@ object SettingsStore {
     const val KEY_TIME_SYNCED_LYRICS = "time_synced_lyrics"
     const val KEY_PLAYER_TYPE = "player_type"
     const val KEY_PLAYER_DYNAMIC_COLORING = "player_dynamic_coloring"
+    const val KEY_FULL_SCREEN_COVER_ART = "full_screen_cover_art"
     const val KEY_TOP_CARD_TYPE = "top_card_type"
     const val KEY_APP_FONT = "app_font"
     const val TOP_CARD_TYPE_PORTRAIT = "Portrait"
@@ -309,6 +311,7 @@ object SettingsStore {
             KEY_PRIORITIZE_SPOTIFY_CANVAS -> cur.copy(prioritizeSpotifyCanvas = value)
             KEY_SHOW_SYNCED_LYRICS_OVER_CANVAS -> cur.copy(showSyncedLyricsOverCanvas = value)
             KEY_PLAYER_DYNAMIC_COLORING -> cur.copy(playerDynamicColoring = value)
+            KEY_FULL_SCREEN_COVER_ART -> cur.copy(fullScreenCoverArt = value)
             KEY_TIME_SYNCED_LYRICS -> cur.copy(timeSyncedLyrics = value)
             KEY_LIQUID_GLASS -> cur.copy(liquidGlassChrome = value)
             KEY_TACTILE_HAPTICS -> cur.copy(tactileHaptics = value)
@@ -639,6 +642,7 @@ object SettingsStore {
             timeSyncedLyrics = p.getBoolean(KEY_TIME_SYNCED_LYRICS, defaults.timeSyncedLyrics),
             playerType = p.getString(KEY_PLAYER_TYPE, defaults.playerType) ?: defaults.playerType,
             playerDynamicColoring = p.getBoolean(KEY_PLAYER_DYNAMIC_COLORING, defaults.playerDynamicColoring),
+            fullScreenCoverArt = p.getBoolean(KEY_FULL_SCREEN_COVER_ART, defaults.fullScreenCoverArt),
             topCardType = p.getString(KEY_TOP_CARD_TYPE, defaults.topCardType) ?: defaults.topCardType,
             appFont = p.getString(KEY_APP_FONT, defaults.appFont) ?: defaults.appFont,
             liquidGlassChrome = p.getBoolean(KEY_LIQUID_GLASS, defaults.liquidGlassChrome),

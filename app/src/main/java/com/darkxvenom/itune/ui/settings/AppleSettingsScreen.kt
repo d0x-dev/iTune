@@ -3030,6 +3030,19 @@ private fun buildSettingsSections(
                 checked = state.playerDynamicColoring,
                 onToggle = { onToggleBool(SettingsStore.KEY_PLAYER_DYNAMIC_COLORING, it) },
             ),
+            SettingsEntry.Toggle(
+                id = "full_screen_cover_art",
+                title = "Full screen cover art",
+                subtitle = if (state.fullScreenCoverArt) {
+                    "Full screen cover art expands to fill the player"
+                } else {
+                    "Show album artwork in classic centered square container"
+                },
+                iconRes = R.drawable.ic_lib_albums,
+                keywords = listOf("cover", "art", "artwork", "full", "screen", "square", "album"),
+                checked = state.fullScreenCoverArt,
+                onToggle = { onToggleBool(SettingsStore.KEY_FULL_SCREEN_COVER_ART, it) },
+            ),
             SettingsEntry.SegmentedToggle(
                 id = "top_card_type",
                 title = "Home Top Card Style",

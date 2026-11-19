@@ -123,7 +123,7 @@ import java.io.File
 private const val DEFAULT_BLURB = "Playback, sound and display preferences for iTune on this TV."
 
 /**
- * Settings Screen matching BitChord & Apple TV (tvOS) layout:
+ * Settings Screen matching Apple TV (tvOS) layout:
  * - Left column: App Logo / Mark and dynamic description ("blurb") that updates smoothly on focus.
  * - Right column: Grouped settings rows with in-place value display and toggling.
  * - Comprehensive settings options from the app module.

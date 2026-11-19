@@ -121,6 +121,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size as ComposeSize
@@ -157,6 +158,7 @@ import androidx.annotation.DrawableRes
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.darkxvenom.itune.R
@@ -615,6 +617,26 @@ fun ITuneMusicPlayer(
     // Artwork colors are optional; when disabled, restore the original white Apple-style player controls.
     val playerAccentColor = if (settingsState.playerDynamicColoring) artworkAccentColor else Color.White
 
+    var loadedArtTrackId by remember { mutableStateOf<String?>(null) }
+    val isCoverLoaded = loadedArtTrackId == track.id && !currentArtUrl.isNullOrBlank()
+
+    LaunchedEffect(track.id) {
+        if (loadedArtTrackId != track.id) {
+            loadedArtTrackId = null
+        }
+    }
+
+    val isFullScreenCover = settingsState.fullScreenCoverArt
+    val coverZoomTarget = if (isFullScreenCover && isCoverLoaded) 1f else 0f
+    val coverZoomProgress by animateFloatAsState(
+        targetValue = coverZoomTarget,
+        animationSpec = spring(
+            dampingRatio = 0.85f,
+            stiffness = 220f,
+        ),
+        label = "coverZoomProgress",
+    )
+
     // ── Canvas (Spotify, Apple Music, Tidal & Community) State ──
     val canvas = rememberTrackCanvasArtwork(
         track = track,
@@ -986,14 +1008,33 @@ fun ITuneMusicPlayer(
         }
 
         // ── 5. Continuous Morphing Artwork Avatar ──
-        // Full bleed across top in music mode, smoothly shrinks into 58dp rounded corner thumbnail
-        // spaced comfortably below the drag handle pill when lyrics or queue opens.
+        // Seamlessly morphs between:
+        // - Classic Square Container (centered 1:1, rounded corners, placeholder with ic_itune_waves)
+        // - Full Bleed Cover Art (when Full Screen Cover Art is ON and image is loaded)
+        // - 58dp Top Left Header Thumbnail (when Lyrics or Queue opens)
+        // - 38dp Bottom Left Mini Player Thumbnail (when swiping down to dismiss player)
+        val defaultPlayerTitleTopDp = maxHeight - 398.dp - navBottomDp
+        val availableArtHeight = (defaultPlayerTitleTopDp - statusBarTopDp - 64.dp).coerceAtLeast(180.dp)
+        val squareArtSize = minOf(maxWidth - 48.dp, availableArtHeight).coerceIn(200.dp, 360.dp)
+        val squareArtTop = statusBarTopDp + 48.dp + ((defaultPlayerTitleTopDp - statusBarTopDp - 48.dp) - squareArtSize) / 2
+        val squareArtStart = (maxWidth - squareArtSize) / 2
+        val squareArtRadius = 16.dp
+
         val progressClamped = panelProgress.coerceIn(0f, 1f)
-        val fullArtStart = lerpDp(0.dp, 24.dp, panelProgress)
-        val fullArtTop = lerpDp(0.dp, statusBarTopDp + 34.dp, panelProgress)
-        val fullArtWidth = lerpDp(maxWidth, 58.dp, panelProgress).coerceAtLeast(1.dp)
-        val fullArtHeight = lerpDp(fullBleedHeight, 58.dp, panelProgress).coerceAtLeast(1.dp)
-        val fullArtRadius = lerpDp(0.dp, 11.dp, progressClamped).coerceAtLeast(0.dp)
+
+        // Resting dimensions before queue/lyrics open (interpolating between square and full bleed based on coverZoomProgress)
+        val restingArtStart = lerpDp(squareArtStart, 0.dp, coverZoomProgress)
+        val restingArtTop = lerpDp(squareArtTop, 0.dp, coverZoomProgress)
+        val restingArtWidth = lerpDp(squareArtSize, maxWidth, coverZoomProgress)
+        val restingArtHeight = lerpDp(squareArtSize, fullBleedHeight, coverZoomProgress)
+        val restingArtRadius = lerpDp(squareArtRadius, 0.dp, coverZoomProgress)
+
+        // Morphing dimensions when queue or lyrics panel opens (collapses to 58dp top thumbnail)
+        val fullArtStart = lerpDp(restingArtStart, 24.dp, panelProgress)
+        val fullArtTop = lerpDp(restingArtTop, statusBarTopDp + 34.dp, panelProgress)
+        val fullArtWidth = lerpDp(restingArtWidth, 58.dp, panelProgress).coerceAtLeast(1.dp)
+        val fullArtHeight = lerpDp(restingArtHeight, 58.dp, panelProgress).coerceAtLeast(1.dp)
+        val fullArtRadius = lerpDp(restingArtRadius, 11.dp, progressClamped).coerceAtLeast(0.dp)
 
         val miniArtStart = 10.dp
         val miniArtTop = 10.dp
@@ -1007,29 +1048,69 @@ fun ITuneMusicPlayer(
         val artHeight = lerpDp(miniArtHeight, fullArtHeight, sp)
         val artRadius = lerpDp(miniArtRadius, fullArtRadius, sp).coerceAtLeast(0.dp)
 
+        val squareShadowElevation = lerpDp(18.dp, 0.dp, coverZoomProgress) * (1f - panelProgress).coerceIn(0f, 1f)
+        val squareBorderAlpha = lerpFloat(0.14f, 0f, coverZoomProgress) * (1f - panelProgress).coerceIn(0f, 1f)
+
         Box(
             modifier = Modifier
                 .zIndex(35f)
                 .offset { IntOffset(artStart.roundToPx(), artTop.roundToPx()) }
                 .size(width = artWidth, height = artHeight)
+                .shadow(
+                    elevation = squareShadowElevation,
+                    shape = RoundedCornerShape(artRadius),
+                    spotColor = Color.Black.copy(alpha = 0.55f),
+                    ambientColor = Color.Black.copy(alpha = 0.35f),
+                )
                 .graphicsLayer {
                     val handoff = canvasCover.floatValue * (1f - panelProgress * 2f).coerceIn(0f, 1f) *
                         ((sp - 0.35f) / 0.65f).coerceIn(0f, 1f)
                     alpha = (1f - handoff).coerceIn(0f, 1f)
                 }
                 .clip(RoundedCornerShape(artRadius))
+                .border(
+                    width = 1.dp,
+                    color = Color.White.copy(
+                        alpha = if (panelProgress > 0.85f) {
+                            (0.22f * panelProgress).coerceIn(0f, 1f)
+                        } else {
+                            squareBorderAlpha
+                        }
+                    ),
+                    shape = RoundedCornerShape(artRadius),
+                )
                 .then(
                     if (panelProgress > 0.85f) {
-                        Modifier
-                            .border(1.dp, Color.White.copy(alpha = (0.22f * panelProgress).coerceIn(0f, 1f)), RoundedCornerShape(artRadius))
-                            .clickable {
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                MusicPlayerState.lyricsOpen = false
-                                MusicPlayerState.queueOpen = false
-                            }
+                        Modifier.clickable {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            MusicPlayerState.lyricsOpen = false
+                            MusicPlayerState.queueOpen = false
+                        }
                     } else Modifier
                 )
         ) {
+            // ── Loading / Placeholder Container: Soft Gradient + ic_itune_waves ──
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.linearGradient(
+                            listOf(
+                                Color(0xFF2E2E32),
+                                Color(0xFF18181A),
+                            )
+                        )
+                    ),
+                contentAlignment = Alignment.Center,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_itune_waves),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.60f)),
+                    modifier = Modifier.size(lerpDp(22.dp, 56.dp, sp)),
+                )
+            }
+
             val playerFadeWeight = (1f - panelProgress * 8f).coerceIn(0f, 1f)
             // Move the sharp-to-ambient morph well up the cover so blur reaches the
             // title and controls region in both Dynamic and Static player modes.
@@ -1037,47 +1118,57 @@ fun ITuneMusicPlayer(
             val fadeMidAlpha = lerpFloat(1.0f, 0.44f, playerFadeWeight)
             val fadeEndAlpha = lerpFloat(1.0f, 0.0f, playerFadeWeight)
 
+            val effectiveFadeMidAlpha = lerpFloat(1.0f, fadeMidAlpha, coverZoomProgress)
+            val effectiveFadeEndAlpha = lerpFloat(1.0f, fadeEndAlpha, coverZoomProgress)
+            val hasFadeMask = coverZoomProgress > 0.01f && (fadeStart < 0.999f || effectiveFadeEndAlpha < 0.999f)
+
             Crossfade(
                 targetState = currentArtUrl,
                 animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing),
                 label = "avatarArtworkCrossfade",
                 modifier = Modifier.fillMaxSize()
             ) { artUrl ->
-                AsyncImage(
-                    model = ImageRequest.Builder(context)
-                        .data(artUrl)
-                        .size(Size.ORIGINAL)
-                        .crossfade(200)
-                        .build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            compositingStrategy = CompositingStrategy.Offscreen
-                        }
-                        .drawWithContent {
-                            drawContent()
-                            if (fadeStart < 0.999f || fadeEndAlpha < 0.999f) {
-                                val mask = Brush.verticalGradient(
-                                    colorStops = arrayOf(
-                                        0f to Color.Black,
-                                        fadeStart to Color.Black,
-                                        0.58f to Color.Black.copy(alpha = fadeMidAlpha),
-                                        1f to Color.Black.copy(alpha = fadeEndAlpha)
-                                    )
-                                )
-                                drawRect(brush = mask, blendMode = BlendMode.DstIn)
+                if (!artUrl.isNullOrBlank()) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(artUrl)
+                            .size(Size.ORIGINAL)
+                            .crossfade(200)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        onState = { state ->
+                            if (state is AsyncImagePainter.State.Success) {
+                                loadedArtTrackId = track.id
                             }
-                        }
-                )
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer {
+                                compositingStrategy = CompositingStrategy.Offscreen
+                            }
+                            .drawWithContent {
+                                drawContent()
+                                if (hasFadeMask) {
+                                    val mask = Brush.verticalGradient(
+                                        colorStops = arrayOf(
+                                            0f to Color.Black,
+                                            fadeStart to Color.Black,
+                                            0.58f to Color.Black.copy(alpha = effectiveFadeMidAlpha),
+                                            1f to Color.Black.copy(alpha = effectiveFadeEndAlpha)
+                                        )
+                                    )
+                                    drawRect(brush = mask, blendMode = BlendMode.DstIn)
+                                }
+                            }
+                    )
+                }
             }
         }
 
         // ── 5b. Continuous Morphing Title & Artist ──
         // Seamlessly morphs between Mini Player position/size and Full Player resting position/size,
         // and glides into the top header when Queue or Lyrics opens.
-        val defaultPlayerTitleTopDp = maxHeight - 398.dp - navBottomDp
         val startTitleTopPx = if (playerTitleVisualTopPx > 0f) playerTitleVisualTopPx else with(density) { defaultPlayerTitleTopDp.toPx() }
 
         val fullTitleStartPx = lerpFloat(with(density) { 24.dp.toPx() }, with(density) { 96.dp.toPx() }, panelProgress)
