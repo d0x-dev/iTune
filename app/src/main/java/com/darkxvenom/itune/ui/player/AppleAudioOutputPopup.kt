@@ -20,6 +20,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -46,6 +52,7 @@ import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -53,6 +60,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -67,6 +75,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.darkxvenom.itune.R
 import com.darkxvenom.itune.audio.AudioOutputManager
+import com.darkxvenom.itune.audio.CastDiscoveryManager
 import com.darkxvenom.itune.audio.OutputDeviceEntry
 import com.darkxvenom.itune.ui.settings.AppleGlassSwitch
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
@@ -102,10 +111,21 @@ fun AppleAudioOutputPopup(
     val view = LocalView.current
 
     val outputState by AudioOutputManager.state.collectAsStateWithLifecycle()
+    val castDevices by CastDiscoveryManager.devices.collectAsStateWithLifecycle()
+    val isScanningCast by CastDiscoveryManager.isScanning.collectAsStateWithLifecycle()
 
     LaunchedEffect(visible) {
         if (visible) {
             AudioOutputManager.refreshDevices()
+            CastDiscoveryManager.startDiscovery(context)
+        } else {
+            CastDiscoveryManager.stopDiscovery()
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            CastDiscoveryManager.stopDiscovery()
         }
     }
 
@@ -149,6 +169,7 @@ fun AppleAudioOutputPopup(
                     .clickable {
                         view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                         AudioOutputManager.refreshDevices()
+                        CastDiscoveryManager.startDiscovery(context)
                     },
                 contentAlignment = Alignment.Center,
             ) {
@@ -276,6 +297,132 @@ fun AppleAudioOutputPopup(
 
             PopupMenuDivider()
 
+            // ── Cast & Wireless Devices Section (Chromecast, Google TV, Nest Speakers) ──
+            val infiniteTransition = rememberInfiniteTransition(label = "castRadar")
+            val radarScale by infiniteTransition.animateFloat(
+                initialValue = 0.85f,
+                targetValue = 1.35f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(1300, easing = LinearOutSlowInEasing),
+                    repeatMode = RepeatMode.Reverse
+                ),
+                label = "radarScale"
+            )
+            val radarAlpha by infiniteTransition.animateFloat(
+                initialValue = 0.35f,
+                targetValue = 0.95f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(1300, easing = FastOutSlowInEasing),
+                    repeatMode = RepeatMode.Reverse
+                ),
+                label = "radarAlpha"
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(7.dp),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 2.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "CAST & WIRELESS DEVICES",
+                            color = AppleTextSecondary,
+                            fontSize = 10.5.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = 0.6.sp,
+                        )
+                        if (isScanningCast) {
+                            Spacer(Modifier.width(6.dp))
+                            Box(
+                                modifier = Modifier
+                                    .size(7.dp)
+                                    .graphicsLayer {
+                                        scaleX = radarScale
+                                        scaleY = radarScale
+                                        alpha = radarAlpha
+                                    }
+                                    .clip(CircleShape)
+                                    .background(OutputActiveGreen)
+                            )
+                        }
+                    }
+                    Text(
+                        text = if (isScanningCast && castDevices.isEmpty()) "Searching nearby…" else "${castDevices.size} nearby",
+                        color = Color.White.copy(alpha = 0.56f),
+                        fontSize = 10.5.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                }
+
+                if (castDevices.isEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(OutputCardBlack)
+                            .border(0.6.dp, Color.White.copy(alpha = 0.16f), RoundedCornerShape(14.dp))
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(34.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.08f)),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.ic_cast),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.75f)),
+                                modifier = Modifier.size(18.dp),
+                            )
+                        }
+                        Spacer(Modifier.width(10.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = if (isScanningCast) "Searching for Cast devices…" else "No Cast devices detected",
+                                color = Color.White,
+                                fontSize = 12.5.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Text(
+                                text = if (isScanningCast) "Scanning local Wi-Fi for Google TV & speakers" else "Make sure device is on the same Wi-Fi",
+                                color = Color.White.copy(alpha = 0.60f),
+                                fontSize = 11.sp,
+                            )
+                        }
+                    }
+                } else {
+                    castDevices.forEach { cast ->
+                        val isCastSelected = outputState.activeCastDevice?.id == cast.id
+                        OutputDeviceBlackButton(
+                            iconRes = R.drawable.ic_cast,
+                            title = cast.name,
+                            subtitle = "Google Cast • ${cast.model}",
+                            badgeText = if (isCastSelected) "Casting" else "Ready",
+                            selected = isCastSelected,
+                            autoInUse = false,
+                            onClick = {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                AudioOutputManager.selectCastDevice(if (isCastSelected) null else cast)
+                                AudioOutputManager.openSystemMediaOutputOrBluetooth(context, preferBluetoothSettings = false)
+                            },
+                        )
+                    }
+                }
+            }
+
+            PopupMenuDivider()
+
             // ── 2. Master Volume Control Bar right inside popup ──
             Column(
                 modifier = Modifier
@@ -325,8 +472,17 @@ fun AppleAudioOutputPopup(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 OutputFooterBlackButton(
+                    iconRes = R.drawable.ic_cast,
+                    label = "Cast Media",
+                    onClick = {
+                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                        AudioOutputManager.openSystemMediaOutputOrBluetooth(context, preferBluetoothSettings = false)
+                    },
+                    modifier = Modifier.weight(1f),
+                )
+                OutputFooterBlackButton(
                     iconRes = R.drawable.ic_output_settings,
-                    label = "System Output",
+                    label = "System",
                     onClick = {
                         view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                         AudioOutputManager.openSystemMediaOutputOrBluetooth(context, preferBluetoothSettings = false)

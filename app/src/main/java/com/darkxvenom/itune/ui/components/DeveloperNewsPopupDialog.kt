@@ -103,7 +103,7 @@ fun DeveloperNewsPopupDialog(
 
     Dialog(
         onDismissRequest = {
-            DeveloperNewsManager.dismissPopup(item.id)
+            DeveloperNewsManager.dismissPopup(item.id, item.timestamp)
         },
         properties = DialogProperties(
             usePlatformDefaultWidth = false,
@@ -127,7 +127,7 @@ fun DeveloperNewsPopupDialog(
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
-                ) { DeveloperNewsManager.dismissPopup(item.id) },
+                ) { DeveloperNewsManager.dismissPopup(item.id, item.timestamp) },
             contentAlignment = Alignment.Center
         ) {
             // Centered Pure Black Apple-styled Modal Dialog Card
@@ -332,6 +332,7 @@ fun DeveloperNewsPopupDialog(
                                 try {
                                     uriHandler.openUri(item.actionUrl)
                                 } catch (_: Exception) {}
+                                DeveloperNewsManager.dismissPopup(item.id, item.timestamp)
                             },
                         contentAlignment = Alignment.Center
                     ) {
@@ -369,7 +370,7 @@ fun DeveloperNewsPopupDialog(
                         .fillMaxWidth()
                         .height(48.dp)
                         .clickable {
-                            DeveloperNewsManager.dismissPopup(item.id)
+                            DeveloperNewsManager.dismissPopup(item.id, item.timestamp)
                             onNavigateToNews()
                         },
                     contentAlignment = Alignment.Center
@@ -395,7 +396,7 @@ fun DeveloperNewsPopupDialog(
                         .fillMaxWidth()
                         .height(48.dp)
                         .clickable {
-                            DeveloperNewsManager.dismissPopup(item.id)
+                            DeveloperNewsManager.dismissPopup(item.id, item.timestamp)
                         },
                     contentAlignment = Alignment.Center
                 ) {

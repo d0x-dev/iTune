@@ -21,6 +21,7 @@ import com.darkxvenom.itune.data.lastfm.LastFmIntegration
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.library.ListeningProfileStore
 import com.darkxvenom.itune.data.library.SearchHistoryStore
+import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.timetravel.TimeTravelDatabaseHelper
 import org.json.JSONArray
 import org.json.JSONObject
@@ -38,6 +39,7 @@ object BackupRestoreManager {
     const val CATEGORY_ACCOUNT = "account"
     const val CATEGORY_LIBRARY = "library"
     const val CATEGORY_ALL = "all"
+    const val CATEGORY_EVERYTHING = "everything"
 
     private val MAGIC = "ITUNE01\n".toByteArray(Charsets.US_ASCII)
     private const val SALT_BYTES = 16
@@ -60,6 +62,7 @@ object BackupRestoreManager {
         val categories: Set<String>,
         val accountDescription: String,
         val libraryDescription: String,
+        val backupAccounts: List<com.darkxvenom.itune.data.account.UserAccount> = emptyList(),
     )
 
     fun createEncryptedBackup(context: Context, selected: Set<String>, password: CharArray): ByteArray {
@@ -70,6 +73,20 @@ object BackupRestoreManager {
             val payload = JSONObject().put("format", "iTuneBackup").put("version", 1)
                 .put("createdAt", System.currentTimeMillis())
             val data = JSONObject()
+
+            val activeAcc = com.darkxvenom.itune.data.account.MultiAccountManager.getActiveAccount()
+            if (activeAcc != null) {
+                payload.put("accountInfo", activeAcc.toJson())
+            }
+
+            if (CATEGORY_EVERYTHING in categories) {
+                payload.put("type", "multi_account_master")
+                val master = com.darkxvenom.itune.data.account.MultiAccountManager.exportAllAccountsBackup(context)
+                data.put("master", master)
+                payload.put("categories", JSONArray(listOf(CATEGORY_EVERYTHING))).put("data", data)
+                return encrypt(payload.toString().toByteArray(Charsets.UTF_8), password)
+            }
+
             categories.forEach { category ->
                 val names = if (category == CATEGORY_ACCOUNT) accountPrefs else libraryPreferenceNames(context)
                 val group = JSONObject()
@@ -97,18 +114,113 @@ object BackupRestoreManager {
         val categories = payload.optJSONArray("categories")?.let { array ->
             (0 until array.length()).map { array.optString(it) }.toSet()
         }.orEmpty()
-        require(categories.any { it == CATEGORY_ACCOUNT || it == CATEGORY_LIBRARY }) { "The backup has no restorable data" }
         val data = payload.optJSONObject("data") ?: JSONObject()
+
+        val isMaster = payload.optString("type") == "multi_account_master" || CATEGORY_EVERYTHING in categories
+        val backupAccounts: List<com.darkxvenom.itune.data.account.UserAccount> = if (isMaster) {
+            val master = data.optJSONObject("master") ?: JSONObject()
+            val accountsArray = master.optJSONArray("accounts")
+            if (accountsArray != null && accountsArray.length() > 0) {
+                (0 until accountsArray.length()).mapNotNull { i ->
+                    accountsArray.optJSONObject(i)?.let { com.darkxvenom.itune.data.account.UserAccount.fromJson(it) }
+                }
+            } else {
+                emptyList()
+            }
+        } else {
+            val infoObj = payload.optJSONObject("accountInfo")
+            if (infoObj != null) {
+                listOf(com.darkxvenom.itune.data.account.UserAccount.fromJson(infoObj))
+            } else {
+                val accGroup = data.optJSONObject(CATEGORY_ACCOUNT)
+                val libGroup = data.optJSONObject(CATEGORY_LIBRARY)
+                val name = libGroup?.optJSONObject("itune_settings_prefs")?.optJSONObject(SettingsStore.KEY_DISPLAY_NAME)?.optString("v")
+                    ?: accGroup?.optJSONObject("itune_auth_meta")?.optJSONObject("ytm_account_name")?.optString("v")
+                    ?: "Listener"
+                val avatarId = accGroup?.optJSONObject("itune_avatar_prefs")?.optJSONObject("selected_avatar_id")?.optInt("v", 1) ?: 1
+                listOf(
+                    com.darkxvenom.itune.data.account.UserAccount(
+                        id = "legacy_backup",
+                        displayName = name,
+                        avatarId = avatarId,
+                        avatarUrl = com.darkxvenom.itune.data.repository.AvatarManager.getAvatarUrl(avatarId),
+                    )
+                )
+            }
+        }
+
+        if (isMaster) {
+            val master = data.optJSONObject("master") ?: JSONObject()
+            val accCount = backupAccounts.size.coerceAtLeast(1)
+            val accountDescription = "All Accounts ($accCount profiles)"
+            val libraryDescription = "All isolated libraries, playlists, histories, and settings"
+            return ScannedBackup(payload, setOf(CATEGORY_EVERYTHING), accountDescription, libraryDescription, backupAccounts)
+        }
+
+        require(categories.any { it == CATEGORY_ACCOUNT || it == CATEGORY_LIBRARY }) { "The backup has no restorable data" }
         val accountDescription = data.optJSONObject(CATEGORY_ACCOUNT)?.let(::describeAccount).orEmpty()
         val libraryDescription = data.optJSONObject(CATEGORY_LIBRARY)?.let { describeLibrary(it, data.optJSONArray("playbackHistory")?.length() ?: 0) }.orEmpty()
-        return ScannedBackup(payload, categories, accountDescription, libraryDescription)
+        return ScannedBackup(payload, categories, accountDescription, libraryDescription, backupAccounts)
     }
 
-    fun restore(context: Context, scanned: ScannedBackup, selected: Set<String>) {
-        val categories = expand(selected).intersect(scanned.categories)
-        require(categories.isNotEmpty()) { "Select data that exists in this backup" }
+    fun restore(
+        context: Context,
+        scanned: ScannedBackup,
+        selected: Set<String>,
+        selectedAccountIds: Set<String> = emptySet(),
+    ) {
         val app = context.applicationContext
         val data = scanned.payload.getJSONObject("data")
+        val master = data.optJSONObject("master")
+
+        // Multi-account selective restore handling
+        if (master != null && scanned.backupAccounts.size > 1 && selectedAccountIds.isNotEmpty()) {
+            val accountsData = master.optJSONObject("accountsData") ?: JSONObject()
+            val accountsMap = mutableMapOf<String, JSONObject>()
+            scanned.backupAccounts.forEach { acc ->
+                accountsData.optJSONObject(acc.id)?.let { accountsMap[acc.id] = it }
+            }
+
+            // Rule 2: If user selected exactly ONE account among multiple in backup,
+            // restore that account inside current selected account!
+            if (selectedAccountIds.size == 1) {
+                val targetId = selectedAccountIds.first()
+                val targetProfile = scanned.backupAccounts.firstOrNull { it.id == targetId }
+                val targetData = accountsMap[targetId]
+                if (targetData != null) {
+                    com.darkxvenom.itune.data.account.MultiAccountManager.restoreIntoCurrentAccount(
+                        app,
+                        targetData,
+                        targetProfile,
+                    )
+                }
+                return
+            }
+
+            // Rule 3: If selected many (or all), create each of them as separate accounts;
+            // current selected account remains untouched!
+            if (selectedAccountIds.size > 1) {
+                val toImport = scanned.backupAccounts.filter { it.id in selectedAccountIds }
+                com.darkxvenom.itune.data.account.MultiAccountManager.importAccountsFromBackup(
+                    app,
+                    toImport,
+                    accountsMap,
+                )
+                return
+            }
+        }
+
+        // Rule 1: No multi accounts detected, or single account restore:
+        val categories = expand(selected).intersect(scanned.categories)
+        require(categories.isNotEmpty()) { "Select data that exists in this backup" }
+
+        if (CATEGORY_EVERYTHING in categories) {
+            if (master != null) {
+                com.darkxvenom.itune.data.account.MultiAccountManager.restoreAllAccountsBackup(context, master)
+            }
+            return
+        }
+
         categories.forEach { category ->
             val group = data.optJSONObject(category) ?: return@forEach
             val names = if (category == CATEGORY_ACCOUNT) accountPrefs else libraryNamesInBackup(group)
@@ -122,12 +234,26 @@ object BackupRestoreManager {
     }
 
     /** Rebind runtime caches and Compose state after the file and database writes complete. */
-    fun refreshRestoredState(context: Context, selected: Set<String>) {
+    fun refreshRestoredState(
+        context: Context,
+        selected: Set<String>,
+        selectedAccountIds: Set<String> = emptySet(),
+    ) {
         val app = context.applicationContext
+        if (selectedAccountIds.size > 1) {
+            // Multiple accounts imported as separate profiles without modifying active account
+            return
+        }
         val categories = expand(selected)
+        if (CATEGORY_EVERYTHING in categories) {
+            com.darkxvenom.itune.data.account.MultiAccountManager.init(app)
+            return
+        }
         AutoBackupScheduler.ensureScheduled(app)
         if (CATEGORY_LIBRARY in categories) {
             com.darkxvenom.itune.data.library.SettingsStore.reloadBackupState(app)
+            com.darkxvenom.itune.data.repository.AvatarManager.init(app)
+            com.darkxvenom.itune.data.account.MultiAccountManager.onBackupRestored(app)
             LibraryStore.reloadBackupState(app)
             SearchHistoryStore.reloadBackupState(app)
             ListeningProfileStore.reloadBackupState(app)
@@ -139,6 +265,8 @@ object BackupRestoreManager {
             com.darkxvenom.itune.backend.MusicCacheManager.init(app)
         }
         if (CATEGORY_ACCOUNT in categories) {
+            com.darkxvenom.itune.data.repository.AvatarManager.init(app)
+            com.darkxvenom.itune.data.account.MultiAccountManager.onBackupRestored(app)
             GoogleAuthStore.refreshAfterBackupRestore(app)
             LastFmIntegration.initialize(app)
             DiscordPresenceManager.initialize(app)
@@ -228,8 +356,9 @@ object BackupRestoreManager {
     }
 
     private fun expand(selected: Set<String>): Set<String> = when {
+        CATEGORY_EVERYTHING in selected -> setOf(CATEGORY_EVERYTHING)
         CATEGORY_ALL in selected -> setOf(CATEGORY_ACCOUNT, CATEGORY_LIBRARY)
-        else -> selected.intersect(setOf(CATEGORY_ACCOUNT, CATEGORY_LIBRARY))
+        else -> selected.intersect(setOf(CATEGORY_ACCOUNT, CATEGORY_LIBRARY, CATEGORY_EVERYTHING))
     }
 
     private fun libraryPreferenceNames(context: Context): List<String> {

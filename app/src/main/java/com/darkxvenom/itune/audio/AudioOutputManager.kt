@@ -44,6 +44,7 @@ enum class AudioDeviceCategory {
     BUILTIN_SPEAKER,
     EXTERNAL_SPEAKER,
     HEARING_AID,
+    CAST_DEVICE,
 }
 
 @Immutable
@@ -72,6 +73,7 @@ data class AudioOutputUiState(
     val bitPerfectActive: Boolean = false,
     val usbDevicePresent: Boolean = false,
     val hasBluetoothPermission: Boolean = true,
+    val activeCastDevice: CastDevice? = null,
 )
 
 /**
@@ -265,21 +267,47 @@ object AudioOutputManager {
         }?.info
         usbBitPerfect?.setDevice(usbDeviceInfo)
 
+        // Cast & Wireless Active Device policy
+        val activeCast = CastDiscoveryManager.activeCastDevice.value
+        val effectiveActiveEntry = if (activeCast != null && chosenPref == null) {
+            OutputDeviceEntry(
+                id = -9999,
+                name = activeCast.name,
+                subtitle = "Google Cast • ${activeCast.model}",
+                category = AudioDeviceCategory.CAST_DEVICE,
+                iconRes = R.drawable.ic_cast,
+                sampleRateLabel = "Wi-Fi Hi-Res",
+                batteryPercent = null,
+                info = null
+            )
+        } else {
+            activeEntry
+        }
+
         // Capsule icon policy:
+        // - Cast device connected -> ic_cast
         // - Bluetooth audio connected/selected -> ic_airbuds
         // - USB / wired audio jack -> ic_headphone
         // - Speaker (explicit OR System Default routing to phone speaker) -> ic_output_speaker
         // - External/HDMI -> ic_output_external_speaker, Hearing aid -> ic_output_hearing_aid
         // - No device resolved yet -> ic_airbuds (ready state)
-        val capsuleIcon = resolveCapsuleIcon(
-            chosenPref = chosenPref,
-            activeEntry = activeEntry,
-        )
+        val capsuleIcon = if (activeCast != null && chosenPref == null) {
+            R.drawable.ic_cast
+        } else {
+            resolveCapsuleIcon(
+                chosenPref = chosenPref,
+                activeEntry = activeEntry,
+            )
+        }
 
-        val summary = buildString {
-            append(activeEntry?.name ?: "Phone Speaker")
-            activeEntry?.batteryPercent?.let { append(" • $it%") }
-            activeEntry?.sampleRateLabel?.let { append(" • $it") }
+        val summary = if (activeCast != null && chosenPref == null) {
+            "${activeCast.name} • Google Cast"
+        } else {
+            buildString {
+                append(effectiveActiveEntry?.name ?: "Phone Speaker")
+                effectiveActiveEntry?.batteryPercent?.let { append(" • $it%") }
+                effectiveActiveEntry?.sampleRateLabel?.let { append(" • $it") }
+            }
         }
 
         val bitPerfectSaved = ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -288,7 +316,7 @@ object AudioOutputManager {
         _state.value = AudioOutputUiState(
             devices = entries,
             preferredDeviceId = chosenPref?.id,
-            activeDevice = activeEntry,
+            activeDevice = effectiveActiveEntry,
             capsuleIconRes = capsuleIcon,
             activeSummary = summary,
             dualAudioEnabled = simultaneousProcessor?.enabled == true,
@@ -298,10 +326,38 @@ object AudioOutputManager {
             bitPerfectActive = usbBitPerfect?.isConfigured() == true,
             usbDevicePresent = usbDeviceInfo != null,
             hasBluetoothPermission = hasBtPerm,
+            activeCastDevice = activeCast,
         )
     }
 
+    fun selectCastDevice(device: CastDevice?) {
+        CastDiscoveryManager.selectCastDevice(device)
+        if (device != null) {
+            preferredDevice = null
+            onRouteDeviceChanged?.invoke(null)
+            val castEntry = OutputDeviceEntry(
+                id = -9999,
+                name = device.name,
+                subtitle = "Google Cast • ${device.model}",
+                category = AudioDeviceCategory.CAST_DEVICE,
+                iconRes = R.drawable.ic_cast,
+                sampleRateLabel = "Wi-Fi Hi-Res",
+                batteryPercent = null,
+                info = null
+            )
+            _state.value = _state.value.copy(
+                activeDevice = castEntry,
+                capsuleIconRes = R.drawable.ic_cast,
+                activeSummary = "${device.name} • Google Cast",
+                activeCastDevice = device,
+            )
+        } else {
+            refreshDevices()
+        }
+    }
+
     fun selectPreferredDevice(entry: OutputDeviceEntry?) {
+        CastDiscoveryManager.selectCastDevice(null)
         preferredDevice = entry?.info
         onRouteDeviceChanged?.invoke(entry?.info)
         refreshDevices()
@@ -600,6 +656,7 @@ internal fun resolveOutputCapsuleIcon(
         AudioDeviceCategory.HEARING_AID -> R.drawable.ic_output_hearing_aid
         AudioDeviceCategory.EXTERNAL_SPEAKER -> R.drawable.ic_output_external_speaker
         AudioDeviceCategory.BUILTIN_SPEAKER -> R.drawable.ic_output_speaker
+        AudioDeviceCategory.CAST_DEVICE -> R.drawable.ic_cast
     }
 }
 
@@ -610,6 +667,7 @@ internal fun resolveOutputListIcon(category: AudioDeviceCategory): Int = when (c
     AudioDeviceCategory.BUILTIN_SPEAKER -> R.drawable.ic_output_speaker
     AudioDeviceCategory.EXTERNAL_SPEAKER -> R.drawable.ic_output_external_speaker
     AudioDeviceCategory.HEARING_AID -> R.drawable.ic_output_hearing_aid
+    AudioDeviceCategory.CAST_DEVICE -> R.drawable.ic_cast
 }
 
 fun AudioDeviceInfo.isBluetoothOutput(): Boolean {

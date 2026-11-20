@@ -47,6 +47,10 @@ class AudioOutputIconPolicyTest {
             R.drawable.ic_output_hearing_aid,
             resolveOutputCapsuleIcon(AudioDeviceCategory.HEARING_AID, explicitSelection = false),
         )
+        assertEquals(
+            R.drawable.ic_cast,
+            resolveOutputCapsuleIcon(AudioDeviceCategory.CAST_DEVICE, explicitSelection = false),
+        )
     }
     // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
@@ -58,5 +62,6 @@ class AudioOutputIconPolicyTest {
         assertEquals(R.drawable.ic_output_speaker, resolveOutputListIcon(AudioDeviceCategory.BUILTIN_SPEAKER))
         assertEquals(R.drawable.ic_output_external_speaker, resolveOutputListIcon(AudioDeviceCategory.EXTERNAL_SPEAKER))
         assertEquals(R.drawable.ic_output_hearing_aid, resolveOutputListIcon(AudioDeviceCategory.HEARING_AID))
+        assertEquals(R.drawable.ic_cast, resolveOutputListIcon(AudioDeviceCategory.CAST_DEVICE))
     }
 }

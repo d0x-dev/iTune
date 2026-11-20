@@ -15,17 +15,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import com.darkxvenom.itune.data.account.UserAccount
+import com.darkxvenom.itune.data.backup.BackupRestoreManager
+import com.darkxvenom.itune.ui.components.AppleMemojiAvatar
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,23 +62,81 @@ internal fun BackupOptionsDialog(
     onDismiss: () -> Unit,
     onCreate: (Set<String>) -> Unit,
 ) {
+    var backupScopeMode by remember { mutableStateOf("this_account") }
     var account by remember { mutableStateOf(true) }
     var library by remember { mutableStateOf(true) }
     var confirmation by remember { mutableStateOf("") }
     BackupDialogFrame(title = "Back Up iTune", subtitle = "Choose what to include. Your backup is encrypted with a password you choose.", onDismiss = onDismiss) {
-        BackupChoiceRow("All", "Accounts, every app setting, audio effects and library data", account && library) {
-            account = !account || !library
-            library = account
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color.White.copy(alpha = 0.08f))
+                .padding(3.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(if (backupScopeMode == "this_account") Color.White.copy(alpha = 0.22f) else Color.Transparent)
+                    .clickable { backupScopeMode = "this_account" }
+                    .padding(vertical = 8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "This account",
+                    fontSize = 13.sp,
+                    fontWeight = if (backupScopeMode == "this_account") FontWeight.Bold else FontWeight.Medium,
+                    color = Color.White
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(if (backupScopeMode == "everything") Color.White.copy(alpha = 0.22f) else Color.Transparent)
+                    .clickable { backupScopeMode = "everything" }
+                    .padding(vertical = 8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Everything",
+                    fontSize = 13.sp,
+                    fontWeight = if (backupScopeMode == "everything") FontWeight.Bold else FontWeight.Medium,
+                    color = Color.White
+                )
+            }
         }
-        BackupChoiceRow("Account", "Google, Last.fm and Discord sign-in data", account) { account = !account }
-        BackupChoiceRow("Settings, Audio Effects & Library", "Lyrics APIs, EQ, effect toggles, playlists, history, albums and stats", library) { library = !library }
+
+        if (backupScopeMode == "everything") {
+            BackupChoiceRow(
+                "All Accounts & Everything",
+                "Backs up all created profiles, sign-ins, and all isolated libraries, playlists, histories, and settings. Never skips a single datum.",
+                true
+            ) {}
+        } else {
+            BackupChoiceRow("All", "Accounts, every app setting, audio effects and library data", account && library) {
+                account = !account || !library
+                library = account
+            }
+            BackupChoiceRow("Account", "Google, Last.fm and Discord sign-in data", account) { account = !account }
+            BackupChoiceRow("Settings, Audio Effects & Library", "Lyrics APIs, EQ, effect toggles, playlists, history, albums and stats", library) { library = !library }
+        }
+
         BackupPasswordField(password, onPasswordChange, "Encryption password")
         BackupPasswordField(confirmation, { confirmation = it }, "Confirm password")
         if (confirmation.isNotEmpty() && password != confirmation) {
             Text("Passwords don’t match", color = Color(0xFFFF453A), fontSize = 12.sp, modifier = Modifier.padding(bottom = 7.dp))
         }
-        BackupAction("Save Encrypted Backup", enabled = (account || library) && password.length >= 8 && password == confirmation) {
-            onCreate(buildSet { if (account) add("account"); if (library) add("library") })
+        val isReady = ((backupScopeMode == "everything") || account || library) && password.length >= 8 && password == confirmation
+        BackupAction("Save Encrypted Backup", enabled = isReady) {
+            if (backupScopeMode == "everything") {
+                onCreate(setOf(BackupRestoreManager.CATEGORY_EVERYTHING))
+            } else {
+                onCreate(buildSet { if (account) add("account"); if (library) add("library") })
+            }
         }
         BackupAction("Cancel", enabled = true, primary = false, onClick = onDismiss)
     }
@@ -99,22 +164,159 @@ internal fun RestoreOptionsDialog(
     accountDescription: String,
     libraryDescription: String,
     available: Set<String>,
+    backupAccounts: List<UserAccount> = emptyList(),
     onDismiss: () -> Unit,
-    onRestore: (Set<String>) -> Unit,
+    onRestore: (selectedCategories: Set<String>, selectedAccountIds: Set<String>) -> Unit,
 ) {
+    val hasMultiAccounts = backupAccounts.size > 1
+    var selectedAccountIds by remember(backupAccounts) {
+        mutableStateOf(backupAccounts.map { it.id }.toSet())
+    }
+    val allAccountsSelected = backupAccounts.isNotEmpty() && selectedAccountIds.size == backupAccounts.size
+
+    val isEverything = BackupRestoreManager.CATEGORY_EVERYTHING in available
     var account by remember(available) { mutableStateOf("account" in available) }
     var library by remember(available) { mutableStateOf("library" in available) }
+
     BackupDialogFrame(title = "Choose What to Restore", subtitle = "The encrypted file contains the following data.", onDismiss = onDismiss) {
-        if (available.containsAll(setOf("account", "library"))) {
-            BackupChoiceRow("All", "Restore both sections", account && library) {
-                account = !account || !library
-                library = account
+        if (hasMultiAccounts) {
+            BackupChoiceRow(
+                title = "All Accounts",
+                detail = "Restore all ${backupAccounts.size} profiles (${if (allAccountsSelected) "all selected" else "${selectedAccountIds.size} selected"})",
+                checked = allAccountsSelected,
+            ) {
+                selectedAccountIds = if (allAccountsSelected) {
+                    emptySet()
+                } else {
+                    backupAccounts.map { it.id }.toSet()
+                }
             }
-        }
-        if ("account" in available) BackupChoiceRow("Account", accountDescription, account) { account = !account }
-        if ("library" in available) BackupChoiceRow("Settings, Audio Effects & Library", libraryDescription, library) { library = !library }
-        BackupAction("Restore Selected", enabled = account || library) {
-            onRestore(buildSet { if (account) add("account"); if (library) add("library") })
+
+            Spacer(Modifier.height(4.dp))
+
+            Text(
+                text = "PROFILES IN BACKUP",
+                color = BackupSecondary,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.5.sp,
+                modifier = Modifier.padding(start = 4.dp, top = 6.dp, bottom = 4.dp),
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(Color(0xFF171719)),
+            ) {
+                backupAccounts.forEachIndexed { index, acc ->
+                    val isChecked = acc.id in selectedAccountIds
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                selectedAccountIds = if (isChecked) {
+                                    selectedAccountIds - acc.id
+                                } else {
+                                    selectedAccountIds + acc.id
+                                }
+                            }
+                            .padding(horizontal = 14.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(22.dp)
+                                .clip(CircleShape)
+                                .background(if (isChecked) BackupAccent else Color.Transparent)
+                                .border(1.dp, if (isChecked) BackupAccent else Color(0xFF68686D), CircleShape),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            if (isChecked) {
+                                Icon(Icons.Rounded.Check, null, tint = Color.White, modifier = Modifier.size(15.dp))
+                            }
+                        }
+
+                        Spacer(Modifier.width(12.dp))
+
+                        AppleMemojiAvatar(
+                            size = 34.dp,
+                            avatarId = acc.avatarId,
+                        )
+
+                        Spacer(Modifier.width(12.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = acc.displayName,
+                                color = Color.White,
+                                fontSize = 14.5.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Text(
+                                text = if (acc.isDefault) "Primary Account" else "Profile",
+                                color = BackupSecondary,
+                                fontSize = 11.sp,
+                            )
+                        }
+                    }
+
+                    if (index < backupAccounts.lastIndex) {
+                        HorizontalDivider(
+                            thickness = 0.5.dp,
+                            color = Color.White.copy(alpha = 0.08f),
+                            modifier = Modifier.padding(start = 48.dp),
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            val explanation = when {
+                selectedAccountIds.size == 1 -> "Restores selected profile's data into your current active account."
+                selectedAccountIds.size > 1 -> "Creates each selected profile as a new account. Your current active account remains untouched."
+                else -> "Select at least one profile to restore."
+            }
+            Text(
+                text = explanation,
+                color = BackupSecondary,
+                fontSize = 11.5.sp,
+                lineHeight = 15.sp,
+                modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+            )
+
+            Spacer(Modifier.height(10.dp))
+
+            val actionLabel = when {
+                allAccountsSelected -> "Restore All Accounts"
+                selectedAccountIds.size == 1 -> "Restore Profile"
+                selectedAccountIds.size > 1 -> "Restore (${selectedAccountIds.size} Accounts)"
+                else -> "Restore"
+            }
+            BackupAction(
+                label = actionLabel,
+                enabled = selectedAccountIds.isNotEmpty(),
+            ) {
+                onRestore(setOf(BackupRestoreManager.CATEGORY_EVERYTHING), selectedAccountIds)
+            }
+        } else if (isEverything) {
+            BackupChoiceRow("All Accounts & Everything", "$accountDescription · $libraryDescription", true) {}
+            BackupAction("Restore Everything", enabled = true) {
+                onRestore(setOf(BackupRestoreManager.CATEGORY_EVERYTHING), emptySet())
+            }
+        } else {
+            if (available.containsAll(setOf("account", "library"))) {
+                BackupChoiceRow("All", "Restore both sections", account && library) {
+                    account = !account || !library
+                    library = account
+                }
+            }
+            if ("account" in available) BackupChoiceRow("Account", accountDescription, account) { account = !account }
+            if ("library" in available) BackupChoiceRow("Settings, Audio Effects & Library", libraryDescription, library) { library = !library }
+            BackupAction("Restore Selected", enabled = account || library) {
+                onRestore(buildSet { if (account) add("account"); if (library) add("library") }, emptySet())
+            }
         }
         BackupAction("Cancel", enabled = true, primary = false, onClick = onDismiss)
     }

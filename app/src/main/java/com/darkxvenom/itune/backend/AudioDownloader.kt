@@ -19,6 +19,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.media.MediaCodec
 import android.media.MediaExtractor
@@ -37,6 +38,8 @@ import coil.imageLoader
 import coil.request.ImageRequest
 import coil.size.Size
 import com.darkxvenom.itune.MainActivity
+import com.darkxvenom.itune.backend.lyrics.LyricsHelper
+import com.darkxvenom.itune.backend.tagger.MediaTagger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,6 +52,7 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.Call
 import okhttp3.Request
 import java.io.File
@@ -82,22 +86,26 @@ object AudioDownloader {
     private const val CHANNEL_ID = "itune_audio_downloads_v2"
     private const val CHANNEL_NAME = "Audio Downloads"
     const val DEFAULT_FOREGROUND_ID = 2000
+    const val COMPLETE_NOTIFICATION_ID = 2001
 
-    private const val CHUNK_SIZE = 512L * 1024L // 512 KB chunks for fast parallel pulls + instant byte-exact resume
-    private const val PARALLEL_WORKERS = 3
+    private const val CHUNK_SIZE = 512L * 1024L // 512 KB chunks for fast parallel pulls + byte-exact resume
+    private const val PARALLEL_WORKERS = 3 // 3 parallel chunk workers for single track speed
 
-    private val nextId = AtomicInteger(2100)
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private val tasks = ConcurrentHashMap<Int, DownloadTaskState>()
-    private val notifications = ConcurrentHashMap<Int, Notification>()
+
+    data class DownloadQueueItem(
+        val track: MusicTrack,
+        val option: AudioDownloadOption? = null,
+    )
 
     private class DownloadTaskState(
-        val id: Int,
+        val id: Int = DEFAULT_FOREGROUND_ID,
         val track: MusicTrack,
-        val option: AudioDownloadOption,
+        val option: AudioDownloadOption? = null,
         val isPaused: AtomicBoolean = AtomicBoolean(false),
         val isCancelled: AtomicBoolean = AtomicBoolean(false),
         val activeCalls: ConcurrentHashMap<Call, Boolean> = ConcurrentHashMap(),
+        @Volatile var resolvedOption: AudioDownloadOption? = null,
         @Volatile var downloadedBytes: Long = 0L,
         @Volatile var totalBytes: Long = -1L,
         @Volatile var smoothedSpeedBps: Double = 0.0,
@@ -108,12 +116,19 @@ object AudioDownloader {
         @Volatile var job: Job? = null,
     )
 
+    private val downloadQueue = ConcurrentLinkedQueue<DownloadQueueItem>()
+    private val queueLock = Any()
+    @Volatile private var activeTask: DownloadTaskState? = null
+    private val totalQueuedCount = AtomicInteger(0)
+    private val completedCount = AtomicInteger(0)
+    @Volatile private var lastFinishedTitle: String? = null
+
     fun ensureChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_LOW
             ).apply {
                 description = "Live audio download progress, speed, pause and cancel controls"
                 setShowBadge(false)
@@ -125,100 +140,179 @@ object AudioDownloader {
         }
     }
 
-    fun hasActiveDownloads(): Boolean = tasks.isNotEmpty()
+    fun hasActiveDownloads(): Boolean = activeTask != null
+    fun hasActiveOrPendingDownloads(): Boolean = activeTask != null || downloadQueue.isNotEmpty()
 
-    fun getOrBuildNotification(context: Context, notificationId: Int, fallbackTitle: String): Notification {
-        notifications[notificationId]?.let { return it }
-        return buildProgressNotification(
-            context = context,
-            notificationId = notificationId,
-            title = fallbackTitle,
-            subText = "Audio Download",
-            contentText = "Preparing download…",
-            percent = 0,
-            indeterminate = true,
-            isPaused = false,
-            largeIcon = null
-        )
+    fun getMasterNotification(context: Context): Notification {
+        ensureChannel(context)
+        val task = activeTask
+        if (task != null) {
+            val total = task.totalBytes
+            val read = task.downloadedBytes
+            val percent = if (total > 0) ((read * 100L) / total).toInt().coerceIn(0, 100) else 0
+            val isPaused = task.isPaused.get()
+            val speedText = if (task.smoothedSpeedBps > 512.0) " · ${formatSpeed(task.smoothedSpeedBps)}" else ""
+            val queueRemaining = downloadQueue.size
+            val queueText = if (queueRemaining > 0) " ($queueRemaining in queue)" else ""
+            val contentText = if (isPaused) {
+                "Paused · $percent%$queueText"
+            } else if (total > 0) {
+                "$percent% · ${formatBytes(read)} / ${formatBytes(total)}$speedText$queueText"
+            } else {
+                "${formatBytes(read)}$speedText$queueText"
+            }
+            return buildProgressNotification(
+                context = context,
+                title = task.track.title,
+                subText = buildSubText(task),
+                contentText = contentText,
+                percent = percent,
+                indeterminate = total <= 0 && !isPaused,
+                isPaused = isPaused,
+                largeIcon = task.albumArtBitmap
+            )
+        }
+
+        return NotificationCompat.Builder(context, CHANNEL_ID)
+            .setContentTitle("iTune Downloads")
+            .setContentText("Preparing download…")
+            .setSmallIcon(android.R.drawable.stat_sys_download)
+            .setProgress(100, 0, true)
+            .setOngoing(true)
+            .setSilent(true)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .build()
     }
 
-    fun download(context: Context, track: MusicTrack, option: AudioDownloadOption) {
+    fun getOrBuildNotification(context: Context, notificationId: Int, fallbackTitle: String): Notification {
+        return getMasterNotification(context)
+    }
+
+    fun download(context: Context, track: MusicTrack, option: AudioDownloadOption? = null) {
         val appContext = context.applicationContext
         ensureChannel(appContext)
-        val notificationId = nextId.incrementAndGet()
+        totalQueuedCount.incrementAndGet()
+        downloadQueue.add(DownloadQueueItem(track, option))
+        processNext(appContext)
+    }
 
-        val taskState = DownloadTaskState(
-            id = notificationId,
-            track = track,
-            option = option,
+    fun downloadTracks(context: Context, tracks: List<MusicTrack>) {
+        if (tracks.isEmpty()) return
+        val appContext = context.applicationContext
+        ensureChannel(appContext)
+        totalQueuedCount.addAndGet(tracks.size)
+        for (track in tracks) {
+            downloadQueue.add(DownloadQueueItem(track, null))
+        }
+        processNext(appContext)
+    }
+
+    fun processNext(context: Context) {
+        val appContext = context.applicationContext
+        synchronized(queueLock) {
+            if (activeTask != null) {
+                updateNotificationForTask(appContext, activeTask, force = true)
+                return
+            }
+
+            val nextItem = downloadQueue.poll()
+            if (nextItem == null) {
+                val totalFinished = completedCount.get()
+                val lastTitle = lastFinishedTitle
+                totalQueuedCount.set(0)
+                completedCount.set(0)
+                lastFinishedTitle = null
+
+                stopService(appContext, removeNotification = true)
+                NotificationManagerCompat.from(appContext).cancel(DEFAULT_FOREGROUND_ID)
+
+                if (totalFinished > 0) {
+                    showSummaryCompleteNotification(appContext, totalFinished, lastTitle)
+                }
+                return
+            }
+
+            startSingleTask(appContext, nextItem)
+        }
+    }
+
+    private fun startSingleTask(context: Context, item: DownloadQueueItem) {
+        val task = DownloadTaskState(
+            id = DEFAULT_FOREGROUND_ID,
+            track = item.track,
+            option = item.option,
         )
-        tasks[notificationId] = taskState
+        activeTask = task
 
-        val initialNotification = buildProgressNotification(
-            context = appContext,
-            notificationId = notificationId,
-            title = track.title,
-            subText = option.formatLabel,
+        tryStartService(context)
+
+        val initialNotif = buildProgressNotification(
+            context = context,
+            title = item.track.title,
+            subText = buildSubText(task),
             contentText = "0% · Starting download…",
             percent = 0,
             indeterminate = true,
             isPaused = false,
             largeIcon = null
         )
-        notifications[notificationId] = initialNotification
-        tryStartService(appContext, notificationId, track.title)
-        safeNotify(appContext, notificationId, initialNotification)
+        safeNotify(context, DEFAULT_FOREGROUND_ID, initialNotif)
 
-        taskState.job = scope.launch {
-            // Load artwork bitmap asynchronously for notification LargeIcon without blocking download
+        task.job = scope.launch {
             launch {
-                taskState.albumArtBitmap = loadArtworkBitmap(appContext, track)
+                val bmp = loadArtworkBitmap(context, item.track)
+                task.albumArtBitmap = bmp
+                if (activeTask === task && !task.isCancelled.get()) {
+                    updateNotificationForTask(context, task, force = true)
+                }
             }
 
             try {
-                performAudioDownload(appContext, taskState)
+                val resolvedOpt = task.option ?: run {
+                    val extracted = runCatching {
+                        MusicBackend.extractAudioQualities(item.track.id)
+                    }.getOrNull().orEmpty()
+                    MusicBackend.selectDownloadOption(extracted) ?: extracted.firstOrNull()
+                }
+
+                if (resolvedOpt == null) {
+                    Log.e(TAG, "No downloadable stream found for '${item.track.title}'")
+                } else {
+                    task.resolvedOption = resolvedOpt
+                    performAudioDownload(context, task)
+                    completedCount.incrementAndGet()
+                    lastFinishedTitle = item.track.title
+                }
             } catch (cancelled: CancellationException) {
-                NotificationManagerCompat.from(appContext).cancel(notificationId)
-                throw cancelled
+                // Cancelled or skipped
             } catch (error: Exception) {
                 currentCoroutineContext().ensureActive()
-                if (!taskState.isCancelled.get()) {
-                    Log.e(TAG, "Audio download failed for '${track.title}'", error)
-                    showFailedNotification(
-                        appContext,
-                        notificationId,
-                        track.title,
-                        error.message ?: "Download failed",
-                        taskState.albumArtBitmap
-                    )
+                if (!task.isCancelled.get()) {
+                    Log.e(TAG, "Audio download failed for '${item.track.title}'", error)
+                    if (downloadQueue.isEmpty() && totalQueuedCount.get() <= 1) {
+                        showFailedNotification(context, item.track.title, error.message ?: "Download failed", task.albumArtBitmap)
+                    }
                 }
             } finally {
-                tasks.remove(notificationId)
-                notifications.remove(notificationId)
-                if (tasks.isEmpty()) {
-                    stopService(appContext, removeNotification = true)
-                    NotificationManagerCompat.from(appContext).cancel(notificationId)
-                } else {
-                    val nextEntry = tasks.entries.firstOrNull()
-                    if (nextEntry != null) {
-                        tryStartService(appContext, nextEntry.key, nextEntry.value.track.title)
+                synchronized(queueLock) {
+                    if (activeTask === task) {
+                        activeTask = null
                     }
-                    NotificationManagerCompat.from(appContext).cancel(notificationId)
                 }
+                processNext(context)
             }
         }
     }
 
-    fun togglePause(context: Context, notificationId: Int) {
+    fun togglePause(context: Context, notificationId: Int = DEFAULT_FOREGROUND_ID) {
         val appContext = context.applicationContext
-        val task = tasks[notificationId] ?: return
+        val task = activeTask ?: return
         if (task.isCancelled.get()) return
 
         val nowPaused = !task.isPaused.get()
         task.isPaused.set(nowPaused)
 
         if (nowPaused) {
-            // Immediately close active HTTP streams so no data is pulled while paused
             task.activeCalls.keys.forEach { call -> runCatching { call.cancel() } }
             task.activeCalls.clear()
             task.smoothedSpeedBps = 0.0
@@ -228,66 +322,87 @@ object AudioDownloader {
             task.smoothedSpeedBps = 0.0
         }
 
-        val total = task.totalBytes
-        val read = task.downloadedBytes
-        val percent = if (total > 0) ((read * 100L) / total).toInt().coerceIn(0, 100) else 0
-        val text = if (nowPaused) {
-            if (total > 0) {
-                "Paused · $percent% (${formatBytes(read)} / ${formatBytes(total)})"
-            } else {
-                "Paused · ${formatBytes(read)}"
-            }
-        } else {
-            if (total > 0) {
-                "Resuming · $percent% (${formatBytes(read)} / ${formatBytes(total)})"
-            } else {
-                "Resuming · ${formatBytes(read)}"
-            }
-        }
-
-        val notif = buildProgressNotification(
-            context = appContext,
-            notificationId = notificationId,
-            title = task.track.title,
-            subText = task.option.formatLabel,
-            contentText = text,
-            percent = percent,
-            indeterminate = total <= 0 && !nowPaused,
-            isPaused = nowPaused,
-            largeIcon = task.albumArtBitmap
-        )
-        notifications[notificationId] = notif
-        safeNotify(appContext, notificationId, notif)
+        updateNotificationForTask(appContext, task, force = true)
     }
 
-    fun cancel(context: Context, notificationId: Int) {
+    fun cancel(context: Context, notificationId: Int = DEFAULT_FOREGROUND_ID) {
         val appContext = context.applicationContext
-        val task = tasks.remove(notificationId)
+        val task = activeTask
         if (task != null) {
             task.isCancelled.set(true)
             task.isPaused.set(false)
             task.activeCalls.keys.forEach { call -> runCatching { call.cancel() } }
             task.activeCalls.clear()
-            task.job?.cancel(CancellationException("Cancelled by user"))
+            task.job?.cancel(CancellationException("Skipped by user"))
         }
-        notifications.remove(notificationId)
-        NotificationManagerCompat.from(appContext).cancel(notificationId)
-        if (tasks.isEmpty()) {
-            stopService(appContext, removeNotification = true)
+    }
+
+    fun cancelAll(context: Context) {
+        val appContext = context.applicationContext
+        downloadQueue.clear()
+        totalQueuedCount.set(0)
+        completedCount.set(0)
+        lastFinishedTitle = null
+
+        val task = activeTask
+        if (task != null) {
+            task.isCancelled.set(true)
+            task.isPaused.set(false)
+            task.activeCalls.keys.forEach { call -> runCatching { call.cancel() } }
+            task.activeCalls.clear()
+            task.job?.cancel(CancellationException("Cancelled all by user"))
         }
+        synchronized(queueLock) {
+            activeTask = null
+        }
+        stopService(appContext, removeNotification = true)
+        NotificationManagerCompat.from(appContext).cancel(DEFAULT_FOREGROUND_ID)
+    }
+
+    private fun updateNotificationForTask(context: Context, task: DownloadTaskState?, force: Boolean = false) {
+        if (task == null) return
+        val total = task.totalBytes
+        val read = task.downloadedBytes
+        val isPaused = task.isPaused.get()
+        val percent = if (total > 0) ((read * 100L) / total).toInt().coerceIn(0, 100) else 0
+        val speedText = if (task.smoothedSpeedBps > 512.0) " · ${formatSpeed(task.smoothedSpeedBps)}" else ""
+        val queueRemaining = downloadQueue.size
+        val queueText = if (queueRemaining > 0) " ($queueRemaining in queue)" else ""
+
+        val text = if (isPaused) {
+            if (total > 0) "Paused · $percent% (${formatBytes(read)} / ${formatBytes(total)})$queueText"
+            else "Paused · ${formatBytes(read)}$queueText"
+        } else if (total > 0) {
+            "$percent% · ${formatBytes(read)} / ${formatBytes(total)}$speedText$queueText"
+        } else {
+            "${formatBytes(read)}$speedText$queueText"
+        }
+
+        val notif = buildProgressNotification(
+            context = context,
+            title = task.track.title,
+            subText = buildSubText(task),
+            contentText = text,
+            percent = percent,
+            indeterminate = total <= 0 && !isPaused,
+            isPaused = isPaused,
+            largeIcon = task.albumArtBitmap
+        )
+        safeNotify(context, DEFAULT_FOREGROUND_ID, notif)
     }
 
     private suspend fun performAudioDownload(
         context: Context,
         task: DownloadTaskState
     ) = withContext(Dispatchers.IO) {
+        val option = task.resolvedOption ?: task.option ?: return@withContext
         val cleanTitle = "${task.track.title} - ${task.track.artists}"
             .replace(Regex("[\\\\/:*?\"<>|]"), "_")
             .trim()
             .take(90)
-        val downloadExt = if (task.option.needsOggRemux) "webm" else task.option.extension
+        val downloadExt = if (option.needsOggRemux) "webm" else option.extension
         val tempFile = File(context.cacheDir, "itune_dl_${task.id}_${System.currentTimeMillis()}.$downloadExt")
-        val remuxedFile = if (task.option.needsOggRemux) {
+        val remuxedFile = if (option.needsOggRemux) {
             File(context.cacheDir, "itune_ogg_${task.id}_${System.currentTimeMillis()}.ogg")
         } else null
 
@@ -310,28 +425,28 @@ object AudioDownloader {
                 task.lastSpeedSampleBytes = read
             }
 
-            if (force || now - task.lastNotifyTimeMs >= 420L || (total > 0 && read >= total)) {
+            if (force || now - task.lastNotifyTimeMs >= 400L || (total > 0 && read >= total)) {
                 task.lastNotifyTimeMs = now
                 val percent = if (total > 0) ((read * 100L) / total).toInt().coerceIn(0, 100) else 0
                 val speedText = if (task.smoothedSpeedBps > 512.0) " · ${formatSpeed(task.smoothedSpeedBps)}" else ""
+                val queueRemaining = downloadQueue.size
+                val queueText = if (queueRemaining > 0) " ($queueRemaining in queue)" else ""
                 val text = if (total > 0) {
-                    "$percent% · ${formatBytes(read)} / ${formatBytes(total)}$speedText"
+                    "$percent% · ${formatBytes(read)} / ${formatBytes(total)}$speedText$queueText"
                 } else {
-                    "${formatBytes(read)}$speedText"
+                    "${formatBytes(read)}$speedText$queueText"
                 }
                 val notif = buildProgressNotification(
                     context = context,
-                    notificationId = task.id,
                     title = task.track.title,
-                    subText = task.option.formatLabel,
+                    subText = buildSubText(task),
                     contentText = text,
                     percent = percent,
                     indeterminate = total <= 0,
                     isPaused = false,
                     largeIcon = task.albumArtBitmap
                 )
-                notifications[task.id] = notif
-                safeNotify(context, task.id, notif)
+                safeNotify(context, DEFAULT_FOREGROUND_ID, notif)
             }
         }
 
@@ -347,24 +462,23 @@ object AudioDownloader {
                 if (ok && remuxedFile.exists() && remuxedFile.length() > 0L) remuxedFile else tempFile
             } else tempFile
 
-            val actualExt = if (sourceToSave === remuxedFile) "ogg" else task.option.extension
-            val actualMime = if (sourceToSave === remuxedFile) "audio/ogg" else task.option.mimeType
-            val finalFileName = "$cleanTitle [${task.option.bitrateKbps}kbps].$actualExt"
-            val savedUri = saveToDownloads(context, sourceToSave, finalFileName, actualMime)
-                ?: throw IOException("Could not save audio to Downloads")
-            task.albumArtBitmap?.let { bitmap ->
-                saveArtworkToDownloads(context, bitmap, finalFileName)
-            }
+            val actualExt = if (sourceToSave === remuxedFile) "ogg" else option.extension
+            val actualMime = if (sourceToSave === remuxedFile) "audio/ogg" else option.mimeType
+            val finalFileName = "$cleanTitle [${option.bitrateKbps}kbps].$actualExt"
 
-            showCompleteNotification(
-                context = context,
-                notificationId = task.id,
-                title = task.track.title,
-                detailText = "${task.option.formatLabel} · ${formatBytes(sourceToSave.length())} · Saved to Downloads/iTune",
-                fileUri = savedUri,
-                mimeType = actualMime,
-                largeIcon = task.albumArtBitmap
+            val (coverBytes, coverMime) = loadArtworkBytes(context, task)
+            val lyricsText = loadLyricsForTrack(task.track)
+
+            MediaTagger.tagAudioFile(
+                file = sourceToSave,
+                track = task.track,
+                coverBytes = coverBytes.takeIf { it.isNotEmpty() },
+                coverMime = coverMime,
+                lyrics = lyricsText
             )
+
+            saveToDownloads(context, sourceToSave, finalFileName, actualMime, task.track)
+                ?: throw IOException("Could not save audio to Downloads")
         } finally {
             runCatching { tempFile.delete() }
             runCatching { remuxedFile?.delete() }
@@ -413,14 +527,14 @@ object AudioDownloader {
         targetFile: File,
         onProgress: (bytesRead: Long, totalBytes: Long) -> Unit
     ) = withContext(Dispatchers.IO) {
+        val streamUrl = task.resolvedOption?.streamUrl ?: task.option?.streamUrl ?: return@withContext
         targetFile.parentFile?.mkdirs()
 
-        // 1. Probe content length and Range support
         var totalBytes = -1L
         var supportsRange = false
         try {
             val probeReq = Request.Builder()
-                .url(task.option.streamUrl)
+                .url(streamUrl)
                 .header("User-Agent", Net.USER_AGENT)
                 .header("Range", "bytes=0-0")
                 .build()
@@ -501,7 +615,7 @@ object AudioDownloader {
 
                                 val reqStart = chunkBaseStart + alreadyInChunk
                                 val chunkReq = Request.Builder()
-                                    .url(task.option.streamUrl)
+                                    .url(streamUrl)
                                     .header("User-Agent", Net.USER_AGENT)
                                     .header("Range", "bytes=$reqStart-$chunkEnd")
                                     .build()
@@ -520,7 +634,6 @@ object AudioDownloader {
                                         while (stream.read(buffer).also { readCount = it } != -1) {
                                             if (task.isCancelled.get()) throw CancellationException("Cancelled")
                                             if (task.isPaused.get()) {
-                                                // Paused cleanly mid-chunk: exit stream read so we don't block socket
                                                 break
                                             }
                                             val byteBuffer = ByteBuffer.wrap(buffer, 0, readCount)
@@ -572,47 +685,57 @@ object AudioDownloader {
     private suspend fun downloadPausableDirectStream(
         task: DownloadTaskState,
         targetFile: File,
-        initialTotalBytes: Long,
+        knownTotalBytes: Long,
         onProgress: (bytesRead: Long, totalBytes: Long) -> Unit
     ) = withContext(Dispatchers.IO) {
-        var bytesWritten = 0L
-        var totalBytes = initialTotalBytes
-        val buffer = ByteArray(32 * 1024)
+        val streamUrl = task.resolvedOption?.streamUrl ?: task.option?.streamUrl ?: return@withContext
+        var bytesWritten = targetFile.length()
+        var totalBytes = knownTotalBytes
 
-        while (!task.isCancelled.get() && isActive) {
-            while (task.isPaused.get() && !task.isCancelled.get() && isActive) {
+        while (!task.isCancelled.get()) {
+            while (task.isPaused.get() && !task.isCancelled.get()) {
                 delay(150L)
             }
-            if (task.isCancelled.get() || !isActive) break
+            if (task.isCancelled.get()) break
 
             val reqBuilder = Request.Builder()
-                .url(task.option.streamUrl)
+                .url(streamUrl)
                 .header("User-Agent", Net.USER_AGENT)
+
             if (bytesWritten > 0L) {
                 reqBuilder.header("Range", "bytes=$bytesWritten-")
             }
-            val call = Net.client.newCall(reqBuilder.build())
+
+            val req = reqBuilder.build()
+            val call = Net.client.newCall(req)
             task.activeCalls[call] = true
 
             var pausedMidStream = false
+
             try {
                 call.execute().use { resp ->
-                    if (!resp.isSuccessful) throw IOException("Network error ${resp.code}")
-                    val body = resp.body ?: throw IOException("Empty response body")
-                    val appendMode = resp.code == 206 && bytesWritten > 0L
-                    if (!appendMode && bytesWritten > 0L) {
-                        bytesWritten = 0L
-                    }
-                    if (totalBytes <= 0L) {
-                        val contentLen = body.contentLength()
-                        if (contentLen > 0L) {
-                            totalBytes = if (appendMode) bytesWritten + contentLen else contentLen
+                    if (!resp.isSuccessful && resp.code != 206) {
+                        if (bytesWritten > 0L) {
+                            bytesWritten = 0L
+                            targetFile.delete()
+                            return@use
                         }
+                        throw IOException("HTTP error ${resp.code} during audio download")
                     }
-                    java.io.FileOutputStream(targetFile, appendMode).use { out ->
-                        body.byteStream().use { input ->
+
+                    if (totalBytes <= 0L) {
+                        val cl = resp.body?.contentLength() ?: -1L
+                        if (cl > 0L) totalBytes = bytesWritten + cl
+                    }
+
+                    val body = resp.body ?: throw IOException("Empty body response")
+                    val source = body.byteStream()
+                    val append = bytesWritten > 0L
+                    targetFile.outputStream().use { fos ->
+                        java.io.BufferedOutputStream(fos, 64 * 1024).use { out ->
+                            val buffer = ByteArray(32 * 1024)
                             var read: Int
-                            while (input.read(buffer).also { read = it } != -1) {
+                            while (source.read(buffer).also { read = it } != -1) {
                                 if (task.isCancelled.get()) throw CancellationException("Cancelled")
                                 if (task.isPaused.get()) {
                                     pausedMidStream = true
@@ -642,10 +765,17 @@ object AudioDownloader {
         }
     }
 
-    private fun saveToDownloads(context: Context, sourceFile: File, fileName: String, mimeType: String): Uri? {
+    private fun saveToDownloads(
+        context: Context,
+        sourceFile: File,
+        fileName: String,
+        mimeType: String,
+        track: MusicTrack
+    ): Uri? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val values = ContentValues().apply {
                 put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+                put(MediaStore.Downloads.TITLE, track.title)
                 put(MediaStore.Downloads.MIME_TYPE, mimeType)
                 put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/iTune")
                 put(MediaStore.Downloads.IS_PENDING, 1)
@@ -658,9 +788,11 @@ object AudioDownloader {
                     sourceFile.inputStream().use { inputStream -> inputStream.copyTo(outputStream) }
                 }
                 values.clear()
-                values.clear()
                 values.put(MediaStore.Downloads.IS_PENDING, 0)
                 resolver.update(uri, values, null, null)
+
+                val publicFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "iTune/$fileName")
+                MediaScannerConnection.scanFile(context, arrayOf(publicFile.absolutePath), arrayOf(mimeType), null)
                 uri
             } catch (e: Exception) {
                 resolver.delete(uri, null, null)
@@ -677,50 +809,82 @@ object AudioDownloader {
         }
     }
 
-    private fun saveArtworkToDownloads(context: Context, bitmap: Bitmap, audioFileName: String): String? {
-        val imageName = audioFileName.substringBeforeLast('.') + "-cover.jpg"
-        val temp = File(context.cacheDir, "itune_cover_${System.currentTimeMillis()}.jpg")
-        return try {
-            temp.outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 92, it) }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                val values = ContentValues().apply {
-                    put(MediaStore.MediaColumns.DISPLAY_NAME, imageName)
-                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/iTune")
-                    put(MediaStore.MediaColumns.IS_PENDING, 1)
+    private suspend fun loadArtworkBytes(context: Context, task: DownloadTaskState): Pair<ByteArray, String> = withContext(Dispatchers.IO) {
+        val candidates = listOfNotNull(
+            task.track.thumbnailUrl?.highQualityThumbnail(),
+            task.track.thumbnailUrl,
+            "https://i.ytimg.com/vi/${task.track.id}/maxresdefault.jpg",
+            "https://i.ytimg.com/vi/${task.track.id}/hqdefault.jpg"
+        ).filter { it.isNotBlank() }.distinct()
+
+        for (url in candidates) {
+            val res = runCatching {
+                val req = Request.Builder()
+                    .url(url)
+                    .header("User-Agent", Net.USER_AGENT)
+                    .build()
+                Net.client.newCall(req).execute().use { resp ->
+                    if (resp.isSuccessful) {
+                        val bytes = resp.body?.bytes()
+                        val mime = resp.header("Content-Type")?.substringBefore(";")?.trim() ?: "image/jpeg"
+                        if (bytes != null && bytes.isNotEmpty()) {
+                            Pair(bytes, mime)
+                        } else null
+                    } else null
                 }
-                val uri = context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values) ?: return null
-                try {
-                    context.contentResolver.openOutputStream(uri)?.use { output -> temp.inputStream().use { it.copyTo(output) } }
-                        ?: throw IOException("Could not save artwork")
-                    context.contentResolver.update(uri, ContentValues().apply {
-                        put(MediaStore.MediaColumns.IS_PENDING, 0)
-                    }, null, null)
-                } catch (error: Exception) {
-                    context.contentResolver.delete(uri, null, null)
-                    throw error
+            }.getOrNull()
+
+            if (res != null) {
+                if (task.albumArtBitmap == null) {
+                    task.albumArtBitmap = runCatching {
+                        BitmapFactory.decodeByteArray(res.first, 0, res.first.size)
+                    }.getOrNull()
                 }
-            } else {
-                @Suppress("DEPRECATION")
-                val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "iTune")
-                dir.mkdirs()
-                val artworkFile = File(dir, imageName)
-                temp.copyTo(artworkFile, overwrite = true)
-                MediaScannerConnection.scanFile(context, arrayOf(artworkFile.absolutePath), arrayOf("image/jpeg"), null)
+                return@withContext res
             }
-            @Suppress("DEPRECATION")
-            File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "iTune/$imageName").absolutePath
-        } catch (error: Exception) {
-            Log.w(TAG, "Could not save download artwork", error)
-            null
-        } finally {
-            temp.delete()
+        }
+
+        task.albumArtBitmap?.let { bmp ->
+            val out = java.io.ByteArrayOutputStream()
+            bmp.compress(Bitmap.CompressFormat.JPEG, 92, out)
+            val bytes = out.toByteArray()
+            if (bytes.isNotEmpty()) {
+                return@withContext Pair(bytes, "image/jpeg")
+            }
+        }
+
+        Pair(ByteArray(0), "image/jpeg")
+    }
+
+    private suspend fun loadLyricsForTrack(track: MusicTrack): String? = withContext(Dispatchers.IO) {
+        runCatching {
+            if (MusicPlayerState.currentTrack?.id == track.id && MusicPlayerState.rawLyricsText.isNotBlank()) {
+                return@withContext MusicPlayerState.rawLyricsText
+            }
+            withTimeoutOrNull(3500L) {
+                LyricsHelper.loadLyricsWithRaw(
+                    songId = track.id,
+                    title = track.title,
+                    artist = track.artists,
+                    durationSec = track.durationSec.toInt()
+                ).rawText.takeIf { it.isNotBlank() }
+            }
+        }.getOrNull()
+    }
+
+    private fun buildSubText(task: DownloadTaskState): String {
+        val total = totalQueuedCount.get()
+        val currentDone = completedCount.get()
+        return if (total > 1) {
+            "iTune · Track ${currentDone + 1} of $total"
+        } else {
+            val fmt = task.resolvedOption?.formatLabel ?: task.option?.formatLabel ?: "Audio"
+            "iTune · $fmt"
         }
     }
 
     private fun buildProgressNotification(
         context: Context,
-        notificationId: Int,
         title: String,
         subText: String,
         contentText: String,
@@ -729,38 +893,45 @@ object AudioDownloader {
         isPaused: Boolean,
         largeIcon: Bitmap?
     ): Notification {
-        val pauseResumeIcon = if (isPaused) {
-            android.R.drawable.ic_media_play
-        } else {
-            android.R.drawable.ic_media_pause
-        }
-        val pauseResumeLabel = if (isPaused) "Resume" else "Pause"
+        val hasMoreInQueue = downloadQueue.isNotEmpty()
 
+        val pauseResumeIcon = if (isPaused) android.R.drawable.ic_media_play else android.R.drawable.ic_media_pause
+        val pauseResumeLabel = if (isPaused) "Resume" else "Pause"
         val pauseResumeIntent = Intent(context, DownloadActionReceiver::class.java).apply {
             action = DownloadActionReceiver.ACTION_PAUSE_RESUME
-            putExtra(DownloadActionReceiver.EXTRA_DOWNLOAD_ID, notificationId)
+            putExtra(DownloadActionReceiver.EXTRA_DOWNLOAD_ID, DEFAULT_FOREGROUND_ID)
         }
-        val pauseResumePendingIntent = PendingIntent.getBroadcast(
+        val pauseResumePI = PendingIntent.getBroadcast(
             context,
-            notificationId * 10 + 1,
+            DEFAULT_FOREGROUND_ID * 10 + 1,
             pauseResumeIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val cancelIntent = Intent(context, DownloadActionReceiver::class.java).apply {
+        val skipIntent = Intent(context, DownloadActionReceiver::class.java).apply {
             action = DownloadActionReceiver.ACTION_CANCEL
-            putExtra(DownloadActionReceiver.EXTRA_DOWNLOAD_ID, notificationId)
+            putExtra(DownloadActionReceiver.EXTRA_DOWNLOAD_ID, DEFAULT_FOREGROUND_ID)
         }
-        val cancelPendingIntent = PendingIntent.getBroadcast(
+        val skipPI = PendingIntent.getBroadcast(
             context,
-            notificationId * 10 + 2,
-            cancelIntent,
+            DEFAULT_FOREGROUND_ID * 10 + 2,
+            skipIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val cancelAllIntent = Intent(context, DownloadActionReceiver::class.java).apply {
+            action = DownloadActionReceiver.ACTION_CANCEL_ALL
+        }
+        val cancelAllPI = PendingIntent.getBroadcast(
+            context,
+            DEFAULT_FOREGROUND_ID * 10 + 3,
+            cancelAllIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val openAppIntent = PendingIntent.getActivity(
             context,
-            notificationId + 50_000,
+            DEFAULT_FOREGROUND_ID + 50_000,
             Intent(context, MainActivity::class.java).addFlags(
                 Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
             ),
@@ -777,11 +948,17 @@ object AudioDownloader {
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setSilent(true)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .setCategory(NotificationCompat.CATEGORY_PROGRESS)
             .setContentIntent(openAppIntent)
-            .addAction(pauseResumeIcon, pauseResumeLabel, pauseResumePendingIntent)
-            .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Cancel", cancelPendingIntent)
+            .addAction(pauseResumeIcon, pauseResumeLabel, pauseResumePI)
+
+        if (hasMoreInQueue) {
+            builder.addAction(android.R.drawable.ic_media_next, "Skip", skipPI)
+            builder.addAction(android.R.drawable.ic_menu_close_clear_cancel, "Cancel All", cancelAllPI)
+        } else {
+            builder.addAction(android.R.drawable.ic_menu_close_clear_cancel, "Cancel", cancelAllPI)
+        }
 
         if (largeIcon != null) {
             builder.setLargeIcon(largeIcon)
@@ -789,52 +966,43 @@ object AudioDownloader {
         return builder.build()
     }
 
-    private fun showCompleteNotification(
-        context: Context,
-        notificationId: Int,
-        title: String,
-        detailText: String,
-        fileUri: Uri?,
-        mimeType: String,
-        largeIcon: Bitmap?
-    ) {
-        val pendingIntent = fileUri?.let { uri ->
-            val viewIntent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(uri, mimeType)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            PendingIntent.getActivity(
-                context,
-                notificationId,
-                viewIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
+    private fun showSummaryCompleteNotification(context: Context, totalDownloaded: Int, lastTitle: String?) {
+        val openAppIntent = PendingIntent.getActivity(
+            context,
+            COMPLETE_NOTIFICATION_ID + 50_000,
+            Intent(context, MainActivity::class.java).addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            ),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val title = if (totalDownloaded == 1) "Download Complete" else "Downloads Complete"
+        val message = if (totalDownloaded == 1) {
+            "${lastTitle ?: "Track"} · Saved to Downloads/iTune"
+        } else {
+            "Downloaded $totalDownloaded tracks · Saved to Downloads/iTune"
         }
 
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle("Download Complete · $title")
-            .setContentText(detailText)
+        val notif = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setContentTitle(title)
+            .setContentText(message)
             .setSmallIcon(android.R.drawable.stat_sys_download_done)
-            .setProgress(0, 0, false)
-            .setOngoing(false)
             .setAutoCancel(true)
+            .setOngoing(false)
+            .setContentIntent(openAppIntent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
 
-        if (largeIcon != null) builder.setLargeIcon(largeIcon)
-        if (pendingIntent != null) builder.setContentIntent(pendingIntent)
-
-        safeNotify(context, notificationId + 10_000, builder.build())
+        safeNotify(context, COMPLETE_NOTIFICATION_ID, notif)
     }
 
     private fun showFailedNotification(
         context: Context,
-        notificationId: Int,
         title: String,
         reason: String,
         largeIcon: Bitmap?
     ) {
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+        val notif = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle("Download Failed · $title")
             .setContentText(reason)
             .setSmallIcon(android.R.drawable.stat_notify_error)
@@ -842,9 +1010,11 @@ object AudioDownloader {
             .setOngoing(false)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-        if (largeIcon != null) builder.setLargeIcon(largeIcon)
-        safeNotify(context, notificationId + 10_000, builder.build())
+            .apply {
+                if (largeIcon != null) setLargeIcon(largeIcon)
+            }
+            .build()
+        safeNotify(context, COMPLETE_NOTIFICATION_ID, notif)
     }
 
     private suspend fun loadArtworkBitmap(context: Context, track: MusicTrack): Bitmap? {
@@ -860,12 +1030,12 @@ object AudioDownloader {
         }.getOrNull()
     }
 
-    private fun tryStartService(context: Context, notificationId: Int, title: String) {
+    private fun tryStartService(context: Context) {
         runCatching {
             val intent = Intent(context, AudioDownloadService::class.java).apply {
                 action = AudioDownloadService.ACTION_START_OR_SYNC
-                putExtra(AudioDownloadService.EXTRA_NOTIFICATION_ID, notificationId)
-                putExtra(AudioDownloadService.EXTRA_TITLE, title)
+                putExtra(AudioDownloadService.EXTRA_NOTIFICATION_ID, DEFAULT_FOREGROUND_ID)
+                putExtra(AudioDownloadService.EXTRA_TITLE, "iTune Downloads")
             }
             ContextCompat.startForegroundService(context, intent)
         }

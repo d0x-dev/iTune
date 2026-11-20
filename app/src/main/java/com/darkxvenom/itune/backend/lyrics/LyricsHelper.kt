@@ -769,10 +769,41 @@ object LyricsHelper {
         }
     }
 
+    private fun isIgnoredMetadataLyrics(text: String): Boolean {
+        val t = text.trim()
+        if (t.isBlank() || t.equals("null", ignoreCase = true)) return true
+        if (t.startsWith("{") && t.endsWith("}")) return true
+        if (t.startsWith("[") && t.endsWith("]")) return true
+        if (t.startsWith("{\"") || t.startsWith("{\\\"")) return true
+        if (t.contains("\"element\":") || t.contains("\"key\":") || t.contains("\"singer\":") || t.contains("ement\":{")) return true
+        if (t.startsWith("krc1", ignoreCase = true)) return true
+        if (t.startsWith("ti:", ignoreCase = true) || t.startsWith("ar:", ignoreCase = true) ||
+            t.startsWith("al:", ignoreCase = true) || t.startsWith("by:", ignoreCase = true) ||
+            t.startsWith("offset:", ignoreCase = true) || t.startsWith("re:", ignoreCase = true) ||
+            t.startsWith("ve:", ignoreCase = true)) return true
+        return false
+    }
+
     /** Parses TTML, LRC (`[mm:ss.xx]`), or plain text. */
     fun parseLyricsText(rawText: String): List<LyricsLine> {
         val clean = rawText.trim()
         if (clean.isBlank() || clean.equals("null", ignoreCase = true)) return emptyList()
+
+        if ((clean.startsWith("{") && clean.endsWith("}")) || (clean.startsWith("[") && clean.endsWith("]"))) {
+            val extracted = runCatching {
+                if (clean.startsWith("{")) {
+                    val obj = JSONObject(clean)
+                    for (k in listOf("lyrics", "lrc", "content", "text", "syncedLyrics", "plainLyrics")) {
+                        val v = obj.optString(k, "")
+                        if (v.isNotBlank()) return@runCatching v
+                    }
+                }
+                null
+            }.getOrNull()
+            if (!extracted.isNullOrBlank()) {
+                return parseLyricsText(extracted)
+            }
+        }
 
         if (TTMLParser.isTtml(clean)) {
             val ttmlLines = TTMLParser.parseTtml(clean)
@@ -784,7 +815,7 @@ object LyricsHelper {
 
         return clean.lines()
             .map { unescapeHtml(it.trim()) }
-            .filter { it.isNotBlank() && !it.equals("null", ignoreCase = true) }
+            .filter { line -> !isIgnoredMetadataLyrics(line) }
             .map { LyricsLine(timeMs = 0L, text = it) }
     }
 
@@ -824,7 +855,7 @@ object LyricsHelper {
                 val timeMs = min * 60000L + sec * 1000L + ms
                 val rawText = matcher.group(4)?.trim().orEmpty()
                 val text = unescapeHtml(rawText)
-                if (text.isNotBlank()) {
+                if (text.isNotBlank() && !isIgnoredMetadataLyrics(text)) {
                     lines.add(LyricsLine(timeMs = timeMs, text = text))
                 }
             }

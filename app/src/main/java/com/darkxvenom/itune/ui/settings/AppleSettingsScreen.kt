@@ -90,6 +90,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
@@ -157,6 +158,7 @@ import com.darkxvenom.itune.ui.artist.components.backdrop.backdrops.rememberSnap
 import com.darkxvenom.itune.ui.artist.components.backdrop.backdrops.snapshotBackdropSource
 import com.darkxvenom.itune.ui.artist.components.isGlassSupported
 import com.darkxvenom.itune.ui.artist.components.topBarContentPadding
+import com.darkxvenom.itune.data.account.UserAccount
 import com.darkxvenom.itune.ui.artist.haptics.Haptic
 import com.darkxvenom.itune.ui.artist.haptics.Haptics
 import com.darkxvenom.itune.ui.artist.haptics.rememberHaptics
@@ -301,6 +303,8 @@ fun AppleSettingsScreen(
     onAccountClick: () -> Unit,
     onOpenIShare: () -> Unit = {},
     onOpenDynamicIsland: () -> Unit = {},
+    onAddNewAccount: () -> Unit = {},
+    onSwitchAccount: (UserAccount, Rect?) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -738,9 +742,15 @@ fun AppleSettingsScreen(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(horizontal = 24.dp, vertical = 4.dp),
+                                        .padding(horizontal = 24.dp, vertical = 6.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
+                                    Image(
+                                        painter = painterResource(R.drawable.ic_itune_waves),
+                                        contentDescription = "iTune icon",
+                                        modifier = Modifier.size(38.dp),
+                                    )
+                                    Spacer(Modifier.height(8.dp))
                                     Text(
                                         text = "Version ${AppUpdateManager.installedVersion} (${AppUpdateManager.installedVersionCode})",
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
@@ -860,6 +870,14 @@ fun AppleSettingsScreen(
                             showProfileAccount = false
                             showSpotifyIntegration = true
                         },
+                        onAddNewAccount = {
+                            showProfileAccount = false
+                            onAddNewAccount()
+                        },
+                        onSwitchAccount = { target, bounds ->
+                            showProfileAccount = false
+                            onSwitchAccount(target, bounds)
+                        },
                     )
                 }
 
@@ -955,10 +973,6 @@ fun AppleSettingsScreen(
             updateAvailable = availableUpdate != null,
             isCheckingForUpdate = isCheckingForUpdate,
             onOpenRelease = { release -> AppUpdateManager.downloadApk(context, release) },
-            onReplayWelcome = {
-                showAboutDialog = false
-                SettingsStore.setBoolean(context, SettingsStore.KEY_WELCOME_COMPLETED, false)
-            },
             onOpenLicense = { showLicenseDialog = true },
             onDismiss = { showAboutDialog = false },
         )
@@ -1042,13 +1056,16 @@ fun AppleSettingsScreen(
             accountDescription = scanned.accountDescription,
             libraryDescription = scanned.libraryDescription,
             available = scanned.categories,
+            backupAccounts = scanned.backupAccounts,
             onDismiss = { scannedBackup = null; restoreUri = null; restorePassword = "" },
-            onRestore = { selected ->
+            onRestore = { selected, selectedAccountIds ->
                 restoreBusy = true
                 coroutineScope.launch {
                     val result = runCatching {
-                        withContext(Dispatchers.IO) { BackupRestoreManager.restore(context, scanned, selected) }
-                        BackupRestoreManager.refreshRestoredState(context, selected)
+                        withContext(Dispatchers.IO) {
+                            BackupRestoreManager.restore(context, scanned, selected, selectedAccountIds)
+                        }
+                        BackupRestoreManager.refreshRestoredState(context, selected, selectedAccountIds)
                     }
                     restoreBusy = false
                     scannedBackup = null
@@ -1914,7 +1931,6 @@ private fun SettingsAboutDialog(
     updateAvailable: Boolean,
     isCheckingForUpdate: Boolean,
     onOpenRelease: (GithubReleaseInfo) -> Unit,
-    onReplayWelcome: () -> Unit,
     onOpenLicense: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -2075,21 +2091,6 @@ private fun SettingsAboutDialog(
         }
 
         Spacer(Modifier.height(16.dp))
-        HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(46.dp)
-                .clickable { onReplayWelcome() },
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "Replay Welcome Screen",
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
-                fontSize = 15.5.sp,
-                fontWeight = FontWeight.Medium,
-            )
-        }
         HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
         Box(
             modifier = Modifier

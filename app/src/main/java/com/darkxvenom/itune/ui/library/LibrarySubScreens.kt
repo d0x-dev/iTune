@@ -91,8 +91,10 @@ import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.library.LibraryDestination
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.library.SavedCollectionEntry
+import com.darkxvenom.itune.data.library.SavedSongMetadata
 import com.darkxvenom.itune.data.library.UserPlaylist
 import com.darkxvenom.itune.data.spotify.SpotifyLibrarySyncManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.darkxvenom.itune.data.model.BrowseType
 import com.darkxvenom.itune.data.model.CARD_ART_PX
@@ -1160,6 +1162,50 @@ fun UserPlaylistDetailScreen(
     var spotifyHydrating by remember(playlist?.id) {
         mutableStateOf(playlist?.isSpotifyAccount == true && playlist.songs.isEmpty())
     }
+    var isRefreshing by remember { mutableStateOf(false) }
+
+    val handleRefresh: () -> Unit = {
+        if (!isRefreshing && playlist != null) {
+            isRefreshing = true
+            val countBefore = playlist.songs.size
+            scope.launch {
+                try {
+                    when {
+                        playlist.isSpotifyAccount -> {
+                            SpotifyLibrarySyncManager.hydratePlaylistTracks(context, playlist.id)
+                        }
+                        playlist.isGoogleAccount -> {
+                            val ytBrowseId = playlist.ytPlaylistId ?: ("VL" + playlist.id.removePrefix("VL"))
+                            runCatching {
+                                val page = com.darkxvenom.itune.data.artist.ArtistRepository.browseSongs(ytBrowseId).getOrNull()
+                                val fetched = page?.songs
+                                if (!fetched.isNullOrEmpty()) {
+                                    val newMeta = fetched.map { s -> SavedSongMetadata.fromSong(s) }
+                                    LibraryStore.replaceUserPlaylistSongs(context, playlist.id, newMeta)
+                                }
+                            }
+                        }
+                        else -> {
+                            delay(400L)
+                        }
+                    }
+                    val updatedPl = LibraryStore.userPlaylists.value.firstOrNull { it.id == playlist.id }
+                    val countAfter = updatedPl?.songs?.size ?: countBefore
+                    val newSongs = (countAfter - countBefore).coerceAtLeast(0)
+                    if (newSongs > 0) {
+                        controller.showToast("$newSongs new ${if (newSongs == 1) "song" else "songs"} added")
+                    } else {
+                        controller.showToast("Playlist is up to date")
+                    }
+                } catch (e: Exception) {
+                    controller.showToast("Failed to refresh playlist")
+                } finally {
+                    isRefreshing = false
+                }
+            }
+        }
+    }
+
     LaunchedEffect(playlist?.id, playlist?.isSpotifyAccount) {
         val pl = playlist ?: return@LaunchedEffect
         if (pl.isSpotifyAccount) {
@@ -1335,6 +1381,8 @@ fun UserPlaylistDetailScreen(
                                 )
                             }
                         },
+                        onRefresh = handleRefresh,
+                        isRefreshing = isRefreshing || spotifyHydrating,
                     )
                 }
 

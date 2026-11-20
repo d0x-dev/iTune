@@ -143,6 +143,11 @@ import com.darkxvenom.itune.ui.components.DeveloperNewsPopupDialog
 import com.darkxvenom.itune.data.updates.AppUpdateManager
 import com.darkxvenom.itune.ui.components.AppUpdatePopupDialog
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
+import com.darkxvenom.itune.data.account.MultiAccountManager
+import com.darkxvenom.itune.data.account.UserAccount
+import com.darkxvenom.itune.ui.account.AccountSwitchTransitionOverlay
+import com.darkxvenom.itune.ui.account.HangingProfileIconsPopup
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.requiredSize
@@ -185,6 +190,7 @@ fun HomeScreen(
     showTopBarBrand: Boolean = true,
     deferStartupPrompts: Boolean = false,
     onTopBarBrandBoundsChanged: ((iconBounds: Rect, titleBounds: Rect) -> Unit)? = null,
+    onAddNewAccount: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val availableUpdate by AppUpdateManager.availableUpdate.collectAsStateWithLifecycle()
@@ -371,6 +377,18 @@ fun HomeScreen(
     var showIRecognition by remember { mutableStateOf(false) }
     var showDeveloperNewsScreen by remember { mutableStateOf(false) }
 
+    val view = LocalView.current
+    val accountsList by MultiAccountManager.accounts.collectAsStateWithLifecycle()
+    var showHangingAccountSwitcher by remember { mutableStateOf(false) }
+    var switchingTargetAccount by remember { mutableStateOf<UserAccount?>(null) }
+    var switchingSourceBounds by remember { mutableStateOf<Rect?>(null) }
+    val handleProfileLongClick: () -> Unit = remember(view) {
+        {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+            showHangingAccountSwitcher = true
+        }
+    }
+
     LaunchedEffect(Unit) {
         DeveloperNewsManager.onOpenNewsRequested = {
             showDeveloperNewsScreen = true
@@ -406,11 +424,14 @@ fun HomeScreen(
     }
 
     LaunchedEffect(deferStartupPrompts) {
-        if (!deferStartupPrompts &&
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
-        ) {
-            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        if (!deferStartupPrompts) {
+            DeveloperNewsManager.checkOnAppOpen()
+            com.darkxvenom.itune.data.festival.FestivalManager.refresh()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+            ) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
         }
     }
 
@@ -540,7 +561,8 @@ fun HomeScreen(
                         onBrandBoundsChanged = onTopBarBrandBoundsChanged,
                         onProfileClick = {
                             showSettings = true
-                        }
+                        },
+                        onProfileLongClick = handleProfileLongClick,
                     )
                 }
 
@@ -686,6 +708,7 @@ fun HomeScreen(
                     onProfileClick = {
                         showSettings = true
                     },
+                    onProfileLongClick = handleProfileLongClick,
                     onOpenContentSettings = {
                         showSettings = true
                     },
@@ -750,6 +773,7 @@ fun HomeScreen(
                     onProfileClick = {
                         showSettings = true
                     },
+                    onProfileLongClick = handleProfileLongClick,
                     onRecognizeClick = {
                         showIRecognition = true
                     },
@@ -794,6 +818,7 @@ fun HomeScreen(
                     onProfileClick = {
                         showSettings = true
                     },
+                    onProfileLongClick = handleProfileLongClick,
                     onOpenIRecognition = {
                         showIRecognition = true
                     }
@@ -844,6 +869,15 @@ fun HomeScreen(
                 onAccountClick = { showAvatarDialog = true },
                 onOpenIShare = { showIShare = true },
                 onOpenDynamicIsland = { showDynamicIsland = true },
+                onAddNewAccount = {
+                    showSettings = false
+                    onAddNewAccount()
+                },
+                onSwitchAccount = { target, bounds ->
+                    showSettings = false
+                    switchingSourceBounds = bounds
+                    switchingTargetAccount = target
+                },
             )
         }
 
@@ -1328,16 +1362,47 @@ fun HomeScreen(
             )
         }
 
-        DeveloperNewsPopupDialog(
-            onNavigateToNews = {
-                showDeveloperNewsScreen = true
-            }
-        )
+        if (!deferStartupPrompts && !showDeveloperNewsScreen) {
+            DeveloperNewsPopupDialog(
+                onNavigateToNews = {
+                    showDeveloperNewsScreen = true
+                }
+            )
+        }
 
         availableUpdate?.takeIf { it.tag != dismissedUpdateTag }?.let { release ->
             AppUpdatePopupDialog(
                 release = release,
                 onDismiss = { dismissedUpdateTag = release.tag },
+            )
+        }
+
+        if (showHangingAccountSwitcher) {
+            val activeAcc by MultiAccountManager.activeAccount.collectAsStateWithLifecycle()
+            HangingProfileIconsPopup(
+                accounts = accountsList,
+                activeAccount = activeAcc,
+                onDismiss = { showHangingAccountSwitcher = false },
+                onSelectAccount = { acc, bounds ->
+                    showHangingAccountSwitcher = false
+                    switchingSourceBounds = bounds
+                    switchingTargetAccount = acc
+                },
+                onAddNewAccount = {
+                    showHangingAccountSwitcher = false
+                    onAddNewAccount()
+                },
+            )
+        }
+
+        switchingTargetAccount?.let { targetAcc ->
+            AccountSwitchTransitionOverlay(
+                targetAccount = targetAcc,
+                sourceAvatarBounds = switchingSourceBounds,
+                onComplete = {
+                    switchingTargetAccount = null
+                    switchingSourceBounds = null
+                },
             )
         }
     }

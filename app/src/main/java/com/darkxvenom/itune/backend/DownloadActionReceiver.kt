@@ -18,11 +18,11 @@ import android.content.Intent
 class DownloadActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val id = intent.getIntExtra(EXTRA_DOWNLOAD_ID, -1)
-        if (id < 0) return
 
         when (intent.action) {
-            ACTION_PAUSE_RESUME -> AudioDownloader.togglePause(context, id)
-            ACTION_CANCEL -> AudioDownloader.cancel(context, id)
+            ACTION_PAUSE_RESUME -> if (id >= 0) AudioDownloader.togglePause(context, id)
+            ACTION_CANCEL -> if (id >= 0) AudioDownloader.cancel(context, id)
+            ACTION_CANCEL_ALL -> AudioDownloader.cancelAll(context)
         }
     }
     // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
@@ -30,6 +30,7 @@ class DownloadActionReceiver : BroadcastReceiver() {
     companion object {
         const val ACTION_PAUSE_RESUME = "com.darkxvenom.itune.action.DOWNLOAD_PAUSE_RESUME"
         const val ACTION_CANCEL = "com.darkxvenom.itune.action.DOWNLOAD_CANCEL"
+        const val ACTION_CANCEL_ALL = "com.darkxvenom.itune.action.DOWNLOAD_CANCEL_ALL"
         const val EXTRA_DOWNLOAD_ID = "com.darkxvenom.itune.extra.DOWNLOAD_ID"
     }
 }

@@ -30,21 +30,26 @@ object AvatarManager {
     val currentAvatarId: State<Int> get() = _currentAvatarId
     // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
-    private var isInitialized = false
-
     /**
      * Initializes the avatar manager from SharedPreferences.
+     * Always reloads the saved avatar to guarantee fresh state across account switches.
      */
     fun init(context: Context) {
-        if (isInitialized) return
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val savedId = prefs.getInt(KEY_SELECTED_AVATAR, 1)
         _currentAvatarId.intValue = savedId.coerceIn(1, TOTAL_AVATARS)
-        isInitialized = true
     }
 
     /**
-     * Saves the chosen avatar permanently to SharedPreferences and updates reactive state.
+     * Forces a reload of the avatar ID from SharedPreferences.
+     */
+    fun reload(context: Context) {
+        init(context)
+    }
+
+    /**
+     * Saves the chosen avatar permanently to SharedPreferences, updates reactive state,
+     * and synchronizes with the active user account.
      */
     fun setAvatar(context: Context, avatarId: Int) {
         val safeId = avatarId.coerceIn(1, TOTAL_AVATARS)
@@ -53,6 +58,7 @@ object AvatarManager {
             .edit()
             .putInt(KEY_SELECTED_AVATAR, safeId)
             .apply()
+        com.darkxvenom.itune.data.account.MultiAccountManager.updateActiveAccountProfile(context, avatarId = safeId)
     }
 
     /**

@@ -466,6 +466,7 @@ class LibraryHostController internal constructor(
             val stamped = loaded.map { song ->
                 song.copy(
                     albumName = if (entry.type == BrowseType.ALBUM) song.albumName ?: entry.title else song.albumName,
+                    thumbnailUrl = song.thumbnailUrl?.takeIf { it.isNotBlank() } ?: entry.thumbnailUrl,
                     playbackSource = entry.title,
                     playbackSourceType = PlaybackSourceType.BROWSE,
                     playbackSourceId = entry.browseId,
@@ -528,9 +529,7 @@ class LibraryHostController internal constructor(
             return
         }
         showToast("Queuing ${songs.size} tracks for download...")
-        scope.launch {
-            songs.take(25).forEach { downloadSong(it) }
-        }
+        AudioDownloader.downloadTracks(context, songs.map { it.toMusicTrack() })
     }
 
     fun removeCollection(entry: SavedCollectionEntry) {

@@ -110,6 +110,7 @@ fun LibraryScreen(
     onRecentlyAddedClick: () -> Unit = {},
     onNewReleaseClick: (NewReleaseAlbum) -> Unit = {},
     onProfileClick: () -> Unit = {},
+    onProfileLongClick: (() -> Unit)? = null,
     onRecognizeClick: () -> Unit = {},
     onSpotifyImportClick: () -> Unit = {},
     onTimeTravelClick: () -> Unit = {},
@@ -206,7 +207,8 @@ fun LibraryScreen(
                         // Profile Icon Only (No 3-dot button)
                         AppleMemojiAvatar(
                             size = 38.dp,
-                            onClick = onProfileClick
+                            onClick = onProfileClick,
+                            onLongClick = onProfileLongClick,
                         )
                     }
                 }

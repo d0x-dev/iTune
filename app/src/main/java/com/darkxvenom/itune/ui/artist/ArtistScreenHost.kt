@@ -538,6 +538,7 @@ class ArtistHostController internal constructor(
             list.map { song ->
                 song.copy(
                     albumName = if (target.type == BrowseType.ALBUM) song.albumName ?: target.title else song.albumName,
+                    thumbnailUrl = song.thumbnailUrl?.takeIf { it.isNotBlank() } ?: target.thumbnailUrl,
                     playbackSource = target.title,
                     playbackSourceType = PlaybackSourceType.BROWSE,
                     playbackSourceId = target.browseId,
@@ -585,23 +586,7 @@ class ArtistHostController internal constructor(
     fun downloadSongs(songs: List<Song>) {
         if (songs.isEmpty()) return
         showToast("Starting download for ${songs.size} tracks...")
-        scope.launch {
-            for (song in songs) {
-                try {
-                    val options = withContext(Dispatchers.IO) {
-                        MusicBackend.extractAudioQualities(song.videoId)
-                    }
-                    val best = options.firstOrNull()
-                    if (best != null) {
-                        AudioDownloader.download(context, song.toMusicTrack(), best)
-                    }
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (_: Exception) {
-                    // Continue remaining tracks in the collection.
-                }
-            }
-        }
+        AudioDownloader.downloadTracks(context, songs.map { it.toMusicTrack() })
     }
 
     fun shareUrl(title: String, url: String) {

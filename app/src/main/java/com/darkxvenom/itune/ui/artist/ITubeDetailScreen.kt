@@ -189,6 +189,9 @@ import com.darkxvenom.itune.ui.artist.icons.ITubeIcons
 import com.darkxvenom.itune.ui.artist.theme.ArtworkPalette
 import com.darkxvenom.itune.ui.artist.theme.ITubeArtistTheme
 import com.darkxvenom.itune.ui.artist.theme.rememberArtworkPalette
+import com.darkxvenom.itune.ui.components.TopSpringLoadingBar
+import com.darkxvenom.itune.ui.components.rememberSpringOverscrollState
+import com.darkxvenom.itune.ui.components.springOverscroll
 import com.darkxvenom.itune.ui.library.PlaylistCollageAvatar
 import kotlinx.coroutines.delay
 import java.util.Locale
@@ -293,7 +296,16 @@ fun ITubeDetailScreen(
     downloadedIds: Set<String> = emptySet(),
     onAddSuggested: (Song) -> Unit = {},
     emptyContent: (@Composable () -> Unit)? = null,
+    onRefresh: (() -> Unit)? = null,
+    isRefreshing: Boolean = false,
 ) {
+    val overscrollState = rememberSpringOverscrollState()
+    LaunchedEffect(overscrollState.offset.value) {
+        if (listState.firstVisibleItemIndex == 0 && overscrollState.offset.value > 25f && !isRefreshing) {
+            onRefresh?.invoke()
+        }
+    }
+
     val rawSongs = (page.songs as? UiState.Success)?.data.orEmpty()
     val songs = remember(rawSongs, songSort) { rawSongs.sortedForDetail(songSort) }
     val originalTrackNumbers = remember(rawSongs) {
@@ -418,7 +430,11 @@ fun ITubeDetailScreen(
 
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .then(
+                            if (onRefresh != null) Modifier.springOverscroll(overscrollState) else Modifier
+                        ),
                     contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                 ) {
                     item(key = "header") {
@@ -690,6 +706,13 @@ fun ITubeDetailScreen(
                         }
                     }
                     if (isArtist) aboutItem()
+                }
+
+                if (onRefresh != null) {
+                    TopSpringLoadingBar(
+                        isVisible = (isRefreshing || (overscrollState.isPullingTop && overscrollState.offset.value > 8f)) && listState.firstVisibleItemIndex == 0,
+                        modifier = Modifier.align(Alignment.TopCenter),
+                    )
                 }
             }
         } else {

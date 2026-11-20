@@ -308,10 +308,12 @@ internal fun sampleWelcomeAmbientFrame(progress: Float): WelcomeAmbientFrame {
 fun WelcomeScreen(
     initialName: String = "",
     fromSplash: Boolean = false,
+    isAddingAccount: Boolean = false,
     homeIconBounds: Rect? = null,
     homeTitleBounds: Rect? = null,
     onRevealHomeUnderlay: (String) -> Unit = {},
     onContinue: (String) -> Unit,
+    onCancel: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val haptics = rememberHaptics()
@@ -439,6 +441,9 @@ fun WelcomeScreen(
         }
     }
 
+    BackHandler(enabled = isAddingAccount && currentStep == WelcomeStep.NAME) {
+        onCancel?.invoke()
+    }
     BackHandler(enabled = currentStep == WelcomeStep.GOOGLE_CONNECT && !showGoogleLogin) {
         currentStep = WelcomeStep.NAME
     }

@@ -123,6 +123,7 @@ fun SearchScreen(
     modifier: Modifier = Modifier,
     onCategoryClick: (SearchCategory) -> Unit = {},
     onProfileClick: () -> Unit = {},
+    onProfileLongClick: (() -> Unit)? = null,
     onOpenIRecognition: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -373,7 +374,8 @@ fun SearchScreen(
 
                             AppleMemojiAvatar(
                                 size = 38.dp,
-                                onClick = onProfileClick
+                                onClick = onProfileClick,
+                                onLongClick = onProfileLongClick,
                             )
                         }
                         Spacer(modifier = Modifier.height(12.dp))

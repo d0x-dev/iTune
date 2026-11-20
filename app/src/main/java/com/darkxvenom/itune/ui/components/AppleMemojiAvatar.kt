@@ -12,9 +12,11 @@
 package com.darkxvenom.itune.ui.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -44,12 +46,14 @@ import com.darkxvenom.itune.data.repository.AvatarManager
  * Automatically synchronizes with AvatarManager's persistent selection and falls back to
  * the signature Apple Memoji canvas if network is unavailable.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AppleMemojiAvatar(
     modifier: Modifier = Modifier,
     size: Dp = 36.dp,
     avatarId: Int? = null,
-    onClick: () -> Unit = {}
+    onLongClick: (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null
 ) {
     val currentId = avatarId ?: AvatarManager.currentAvatarId.value
     val avatarUrl = remember(currentId) { AvatarManager.getAvatarUrl(currentId) }
@@ -67,7 +71,23 @@ fun AppleMemojiAvatar(
                 ),
                 shape = CircleShape
             )
-            .clickable { onClick() },
+            .then(
+                if (onLongClick != null && onClick != null) {
+                    Modifier.combinedClickable(
+                        onClick = onClick,
+                        onLongClick = onLongClick,
+                    )
+                } else if (onLongClick != null) {
+                    Modifier.combinedClickable(
+                        onClick = {},
+                        onLongClick = onLongClick,
+                    )
+                } else if (onClick != null) {
+                    Modifier.clickable { onClick() }
+                } else {
+                    Modifier
+                }
+            ),
         contentAlignment = Alignment.Center
     ) {
         SubcomposeAsyncImage(

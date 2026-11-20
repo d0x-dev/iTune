@@ -58,12 +58,17 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Logout
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.PhotoCamera
 import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material.icons.rounded.Sync
+import com.darkxvenom.itune.data.account.MultiAccountManager
+import com.darkxvenom.itune.data.account.UserAccount
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -74,6 +79,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -84,11 +90,14 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -103,6 +112,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.darkxvenom.itune.R
@@ -116,6 +126,7 @@ import com.darkxvenom.itune.data.auth.YouTubeProfile
 import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.lastfm.LastFmIntegration
 import com.darkxvenom.itune.data.discord.DiscordPresenceManager
+import com.darkxvenom.itune.data.repository.AvatarManager
 import com.darkxvenom.itune.ishare.IShareSyncManager
 import com.darkxvenom.itune.ui.artist.components.BottomFadeScrim
 import com.darkxvenom.itune.ui.artist.components.FrostedTopBar
@@ -158,6 +169,8 @@ fun SettingsProfileAccountScreen(
     onBack: () -> Unit,
     onOpenAvatarPopup: () -> Unit,
     onOpenSpotify: () -> Unit = {},
+    onAddNewAccount: () -> Unit = {},
+    onSwitchAccount: (UserAccount, Rect?) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -166,6 +179,7 @@ fun SettingsProfileAccountScreen(
     val haptics = rememberHaptics()
     val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
     val ytAccount by GoogleAuthStore.state.collectAsStateWithLifecycle()
+    val accountBoundsMap = remember { mutableStateMapOf<String, Rect>() }
 
     LaunchedEffect(Unit) {
         GoogleAuthStore.ensureInit(context)
@@ -173,7 +187,11 @@ fun SettingsProfileAccountScreen(
         DiscordPresenceManager.initialize(context)
     }
 
-    var nameInput by remember(settingsState.displayName) { mutableStateOf(settingsState.displayName) }
+    val activeAccount by MultiAccountManager.activeAccount.collectAsStateWithLifecycle()
+    val accountsList by MultiAccountManager.accounts.collectAsStateWithLifecycle()
+    var nameInput by remember(activeAccount?.displayName, settingsState.displayName) {
+        mutableStateOf(activeAccount?.displayName ?: settingsState.displayName)
+    }
     val cleanName = nameInput.trim()
     val nameDirty = cleanName.isNotEmpty() && cleanName != settingsState.displayName
 
@@ -184,6 +202,11 @@ fun SettingsProfileAccountScreen(
     var lastFmBusy by remember { mutableStateOf(false) }
     var showDiscordLogin by remember { mutableStateOf(false) }
     var discordLoginBusy by remember { mutableStateOf(false) }
+
+    var accountActionTarget by remember { mutableStateOf<UserAccount?>(null) }
+    var showAccountActionMenu by remember { mutableStateOf(false) }
+    var showRenameAccountDialog by remember { mutableStateOf(false) }
+    var showDeleteAccountConfirmDialog by remember { mutableStateOf(false) }
 
     val listState = rememberLazyListState()
     val overscrollState = rememberSpringOverscrollState()
@@ -197,6 +220,7 @@ fun SettingsProfileAccountScreen(
         haptics.play(Haptic.Select)
         SettingsStore.setString(context, SettingsStore.KEY_DISPLAY_NAME, cleanName)
         IShareSyncManager.setDisplayName(cleanName)
+        MultiAccountManager.updateActiveAccountProfile(context, displayName = cleanName)
         focusManager.clearFocus()
         Toast.makeText(context, "Name saved", Toast.LENGTH_SHORT).show()
     }
@@ -257,6 +281,7 @@ fun SettingsProfileAccountScreen(
                         ) {
                             AppleMemojiAvatar(
                                 size = 96.dp,
+                                avatarId = activeAccount?.avatarId ?: AvatarManager.currentAvatarId.value,
                                 onClick = {
                                     haptics.play(Haptic.Tap)
                                     onOpenAvatarPopup()
@@ -428,6 +453,165 @@ fun SettingsProfileAccountScreen(
                                     contentDescription = null,
                                     tint = Color.White.copy(alpha = 0.36f),
                                     modifier = Modifier.size(13.dp),
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // ── Multi-Account Management Card ──
+                item(key = "multi_account_group") {
+                    val accounts by MultiAccountManager.accounts.collectAsStateWithLifecycle()
+                    val activeAccount by MultiAccountManager.activeAccount.collectAsStateWithLifecycle()
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                    ) {
+                        Text(
+                            text = "ACCOUNTS",
+                            color = Color.White.copy(alpha = 0.56f),
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = 0.4.sp,
+                            modifier = Modifier.padding(start = 12.dp, bottom = 7.dp),
+                        )
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(ProfileCardGrey),
+                        ) {
+                            accounts.forEachIndexed { index, acc ->
+                                val isActive = acc.id == activeAccount?.id
+
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            if (!isActive) {
+                                                haptics.play(Haptic.Select)
+                                                val bounds = accountBoundsMap[acc.id]
+                                                onSwitchAccount(acc, bounds)
+                                            }
+                                        }
+                                        .padding(horizontal = 16.dp, vertical = 13.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    // Left side: profile in circle
+                                    Box(
+                                        modifier = Modifier.onGloballyPositioned { coords ->
+                                            accountBoundsMap[acc.id] = coords.boundsInRoot()
+                                        }
+                                    ) {
+                                        AppleMemojiAvatar(
+                                            size = 40.dp,
+                                            avatarId = acc.avatarId,
+                                        )
+                                    }
+
+                                    Spacer(Modifier.width(14.dp))
+
+                                    // Right side: Name
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = acc.displayName,
+                                            color = Color.White,
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                        if (isActive) {
+                                            Text(
+                                                text = "Current Account",
+                                                color = AppleMusicRed,
+                                                fontSize = 12.sp,
+                                                fontWeight = FontWeight.Normal,
+                                            )
+                                        }
+                                    }
+
+                                    if (isActive) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Check,
+                                            contentDescription = "Active",
+                                            tint = AppleMusicRed,
+                                            modifier = Modifier.size(18.dp),
+                                        )
+                                        Spacer(Modifier.width(8.dp))
+                                    }
+
+                                    // 3-dot account options button (Rename / Delete)
+                                    Box(
+                                        modifier = Modifier
+                                            .size(34.dp)
+                                            .clip(CircleShape)
+                                            .clickable {
+                                                haptics.play(Haptic.Tap)
+                                                accountActionTarget = acc
+                                                showAccountActionMenu = true
+                                            },
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.MoreVert,
+                                            contentDescription = "Account Options",
+                                            tint = Color.White.copy(alpha = 0.58f),
+                                            modifier = Modifier.size(20.dp),
+                                        )
+                                    }
+                                }
+
+                                if (index < accounts.lastIndex) {
+                                    HorizontalDivider(
+                                        color = Color.White.copy(alpha = 0.08f),
+                                        thickness = 0.5.dp,
+                                        modifier = Modifier.padding(start = 70.dp),
+                                    )
+                                }
+                            }
+
+                            HorizontalDivider(
+                                color = Color.White.copy(alpha = 0.10f),
+                                thickness = 0.5.dp,
+                            )
+
+                            // Below that: Add Account button
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        haptics.play(Haptic.Tap)
+                                        onAddNewAccount()
+                                    }
+                                    .padding(horizontal = 16.dp, vertical = 13.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(CircleShape)
+                                        .background(Color.White.copy(alpha = 0.10f)),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Add,
+                                        contentDescription = "Add Account",
+                                        tint = AppleMusicRed,
+                                        modifier = Modifier.size(22.dp),
+                                    )
+                                }
+
+                                Spacer(Modifier.width(14.dp))
+
+                                Text(
+                                    text = "Add Account",
+                                    color = AppleMusicRed,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold,
                                 )
                             }
                         }
@@ -1105,6 +1289,73 @@ fun SettingsProfileAccountScreen(
                         }
                     }
                 },
+            )
+        }
+
+        if (showAccountActionMenu && accountActionTarget != null) {
+            AccountActionMenuDialog(
+                account = accountActionTarget!!,
+                canDelete = accountsList.size > 1,
+                onDismiss = {
+                    showAccountActionMenu = false
+                    accountActionTarget = null
+                },
+                onRename = {
+                    showAccountActionMenu = false
+                    showRenameAccountDialog = true
+                },
+                onDelete = {
+                    showAccountActionMenu = false
+                    showDeleteAccountConfirmDialog = true
+                }
+            )
+        }
+
+        if (showRenameAccountDialog && accountActionTarget != null) {
+            AccountRenameDialog(
+                account = accountActionTarget!!,
+                onDismiss = {
+                    showRenameAccountDialog = false
+                    accountActionTarget = null
+                },
+                onConfirm = { newName ->
+                    showRenameAccountDialog = false
+                    val target = accountActionTarget
+                    if (target != null && newName.isNotBlank()) {
+                        haptics.play(Haptic.Select)
+                        MultiAccountManager.updateAccountProfile(context, target.id, newName.trim(), target.avatarId)
+                        if (target.id == activeAccount?.id) {
+                            SettingsStore.setString(context, SettingsStore.KEY_DISPLAY_NAME, newName.trim())
+                            IShareSyncManager.setDisplayName(newName.trim())
+                        }
+                        Toast.makeText(context, "Account renamed", Toast.LENGTH_SHORT).show()
+                    }
+                    accountActionTarget = null
+                }
+            )
+        }
+
+        if (showDeleteAccountConfirmDialog && accountActionTarget != null) {
+            AccountDeleteConfirmDialog(
+                account = accountActionTarget!!,
+                onDismiss = {
+                    showDeleteAccountConfirmDialog = false
+                    accountActionTarget = null
+                },
+                onConfirm = {
+                    showDeleteAccountConfirmDialog = false
+                    val target = accountActionTarget
+                    if (target != null) {
+                        haptics.play(Haptic.Tap)
+                        val success = MultiAccountManager.deleteAccount(context, target.id)
+                        if (success) {
+                            Toast.makeText(context, "Account deleted", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "Cannot delete your only account", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    accountActionTarget = null
+                }
             )
         }
     }
@@ -1807,3 +2058,406 @@ private fun animateFloatAsStateOrStatic(pressed: Boolean) =
         ),
         label = "googleCardScale",
     )
+
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
+
+@Composable
+private fun AccountActionMenuDialog(
+    account: UserAccount,
+    canDelete: Boolean,
+    onDismiss: () -> Unit,
+    onRename: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { onDismiss() }
+                .padding(horizontal = 24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { /* absorb inner click */ }
+                    .clip(RoundedCornerShape(22.dp))
+                    .background(Color(0xFF141416))
+                    .border(1.dp, Color(0xFF2C2C2E), RoundedCornerShape(22.dp))
+                    .padding(vertical = 18.dp, horizontal = 18.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Account Avatar & Name Header
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    AppleMemojiAvatar(
+                        size = 38.dp,
+                        avatarId = account.avatarId,
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = account.displayName,
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = "Account Options",
+                            color = AppleTextSecondary,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Normal
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(14.dp))
+                HorizontalDivider(color = Color.White.copy(alpha = 0.08f), thickness = 0.5.dp)
+                Spacer(Modifier.height(6.dp))
+
+                // Rename Option
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable { onRename() }
+                        .padding(horizontal = 10.dp, vertical = 13.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Edit,
+                        contentDescription = "Rename",
+                        tint = Color.White.copy(alpha = 0.9f),
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(Modifier.width(14.dp))
+                    Text(
+                        text = "Rename",
+                        color = Color.White,
+                        fontSize = 15.5.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+
+                // Delete Option
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable(enabled = canDelete) { onDelete() }
+                        .padding(horizontal = 10.dp, vertical = 13.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        tint = if (canDelete) AppleMusicRed else AppleMusicRed.copy(alpha = 0.4f),
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(Modifier.width(14.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Delete",
+                            color = if (canDelete) AppleMusicRed else AppleMusicRed.copy(alpha = 0.4f),
+                            fontSize = 15.5.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                        if (!canDelete) {
+                            Text(
+                                text = "Cannot delete only account",
+                                color = AppleTextSecondary.copy(alpha = 0.7f),
+                                fontSize = 11.5.sp
+                            )
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(6.dp))
+                HorizontalDivider(color = Color.White.copy(alpha = 0.08f), thickness = 0.5.dp)
+                Spacer(Modifier.height(8.dp))
+
+                // Cancel
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable { onDismiss() }
+                        .padding(vertical = 10.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Cancel",
+                        color = Color.White.copy(alpha = 0.65f),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+        }
+    }
+}
+
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
+
+@Composable
+private fun AccountRenameDialog(
+    account: UserAccount,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit,
+) {
+    var text by remember { mutableStateOf(account.displayName) }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { onDismiss() }
+                .padding(horizontal = 28.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { /* absorb */ }
+                    .clip(RoundedCornerShape(22.dp))
+                    .background(Color(0xFF141416))
+                    .border(1.dp, Color(0xFF2C2C2E), RoundedCornerShape(22.dp))
+                    .padding(22.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Rename Account",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = "Enter a new name for this account.",
+                    color = AppleTextSecondary,
+                    fontSize = 13.sp,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(Modifier.height(18.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(0xFF1E1E22))
+                        .border(1.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(12.dp))
+                        .padding(horizontal = 14.dp, vertical = 12.dp)
+                ) {
+                    BasicTextField(
+                        value = text,
+                        onValueChange = { text = it },
+                        singleLine = true,
+                        cursorBrush = SolidColor(AppleMusicRed),
+                        textStyle = TextStyle(
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Normal
+                        ),
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.Words,
+                            imeAction = ImeAction.Done,
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                if (text.isNotBlank()) onConfirm(text.trim())
+                            }
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                Spacer(Modifier.height(22.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    // Cancel
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color.White.copy(alpha = 0.08f))
+                            .clickable { onDismiss() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Cancel",
+                            color = Color.White.copy(alpha = 0.8f),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+
+                    // Save
+                    val canSave = text.isNotBlank()
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(if (canSave) AppleMusicRed else AppleMusicRed.copy(alpha = 0.4f))
+                            .clickable(enabled = canSave) {
+                                onConfirm(text.trim())
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Save",
+                            color = Color.White,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
+
+@Composable
+private fun AccountDeleteConfirmDialog(
+    account: UserAccount,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { onDismiss() }
+                .padding(horizontal = 28.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { /* absorb */ }
+                    .clip(RoundedCornerShape(22.dp))
+                    .background(Color(0xFF141416))
+                    .border(1.dp, Color(0xFF2C2C2E), RoundedCornerShape(22.dp))
+                    .padding(22.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Red trash icon container
+                Box(
+                    modifier = Modifier
+                        .size(52.dp)
+                        .clip(CircleShape)
+                        .background(AppleMusicRed.copy(alpha = 0.14f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        tint = AppleMusicRed,
+                        modifier = Modifier.size(26.dp)
+                    )
+                }
+
+                Spacer(Modifier.height(14.dp))
+
+                Text(
+                    text = "Delete Account?",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(Modifier.height(10.dp))
+
+                Text(
+                    text = "Are you sure you want to delete “${account.displayName}”? All data, playlists, favorites, history, and settings in this account will be permanently deleted.",
+                    color = AppleTextSecondary,
+                    fontSize = 13.5.sp,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 19.sp
+                )
+
+                Spacer(Modifier.height(24.dp))
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    // Delete Button (Red destructive)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(46.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(AppleMusicRed)
+                            .clickable { onConfirm() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Delete Account",
+                            color = Color.White,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    // Cancel Button
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(42.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { onDismiss() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Cancel",
+                            color = Color.White.copy(alpha = 0.65f),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+            }
+        }
+    }
+}

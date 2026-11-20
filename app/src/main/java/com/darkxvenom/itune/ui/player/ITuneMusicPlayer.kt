@@ -21,6 +21,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -95,7 +96,6 @@ import androidx.compose.material.icons.automirrored.rounded.VolumeDown
 import androidx.compose.material.icons.automirrored.rounded.VolumeOff
 import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material.icons.rounded.PlaylistPlay
 import androidx.compose.material3.CircularProgressIndicator
@@ -346,7 +346,7 @@ private fun buildPlayerLyricPreviewLine(
     lines: List<com.darkxvenom.itune.backend.LyricsLine>,
 ): PlayerLyricPreviewLine? {
     val line = lines.getOrNull(index) ?: return null
-    if (line.text.isBlank()) return null
+    if (line.text.isBlank() || line.text.startsWith("{\"") || line.text.startsWith("krc1")) return null
     if (line.words.isNotEmpty()) return PlayerLyricPreviewLine(line.timeMs, line.text, line.words)
 
     val nextLineTime = lines.getOrNull(index + 1)?.timeMs
@@ -617,24 +617,37 @@ fun ITuneMusicPlayer(
     // Artwork colors are optional; when disabled, restore the original white Apple-style player controls.
     val playerAccentColor = if (settingsState.playerDynamicColoring) artworkAccentColor else Color.White
 
-    var loadedArtTrackId by remember { mutableStateOf<String?>(null) }
-    val isCoverLoaded = loadedArtTrackId == track.id && !currentArtUrl.isNullOrBlank()
+    var thumbnailLoadedTrackId by remember { mutableStateOf<String?>(null) }
+    val isCoverLoaded = !currentArtUrl.isNullOrBlank()
 
-    LaunchedEffect(track.id) {
-        if (loadedArtTrackId != track.id) {
-            loadedArtTrackId = null
+    val isFullScreenCover = settingsState.fullScreenCoverArt
+    val coverZoomAnim = remember { Animatable(0f) }
+    val coverZoomProgress = coverZoomAnim.value
+
+    LaunchedEffect(track.id, isFullScreenCover) {
+        if (isFullScreenCover) {
+            coverZoomAnim.snapTo(0f)
+            delay(160L)
+            coverZoomAnim.animateTo(
+                targetValue = 1f,
+                animationSpec = spring(
+                    dampingRatio = 0.84f,
+                    stiffness = 140f,
+                ),
+            )
+        } else {
+            coverZoomAnim.animateTo(0f, tween(250))
         }
     }
 
-    val isFullScreenCover = settingsState.fullScreenCoverArt
-    val coverZoomTarget = if (isFullScreenCover && isCoverLoaded) 1f else 0f
-    val coverZoomProgress by animateFloatAsState(
-        targetValue = coverZoomTarget,
+    // When in square mode, pausing shrinks the artwork to 0.86f, resuming smoothly expands it back to 1.0f
+    val squarePlayPauseScale by animateFloatAsState(
+        targetValue = if (coverZoomProgress < 0.2f && !isPlaying && panelProgress < 0.1f) 0.86f else 1.0f,
         animationSpec = spring(
-            dampingRatio = 0.85f,
-            stiffness = 220f,
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessLow,
         ),
-        label = "coverZoomProgress",
+        label = "squarePlayPauseScale",
     )
 
     // ── Canvas (Spotify, Apple Music, Tidal & Community) State ──
@@ -1013,12 +1026,15 @@ fun ITuneMusicPlayer(
         // - Full Bleed Cover Art (when Full Screen Cover Art is ON and image is loaded)
         // - 58dp Top Left Header Thumbnail (when Lyrics or Queue opens)
         // - 38dp Bottom Left Mini Player Thumbnail (when swiping down to dismiss player)
-        val defaultPlayerTitleTopDp = maxHeight - 398.dp - navBottomDp
-        val availableArtHeight = (defaultPlayerTitleTopDp - statusBarTopDp - 64.dp).coerceAtLeast(180.dp)
-        val squareArtSize = minOf(maxWidth - 48.dp, availableArtHeight).coerceIn(200.dp, 360.dp)
-        val squareArtTop = statusBarTopDp + 48.dp + ((defaultPlayerTitleTopDp - statusBarTopDp - 48.dp) - squareArtSize) / 2
+        val defaultPlayerTitleTopDp = maxHeight - 365.dp - navBottomDp
+        val dynamicMeasuredTitleTopDp = if (playerTitleVisualTopPx > 0f) with(density) { playerTitleVisualTopPx.toDp() } else defaultPlayerTitleTopDp
+        val topPillLimit = statusBarTopDp + 18.dp
+        val maxAvailableSquareHeight = (dynamicMeasuredTitleTopDp - topPillLimit - 14.dp).coerceAtLeast(200.dp)
+        val squareArtSize = minOf(maxWidth - 32.dp, maxAvailableSquareHeight).coerceIn(240.dp, 400.dp)
+        // Center square artwork in the generous vertical space above the title and lyrics
+        val squareArtTop = (topPillLimit + 4.dp) + (((dynamicMeasuredTitleTopDp - 12.dp - topPillLimit) - squareArtSize).coerceAtLeast(0.dp) * 0.45f)
         val squareArtStart = (maxWidth - squareArtSize) / 2
-        val squareArtRadius = 16.dp
+        val squareArtRadius = 8.dp
 
         val progressClamped = panelProgress.coerceIn(0f, 1f)
 
@@ -1034,13 +1050,13 @@ fun ITuneMusicPlayer(
         val fullArtTop = lerpDp(restingArtTop, statusBarTopDp + 34.dp, panelProgress)
         val fullArtWidth = lerpDp(restingArtWidth, 58.dp, panelProgress).coerceAtLeast(1.dp)
         val fullArtHeight = lerpDp(restingArtHeight, 58.dp, panelProgress).coerceAtLeast(1.dp)
-        val fullArtRadius = lerpDp(restingArtRadius, 11.dp, progressClamped).coerceAtLeast(0.dp)
+        val fullArtRadius = lerpDp(restingArtRadius, 6.dp, progressClamped).coerceAtLeast(0.dp)
 
         val miniArtStart = 10.dp
         val miniArtTop = 10.dp
         val miniArtWidth = 38.dp
         val miniArtHeight = 38.dp
-        val miniArtRadius = 6.dp
+        val miniArtRadius = 4.dp
 
         val artStart = lerpDp(miniArtStart, fullArtStart, sp)
         val artTop = lerpDp(miniArtTop, fullArtTop, sp)
@@ -1048,67 +1064,70 @@ fun ITuneMusicPlayer(
         val artHeight = lerpDp(miniArtHeight, fullArtHeight, sp)
         val artRadius = lerpDp(miniArtRadius, fullArtRadius, sp).coerceAtLeast(0.dp)
 
-        val squareShadowElevation = lerpDp(18.dp, 0.dp, coverZoomProgress) * (1f - panelProgress).coerceIn(0f, 1f)
-        val squareBorderAlpha = lerpFloat(0.14f, 0f, coverZoomProgress) * (1f - panelProgress).coerceIn(0f, 1f)
+        val effectiveScale = if (coverZoomProgress < 0.5f) squarePlayPauseScale else 1.0f
 
+        val isCanvasActive = (canvas != null && (canvasRendered || canvasCover.floatValue > 0.05f)) && panelProgress < 0.85f
         Box(
             modifier = Modifier
-                .zIndex(35f)
+                .zIndex(if (isCanvasActive) 1f else 35f)
                 .offset { IntOffset(artStart.roundToPx(), artTop.roundToPx()) }
                 .size(width = artWidth, height = artHeight)
-                .shadow(
-                    elevation = squareShadowElevation,
-                    shape = RoundedCornerShape(artRadius),
-                    spotColor = Color.Black.copy(alpha = 0.55f),
-                    ambientColor = Color.Black.copy(alpha = 0.35f),
-                )
                 .graphicsLayer {
-                    val handoff = canvasCover.floatValue * (1f - panelProgress * 2f).coerceIn(0f, 1f) *
-                        ((sp - 0.35f) / 0.65f).coerceIn(0f, 1f)
-                    alpha = (1f - handoff).coerceIn(0f, 1f)
+                    val handoff = if (isCanvasActive) 1.0f else (canvasCover.floatValue * (1f - panelProgress * 2f).coerceIn(0f, 1f) *
+                        ((sp - 0.35f) / 0.65f).coerceIn(0f, 1f))
+                    alpha = if (isCanvasActive && panelProgress < 0.1f) 0f else (1f - handoff).coerceIn(0f, 1f)
+                    scaleX = effectiveScale
+                    scaleY = effectiveScale
                 }
+                .shadow(
+                    elevation = lerpDp(16.dp, 0.dp, coverZoomProgress) * (1f - panelProgress) * sp,
+                    shape = RoundedCornerShape(artRadius),
+                    clip = false
+                )
                 .clip(RoundedCornerShape(artRadius))
                 .border(
-                    width = 1.dp,
-                    color = Color.White.copy(
-                        alpha = if (panelProgress > 0.85f) {
-                            (0.22f * panelProgress).coerceIn(0f, 1f)
-                        } else {
-                            squareBorderAlpha
-                        }
-                    ),
-                    shape = RoundedCornerShape(artRadius),
+                    width = 0.8.dp,
+                    color = Color.White.copy(alpha = (0.24f * (1f - coverZoomProgress) * (1f - panelProgress) * sp).coerceIn(0f, 1f)),
+                    shape = RoundedCornerShape(artRadius)
                 )
                 .then(
                     if (panelProgress > 0.85f) {
-                        Modifier.clickable {
-                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                            MusicPlayerState.lyricsOpen = false
-                            MusicPlayerState.queueOpen = false
-                        }
+                        Modifier
+                            .border(
+                                width = 1.dp,
+                                color = Color.White.copy(alpha = (0.22f * panelProgress).coerceIn(0f, 1f)),
+                                shape = RoundedCornerShape(artRadius),
+                            )
+                            .clickable {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                MusicPlayerState.lyricsOpen = false
+                                MusicPlayerState.queueOpen = false
+                            }
                     } else Modifier
                 )
         ) {
-            // ── Loading / Placeholder Container: Soft Gradient + ic_itune_waves ──
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.linearGradient(
-                            listOf(
-                                Color(0xFF2E2E32),
-                                Color(0xFF18181A),
+            // ── Loading / Placeholder Container: ONLY shown when thumbnail has NOT loaded yet ──
+            if (!isCoverLoaded) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.linearGradient(
+                                listOf(
+                                    Color(0xFF2C2C2E),
+                                    Color(0xFF18181A),
+                                )
                             )
-                        )
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_itune_waves),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.60f)),
-                    modifier = Modifier.size(lerpDp(22.dp, 56.dp, sp)),
-                )
+                        ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_itune_waves),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.60f)),
+                        modifier = Modifier.size(52.dp),
+                    )
+                }
             }
 
             val playerFadeWeight = (1f - panelProgress * 8f).coerceIn(0f, 1f)
@@ -1118,13 +1137,15 @@ fun ITuneMusicPlayer(
             val fadeMidAlpha = lerpFloat(1.0f, 0.44f, playerFadeWeight)
             val fadeEndAlpha = lerpFloat(1.0f, 0.0f, playerFadeWeight)
 
-            val effectiveFadeMidAlpha = lerpFloat(1.0f, fadeMidAlpha, coverZoomProgress)
-            val effectiveFadeEndAlpha = lerpFloat(1.0f, fadeEndAlpha, coverZoomProgress)
-            val hasFadeMask = coverZoomProgress > 0.01f && (fadeStart < 0.999f || effectiveFadeEndAlpha < 0.999f)
+            val maskProgress = ((coverZoomProgress - 0.30f) / 0.70f).coerceIn(0f, 1f)
+            val effectiveFadeStart = lerpFloat(1.0f, fadeStart, maskProgress)
+            val effectiveFadeMidAlpha = lerpFloat(1.0f, fadeMidAlpha, maskProgress)
+            val effectiveFadeEndAlpha = lerpFloat(1.0f, fadeEndAlpha, maskProgress)
+            val hasFadeMask = maskProgress > 0.01f && (effectiveFadeStart < 0.999f || effectiveFadeEndAlpha < 0.999f)
 
             Crossfade(
                 targetState = currentArtUrl,
-                animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing),
+                animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
                 label = "avatarArtworkCrossfade",
                 modifier = Modifier.fillMaxSize()
             ) { artUrl ->
@@ -1133,19 +1154,19 @@ fun ITuneMusicPlayer(
                         model = ImageRequest.Builder(context)
                             .data(artUrl)
                             .size(Size.ORIGINAL)
-                            .crossfade(200)
+                            .crossfade(150)
                             .build(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         onState = { state ->
                             if (state is AsyncImagePainter.State.Success) {
-                                loadedArtTrackId = track.id
+                                thumbnailLoadedTrackId = track.id
                             }
                         },
                         modifier = Modifier
                             .fillMaxSize()
                             .graphicsLayer {
-                                compositingStrategy = CompositingStrategy.Offscreen
+                                compositingStrategy = if (hasFadeMask) CompositingStrategy.Offscreen else CompositingStrategy.Auto
                             }
                             .drawWithContent {
                                 drawContent()
@@ -1153,7 +1174,7 @@ fun ITuneMusicPlayer(
                                     val mask = Brush.verticalGradient(
                                         colorStops = arrayOf(
                                             0f to Color.Black,
-                                            fadeStart to Color.Black,
+                                            effectiveFadeStart to Color.Black,
                                             0.58f to Color.Black.copy(alpha = effectiveFadeMidAlpha),
                                             1f to Color.Black.copy(alpha = effectiveFadeEndAlpha)
                                         )
@@ -1169,7 +1190,8 @@ fun ITuneMusicPlayer(
         // ── 5b. Continuous Morphing Title & Artist ──
         // Seamlessly morphs between Mini Player position/size and Full Player resting position/size,
         // and glides into the top header when Queue or Lyrics opens.
-        val startTitleTopPx = if (playerTitleVisualTopPx > 0f) playerTitleVisualTopPx else with(density) { defaultPlayerTitleTopDp.toPx() }
+        val startTitleTopDp = dynamicMeasuredTitleTopDp
+        val startTitleTopPx = with(density) { startTitleTopDp.toPx() }
 
         val fullTitleStartPx = lerpFloat(with(density) { 24.dp.toPx() }, with(density) { 96.dp.toPx() }, panelProgress)
         // Center Title + Artist vertically against the 58dp header avatar (centerY = statusBarTopDp + 63dp)
@@ -1199,13 +1221,13 @@ fun ITuneMusicPlayer(
 
         Box(
             modifier = Modifier
-                .zIndex(36f)
+                .zIndex(45f)
                 .offset { IntOffset(curTitleLeftPx.roundToInt(), curTitleTopPx.roundToInt()) }
                 .graphicsLayer {
                     translationY = (canvasSlideDownPx + compactTitleNudgePx) * (1f - panelProgress) * sp
                 }
                 .width(curTitleWidthDp)
-                .height(if (sp < 0.5f) 38.dp else if (panelProgress < 0.80f) 90.dp else 48.dp)
+                .height(if (sp < 0.5f) 38.dp else if (panelProgress < 0.80f) 96.dp else 48.dp)
                 .then(
                     if (panelProgress > 0.80f) {
                         Modifier.clickable(
@@ -1221,8 +1243,7 @@ fun ITuneMusicPlayer(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clipToBounds(),
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.Top
             ) {
                 Row(
@@ -1252,7 +1273,7 @@ fun ITuneMusicPlayer(
                             .basicMarquee()
                     )
                 }
-                Spacer(Modifier.height(lerpDp(lerpDp(1.dp, 3.dp, sp), 2.dp, panelProgress)))
+                Spacer(Modifier.height(lerpDp(lerpDp(1.dp, 2.dp, sp), 1.5.dp, panelProgress)))
                 Text(
                     text = track.artists,
                     style = TextStyle(
@@ -1276,8 +1297,8 @@ fun ITuneMusicPlayer(
                     }.basicMarquee()
                 )
 
-                // Send lyrics line a little bit below the artist
-                Spacer(Modifier.height(lerpDp(2.dp, 10.dp, sp)))
+                // Send lyrics line comfortably below the artist, directly centered between artist and seekbar
+                Spacer(Modifier.height(lerpDp(1.dp, 10.dp, sp)))
 
                 AnimatedVisibility(
                     visible = sp >= 0.5f && panelProgress < 0.80f && canvasMinimizeProgress < 0.85f,
@@ -1302,9 +1323,8 @@ fun ITuneMusicPlayer(
 
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .clipToBounds()
-                            .padding(vertical = 2.dp),
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(6.dp)),
                         contentAlignment = Alignment.CenterStart
                     ) {
                         Row(
@@ -1320,7 +1340,7 @@ fun ITuneMusicPlayer(
                                         MusicPlayerState.refreshLyrics()
                                     }
                                 }
-                                .padding(vertical = 4.dp),
+                                .padding(vertical = 1.dp),
                         ) {
                             AnimatedContent(
                                 targetState = displayLyric,
@@ -1334,7 +1354,6 @@ fun ITuneMusicPlayer(
                                 label = "lyrics_line_transition",
                                 modifier = Modifier
                                     .weight(1f, fill = false)
-                                    .clipToBounds()
                             ) { line ->
                                 if (line == null || line.text.isBlank()) {
                                     Row(
@@ -1376,8 +1395,10 @@ fun ITuneMusicPlayer(
                                         fontFamily = SFProDisplay,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.SemiBold,
+                                        lineHeight = 19.sp,
                                         color = Color.White,
                                         maxLines = 1,
+                                        softWrap = false,
                                         overflow = TextOverflow.Ellipsis,
                                         modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE)
                                     )
@@ -1497,7 +1518,7 @@ fun ITuneMusicPlayer(
         // Initially positioned beside the 3-dot button at the end of the Title & Artist row in player mode (matching Apple Music),
         // glides smoothly upward into the top header next to the 3-dot button when Queue or Lyrics opens.
         // Kept at the exact same size (36dp, 20dp icon) at both resting player and top header positions.
-        val startStarTopPx = startTitleTopPx + with(density) { 6.dp.toPx() }
+        val startStarTopPx = startTitleTopPx + with(density) { 3.dp.toPx() }
         // Keep Star vertically centered with 58dp avatar (centerY = statusBarTopDp + 63dp -> top = 63 - 18 = 45dp)
         val targetStarTopPx = with(density) { (statusBarTopDp + 45.dp).toPx() }
         val startStarLeftPx = with(density) { (maxWidth - 104.dp).toPx() }
@@ -1540,7 +1561,7 @@ fun ITuneMusicPlayer(
         // Initially positioned at the far right end of the Title & Artist row in player mode (matching Apple Music),
         // glides smoothly upward into the top-right header corner when Queue or Lyrics opens.
         // Kept at the exact same size (36dp, 22dp icon) at both resting player and top header positions.
-        val startMoreTopPx = startTitleTopPx + with(density) { 6.dp.toPx() }
+        val startMoreTopPx = startTitleTopPx + with(density) { 3.dp.toPx() }
         // Keep 3-dot vertically centered with 58dp avatar (centerY = statusBarTopDp + 63dp -> top = 63 - 18 = 45dp)
         val targetMoreTopPx = with(density) { (statusBarTopDp + 45.dp).toPx() }
         val startMoreLeftPx = with(density) { (maxWidth - 60.dp).toPx() }
@@ -1591,7 +1612,7 @@ fun ITuneMusicPlayer(
                 .padding(horizontal = 12.dp, vertical = 6.dp)
                 .graphicsLayer { alpha = canvasChromeAlpha }
         ) {
-            // iOS Pull Handle Pill (Centered at top in both full player and queue/lyrics header)
+            // iOS Pull Handle Pill
             Box(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
@@ -1600,25 +1621,6 @@ fun ITuneMusicPlayer(
                     .clip(RoundedCornerShape(2.5.dp))
                     .background(Color.White.copy(alpha = 0.34f))
             )
-
-            // Normal Collapse Chevron (fades out in lyrics or queue mode)
-            IconButton(
-                onClick = onCollapse,
-                modifier = Modifier
-                    .size(44.dp)
-                    .align(Alignment.CenterStart)
-                    .graphicsLayer {
-                        alpha = (1f - panelProgress * 2.5f).coerceIn(0f, 1f)
-                    },
-                enabled = panelProgress < 0.2f
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.KeyboardArrowDown,
-                    contentDescription = "Collapse",
-                    tint = Color.White.copy(alpha = 0.95f),
-                    modifier = Modifier.size(36.dp)
-                )
-            }
 
             // Full Header Tap Target to collapse back to main player in Queue or Lyrics mode
             if (panelProgress > 0.8f) {
@@ -1680,7 +1682,7 @@ fun ITuneMusicPlayer(
                     }
             )
 
-            Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(8.dp))
 
             // iOS Capsule Seek Bar (Exact same UI as Volume Slider, no waves)
             IosCapsuleSeekSlider(
@@ -2022,8 +2024,15 @@ fun ITuneMusicPlayer(
                 }
                 Row(
                     modifier = Modifier
-                        .widthIn(max = 190.dp)
-                        .height(18.dp),
+                        .widthIn(max = 210.dp)
+                        .height(20.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable {
+                            lastLyricsInteractionTime = System.currentTimeMillis()
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            isAudioOutputPopupOpen = !isAudioOutputPopupOpen
+                        }
+                        .padding(horizontal = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                 ) {

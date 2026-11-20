@@ -161,6 +161,15 @@ class TimeTravelDatabaseHelper private constructor(context: Context) :
         return result
     }
 
+    fun clearPlaybackHistory() {
+        try {
+            val db = writableDatabase
+            db.delete(TABLE_PLAYBACK, null, null)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error clearing playback history", e)
+        }
+    }
+
     fun restorePlaybackHistory(records: JSONArray) {
         val db = writableDatabase
         db.beginTransaction()

@@ -80,6 +80,7 @@ import kotlin.math.PI
 @Composable
 fun SplashScreen(
     isNewUser: Boolean,
+    goToAccountPicker: Boolean = false,
     homeIconBounds: Rect?,
     homeTitleBounds: Rect?,
     onRevealUnderlay: () -> Unit = {},
@@ -198,8 +199,9 @@ fun SplashScreen(
         delay(480L)
 
         // 5. Transition:
-        if (isNewUser) {
-            // Animate wave icon and iTune title directly to WelcomeScreen's corner positions
+        if (isNewUser || goToAccountPicker) {
+            // Animate wave icon and iTune title directly to top-left & top-right corner positions
+            // Background mesh stays 100% visible (no underlay reveal or fade)
             travelProgress.animateTo(
                 targetValue = 1f,
                 animationSpec = tween(durationMillis = 850, easing = FastOutSlowInEasing),
@@ -266,18 +268,18 @@ fun SplashScreen(
             val targetTitleCenter: Offset
             val targetTitleScale: Float
 
-            if (isNewUser) {
-                // Land at WelcomeScreen top corners (icon top-left, title top-right)
+            if (isNewUser || goToAccountPicker) {
+                // Land at top corners (icon top-left, title top-right)
                 val cornerPadX = with(density) { 24.dp.toPx() }
-                val cornerPadY = statusBarTopPx + with(density) { 14.dp.toPx() }
-                val cornerIconSizePx = with(density) { 34.dp.toPx() }
-                val cornerTitleSizePx = with(density) { 22.dp.toPx() }
+                val cornerPadY = statusBarTopPx + with(density) { 18.dp.toPx() }
+                val cornerIconSizePx = with(density) { 36.dp.toPx() }
+                val cornerTitleSizePx = with(density) { 24.dp.toPx() }
 
                 targetIconTopLeft = Offset(cornerPadX, cornerPadY)
                 targetIconSizePx = cornerIconSizePx
 
                 targetTitleCenter = Offset(
-                    x = rootW - cornerPadX - with(density) { 28.dp.toPx() },
+                    x = rootW - cornerPadX - with(density) { 32.dp.toPx() },
                     y = cornerPadY + cornerIconSizePx / 2f,
                 )
                 targetTitleScale = cornerTitleSizePx / baseHeroTextH

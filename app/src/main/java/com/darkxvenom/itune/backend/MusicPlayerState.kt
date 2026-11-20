@@ -470,6 +470,12 @@ object MusicPlayerState : Player.Listener {
         )
     }
 
+    fun ensureProgressLoopRunning() {
+        if (progressJob == null || progressJob?.isActive != true) {
+            startProgressLoop()
+        }
+    }
+
     private fun startProgressLoop() {
         progressJob?.cancel()
         progressJob = scope.launch {
@@ -523,6 +529,7 @@ object MusicPlayerState : Player.Listener {
         preResolvedUrl: String? = null,
     ) {
         autoSkipFailedTrackIds.remove(track.id)
+        ensureProgressLoopRunning()
         if (AutoSleepTimerManager.isSleepWindowActive()) {
             appContext?.let {
                 android.widget.Toast.makeText(it, "Auto Sleep Timer active · Playback paused", android.widget.Toast.LENGTH_SHORT).show()
@@ -791,7 +798,23 @@ object MusicPlayerState : Player.Listener {
         playbackState = Player.STATE_IDLE
     }
 
+    fun resetForAccountSwitch() {
+        stop()
+        currentTrack = null
+        queue.clear()
+        queueIndex = 0
+        positionMs = 0L
+        durationMs = 0L
+        lyrics = emptyList()
+        rawLyricsText = ""
+        lyricsOffsetMs = 0L
+        hasCustomLyricsOverride = false
+        lyricsLoading = false
+        ensureProgressLoopRunning()
+    }
+
     fun togglePlayPause() {
+        ensureProgressLoopRunning()
         val track = currentTrack ?: return
         if (restoredPendingStream) {
             if (!resolvingStream) {

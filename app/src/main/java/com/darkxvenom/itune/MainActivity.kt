@@ -92,6 +92,8 @@ class MainActivity : ComponentActivity() {
         DynamicIslandStore.ensureInit(this)
         DynamicIslandStore.syncServiceState(this)
         AudioDownloader.ensureChannel(this)
+        com.darkxvenom.itune.data.account.MultiAccountManager.init(this)
+        com.darkxvenom.itune.data.festival.FestivalManager.init(this)
         handleIncomingShareIntent(intent)
         handleRecognitionIntent(intent)
         enableEdgeToEdge()
@@ -154,6 +156,11 @@ class MainActivity : ComponentActivity() {
                                         showWelcomeFlow = false
                                         SettingsStore.completeWelcome(this@MainActivity, enteredName)
                                         IShareSyncManager.setDisplayName(enteredName)
+                                        com.darkxvenom.itune.data.account.MultiAccountManager.registerInitialAccount(
+                                            this@MainActivity,
+                                            enteredName,
+                                            com.darkxvenom.itune.data.repository.AvatarManager.currentAvatarId.value,
+                                        )
                                     },
                                 )
                             }
@@ -179,27 +186,35 @@ class MainActivity : ComponentActivity() {
                         }
                     } else {
                         val splashEnabled = settingsState.splashScreenEnabled
+                        val hasMultipleAccounts = com.darkxvenom.itune.data.account.MultiAccountManager.hasMultipleAccounts()
+                        val initialNeedsWhoIsListening = settingsState.welcomeCompleted && hasMultipleAccounts
                         var showSplash by rememberSaveable { mutableStateOf(splashEnabled) }
                         var revealHomeUnderlay by remember(settingsState.welcomeCompleted, splashEnabled) {
-                            mutableStateOf(settingsState.welcomeCompleted)
+                            mutableStateOf(settingsState.welcomeCompleted && !hasMultipleAccounts && !splashEnabled)
                         }
                         var showWelcomeFlow by remember(settingsState.welcomeCompleted) {
                             mutableStateOf(!settingsState.welcomeCompleted)
                         }
                         var homeBrandVisible by remember(settingsState.welcomeCompleted, splashEnabled) {
-                            mutableStateOf(settingsState.welcomeCompleted && !showSplash)
+                            mutableStateOf(settingsState.welcomeCompleted && !showSplash && !hasMultipleAccounts)
                         }
+                        var showWhoIsListening by remember { mutableStateOf(!splashEnabled && initialNeedsWhoIsListening) }
+                        var showAddAccountWelcome by remember { mutableStateOf(false) }
+                        val allAccounts by com.darkxvenom.itune.data.account.MultiAccountManager.accounts.collectAsStateWithLifecycle()
                         var homeIconBounds by remember { mutableStateOf<Rect?>(null) }
                         var homeTitleBounds by remember { mutableStateOf<Rect?>(null) }
 
                         Box(modifier = Modifier.fillMaxSize()) {
-                            if (revealHomeUnderlay || settingsState.welcomeCompleted) {
+                            if (revealHomeUnderlay || (settingsState.welcomeCompleted && !showSplash && !showWhoIsListening && !showAddAccountWelcome)) {
                                 HomeScreen(
                                     showTopBarBrand = homeBrandVisible,
-                                    deferStartupPrompts = showWelcomeFlow || showSplash,
+                                    deferStartupPrompts = showWelcomeFlow || showSplash || showWhoIsListening || showAddAccountWelcome,
                                     onTopBarBrandBoundsChanged = { iconR, titleR ->
                                         homeIconBounds = iconR
                                         homeTitleBounds = titleR
+                                    },
+                                    onAddNewAccount = {
+                                        showAddAccountWelcome = true
                                     },
                                 )
                             }
@@ -219,21 +234,82 @@ class MainActivity : ComponentActivity() {
                                         showWelcomeFlow = false
                                         SettingsStore.completeWelcome(this@MainActivity, enteredName)
                                         IShareSyncManager.setDisplayName(enteredName)
+                                        com.darkxvenom.itune.data.account.MultiAccountManager.registerInitialAccount(
+                                            this@MainActivity,
+                                            enteredName,
+                                            com.darkxvenom.itune.data.repository.AvatarManager.currentAvatarId.value,
+                                        )
+                                    },
+                                )
+                            }
+                            if (showWhoIsListening) {
+                                com.darkxvenom.itune.ui.account.WhoIsListeningScreen(
+                                    accounts = allAccounts,
+                                    homeIconBounds = homeIconBounds,
+                                    homeTitleBounds = homeTitleBounds,
+                                    onRevealHomeUnderlay = {
+                                        revealHomeUnderlay = true
+                                    },
+                                    onAccountSelected = { selected ->
+                                        com.darkxvenom.itune.data.account.MultiAccountManager.switchAccount(this@MainActivity, selected.id)
+                                        showWhoIsListening = false
+                                        homeBrandVisible = true
+                                    },
+                                    onAddNewAccount = {
+                                        showWhoIsListening = false
+                                        showAddAccountWelcome = true
+                                    },
+                                )
+                            }
+                            if (showAddAccountWelcome) {
+                                WelcomeScreen(
+                                    initialName = "",
+                                    isAddingAccount = true,
+                                    fromSplash = false,
+                                    homeIconBounds = homeIconBounds,
+                                    homeTitleBounds = homeTitleBounds,
+                                    onRevealHomeUnderlay = { _ ->
+                                        revealHomeUnderlay = true
+                                    },
+                                    onContinue = { enteredName ->
+                                        val existingCount = com.darkxvenom.itune.data.account.MultiAccountManager.getAccounts().size
+                                        val nextAvatarId = (existingCount % com.darkxvenom.itune.data.repository.AvatarManager.TOTAL_AVATARS) + 1
+                                        com.darkxvenom.itune.data.account.MultiAccountManager.createAccount(
+                                            this@MainActivity,
+                                            enteredName,
+                                            nextAvatarId,
+                                        )
+                                        homeBrandVisible = true
+                                        showAddAccountWelcome = false
+                                    },
+                                    onCancel = {
+                                        showAddAccountWelcome = false
+                                        homeBrandVisible = true
                                     },
                                 )
                             }
                             if (showSplash) {
+                                val needsAccountPicker = settingsState.welcomeCompleted && hasMultipleAccounts
                                 SplashScreen(
                                     isNewUser = !settingsState.welcomeCompleted,
+                                    goToAccountPicker = needsAccountPicker,
                                     homeIconBounds = homeIconBounds,
                                     homeTitleBounds = homeTitleBounds,
                                     onRevealUnderlay = {
-                                        revealHomeUnderlay = true
+                                        if (!needsAccountPicker) {
+                                            revealHomeUnderlay = true
+                                        }
                                     },
                                     onSplashFinished = {
                                         if (settingsState.welcomeCompleted) {
-                                            homeBrandVisible = true
-                                            showSplash = false
+                                            if (hasMultipleAccounts) {
+                                                showSplash = false
+                                                showWhoIsListening = true
+                                                homeBrandVisible = false
+                                            } else {
+                                                homeBrandVisible = true
+                                                showSplash = false
+                                            }
                                         } else {
                                             showSplash = false
                                             showWelcomeFlow = true
@@ -395,6 +471,8 @@ class MainActivity : ComponentActivity() {
         AppleVolumeManager.setForeground(true)
         AlwaysOnDisplayManager.setAppForeground(true)
         DynamicIslandStore.syncServiceState(this)
+        DeveloperNewsManager.checkOnAppOpen()
+        com.darkxvenom.itune.data.festival.FestivalManager.refresh()
     }
 
     override fun onStop() {

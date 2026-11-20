@@ -91,6 +91,7 @@ fun BrowseScreen(
     modifier: Modifier = Modifier,
     onCategoryClick: (BrowseCategoryItem) -> Unit = {},
     onProfileClick: () -> Unit = {},
+    onProfileLongClick: (() -> Unit)? = null,
     onOpenContentSettings: () -> Unit = onProfileClick,
 ) {
     val context = LocalContext.current
@@ -206,7 +207,8 @@ fun BrowseScreen(
 
                         AppleMemojiAvatar(
                             size = 38.dp,
-                            onClick = onProfileClick
+                            onClick = onProfileClick,
+                            onLongClick = onProfileLongClick,
                         )
                     }
 
