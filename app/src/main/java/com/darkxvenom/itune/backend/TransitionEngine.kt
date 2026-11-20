@@ -26,6 +26,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.SeekParameters
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import com.darkxvenom.itune.audio.LevelProbeProcessor
 import com.darkxvenom.itune.data.library.SettingsStore
@@ -75,11 +76,13 @@ import kotlin.math.sin
 object TransitionEngine {
     private const val TAG = "TransitionEngine"
 
-    private const val RELAY_LEAD_MS = 350L
+    private const val RELAY_LEAD_MS = 500L
     private const val RELAY_START_LATENCY_MS = 100L
-    private const val RELAY_OVERLAP_MS = 150L
-    private const val CROSSFADE_GUARD_MS = 2_200L
-    private const val AUTOMIX_GUARD_MS = 4_200L
+    private const val RELAY_OVERLAP_MS = 300L
+    private const val TAIL_MIN_BUFFER_MS = 2_500L
+    private const val MAX_SYNC_DRIFT_MS = 45L
+    private const val CROSSFADE_GUARD_MS = 5_500L
+    private const val AUTOMIX_GUARD_MS = 7_500L
     private const val PREFETCH_LEAD_MS = 30_000L
     private const val MIN_TRACK_MS = 9_000L
     private const val PREROLL_MAX_MS = 2_000L
@@ -251,12 +254,12 @@ object TransitionEngine {
 
         // AutoMix: if the song is already sinking into a quiet outro, start now with a shorter blend.
         var early = false
-        if (mode == Mode.AUTOMIX && remainingMs in 4_500L..12_000L) {
+        if (mode == Mode.AUTOMIX && remainingMs in 8_000L..15_000L) {
             val quiet = probe.longRms > 0.02f && probe.shortRms < 0.45f * probe.longRms
             quietTicks = if (quiet) quietTicks + 1 else 0
             if (quietTicks >= 4) {
                 early = true
-                fadeMs = (remainingMs - 2_200L).coerceIn(1_500L, plan.fadeMs)
+                fadeMs = (remainingMs - 6_000L).coerceIn(1_500L, plan.fadeMs)
             }
         } else {
             quietTicks = 0
@@ -271,7 +274,7 @@ object TransitionEngine {
         prefetch(next.second)
         val url = prefetched?.takeIf { it.first == next.second.id }?.second ?: return
         // Too late to blend properly: let the song end normally.
-        if (remainingMs < fadeMs / 2 + 1_200L) return
+        if (remainingMs < fadeMs + 3_500L) return
 
         active = true
         val mySerial = ++serial
@@ -344,17 +347,27 @@ object TransitionEngine {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             tp.setPreferredAudioDevice(preferredDevice)
         }
+        // Frame-exact seeks: a keyframe-snapped seek on a webm/opus stream lands off-position and
+        // is audible as a skip or gap at the hand-off.
+        tp.setSeekParameters(SeekParameters.EXACT)
         tp.setMediaItem(
             MediaItem.Builder().setMediaId("tail-${outgoing.id}").setUri(outUri).build(),
             relayStartMs,
         )
         tp.prepare()
-        if (!waitFor(main, 2_500L) { tp.playbackState == Player.STATE_READY }) {
+        // Wait until the tail is READY *and* has real data buffered, otherwise it rebuffers the
+        // moment it starts and the outgoing song freezes for 1-2 s.
+        if (!waitFor(main, 4_000L) {
+                tp.playbackState == Player.STATE_READY &&
+                    tp.bufferedPosition - relayStartMs >= TAIL_MIN_BUFFER_MS
+            }
+        ) {
             markAborted(outgoing.id)
             return
         }
 
-        // 2) Wait until the main player reaches the same spot, then start the tail.
+        // 2) Start the tail muted and let it run alongside the main player. Both sound the same
+        //    audio, so only once the tail is proven to be playing and in sync do we hand over.
         if (!waitFor(main, 4_000L) { main.currentPosition >= relayStartMs - RELAY_START_LATENCY_MS }) {
             markAborted(outgoing.id)
             return
@@ -368,7 +381,38 @@ object TransitionEngine {
         tp.volume = 0f
         tp.play()
 
-        // 3) Micro-overlap so the hand-off from main to tail is inaudible.
+        // Wait for the tail's audio to actually be flowing (AudioTrack start-up latency).
+        val tailStartPos = tp.currentPosition
+        if (!waitFor(main, 1_500L) {
+                tp.isPlaying && tp.currentPosition >= tailStartPos + 120L
+            }
+        ) {
+            tp.volume = 0f
+            tp.pause()
+            main.volume = MusicPlayerState.volume
+            markAborted(outgoing.id)
+            return
+        }
+
+        // Correct any drift between the two players while the tail is still muted.
+        val drift = tp.currentPosition - main.currentPosition
+        if (kotlin.math.abs(drift) > MAX_SYNC_DRIFT_MS) {
+            tp.seekTo((tp.currentPosition - drift).coerceAtLeast(0L))
+            val seekedFrom = tp.currentPosition
+            waitFor(main, 800L) {
+                tp.isPlaying && tp.currentPosition >= seekedFrom + 100L
+            }
+        }
+        if (!stillOutgoing(main, outgoing.id) || tp.playbackState != Player.STATE_READY) {
+            tp.volume = 0f
+            tp.pause()
+            main.volume = MusicPlayerState.volume
+            markAborted(outgoing.id)
+            return
+        }
+
+        // 3) Equal-sum overlap (both play identical audio, so a linear fade keeps the level flat).
+        //    The main player is only silenced once the tail is audible, so there is never a gap.
         val relayT0 = SystemClock.elapsedRealtime()
         while (true) {
             val k = ((SystemClock.elapsedRealtime() - relayT0).toFloat() / RELAY_OVERLAP_MS).coerceIn(0f, 1f)
@@ -376,7 +420,15 @@ object TransitionEngine {
             tp.volume = userVolume * k
             main.volume = userVolume * (1f - k)
             if (k >= 1f) break
-            delay(12)
+            // Tail stalled mid hand-off: give the song back to the main player untouched.
+            if (tp.playbackState == Player.STATE_BUFFERING) {
+                tp.volume = 0f
+                tp.pause()
+                main.volume = userVolume
+                markAborted(outgoing.id)
+                return
+            }
+            delay(10)
         }
         main.volume = 0f
 
