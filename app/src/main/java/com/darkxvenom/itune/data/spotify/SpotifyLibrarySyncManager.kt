@@ -130,6 +130,7 @@ object SpotifyLibrarySyncManager {
                             thumbnailUrl = st.imageUrl.orEmpty(),
                             durationSec = (st.durationMs / 1000L).coerceAtLeast(0L),
                             spotifyTrackUri = uri,
+                            isExplicit = st.isExplicit,
                         )
                 }
 
@@ -155,6 +156,7 @@ object SpotifyLibrarySyncManager {
                                         spotifyTrackUri = "spotify:track:${st.id}",
                                         thumbnailUrl = matched.thumbnailUrl?.takeIf { it.isNotBlank() }
                                             ?: st.imageUrl.orEmpty(),
+                                        isExplicit = matched.isExplicit || st.isExplicit,
                                     )
                                 }
                             }

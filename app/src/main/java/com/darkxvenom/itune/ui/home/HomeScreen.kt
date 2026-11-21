@@ -280,6 +280,9 @@ fun HomeScreen(
             signedIn = ytAccountState.isSignedIn,
         )
     }
+    val visibleSpotify = remember(spotifyShelves, hideExplicit) {
+        spotifyShelves.withoutExplicit(hideExplicit)
+    }
     val listState = rememberLazyListState()
     val overscrollState = rememberSpringOverscrollState()
     val coroutineScope = rememberCoroutineScope()
@@ -682,7 +685,7 @@ fun HomeScreen(
 
                 // Spotify shelves (only after Spotify login); YouTube shelves above stay untouched
                 if (spotifyLinked) {
-                    items(spotifyShelves, key = { it.key }) { shelf ->
+                    items(visibleSpotify, key = { it.key }) { shelf ->
                         if (shelf.key.startsWith("sp_hero_")) {
                             SpotifyHeroShelf(shelf = shelf, onItemClick = onSpotifyItemClick, onItemPlay = onSpotifyHeroPlay)
                         } else {

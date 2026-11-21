@@ -157,6 +157,7 @@ import com.darkxvenom.itune.data.model.playingRowMatcher
 import com.darkxvenom.itune.ui.artist.canvas.CanvasArtworkPlayer
 import com.darkxvenom.itune.ui.artist.components.CoverPlaceholder
 import com.darkxvenom.itune.ui.artist.components.DownloadedBadge
+import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
 import com.darkxvenom.itune.ui.artist.components.ExplicitSongTitle
 import com.darkxvenom.itune.ui.artist.components.FadingText
 import com.darkxvenom.itune.ui.artist.components.LIBRARY_GRID_SPACING
@@ -306,16 +307,29 @@ fun ITubeDetailScreen(
         }
     }
 
+    val detailSettings by com.darkxvenom.itune.data.library.SettingsStore.state.collectAsStateWithLifecycle()
+    val hideExplicit = detailSettings.hideExplicitContent
+
     val rawSongs = (page.songs as? UiState.Success)?.data.orEmpty()
-    val songs = remember(rawSongs, songSort) { rawSongs.sortedForDetail(songSort) }
-    val originalTrackNumbers = remember(rawSongs) {
-        val byTag = rawSongs.useTrackTags()
-        rawSongs.withIndex().associate { (i, s) -> s.videoId to ((if (byTag) s.trackNumber else null) ?: (i + 1)) }
+    val filteredRawSongs = remember(rawSongs, hideExplicit) {
+        if (hideExplicit) rawSongs.filterNot { it.isExplicit == true } else rawSongs
+    }
+    val songs = remember(filteredRawSongs, songSort) { filteredRawSongs.sortedForDetail(songSort) }
+    val originalTrackNumbers = remember(filteredRawSongs) {
+        val byTag = filteredRawSongs.useTrackTags()
+        filteredRawSongs.withIndex().associate { (i, s) -> s.videoId to ((if (byTag) s.trackNumber else null) ?: (i + 1)) }
     }
     val isArtist = page.type == BrowseType.ARTIST
     val isSpotifyArtist = isArtist && page.browseId.startsWith("spotify:artist:")
     val isSpotifyAlbum = page.type == BrowseType.ALBUM && page.browseId.startsWith("spotify:album:")
-    val topReleaseId = if (isArtist) page.sections.topRelease()?.browseId else null
+    val visibleSections = remember(page.sections, hideExplicit) {
+        if (!hideExplicit) page.sections
+        else page.sections.mapNotNull { shelf ->
+            val kept = shelf.items.filterNot { it.isExplicit }
+            if (kept.isEmpty()) null else shelf.copy(items = kept)
+        }
+    }
+    val topReleaseId = if (isArtist) visibleSections.topRelease()?.browseId else null
     LaunchedEffect(topReleaseId) { topReleaseId?.let { onLoadReleaseLibrary?.invoke(it) } }
 
     val appleArtVersion by AppleArtistArtRepository.updates.collectAsStateWithLifecycle()
@@ -369,14 +383,14 @@ fun ITubeDetailScreen(
 
     val matches = remember(songs, query) { songs.matching(query) }
     val queue = remember(matches) { matches.map { it.value } }
-    val suggested = remember(page.suggestedSongs, query) {
-        page.suggestedSongs.matching(query).map { it.value }
+    val suggested = remember(page.suggestedSongs, query, hideExplicit) {
+        val base = if (hideExplicit) page.suggestedSongs.filterNot { it.isExplicit == true } else page.suggestedSongs
+        base.matching(query).map { it.value }
     }
     val downloadedTint = palette.accent
 
     val artistVideo = appleArt?.videoUrl
     val detailContext = LocalContext.current
-    val detailSettings by com.darkxvenom.itune.data.library.SettingsStore.state.collectAsStateWithLifecycle()
     val canvasOverCellular = detailSettings.canvasOverCellular
     val prioritizeSpotifyCanvas = detailSettings.prioritizeSpotifyCanvas
     var canvas by remember(page.browseId) { mutableStateOf<CanvasArtwork?>(null) }
@@ -497,7 +511,7 @@ fun ITubeDetailScreen(
                         }
                     }
 
-                    val topRelease = if (isArtist) page.sections.topRelease() else null
+                    val topRelease = if (isArtist) visibleSections.topRelease() else null
                     if (topRelease != null) {
                         item(key = "top-release") {
                             TopReleaseCard(
@@ -677,7 +691,7 @@ fun ITubeDetailScreen(
                         }
                     }
 
-                    items(page.sections) { shelf ->
+                    items(visibleSections) { shelf ->
                         val canShowAll = shelf.items.size > ARTIST_ROW_MAX_ITEMS
                         val displayItems = remember(shelf.items) {
                             if (canShowAll) shelf.items.take(ARTIST_ROW_MAX_ITEMS) else shelf.items
@@ -724,7 +738,7 @@ fun ITubeDetailScreen(
             }
         } else {
             ArtistShelfGridPage(
-                shelf = targetShelf,
+                shelf = if (hideExplicit) targetShelf.copy(items = targetShelf.items.filterNot { it.isExplicit }) else targetShelf,
                 palette = palette,
                 onItemClick = onSectionItemClick,
                 onItemLongPress = onSectionItemLongPress,
@@ -846,15 +860,27 @@ private fun ReleaseHeader(
         }
 
         Spacer(Modifier.height(20.dp))
-        Text(
-            text = page.title,
-            style = MaterialTheme.typography.headlineMedium,
-            color = palette.onBackground,
-            textAlign = TextAlign.Center,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
+        val isAlbumExplicit = songs.any { it.isExplicit == true }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
             modifier = Modifier.padding(horizontal = HEADER_GUTTER),
-        )
+        ) {
+            if (isAlbumExplicit) {
+                ExplicitBadge(
+                    color = palette.onBackground.copy(alpha = 0.75f),
+                    modifier = Modifier.padding(end = 6.dp),
+                )
+            }
+            Text(
+                text = page.title,
+                style = MaterialTheme.typography.headlineMedium,
+                color = palette.onBackground,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         if (credit.isNotBlank()) {
             Spacer(Modifier.height(2.dp))
             Text(
@@ -1847,15 +1873,23 @@ private fun TopReleaseCard(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            FadingText(
-                text = item.title,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    lineHeight = TOP_RELEASE_TITLE_LINE_HEIGHT,
-                    lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.None),
-                ),
-                color = palette.onBackground,
-                maxLines = 2,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (item.isExplicit) {
+                    ExplicitBadge(
+                        color = palette.onBackground.copy(alpha = 0.75f),
+                        modifier = Modifier.padding(end = 6.dp),
+                    )
+                }
+                FadingText(
+                    text = item.title,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        lineHeight = TOP_RELEASE_TITLE_LINE_HEIGHT,
+                        lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.None),
+                    ),
+                    color = palette.onBackground,
+                    maxLines = 2,
+                )
+            }
             Text(
                 text = stringResource(item.recentLabel()),
                 style = MaterialTheme.typography.bodyMedium,
@@ -1936,13 +1970,21 @@ private fun SectionCard(
                 .background(palette.elevated),
         )
         Spacer(Modifier.height(8.dp))
-        Text(
-            text = item.title,
-            style = MaterialTheme.typography.titleMedium,
-            color = palette.onBackground,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (item.isExplicit) {
+                ExplicitBadge(
+                    color = palette.onBackground.copy(alpha = 0.75f),
+                    modifier = Modifier.padding(end = 4.dp),
+                )
+            }
+            Text(
+                text = item.title,
+                style = MaterialTheme.typography.titleMedium,
+                color = palette.onBackground,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         Text(
             text = item.subtitle,
             style = MaterialTheme.typography.bodyMedium,

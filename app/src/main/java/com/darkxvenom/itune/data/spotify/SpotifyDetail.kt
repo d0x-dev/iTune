@@ -73,12 +73,15 @@ object SpotifyDetail {
                     fun shelf(title: String, list: List<JsonObject>) {
                         val items = list.mapNotNull { x ->
                             val releaseId = x.str("id") ?: return@mapNotNull null
+                            val isExp = x.obj("contentRating")?.str("label")?.equals("EXPLICIT", ignoreCase = true) == true
+                                || (x["explicit"]?.jsonPrimitive?.contentOrNull)?.toBooleanStrictOrNull() == true
                             ShelfItem(
                                 x.str("name").orEmpty(),
                                 x.str("release_date").orEmpty().take(4),
                                 x.img(),
                                 null,
                                 "spotify:album:$releaseId",
+                                isExplicit = isExp,
                             )
                         }
                         if (items.isNotEmpty()) add(HomeShelf(title, items))
@@ -184,6 +187,8 @@ object SpotifyDetail {
                 val durationMs = t.obj("duration")?.get("totalMilliseconds")?.jsonPrimitive?.intOrNull
                     ?: t.get("duration_ms")?.jsonPrimitive?.intOrNull
                     ?: 0
+                val isExp = t.obj("contentRating")?.str("label")?.equals("EXPLICIT", ignoreCase = true) == true
+                    || (t["explicit"]?.jsonPrimitive?.contentOrNull)?.toBooleanStrictOrNull() == true
                 Song(
                     videoId = "sp:$tid",
                     title = t.str("name").orEmpty(),
@@ -192,6 +197,7 @@ object SpotifyDetail {
                     durationText = dur(durationMs),
                     albumName = name,
                     albumId = "spotify:album:$id",
+                    isExplicit = isExp,
                 )
             }
             if (songs.isNotEmpty()) {
@@ -272,19 +278,24 @@ object SpotifyDetail {
                 val t = row.obj("track") ?: return@mapNotNull null
                 val tid = t.str("uri")?.substringAfterLast(':') ?: return@mapNotNull null
                 val album = t.obj("albumOfTrack")
+                val isExp = t.obj("contentRating")?.str("label")?.equals("EXPLICIT", ignoreCase = true) == true
+                    || (t["explicit"]?.jsonPrimitive?.contentOrNull)?.toBooleanStrictOrNull() == true
                 Song(
                     videoId = "sp:$tid", title = t.str("name").orEmpty(),
                     artist = t.items("artists").mapNotNull { it.obj("profile")?.str("name") }.joinToString(", ").ifBlank { name },
                     thumbnailUrl = album?.obj("coverArt")?.srcUrl() ?: thumb,
                     durationText = dur(t.obj("duration")?.get("totalMilliseconds")?.jsonPrimitive?.intOrNull ?: 0),
                     albumName = album?.str("name"), albumId = album?.str("uri")?.let { "spotify:album:${it.substringAfterLast(':')}" },
+                    isExplicit = isExp,
                 )
             }
             fun releases(path: JsonObject?): List<ShelfItem> = path?.items("items").orEmpty().flatMap { row ->
                 row.obj("releases")?.items("items") ?: listOf(row)
             }.mapNotNull { r ->
                 val rid = r.str("id") ?: r.str("uri")?.substringAfterLast(':') ?: return@mapNotNull null
-                ShelfItem(r.str("name").orEmpty(), r.obj("date")?.str("year").orEmpty(), r.obj("coverArt")?.srcUrl(), null, "spotify:album:$rid")
+                val isExp = r.obj("contentRating")?.str("label")?.equals("EXPLICIT", ignoreCase = true) == true
+                    || (r["explicit"]?.jsonPrimitive?.contentOrNull)?.toBooleanStrictOrNull() == true
+                ShelfItem(r.str("name").orEmpty(), r.obj("date")?.str("year").orEmpty(), r.obj("coverArt")?.srcUrl(), null, "spotify:album:$rid", isExplicit = isExp)
             }
             val sections = buildList {
                 releases(disc?.obj("popularReleasesAlbums")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Popular releases", it)) }
@@ -297,7 +308,9 @@ object SpotifyDetail {
                         row.obj("releases")?.items("items") ?: listOf(row)
                     }.mapNotNull { r ->
                         val rid = r.str("id") ?: r.str("uri")?.substringAfterLast(':') ?: return@mapNotNull null
-                        ShelfItem(r.str("name").orEmpty(), r.obj("date")?.str("year").orEmpty(), r.obj("coverArt")?.srcUrl(), null, "spotify:album:$rid")
+                        val isExp = r.obj("contentRating")?.str("label")?.equals("EXPLICIT", ignoreCase = true) == true
+                            || (r["explicit"]?.jsonPrimitive?.contentOrNull)?.toBooleanStrictOrNull() == true
+                        ShelfItem(r.str("name").orEmpty(), r.obj("date")?.str("year").orEmpty(), r.obj("coverArt")?.srcUrl(), null, "spotify:album:$rid", isExplicit = isExp)
                     }
                     if (items.isNotEmpty()) add(HomeShelf(title, items))
                 }
@@ -387,7 +400,7 @@ object SpotifyDetail {
             ?: return null
         val songs = search.songs.filter { it.artist.contains(name, ignoreCase = true) }
         val albums = search.albums.filter { it.subtitle.contains(name, ignoreCase = true) || it.title.contains(name, ignoreCase = true) }
-            .map { ShelfItem(it.title, it.subtitle, it.image, null, it.browseId) }
+            .map { ShelfItem(it.title, it.subtitle, it.image, null, it.browseId, isExplicit = it.isExplicit) }
         if (songs.isEmpty() && albums.isEmpty()) return null
         return SpotifyPage(name, "Artist", thumb, songs, if (albums.isEmpty()) emptyList() else listOf(HomeShelf("Albums", albums)))
     }
@@ -395,6 +408,7 @@ object SpotifyDetail {
     fun SpotifyTrack.toSong(albumImg: String?, albumId: String?) = Song(
         videoId = "sp:$id", title = title, artist = artist, thumbnailUrl = imageUrl ?: albumImg,
         durationText = dur(durationMs), albumName = album, albumId = albumId,
+        isExplicit = isExplicit,
     )
 
     fun parseTrack(o: JsonObject): Song? = o.track(null, null, null)

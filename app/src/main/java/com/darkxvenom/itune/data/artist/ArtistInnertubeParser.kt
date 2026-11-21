@@ -288,7 +288,7 @@ object ArtistInnertubeParser {
             val item = parseBrowseItem(renderer) ?: return@forEach
             out.putIfAbsent(
                 item.browseId,
-                ShelfItem(item.title, item.subtitle, item.thumbnailUrl, null, item.browseId),
+                ShelfItem(item.title, item.subtitle, item.thumbnailUrl, null, item.browseId, isExplicit = renderer.hasExplicitBadge() == true),
             )
         }
         return LibraryItemPage(out.values.toList(), continuationToken(root))
@@ -775,6 +775,7 @@ object ArtistInnertubeParser {
             videoId = videoId,
             browseId = resolvedBrowseId,
             isVideo = isVideo,
+            isExplicit = renderer.hasExplicitBadge() == true,
         )
     }
 

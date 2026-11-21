@@ -59,6 +59,7 @@ data class SpotifyTrack(
     val album: String?,
     val durationMs: Int,
     val imageUrl: String?,
+    val isExplicit: Boolean = false,
 )
 
 object SpotifyLibrary {
@@ -749,6 +750,8 @@ internal fun parseTrackPage(root: JsonObject): Triple<List<SpotifyTrack>, Int, I
             artist.jsonObject.obj("profile")?.str("name")?.takeIf { it.isNotBlank() }
         }.joinToString(", ")
         val album = data.obj("albumOfTrack")
+        val isExplicit = data.obj("contentRating")?.str("label")?.equals("EXPLICIT", ignoreCase = true) == true
+            || data["explicit"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull() == true
         SpotifyTrack(
             id = uri.substringAfterLast(":"),
             title = title,
@@ -756,6 +759,7 @@ internal fun parseTrackPage(root: JsonObject): Triple<List<SpotifyTrack>, Int, I
             album = album?.str("name"),
             durationMs = data.obj("duration")?.int("totalMilliseconds") ?: 0,
             imageUrl = album?.obj("coverArt")?.arr("sources")?.lastUrl(),
+            isExplicit = isExplicit,
         )
     }
     return Triple(items, content.int("totalCount") ?: rawItems.size, rawItems.size)
@@ -772,6 +776,10 @@ internal fun parseLikedPage(root: JsonObject): Triple<List<SpotifyTrack>, Int, I
         if (title.isBlank()) return@mapNotNull null
         val uri = wrapper.str("_uri") ?: data.str("uri") ?: return@mapNotNull null
         val album = data.obj("albumOfTrack")
+        val isExplicit = data.obj("contentRating")?.str("label")?.equals("EXPLICIT", ignoreCase = true) == true
+            || wrapper.obj("contentRating")?.str("label")?.equals("EXPLICIT", ignoreCase = true) == true
+            || data["explicit"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull() == true
+            || wrapper["explicit"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull() == true
         SpotifyTrack(
             id = uri.substringAfterLast(":"),
             title = title,
@@ -781,6 +789,7 @@ internal fun parseLikedPage(root: JsonObject): Triple<List<SpotifyTrack>, Int, I
             album = album?.str("name"),
             durationMs = (data.obj("trackDuration") ?: data.obj("duration"))?.int("totalMilliseconds") ?: 0,
             imageUrl = album?.obj("coverArt")?.arr("sources")?.lastUrl(),
+            isExplicit = isExplicit,
         )
     }
     return Triple(items, tracks.int("totalCount") ?: rawItems.size, rawItems.size)

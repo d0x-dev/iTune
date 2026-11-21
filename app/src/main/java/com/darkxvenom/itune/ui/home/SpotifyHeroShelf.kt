@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.draw.shadow
+import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
 import com.darkxvenom.itune.R
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -248,11 +249,17 @@ private fun SpotifyHeroCard(
                     contentScale = ContentScale.Crop,
                 )
                 Column(Modifier.padding(start = 12.dp)) {
-                    Text(
-                        item.title, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold,
-                        lineHeight = 26.sp, maxLines = 2, overflow = TextOverflow.Ellipsis,
-                    )
-                    Text("Playlist \u2022 Spotify", color = Color(0xCCFFFFFF), fontSize = 13.sp)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (item.isExplicit) {
+                            ExplicitBadge(color = Color.White.copy(alpha = 0.85f))
+                            Spacer(Modifier.width(6.dp))
+                        }
+                        Text(
+                            item.title, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold,
+                            lineHeight = 26.sp, maxLines = 2, overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                    Text("Playlist • Spotify", color = Color(0xCCFFFFFF), fontSize = 13.sp)
                 }
             }
 

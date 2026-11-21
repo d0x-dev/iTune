@@ -162,7 +162,7 @@ object SpotifyHomeRepository {
                         else matched(track)?.let { m ->
                             entry.item.copy(
                                 videoId = m.id, artistName = m.artists.ifBlank { track.artist }, artistId = m.artistId,
-                                albumName = m.album ?: track.album, albumId = m.albumId, isExplicit = m.isExplicit,
+                                albumName = m.album ?: track.album, albumId = m.albumId, isExplicit = m.isExplicit || track.isExplicit,
                             )
                         }
                     }
@@ -205,23 +205,25 @@ object SpotifyHomeRepository {
         val type = d.str("__typename").orEmpty()
         val name = d.str("name") ?: d.obj("profile")?.str("name") ?: return null
         val img = bestImage(d)
+        val isExp = d.obj("contentRating")?.str("label")?.equals("EXPLICIT", ignoreCase = true) == true
+            || d["explicit"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull() == true
         return when {
             type.contains("Playlist") -> HomeEntry(HomeFeedItem(HomeItemKind.PLAYLIST, name,
-                d.obj("ownerV2")?.obj("data")?.str("name").orEmpty(), img, browseId = "${PREFIX}playlist:$id"))
+                d.obj("ownerV2")?.obj("data")?.str("name").orEmpty(), img, browseId = "${PREFIX}playlist:$id", isExplicit = isExp))
             type.contains("Album") -> {
                 val artist = d.obj("artists")?.arr("items")?.firstOrNull()?.jsonObject?.obj("profile")?.str("name").orEmpty()
-                HomeEntry(HomeFeedItem(HomeItemKind.ALBUM, name, artist, img, browseId = "${PREFIX}album:$id", artistName = artist))
+                HomeEntry(HomeFeedItem(HomeItemKind.ALBUM, name, artist, img, browseId = "${PREFIX}album:$id", artistName = artist, isExplicit = isExp))
             }
             type.contains("Artist") -> HomeEntry(HomeFeedItem(HomeItemKind.ARTIST, name, "Artist", img, browseId = "${PREFIX}artist:$id"))
             type.contains("Episode") -> HomeEntry(HomeFeedItem(HomeItemKind.PODCAST, name,
-                d.obj("podcastV2")?.obj("data")?.str("name").orEmpty(), img, browseId = "${PREFIX}episode:$id"))
+                d.obj("podcastV2")?.obj("data")?.str("name").orEmpty(), img, browseId = "${PREFIX}episode:$id", isExplicit = isExp))
             type.contains("Podcast") -> HomeEntry(HomeFeedItem(HomeItemKind.PODCAST, name,
                 d.obj("publisher")?.str("name").orEmpty(), img, browseId = "${PREFIX}show:$id"))
             type.contains("Track") -> {
                 val artist = d.obj("artists")?.arr("items")?.mapNotNull { (it as? JsonObject)?.obj("profile")?.str("name") }
                     ?.joinToString(", ").orEmpty()
-                val t = SpotifyTrack(id, name, artist, d.obj("albumOfTrack")?.str("name"), 0, img)
-                HomeEntry(HomeFeedItem(HomeItemKind.SONG, name, artist, img), t)
+                val t = SpotifyTrack(id, name, artist, d.obj("albumOfTrack")?.str("name"), 0, img, isExplicit = isExp)
+                HomeEntry(HomeFeedItem(HomeItemKind.SONG, name, artist, img, isExplicit = isExp), t)
             }
             else -> null
         }
@@ -258,7 +260,7 @@ object SpotifyHomeRepository {
                     kind = HomeItemKind.SONG, title = m.title.ifBlank { sp.title },
                     subtitle = m.artists.ifBlank { sp.artist }, thumbnailUrl = sp.imageUrl ?: m.thumbnailUrl,
                     videoId = m.id, artistName = m.artists.ifBlank { sp.artist }, artistId = m.artistId,
-                    albumName = m.album ?: sp.album, albumId = m.albumId, isExplicit = m.isExplicit,
+                    albumName = m.album ?: sp.album, albumId = m.albumId, isExplicit = m.isExplicit || sp.isExplicit,
                 )
             }.takeIf { it.isNotEmpty() }
     }
@@ -287,8 +289,10 @@ object SpotifyHomeRepository {
         val items = list?.mapNotNull { (it as? JsonObject)?.let(pick) }?.mapNotNull { a ->
             val id = a.str("id") ?: return@mapNotNull null
             val artist = a.arr("artists")?.firstOrNull()?.jsonObject?.str("name").orEmpty()
+            val isExp = a.obj("contentRating")?.str("label")?.equals("EXPLICIT", ignoreCase = true) == true
+                || a["explicit"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull() == true
             HomeFeedItem(HomeItemKind.ALBUM, a.str("name").orEmpty(), artist, a.images(),
-                browseId = "${PREFIX}album:$id", artistName = artist)
+                browseId = "${PREFIX}album:$id", artistName = artist, isExplicit = isExp)
         }.orEmpty()
         return HomeFeedShelf(key, title, "", items, HomeShelfGroup.TRENDING.takeIf { key == "sp_new_releases" } ?: HomeShelfGroup.FEED)
     }
@@ -380,6 +384,8 @@ object SpotifyHomeRepository {
     private fun JsonObject.toTrack(): SpotifyTrack? {
         val id = str("id") ?: return null
         val album = obj("album")
+        val isExp = this["explicit"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull() == true
+            || obj("contentRating")?.str("label")?.equals("EXPLICIT", ignoreCase = true) == true
         return SpotifyTrack(
             id = id,
             title = str("name").orEmpty(),
@@ -387,6 +393,7 @@ object SpotifyHomeRepository {
             album = album?.str("name"),
             durationMs = this["duration_ms"]?.jsonPrimitive?.intOrNull ?: 0,
             imageUrl = album?.images(),
+            isExplicit = isExp,
         )
     }
 
@@ -394,7 +401,7 @@ object SpotifyHomeRepository {
     suspend fun matchSong(song: Song): MusicTrack? = when {
         song.videoId.startsWith("sp:") -> matched(
             SpotifyTrack(song.videoId.removePrefix("sp:"), song.title, song.artist, song.albumName,
-                parseDur(song.durationText), song.thumbnailUrl),
+                parseDur(song.durationText), song.thumbnailUrl, isExplicit = song.isExplicit == true),
         )
         song.videoId.startsWith("spe:") -> gate.withPermit {
             runCatching { MusicBackend.searchMusic("${song.title} ${song.artist}").firstOrNull() }.getOrNull()
@@ -421,6 +428,7 @@ object SpotifyHomeRepository {
                         addedAtMs = runCatching { java.time.Instant.parse(row.str("played_at")).toEpochMilli() }
                             .getOrDefault(System.currentTimeMillis()),
                         spotifyTrackUri = "spotify:track:${t.id}",
+                        isExplicit = m.isExplicit || t.isExplicit,
                     )
                 }
             }.mapNotNull { it.await() }

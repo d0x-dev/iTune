@@ -27,7 +27,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import java.net.URLEncoder
 
-data class SpotifyEntity(val title: String, val subtitle: String, val image: String?, val browseId: String)
+data class SpotifyEntity(val title: String, val subtitle: String, val image: String?, val browseId: String, val isExplicit: Boolean = false)
 
 data class SpotifySearchResults(
     val songs: List<Song> = emptyList(),
@@ -71,6 +71,7 @@ data class SpotifySearchResults(
                 author = alb.subtitle,
                 thumbnailUrl = alb.image,
                 isAlbum = true,
+                isExplicit = alb.isExplicit,
             )
         }
         val unifiedPlaylists = (playlists + shows).map { pl ->
@@ -80,6 +81,7 @@ data class SpotifySearchResults(
                 author = pl.subtitle,
                 thumbnailUrl = pl.image,
                 isAlbum = false,
+                isExplicit = pl.isExplicit,
             )
         }
         return UnifiedSearchResults(
@@ -247,7 +249,9 @@ object SpotifySearch {
                 artistName.ifBlank { null },
                 year?.let { "($it)" },
             ).joinToString(" • ")
-            SpotifyEntity(title = name, subtitle = sub, image = cover, browseId = uri)
+            val isExp = (data["contentRating"] as? JsonObject)?.let { str(it, "label") }?.equals("EXPLICIT", ignoreCase = true) == true
+                || data["explicit"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull() == true
+            SpotifyEntity(title = name, subtitle = sub, image = cover, browseId = uri, isExplicit = isExp)
         }
 
         // Playlists
@@ -262,7 +266,9 @@ object SpotifySearch {
             val owner = (data["ownerV2"] as? JsonObject)?.get("data")?.let { str(it as? JsonObject, "name") }
                 ?: (data["owner"] as? JsonObject)?.let { str(it, "display_name") ?: str(it, "name") }
             val img = extractImage(data)
-            SpotifyEntity(title = name, subtitle = if (!owner.isNullOrBlank()) "Playlist • $owner" else "Playlist", image = img, browseId = uri)
+            val isExp = (data["contentRating"] as? JsonObject)?.let { str(it, "label") }?.equals("EXPLICIT", ignoreCase = true) == true
+                || data["explicit"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull() == true
+            SpotifyEntity(title = name, subtitle = if (!owner.isNullOrBlank()) "Playlist • $owner" else "Playlist", image = img, browseId = uri, isExplicit = isExp)
         }
 
         // Podcasts / Shows
@@ -277,7 +283,9 @@ object SpotifySearch {
             val name = str(data, "name") ?: return@mapNotNull null
             val publisher = (data["publisher"] as? JsonObject)?.let { str(it, "name") } ?: str(data, "publisher")
             val img = extractImage(data)
-            SpotifyEntity(title = name, subtitle = if (!publisher.isNullOrBlank()) "Podcast • $publisher" else "Podcast", image = img, browseId = uri)
+            val isExp = (data["contentRating"] as? JsonObject)?.let { str(it, "label") }?.equals("EXPLICIT", ignoreCase = true) == true
+                || data["explicit"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull() == true
+            SpotifyEntity(title = name, subtitle = if (!publisher.isNullOrBlank()) "Podcast • $publisher" else "Podcast", image = img, browseId = uri, isExplicit = isExp)
         }
 
         return SpotifySearchResults(
@@ -306,6 +314,8 @@ object SpotifySearch {
             ?: (data["duration"] as? JsonObject)?.get("totalMilliseconds")?.jsonPrimitive?.intOrNull
             ?: data["duration_ms"]?.jsonPrimitive?.intOrNull
             ?: 0
+        val isExp = (data["contentRating"] as? JsonObject)?.let { str(it, "label") }?.equals("EXPLICIT", ignoreCase = true) == true
+            || data["explicit"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull() == true
         return Song(
             videoId = "sp:$id",
             title = title,
@@ -314,6 +324,7 @@ object SpotifySearch {
             durationText = if (durationMs > 0) "%d:%02d".format(durationMs / 60000, durationMs / 1000 % 60) else null,
             albumName = albumName,
             albumId = albumId,
+            isExplicit = isExp,
         )
     }
 

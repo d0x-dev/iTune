@@ -41,6 +41,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
+import com.darkxvenom.itune.ui.theme.AppleExplicitBadge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -180,14 +182,20 @@ fun SquareCardShelf(
                         }
                     }
                     Spacer(Modifier.height(7.dp))
-                    Text(
-                        item.title,
-                        color = AppleTextPrimary,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (item.isExplicit) {
+                            ExplicitBadge(color = AppleExplicitBadge)
+                            Spacer(Modifier.width(4.dp))
+                        }
+                        Text(
+                            item.title,
+                            color = AppleTextPrimary,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                     if (item.subtitle.isNotBlank()) {
                         Text(
                             item.subtitle,
@@ -341,14 +349,20 @@ fun WideCardShelf(
                         }
                     }
                     Spacer(Modifier.height(7.dp))
-                    Text(
-                        item.title,
-                        color = AppleTextPrimary,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (item.isExplicit) {
+                            ExplicitBadge(color = AppleExplicitBadge)
+                            Spacer(Modifier.width(4.dp))
+                        }
+                        Text(
+                            item.title,
+                            color = AppleTextPrimary,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                     if (item.subtitle.isNotBlank()) {
                         Text(
                             item.subtitle,
