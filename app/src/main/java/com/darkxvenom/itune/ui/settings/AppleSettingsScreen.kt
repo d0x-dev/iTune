@@ -2782,7 +2782,7 @@ private fun buildSettingsSections(
                     } else {
                         "Off · Songs play from YouTube Music"
                     },
-                    iconRes = R.drawable.ic_settings_lossless,
+                    iconRes = R.drawable.ic_settings_jiosaavn,
                     keywords = listOf("jiosaavn", "saavn", "source", "provider", "320", "quality", "lossless"),
                     checked = state.jioSaavnProvider,
                     onToggle = { onToggleBool(SettingsStore.KEY_JIOSAAVN_PROVIDER, it) },
