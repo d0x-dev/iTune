@@ -627,6 +627,19 @@ object MusicPlayerState : Player.Listener {
                 val cachedFile = MusicCacheManager.getCachedAudioFile(track.id)
                 // Pill state for cached songs, plus the optional background "upgrade cached songs" pass.
                 if (cachedFile != null) {
+                    val cachedFrom = if (MusicCacheManager.cachedSource(track.id) == "saavn") "JioSaavn" else "YouTube"
+                    com.darkxvenom.itune.audio.StreamTraceStore.put(
+                        track.id,
+                        com.darkxvenom.itune.audio.StreamTrace(
+                            source = "Local cache ($cachedFrom)",
+                            quality = "",
+                            steps = listOf(
+                                "Found a saved copy on this device (${MusicCacheManager.formatStorageSize(cachedFile.length())})",
+                                "That copy was originally downloaded from $cachedFrom",
+                                "No network request needed — played straight from storage",
+                            ),
+                        ),
+                    )
                     when (MusicCacheManager.cachedSource(track.id)) {
                         "saavn" -> com.darkxvenom.itune.data.saavn.SaavnQuality.set(track.id, com.darkxvenom.itune.data.saavn.SaavnStatus.LOSSLESS)
                         else -> {
@@ -827,6 +840,9 @@ object MusicPlayerState : Player.Listener {
         lyricsLoading = false
         ensureProgressLoopRunning()
     }
+
+    /** Live format the decoder is reading right now (mime, bitrate, sample rate, channels), or null. */
+    fun liveAudioFormat(): androidx.media3.common.Format? = exoPlayer?.audioFormat
 
     // ── Upgrade Quality (JioSaavn) ──────────────────────────────────────────
 
