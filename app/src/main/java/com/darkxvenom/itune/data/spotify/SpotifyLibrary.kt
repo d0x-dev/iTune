@@ -371,8 +371,8 @@ object SpotifyLibrary {
     private val restGate = kotlinx.coroutines.sync.Semaphore(3)
 
     /**
-     * Executes [req], retrying HTTP 429 / 503 (honouring `Retry-After`, else 2s/4s/8s backoff,
-     * capped at 15s). Returns the final status code and body.
+     * Executes [req], retrying HTTP 429 / 503 (honouring `Retry-After`, else 2s/4s/8s backoff).
+     * Returns the final status code and body.
      */
     private suspend fun execRetry(req: Request): Pair<Int, String> {
         var attempt = 0
@@ -406,23 +406,6 @@ object SpotifyLibrary {
         val (code, body) = restGate.withPermit { execRetry(req) }
         if (code !in 200..299) throw IllegalStateException("Spotify request failed ($code)")
         json.parseToJsonElement(body).jsonObject
-    }
-
-    private suspend fun currentUserId(tokens: Tokens): String {
-        val req = Request.Builder()
-            .url("$REST_API/me")
-            .get()
-            .apply { restHeaders(tokens).forEach { (k, v) -> header(k, v) } }
-            .build()
-        Net.client.newCall(req).execute().use { resp ->
-            val body = resp.body?.string().orEmpty()
-            if (!resp.isSuccessful) {
-                throw IllegalStateException("Could not read Spotify profile (${resp.code})")
-            }
-            val id = json.parseToJsonElement(body).jsonObject.str("id")
-            if (id.isNullOrBlank()) throw IllegalStateException("Spotify user ID missing")
-            return id
-        }
     }
 
     /**
