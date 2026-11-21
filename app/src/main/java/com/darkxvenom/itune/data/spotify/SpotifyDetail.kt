@@ -65,33 +65,36 @@ object SpotifyDetail {
                 // Prioritize Pathfinder GraphQL queryArtistOverview to avoid 429 delays and errors
                 artistViaPathfinder(id, fallbackTitle, fallbackThumb)?.let { return@coroutineScope it }
                 artistViaSearch(id, fallbackTitle, fallbackThumb)?.let { return@coroutineScope it }
-                val info = async { runCatching { SpotifyLibrary.restGet("/artists/$id") }.getOrNull() }
-                val top = async { runCatching { SpotifyLibrary.restGet("/artists/$id/top-tracks?market=from_token") }.getOrNull() }
-                val albums = async { runCatching { SpotifyLibrary.restGet("/artists/$id/albums?include_groups=album,single&limit=30&market=from_token") }.getOrNull() }
-                val related = async { runCatching { SpotifyLibrary.restGet("/artists/$id/related-artists") }.getOrNull() }
-                val i = info.await()
-                val songs = top.await()?.arr("tracks").orEmpty().mapNotNull { (it as? JsonObject)?.track(null, null, null) }
+                val info = runCatching { SpotifyLibrary.restGet("/artists/$id") }.getOrNull()
+                val releases = runCatching { artistAlbums(id) }.getOrDefault(emptyList())
                 val sections = buildList {
-                    val items = albums.await()?.arr("items").orEmpty().mapNotNull { (it as? JsonObject) }
                     fun shelf(title: String, list: List<JsonObject>) {
-                        if (list.isNotEmpty()) add(HomeShelf(title, list.map { x ->
-                            ShelfItem(x.str("name").orEmpty(), (x.str("release_date") ?: "").take(4), x.img(), null, "spotify:album:${x.str("id")}")
-                        }))
+                        val items = list.mapNotNull { x ->
+                            val releaseId = x.str("id") ?: return@mapNotNull null
+                            ShelfItem(
+                                x.str("name").orEmpty(),
+                                x.str("release_date").orEmpty().take(4),
+                                x.img(),
+                                null,
+                                "spotify:album:$releaseId",
+                            )
+                        }
+                        if (items.isNotEmpty()) add(HomeShelf(title, items))
                     }
-                    shelf("Albums", items.filter { it.str("album_type") == "album" })
-                    shelf("Singles & EPs", items.filter { it.str("album_type") != "album" })
-                    val rel = related.await()?.arr("artists").orEmpty().mapNotNull { it as? JsonObject }
-                    if (rel.isNotEmpty()) add(HomeShelf("Fans also like", rel.map { x ->
-                        ShelfItem(x.str("name").orEmpty(), "Artist", x.img(), null, "spotify:artist:${x.str("id")}")
-                    }))
+                    shelf("Albums", releases.filter { it.str("album_type") == "album" })
+                    shelf("Singles & EPs", releases.filter { it.str("album_type") == "single" })
+                    shelf("Compilations", releases.filter { it.str("album_type") == "compilation" })
+                    shelf("Appears On", releases.filter { it.str("album_group") == "appears_on" })
                 }
-                val followers = i?.get("followers")?.let { (it as? JsonObject)?.get("total")?.jsonPrimitive?.intOrNull }
-                if (songs.isEmpty() && sections.isEmpty()) {
-                    error("Spotify didn't return any data for this artist")
-                }
+                val followers = info?.obj("followers")?.get("total")?.jsonPrimitive?.intOrNull
+                if (sections.isEmpty()) error("Spotify didn't return any data for this artist")
                 SpotifyPage(
-                    i?.str("name") ?: fallbackTitle, "Artist", i?.img() ?: fallbackThumb, songs, sections,
-                    i?.arr("genres")?.joinToString(", ") { it.jsonPrimitive.content }?.ifBlank { null },
+                    info?.str("name") ?: fallbackTitle,
+                    "Artist",
+                    info?.img() ?: fallbackThumb,
+                    emptyList(),
+                    sections,
+                    info?.arr("genres")?.joinToString(", ") { it.jsonPrimitive.content }?.ifBlank { null },
                     followers?.let { "%,d followers".format(it) },
                 )
             }
