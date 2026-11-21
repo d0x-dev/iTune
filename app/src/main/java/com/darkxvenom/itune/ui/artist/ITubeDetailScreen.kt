@@ -430,7 +430,7 @@ fun ITubeDetailScreen(
                         canvas = canvas,
                         artHeight = artHeight,
                         listState = listState,
-                        heroUrl = appleArt?.heroUrl,
+                        heroUrl = appleArt?.heroUrl ?: page.spotifyHeaderImageUrl,
                         modifier = Modifier.matchParentSize(),
                     )
                 }
