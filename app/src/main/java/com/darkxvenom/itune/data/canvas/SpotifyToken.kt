@@ -260,11 +260,7 @@ object SpotifyToken {
         val now = System.currentTimeMillis()
         cachedClientToken?.let { if (now < clientTokenExpiresAtMs - 30_000) return it }
 
-        val clientId = cachedClientId
-        if (clientId == null) {
-            Log.w(TAG, "no client id yet (access token not minted); skipping client token")
-            return null
-        }
+        val clientId = cachedClientId ?: "d8a5ed95f0bc4f2e819c6a8dda425420"
         val session = session() ?: return null
 
         val payload = buildJsonObject {
