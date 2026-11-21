@@ -625,6 +625,17 @@ object MusicPlayerState : Player.Listener {
                 }
 
                 val cachedFile = MusicCacheManager.getCachedAudioFile(track.id)
+                // Pill state for cached songs, plus the optional background "upgrade cached songs" pass.
+                if (cachedFile != null) {
+                    when (MusicCacheManager.cachedSource(track.id)) {
+                        "saavn" -> com.darkxvenom.itune.data.saavn.SaavnQuality.set(track.id, com.darkxvenom.itune.data.saavn.SaavnStatus.LOSSLESS)
+                        else -> {
+                            com.darkxvenom.itune.data.saavn.SaavnQuality.clear(track.id)
+                            val st = SettingsStore.state.value
+                            if (st.jioSaavnProvider && st.upgradeCachedSongs && !st.offlineMode) upgradeCachedInBackground(track)
+                        }
+                    }
+                }
                 val streamUrl = preResolvedUrl ?: if (cachedFile != null) {
                     Uri.fromFile(cachedFile).toString()
                 } else if (SettingsStore.state.value.offlineMode) {
@@ -646,7 +657,11 @@ object MusicPlayerState : Player.Listener {
 
                 if (MusicCacheManager.cachingEnabled.value && cachedFile == null) {
                     scope.launch(Dispatchers.IO) {
-                        MusicCacheManager.cacheTrackOnDemand(track)
+                        if (com.darkxvenom.itune.data.saavn.JioSaavnProvider.isSaavnUrl(streamUrl)) {
+                            MusicCacheManager.cacheSaavnStream(track, streamUrl, replaceExisting = false)
+                        } else {
+                            MusicCacheManager.cacheTrackOnDemand(track)
+                        }
                     }
                 }
 
@@ -811,6 +826,95 @@ object MusicPlayerState : Player.Listener {
         hasCustomLyricsOverride = false
         lyricsLoading = false
         ensureProgressLoopRunning()
+    }
+
+    // ── Upgrade Quality (JioSaavn) ──────────────────────────────────────────
+
+    /** True while the 3-dot menu's "Upgrade Quality" is searching / swapping. */
+    var upgradingQuality by mutableStateOf(false)
+        private set
+
+    private val backgroundUpgrades = java.util.concurrent.ConcurrentHashMap.newKeySet<String>()
+
+    /** Settings: "Upgrade Quality of cached songs" — replaces a cached YouTube copy with the JioSaavn one. */
+    private fun upgradeCachedInBackground(track: MusicTrack) {
+        if (!backgroundUpgrades.add(track.id)) return
+        scope.launch(Dispatchers.IO) {
+            try {
+                val url = com.darkxvenom.itune.data.saavn.JioSaavnProvider.lookup(track.title, track.artists) ?: return@launch
+                MusicCacheManager.cacheSaavnStream(track, url, replaceExisting = true) { ok ->
+                    if (ok && currentTrack?.id == track.id) {
+                        com.darkxvenom.itune.data.saavn.SaavnQuality.set(track.id, com.darkxvenom.itune.data.saavn.SaavnStatus.LOSSLESS)
+                    }
+                }
+            } finally {
+                // Allow a later retry only if the cache still holds the YouTube copy.
+                if (MusicCacheManager.cachedSource(track.id) == "saavn") Unit else backgroundUpgrades.remove(track.id)
+            }
+        }
+    }
+
+    /**
+     * 3-dot menu → "Upgrade Quality". Finds the song on JioSaavn and, when found, switches the playing
+     * stream to it at the CURRENT position (no restart), then replaces the cached copy with the JioSaavn one.
+     */
+    fun upgradeCurrentQuality() {
+        val ctx = appContext ?: return
+        val track = currentTrack ?: return
+        if (upgradingQuality) return
+        val saavn = com.darkxvenom.itune.data.saavn.SaavnQuality.statuses.value[track.id]
+        val alreadyLossless = saavn == com.darkxvenom.itune.data.saavn.SaavnStatus.LOSSLESS ||
+            MusicCacheManager.cachedSource(track.id) == "saavn"
+        if (alreadyLossless) {
+            Toast.makeText(ctx, "Song already playing in Lossless Quality", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (!SettingsStore.state.value.jioSaavnProvider) {
+            Toast.makeText(ctx, "Turn on JioSaavn Provider in Settings to upgrade quality", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (SettingsStore.state.value.offlineMode) {
+            Toast.makeText(ctx, "Offline mode: can't upgrade quality", Toast.LENGTH_SHORT).show()
+            return
+        }
+        upgradingQuality = true
+        scope.launch {
+            try {
+                com.darkxvenom.itune.data.saavn.SaavnQuality.set(track.id, com.darkxvenom.itune.data.saavn.SaavnStatus.SEARCHING)
+                val url = com.darkxvenom.itune.data.saavn.JioSaavnProvider.resolve(track.id, track.title, track.artists, emptySet(), force = true)
+                if (url == null) {
+                    Toast.makeText(ctx, "No lossless version found for this song", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+                if (currentTrack?.id != track.id) return@launch // user moved on meanwhile
+                withContext(Dispatchers.Main) {
+                    exoPlayer?.let { player ->
+                        val resumeAt = player.currentPosition.coerceAtLeast(0L)
+                        val wasPlaying = player.playWhenReady
+                        val item = MediaItem.Builder()
+                            .setMediaId(track.id)
+                            .setUri(Uri.parse(url))
+                            .setMediaMetadata(
+                                MediaMetadata.Builder()
+                                    .setTitle(track.title)
+                                    .setArtist(track.artists)
+                                    .setAlbumTitle(track.album)
+                                    .setArtworkUri((track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl)?.let(Uri::parse))
+                                    .build()
+                            )
+                            .build()
+                        player.setMediaItem(item, resumeAt)
+                        player.prepare()
+                        player.setPlaybackSpeed(if (holdingFast) 2f else playbackSpeed)
+                        player.playWhenReady = wasPlaying
+                    }
+                }
+                // Replace (or create) the cached copy with the JioSaavn one.
+                MusicCacheManager.cacheSaavnStream(track, url, replaceExisting = true)
+            } finally {
+                upgradingQuality = false
+            }
+        }
     }
 
     fun togglePlayPause() {
