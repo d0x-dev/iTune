@@ -834,6 +834,7 @@ object MusicBackend {
         artist: String? = null,
     ): String? = withContext(Dispatchers.IO) {
         try {
+            com.darkxvenom.itune.audio.StreamTraceStore.begin(videoId)
             // Optional JioSaavn provider: tried first, any miss falls through to YouTube below.
             if (SettingsStore.state.value.jioSaavnProvider && !title.isNullOrBlank() && !artist.isNullOrBlank()) {
                 if (forceRefresh) {
@@ -848,6 +849,7 @@ object MusicBackend {
                     }
                 }
             }
+            com.darkxvenom.itune.audio.StreamTraceStore.addStep(videoId, "Asked YouTube Music (stream extractor) for watch?v=$videoId")
             val info = getOrLoadStreamInfo(videoId, forceRefresh = forceRefresh)
 
             val audioStreams = info.audioStreams
@@ -894,6 +896,23 @@ object MusicBackend {
 
             val chosen = pickAudioStream(candidates, isLossless, userQuality) ?: candidates.firstOrNull()
             val effectiveQuality = if (isLossless) "Lossless (Max)" else userQuality
+            chosen?.let { c ->
+                val kb = c.averageBitrate
+                val fmt = c.format?.name ?: "audio"
+                val prev = com.darkxvenom.itune.audio.StreamTraceStore.traces.value[videoId]?.steps.orEmpty()
+                com.darkxvenom.itune.audio.StreamTraceStore.put(
+                    videoId,
+                    com.darkxvenom.itune.audio.StreamTrace(
+                        source = "YouTube Music",
+                        quality = if (kb > 0) "$kb kbps • $fmt" else fmt,
+                        steps = prev + listOf(
+                            "Found ${candidates.size} audio stream(s)",
+                            "Mode: ${if (isLossless) "Lossless (Max) — highest bitrate" else "target quality $userQuality"}${if (onCellular) " (cellular)" else ""}",
+                            "Picked $fmt @ ${if (kb > 0) "$kb kbps" else "unknown bitrate"}",
+                        ),
+                    ),
+                )
+            }
             Log.d(TAG, "Selected stream for $videoId (lossless=$isLossless, quality=$effectiveQuality): format=${chosen?.format}, bitrate=${chosen?.averageBitrate} kbps")
             return@withContext chosen?.content
         } catch (e: Exception) {
