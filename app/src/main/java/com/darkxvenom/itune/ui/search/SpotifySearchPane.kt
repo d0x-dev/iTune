@@ -12,15 +12,23 @@
 package com.darkxvenom.itune.ui.search
 
 import android.widget.Toast
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -39,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -55,29 +64,82 @@ import com.darkxvenom.itune.data.spotify.SpotifyEntity
 import com.darkxvenom.itune.data.spotify.SpotifyHomeRepository
 import com.darkxvenom.itune.data.spotify.SpotifySearch
 import com.darkxvenom.itune.data.spotify.SpotifySearchResults
+import com.darkxvenom.itune.ui.theme.AppleTextSecondary
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 private enum class SpFilter(val label: String) { ALL("All"), SONGS("Songs"), ARTISTS("Artists"), ALBUMS("Albums"), PLAYLISTS("Playlists"), PODCASTS("Podcasts") }
 
-/** Source switch shown above recent searches: YouTube Music (default) / Spotify. */
+/** Apple-style segmented source switch shown above recent searches: YouTube Music (default) / Spotify. */
 @Composable
 fun SearchSourceSwitch(useSpotify: Boolean, onChange: (Boolean) -> Unit, modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier.fillMaxWidth().padding(top = 8.dp).height(36.dp)
-            .clip(RoundedCornerShape(9.dp)).background(Color(0xFF1C1C1E)).padding(2.5.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    val selectedIndex = if (useSpotify) 1 else 0
+    val animatedIndex by animateFloatAsState(
+        targetValue = selectedIndex.toFloat(),
+        animationSpec = spring(
+            dampingRatio = 0.8f,
+            stiffness = Spring.StiffnessMediumLow,
+        ),
+        label = "SearchSourceSwitchAnim",
+    )
+
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(36.dp)
+            .clip(RoundedCornerShape(9.dp))
+            .background(Color(0xFF1C1C1E))
+            .padding(2.5.dp),
     ) {
-        listOf(false to "YouTube Music", true to "Spotify").forEach { (isSp, label) ->
-            val sel = useSpotify == isSp
-            Box(
-                modifier = Modifier.weight(1f).fillMaxWidth().clip(RoundedCornerShape(7.dp))
-                    .background(if (sel) (if (isSp) Color(0xFF1DB954) else Color(0xFFFA2D48)) else Color.Transparent)
-                    .clickable { onChange(isSp) },
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(label, color = Color.White, fontSize = 13.sp, fontWeight = if (sel) FontWeight.SemiBold else FontWeight.Medium)
+        val segmentWidth = maxWidth / 2
+
+        // Sliding solid white thumb covering the whole selected button
+        Box(
+            modifier = Modifier
+                .offset(x = segmentWidth * animatedIndex)
+                .width(segmentWidth)
+                .fillMaxHeight()
+                .shadow(
+                    elevation = 2.dp,
+                    shape = RoundedCornerShape(7.dp),
+                    ambientColor = Color.Black.copy(alpha = 0.25f),
+                    spotColor = Color.Black.copy(alpha = 0.25f),
+                )
+                .clip(RoundedCornerShape(7.dp))
+                .background(Color.White),
+        )
+
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            listOf(false to "YouTube Music", true to "Spotify").forEachIndexed { index, (isSp, label) ->
+                val isSelected = index == selectedIndex
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clip(RoundedCornerShape(7.dp))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ) {
+                            if (useSpotify != isSp) {
+                                onChange(isSp)
+                            }
+                        },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = label,
+                        color = if (isSelected) Color(0xFF1C1C1E) else AppleTextSecondary,
+                        fontSize = 13.sp,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                        letterSpacing = (-0.2).sp,
+                        maxLines = 1,
+                    )
+                }
             }
         }
     }
