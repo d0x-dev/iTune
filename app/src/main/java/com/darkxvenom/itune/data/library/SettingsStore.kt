@@ -32,6 +32,10 @@ data class SettingsUiState(
     val losslessAudio: Boolean = true,
     /** Optional JioSaavn stream provider: tried before YouTube when on. */
     val jioSaavnProvider: Boolean = false,
+    /** With the JioSaavn provider on: replace cached YouTube songs with JioSaavn quality. */
+    val upgradeCachedSongs: Boolean = false,
+    /** Side of the screen the in-app volume bar appears on: "Right" or "Left". */
+    val volumeBarSide: String = "Right",
     val audioQuality: String = "Extreme",
     val downloadQuality: String = "Best Available",
     val pcmOutputFormat: String = "16-bit PCM",
@@ -121,6 +125,8 @@ object SettingsStore {
     const val KEY_DOLBY_ATMOS = "dolby_atmos"
     const val KEY_LOSSLESS_AUDIO = "lossless_audio"
     const val KEY_JIOSAAVN_PROVIDER = "jiosaavn_provider"
+    const val KEY_UPGRADE_CACHED = "upgrade_cached_songs"
+    const val KEY_VOLUME_BAR_SIDE = "volume_bar_side"
     const val KEY_AUDIO_QUALITY = "audio_quality"
     const val KEY_DOWNLOAD_QUALITY = "download_quality"
     const val KEY_PCM_OUTPUT_FORMAT = "pcm_output_format"
@@ -308,6 +314,7 @@ object SettingsStore {
             KEY_AUTOMIX -> cur.copy(autoMix = value, automixEnabled = value)
             KEY_LOSSLESS_AUDIO -> cur.copy(losslessAudio = value)
             KEY_JIOSAAVN_PROVIDER -> cur.copy(jioSaavnProvider = value)
+            KEY_UPGRADE_CACHED -> cur.copy(upgradeCachedSongs = value)
             KEY_SOUND_CHECK -> cur.copy(soundCheck = value)
             KEY_ANIMATED_ARTWORK -> cur.copy(animatedArtwork = value)
             KEY_CANVAS_OVER_CELLULAR -> cur.copy(canvasOverCellular = value)
@@ -379,6 +386,7 @@ object SettingsStore {
             KEY_APP_FONT -> cur.copy(appFont = normalized)
             KEY_SPATIAL_AUDIO -> cur.copy(spatialAudioMode = normalized)
             KEY_AUDIO_QUALITY -> cur.copy(audioQuality = normalizeAudioQuality(normalized))
+            KEY_VOLUME_BAR_SIDE -> cur.copy(volumeBarSide = if (normalized.equals("Left", true)) "Left" else "Right")
             KEY_DOWNLOAD_QUALITY -> cur.copy(downloadQuality = normalized.takeIf { it in setOf("Best Available", "Maximum", "High", "Standard", "Data Saver") } ?: "Best Available")
             KEY_PCM_OUTPUT_FORMAT -> cur.copy(pcmOutputFormat = if (normalized == "32-bit float PCM") normalized else "16-bit PCM")
             KEY_EQ_PRESET -> cur.copy(eqPreset = normalized)
@@ -629,6 +637,8 @@ object SettingsStore {
             dolbyAtmos = p.getBoolean(KEY_DOLBY_ATMOS, defaults.dolbyAtmos),
             losslessAudio = p.getBoolean(KEY_LOSSLESS_AUDIO, defaults.losslessAudio),
             jioSaavnProvider = p.getBoolean(KEY_JIOSAAVN_PROVIDER, defaults.jioSaavnProvider),
+            upgradeCachedSongs = p.getBoolean(KEY_UPGRADE_CACHED, defaults.upgradeCachedSongs),
+            volumeBarSide = if (p.getString(KEY_VOLUME_BAR_SIDE, defaults.volumeBarSide).equals("Left", true)) "Left" else "Right",
             audioQuality = normalizeAudioQuality(p.getString(KEY_AUDIO_QUALITY, defaults.audioQuality)),
             downloadQuality = p.getString(KEY_DOWNLOAD_QUALITY, defaults.downloadQuality)?.takeIf { it in setOf("Best Available", "Maximum", "High", "Standard", "Data Saver") } ?: defaults.downloadQuality,
             pcmOutputFormat = p.getString(KEY_PCM_OUTPUT_FORMAT, defaults.pcmOutputFormat) ?: defaults.pcmOutputFormat,
