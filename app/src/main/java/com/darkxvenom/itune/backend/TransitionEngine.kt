@@ -307,7 +307,7 @@ object TransitionEngine {
         prefetchJob?.cancel()
         prefetchJob = scope.launch {
             val url = try {
-                MusicBackend.resolveAudioStreamUrl(track.id)
+                MusicBackend.resolveAudioStreamUrl(track.id, title = track.title, artist = track.artists)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {

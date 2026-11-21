@@ -1726,6 +1726,10 @@ fun ITuneMusicPlayer(
 
                 // Center Dynamic Audio Engine & Quality Badge Pill (iMusic 128k / Dolby Atmos / 8D Audio / Bit-Perfect)
                 val pillBadge = audioEngineState.pillBadge
+                val saavnStatuses by com.darkxvenom.itune.data.saavn.SaavnQuality.statuses.collectAsStateWithLifecycle()
+                val saavnStatus = if (settingsState.jioSaavnProvider) {
+                    saavnStatuses[track.id]?.takeIf { it != com.darkxvenom.itune.data.saavn.SaavnStatus.FALLBACK }
+                } else null
                 Box(
                     modifier = Modifier
                             .graphicsLayer { alpha = canvasChromeAlpha }
@@ -1754,22 +1758,24 @@ fun ITuneMusicPlayer(
                     contentAlignment = Alignment.Center
                 ) {
                     AnimatedContent(
-                        targetState = pillBadge,
+                        targetState = pillBadge to saavnStatus,
                         transitionSpec = { fadeIn(tween(180)) togetherWith fadeOut(tween(140)) },
                         label = "audioEnginePillContent",
-                    ) { badge ->
+                    ) { (badge, saavn) ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Image(
+                        if (!(badge.isBrandedITune && saavn != null)) Image(
                                 painter = painterResource(badge.iconRes),
                                 contentDescription = badge.text,
                                 colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
                                 contentScale = ContentScale.Fit,
                                 modifier = Modifier.size(14.dp)
                             )
-                            if (badge.isBrandedITune) {
+                            if (badge.isBrandedITune && saavn != null) {
+                                SaavnQualityLabel(saavn)
+                            } else if (badge.isBrandedITune) {
                                 Text(
                                     text = buildAnnotatedString {
                                         withStyle(SpanStyle(color = Color(0xFFFF1744))) { append("i") }

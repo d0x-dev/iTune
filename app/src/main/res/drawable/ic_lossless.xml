@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- "Lossless" pill glyph: a compact audio waveform. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="12dp"
+    android:viewportWidth="16"
+    android:viewportHeight="12">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M0.5,5h1.4v2H0.5z M3.2,3h1.4v6H3.2z M5.9,1h1.4v10H5.9z M8.6,3.5h1.4v5H8.6z M11.3,0.5h1.4v11h-1.4z M14,4h1.4v4H14z" />
+</vector>

@@ -830,8 +830,24 @@ object MusicBackend {
         targetQuality: String? = null,
         forceRefresh: Boolean = false,
         excludedUrls: Set<String> = emptySet(),
+        title: String? = null,
+        artist: String? = null,
     ): String? = withContext(Dispatchers.IO) {
         try {
+            // Optional JioSaavn provider: tried first, any miss falls through to YouTube below.
+            if (SettingsStore.state.value.jioSaavnProvider && !title.isNullOrBlank() && !artist.isNullOrBlank()) {
+                if (forceRefresh) {
+                    // A retry means the previous stream failed: don't hand the same provider back.
+                    com.darkxvenom.itune.data.saavn.SaavnQuality.set(videoId, com.darkxvenom.itune.data.saavn.SaavnStatus.FALLBACK)
+                } else {
+                    val blocked = appContext?.let(::isCellularConnection) == true &&
+                        SettingsStore.state.value.cellularStreaming.equals("Off", ignoreCase = true)
+                    if (!blocked) {
+                        com.darkxvenom.itune.data.saavn.JioSaavnProvider.resolve(videoId, title, artist, excludedUrls)
+                            ?.let { return@withContext it }
+                    }
+                }
+            }
             val info = getOrLoadStreamInfo(videoId, forceRefresh = forceRefresh)
 
             val audioStreams = info.audioStreams
@@ -898,7 +914,9 @@ object MusicBackend {
         targetQuality: String? = null,
         forceRefresh: Boolean = false,
         excludedUrls: Set<String> = emptySet(),
-    ): String? = resolveAudioStream(videoId, forceLossless, targetQuality, forceRefresh, excludedUrls)
+        title: String? = null,
+        artist: String? = null,
+    ): String? = resolveAudioStream(videoId, forceLossless, targetQuality, forceRefresh, excludedUrls, title, artist)
 
     data class CacheStreamChoice(val url: String, val bitrateKbps: Int)
 

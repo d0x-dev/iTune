@@ -630,7 +630,7 @@ object MusicPlayerState : Player.Listener {
                 } else if (SettingsStore.state.value.offlineMode) {
                     null
                 } else {
-                    MusicBackend.resolveAudioStreamUrl(track.id)
+                    MusicBackend.resolveAudioStreamUrl(track.id, title = track.title, artist = track.artists)
                 }
                 if (streamUrl.isNullOrBlank()) {
                     Log.e(TAG, "Failed to resolve stream URL for track: ${track.id}")

@@ -2774,6 +2774,19 @@ private fun buildSettingsSections(
                     checked = state.losslessAudio,
                     onToggle = { onToggleBool(SettingsStore.KEY_LOSSLESS_AUDIO, it) },
                 ),
+                SettingsEntry.Toggle(
+                    id = "jiosaavn_provider",
+                    title = "JioSaavn Provider",
+                    subtitle = if (state.jioSaavnProvider) {
+                        "Playing from JioSaavn (up to 320 kbps) when a match is found · YouTube otherwise"
+                    } else {
+                        "Off · Songs play from YouTube Music"
+                    },
+                    iconRes = R.drawable.ic_settings_lossless,
+                    keywords = listOf("jiosaavn", "saavn", "source", "provider", "320", "quality", "lossless"),
+                    checked = state.jioSaavnProvider,
+                    onToggle = { onToggleBool(SettingsStore.KEY_JIOSAAVN_PROVIDER, it) },
+                ),
                 SettingsEntry.Picker(
                     id = "audio_quality",
                     title = "Streaming Quality",
