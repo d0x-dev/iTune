@@ -104,22 +104,47 @@ object JioSaavnProvider {
         runCatching { find(title, artist)?.first }.getOrNull()
     }
 
-    /** Returns (stream URL, quality label) and appends the exact steps taken to [steps]. */
+    /**
+     * Returns (stream URL, quality label) and appends the exact steps taken to [steps].
+     *
+     * The track's artists are split into individual names (a song can credit several, joined by
+     * ",", "&", "•", "feat." ...) and tried ONE BY ONE: for each artist JioSaavn is searched for
+     * "title + that artist" and the results are compared with that single artist. The first artist
+     * that matches a result decides the stream.
+     */
     private fun find(title: String, artist: String, steps: MutableList<String> = mutableListOf()): Pair<String, String>? {
-        val query = "$title $artist"
-        steps += "Asked JioSaavn (jiosaavn.com api, search.getResults) for \"$query\""
-        val hits = search(query)
-        steps += "JioSaavn returned ${hits.size} result(s)"
-        val (match, rule) = pickMatch(hits, title, artist) ?: run {
-            steps += "No result passed the Title + Artist check (or Title + first word of Artist)"
+        val artists = splitArtists(artist).take(MAX_ARTISTS)
+        steps += "Artists read from the track: " + artists.joinToString(" | ").ifBlank { "none" }
+        if (artists.isEmpty()) {
+            steps += "No artist to match against"
             return null
         }
-        steps += "Matched \"${match.title}\" by ${match.artists.joinToString(", ")} — rule: $rule"
-        val (url, kbps) = streamFor(match, steps) ?: return null
-        return url to "$kbps kbps • AAC (MP4)"
+
+        val fetched = mutableListOf<Pair<String, List<Hit>>>()
+        // Pass 1: exact artist match, one artist at a time.
+        for ((i, a) in artists.withIndex()) {
+            val query = "$title $a".trim()
+            steps += "Artist ${i + 1}/${artists.size} \"$a\": asked JioSaavn (search.getResults) for \"$query\""
+            val hits = search(query)
+            steps += "JioSaavn returned ${hits.size} result(s)"
+            fetched += a to hits
+            val match = pickByArtist(hits, title, a) ?: continue
+            steps += "Matched \"${match.title}\" by ${match.artists.joinToString(", ")}  rule: Title + Artist (\"$a\")"
+            streamFor(match, steps)?.let { (url, kbps) -> return url to "$kbps kbps • AAC (MP4)" }
+        }
+        // Pass 2: title + first word of the artist, reusing the results already fetched.
+        for ((a, hits) in fetched) {
+            val match = pickByFirstWord(hits, title, a) ?: continue
+            steps += "Matched \"${match.title}\" by ${match.artists.joinToString(", ")}  rule: Title + first word of Artist (\"$a\")"
+            streamFor(match, steps)?.let { (url, kbps) -> return url to "$kbps kbps • AAC (MP4)" }
+        }
+        steps += "No result passed the Title + Artist check for any of the ${artists.size} artist(s)"
+        return null
     }
 
-    // ── matching ────────────────────────────────────────────────────────────
+    // -- matching --------------------------------------------------------------
+
+    private const val MAX_ARTISTS = 4
 
     private fun norm(s: String): String = s.lowercase()
         .replace(Regex("\\(.*?\\)|\\[.*?]"), " ")
@@ -127,24 +152,45 @@ object JioSaavnProvider {
         .replace(Regex("[^\\p{L}\\p{N}]+"), " ")
         .trim()
 
-    private fun artistList(s: String): List<String> =
-        s.split(Regex("\\s*(?:,|&|\\band\\b|\\bx\\b|\\bfeat\\.?\\b|\\bft\\.?\\b|/)\\s*", RegexOption.IGNORE_CASE))
-            .map(::norm).filter { it.isNotBlank() }
+    /** "A. R. Rahman" and "AR Rahman" compare equal. */
+    private fun compact(s: String): String = norm(s).replace(" ", "")
 
-    /** 1) title + artist match directly; 2) title + first word of the artist, exact. */
-    private fun pickMatch(hits: List<Hit>, title: String, artist: String): Pair<Hit, String>? {
+    private val artistSeparators = Regex(
+        "\\s*(?:,|&|;|\\+|/|\\||•|·|×|\\band\\b|\\bx\\b|\\bfeat\\.?|\\bft\\.?|\\bfeaturing\\b|\\bwith\\b|\\bvs\\.?)\\s*",
+        RegexOption.IGNORE_CASE,
+    )
+
+    /** Things like "4.7M views" that YouTube-style artist lines carry along. */
+    private val statNoise = Regex(
+        "^\\d[\\d.,]*\\s*[kmb]?\\s*(views?|plays?|likes?|subscribers?|listeners?|streams?)$",
+        RegexOption.IGNORE_CASE,
+    )
+
+    /** Splits a credit line into individual, de-duplicated artist names (original spelling kept). */
+    private fun splitArtists(s: String): List<String> =
+        s.split(artistSeparators)
+            .map { it.replace(Regex("\\(.*?\\)|\\[.*?]"), " ").replace(Regex("\\s+"), " ").trim() }
+            .filter { it.isNotBlank() && !statNoise.matches(it) && norm(it).isNotBlank() }
+            .distinctBy(::compact)
+
+    /** Same title, and this single artist is one of the result's artists. */
+    private fun pickByArtist(hits: List<Hit>, title: String, artist: String): Hit? {
         val t = norm(title)
+        val want = compact(artist)
+        if (t.isBlank() || want.isBlank()) return null
+        return hits.firstOrNull { h ->
+            norm(h.title) == t && h.artists.flatMap(::splitArtists).any { compact(it) == want }
+        }
+    }
+
+    /** Same title, and the artist's first word is a word of one of the result's artists. */
+    private fun pickByFirstWord(hits: List<Hit>, title: String, artist: String): Hit? {
+        val t = norm(title)
+        val first = norm(artist).substringBefore(' ').takeIf { it.isNotBlank() } ?: return null
         if (t.isBlank()) return null
-        val wanted = artistList(artist)
-        val sameTitle = hits.filter { norm(it.title) == t }
-        sameTitle.firstOrNull { h ->
-            val have = h.artists.flatMap(::artistList)
-            wanted.any { w -> have.any { it == w } }
-        }?.let { return it to "Title + Artist" }
-        val first = wanted.firstOrNull()?.substringBefore(' ')?.takeIf { it.isNotBlank() } ?: return null
-        return sameTitle.firstOrNull { h ->
-            h.artists.flatMap { norm(it).split(' ') }.any { it == first }
-        }?.let { it to "Title + first word of Artist (\"$first\")" }
+        return hits.firstOrNull { h ->
+            norm(h.title) == t && h.artists.flatMap { norm(it).split(' ') }.any { it == first }
+        }
     }
 
     // ── JioSaavn API ────────────────────────────────────────────────────────
@@ -167,9 +213,13 @@ object JioSaavnProvider {
     private fun parseSong(o: JSONObject): Hit? {
         val more = o.optJSONObject("more_info") ?: return null
         val id = o.optString("id").ifBlank { return null }
-        val artists = more.optJSONObject("artistMap")?.optJSONArray("primary_artists")?.let { arr ->
-            (0 until arr.length()).mapNotNull { arr.optJSONObject(it)?.optString("name")?.takeIf { n -> n.isNotBlank() } }
-        }.orEmpty()
+        // Every credited artist (primary, featured and other), not just the primary ones.
+        val artistMap = more.optJSONObject("artistMap")
+        val artists = listOf("primary_artists", "featured_artists", "artists").flatMap { key ->
+            artistMap?.optJSONArray(key)?.let { arr ->
+                (0 until arr.length()).mapNotNull { arr.optJSONObject(it)?.optString("name")?.takeIf { n -> n.isNotBlank() } }
+            }.orEmpty()
+        }.distinct()
         return Hit(
             id = id,
             title = o.optString("title"),
