@@ -169,6 +169,7 @@ object SettingsStore {
     const val KEY_APP_FONT = "app_font"
     const val TOP_CARD_TYPE_PORTRAIT = "Portrait"
     const val TOP_CARD_TYPE_LANDSCAPE = "Landscape"
+    const val TOP_CARD_TYPE_APPLE = "Apple"
     const val KEY_LIQUID_GLASS = "liquid_glass_chrome"
     const val KEY_TACTILE_HAPTICS = "tactile_haptics"
     const val KEY_CELLULAR_STREAMING = "cellular_streaming"
@@ -382,7 +383,13 @@ object SettingsStore {
         _state.value = when (key) {
             KEY_DISPLAY_NAME -> cur.copy(displayName = normalized)
             KEY_PLAYER_TYPE -> cur.copy(playerType = if (normalized.equals("Static", ignoreCase = true)) "Static" else "Dynamic")
-            KEY_TOP_CARD_TYPE -> cur.copy(topCardType = if (normalized.equals(TOP_CARD_TYPE_LANDSCAPE, ignoreCase = true)) TOP_CARD_TYPE_LANDSCAPE else TOP_CARD_TYPE_PORTRAIT)
+            KEY_TOP_CARD_TYPE -> cur.copy(
+                topCardType = when {
+                    normalized.equals(TOP_CARD_TYPE_LANDSCAPE, ignoreCase = true) -> TOP_CARD_TYPE_LANDSCAPE
+                    normalized.equals(TOP_CARD_TYPE_APPLE, ignoreCase = true) -> TOP_CARD_TYPE_APPLE
+                    else -> TOP_CARD_TYPE_PORTRAIT
+                },
+            )
             KEY_APP_FONT -> cur.copy(appFont = normalized)
             KEY_SPATIAL_AUDIO -> cur.copy(spatialAudioMode = normalized)
             KEY_AUDIO_QUALITY -> cur.copy(audioQuality = normalizeAudioQuality(normalized))
