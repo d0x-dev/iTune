@@ -13,6 +13,8 @@ package com.darkxvenom.itune.data.saavn
 
 import android.util.Base64
 import android.util.Log
+import com.darkxvenom.itune.audio.StreamTrace
+import com.darkxvenom.itune.audio.StreamTraceStore
 import com.darkxvenom.itune.backend.Net
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,7 +57,7 @@ object JioSaavnProvider {
     private const val API = "https://www.jiosaavn.com/api.php"
     private const val CACHE_TTL_MS = 20 * 60_000L
 
-    private class Cached(val url: String?, val at: Long)
+    private class Cached(val url: String?, val at: Long, val trace: StreamTrace? = null)
     private val cache = ConcurrentHashMap<String, Cached>()
 
     private class Hit(val id: String, val title: String, val artists: List<String>, val encUrl: String, val has320: Boolean)
@@ -66,16 +68,30 @@ object JioSaavnProvider {
     ): String? =
         withContext(Dispatchers.IO) {
             val cached = cache[trackId]
+            cached?.trace?.let { StreamTraceStore.put(trackId, it) }
             if (!force && cached != null && System.currentTimeMillis() - cached.at < CACHE_TTL_MS) {
                 val url = cached.url?.takeIf { it !in excludedUrls }
                 SaavnQuality.set(trackId, if (url != null) SaavnStatus.LOSSLESS else SaavnStatus.FALLBACK)
                 return@withContext url
             }
             SaavnQuality.set(trackId, SaavnStatus.SEARCHING)
-            val url = runCatching { find(title, artist) }
-                .onFailure { Log.w(TAG, "lookup failed: ${it.message}") }
-                .getOrNull()?.takeIf { it !in excludedUrls }
-            cache[trackId] = Cached(url, System.currentTimeMillis())
+            val steps = mutableListOf<String>()
+            StreamTraceStore.put(trackId, StreamTrace("Resolving…", "", emptyList()))
+            val found = runCatching { find(title, artist, steps) }
+                .onFailure {
+                    Log.w(TAG, "lookup failed: ${it.message}")
+                    steps += "JioSaavn lookup failed (${it.javaClass.simpleName})"
+                }
+                .getOrNull()
+            val url = found?.first?.takeIf { it !in excludedUrls }
+            val trace = if (url != null) {
+                StreamTrace("JioSaavn", found.second, steps.toList())
+            } else {
+                steps += "No usable JioSaavn stream → falling back to YouTube Music"
+                StreamTrace("JioSaavn (no match)", "", steps.toList())
+            }
+            StreamTraceStore.put(trackId, trace)
+            cache[trackId] = Cached(url, System.currentTimeMillis(), trace)
             SaavnQuality.set(trackId, if (url != null) SaavnStatus.LOSSLESS else SaavnStatus.FALLBACK)
             url
         }
@@ -85,13 +101,22 @@ object JioSaavnProvider {
 
     /** Status-free lookup, used for background cache upgrades. */
     suspend fun lookup(title: String, artist: String): String? = withContext(Dispatchers.IO) {
-        runCatching { find(title, artist) }.getOrNull()
+        runCatching { find(title, artist)?.first }.getOrNull()
     }
 
-    private fun find(title: String, artist: String): String? {
-        val hits = search("$title $artist")
-        val match = pickMatch(hits, title, artist) ?: return null
-        return streamFor(match)
+    /** Returns (stream URL, quality label) and appends the exact steps taken to [steps]. */
+    private fun find(title: String, artist: String, steps: MutableList<String> = mutableListOf()): Pair<String, String>? {
+        val query = "$title $artist"
+        steps += "Asked JioSaavn (jiosaavn.com api, search.getResults) for \"$query\""
+        val hits = search(query)
+        steps += "JioSaavn returned ${hits.size} result(s)"
+        val (match, rule) = pickMatch(hits, title, artist) ?: run {
+            steps += "No result passed the Title + Artist check (or Title + first word of Artist)"
+            return null
+        }
+        steps += "Matched \"${match.title}\" by ${match.artists.joinToString(", ")} — rule: $rule"
+        val (url, kbps) = streamFor(match, steps) ?: return null
+        return url to "$kbps kbps • AAC (MP4)"
     }
 
     // ── matching ────────────────────────────────────────────────────────────
@@ -107,7 +132,7 @@ object JioSaavnProvider {
             .map(::norm).filter { it.isNotBlank() }
 
     /** 1) title + artist match directly; 2) title + first word of the artist, exact. */
-    private fun pickMatch(hits: List<Hit>, title: String, artist: String): Hit? {
+    private fun pickMatch(hits: List<Hit>, title: String, artist: String): Pair<Hit, String>? {
         val t = norm(title)
         if (t.isBlank()) return null
         val wanted = artistList(artist)
@@ -115,11 +140,11 @@ object JioSaavnProvider {
         sameTitle.firstOrNull { h ->
             val have = h.artists.flatMap(::artistList)
             wanted.any { w -> have.any { it == w } }
-        }?.let { return it }
+        }?.let { return it to "Title + Artist" }
         val first = wanted.firstOrNull()?.substringBefore(' ')?.takeIf { it.isNotBlank() } ?: return null
         return sameTitle.firstOrNull { h ->
             h.artists.flatMap { norm(it).split(' ') }.any { it == first }
-        }
+        }?.let { it to "Title + first word of Artist (\"$first\")" }
     }
 
     // ── JioSaavn API ────────────────────────────────────────────────────────
@@ -160,7 +185,7 @@ object JioSaavnProvider {
         return (0 until arr.length()).mapNotNull { arr.optJSONObject(it)?.let(::parseSong) }
     }
 
-    private fun streamFor(hit: Hit): String? {
+    private fun streamFor(hit: Hit, steps: MutableList<String>): Pair<String, Int>? {
         // Search rows normally carry the encrypted URL; fetch details only if they don't.
         val enc = hit.encUrl.ifBlank {
             val body = call(mapOf("__call" to "song.getDetails", "pids" to hit.id)) ?: return null
@@ -169,20 +194,33 @@ object JioSaavnProvider {
                 ?: root.optJSONObject(hit.id)
                 ?: root.keys().asSequence().mapNotNull { root.optJSONObject(it) }.firstOrNull()
                 ?: return null
-            return decode(parseSong(song) ?: return null)
+            steps += "Fetched stream details (song.getDetails) for id ${hit.id}"
+            return decode(parseSong(song) ?: return null, steps)
         }
-        return decode(Hit(hit.id, hit.title, hit.artists, enc, hit.has320))
+        return decode(Hit(hit.id, hit.title, hit.artists, enc, hit.has320), steps)
     }
 
-    private fun decode(hit: Hit): String? {
-        val url = decrypt(hit.encUrl).takeIf { it.isNotBlank() } ?: return null
+    private fun decode(hit: Hit, steps: MutableList<String>): Pair<String, Int>? {
+        val url = decrypt(hit.encUrl).takeIf { it.isNotBlank() } ?: run {
+            steps += "Could not decrypt the CDN link"
+            return null
+        }
+        steps += "Decrypted the encrypted CDN link (DES) → saavncdn stream"
         val m = Regex("_(48|96|160|320)\\.(mp4|aac|mp3)(?=[?#]|$)", RegexOption.IGNORE_CASE).find(url)
-            ?: return url
+        if (m == null) {
+            steps += "Rendition not named in the URL; using it as given"
+            return url to 160
+        }
         val offered = m.groupValues[1].toInt()
         val best = if (hit.has320) url.replaceRange(m.range, "_320.${m.groupValues[2]}") else url
         val kbps = if (hit.has320) 320 else offered
+        steps += if (hit.has320) "Catalogue lists a 320 kbps file → switched $offered → 320 kbps" else "Highest rendition offered: $offered kbps"
         // 48/96kbps is worse than YouTube's stream: let the caller fall back instead.
-        return if (kbps <= 96) null else best
+        if (kbps <= 96) {
+            steps += "$kbps kbps is below YouTube quality → rejected"
+            return null
+        }
+        return best to kbps
     }
 
     private fun decrypt(enc: String): String = runCatching {
