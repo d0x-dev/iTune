@@ -99,8 +99,12 @@ import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.model.BrowseType
 import com.darkxvenom.itune.data.model.PendingArtistNav
 import com.darkxvenom.itune.data.model.SearchCategory
+import com.darkxvenom.itune.data.model.Song
 import com.darkxvenom.itune.data.model.toMusicTrack
 import com.darkxvenom.itune.data.repository.MusicRepository
+import com.darkxvenom.itune.data.spotify.SpotifyDetail
+import com.darkxvenom.itune.data.spotify.SpotifyHomeRepository
+import com.darkxvenom.itune.data.spotify.SpotifySearch
 import com.darkxvenom.itune.ui.components.AppleMemojiAvatar
 import com.darkxvenom.itune.ui.components.TopSpringLoadingBar
 import com.darkxvenom.itune.ui.components.springOverscroll
@@ -108,8 +112,13 @@ import com.darkxvenom.itune.ui.theme.AppleOledBlack
 import com.darkxvenom.itune.ui.theme.AppleTextPrimary
 import com.darkxvenom.itune.ui.theme.AppleTextSecondary
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 
 private enum class SearchUiMode {
     EXPLORE,
@@ -219,7 +228,11 @@ fun SearchScreen(
         launched = coroutineScope.launch {
             gridState.scrollToItem(0)
             try {
-                val results = MusicBackend.searchAllCategories(clean)
+                val results = if (useSpotify && spotifyLinked) {
+                    SpotifySearch.searchUnified(clean)
+                } else {
+                    MusicBackend.searchAllCategories(clean)
+                }
                 if (activeSearchJob == launched) {
                     searchResults = results
                 }
@@ -431,11 +444,15 @@ fun SearchScreen(
                 }
             }
 
-            if (spotifyLinked) {
+            AnimatedVisibility(
+                visible = spotifyLinked && (uiMode == SearchUiMode.HISTORY || uiMode == SearchUiMode.SUGGESTIONS),
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut(),
+            ) {
                 SearchSourceSwitch(
                     useSpotify = useSpotify,
                     onChange = { useSpotify = it },
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                 )
             }
 
@@ -561,11 +578,7 @@ fun SearchScreen(
                     }
 
                     SearchUiMode.RESULTS -> {
-                        if (useSpotify && spotifyLinked) {
-                            item(span = { GridItemSpan(2) }, key = "spotify_results_$submittedQuery") {
-                                SpotifySearchPane(query = submittedQuery)
-                            }
-                        } else if (isSearching && visibleResults.isEmpty) {
+                        if (isSearching && visibleResults.isEmpty) {
                             item(span = { GridItemSpan(2) }, key = "search_results_skeleton") {
                                 SearchResultsSkeletonBlock()
                             }
@@ -629,7 +642,29 @@ fun SearchScreen(
                                                 is TopResultItem.Song -> {
                                                     focusManager.clearFocus(force = true)
                                                     keyboardController?.hide()
-                                                    MusicPlayerState.playWithRadioQueue(topResult.track, expandPlayer = true)
+                                                    if (topResult.track.id.startsWith("sp:") || topResult.track.id.startsWith("spe:")) {
+                                                        coroutineScope.launch {
+                                                            val matched = SpotifyHomeRepository.matchSong(
+                                                                Song(
+                                                                    videoId = topResult.track.id,
+                                                                    title = topResult.track.title,
+                                                                    artist = topResult.track.artists,
+                                                                    thumbnailUrl = topResult.track.thumbnailUrl,
+                                                                    durationText = topResult.track.duration,
+                                                                    albumName = topResult.track.album,
+                                                                    albumId = topResult.track.albumId,
+                                                                )
+                                                            )
+                                                            if (matched != null) {
+                                                                SpotifyHomeRepository.markOrigin(listOf(matched.id))
+                                                                MusicPlayerState.playWithRadioQueue(matched, expandPlayer = true)
+                                                            } else {
+                                                                Toast.makeText(context, "Couldn't find this song on YouTube Music", Toast.LENGTH_SHORT).show()
+                                                            }
+                                                        }
+                                                    } else {
+                                                        MusicPlayerState.playWithRadioQueue(topResult.track, expandPlayer = true)
+                                                    }
                                                 }
                                                 is TopResultItem.Album -> openCollectionDetail(
                                                     SearchDetailState(
@@ -734,20 +769,60 @@ fun SearchScreen(
                                         onPlayClick = {
                                             when (topResult) {
                                                 is TopResultItem.Song -> {
-                                                    MusicPlayerState.playWithRadioQueue(
-                                                        topResult.track,
-                                                        expandPlayer = false
-                                                    )
+                                                    if (topResult.track.id.startsWith("sp:") || topResult.track.id.startsWith("spe:")) {
+                                                        coroutineScope.launch {
+                                                            val matched = SpotifyHomeRepository.matchSong(
+                                                                Song(
+                                                                    videoId = topResult.track.id,
+                                                                    title = topResult.track.title,
+                                                                    artist = topResult.track.artists,
+                                                                    thumbnailUrl = topResult.track.thumbnailUrl,
+                                                                    durationText = topResult.track.duration,
+                                                                    albumName = topResult.track.album,
+                                                                    albumId = topResult.track.albumId,
+                                                                )
+                                                            )
+                                                            if (matched != null) {
+                                                                SpotifyHomeRepository.markOrigin(listOf(matched.id))
+                                                                MusicPlayerState.playWithRadioQueue(topResult.track.copy(id = matched.id, thumbnailUrl = matched.thumbnailUrl ?: topResult.track.thumbnailUrl), expandPlayer = false)
+                                                            } else {
+                                                                Toast.makeText(context, "Couldn't find this song on YouTube Music", Toast.LENGTH_SHORT).show()
+                                                            }
+                                                        }
+                                                    } else {
+                                                        MusicPlayerState.playWithRadioQueue(
+                                                            topResult.track,
+                                                            expandPlayer = false
+                                                        )
+                                                    }
                                                 }
                                                 is TopResultItem.Album -> {
                                                     coroutineScope.launch {
-                                                        val loaded = MusicBackend.loadCollectionTracks(
-                                                            browseId = topResult.album.id,
-                                                            fallbackArtist = topResult.album.title,
-                                                            fallbackThumbnailUrl = topResult.album.thumbnailUrl
-                                                        )
+                                                        val loaded = if (topResult.album.id.startsWith("spotify:")) {
+                                                            val page = runCatching { SpotifyDetail.load(topResult.album.id, topResult.album.title, topResult.album.thumbnailUrl) }.getOrNull()
+                                                            page?.songs.orEmpty().map { it.toMusicTrack() }
+                                                        } else {
+                                                            MusicBackend.loadCollectionTracks(
+                                                                browseId = topResult.album.id,
+                                                                fallbackArtist = topResult.album.title,
+                                                                fallbackThumbnailUrl = topResult.album.thumbnailUrl
+                                                            )
+                                                        }
                                                         if (loaded.isNotEmpty()) {
-                                                            MusicPlayerState.play(loaded.first(), loaded, expandPlayer = false)
+                                                            if (loaded.any { it.id.startsWith("sp:") }) {
+                                                                val matched = coroutineScope {
+                                                                    loaded.take(20).map { async { SpotifyHomeRepository.matchSong(Song(videoId = it.id, title = it.title, artist = it.artists, thumbnailUrl = it.thumbnailUrl, durationText = it.duration, albumName = it.album, albumId = it.albumId)) } }
+                                                                        .mapNotNull { it.await() }
+                                                                }
+                                                                if (matched.isNotEmpty()) {
+                                                                    SpotifyHomeRepository.markOrigin(matched.map { it.id })
+                                                                    MusicPlayerState.play(matched.first(), matched, expandPlayer = false)
+                                                                } else {
+                                                                    Toast.makeText(context, "Couldn't find tracks on YouTube Music", Toast.LENGTH_SHORT).show()
+                                                                }
+                                                            } else {
+                                                                MusicPlayerState.play(loaded.first(), loaded, expandPlayer = false)
+                                                            }
                                                         } else {
                                                             Toast.makeText(context, "No tracks found", Toast.LENGTH_SHORT).show()
                                                         }
@@ -755,13 +830,31 @@ fun SearchScreen(
                                                 }
                                                 is TopResultItem.Playlist -> {
                                                     coroutineScope.launch {
-                                                        val loaded = MusicBackend.loadCollectionTracks(
-                                                            browseId = topResult.playlist.id,
-                                                            fallbackArtist = topResult.playlist.title,
-                                                            fallbackThumbnailUrl = topResult.playlist.thumbnailUrl
-                                                        )
+                                                        val loaded = if (topResult.playlist.id.startsWith("spotify:")) {
+                                                            val page = runCatching { SpotifyDetail.load(topResult.playlist.id, topResult.playlist.title, topResult.playlist.thumbnailUrl) }.getOrNull()
+                                                            page?.songs.orEmpty().map { it.toMusicTrack() }
+                                                        } else {
+                                                            MusicBackend.loadCollectionTracks(
+                                                                browseId = topResult.playlist.id,
+                                                                fallbackArtist = topResult.playlist.title,
+                                                                fallbackThumbnailUrl = topResult.playlist.thumbnailUrl
+                                                            )
+                                                        }
                                                         if (loaded.isNotEmpty()) {
-                                                            MusicPlayerState.play(loaded.first(), loaded, expandPlayer = false)
+                                                            if (loaded.any { it.id.startsWith("sp:") }) {
+                                                                val matched = coroutineScope {
+                                                                    loaded.take(20).map { async { SpotifyHomeRepository.matchSong(Song(videoId = it.id, title = it.title, artist = it.artists, thumbnailUrl = it.thumbnailUrl, durationText = it.duration, albumName = it.album, albumId = it.albumId)) } }
+                                                                        .mapNotNull { it.await() }
+                                                                }
+                                                                if (matched.isNotEmpty()) {
+                                                                    SpotifyHomeRepository.markOrigin(matched.map { it.id })
+                                                                    MusicPlayerState.play(matched.first(), matched, expandPlayer = false)
+                                                                } else {
+                                                                    Toast.makeText(context, "Couldn't find tracks on YouTube Music", Toast.LENGTH_SHORT).show()
+                                                                }
+                                                            } else {
+                                                                MusicPlayerState.play(loaded.first(), loaded, expandPlayer = false)
+                                                            }
                                                         } else {
                                                             Toast.makeText(context, "No tracks found", Toast.LENGTH_SHORT).show()
                                                         }
@@ -838,7 +931,29 @@ fun SearchScreen(
                                         onClick = {
                                             focusManager.clearFocus(force = true)
                                             keyboardController?.hide()
-                                            MusicPlayerState.playWithRadioQueue(track, expandPlayer = false)
+                                            if (track.id.startsWith("sp:") || track.id.startsWith("spe:")) {
+                                                coroutineScope.launch {
+                                                    val matched = SpotifyHomeRepository.matchSong(
+                                                        Song(
+                                                            videoId = track.id,
+                                                            title = track.title,
+                                                            artist = track.artists,
+                                                            thumbnailUrl = track.thumbnailUrl,
+                                                            durationText = track.duration,
+                                                            albumName = track.album,
+                                                            albumId = track.albumId,
+                                                        )
+                                                    )
+                                                    if (matched != null) {
+                                                        SpotifyHomeRepository.markOrigin(listOf(matched.id))
+                                                        MusicPlayerState.playWithRadioQueue(matched, expandPlayer = false)
+                                                    } else {
+                                                        Toast.makeText(context, "Couldn't find this song on YouTube Music", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                }
+                                            } else {
+                                                MusicPlayerState.playWithRadioQueue(track, expandPlayer = false)
+                                            }
                                         },
                                         onMoreClick = { pos -> moreRequest = SearchMoreRequest(SearchMoreTarget.Song(track), pos) }
                                     )
