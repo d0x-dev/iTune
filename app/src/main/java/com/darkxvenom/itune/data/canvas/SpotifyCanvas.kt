@@ -68,6 +68,18 @@ object SpotifyCanvas {
 
     private const val MAX_CANVAS_CANDIDATES = 5
 
+    /**
+     * Canvas for a track whose Spotify id is already known (e.g. from a Spotify playlist): skips the
+     * fuzzy search and asks for the clip directly, so it is faster and can't match the wrong song.
+     */
+    suspend fun forTrackId(trackId: String, title: String, artist: String, album: String?): CanvasArtwork? {
+        val token = SpotifyToken.accessToken() ?: return null
+        val url = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            runCatching { fetchCanvasUrl("spotify:track:$trackId", token) }.getOrNull()
+        } ?: return null
+        return CanvasArtwork(url = url, title = title, artist = artist, album = album, source = CanvasSource.SPOTIFY)
+    }
+
     suspend fun search(title: String, artist: String, album: String?): CanvasArtwork? {
         val token = SpotifyToken.accessToken()
         if (token == null) {
