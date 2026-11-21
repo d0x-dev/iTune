@@ -218,13 +218,13 @@ object SpotifyDetail {
         val label = a.str("label")?.takeIf { it.isNotBlank() }
         val genres = a.arr("genres").orEmpty().mapNotNull { it.jsonPrimitive.contentOrNull }.joinToString(", ")
         val copyright = a.arr("copyrights").orEmpty().mapNotNull { (it as? JsonObject)?.str("text") }
-            .distinct().joinToString("\\n")
+            .distinct().joinToString("\n")
         val details = listOfNotNull(
             "$totalTracks tracks",
             label?.let { "Label: $it" },
             genres.takeIf { it.isNotBlank() }?.let { "Genres: $it" },
             copyright.takeIf { it.isNotBlank() },
-        ).joinToString("\\n")
+        ).joinToString("\n")
         return SpotifyPage(
             name,
             listOf(artist, a.str("release_date").orEmpty().take(4)).filter { it.isNotBlank() }.joinToString(" • "),
@@ -273,9 +273,11 @@ object SpotifyDetail {
             }
             val sections = buildList {
                 releases(disc?.obj("popularReleasesAlbums")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Popular releases", it)) }
-                releases(disc?.obj("albums")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Albums", it)) }
-                releases(disc?.obj("singles")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Singles & EPs", it)) }
-                releases(disc?.obj("compilations")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Compilations", it)) }
+                if (restReleases.isEmpty()) {
+                    releases(disc?.obj("albums")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Albums", it)) }
+                    releases(disc?.obj("singles")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Singles & EPs", it)) }
+                    releases(disc?.obj("compilations")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Compilations", it)) }
+                }
                 val relatedContent = a.obj("relatedContent")
                 fun relatedShelf(key: String, title: String) {
                     val items = relatedContent?.obj(key)?.items("items").orEmpty().flatMap { row ->
