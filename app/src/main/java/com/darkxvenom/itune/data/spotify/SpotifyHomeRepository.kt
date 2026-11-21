@@ -178,9 +178,9 @@ object SpotifyHomeRepository {
                         kind == HomeItemKind.ARTIST -> " · Artists"
                         else -> " · Songs"
                     }
-                    val hero = kind == HomeItemKind.PLAYLIST && title.contains("made for you", ignoreCase = true)
+                    val hero = kind == HomeItemKind.PLAYLIST // every playlist shelf gets the big Spotify-style cards
                     publish(
-                        if (hero) HomeFeedShelf("sp_hero_%03d_%d".format(index, gi), title, "", resolved.take(6), groupFor(title))
+                        if (hero) HomeFeedShelf("sp_hero_%03d_%d".format(index, gi), title, "", resolved.take(10), groupFor(title))
                         else HomeFeedShelf("sp_home_%03d_%d".format(index, gi), title + label, "", resolved.take(20), groupFor(title)),
                     )
                     count++
