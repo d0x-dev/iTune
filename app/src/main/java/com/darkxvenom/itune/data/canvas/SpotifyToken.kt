@@ -111,8 +111,7 @@ object SpotifyToken {
                 return@withLock null
             }
 
-            val harvested = fetchViaTotp(cookie)
-                ?: withContext(Dispatchers.Main) { harvestViaWebView(context, cookie) }
+            val harvested = withContext(Dispatchers.Main) { harvestViaWebView(context, cookie) }
             if (harvested == null) {
                 Log.w(TAG, "token harvest failed or timed out")
                 return@withLock null
@@ -145,7 +144,11 @@ object SpotifyToken {
         // /api/token request if a live one is already sitting there, leaving
         // the hook with nothing to see — wipe storage so every harvest forces
         // a real mint.
-        runCatching { WebStorage.getInstance().deleteAllData() }
+        runCatching {
+            val storage = WebStorage.getInstance()
+            storage.deleteOrigin("https://open.spotify.com")
+            storage.deleteOrigin("https://accounts.spotify.com")
+        }
 
         var webView: WebView? = null
         return try {
@@ -378,107 +381,4 @@ object SpotifyToken {
         return session
     }
 
-    private const val NUANCE_GIST_URL = "https://api.github.com/gists/22ed9c6ba463899e933427f7de1f0eef"
-    private const val SERVER_TIME_URL = "https://open.spotify.com/api/server-time"
-
-    private suspend fun fetchViaTotp(cookie: String): HarvestedToken? = withContext(Dispatchers.IO) {
-        runCatching {
-            val cleanCookie = if (cookie.startsWith("sp_dc=")) cookie.substringAfter("sp_dc=").substringBefore(";") else cookie
-
-            // 1. Fetch nuance from Gist
-            val gistReq = Request.Builder()
-                .url(NUANCE_GIST_URL)
-                .header("User-Agent", CANVAS_UA)
-                .build()
-            val gistBody = Net.client.newCall(gistReq).execute().use { if (it.isSuccessful) it.body?.string() else null } ?: return@runCatching null
-            val gistJson = json.parseToJsonElement(gistBody).jsonObject
-            val filesObj = gistJson["files"]?.jsonObject ?: return@runCatching null
-            val firstFile = filesObj.values.firstOrNull()?.jsonObject?.get("content")?.jsonPrimitive?.contentOrNull ?: return@runCatching null
-            val nuancesArray = json.parseToJsonElement(firstFile).jsonArray
-            val bestNuance = nuancesArray.mapNotNull { it as? JsonObject }
-                .maxByOrNull { it["v"]?.jsonPrimitive?.intOrNull ?: 0 } ?: return@runCatching null
-            val secret = bestNuance["s"]?.jsonPrimitive?.contentOrNull ?: return@runCatching null
-            val ver = bestNuance["v"]?.jsonPrimitive?.intOrNull ?: 61
-
-            // 2. Fetch server time (fallback to system time)
-            val serverTimeSec = runCatching {
-                val stReq = Request.Builder()
-                    .url(SERVER_TIME_URL)
-                    .header("User-Agent", CANVAS_UA)
-                    .build()
-                val stBody = Net.client.newCall(stReq).execute().use { if (it.isSuccessful) it.body?.string() else null }
-                stBody?.let { json.parseToJsonElement(it).jsonObject["serverTime"]?.jsonPrimitive?.intOrNull?.toLong() }
-            }.getOrNull() ?: (System.currentTimeMillis() / 1000L)
-
-            // 3. Generate TOTP
-            val totp = generateTotp(secret, serverTimeSec)
-
-            // 4. Request token from Spotify
-            val tokenUrl = "https://open.spotify.com/api/token?reason=transport&productType=web-player&totp=$totp&totpServer=$totp&totpVer=$ver"
-            val tokenReq = Request.Builder()
-                .url(tokenUrl)
-                .header("User-Agent", CANVAS_UA)
-                .header("Cookie", "sp_dc=$cleanCookie")
-                .header("Accept", "application/json")
-                .build()
-            val tokenBody = Net.client.newCall(tokenReq).execute().use { if (it.isSuccessful) it.body?.string() else null } ?: return@runCatching null
-            val root = json.parseToJsonElement(tokenBody).jsonObject
-            val token = root["accessToken"]?.jsonPrimitive?.contentOrNull ?: return@runCatching null
-            val isAnonymous = root["isAnonymous"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull() ?: false
-            if (isAnonymous) return@runCatching null
-
-            val expiresAt = root["accessTokenExpirationTimestampMs"]?.jsonPrimitive?.contentOrNull
-                ?.toLongOrNull()?.takeIf { it > System.currentTimeMillis() }
-                ?: (System.currentTimeMillis() + DEFAULT_TOKEN_LIFETIME_MS)
-            val clientId = root["clientId"]?.jsonPrimitive?.contentOrNull
-            Log.d(TAG, "Minted access token via fast TOTP path")
-            HarvestedToken(token, expiresAt, clientId)
-        }.getOrNull()
-    }
-
-    private fun generateTotp(secret: String, serverTimeSec: Long): String {
-        val key = base32Decode(secret)
-        val interval = 30L
-        val timeStep = kotlin.math.floor(serverTimeSec.toDouble() / interval).toLong()
-
-        val timeBytes = ByteArray(8)
-        var value = timeStep
-        for (i in 7 downTo 0) {
-            timeBytes[i] = (value and 0xFF).toByte()
-            value = value shr 8
-        }
-
-        val mac = javax.crypto.Mac.getInstance("HmacSHA1")
-        mac.init(javax.crypto.spec.SecretKeySpec(key, "HmacSHA1"))
-        val hash = mac.doFinal(timeBytes)
-
-        val offset = hash[hash.size - 1].toInt() and 0x0F
-        val code = ((hash[offset].toInt() and 0x7F) shl 24) or
-            ((hash[offset + 1].toInt() and 0xFF) shl 16) or
-            ((hash[offset + 2].toInt() and 0xFF) shl 8) or
-            (hash[offset + 3].toInt() and 0xFF)
-
-        val otp = code % 1_000_000
-        return otp.toString().padStart(6, '0')
-    }
-
-    private fun base32Decode(input: String): ByteArray {
-        val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
-        val cleaned = input.uppercase().replace("=", "")
-        val bytes = mutableListOf<Byte>()
-        var buffer = 0
-        var bitsLeft = 0
-
-        for (char in cleaned) {
-            val value = alphabet.indexOf(char)
-            if (value == -1) continue
-            buffer = (buffer shl 5) or value
-            bitsLeft += 5
-            if (bitsLeft >= 8) {
-                bitsLeft -= 8
-                bytes.add(((buffer shr bitsLeft) and 0xFF).toByte())
-            }
-        }
-        return bytes.toByteArray()
-    }
 }
