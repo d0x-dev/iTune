@@ -55,6 +55,8 @@ import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.library.LibraryDestination
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.library.SavedSongMetadata
+import com.darkxvenom.itune.data.library.SettingsStore
+import com.darkxvenom.itune.data.spotify.SpotifyHomeRepository
 import com.darkxvenom.itune.data.model.Song
 import com.darkxvenom.itune.data.model.toMusicTrack
 import com.darkxvenom.itune.ui.artist.components.SongRow
@@ -71,6 +73,7 @@ private enum class HistoryFilterTab(val label: String) {
     ALL("All"),
     LOCAL("Recent Plays"),
     YOUTUBE("YouTube Music"),
+    SPOTIFY("Spotify"),
 }
 // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
@@ -88,6 +91,19 @@ fun LibraryHistoryScreen(
     val query = controller.searchQuery
 
     var selectedTab by remember { mutableStateOf(HistoryFilterTab.ALL) }
+    val spotifyLinked = SettingsStore.state.collectAsStateWithLifecycle().value.spotifySpdcToken.isNotBlank()
+    val spotifyLocal by LibraryStore.spotifyHistory.collectAsStateWithLifecycle()
+    var spotifyRemote by remember { mutableStateOf<List<SavedSongMetadata>>(emptyList()) }
+    val spotifyMeta = remember(spotifyLocal, spotifyRemote, spotifyLinked) {
+        if (!spotifyLinked) emptyList() else {
+            val seen = LinkedHashSet<String>()
+            (spotifyLocal + spotifyRemote).sortedByDescending { it.addedAtMs }.filter { seen.add(it.id) }
+        }
+    }
+    LaunchedEffect(spotifyLinked) {
+        spotifyRemote = if (spotifyLinked) runCatching { SpotifyHomeRepository.history() }.getOrDefault(emptyList()) else emptyList()
+        if (!spotifyLinked && selectedTab == HistoryFilterTab.SPOTIFY) selectedTab = HistoryFilterTab.ALL
+    }
     var isSyncingYtm by remember { mutableStateOf(false) }
 
     LaunchedEffect(ytAccount.isSignedIn, ytAccount.activeSessionKey) {
@@ -101,8 +117,17 @@ fun LibraryHistoryScreen(
     }
 
     // Filter metadata according to selected tab
-    val displayedMeta = remember(recentMeta, ytmHistoryMeta, selectedTab, ytAccount.isSignedIn) {
+    val displayedMeta = remember(recentMeta, ytmHistoryMeta, spotifyMeta, selectedTab, ytAccount.isSignedIn, spotifyLinked) {
         when {
+            spotifyLinked && selectedTab == HistoryFilterTab.SPOTIFY -> spotifyMeta
+            !ytAccount.isSignedIn && !spotifyLinked -> recentMeta
+            !ytAccount.isSignedIn && selectedTab == HistoryFilterTab.ALL -> {
+                val seen = LinkedHashSet<String>()
+                buildList {
+                    recentMeta.forEach { if (seen.add(it.id)) add(it) }
+                    spotifyMeta.forEach { if (seen.add(it.id)) add(it) }
+                }
+            }
             !ytAccount.isSignedIn -> recentMeta
             selectedTab == HistoryFilterTab.LOCAL -> recentMeta
             selectedTab == HistoryFilterTab.YOUTUBE -> ytmHistoryMeta
@@ -112,6 +137,7 @@ fun LibraryHistoryScreen(
                 buildList {
                     recentMeta.forEach { if (seen.add(it.id)) add(it) }
                     ytmHistoryMeta.forEach { if (seen.add(it.id)) add(it) }
+                    spotifyMeta.forEach { if (seen.add(it.id)) add(it) }
                 }
             }
         }
@@ -227,7 +253,7 @@ fun LibraryHistoryScreen(
                     )
 
                     // Tab Selector if signed in to Google/YouTube Music
-                    if (ytAccount.isSignedIn) {
+                    if (ytAccount.isSignedIn || spotifyLinked) {
                         Spacer(Modifier.height(10.dp))
                         Row(
                             modifier = Modifier
@@ -238,7 +264,10 @@ fun LibraryHistoryScreen(
                                 .padding(2.5.dp),
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            HistoryFilterTab.values().forEach { tab ->
+                            HistoryFilterTab.values().filter {
+                                (it != HistoryFilterTab.YOUTUBE || ytAccount.isSignedIn) &&
+                                    (it != HistoryFilterTab.SPOTIFY || spotifyLinked)
+                            }.forEach { tab ->
                                 val isSelected = selectedTab == tab
                                 val bg by animateColorAsState(
                                     targetValue = if (isSelected) AppleMusicRed else Color.Transparent,

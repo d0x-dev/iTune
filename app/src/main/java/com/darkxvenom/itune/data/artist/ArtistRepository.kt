@@ -96,7 +96,9 @@ object ArtistRepository {
             ?: error("no watch entry for $videoId")
     }
 
-    suspend fun browseSongs(browseId: String): Result<SongPage> = call("browse:$browseId") {
+    suspend fun browseSongs(rawBrowseId: String): Result<SongPage> = call("browse:$rawBrowseId") {
+        // Innertube needs playlist browse ids as "VL<playlistId>"; a bare "PL…" id answers HTTP 400.
+        val browseId = if (rawBrowseId.startsWith("PL")) "VL$rawBrowseId" else rawBrowseId
         val response = ArtistInnertubeClient.browse(browseId)
         val page = if (browseId.startsWith("MPREb")) {
             albumPageOf(response)

@@ -218,6 +218,7 @@ object LibraryStore {
     private const val PREFS_NAME = "itune_library_metadata"
     private const val KEY_LIKED_SONGS = "liked_songs_json"
     private const val KEY_RECENT_SONGS = "recent_songs_json"
+    private const val KEY_SPOTIFY_HISTORY = "spotify_history_json"
     private const val KEY_YTM_HISTORY = "ytm_history_songs_json"
     private const val KEY_ARTISTS = "liked_artists_json"
     private const val KEY_ALBUMS = "saved_albums_json"
@@ -247,6 +248,9 @@ object LibraryStore {
 
     private val _recentSongs = MutableStateFlow<List<SavedSongMetadata>>(emptyList())
     val recentSongs: StateFlow<List<SavedSongMetadata>> = _recentSongs.asStateFlow()
+    private val _spotifyHistory = MutableStateFlow<List<SavedSongMetadata>>(emptyList())
+    /** Songs the user played by picking them from Spotify data (kept apart from YouTube plays). */
+    val spotifyHistory: StateFlow<List<SavedSongMetadata>> = _spotifyHistory.asStateFlow()
 
     private val _ytmHistorySongs = MutableStateFlow<List<SavedSongMetadata>>(emptyList())
     val ytmHistorySongs: StateFlow<List<SavedSongMetadata>> = _ytmHistorySongs.asStateFlow()
@@ -271,6 +275,7 @@ object LibraryStore {
             prefs = p
             _likedSongs.value = decodeSongs(p.getString(KEY_LIKED_SONGS, null))
             _recentSongs.value = decodeSongs(p.getString(KEY_RECENT_SONGS, null))
+            _spotifyHistory.value = decodeSongs(p.getString(KEY_SPOTIFY_HISTORY, null))
             _ytmHistorySongs.value = decodeSongs(p.getString(KEY_YTM_HISTORY, null))
             _likedArtists.value = decodeCollections(p.getString(KEY_ARTISTS, null), BrowseType.ARTIST)
             _savedAlbums.value = decodeCollections(p.getString(KEY_ALBUMS, null), BrowseType.ALBUM)
@@ -286,6 +291,7 @@ object LibraryStore {
         synchronized(this) {
             _likedSongs.value = decodeSongs(p.getString(KEY_LIKED_SONGS, null))
             _recentSongs.value = decodeSongs(p.getString(KEY_RECENT_SONGS, null))
+            _spotifyHistory.value = decodeSongs(p.getString(KEY_SPOTIFY_HISTORY, null))
             _ytmHistorySongs.value = decodeSongs(p.getString(KEY_YTM_HISTORY, null))
             _likedArtists.value = decodeCollections(p.getString(KEY_ARTISTS, null), BrowseType.ARTIST)
             _savedAlbums.value = decodeCollections(p.getString(KEY_ALBUMS, null), BrowseType.ALBUM)
@@ -533,6 +539,16 @@ object LibraryStore {
         ensureInit(context)
         if (SettingsStore.isPauseListeningHistory()) return
         val entry = SavedSongMetadata.fromTrack(track)
+        com.darkxvenom.itune.data.spotify.SpotifyHomeRepository.originUri(track.id)?.let { uri ->
+            // Picked from Spotify data → Spotify history; YouTube-origin plays keep going to Recents below.
+            synchronized(this) {
+                val cur = _spotifyHistory.value.filterNot { it.id == track.id }
+                val upd = (listOf(entry.copy(spotifyTrackUri = uri)) + cur).take(MAX_RECENT_SONGS)
+                _spotifyHistory.value = upd
+                persistSongs(KEY_SPOTIFY_HISTORY, upd)
+            }
+            return
+        }
         synchronized(this) {
             val current = _recentSongs.value.filterNot { it.id == track.id }
             val updated = (listOf(entry) + current).take(MAX_RECENT_SONGS)

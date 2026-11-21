@@ -141,6 +141,8 @@ fun SearchScreen(
     var searchInput by remember { mutableStateOf(TextFieldValue("")) }
     val searchQuery = searchInput.text
     var submittedQuery by remember { mutableStateOf("") }
+    val spotifyLinked = com.darkxvenom.itune.data.library.SettingsStore.state.collectAsState().value.spotifySpdcToken.isNotBlank()
+    var useSpotify by remember { mutableStateOf(false) }
     var isEditing by remember { mutableStateOf(false) }
     var showVoiceOptionsPopup by remember { mutableStateOf(false) }
     var showVoiceSearchDialog by remember { mutableStateOf(false) }
@@ -429,6 +431,14 @@ fun SearchScreen(
                 }
             }
 
+            if (spotifyLinked) {
+                SearchSourceSwitch(
+                    useSpotify = useSpotify,
+                    onChange = { useSpotify = it },
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+            }
+
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 state = gridState,
@@ -551,7 +561,11 @@ fun SearchScreen(
                     }
 
                     SearchUiMode.RESULTS -> {
-                        if (isSearching && visibleResults.isEmpty) {
+                        if (useSpotify && spotifyLinked) {
+                            item(span = { GridItemSpan(2) }, key = "spotify_results_$submittedQuery") {
+                                SpotifySearchPane(query = submittedQuery)
+                            }
+                        } else if (isSearching && visibleResults.isEmpty) {
                             item(span = { GridItemSpan(2) }, key = "search_results_skeleton") {
                                 SearchResultsSkeletonBlock()
                             }

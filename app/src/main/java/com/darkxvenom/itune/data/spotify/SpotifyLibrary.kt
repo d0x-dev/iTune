@@ -16,6 +16,7 @@ import com.darkxvenom.itune.data.artist.artistsCompatible
 import com.darkxvenom.itune.data.artist.normalizeForMatch
 import com.darkxvenom.itune.data.artist.titlesCompatible
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -286,6 +287,98 @@ object SpotifyLibrary {
         tokens.clientToken?.let { put("Client-Token", it) }
     }
 
+    // ── Spotify's own Home feed (the web player's `home` GraphQL operation) ──
+    private const val HOME_HASH_DEFAULT = "72325e84c876c72564fb9ab012f602be8ef6a1fdd3039be2f8b4f2be4c229a30"
+    @Volatile private var homeHash: String? = null
+    private val deviceId = java.util.UUID.randomUUID().toString()
+
+    /**
+     * The personalised Home feed exactly as open.spotify.com builds it
+     * (`data.home.sectionContainer.sections.items`). Spotify rotates persisted-query hashes
+     * per web-player release, so when the known hash is rejected the current one is read
+     * out of the web player's own JS bundle.
+     */
+    suspend fun homeFeed(): JsonObject = withContext(Dispatchers.IO) {
+        val headers = authHeaders()
+        val vars = buildJsonObject {
+            put("timeZone", java.util.TimeZone.getDefault().id)
+            put("sp_t", deviceId)
+            put("facet", "")
+            put("sectionItemsLimit", 15)
+        }
+        fun attempt(hash: String): JsonObject? =
+            runCatching { gql("home", hash, vars, headers) }.getOrNull()
+                ?.takeIf { it.obj("data")?.obj("home") != null }
+        val tried = mutableSetOf<String>()
+        for (h in listOfNotNull(homeHash, HOME_HASH_DEFAULT)) {
+            if (!tried.add(h)) continue
+            attempt(h)?.let { homeHash = h; return@withContext it }
+        }
+        val found = runCatching { discoverHomeHash() }.getOrNull()
+        if (found != null && tried.add(found)) {
+            attempt(found)?.let { homeHash = found; return@withContext it }
+        }
+        throw IllegalStateException("Spotify home feed unavailable")
+    }
+
+    private fun httpText(url: String): String {
+        val req = Request.Builder().url(url).get()
+            .header("User-Agent", USER_AGENT).header("Accept", "*/*").build()
+        return Net.client.newCall(req).execute().use { it.body?.string().orEmpty() }
+    }
+
+    private fun discoverHomeHash(): String? {
+        val page = httpText("https://open.spotify.com/")
+        val scripts = Regex("""<script[^>]+src="(https://[^"]+\.js)"""").findAll(page).map { it.groupValues[1] }.toList()
+        val patterns = listOf(
+            Regex(""""home","query","([0-9a-f]{64})""""),
+            Regex("""home['"]\s*,\s*['"]query['"]\s*,\s*['"]([0-9a-f]{64})"""),
+        )
+        for (src in scripts.take(10)) {
+            val js = runCatching { httpText(src) }.getOrNull() ?: continue
+            for (p in patterns) p.find(js)?.let { return it.groupValues[1] }
+        }
+        return null
+    }
+
+    private val restGate = kotlinx.coroutines.sync.Semaphore(3)
+
+    /**
+     * Executes [req], retrying HTTP 429 / 503 (honouring `Retry-After`, else 2s/4s/8s backoff,
+     * capped at 15s). Returns the final status code and body.
+     */
+    private suspend fun execRetry(req: Request): Pair<Int, String> {
+        var attempt = 0
+        while (true) {
+            val (code, body, retryAfter) = withContext(Dispatchers.IO) {
+                Net.client.newCall(req).execute().use { r ->
+                    Triple(r.code, r.body?.string().orEmpty(), r.header("Retry-After")?.trim()?.toLongOrNull())
+                }
+            }
+            if ((code != 429 && code != 503) || attempt >= 4) return code to body
+            val waitMs = ((retryAfter ?: (2L shl attempt)).coerceIn(1L, 15L)) * 1000L
+            kotlinx.coroutines.delay(waitMs)
+            attempt++
+        }
+    }
+
+    /** Web-player GraphQL (pathfinder) persisted query with the signed-in session. */
+    suspend fun pathfinder(operation: String, hash: String, variables: JsonObject): JsonObject =
+        withContext(Dispatchers.IO) { gql(operation, hash, variables, authHeaders()) }
+
+    /** Authenticated GET against the Spotify Web API (path starts with "/"). */
+    suspend fun restGet(pathAndQuery: String): JsonObject = withContext(Dispatchers.IO) {
+        val tokens = auth?.tokens() ?: throw IllegalStateException("Spotify sign-in expired")
+        val req = Request.Builder()
+            .url("$REST_API$pathAndQuery")
+            .get()
+            .apply { restHeaders(tokens).forEach { (k, v) -> header(k, v) } }
+            .build()
+        val (code, body) = restGate.withPermit { execRetry(req) }
+        if (code !in 200..299) throw IllegalStateException("Spotify request failed ($code)")
+        json.parseToJsonElement(body).jsonObject
+    }
+
     private suspend fun currentUserId(tokens: Tokens): String {
         val req = Request.Builder()
             .url("$REST_API/me")
@@ -331,14 +424,12 @@ object SpotifyLibrary {
                 .post(payload.toRequestBody(mediaType))
                 .apply { restHeaders(tokens).forEach { (k, v) -> header(k, v) } }
                 .build()
-            Net.client.newCall(req).execute().use { resp ->
-                lastCode = resp.code
-                val text = resp.body?.string().orEmpty()
-                if (resp.isSuccessful && text.isNotBlank()) {
-                    createdObj = runCatching { json.parseToJsonElement(text).jsonObject }.getOrNull()
-                }
+            val (code, text) = execRetry(req)
+            lastCode = code
+            if (code in 200..299 && text.isNotBlank()) {
+                createdObj = runCatching { json.parseToJsonElement(text).jsonObject }.getOrNull()
             }
-            if (createdObj != null) break
+            if (createdObj != null || code == 429) break // don't hammer the fallback endpoint while rate limited
         }
 
         val obj = createdObj
@@ -531,11 +622,11 @@ object SpotifyLibrary {
                 .post(body.toRequestBody(mediaType))
                 .apply { restHeaders(tokens).forEach { (k, v) -> header(k, v) } }
                 .build()
-            Net.client.newCall(req).execute().use { resp ->
-                if (!resp.isSuccessful) {
-                    throw IllegalStateException("Could not add track(s) to Spotify playlist (HTTP ${resp.code})")
-                }
+            val (code, _) = execRetry(req)
+            if (code !in 200..299) {
+                throw IllegalStateException("Could not add track(s) to Spotify playlist (HTTP $code)")
             }
+            kotlinx.coroutines.delay(300)
         }
     }
 

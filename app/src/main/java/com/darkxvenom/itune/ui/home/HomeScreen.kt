@@ -76,6 +76,7 @@ import com.darkxvenom.itune.data.library.HomeFeedRepository
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.library.ListeningProfileStore
 import com.darkxvenom.itune.data.model.HomeFeedItem
+import com.darkxvenom.itune.data.spotify.SpotifyHomeRepository
 import com.darkxvenom.itune.data.model.HomeFeedShelf
 import com.darkxvenom.itune.data.model.HomeHeroCard
 import com.darkxvenom.itune.data.model.HomeItemKind
@@ -228,6 +229,11 @@ fun HomeScreen(
         HomeFeedRepository.refreshPersonal(context)
     }
 
+    val spotifyLinked = settingsState.spotifySpdcToken.isNotBlank()
+    val spotifyShelves by SpotifyHomeRepository.shelves.collectAsStateWithLifecycle()
+    LaunchedEffect(spotifyLinked) {
+        if (spotifyLinked) SpotifyHomeRepository.refresh() else SpotifyHomeRepository.clear()
+    }
     val hideExplicit = settingsState.hideExplicitContent
     val allHomePlaylistRefs = remember(personalizedPlaylists, featuredPlaylists, ytAccountState.isSignedIn) {
         if (ytAccountState.isSignedIn && personalizedPlaylists.isNotEmpty()) {
@@ -317,10 +323,44 @@ fun HomeScreen(
         }
     }
 
+    val onSpotifyItemClick: (HomeFeedItem, List<HomeFeedItem>) -> Unit = { item, queue ->
+        if (SpotifyHomeRepository.isSpotifyItem(item)) {
+            val bid = item.browseId.orEmpty()
+            val nativeType = when {
+                bid.startsWith("spotify:artist:") -> BrowseType.ARTIST
+                bid.startsWith("spotify:album:") -> BrowseType.ALBUM
+                bid.startsWith("spotify:playlist:") || bid.startsWith("spotify:show:") -> BrowseType.PLAYLIST
+                else -> null
+            }
+            if (nativeType != null) {
+                // Same artist / album / playlist screens as YouTube, filled with Spotify data
+                MusicPlayerState.pendingArtistNav = PendingArtistNav(
+                    browseId = bid, name = item.title, subtitle = item.subtitle,
+                    thumbnailUrl = item.thumbnailUrl, initialType = nativeType,
+                )
+            } else {
+                Toast.makeText(context, "Opening ${item.title}…", Toast.LENGTH_SHORT).show()
+                coroutineScope.launch {
+                    when (val action = SpotifyHomeRepository.resolve(item)) {
+                        is SpotifyHomeRepository.Action.Play -> {
+                            SpotifyHomeRepository.markOrigin(action.tracks.map { it.id })
+                            MusicPlayerState.play(action.tracks.first(), action.tracks)
+                        }
+                        else -> Toast.makeText(context, "Couldn't open ${item.title}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        } else {
+            // Songs on Spotify shelves: log to Spotify history, not YouTube
+            SpotifyHomeRepository.markOrigin(queue.mapNotNull { it.videoId })
+            onFeedItemClick(item, queue)
+        }
+    }
+
     var homeMoreRequest by remember { mutableStateOf<SearchMoreRequest?>(null) }
 
     val onFeedItemMenuClick: (HomeFeedItem, Offset) -> Unit = { item, offset ->
-        val target: SearchMoreTarget? = when (item.kind) {
+        val target: SearchMoreTarget? = if (SpotifyHomeRepository.isSpotifyItem(item)) null else when (item.kind) {
             HomeItemKind.SONG, HomeItemKind.VIDEO, HomeItemKind.EPISODE -> {
                 item.toMusicTrack()?.let { SearchMoreTarget.Song(it) }
             }
@@ -624,6 +664,22 @@ fun HomeScreen(
                         onItemMenuClick = onFeedItemMenuClick,
                     )
                     Spacer(modifier = Modifier.height(28.dp))
+                }
+
+                // Spotify shelves (only after Spotify login); YouTube shelves above stay untouched
+                if (spotifyLinked) {
+                    items(spotifyShelves, key = { it.key }) { shelf ->
+                        if (shelf.key.startsWith("sp_hero_")) {
+                            SpotifyHeroShelf(shelf = shelf, onItemClick = onSpotifyItemClick)
+                        } else {
+                            HomeFeedShelfRow(
+                                shelf = shelf,
+                                onItemClick = onSpotifyItemClick,
+                                onItemMenuClick = onFeedItemMenuClick,
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(28.dp))
+                    }
                 }
 
                 // Live Radio Stations (Top 10: Favorites prioritized first, then unliked online stations)
