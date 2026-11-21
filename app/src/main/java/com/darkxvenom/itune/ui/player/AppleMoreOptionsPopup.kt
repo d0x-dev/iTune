@@ -54,6 +54,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
@@ -745,6 +746,14 @@ fun AppleMoreOptionsPopup(
                                         )
                                         PopupMenuDivider()
 
+                                        UpgradeQualityRow(
+                                            onClick = {
+                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                MusicPlayerState.upgradeCurrentQuality()
+                                            }
+                                        )
+                                        PopupMenuDivider()
+
                                         MorePopupVectorOptionRow(
                                             icon = Icons.AutoMirrored.Rounded.QueueMusic,
                                             title = "Add to Playlist",
@@ -1092,6 +1101,56 @@ private fun MorePopupRowFrame(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
+                )
+            }
+        }
+    }
+}
+
+/**
+ * "Upgrade Quality": lossless glyph + title. While the search / swap runs the play state is untouched
+ * and a red bar sweeps along the bottom of the row (no spinner, no loading takeover).
+ */
+@Composable
+private fun UpgradeQualityRow(onClick: () -> Unit) {
+    val busy = MusicPlayerState.upgradingQuality
+    Box(modifier = Modifier.fillMaxWidth()) {
+        MorePopupRowFrame(title = "Upgrade Quality", onClick = onClick) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_lossless),
+                contentDescription = "Upgrade Quality",
+                colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
+                modifier = Modifier.size(width = 21.dp, height = 16.dp)
+            )
+        }
+        if (busy) {
+            val t = androidx.compose.animation.core.rememberInfiniteTransition(label = "upgradeBar")
+            val x by t.animateFloat(
+                initialValue = -0.4f,
+                targetValue = 1f,
+                animationSpec = androidx.compose.animation.core.infiniteRepeatable(
+                    androidx.compose.animation.core.tween(1100, easing = androidx.compose.animation.core.LinearEasing),
+                ),
+                label = "upgradeBarX",
+            )
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .fillMaxWidth()
+                    .height(3.dp)
+                    .clipToBounds()
+                    .background(Color.White.copy(alpha = 0.08f))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.4f)
+                        .fillMaxHeight()
+                        .graphicsLayer { translationX = x * size.width / 0.4f }
+                        .background(
+                            androidx.compose.ui.graphics.Brush.horizontalGradient(
+                                listOf(Color.Transparent, Color(0xFFFF1744), Color(0xFFFF5252), Color.Transparent)
+                            )
+                        )
                 )
             }
         }
