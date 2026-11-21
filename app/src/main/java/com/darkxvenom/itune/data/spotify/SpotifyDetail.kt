@@ -57,15 +57,14 @@ object SpotifyDetail {
                     tracks.map { it.toSong(null, null) })
             }
             "album" -> {
-                val a = SpotifyLibrary.restGet("/albums/$id?market=from_token")
-                val name = a.str("name") ?: fallbackTitle
-                val img = a.img() ?: fallbackThumb
-                val artist = a.artistNames()
-                val songs = a.arr("tracks")?.let { (it as? JsonObject)?.arr("items") }.orEmpty()
-                    .mapNotNull { (it as? JsonObject)?.track(img, name, browseId) }
-                SpotifyPage(name, "$artist • ${a.str("release_date").orEmpty().take(4)}", img, songs)
+                albumViaPathfinder(id, fallbackTitle, fallbackThumb)
+                    ?: runCatching { albumViaRest(id, fallbackTitle, fallbackThumb) }.getOrNull()
+                    ?: SpotifyPage(fallbackTitle, "Album", fallbackThumb, emptyList())
             }
             "artist" -> coroutineScope {
+                // Prioritize Pathfinder GraphQL queryArtistOverview to avoid 429 delays and errors
+                artistViaPathfinder(id, fallbackTitle, fallbackThumb)?.let { return@coroutineScope it }
+                artistViaSearch(id, fallbackTitle, fallbackThumb)?.let { return@coroutineScope it }
                 val info = async { runCatching { SpotifyLibrary.restGet("/artists/$id") }.getOrNull() }
                 val top = async { runCatching { SpotifyLibrary.restGet("/artists/$id/top-tracks?market=from_token") }.getOrNull() }
                 val albums = async { runCatching { SpotifyLibrary.restGet("/artists/$id/albums?include_groups=album,single&limit=30&market=from_token") }.getOrNull() }
@@ -88,9 +87,6 @@ object SpotifyDetail {
                 }
                 val followers = i?.get("followers")?.let { (it as? JsonObject)?.get("total")?.jsonPrimitive?.intOrNull }
                 if (songs.isEmpty() && sections.isEmpty()) {
-                    // The plain Web API blocks artist endpoints for the web-player token → use the web player's own query
-                    artistViaPathfinder(id, fallbackTitle, fallbackThumb)?.let { return@coroutineScope it }
-                    artistViaSearch(id, i?.str("name") ?: fallbackTitle, i?.img() ?: fallbackThumb)?.let { return@coroutineScope it }
                     error("Spotify didn't return any data for this artist")
                 }
                 SpotifyPage(
@@ -125,10 +121,82 @@ object SpotifyDetail {
         "433e28d1e949372d3ca3aa6c47975cff428b5dc37b12f5325d9213accadf770a",
     )
 
+    private val ALBUM_HASHES = listOf(
+        "0b6ce3511e1b02e4a40fa95440f992acbe85080eb308af9194322d708fc1914f", // Web player live getAlbum / queryAlbumTracks
+        "b9bfabef66ed756e5e13f68a942deb60bd4125ec1f1be8cc42769dc0259b4b10", // Upstream getAlbum candidate
+        "8628ad33de3267d7bef516c76a746979a5f98891a2c9eaff3dfec828abdcd983", // Web player getAlbumNameAndTracks
+    )
+
     private fun JsonObject.obj(k: String) = this[k] as? JsonObject
     private fun JsonObject.items(k: String): List<JsonObject> = obj(k)?.arr("items").orEmpty().mapNotNull { it as? JsonObject }
     private fun JsonObject.srcUrl(): String? =
         arr("sources")?.mapNotNull { it as? JsonObject }?.maxByOrNull { it["width"]?.jsonPrimitive?.intOrNull ?: 0 }?.str("url")
+
+    private suspend fun albumViaPathfinder(id: String, fallbackTitle: String, fallbackThumb: String?): SpotifyPage? {
+        val vars = buildJsonObject {
+            put("uri", "spotify:album:$id")
+            put("locale", "")
+            put("offset", 0)
+            put("limit", 150)
+        }
+        for (h in ALBUM_HASHES) {
+            val root = runCatching { SpotifyLibrary.pathfinder("getAlbum", h, vars) }.getOrNull()
+                ?: runCatching { SpotifyLibrary.pathfinder("getAlbumNameAndTracks", h, vars) }.getOrNull()
+                ?: continue
+
+            val albumData = root.obj("data")?.obj("albumUnion")
+                ?: root.obj("data")?.obj("album")
+                ?: continue
+
+            val name = albumData.str("name") ?: fallbackTitle
+            val img = albumData.obj("coverArt")?.srcUrl() ?: fallbackThumb
+            val artistList = albumData.obj("artists")?.items("items").orEmpty()
+            val artistName = artistList.mapNotNull { it.obj("profile")?.str("name") ?: it.str("name") }.joinToString(", ").ifBlank { "" }
+            val year = albumData.obj("date")?.let { it.str("year") ?: it.str("isoString")?.take(4) }.orEmpty()
+            val subtitle = when {
+                artistName.isNotBlank() && year.isNotBlank() -> "$artistName • $year"
+                artistName.isNotBlank() -> artistName
+                year.isNotBlank() -> "Album • $year"
+                else -> "Album"
+            }
+
+            val tracksSection = albumData.obj("tracksV2") ?: albumData.obj("tracks")
+            val trackItems = tracksSection?.items("items").orEmpty()
+            val songs = trackItems.mapNotNull { elem ->
+                val t = elem.obj("track") ?: elem
+                val tid = t.str("uri")?.substringAfterLast(':') ?: t.str("id") ?: return@mapNotNull null
+                val tArtists = t.obj("artists")?.items("items")?.mapNotNull {
+                    it.obj("profile")?.str("name") ?: it.str("name")
+                }?.joinToString(", ")?.ifBlank { artistName } ?: artistName
+                val durationMs = t.obj("duration")?.get("totalMilliseconds")?.jsonPrimitive?.intOrNull
+                    ?: t.get("duration_ms")?.jsonPrimitive?.intOrNull
+                    ?: 0
+                Song(
+                    videoId = "sp:$tid",
+                    title = t.str("name").orEmpty(),
+                    artist = tArtists,
+                    thumbnailUrl = t.obj("albumOfTrack")?.obj("coverArt")?.srcUrl() ?: img,
+                    durationText = dur(durationMs),
+                    albumName = name,
+                    albumId = "spotify:album:$id",
+                )
+            }
+            if (songs.isNotEmpty()) {
+                return SpotifyPage(name, subtitle, img, songs)
+            }
+        }
+        return null
+    }
+
+    private suspend fun albumViaRest(id: String, fallbackTitle: String, fallbackThumb: String?): SpotifyPage {
+        val a = SpotifyLibrary.restGet("/albums/$id?market=from_token")
+        val name = a.str("name") ?: fallbackTitle
+        val img = a.img() ?: fallbackThumb
+        val artist = a.artistNames()
+        val songs = a.arr("tracks")?.let { (it as? JsonObject)?.arr("items") }.orEmpty()
+            .mapNotNull { (it as? JsonObject)?.track(img, name, "spotify:album:$id") }
+        return SpotifyPage(name, "$artist • ${a.str("release_date").orEmpty().take(4)}", img, songs)
+    }
 
     private suspend fun artistViaPathfinder(id: String, fallbackTitle: String, fallbackThumb: String?): SpotifyPage? {
         val vars = kotlinx.serialization.json.buildJsonObject {
