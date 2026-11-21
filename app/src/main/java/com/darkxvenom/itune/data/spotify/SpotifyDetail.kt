@@ -245,14 +245,17 @@ object SpotifyDetail {
             val thumb = a.obj("visuals")?.obj("avatarImage")?.srcUrl() ?: a.obj("visuals")?.obj("headerImage")?.srcUrl() ?: fallbackThumb
             val disc = a.obj("discography")
             val restReleases = runCatching { artistAlbums(id) }.getOrDefault(emptyList())
-            val playlistItems = runCatching {
-                val playlistVars = buildJsonObject {
-                    put("uri", "spotify:artist:$id")
-                    put("offset", 0)
-                    put("limit", 50)
-                }
-                collectSpotifyPlaylists(SpotifyLibrary.pathfinder("queryArtistPlaylists", ARTIST_PLAYLISTS_HASH, playlistVars))
-            }.getOrDefault(emptyList())
+            val playlistItems = (
+                a.obj("profile")?.obj("playlistsV2")?.let(::collectSpotifyPlaylists).orEmpty() +
+                    runCatching {
+                        val playlistVars = buildJsonObject {
+                            put("uri", "spotify:artist:$id")
+                            put("offset", 0)
+                            put("limit", 50)
+                        }
+                        collectSpotifyPlaylists(SpotifyLibrary.pathfinder("queryArtistPlaylists", ARTIST_PLAYLISTS_HASH, playlistVars))
+                    }.getOrDefault(emptyList())
+                ).distinctBy { it.browseId }
             val songs = disc?.items("topTracks").orEmpty().mapNotNull { row ->
                 val t = row.obj("track") ?: return@mapNotNull null
                 val tid = t.str("uri")?.substringAfterLast(':') ?: return@mapNotNull null
@@ -291,6 +294,20 @@ object SpotifyDetail {
                 relatedShelf("appearsOn", "Appears On")
                 relatedShelf("featuringV2", "Featuring")
                 relatedShelf("discoveredOnV2", "Discovered On")
+                val pinned = a.obj("profile")?.obj("pinnedItem")
+                val pinnedUri = pinned?.str("uri")
+                val pinnedTitle = pinned?.str("title")
+                if (!pinnedUri.isNullOrBlank() && !pinnedTitle.isNullOrBlank()) {
+                    val pinnedImage = pinned.obj("thumbnailImage")?.obj("data")?.srcUrl()
+                        ?: pinned.obj("coverArt")?.srcUrl()
+                    val pinnedSubtitle = listOfNotNull(
+                        pinned.str("subtitle")?.takeIf { it.isNotBlank() },
+                        pinned.str("comment")?.takeIf { it.isNotBlank() },
+                    ).joinToString(" • ")
+                    add(HomeShelf("Artist Pick", listOf(
+                        ShelfItem(pinnedTitle, pinnedSubtitle, pinnedImage, null, pinnedUri),
+                    )))
+                }
                 if (playlistItems.isNotEmpty()) add(HomeShelf("Artist Playlists", playlistItems))
                 val restAlbums = restReleases.filter { it.str("album_type") == "album" }
                 val restSingles = restReleases.filter { it.str("album_type") == "single" }
