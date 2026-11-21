@@ -1634,7 +1634,7 @@ private fun SignalPipelinePage(
         else -> listOfNotNull("Media3 ExoPlayer", liveCodec, liveKbps).joinToString(" • ")
     }
     val liveRate = fmt?.takeIf { it.sampleRate > 0 }?.let { "%.1f kHz".format(it.sampleRate / 1000f) }
-    val liveCh = fmt?.takeIf { it.channelCount > 0 }?.let { if (it == 2) "Stereo" else "$it ch" }
+    val liveCh = fmt?.takeIf { it.channelCount > 0 }?.let { if (it.channelCount == 2) "Stereo" else "${it.channelCount} ch" }
     val qualityLine = trace?.quality?.takeIf { it.isNotBlank() } ?: liveKbps?.let { "$it • ${liveCodec.orEmpty()}" }.orEmpty()
 
     Column(
