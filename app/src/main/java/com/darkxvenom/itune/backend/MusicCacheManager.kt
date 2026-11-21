@@ -59,6 +59,8 @@ data class CachedMusicTrack(
     val cachedAtMs: Long = System.currentTimeMillis(),
     var lastPlayedMs: Long = System.currentTimeMillis(),
     val liked: Boolean = false,
+    /** Where the audio came from: "yt" (YouTube Music) or "saavn" (JioSaavn upgrade). */
+    val source: String = "yt",
 ) {
     fun resolvedArtworkUri(): String? {
         if (!localThumbnailPath.isNullOrBlank()) {
@@ -182,7 +184,8 @@ object MusicCacheManager {
                                         fileSizeBytes = size,
                                         cachedAtMs = o.optLong("cachedAtMs", System.currentTimeMillis()),
                                         lastPlayedMs = o.optLong("lastPlayedMs", System.currentTimeMillis()),
-                                        liked = o.optBoolean("liked", false)
+                                        liked = o.optBoolean("liked", false),
+                                        source = o.optString("source", "yt").ifBlank { "yt" },
                                     )
                                 )
                             }
@@ -231,6 +234,7 @@ object MusicCacheManager {
                             .put("cachedAtMs", track.cachedAtMs)
                             .put("lastPlayedMs", track.lastPlayedMs)
                             .put("liked", track.liked)
+                            .put("source", track.source)
                     )
                 }
                 val indexFile = File(cacheDir, INDEX_FILE)
@@ -262,6 +266,79 @@ object MusicCacheManager {
      * Returns true if track is cached and ready for offline playback.
      */
     fun isTrackCached(trackId: String): Boolean = getCachedAudioFile(trackId) != null
+
+    /** "yt" / "saavn" for a cached track, or null when it isn't cached. */
+    fun cachedSource(trackId: String): String? =
+        if (!isTrackCached(trackId)) null else cachedTracks.firstOrNull { it.id == trackId }?.source ?: "yt"
+
+    private val saavnJobs = ConcurrentHashMap<String, Job>()
+
+    /**
+     * Downloads a JioSaavn stream into the cache. When [replaceExisting] is set it swaps out a cached
+     * YouTube copy of the same track (written to a temp file first, so the old copy stays valid until the
+     * new one is complete). Otherwise it only caches if the track isn't cached yet and caching is on.
+     * [onDone] is called with true when the cache now holds the JioSaavn copy.
+     */
+    fun cacheSaavnStream(
+        track: MusicTrack,
+        url: String,
+        replaceExisting: Boolean,
+        onDone: ((Boolean) -> Unit)? = null,
+    ) {
+        val existing = cachedTracks.firstOrNull { it.id == track.id }
+        if (existing?.source == "saavn" && getCachedAudioFile(track.id) != null) { onDone?.invoke(true); return }
+        if (existing == null && !cachingEnabled.value) { onDone?.invoke(false); return }
+        if (existing != null && !replaceExisting) { onDone?.invoke(false); return }
+        if (saavnJobs.containsKey(track.id)) return
+        saavnJobs[track.id] = scope.launch {
+            val tmp = File(cacheDir, "${track.id}.saavn.tmp")
+            val finalFile = File(cacheDir, "${track.id}.m4a")
+            var ok = false
+            try {
+                val req = okhttp3.Request.Builder().url(url).header("User-Agent", Net.USER_AGENT).build()
+                Net.client.newCall(req).execute().use { resp ->
+                    val body = resp.body
+                    if (!resp.isSuccessful || body == null) return@use
+                    tmp.outputStream().use { out -> body.byteStream().copyTo(out) }
+                }
+                val expected = 64 * 1024L
+                if (tmp.exists() && tmp.length() > expected) {
+                    // Atomic swap: the old file (possibly still playing) is replaced only now.
+                    val moved = tmp.renameTo(finalFile) || runCatching {
+                        tmp.copyTo(finalFile, overwrite = true); true
+                    }.getOrDefault(false)
+                    if (moved && finalFile.length() > 0) {
+                        val thumb = File(thumbsDir, "${track.id}.jpg").takeIf { it.exists() && it.length() > 0 }?.absolutePath
+                        val entry = CachedMusicTrack(
+                            id = track.id, title = track.title, artists = track.artists,
+                            artistId = track.artistId, album = track.album, albumId = track.albumId,
+                            thumbnailUrl = existing?.thumbnailUrl ?: track.thumbnailUrl?.highQualityThumbnail() ?: track.thumbnailUrl,
+                            localThumbnailPath = existing?.localThumbnailPath ?: thumb,
+                            durationSec = track.durationSec, audioFilePath = finalFile.absolutePath,
+                            fileSizeBytes = finalFile.length(),
+                            cachedAtMs = System.currentTimeMillis(),
+                            lastPlayedMs = existing?.lastPlayedMs ?: System.currentTimeMillis(),
+                            liked = track.liked, source = "saavn",
+                        )
+                        withContext(Dispatchers.Main) {
+                            val idx = cachedTracks.indexOfFirst { it.id == track.id }
+                            if (idx >= 0) cachedTracks[idx] = entry else cachedTracks.add(0, entry)
+                            persistIndex(cachedTracks.toList())
+                        }
+                        enforceCacheLimit()
+                        ok = true
+                        Log.d(TAG, "Cached JioSaavn copy of '${track.title}' (${formatStorageSize(finalFile.length())})")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "JioSaavn cache failed for ${track.id}: ${e.message}")
+            } finally {
+                saavnJobs.remove(track.id)
+                if (tmp.exists()) tmp.delete()
+            }
+            withContext(Dispatchers.Main) { onDone?.invoke(ok) }
+        }
+    }
 
     /**
      * Marks track as recently played for LRU (Least Recently Used) cache ranking.
@@ -312,6 +389,11 @@ object MusicCacheManager {
         if (!cachingEnabled.value && !force) return
         if (isTrackCached(track.id)) return
         if (activeDownloads.containsKey(track.id)) return
+        // Playing a JioSaavn stream: cache THAT stream, so the cached copy is the lossless one.
+        if (com.darkxvenom.itune.data.saavn.JioSaavnProvider.isSaavnUrl(playbackStreamUrl)) {
+            cacheSaavnStream(track, playbackStreamUrl, replaceExisting = false)
+            return
+        }
 
         val job = scope.launch {
             val tmpFile = File(cacheDir, "${track.id}.tmp")
