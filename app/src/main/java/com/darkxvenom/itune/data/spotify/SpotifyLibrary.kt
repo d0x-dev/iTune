@@ -168,6 +168,32 @@ object SpotifyLibrary {
         (playlistTitle ?: "Imported Spotify Playlist") to collected
     }
 
+    /** A playlist's name, Spotify tagline and first tracks, fetched with a single small request. */
+    data class PlaylistHead(val title: String?, val description: String?, val tracks: List<SpotifyTrack>)
+
+    suspend fun playlistHead(playlistId: String, limit: Int = 12): PlaylistHead? = withContext(Dispatchers.IO) {
+        runCatching {
+            val variables = buildJsonObject {
+                put("uri", "spotify:playlist:$playlistId")
+                put("offset", 0)
+                put("limit", limit)
+                put("enableWatchFeedEntrypoint", false)
+            }
+            val root = gql("fetchPlaylist", PLAYLIST, variables, authHeaders())
+            val pl = root.obj("data")?.obj("playlistV2")
+            PlaylistHead(
+                title = pl?.str("name")?.takeIf { it.isNotBlank() },
+                description = pl?.str("description")?.let(::cleanDescription)?.takeIf { it.isNotBlank() },
+                tracks = parseTrackPage(root).first,
+            )
+        }.getOrNull()
+    }
+
+    /** Spotify descriptions can contain HTML links / entities; show them as plain text. */
+    private fun cleanDescription(raw: String): String =
+        androidx.core.text.HtmlCompat.fromHtml(raw, androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT)
+            .toString().replace('\u00A0', ' ').trim()
+
     suspend fun cover(playlistId: String): String? = withContext(Dispatchers.IO) {
         if (playlistId == LIKED_ID) return@withContext LIKED_COVER
         val variables = buildJsonObject {
