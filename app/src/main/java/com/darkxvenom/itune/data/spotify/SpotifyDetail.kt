@@ -180,14 +180,12 @@ object SpotifyDetail {
 
     /** Last resort: Spotify search for the artist's tracks and albums. */
     private suspend fun artistViaSearch(id: String, name: String, thumb: String?): SpotifyPage? {
-        val q = java.net.URLEncoder.encode("artist:\"$name\"", "UTF-8")
-        val root = runCatching { SpotifyLibrary.restGet("/search?q=$q&type=track,album&limit=10&market=from_token") }.getOrNull() ?: return null
-        val songs = root.obj("tracks")?.arr("items").orEmpty().mapNotNull { (it as? JsonObject) }
-            .filter { t -> t.arr("artists").orEmpty().any { (it as? JsonObject)?.str("id") == id } }
-            .mapNotNull { it.track(null, null, null) }
-        val albums = root.obj("albums")?.arr("items").orEmpty().mapNotNull { (it as? JsonObject) }
-            .filter { t -> t.arr("artists").orEmpty().any { (it as? JsonObject)?.str("id") == id } }
-            .map { x -> ShelfItem(x.str("name").orEmpty(), (x.str("release_date") ?: "").take(4), x.img(), null, "spotify:album:${x.str("id")}") }
+        val search = runCatching { SpotifySearch.search("artist:\"$name\"") }.getOrNull()
+            ?: runCatching { SpotifySearch.search(name) }.getOrNull()
+            ?: return null
+        val songs = search.songs.filter { it.artist.contains(name, ignoreCase = true) }
+        val albums = search.albums.filter { it.subtitle.contains(name, ignoreCase = true) || it.title.contains(name, ignoreCase = true) }
+            .map { ShelfItem(it.title, it.subtitle, it.image, null, it.browseId) }
         if (songs.isEmpty() && albums.isEmpty()) return null
         return SpotifyPage(name, "Artist", thumb, songs, if (albums.isEmpty()) emptyList() else listOf(HomeShelf("Albums", albums)))
     }
