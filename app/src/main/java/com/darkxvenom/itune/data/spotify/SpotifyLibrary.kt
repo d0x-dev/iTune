@@ -383,7 +383,9 @@ object SpotifyLibrary {
                 }
             }
             if ((code != 429 && code != 503) || attempt >= 4) return code to body
-            val waitMs = ((retryAfter ?: (2L shl attempt)).coerceIn(1L, 15L)) * 1000L
+            // Spotify's Retry-After is authoritative; do not retry a 429
+            // earlier than the server permits.
+            val waitMs = (retryAfter ?: (2L shl attempt)).coerceAtLeast(1L) * 1000L
             kotlinx.coroutines.delay(waitMs)
             attempt++
         }
