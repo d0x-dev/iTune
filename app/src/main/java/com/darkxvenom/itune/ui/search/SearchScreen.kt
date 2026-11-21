@@ -810,9 +810,22 @@ fun SearchScreen(
                                                         }
                                                         if (loaded.isNotEmpty()) {
                                                             if (loaded.any { it.id.startsWith("sp:") }) {
-                                                                val matched = coroutineScope {
-                                                                    loaded.take(20).map { async { SpotifyHomeRepository.matchSong(Song(videoId = it.id, title = it.title, artist = it.artists, thumbnailUrl = it.thumbnailUrl, durationText = it.duration, albumName = it.album, albumId = it.albumId)) } }
-                                                                        .mapNotNull { it.await() }
+                                                                val matched = kotlinx.coroutines.coroutineScope {
+                                                                    loaded.take(20).map { trackItem ->
+                                                                        async {
+                                                                            SpotifyHomeRepository.matchSong(
+                                                                                Song(
+                                                                                    videoId = trackItem.id,
+                                                                                    title = trackItem.title,
+                                                                                    artist = trackItem.artists,
+                                                                                    thumbnailUrl = trackItem.thumbnailUrl,
+                                                                                    durationText = trackItem.duration,
+                                                                                    albumName = trackItem.album,
+                                                                                    albumId = trackItem.albumId,
+                                                                                )
+                                                                            )
+                                                                        }
+                                                                    }.mapNotNull { it.await() }
                                                                 }
                                                                 if (matched.isNotEmpty()) {
                                                                     SpotifyHomeRepository.markOrigin(matched.map { it.id })
@@ -842,9 +855,22 @@ fun SearchScreen(
                                                         }
                                                         if (loaded.isNotEmpty()) {
                                                             if (loaded.any { it.id.startsWith("sp:") }) {
-                                                                val matched = coroutineScope {
-                                                                    loaded.take(20).map { async { SpotifyHomeRepository.matchSong(Song(videoId = it.id, title = it.title, artist = it.artists, thumbnailUrl = it.thumbnailUrl, durationText = it.duration, albumName = it.album, albumId = it.albumId)) } }
-                                                                        .mapNotNull { it.await() }
+                                                                val matched = kotlinx.coroutines.coroutineScope {
+                                                                    loaded.take(20).map { trackItem ->
+                                                                        async {
+                                                                            SpotifyHomeRepository.matchSong(
+                                                                                Song(
+                                                                                    videoId = trackItem.id,
+                                                                                    title = trackItem.title,
+                                                                                    artist = trackItem.artists,
+                                                                                    thumbnailUrl = trackItem.thumbnailUrl,
+                                                                                    durationText = trackItem.duration,
+                                                                                    albumName = trackItem.album,
+                                                                                    albumId = trackItem.albumId,
+                                                                                )
+                                                                            )
+                                                                        }
+                                                                    }.mapNotNull { it.await() }
                                                                 }
                                                                 if (matched.isNotEmpty()) {
                                                                     SpotifyHomeRepository.markOrigin(matched.map { it.id })
