@@ -357,6 +357,20 @@ fun HomeScreen(
         }
     }
 
+    // Play button on the big Spotify cards: start the playlist right away (Preview / card tap opens it).
+    val onSpotifyHeroPlay: (HomeFeedItem) -> Unit = { item ->
+        Toast.makeText(context, "Playing ${item.title}…", Toast.LENGTH_SHORT).show()
+        coroutineScope.launch {
+            when (val action = SpotifyHomeRepository.resolve(item)) {
+                is SpotifyHomeRepository.Action.Play -> {
+                    SpotifyHomeRepository.markOrigin(action.tracks.map { it.id })
+                    MusicPlayerState.play(action.tracks.first(), action.tracks)
+                }
+                else -> Toast.makeText(context, "Couldn't play ${item.title}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     var homeMoreRequest by remember { mutableStateOf<SearchMoreRequest?>(null) }
 
     val onFeedItemMenuClick: (HomeFeedItem, Offset) -> Unit = { item, offset ->
@@ -670,7 +684,7 @@ fun HomeScreen(
                 if (spotifyLinked) {
                     items(spotifyShelves, key = { it.key }) { shelf ->
                         if (shelf.key.startsWith("sp_hero_")) {
-                            SpotifyHeroShelf(shelf = shelf, onItemClick = onSpotifyItemClick)
+                            SpotifyHeroShelf(shelf = shelf, onItemClick = onSpotifyItemClick, onItemPlay = onSpotifyHeroPlay)
                         } else {
                             HomeFeedShelfRow(
                                 shelf = shelf,
