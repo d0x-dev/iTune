@@ -17,6 +17,7 @@ import com.darkxvenom.itune.data.model.Song
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.async
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
@@ -123,6 +124,8 @@ object SpotifyDetail {
         "d66221ea13998b2f81883c5187d174c8646e4041d67f5b1e103bc262d447e3a0",
         "433e28d1e949372d3ca3aa6c47975cff428b5dc37b12f5325d9213accadf770a",
     )
+
+    private const val ARTIST_PLAYLISTS_HASH = "54f7e5a5a2af05b7dc98526df376a46c6b15c05440c8dfdc8f6cecb1a807eca7"
 
     private val ALBUM_HASHES = listOf(
         "0b6ce3511e1b02e4a40fa95440f992acbe85080eb308af9194322d708fc1914f", // Web player live getAlbum / queryAlbumTracks
@@ -242,6 +245,14 @@ object SpotifyDetail {
             val thumb = a.obj("visuals")?.obj("avatarImage")?.srcUrl() ?: a.obj("visuals")?.obj("headerImage")?.srcUrl() ?: fallbackThumb
             val disc = a.obj("discography")
             val restReleases = runCatching { artistAlbums(id) }.getOrDefault(emptyList())
+            val playlistItems = runCatching {
+                val playlistVars = buildJsonObject {
+                    put("uri", "spotify:artist:$id")
+                    put("offset", 0)
+                    put("limit", 50)
+                }
+                collectSpotifyPlaylists(SpotifyLibrary.pathfinder("queryArtistPlaylists", ARTIST_PLAYLISTS_HASH, playlistVars))
+            }.getOrDefault(emptyList())
             val songs = disc?.items("topTracks").orEmpty().mapNotNull { row ->
                 val t = row.obj("track") ?: return@mapNotNull null
                 val tid = t.str("uri")?.substringAfterLast(':') ?: return@mapNotNull null
@@ -263,6 +274,22 @@ object SpotifyDetail {
             val sections = buildList {
                 releases(disc?.obj("popularReleasesAlbums")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Popular releases", it)) }
                 releases(disc?.obj("albums")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Albums", it)) }
+                releases(disc?.obj("singles")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Singles & EPs", it)) }
+                releases(disc?.obj("compilations")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Compilations", it)) }
+                val relatedContent = a.obj("relatedContent")
+                fun relatedShelf(key: String, title: String) {
+                    val items = relatedContent?.obj(key)?.items("items").orEmpty().flatMap { row ->
+                        row.obj("releases")?.items("items") ?: listOf(row)
+                    }.mapNotNull { r ->
+                        val rid = r.str("id") ?: r.str("uri")?.substringAfterLast(':') ?: return@mapNotNull null
+                        ShelfItem(r.str("name").orEmpty(), r.obj("date")?.str("year").orEmpty(), r.obj("coverArt")?.srcUrl(), null, "spotify:album:$rid")
+                    }
+                    if (items.isNotEmpty()) add(HomeShelf(title, items))
+                }
+                relatedShelf("appearsOn", "Appears On")
+                relatedShelf("featuringV2", "Featuring")
+                relatedShelf("discoveredOnV2", "Discovered On")
+                if (playlistItems.isNotEmpty()) add(HomeShelf("Artist Playlists", playlistItems))
                 val restAlbums = restReleases.filter { it.str("album_type") == "album" }
                 val restSingles = restReleases.filter { it.str("album_type") == "single" }
                 val restCompilations = restReleases.filter { it.str("album_type") == "compilation" }
@@ -291,6 +318,31 @@ object SpotifyDetail {
             return SpotifyPage(name, "Artist", thumb, songs, sections, bio, listeners)
         }
         return null
+    }
+
+    /** Extract Spotify playlist cards from the artist-playlists Pathfinder response. */
+    private fun collectSpotifyPlaylists(root: JsonElement): List<ShelfItem> {
+        val found = linkedMapOf<String, ShelfItem>()
+        fun visit(element: JsonElement) {
+            when (element) {
+                is JsonObject -> {
+                    val uri = element.str("uri")
+                    if (!uri.isNullOrBlank() && uri.startsWith("spotify:playlist:")) {
+                        val id = uri.substringAfterLast(':')
+                        val image = element.obj("coverArt")?.srcUrl()
+                            ?: element.obj("images")?.arr("items")?.firstOrNull()?.let { (it as? JsonObject)?.str("url") }
+                            ?: element.arr("images")?.firstOrNull()?.let { (it as? JsonObject)?.str("url") }
+                        val title = element.str("name") ?: element.obj("profile")?.str("name")
+                        if (!title.isNullOrBlank()) found[id] = ShelfItem(title, "Spotify playlist", image, null, uri)
+                    }
+                    element.values.forEach(::visit)
+                }
+                is JsonArray -> element.forEach(::visit)
+                else -> Unit
+            }
+        }
+        visit(root)
+        return found.values.toList()
     }
 
     /** Fetch every Spotify artist release page; Web API currently caps this endpoint at 10. */
