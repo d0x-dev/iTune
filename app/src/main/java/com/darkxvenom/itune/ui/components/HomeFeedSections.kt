@@ -727,8 +727,9 @@ private fun PortraitHeroCardItem(
     }
 }
 
-// Apple style top card: full artwork, tag + title on top, details on a frosted bottom 20%.
-private val AppleHeroShape = RoundedCornerShape(12.dp) // same corner as the player artwork square
+// Apple style top card: full artwork, tag outside above card, logo + title on top, details on frosted bottom.
+private val AppleHeroCornerRadius = 8.dp
+private val AppleHeroShape = RoundedCornerShape(AppleHeroCornerRadius)
 private val AppleHeroWidth = 250.dp
 private val AppleHeroHeight = 320.dp
 
@@ -753,123 +754,131 @@ private fun AppleHeroCardItem(
 ) {
     var cardCenter by remember { mutableStateOf(Offset.Zero) }
 
-    Box(
-        modifier = modifier
-            .width(AppleHeroWidth)
-            .height(AppleHeroHeight)
-            .onGloballyPositioned { coords ->
-                if (coords.isAttached) {
-                    val pos = coords.positionInWindow()
-                    cardCenter = Offset(
-                        x = pos.x + coords.size.width / 2f,
-                        y = pos.y + coords.size.height / 2f,
-                    )
-                }
-            }
-            .clip(AppleHeroShape)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = { onMenuClick(cardCenter) },
-            ),
+    Column(
+        modifier = modifier.width(AppleHeroWidth),
     ) {
-        HeroCardArtwork(card, Modifier.fillMaxSize(), 12.dp)
+        // Tag outside the card above (e.g. "Made for You", "Listen Again", "Trending now")
+        val categoryTag = card.category.ifBlank { "Made for You" }
+        Text(
+            text = categoryTag,
+            style = TextStyle(
+                fontFamily = LocalAppFontFamily.current,
+                fontWeight = FontWeight.Medium,
+                fontSize = 13.sp,
+                letterSpacing = (-0.1).sp,
+            ),
+            color = AppleTextSecondary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(start = 2.dp, bottom = 8.dp),
+        )
 
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .align(Alignment.TopCenter)
-                .background(Brush.verticalGradient(listOf(Color.Black.copy(alpha = 0.45f), Color.Transparent))),
-        )
-
-        Column(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .fillMaxWidth()
-                .padding(start = 14.dp, end = 14.dp, top = 14.dp),
+                .width(AppleHeroWidth)
+                .height(AppleHeroHeight)
+                .onGloballyPositioned { coords ->
+                    if (coords.isAttached) {
+                        val pos = coords.positionInWindow()
+                        cardCenter = Offset(
+                            x = pos.x + coords.size.width / 2f,
+                            y = pos.y + coords.size.height / 2f,
+                        )
+                    }
+                }
+                .clip(AppleHeroShape)
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = { onMenuClick(cardCenter) },
+                ),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            HeroCardArtwork(card, Modifier.fillMaxSize(), AppleHeroCornerRadius)
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(130.dp)
+                    .align(Alignment.TopCenter)
+                    .background(Brush.verticalGradient(listOf(Color.Black.copy(alpha = 0.50f), Color.Transparent))),
+            )
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .fillMaxWidth()
+                    .padding(start = 14.dp, end = 14.dp, top = 14.dp),
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_itune_waves),
+                        contentDescription = null,
+                        tint = Color.White.copy(alpha = 0.95f),
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = "iTune",
+                        style = TextStyle(
+                            fontFamily = LocalAppFontFamily.current,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.5.sp,
+                            letterSpacing = (-0.3).sp,
+                        ),
+                        color = Color.White.copy(alpha = 0.95f),
+                    )
+                }
+
+                Spacer(Modifier.height(8.dp))
+
                 Text(
-                    text = card.category.ifBlank { "Mood for You" }.uppercase(),
-                    style = TextStyle(
-                        fontFamily = LocalAppFontFamily.current,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 11.sp,
-                        letterSpacing = 0.8.sp,
-                    ),
-                    color = Color.White.copy(alpha = 0.85f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
-                )
-                Spacer(Modifier.width(8.dp))
-                Icon(
-                    painter = painterResource(R.drawable.ic_itune_waves),
-                    contentDescription = null,
-                    tint = Color.White.copy(alpha = 0.95f),
-                    modifier = Modifier.size(16.dp),
-                )
-                Spacer(Modifier.width(4.dp))
-                Text(
-                    text = "iTune",
+                    text = card.title,
                     style = TextStyle(
                         fontFamily = LocalAppFontFamily.current,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        letterSpacing = (-0.3).sp,
+                        fontSize = 24.sp,
+                        lineHeight = 28.sp,
+                        letterSpacing = (-0.4).sp,
                     ),
-                    color = Color.White.copy(alpha = 0.95f),
+                    color = Color.White,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
-            Spacer(Modifier.height(6.dp))
-            Text(
-                text = card.title,
-                style = TextStyle(
-                    fontFamily = LocalAppFontFamily.current,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 24.sp,
-                    lineHeight = 27.sp,
-                    letterSpacing = (-0.4).sp,
-                ),
-                color = Color.White,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(AppleHeroHeight * 0.2f)
-                .align(Alignment.BottomCenter)
-                .clipToBounds(),
-        ) {
             Box(
                 modifier = Modifier
-                    .requiredSize(AppleHeroWidth, AppleHeroHeight)
+                    .fillMaxWidth()
+                    .height(AppleHeroHeight * 0.22f)
                     .align(Alignment.BottomCenter)
-                    .blur(28.dp),
+                    .clipToBounds(),
             ) {
-                HeroCardArtwork(card, Modifier.fillMaxSize(), 0.dp)
-            }
-            Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.38f)))
-            val details = card.caption.ifBlank { card.subtitle }
-            if (details.isNotBlank()) {
-                Text(
-                    text = details,
-                    style = TextStyle(
-                        fontFamily = LocalAppFontFamily.current,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 12.sp,
-                        lineHeight = 15.sp,
-                    ),
-                    color = Color.White.copy(alpha = 0.92f),
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
+                Box(
                     modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .padding(horizontal = 14.dp, vertical = 6.dp),
-                )
+                        .requiredSize(AppleHeroWidth, AppleHeroHeight)
+                        .align(Alignment.BottomCenter)
+                        .blur(28.dp),
+                ) {
+                    HeroCardArtwork(card, Modifier.fillMaxSize(), 0.dp)
+                }
+                Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.38f)))
+                val details = card.caption.ifBlank { card.subtitle }
+                if (details.isNotBlank()) {
+                    Text(
+                        text = details,
+                        style = TextStyle(
+                            fontFamily = LocalAppFontFamily.current,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 12.sp,
+                            lineHeight = 15.sp,
+                        ),
+                        color = Color.White.copy(alpha = 0.92f),
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .padding(horizontal = 14.dp, vertical = 6.dp),
+                    )
+                }
             }
         }
     }
@@ -914,13 +923,17 @@ private fun AppleMusicAmbientArtwork(
 
 @Composable
 private fun HeroPortraitSkeletonCard() {
-    Box(
-        modifier = Modifier
-            .width(235.dp)
-            .height(325.dp)
-            .clip(RoundedCornerShape(26.dp))
-            .background(AppleSurface)
-    )
+    Column(Modifier.width(AppleHeroWidth)) {
+        Box(Modifier.width(80.dp).height(12.dp).clip(RoundedCornerShape(4.dp)).background(AppleSurfaceElevated))
+        Spacer(Modifier.height(8.dp))
+        Box(
+            modifier = Modifier
+                .width(AppleHeroWidth)
+                .height(AppleHeroHeight)
+                .clip(AppleHeroShape)
+                .background(AppleSurface)
+        )
+    }
 }
 
 @Composable
