@@ -86,11 +86,28 @@ private fun ShimmerLabel(text: String, style: TextStyle) {
         animationSpec = infiniteRepeatable(tween(3000, easing = LinearEasing), RepeatMode.Restart),
         label = "saavnShimmerPos",
     )
+    // Soft breathing glow behind the confirmed "Lossless" text.
+    val glow = rememberInfiniteTransition(label = "saavnGlow").animateFloat(
+        initialValue = 0.25f, targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(1400, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        label = "saavnGlowAlpha",
+    )
     val base = Color.White.copy(alpha = 0.7f)
     val brush = Brush.linearGradient(
         colors = listOf(base, Color.White, base),
         start = androidx.compose.ui.geometry.Offset(t.value * 160f, 0f),
         end = androidx.compose.ui.geometry.Offset(t.value * 160f + 120f, 0f),
     )
-    Text(text, style = style.copy(brush = brush), maxLines = 1)
+    Text(
+        text,
+        style = style.copy(
+            brush = brush,
+            shadow = androidx.compose.ui.graphics.Shadow(
+                color = Color(0xFFBFE3FF).copy(alpha = glow.value),
+                offset = androidx.compose.ui.geometry.Offset.Zero,
+                blurRadius = 8f + 14f * glow.value,
+            ),
+        ),
+        maxLines = 1,
+    )
 }
