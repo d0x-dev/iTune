@@ -313,18 +313,22 @@ fun ITubeDetailScreen(
         rawSongs.withIndex().associate { (i, s) -> s.videoId to ((if (byTag) s.trackNumber else null) ?: (i + 1)) }
     }
     val isArtist = page.type == BrowseType.ARTIST
+    val isSpotifyArtist = isArtist && page.browseId.startsWith("spotify:artist:")
+    val isSpotifyAlbum = page.type == BrowseType.ALBUM && page.browseId.startsWith("spotify:album:")
     val topReleaseId = if (isArtist) page.sections.topRelease()?.browseId else null
     LaunchedEffect(topReleaseId) { topReleaseId?.let { onLoadReleaseLibrary?.invoke(it) } }
 
     val appleArtVersion by AppleArtistArtRepository.updates.collectAsStateWithLifecycle()
     var appleArt by remember(page.browseId, appleArtVersion) {
-        mutableStateOf(if (isArtist) AppleArtistArtRepository.cached(page.browseId) else null)
+        mutableStateOf(if (isArtist && !isSpotifyArtist) AppleArtistArtRepository.cached(page.browseId) else null)
     }
     val songsLoading = page.songs is UiState.Loading
-    LaunchedEffect(page.browseId, page.title, songsLoading) {
-        if (isArtist && !songsLoading) {
+    LaunchedEffect(page.browseId, page.title, songsLoading, isSpotifyArtist) {
+        if (isArtist && !isSpotifyArtist && !songsLoading) {
             appleArt = AppleArtistArtRepository.artFor(page.browseId, page.title) { page.appleCatalogue() }
                 ?: appleArt
+        } else if (isSpotifyArtist) {
+            appleArt = null
         }
     }
 
@@ -334,7 +338,10 @@ fun ITubeDetailScreen(
     var signature by remember(page.browseId) { mutableStateOf<ArtistSignature?>(null) }
     val nameSettled = !page.title.looksLikeCredit() || page.songs !is UiState.Loading
     LaunchedEffect(page.browseId, page.title, nameSettled, signatureEnabled, signatureBaseUrl, signatureUpdates) {
-        if (!isArtist || !nameSettled) return@LaunchedEffect
+        if (!isArtist || isSpotifyArtist || !nameSettled) {
+            if (isSpotifyArtist) signature = null
+            return@LaunchedEffect
+        }
         val base = ArtistSignatureRepository.effectiveBaseUrl(signatureEnabled, signatureBaseUrl)
         if (base == null) {
             signature = null
@@ -386,7 +393,7 @@ fun ITubeDetailScreen(
         }
         if (isArtist) {
             canvas = artistVideo?.let { CanvasArtwork(url = it) }
-        } else if (page.type == BrowseType.ALBUM) {
+        } else if (page.type == BrowseType.ALBUM && !isSpotifyAlbum) {
             canvas = CanvasRepository.canvasForAlbum(page.title, page.subtitle)
         }
     }
@@ -423,7 +430,7 @@ fun ITubeDetailScreen(
                         canvas = canvas,
                         artHeight = artHeight,
                         listState = listState,
-                        heroUrl = appleArt?.heroUrl,
+                        heroUrl = appleArt?.heroUrl ?: page.spotifyHeaderImageUrl,
                         modifier = Modifier.matchParentSize(),
                     )
                 }

@@ -17,6 +17,7 @@ import com.darkxvenom.itune.data.model.Song
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.async
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
@@ -35,6 +36,7 @@ data class SpotifyPage(
     val sections: List<HomeShelf> = emptyList(),
     val description: String? = null,
     val followers: String? = null,
+    val headerImageUrl: String? = null,
 )
 
 object SpotifyDetail {
@@ -65,33 +67,36 @@ object SpotifyDetail {
                 // Prioritize Pathfinder GraphQL queryArtistOverview to avoid 429 delays and errors
                 artistViaPathfinder(id, fallbackTitle, fallbackThumb)?.let { return@coroutineScope it }
                 artistViaSearch(id, fallbackTitle, fallbackThumb)?.let { return@coroutineScope it }
-                val info = async { runCatching { SpotifyLibrary.restGet("/artists/$id") }.getOrNull() }
-                val top = async { runCatching { SpotifyLibrary.restGet("/artists/$id/top-tracks?market=from_token") }.getOrNull() }
-                val albums = async { runCatching { SpotifyLibrary.restGet("/artists/$id/albums?include_groups=album,single&limit=30&market=from_token") }.getOrNull() }
-                val related = async { runCatching { SpotifyLibrary.restGet("/artists/$id/related-artists") }.getOrNull() }
-                val i = info.await()
-                val songs = top.await()?.arr("tracks").orEmpty().mapNotNull { (it as? JsonObject)?.track(null, null, null) }
+                val info = runCatching { SpotifyLibrary.restGet("/artists/$id") }.getOrNull()
+                val releases = runCatching { artistAlbums(id) }.getOrDefault(emptyList())
                 val sections = buildList {
-                    val items = albums.await()?.arr("items").orEmpty().mapNotNull { (it as? JsonObject) }
                     fun shelf(title: String, list: List<JsonObject>) {
-                        if (list.isNotEmpty()) add(HomeShelf(title, list.map { x ->
-                            ShelfItem(x.str("name").orEmpty(), (x.str("release_date") ?: "").take(4), x.img(), null, "spotify:album:${x.str("id")}")
-                        }))
+                        val items = list.mapNotNull { x ->
+                            val releaseId = x.str("id") ?: return@mapNotNull null
+                            ShelfItem(
+                                x.str("name").orEmpty(),
+                                x.str("release_date").orEmpty().take(4),
+                                x.img(),
+                                null,
+                                "spotify:album:$releaseId",
+                            )
+                        }
+                        if (items.isNotEmpty()) add(HomeShelf(title, items))
                     }
-                    shelf("Albums", items.filter { it.str("album_type") == "album" })
-                    shelf("Singles & EPs", items.filter { it.str("album_type") != "album" })
-                    val rel = related.await()?.arr("artists").orEmpty().mapNotNull { it as? JsonObject }
-                    if (rel.isNotEmpty()) add(HomeShelf("Fans also like", rel.map { x ->
-                        ShelfItem(x.str("name").orEmpty(), "Artist", x.img(), null, "spotify:artist:${x.str("id")}")
-                    }))
+                    shelf("Albums", releases.filter { it.str("album_type") == "album" })
+                    shelf("Singles & EPs", releases.filter { it.str("album_type") == "single" })
+                    shelf("Compilations", releases.filter { it.str("album_type") == "compilation" })
+                    shelf("Appears On", releases.filter { it.str("album_group") == "appears_on" })
                 }
-                val followers = i?.get("followers")?.let { (it as? JsonObject)?.get("total")?.jsonPrimitive?.intOrNull }
-                if (songs.isEmpty() && sections.isEmpty()) {
-                    error("Spotify didn't return any data for this artist")
-                }
+                val followers = info?.obj("followers")?.get("total")?.jsonPrimitive?.intOrNull
+                if (sections.isEmpty()) error("Spotify didn't return any data for this artist")
                 SpotifyPage(
-                    i?.str("name") ?: fallbackTitle, "Artist", i?.img() ?: fallbackThumb, songs, sections,
-                    i?.arr("genres")?.joinToString(", ") { it.jsonPrimitive.content }?.ifBlank { null },
+                    info?.str("name") ?: fallbackTitle,
+                    "Artist",
+                    info?.img() ?: fallbackThumb,
+                    emptyList(),
+                    sections,
+                    info?.arr("genres")?.joinToString(", ") { it.jsonPrimitive.content }?.ifBlank { null },
                     followers?.let { "%,d followers".format(it) },
                 )
             }
@@ -121,6 +126,8 @@ object SpotifyDetail {
         "433e28d1e949372d3ca3aa6c47975cff428b5dc37b12f5325d9213accadf770a",
     )
 
+    private const val ARTIST_PLAYLISTS_HASH = "54f7e5a5a2af05b7dc98526df376a46c6b15c05440c8dfdc8f6cecb1a807eca7"
+
     private val ALBUM_HASHES = listOf(
         "0b6ce3511e1b02e4a40fa95440f992acbe85080eb308af9194322d708fc1914f", // Web player live getAlbum / queryAlbumTracks
         "b9bfabef66ed756e5e13f68a942deb60bd4125ec1f1be8cc42769dc0259b4b10", // Upstream getAlbum candidate
@@ -140,19 +147,21 @@ object SpotifyDetail {
             put("limit", 150)
         }
         for (h in ALBUM_HASHES) {
-            val root = runCatching { SpotifyLibrary.pathfinder("getAlbum", h, vars) }.getOrNull()
-                ?: runCatching { SpotifyLibrary.pathfinder("getAlbumNameAndTracks", h, vars) }.getOrNull()
-                ?: continue
+            var albumData: JsonObject? = null
+            for (operation in listOf("getAlbum", "getAlbumNameAndTracks")) {
+                val root = runCatching { SpotifyLibrary.pathfinder(operation, h, vars) }.getOrNull()
+                    ?: continue
+                albumData = root.obj("data")?.obj("albumUnion")
+                    ?: root.obj("data")?.obj("album")
+                if (albumData != null) break
+            }
+            val album = albumData ?: continue
 
-            val albumData = root.obj("data")?.obj("albumUnion")
-                ?: root.obj("data")?.obj("album")
-                ?: continue
-
-            val name = albumData.str("name") ?: fallbackTitle
-            val img = albumData.obj("coverArt")?.srcUrl() ?: fallbackThumb
-            val artistList = albumData.obj("artists")?.items("items").orEmpty()
+            val name = album.str("name") ?: fallbackTitle
+            val img = album.obj("coverArt")?.srcUrl() ?: fallbackThumb
+            val artistList = album.obj("artists")?.items("items").orEmpty()
             val artistName = artistList.mapNotNull { it.obj("profile")?.str("name") ?: it.str("name") }.joinToString(", ").ifBlank { "" }
-            val year = albumData.obj("date")?.let { it.str("year") ?: it.str("isoString")?.take(4) }.orEmpty()
+            val year = album.obj("date")?.let { it.str("year") ?: it.str("isoString")?.take(4) }.orEmpty()
             val subtitle = when {
                 artistName.isNotBlank() && year.isNotBlank() -> "$artistName • $year"
                 artistName.isNotBlank() -> artistName
@@ -160,7 +169,7 @@ object SpotifyDetail {
                 else -> "Album"
             }
 
-            val tracksSection = albumData.obj("tracksV2") ?: albumData.obj("tracks")
+            val tracksSection = album.obj("tracksV2") ?: album.obj("tracks")
             val trackItems = tracksSection?.items("items").orEmpty()
             val songs = trackItems.mapNotNull { elem ->
                 val t = elem.obj("track") ?: elem
@@ -193,9 +202,37 @@ object SpotifyDetail {
         val name = a.str("name") ?: fallbackTitle
         val img = a.img() ?: fallbackThumb
         val artist = a.artistNames()
-        val songs = a.arr("tracks")?.let { (it as? JsonObject)?.arr("items") }.orEmpty()
-            .mapNotNull { (it as? JsonObject)?.track(img, name, "spotify:album:$id") }
-        return SpotifyPage(name, "$artist • ${a.str("release_date").orEmpty().take(4)}", img, songs)
+        val trackItems = mutableListOf<JsonObject>()
+        var offset = 0
+        val total = a.obj("tracks")?.int("total") ?: 0
+        trackItems += a.obj("tracks")?.arr("items").orEmpty().mapNotNull { it as? JsonObject }
+        offset += trackItems.size
+        while (offset < total) {
+            val page = SpotifyLibrary.restGet("/albums/$id/tracks?limit=50&offset=$offset&market=from_token")
+            val items = page.arr("items").orEmpty().mapNotNull { it as? JsonObject }
+            if (items.isEmpty()) break
+            trackItems += items
+            offset += items.size
+        }
+        val songs = trackItems.mapNotNull { it.track(img, name, "spotify:album:$id") }
+        val totalTracks = a.obj("tracks")?.int("total") ?: songs.size
+        val label = a.str("label")?.takeIf { it.isNotBlank() }
+        val genres = a.arr("genres").orEmpty().mapNotNull { it.jsonPrimitive.contentOrNull }.joinToString(", ")
+        val copyright = a.arr("copyrights").orEmpty().mapNotNull { (it as? JsonObject)?.str("text") }
+            .distinct().joinToString("\n")
+        val details = listOfNotNull(
+            "$totalTracks tracks",
+            label?.let { "Label: $it" },
+            genres.takeIf { it.isNotBlank() }?.let { "Genres: $it" },
+            copyright.takeIf { it.isNotBlank() },
+        ).joinToString("\n")
+        return SpotifyPage(
+            name,
+            listOf(artist, a.str("release_date").orEmpty().take(4)).filter { it.isNotBlank() }.joinToString(" • "),
+            img,
+            songs,
+            description = details.ifBlank { null },
+        )
     }
 
     private suspend fun artistViaPathfinder(id: String, fallbackTitle: String, fallbackThumb: String?): SpotifyPage? {
@@ -208,6 +245,18 @@ object SpotifyDetail {
             val name = a.obj("profile")?.str("name") ?: fallbackTitle
             val thumb = a.obj("visuals")?.obj("avatarImage")?.srcUrl() ?: a.obj("visuals")?.obj("headerImage")?.srcUrl() ?: fallbackThumb
             val disc = a.obj("discography")
+            val restReleases = runCatching { artistAlbums(id) }.getOrDefault(emptyList())
+            val playlistItems = (
+                a.obj("profile")?.obj("playlistsV2")?.let(::collectSpotifyPlaylists).orEmpty() +
+                    runCatching {
+                        val playlistVars = buildJsonObject {
+                            put("uri", "spotify:artist:$id")
+                            put("offset", 0)
+                            put("limit", 50)
+                        }
+                        collectSpotifyPlaylists(SpotifyLibrary.pathfinder("queryArtistPlaylists", ARTIST_PLAYLISTS_HASH, playlistVars))
+                    }.getOrDefault(emptyList())
+                ).distinctBy { it.browseId }
             val songs = disc?.items("topTracks").orEmpty().mapNotNull { row ->
                 val t = row.obj("track") ?: return@mapNotNull null
                 val tid = t.str("uri")?.substringAfterLast(':') ?: return@mapNotNull null
@@ -228,8 +277,53 @@ object SpotifyDetail {
             }
             val sections = buildList {
                 releases(disc?.obj("popularReleasesAlbums")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Popular releases", it)) }
-                releases(disc?.obj("albums")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Albums", it)) }
-                releases(disc?.obj("singles")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Singles & EPs", it)) }
+                if (restReleases.isEmpty()) {
+                    releases(disc?.obj("albums")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Albums", it)) }
+                    releases(disc?.obj("singles")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Singles & EPs", it)) }
+                    releases(disc?.obj("compilations")).takeIf { it.isNotEmpty() }?.let { add(HomeShelf("Compilations", it)) }
+                }
+                val relatedContent = a.obj("relatedContent")
+                fun relatedShelf(key: String, title: String) {
+                    val items = relatedContent?.obj(key)?.items("items").orEmpty().flatMap { row ->
+                        row.obj("releases")?.items("items") ?: listOf(row)
+                    }.mapNotNull { r ->
+                        val rid = r.str("id") ?: r.str("uri")?.substringAfterLast(':') ?: return@mapNotNull null
+                        ShelfItem(r.str("name").orEmpty(), r.obj("date")?.str("year").orEmpty(), r.obj("coverArt")?.srcUrl(), null, "spotify:album:$rid")
+                    }
+                    if (items.isNotEmpty()) add(HomeShelf(title, items))
+                }
+                relatedShelf("appearsOn", "Appears On")
+                relatedShelf("featuringV2", "Featuring")
+                relatedShelf("discoveredOnV2", "Discovered On")
+                val pinned = a.obj("profile")?.obj("pinnedItem")
+                val pinnedUri = pinned?.str("uri")
+                val pinnedTitle = pinned?.str("title")
+                if (!pinnedUri.isNullOrBlank() && !pinnedTitle.isNullOrBlank()) {
+                    val pinnedImage = pinned.obj("thumbnailImage")?.obj("data")?.srcUrl()
+                        ?: pinned.obj("coverArt")?.srcUrl()
+                    val pinnedSubtitle = listOfNotNull(
+                        pinned.str("subtitle")?.takeIf { it.isNotBlank() },
+                        pinned.str("comment")?.takeIf { it.isNotBlank() },
+                    ).joinToString(" • ")
+                    add(HomeShelf("Artist Pick", listOf(
+                        ShelfItem(pinnedTitle, pinnedSubtitle, pinnedImage, null, pinnedUri),
+                    )))
+                }
+                if (playlistItems.isNotEmpty()) add(HomeShelf("Artist Playlists", playlistItems))
+                val restAlbums = restReleases.filter { it.str("album_type") == "album" }
+                val restSingles = restReleases.filter { it.str("album_type") == "single" }
+                val restCompilations = restReleases.filter { it.str("album_type") == "compilation" }
+                fun restShelf(title: String, list: List<JsonObject>) {
+                    val mapped = list.mapNotNull { r ->
+                        val rid = r.str("id") ?: return@mapNotNull null
+                        ShelfItem(r.str("name").orEmpty(), r.str("release_date").orEmpty().take(4), r.img(), null, "spotify:album:$rid")
+                    }
+                    if (mapped.isNotEmpty()) add(HomeShelf(title, mapped))
+                }
+                restShelf("Albums", restAlbums)
+                restShelf("Singles & EPs", restSingles)
+                restShelf("Compilations", restCompilations)
+                restShelf("Appears On", restReleases.filter { it.str("album_group") == "appears_on" })
                 val rel = a.obj("relatedContent")?.obj("relatedArtists")?.items("items").orEmpty().mapNotNull { r ->
                     val rid = r.str("id") ?: r.str("uri")?.substringAfterLast(':') ?: return@mapNotNull null
                     ShelfItem(r.obj("profile")?.str("name").orEmpty(), "Artist", r.obj("visuals")?.obj("avatarImage")?.srcUrl(), null, "spotify:artist:$rid")
@@ -241,9 +335,54 @@ object SpotifyDetail {
             val listeners = stats?.get("monthlyListeners")?.jsonPrimitive?.intOrNull?.let { "%,d monthly listeners".format(it) }
                 ?: stats?.get("followers")?.jsonPrimitive?.intOrNull?.let { "%,d followers".format(it) }
             val bio = a.obj("profile")?.obj("biography")?.str("text")?.replace(Regex("<[^>]*>"), "")?.ifBlank { null }
-            return SpotifyPage(name, "Artist", thumb, songs, sections, bio, listeners)
+            val headerImage = a.obj("headerImage")?.obj("data")?.srcUrl()
+                ?: a.obj("visuals")?.obj("headerImage")?.srcUrl()
+            return SpotifyPage(name, "Artist", thumb, songs, sections, bio, listeners, headerImage)
         }
         return null
+    }
+
+    /** Extract Spotify playlist cards from the artist-playlists Pathfinder response. */
+    private fun collectSpotifyPlaylists(root: JsonElement): List<ShelfItem> {
+        val found = linkedMapOf<String, ShelfItem>()
+        fun visit(element: JsonElement) {
+            when (element) {
+                is JsonObject -> {
+                    val uri = element.str("uri")
+                    if (!uri.isNullOrBlank() && uri.startsWith("spotify:playlist:")) {
+                        val id = uri.substringAfterLast(':')
+                        val image = element.obj("coverArt")?.srcUrl()
+                            ?: element.obj("images")?.arr("items")?.firstOrNull()?.let { (it as? JsonObject)?.str("url") }
+                            ?: element.arr("images")?.firstOrNull()?.let { (it as? JsonObject)?.str("url") }
+                        val title = element.str("name") ?: element.obj("profile")?.str("name")
+                        if (!title.isNullOrBlank()) found[id] = ShelfItem(title, "Spotify playlist", image, null, uri)
+                    }
+                    element.values.forEach(::visit)
+                }
+                is JsonArray -> element.forEach(::visit)
+                else -> Unit
+            }
+        }
+        visit(root)
+        return found.values.toList()
+    }
+
+    /** Fetch every Spotify artist release page; Web API currently caps this endpoint at 10. */
+    private suspend fun artistAlbums(id: String): List<JsonObject> {
+        val collected = mutableListOf<JsonObject>()
+        var offset = 0
+        var total = Int.MAX_VALUE
+        while (offset < total && offset < 1000) {
+            val page = SpotifyLibrary.restGet(
+                "/artists/$id/albums?include_groups=album,single,appears_on,compilation&limit=10&offset=$offset&market=from_token",
+            )
+            val items = page.arr("items").orEmpty().mapNotNull { it as? JsonObject }
+            if (items.isEmpty()) break
+            collected += items
+            offset += items.size
+            total = page.int("total") ?: offset
+        }
+        return collected.distinctBy { it.str("id") }
     }
 
     /** Last resort: Spotify search for the artist's tracks and albums. */
@@ -280,6 +419,7 @@ object SpotifyDetail {
     }
 
     private fun JsonObject.str(k: String) = runCatching { this[k]?.jsonPrimitive?.contentOrNull }.getOrNull()
+    private fun JsonObject.int(k: String) = runCatching { this[k]?.jsonPrimitive?.intOrNull }.getOrNull()
     private fun JsonObject.arr(k: String) = this[k] as? JsonArray
     private fun JsonObject.artistNames() = arr("artists")?.mapNotNull { (it as? JsonObject)?.str("name") }?.joinToString(", ").orEmpty()
     private fun JsonObject.img() = arr("images")?.firstOrNull()?.jsonObject?.str("url")

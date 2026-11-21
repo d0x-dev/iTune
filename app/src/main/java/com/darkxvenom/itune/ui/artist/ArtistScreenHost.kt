@@ -305,6 +305,7 @@ class ArtistHostController internal constructor(
                                 title = sp.title, subtitle = sp.subtitle, thumbnailUrl = sp.thumbnailUrl ?: existing.thumbnailUrl,
                                 songs = UiState.Success(stamped), sections = sp.sections, description = sp.description,
                                 monthlyListenerCount = sp.followers,
+                                spotifyHeaderImageUrl = sp.headerImageUrl,
                             )
                         }
                     },
