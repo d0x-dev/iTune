@@ -48,6 +48,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -417,11 +420,12 @@ fun LiveFeaturedHeroCarousel(
     isLoading: Boolean,
     modifier: Modifier = Modifier,
     isPortrait: Boolean = false,
+    isApple: Boolean = false,
     sectionTitle: String = "Top Picks for You",
     onCardClick: (HomeHeroCard) -> Unit,
     onCardMenuClick: (HomeHeroCard, Offset) -> Unit = { _, _ -> },
 ) {
-    if (isPortrait) {
+    if (isPortrait || isApple) {
         Column(modifier = modifier.fillMaxWidth()) {
             Text(
                 text = sectionTitle,
@@ -447,11 +451,19 @@ fun LiveFeaturedHeroCarousel(
                     items(2) { HeroPortraitSkeletonCard() }
                 } else {
                     items(cards, key = { it.id }) { card ->
-                        PortraitHeroCardItem(
-                            card = card,
-                            onClick = { onCardClick(card) },
-                            onMenuClick = { offset -> onCardMenuClick(card, offset) },
-                        )
+                        if (isApple) {
+                            AppleHeroCardItem(
+                                card = card,
+                                onClick = { onCardClick(card) },
+                                onMenuClick = { offset -> onCardMenuClick(card, offset) },
+                            )
+                        } else {
+                            PortraitHeroCardItem(
+                                card = card,
+                                onClick = { onCardClick(card) },
+                                onMenuClick = { offset -> onCardMenuClick(card, offset) },
+                            )
+                        }
                     }
                 }
             }
@@ -710,6 +722,154 @@ private fun PortraitHeroCardItem(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
+            }
+        }
+    }
+}
+
+// Apple style top card: full artwork, tag + title on top, details on a frosted bottom 20%.
+private val AppleHeroShape = RoundedCornerShape(12.dp) // same corner as the player artwork square
+private val AppleHeroWidth = 250.dp
+private val AppleHeroHeight = 320.dp
+
+@Composable
+private fun HeroCardArtwork(card: HomeHeroCard, modifier: Modifier, cornerRadius: androidx.compose.ui.unit.Dp) {
+    if (!card.imageUrl.isNullOrBlank()) {
+        Artwork(card.imageUrl, modifier, RoundedCornerShape(cornerRadius))
+    } else if (card.heroType != null) {
+        AlbumArtwork(type = card.heroType, modifier = modifier, cornerRadius = cornerRadius)
+    } else {
+        AppleMusicAmbientArtwork(title = card.title, category = card.category, modifier = modifier)
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun AppleHeroCardItem(
+    card: HomeHeroCard,
+    onClick: () -> Unit,
+    onMenuClick: (Offset) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var cardCenter by remember { mutableStateOf(Offset.Zero) }
+
+    Box(
+        modifier = modifier
+            .width(AppleHeroWidth)
+            .height(AppleHeroHeight)
+            .onGloballyPositioned { coords ->
+                if (coords.isAttached) {
+                    val pos = coords.positionInWindow()
+                    cardCenter = Offset(
+                        x = pos.x + coords.size.width / 2f,
+                        y = pos.y + coords.size.height / 2f,
+                    )
+                }
+            }
+            .clip(AppleHeroShape)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = { onMenuClick(cardCenter) },
+            ),
+    ) {
+        HeroCardArtwork(card, Modifier.fillMaxSize(), 12.dp)
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp)
+                .align(Alignment.TopCenter)
+                .background(Brush.verticalGradient(listOf(Color.Black.copy(alpha = 0.45f), Color.Transparent))),
+        )
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .fillMaxWidth()
+                .padding(start = 14.dp, end = 14.dp, top = 14.dp),
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = card.category.ifBlank { "Mood for You" }.uppercase(),
+                    style = TextStyle(
+                        fontFamily = LocalAppFontFamily.current,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 11.sp,
+                        letterSpacing = 0.8.sp,
+                    ),
+                    color = Color.White.copy(alpha = 0.85f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                )
+                Spacer(Modifier.width(8.dp))
+                Icon(
+                    painter = painterResource(R.drawable.ic_itune_waves),
+                    contentDescription = null,
+                    tint = Color.White.copy(alpha = 0.95f),
+                    modifier = Modifier.size(16.dp),
+                )
+                Spacer(Modifier.width(4.dp))
+                Text(
+                    text = "iTune",
+                    style = TextStyle(
+                        fontFamily = LocalAppFontFamily.current,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        letterSpacing = (-0.3).sp,
+                    ),
+                    color = Color.White.copy(alpha = 0.95f),
+                )
+            }
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = card.title,
+                style = TextStyle(
+                    fontFamily = LocalAppFontFamily.current,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 24.sp,
+                    lineHeight = 27.sp,
+                    letterSpacing = (-0.4).sp,
+                ),
+                color = Color.White,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(AppleHeroHeight * 0.2f)
+                .align(Alignment.BottomCenter)
+                .clipToBounds(),
+        ) {
+            Box(
+                modifier = Modifier
+                    .requiredSize(AppleHeroWidth, AppleHeroHeight)
+                    .align(Alignment.BottomCenter)
+                    .blur(28.dp),
+            ) {
+                HeroCardArtwork(card, Modifier.fillMaxSize(), 0.dp)
+            }
+            Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.38f)))
+            val details = card.caption.ifBlank { card.subtitle }
+            if (details.isNotBlank()) {
+                Text(
+                    text = details,
+                    style = TextStyle(
+                        fontFamily = LocalAppFontFamily.current,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 12.sp,
+                        lineHeight = 15.sp,
+                    ),
+                    color = Color.White.copy(alpha = 0.92f),
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(horizontal = 14.dp, vertical = 6.dp),
+                )
             }
         }
     }
