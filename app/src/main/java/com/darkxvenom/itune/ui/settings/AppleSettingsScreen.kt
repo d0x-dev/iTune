@@ -2787,6 +2787,20 @@ private fun buildSettingsSections(
                     checked = state.jioSaavnProvider,
                     onToggle = { onToggleBool(SettingsStore.KEY_JIOSAAVN_PROVIDER, it) },
                 ),
+                SettingsEntry.Toggle(
+                    id = "upgrade_cached_songs",
+                    title = "Upgrade Quality of Cached Songs",
+                    subtitle = if (state.upgradeCachedSongs) {
+                        if (state.jioSaavnProvider) "Cached YouTube songs are replaced with JioSaavn quality when played"
+                        else "On · needs JioSaavn Provider to take effect"
+                    } else {
+                        "Off · Cached songs play as they are"
+                    },
+                    iconRes = R.drawable.ic_settings_lossless,
+                    keywords = listOf("cache", "cached", "upgrade", "jiosaavn", "replace", "quality"),
+                    checked = state.upgradeCachedSongs,
+                    onToggle = { onToggleBool(SettingsStore.KEY_UPGRADE_CACHED, it) },
+                ),
                 SettingsEntry.Picker(
                     id = "audio_quality",
                     title = "Streaming Quality",
@@ -2893,6 +2907,20 @@ private fun buildSettingsSections(
                     keywords = listOf("pause", "volume", "zero", "mute", "playback", "silence"),
                     checked = state.pauseOnZeroVolume,
                     onToggle = { onToggleBool(SettingsStore.KEY_PAUSE_ON_ZERO_VOLUME, it) },
+                ),
+                SettingsEntry.Picker(
+                    id = "volume_bar_side",
+                    title = "Volume Bar",
+                    subtitle = "Shown on the ${state.volumeBarSide.lowercase()} edge when you press the volume buttons",
+                    iconRes = R.drawable.volume_off,
+                    keywords = listOf("volume", "bar", "left", "right", "side", "slider", "hud"),
+                    currentValue = state.volumeBarSide,
+                    description = "Choose which edge of the screen the in-app volume bar appears on.",
+                    options = listOf(
+                        SettingsOptionChoice("Right", "Show the volume bar on the right edge (default)"),
+                        SettingsOptionChoice("Left", "Show the volume bar on the left edge"),
+                    ),
+                    onSelect = { onSelectString(SettingsStore.KEY_VOLUME_BAR_SIDE, it) },
                 ),
             ),
         ),
