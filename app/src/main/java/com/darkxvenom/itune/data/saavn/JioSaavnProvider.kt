@@ -35,6 +35,8 @@ object SaavnQuality {
     private val _statuses = MutableStateFlow<Map<String, SaavnStatus>>(emptyMap())
     val statuses: StateFlow<Map<String, SaavnStatus>> = _statuses
 
+    fun clear(trackId: String) = _statuses.update { it - trackId }
+
     fun set(trackId: String, status: SaavnStatus) = _statuses.update { cur ->
         val next = if (cur.size > 60) cur.entries.drop(30).associate { it.key to it.value } else cur
         next + (trackId to status)
@@ -59,10 +61,12 @@ object JioSaavnProvider {
     private class Hit(val id: String, val title: String, val artists: List<String>, val encUrl: String, val has320: Boolean)
 
     /** A playable JioSaavn URL for this track, or null (→ use YouTube). */
-    suspend fun resolve(trackId: String, title: String, artist: String, excludedUrls: Set<String>): String? =
+    suspend fun resolve(
+        trackId: String, title: String, artist: String, excludedUrls: Set<String>, force: Boolean = false,
+    ): String? =
         withContext(Dispatchers.IO) {
             val cached = cache[trackId]
-            if (cached != null && System.currentTimeMillis() - cached.at < CACHE_TTL_MS) {
+            if (!force && cached != null && System.currentTimeMillis() - cached.at < CACHE_TTL_MS) {
                 val url = cached.url?.takeIf { it !in excludedUrls }
                 SaavnQuality.set(trackId, if (url != null) SaavnStatus.LOSSLESS else SaavnStatus.FALLBACK)
                 return@withContext url
@@ -75,6 +79,14 @@ object JioSaavnProvider {
             SaavnQuality.set(trackId, if (url != null) SaavnStatus.LOSSLESS else SaavnStatus.FALLBACK)
             url
         }
+
+    /** True for a stream URL that came from JioSaavn's CDN. */
+    fun isSaavnUrl(url: String): Boolean = url.contains("saavncdn.com", ignoreCase = true)
+
+    /** Status-free lookup, used for background cache upgrades. */
+    suspend fun lookup(title: String, artist: String): String? = withContext(Dispatchers.IO) {
+        runCatching { find(title, artist) }.getOrNull()
+    }
 
     private fun find(title: String, artist: String): String? {
         val hits = search("$title $artist")
