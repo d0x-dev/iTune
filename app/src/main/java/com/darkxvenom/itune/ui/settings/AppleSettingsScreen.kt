@@ -1415,22 +1415,24 @@ private fun SettingsEntryRow(
         }
         is SettingsEntry.SegmentedToggle -> {
             {
-                val next = if (entry.selectedOption == entry.options.firstOrNull()) {
-                    entry.options.getOrNull(1) ?: entry.options.first()
-                } else {
-                    entry.options.first()
-                }
+                val index = entry.options.indexOf(entry.selectedOption)
+                val next = entry.options[(index + 1) % entry.options.size]
                 haptics.play(Haptic.Select)
                 entry.onSelect(next)
             }
         }
     }
 
-    Row(
+    val stackedSegments = entry is SettingsEntry.SegmentedToggle && entry.options.size > 2
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .alpha(animatedAlpha)
-            .clickable(enabled = isEntryEnabled, onClick = rowClick)
+            .clickable(enabled = isEntryEnabled, onClick = rowClick),
+    ) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(horizontal = 15.dp, vertical = if (entry.subtitle != null) 11.dp else 13.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -1499,14 +1501,16 @@ private fun SettingsEntryRow(
                 )
             }
             is SettingsEntry.SegmentedToggle -> {
-                AppleSegmentedSwitch(
-                    options = entry.options,
-                    selectedOption = entry.selectedOption,
-                    onSelect = { choice ->
-                        haptics.play(Haptic.Select)
-                        entry.onSelect(choice)
-                    },
-                )
+                if (!stackedSegments) {
+                    AppleSegmentedSwitch(
+                        options = entry.options,
+                        selectedOption = entry.selectedOption,
+                        onSelect = { choice ->
+                            haptics.play(Haptic.Select)
+                            entry.onSelect(choice)
+                        },
+                    )
+                }
             }
             is SettingsEntry.EffectToggleAction -> {
                 Box(modifier = Modifier.alpha(if (entry.switchEnabled) 1f else 0.42f)) {
@@ -1573,6 +1577,20 @@ private fun SettingsEntryRow(
                 )
             }
         }
+    }
+    if (entry is SettingsEntry.SegmentedToggle && stackedSegments) {
+        AppleSegmentedSwitch(
+            options = entry.options,
+            selectedOption = entry.selectedOption,
+            onSelect = { choice ->
+                haptics.play(Haptic.Select)
+                entry.onSelect(choice)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 54.dp, end = 15.dp, bottom = 12.dp),
+        )
+    }
     }
 }
 
@@ -3088,17 +3106,17 @@ private fun buildSettingsSections(
             SettingsEntry.SegmentedToggle(
                 id = "top_card_type",
                 title = "Home Top Card Style",
-                subtitle = if (state.topCardType == SettingsStore.TOP_CARD_TYPE_PORTRAIT) {
-                    "Portrait • Apple Music card with frosted blur"
-                } else {
-                    "Landscape • Wide 16:9 banner card"
+                subtitle = when (state.topCardType) {
+                    SettingsStore.TOP_CARD_TYPE_PORTRAIT -> "Portrait — Apple Music card with frosted blur"
+                    SettingsStore.TOP_CARD_TYPE_APPLE -> "Apple — Full artwork, title on top, frosted details"
+                    else -> "Landscape — Wide 16:9 banner card"
                 },
                 iconRes = R.drawable.ic_settings_liquid_glass,
                 keywords = listOf(
                     "top", "card", "hero", "portrait", "landscape", "home", "carousel",
-                    "style", "orientation", "shape", "banner"
+                    "style", "orientation", "shape", "banner", "apple"
                 ),
-                options = listOf(SettingsStore.TOP_CARD_TYPE_LANDSCAPE, SettingsStore.TOP_CARD_TYPE_PORTRAIT),
+                options = listOf(SettingsStore.TOP_CARD_TYPE_LANDSCAPE, SettingsStore.TOP_CARD_TYPE_PORTRAIT, SettingsStore.TOP_CARD_TYPE_APPLE),
                 selectedOption = state.topCardType,
                 onSelect = { onSelectString(SettingsStore.KEY_TOP_CARD_TYPE, it) },
             ),
