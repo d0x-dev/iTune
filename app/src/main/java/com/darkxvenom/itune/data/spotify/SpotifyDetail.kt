@@ -36,6 +36,7 @@ data class SpotifyPage(
     val sections: List<HomeShelf> = emptyList(),
     val description: String? = null,
     val followers: String? = null,
+    val headerImageUrl: String? = null,
 )
 
 object SpotifyDetail {
@@ -334,7 +335,9 @@ object SpotifyDetail {
             val listeners = stats?.get("monthlyListeners")?.jsonPrimitive?.intOrNull?.let { "%,d monthly listeners".format(it) }
                 ?: stats?.get("followers")?.jsonPrimitive?.intOrNull?.let { "%,d followers".format(it) }
             val bio = a.obj("profile")?.obj("biography")?.str("text")?.replace(Regex("<[^>]*>"), "")?.ifBlank { null }
-            return SpotifyPage(name, "Artist", thumb, songs, sections, bio, listeners)
+            val headerImage = a.obj("headerImage")?.obj("data")?.srcUrl()
+                ?: a.obj("visuals")?.obj("headerImage")?.srcUrl()
+            return SpotifyPage(name, "Artist", thumb, songs, sections, bio, listeners, headerImage)
         }
         return null
     }
