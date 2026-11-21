@@ -437,30 +437,27 @@ object SpotifyLibrary {
             put("description", "")
         }.toString()
 
-        val userId = runCatching { currentUserId(tokens) }.getOrNull()
-        val endpoints = buildList {
-            if (!userId.isNullOrBlank()) add("$REST_API/users/$userId/playlists")
-            add("$REST_API/me/playlists")
+        // Use Spotify's current create-playlist route. The legacy
+        // /users/{user_id}/playlists endpoint has been retired.
+        val req = Request.Builder()
+            .url("$REST_API/me/playlists")
+            .post(payload.toRequestBody(mediaType))
+            .apply { restHeaders(tokens).forEach { (k, v) -> header(k, v) } }
+            .build()
+        val (code, responseText) = execRetry(req)
+        val obj = if (code in 200..299 && responseText.isNotBlank()) {
+            runCatching { json.parseToJsonElement(responseText).jsonObject }.getOrNull()
+        } else {
+            null
         }
-
-        var lastCode = -1
-        var createdObj: JsonObject? = null
-        for (url in endpoints) {
-            val req = Request.Builder()
-                .url(url)
-                .post(payload.toRequestBody(mediaType))
-                .apply { restHeaders(tokens).forEach { (k, v) -> header(k, v) } }
-                .build()
-            val (code, text) = execRetry(req)
-            lastCode = code
-            if (code in 200..299 && text.isNotBlank()) {
-                createdObj = runCatching { json.parseToJsonElement(text).jsonObject }.getOrNull()
-            }
-            if (createdObj != null || code == 429) break // don't hammer the fallback endpoint while rate limited
+        if (obj == null) {
+            val detail = runCatching {
+                json.parseToJsonElement(responseText).jsonObject
+                    .obj("error")?.str("message")
+            }.getOrNull()
+            val reason = detail?.takeIf { it.isNotBlank() }?.let { ": $it" }.orEmpty()
+            throw IllegalStateException("Could not create Spotify playlist (HTTP $code)$reason")
         }
-
-        val obj = createdObj
-            ?: throw IllegalStateException("Could not create Spotify playlist (HTTP $lastCode)")
         val id = obj.str("id")?.takeIf { it.isNotBlank() }
             ?: throw IllegalStateException("Spotify did not return a playlist ID")
         val resolvedName = obj.str("name")?.takeIf { it.isNotBlank() } ?: cleanName
