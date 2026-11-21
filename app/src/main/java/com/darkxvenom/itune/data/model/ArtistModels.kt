@@ -216,6 +216,7 @@ data class DetailPage(
     val radio: WatchTarget? = null,
     val shuffle: WatchTarget? = null,
     val collageArtworkUrls: List<String> = emptyList(),
+    val spotifyHeaderImageUrl: String? = null,
 )
 
 data class LibraryState(
