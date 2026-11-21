@@ -185,6 +185,9 @@ fun AppleVolumeOverlay(
     val isVisible by AppleVolumeManager.isVisible.collectAsStateWithLifecycle()
     val rawFraction by AppleVolumeManager.volumeFraction.collectAsStateWithLifecycle()
     val isDragging by AppleVolumeManager.isDragging.collectAsStateWithLifecycle()
+    val barOnLeft = com.darkxvenom.itune.data.library.SettingsStore.state
+        .collectAsStateWithLifecycle().value.volumeBarSide == "Left"
+    val sideSign = if (barOnLeft) -1 else 1
     // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
     val animatedFraction by animateFloatAsState(
@@ -218,12 +221,12 @@ fun AppleVolumeOverlay(
 
     Box(
         modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.CenterEnd,
+        contentAlignment = if (barOnLeft) Alignment.CenterStart else Alignment.CenterEnd,
     ) {
         AnimatedVisibility(
             visible = isVisible,
             enter = slideInHorizontally(
-                initialOffsetX = { it + 80 },
+                initialOffsetX = { sideSign * (it + 80) },
                 animationSpec = spring(
                     dampingRatio = 0.72f,
                     stiffness = 380f,
@@ -232,11 +235,11 @@ fun AppleVolumeOverlay(
                 animationSpec = tween(durationMillis = 180, easing = LinearOutSlowInEasing),
             ) + scaleIn(
                 initialScale = 0.88f,
-                transformOrigin = TransformOrigin(1f, 0.5f),
+                transformOrigin = TransformOrigin(if (barOnLeft) 0f else 1f, 0.5f),
                 animationSpec = spring(dampingRatio = 0.72f, stiffness = 380f),
             ),
             exit = slideOutHorizontally(
-                targetOffsetX = { it + 80 },
+                targetOffsetX = { sideSign * (it + 80) },
                 animationSpec = spring(
                     dampingRatio = 0.90f,
                     stiffness = 450f,
@@ -245,7 +248,7 @@ fun AppleVolumeOverlay(
                 animationSpec = tween(durationMillis = 220, easing = FastOutLinearInEasing),
             ) + scaleOut(
                 targetScale = 0.88f,
-                transformOrigin = TransformOrigin(1f, 0.5f),
+                transformOrigin = TransformOrigin(if (barOnLeft) 0f else 1f, 0.5f),
                 animationSpec = tween(durationMillis = 220),
             ),
         ) {
@@ -254,7 +257,7 @@ fun AppleVolumeOverlay(
 
             Box(
                 modifier = Modifier
-                    .padding(end = 16.dp)
+                    .padding(start = if (barOnLeft) 16.dp else 0.dp, end = if (barOnLeft) 0.dp else 16.dp)
                     .offset(y = (-32).dp)
                     .width(capsuleWidth)
                     .height(capsuleHeight)
