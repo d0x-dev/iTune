@@ -55,7 +55,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -1605,6 +1607,36 @@ private fun SignalPipelinePage(
         if (isEmpty()) add("Clean Passthrough")
     }.joinToString(" • ")
 
+    // Where the stream really came from, and what the decoder is reading right now.
+    val traces by com.darkxvenom.itune.audio.StreamTraceStore.traces.collectAsStateWithLifecycle()
+    val trace = track?.let { traces[it.id] }
+    var liveFormat by remember { mutableStateOf<androidx.media3.common.Format?>(null) }
+    LaunchedEffect(track?.id) {
+        while (true) {
+            liveFormat = com.darkxvenom.itune.backend.MusicPlayerState.liveAudioFormat()
+            kotlinx.coroutines.delay(1000)
+        }
+    }
+    val fmt = liveFormat
+    val liveKbps = fmt?.takeIf { it.bitrate > 0 }?.let { "${it.bitrate / 1000} kbps" }
+    val liveCodec = fmt?.sampleMimeType?.lowercase()?.let { m ->
+        when {
+            "mp4a" in m || "aac" in m -> "AAC"
+            "opus" in m -> "Opus"
+            "vorbis" in m -> "Vorbis"
+            "flac" in m -> "FLAC"
+            "mpeg" in m -> "MP3"
+            else -> m.substringAfter('/').uppercase()
+        }
+    }
+    val decoderText = when {
+        fmt == null -> "Media3 ExoPlayer • waiting for audio"
+        else -> listOfNotNull("Media3 ExoPlayer", liveCodec, liveKbps).joinToString(" • ")
+    }
+    val liveRate = fmt?.takeIf { it.sampleRate > 0 }?.let { "%.1f kHz".format(it.sampleRate / 1000f) }
+    val liveCh = fmt?.takeIf { it.channelCount > 0 }?.let { if (it == 2) "Stereo" else "$it ch" }
+    val qualityLine = trace?.quality?.takeIf { it.isNotBlank() } ?: liveKbps?.let { "$it • ${liveCodec.orEmpty()}" }.orEmpty()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1617,10 +1649,25 @@ private fun SignalPipelinePage(
     ) {
         EngineSectionLabel("LIVE AUDIO SIGNAL CHAIN", null)
         EngineKeyValueRow("1. Track", track?.let { "${it.title} — ${it.artists}" } ?: "No active track (Engine Ready)")
-        EngineKeyValueRow("2. Decoder", "Media3 / PCM 16-bit")
-        EngineKeyValueRow("3. Sample Rate", sampleRate)
-        EngineKeyValueRow("4. Active DSP", dspChain)
-        EngineKeyValueRow("5. Output Sink", deviceName)
+        EngineKeyValueRow("2. Stream Source", trace?.source ?: "—")
+        if (qualityLine.isNotBlank()) EngineKeyValueRow("3. Source Quality", qualityLine)
+        EngineKeyValueRow("4. Decoder", decoderText)
+        EngineKeyValueRow("5. Sample Rate", liveRate?.let { r -> liveCh?.let { "$r • $it" } ?: r } ?: sampleRate)
+        EngineKeyValueRow("6. Active DSP", dspChain)
+        EngineKeyValueRow("7. Output Sink", deviceName)
+
+        if (!trace?.steps.isNullOrEmpty()) {
+            Spacer(Modifier.height(4.dp))
+            EngineSectionLabel("HOW THIS STREAM WAS FOUND", null)
+            trace?.steps?.forEachIndexed { i, step ->
+                Text(
+                    text = "${i + 1}. $step",
+                    color = Color.White.copy(alpha = 0.72f),
+                    fontSize = 11.5.sp,
+                    lineHeight = 15.sp,
+                )
+            }
+        }
     }
 }
 
