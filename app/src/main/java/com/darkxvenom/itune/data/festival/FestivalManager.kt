@@ -17,6 +17,7 @@ import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import com.darkxvenom.itune.backend.Net
+import com.darkxvenom.itune.data.updates.AppUpdateManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -120,6 +121,9 @@ object FestivalManager {
      * - Checks "festival" boolean first.
      * - If false, text and color are not required or validated.
      * - If true, validates non-blank "text" and valid hex "color".
+     * - Optional "version": a single version ("1.2.0"), a list (["1.2.0", "1.2.1"]) or a comma-separated
+     *   string. The festival applies only when the installed app version is in it; otherwise it is ignored.
+     *   Without a "version" field the festival applies to every version (as before).
      */
     fun parseFestivalConfig(rawJson: String): FestivalConfig {
         return try {
@@ -129,6 +133,11 @@ object FestivalManager {
             val json = JSONObject(trimmed)
             val festival = json.optBoolean("festival", false)
             if (!festival) {
+                return FestivalConfig(enabled = false)
+            }
+
+            if (!appliesToThisVersion(json)) {
+                Log.i(TAG, "Festival ignored: installed ${AppUpdateManager.installedVersion} is not in its version list")
                 return FestivalConfig(enabled = false)
             }
 
@@ -150,6 +159,22 @@ object FestivalManager {
         } catch (_: Exception) {
             FestivalConfig(enabled = false)
         }
+    }
+
+    private fun normVersion(v: String): String = v.trim().removePrefix("v").removePrefix("V").trim()
+
+    /** True when "version" is absent, or lists this app's version name (or version code). */
+    private fun appliesToThisVersion(json: JSONObject): Boolean {
+        if (!json.has("version") || json.isNull("version")) return true
+        val raw = json.opt("version")
+        val listed: List<String> = when (raw) {
+            is org.json.JSONArray -> (0 until raw.length()).map { raw.opt(it)?.toString().orEmpty() }
+            else -> raw?.toString().orEmpty().split(',', ';', '|')
+        }.map(::normVersion).filter { it.isNotEmpty() }
+        if (listed.isEmpty()) return true
+        val name = normVersion(AppUpdateManager.installedVersion)
+        val code = AppUpdateManager.installedVersionCode.toString()
+        return listed.any { it.equals(name, ignoreCase = true) || it == code }
     }
 
     fun parseHexColor(hex: String): Color? {
