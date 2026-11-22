@@ -135,16 +135,16 @@ fun FloatingNavBar(
     }
 
     // Dynamic morphing:
-    // 1. Normal resting shade: subtle inside-dock oval capsule (58dp x 44dp) with red text/icon
-    // 2. Tap-and-hold glassy bubble: width kept wide (72dp), height decreased to sleek 48dp (compact, not tall)
+    // 1. Normal resting shade: subtle inside-dock oval capsule (56dp x 42dp) with red text/icon
+    // 2. Tap-and-hold glassy bubble: sleek, compact, organic liquid lens sized to fit comfortably inside the dock
     val currentBubbleWidthDp by animateDpAsState(
-        targetValue = if (isHolding) 72.dp else 58.dp,
+        targetValue = if (isHolding) 66.dp else 56.dp,
         animationSpec = tween(durationMillis = 160),
         label = "BubbleWidth"
     )
 
     val currentBubbleHeightDp by animateDpAsState(
-        targetValue = if (isHolding) 54.dp else 44.dp,
+        targetValue = if (isHolding) 48.dp else 42.dp,
         animationSpec = tween(durationMillis = 160),
         label = "BubbleHeight"
     )
@@ -331,8 +331,8 @@ fun FloatingNavBar(
                                     highlight = { Highlight.Default.copy(alpha = holdingProgress) },
                                     shadow = { Shadow(alpha = holdingProgress) },
                                     layerBlock = {
-                                        scaleX = 1f + 0.45f * holdingProgress
-                                        scaleY = 1f + 0.55f * holdingProgress
+                                        scaleX = 1f + 0.10f * holdingProgress
+                                        scaleY = 1f + 0.10f * holdingProgress
                                     },
                                     onDrawSurface = { drawRect(Color.White.copy(alpha = 0.05f * holdingProgress)) },
                                 )
