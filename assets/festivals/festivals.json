@@ -1,5 +1,6 @@
 {
   "festival": true,
-  "text": "Update coming today ",
-  "color": "#E0115F"
+  "text": "Update Available",
+  "color": "#E0115F",
+  "version": ["1.0", "1.1", "1.2"]
 }
