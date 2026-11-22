@@ -58,6 +58,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.material.icons.automirrored.rounded.Sort
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -358,7 +360,13 @@ fun AppleSettingsScreen(
     var showAodSettings by rememberSaveable { mutableStateOf(false) }
     var showWidgetSettings by rememberSaveable { mutableStateOf(false) }
     var showSpotifyIntegration by rememberSaveable { mutableStateOf(false) }
+    // Minimised layout: which grouped screen is open (null = the main settings screen).
+    var activeSectionId by rememberSaveable { mutableStateOf<String?>(null) }
+    var showAppearancePopup by remember { mutableStateOf(false) }
 
+    BackHandler(enabled = activeSectionId != null && !showSpotifyIntegration && !showAodSettings && !showWidgetSettings && !showLyricsSettings && !showDeveloperNews && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
+        activeSectionId = null
+    }
     BackHandler(enabled = showSpotifyIntegration && !showLyricsSettings && !showDeveloperNews && !showProfileAccount && activeAudioEffectPage == null && activePicker == null && !showNameDialog && !showAboutDialog) {
         showSpotifyIntegration = false
     }
@@ -545,6 +553,25 @@ fun AppleSettingsScreen(
     }
 
     val trimmedQuery = searchQuery.trim()
+    val minimised = state.settingsMinimised && trimmedQuery.isEmpty()
+    // "News from dev" and "About" always live on the main screen in the Minimised layout.
+    val devAboutIds = setOf("developer_news", "about_itune")
+    val devAboutEntries = remember(sections) {
+        sections.flatMap { it.entries }.filter { it.id in devAboutIds }
+    }
+    val minimisedMainSections = remember(sections, devAboutEntries) {
+        val top = sections.filter { it.id == "ishare_together" }
+        val navIds = sections.filter { it.id != "ishare_together" }
+        // Notifications & General is the last navigation card, then News from dev + About below it.
+        val ordered = navIds.filter { it.id != "notifications_general" } + navIds.filter { it.id == "notifications_general" }
+        top to ordered
+    }
+    val openSection = remember(sections, activeSectionId, minimised) {
+        if (!minimised) null
+        else sections.firstOrNull { it.id == activeSectionId }
+            ?.let { sec -> sec.copy(entries = sec.entries.filter { it.id !in devAboutIds }) }
+    }
+    LaunchedEffect(minimised) { if (!minimised) activeSectionId = null }
     val filteredSections = remember(sections, trimmedQuery) {
         if (trimmedQuery.isEmpty()) {
             sections
@@ -626,9 +653,9 @@ fun AppleSettingsScreen(
                                     verticalAlignment = Alignment.Bottom,
                                 ) {
                                     Text(
-                                        text = "Settings",
+                                        text = openSection?.title ?: "Settings",
                                         color = MaterialTheme.colorScheme.onSurface,
-                                        fontSize = 34.sp,
+                                        fontSize = if ((openSection?.title?.length ?: 0) > 18) 28.sp else 34.sp,
                                         fontWeight = FontWeight.Bold,
                                         letterSpacing = (-0.6).sp,
                                     )
@@ -658,7 +685,7 @@ fun AppleSettingsScreen(
                             }
                         }
 
-                        if (showAccountCard) {
+                        if (showAccountCard && openSection == null) {
                             item(key = "settings_account_card") {
                                 val totalProfiles = ytAccountState.accounts.sumOf { acc -> acc.profiles.size.coerceAtLeast(1) }
                                 val resolvedSubtitle = if (ytAccountState.isSignedIn) {
@@ -723,6 +750,71 @@ fun AppleSettingsScreen(
                                     onAction = { searchQuery = "" },
                                 )
                             }
+                        } else if (openSection != null) {
+                            // Minimised layout: the grouped screen that was opened.
+                            item(key = "sec_open_${openSection.id}") {
+                                SettingsGroupBlock(
+                                    section = openSection.copy(title = ""),
+                                    useBackdropGlass = glassActive,
+                                    haptics = haptics,
+                                    onOpenPicker = { picker -> activePicker = picker },
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                )
+                            }
+                        } else if (minimised) {
+                            // Minimised layout main screen: iShare / Dynamic Island / AOD as-is, then one card
+                            // per group that opens its own screen, then News from dev + About.
+                            minimisedMainSections.first.forEach { section ->
+                                item(key = "sec_${section.id}") {
+                                    SettingsGroupBlock(
+                                        section = section,
+                                        useBackdropGlass = glassActive,
+                                        haptics = haptics,
+                                        onOpenPicker = { picker -> activePicker = picker },
+                                        modifier = Modifier.padding(horizontal = 16.dp),
+                                    )
+                                }
+                            }
+                            minimisedMainSections.second.forEach { section ->
+                                val visibleEntries = section.entries.filter { it.id !in devAboutIds }
+                                if (visibleEntries.isEmpty()) return@forEach
+                                item(key = "nav_${section.id}") {
+                                    SettingsGroupBlock(
+                                        section = SettingsSection(
+                                            id = "nav_${section.id}",
+                                            title = "",
+                                            entries = listOf(
+                                                SettingsEntry.Action(
+                                                    id = "nav_${section.id}",
+                                                    title = section.title,
+                                                    subtitle = "${visibleEntries.size} options",
+                                                    iconRes = visibleEntries.first().iconRes,
+                                                    keywords = emptyList(),
+                                                    onAction = {
+                                                        haptics.play(Haptic.Tap)
+                                                        activeSectionId = section.id
+                                                    },
+                                                ),
+                                            ),
+                                        ),
+                                        useBackdropGlass = glassActive,
+                                        haptics = haptics,
+                                        onOpenPicker = { picker -> activePicker = picker },
+                                        modifier = Modifier.padding(horizontal = 16.dp),
+                                    )
+                                }
+                            }
+                            if (devAboutEntries.isNotEmpty()) {
+                                item(key = "sec_dev_about") {
+                                    SettingsGroupBlock(
+                                        section = SettingsSection("dev_about", "", devAboutEntries),
+                                        useBackdropGlass = glassActive,
+                                        haptics = haptics,
+                                        onOpenPicker = { picker -> activePicker = picker },
+                                        modifier = Modifier.padding(horizontal = 16.dp),
+                                    )
+                                }
+                            }
                         } else {
                             filteredSections.forEach { section ->
                                 item(key = "sec_${section.id}") {
@@ -737,7 +829,7 @@ fun AppleSettingsScreen(
                             }
                         }
 
-                        if (trimmedQuery.isEmpty()) {
+                        if (trimmedQuery.isEmpty() && openSection == null) {
                             item(key = "settings_footer") {
                                 Column(
                                     modifier = Modifier
@@ -790,7 +882,7 @@ fun AppleSettingsScreen(
                     backButtonHazeState = hazeState,
                     onBack = {
                         haptics.play(Haptic.Tap)
-                        onBack()
+                        if (openSection != null) activeSectionId = null else onBack()
                     },
                     modifier = Modifier.align(Alignment.TopCenter),
                     centerContent = {
@@ -801,7 +893,7 @@ fun AppleSettingsScreen(
                         ) {
                             FrostedTopBarTitlePill(hazeState = hazeState) {
                                 Text(
-                                    text = "Settings",
+                                    text = openSection?.title ?: "Settings",
                                     color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
@@ -812,6 +904,34 @@ fun AppleSettingsScreen(
                         }
                     },
                     actions = {
+                        Box {
+                            IconButton(
+                                onClick = {
+                                    haptics.play(Haptic.Tap)
+                                    showAppearancePopup = true
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Rounded.Sort,
+                                    contentDescription = "Settings Appearance",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(21.dp),
+                                )
+                            }
+                            if (showAppearancePopup) {
+                                SettingsAppearancePopup(
+                                    minimised = state.settingsMinimised,
+                                    onSelect = { min ->
+                                        haptics.play(Haptic.Select)
+                                        SettingsStore.setBoolean(context, SettingsStore.KEY_SETTINGS_MINIMISED, min)
+                                        activeSectionId = null
+                                        showAppearancePopup = false
+                                        coroutineScope.launch { listState.scrollToItem(0) }
+                                    },
+                                    onDismiss = { showAppearancePopup = false },
+                                )
+                            }
+                        }
                         IconButton(
                             onClick = {
                                 haptics.play(Haptic.Tap)
@@ -1126,6 +1246,69 @@ fun AppleSettingsScreen(
                 clearAction = null
             },
         )
+    }
+}
+
+/** "Settings Appearance" popup: Maximised (one long list) vs Minimised (grouped into separate screens). */
+@Composable
+private fun SettingsAppearancePopup(
+    minimised: Boolean,
+    onSelect: (Boolean) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val shape = RoundedCornerShape(22.dp)
+    androidx.compose.ui.window.Popup(
+        alignment = Alignment.TopEnd,
+        offset = androidx.compose.ui.unit.IntOffset(0, 130),
+        onDismissRequest = onDismiss,
+        properties = androidx.compose.ui.window.PopupProperties(focusable = true),
+    ) {
+        Column(
+            modifier = Modifier
+                .width(270.dp)
+                .shadow(24.dp, shape, ambientColor = Color.Black, spotColor = Color.Black)
+                .clip(shape)
+                .background(
+                    Brush.linearGradient(
+                        0f to Color(0xE6505057),
+                        1f to Color(0xE6242428),
+                    ),
+                )
+                .border(
+                    1.dp,
+                    Brush.linearGradient(
+                        0f to Color(0x99FFFFFF),
+                        0.5f to Color(0x1AFFFFFF),
+                        1f to Color(0x66FFFFFF),
+                    ),
+                    shape,
+                )
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(
+                text = "Settings Appearance",
+                color = Color.White,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            AppleSegmentedSwitch(
+                options = listOf("Maximised", "Minimised"),
+                selectedOption = if (minimised) "Minimised" else "Maximised",
+                onSelect = { onSelect(it == "Minimised") },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Text(
+                text = if (minimised) {
+                    "Groups settings into separate screens. News from dev and About stay on the main screen."
+                } else {
+                    "Shows every setting on one scrolling screen."
+                },
+                color = Color.White.copy(alpha = 0.62f),
+                fontSize = 11.5.sp,
+                lineHeight = 15.sp,
+            )
+        }
     }
 }
 
