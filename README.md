@@ -9,7 +9,7 @@
 - **Project site:** [iTune for Android](https://d0x-dev.github.io/iTune/)
 - **Downloads:** [GitHub Releases](https://github.com/d0x-dev/iTune/releases)
 - **Application ID:** `com.darkxvenom.itune`
-- **Current app version:** `1.0` (`versionCode` 1)
+- **Current app version:** `1.3` (`versionCode` 4)
 - **Minimum Android version:** Android 7.0 (API 24)
 
 > Music sources, metadata, artwork, lyrics, and integrations depend on their upstream services and may change or be unavailable by region. Use the app and its download features only for content you are authorized to access and save.
