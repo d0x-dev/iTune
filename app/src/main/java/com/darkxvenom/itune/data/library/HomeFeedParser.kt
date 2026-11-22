@@ -133,7 +133,7 @@ object HomeFeedParser {
             return HomeFeedItem(
                 kind = kind, title = title, subtitle = meta.text, thumbnailUrl = thumb, videoId = vid,
                 watchPlaylistId = watch.optString("playlistId").takeIf { it.isNotBlank() },
-                artistName = meta.artistName.ifBlank { meta.text }, artistId = meta.artistId,
+                artistName = meta.artistName, artistId = meta.artistId, views = meta.views,
                 albumName = meta.albumName, albumId = meta.albumId, isExplicit = explicit,
             )
         }
@@ -164,7 +164,7 @@ object HomeFeedParser {
         if (vid != null) {
             return HomeFeedItem(
                 kind = HomeItemKind.SONG, title = title, subtitle = meta.text, thumbnailUrl = thumb, videoId = vid,
-                artistName = meta.artistName.ifBlank { meta.text }, artistId = meta.artistId,
+                artistName = meta.artistName, artistId = meta.artistId, views = meta.views,
                 albumName = meta.albumName, albumId = meta.albumId, isExplicit = explicit,
             )
         }
@@ -224,7 +224,7 @@ object HomeFeedParser {
                 MusicTrack(
                     id = vid,
                     title = obj.optJSONObject("title").runsText(),
-                    artists = meta.artistName.ifBlank { meta.text },
+                    artists = meta.artistName,
                     artistId = meta.artistId,
                     album = meta.albumName,
                     albumId = meta.albumId,
@@ -244,38 +244,43 @@ object HomeFeedParser {
 
     // ── Subtitle runs → artist / album / readable text ────────────────────────────────────────────
 
-    private data class Meta(
-        val text: String,
-        val artistName: String,
-        val artistId: String?,
-        val albumName: String?,
-        val albumId: String?,
-    )
-
+    private data class Meta(val text: String, val artistName: String, val artistId: String?, val albumName: String?, val albumId: String?, val views: String?)
+    private class SubRun(val raw: String, val browseId: String?, val pageType: String?) {
+        val text: String get() = raw.trim()
+        val isArtist: Boolean get() = pageType?.contains("ARTIST") == true || browseId?.startsWith("UC") == true
+        val isAlbum: Boolean get() = pageType?.contains("ALBUM") == true || browseId?.startsWith("MPRE") == true
+    }
+    private val viewsRegex = Regex("(?i)\\d[\\d.,]*\\s*[kmbt]?\\s*(?:views?|plays?|listeners?|subscribers?|streams?)\\b")
+    private fun segmentText(seg: List<SubRun>): String = seg.joinToString("") { it.raw }.replace(Regex("\\s+"), " ").trim()
     private fun subtitleMeta(runs: JSONArray?): Meta {
-        if (runs == null) return Meta("", "", null, null, null)
-        val parts = mutableListOf<Triple<String, String?, String?>>() // text, browseId, pageType
+        if (runs == null) return Meta("", "", null, null, null, null)
+        val segments = mutableListOf<MutableList<SubRun>>(mutableListOf())
         for (i in 0 until runs.length()) {
             val run = runs.optJSONObject(i) ?: continue
-            val t = run.optString("text").trim()
-            if (t.isBlank() || t == "•" || t == "&" || t == ",") continue
+            val raw = run.optString("text"); val t = raw.trim()
+            if (t == "•" || t == "·") { if (segments.last().isNotEmpty()) segments.add(mutableListOf()); continue }
+            if (t.isBlank()) continue
             val be = run.optJSONObject("navigationEndpoint")?.optJSONObject("browseEndpoint")
-            val pt = be?.optJSONObject("browseEndpointContextSupportedConfigs")
-                ?.optJSONObject("browseEndpointContextMusicConfig")?.optString("pageType")
-            parts.add(Triple(t, be?.optString("browseId")?.takeIf { it.isNotBlank() }, pt))
+            val pt = be?.optJSONObject("browseEndpointContextSupportedConfigs")?.optJSONObject("browseEndpointContextMusicConfig")?.optString("pageType")
+            segments.last().add(SubRun(raw, be?.optString("browseId")?.takeIf { it.isNotBlank() }, pt))
         }
-        val visible = parts.filterIndexed { idx, p -> !(idx == 0 && p.first.lowercase() in typeWords && p.second == null) }
-        val artists = visible.filter { it.third?.contains("ARTIST") == true || it.second?.startsWith("UC") == true }
-        val album = visible.firstOrNull { it.third?.contains("ALBUM") == true || it.second?.startsWith("MPRE") == true }
-        return Meta(
-            text = visible.joinToString(" • ") { it.first },
-            artistName = artists.joinToString(", ") { it.first },
-            artistId = artists.firstOrNull()?.second,
-            albumName = album?.first,
-            albumId = album?.second,
-        )
+        segments.removeAll { it.isEmpty() }
+        segments.firstOrNull()?.singleOrNull()?.let { r -> if (r.browseId == null && r.text.lowercase() in typeWords) segments.removeAt(0) }
+        var views: String? = null
+        val rest = mutableListOf<List<SubRun>>()
+        for (seg in segments) {
+            val text = segmentText(seg)
+            if (views == null && seg.none { it.browseId != null } && viewsRegex.containsMatchIn(text)) views = text
+            else if (!(seg.none { it.browseId != null } && viewsRegex.containsMatchIn(text))) rest.add(seg)
+        }
+        val unlinked = rest.filter { seg -> seg.all { it.browseId == null } }
+        val artistSeg = rest.firstOrNull { seg -> seg.any { it.isArtist } } ?: unlinked.firstOrNull()
+        val albumSeg = rest.firstOrNull { seg -> seg.any { it.isAlbum } } ?: unlinked.firstOrNull { it !== artistSeg && !segmentText(it).all { c -> c.isDigit() || c.code == 32 } }
+        val artistRuns = artistSeg?.filter { it.isArtist }.orEmpty()
+        val artistName = if (artistRuns.isNotEmpty()) artistRuns.joinToString(", ") { it.text } else artistSeg?.let(::segmentText).orEmpty()
+        val albumRun = albumSeg?.firstOrNull { it.isAlbum }
+        return Meta(segments.joinToString(" • ") { segmentText(it) }, artistName, artistRuns.firstOrNull()?.browseId, albumRun?.text ?: albumSeg?.let(::segmentText), albumRun?.browseId, views)
     }
-
     // ── JSON helpers ───────────────────────────────────────────────────────────────────────────────
 
     private fun JSONObject?.runsText(): String {
