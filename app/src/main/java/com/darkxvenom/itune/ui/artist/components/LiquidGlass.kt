@@ -111,6 +111,7 @@ fun Modifier.liquidGlassRim(shape: CornerBasedShape): Modifier {
 fun Modifier.liquidGlass(
     shape: CornerBasedShape,
     surfaceTint: Color? = null,
+    backdropOverride: Backdrop? = null,
 ): Modifier {
     if (!isGlassSupported()) return this
     if (LocalReduceDynamicBlur.current) {
@@ -118,7 +119,7 @@ fun Modifier.liquidGlass(
             .border(GLASS_EDGE_WIDTH, GLASS_EDGE_COLOR, shape)
     }
     val glassPerformance = LocalGlassPerformance.current
-    val backdrop = LocalAppBackdrop.current
+    val backdrop = backdropOverride ?: LocalAppBackdrop.current
     val exportedBackdrop = LocalGlassExport.current
     val density = LocalDensity.current
     val resolutionScale = if (glassPerformance) FROST_RESOLUTION_SCALE else GLASS_RESOLUTION_SCALE

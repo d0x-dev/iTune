@@ -3121,6 +3121,15 @@ private fun buildSettingsSections(
                 onSelect = { onSelectString(SettingsStore.KEY_TOP_CARD_TYPE, it) },
             ),
             SettingsEntry.Toggle(
+                id = "liquid_glass_nav",
+                title = "Liquid Glass Nav & Mini Player",
+                subtitle = "Glass bar and mini player, with a water-bubble lens on hold",
+                iconRes = R.drawable.ic_settings_liquid_glass,
+                keywords = listOf("liquid", "glass", "nav", "navigation", "mini", "player", "bubble", "lens", "blur", "bar"),
+                checked = state.liquidGlassNav,
+                onToggle = { onToggleBool(SettingsStore.KEY_LIQUID_GLASS_NAV, it) },
+            ),
+            SettingsEntry.Toggle(
                 id = "time_synced_lyrics",
                 title = "Time-Synced Lyrics",
                 subtitle = "Follow word and line lyrics in real time",
