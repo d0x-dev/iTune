@@ -11,6 +11,10 @@
 
 package com.darkxvenom.itune.ui.home
 
+import com.darkxvenom.itune.ui.artist.components.backdrop.backdrops.layerBackdrop
+import com.darkxvenom.itune.ui.artist.components.backdrop.backdrops.rememberLayerBackdrop
+import com.darkxvenom.itune.ui.artist.components.isGlassSupported
+
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -594,6 +598,14 @@ fun HomeScreen(
                 radioSheetMorph.progress.snapTo(0f)
             }
         }
+        // Liquid glass nav + mini player: the screens below are recorded into a backdrop the glass samples.
+        val liquidNav = settingsState.liquidGlassNav && isGlassSupported()
+        val navBackdrop = rememberLayerBackdrop()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .then(if (liquidNav) Modifier.layerBackdrop(navBackdrop) else Modifier),
+        ) {
         // SCREEN 1: HOME SCREEN (Retained in GPU layer, 0ms switch time)
         Box(
             modifier = Modifier
@@ -1001,8 +1013,11 @@ fun HomeScreen(
             )
         }
 
-        // Apple Dark Mode Gradient Scrim for Floating Bottom Controls
+        }
+
+        // Apple Dark Mode Gradient Scrim for Floating Bottom Controls (skipped for liquid glass so content shows through)
         if (
+            !liquidNav &&
             !artistHostController.isOpen &&
             !showSettings &&
             !showIShare &&
@@ -1132,6 +1147,7 @@ fun HomeScreen(
                 }
 
                 FloatingMiniPlayer(
+                    liquidGlassBackdrop = if (liquidNav) navBackdrop else null,
                     modifier = Modifier
                         .onGloballyPositioned { coords ->
                             if (coords.isAttached) {
@@ -1195,6 +1211,7 @@ fun HomeScreen(
             }
 
             FloatingNavBar(
+                liquidGlassBackdrop = if (liquidNav) navBackdrop else null,
                 selectedTab = when (currentScreen) {
                     AppScreen.HOME -> selectedTab
                     AppScreen.BROWSE -> NavTab.NEW
