@@ -58,6 +58,8 @@ data class SettingsUiState(
     val topCardType: String = "Portrait",
     val liquidGlassNav: Boolean = false,
     val appFont: String = "system",
+    /** Settings screen layout: false = Maximised (one long list), true = Minimised (grouped into separate screens). */
+    val settingsMinimised: Boolean = false,
     val liquidGlassChrome: Boolean = true,
     val tactileHaptics: Boolean = true,
     val cellularStreaming: String = "High Quality",
@@ -173,6 +175,7 @@ object SettingsStore {
     const val TOP_CARD_TYPE_LANDSCAPE = "Landscape"
     const val TOP_CARD_TYPE_APPLE = "Apple"
     const val KEY_LIQUID_GLASS = "liquid_glass_chrome"
+    const val KEY_SETTINGS_MINIMISED = "settings_minimised"
     const val KEY_TACTILE_HAPTICS = "tactile_haptics"
     const val KEY_CELLULAR_STREAMING = "cellular_streaming"
     const val KEY_DOWNLOAD_WIFI_ONLY = "download_over_wifi_only"
@@ -329,6 +332,7 @@ object SettingsStore {
             KEY_LIQUID_GLASS_NAV -> cur.copy(liquidGlassNav = value)
             KEY_TIME_SYNCED_LYRICS -> cur.copy(timeSyncedLyrics = value)
             KEY_LIQUID_GLASS -> cur.copy(liquidGlassChrome = value)
+            KEY_SETTINGS_MINIMISED -> cur.copy(settingsMinimised = value)
             KEY_TACTILE_HAPTICS -> cur.copy(tactileHaptics = value)
             KEY_DOWNLOAD_WIFI_ONLY -> cur.copy(downloadOverWifiOnly = value)
             KEY_AUTO_DOWNLOADS -> cur.copy(automaticDownloads = value)
@@ -672,6 +676,7 @@ object SettingsStore {
             topCardType = p.getString(KEY_TOP_CARD_TYPE, defaults.topCardType) ?: defaults.topCardType,
             appFont = p.getString(KEY_APP_FONT, defaults.appFont) ?: defaults.appFont,
             liquidGlassChrome = p.getBoolean(KEY_LIQUID_GLASS, defaults.liquidGlassChrome),
+            settingsMinimised = p.getBoolean(KEY_SETTINGS_MINIMISED, defaults.settingsMinimised),
             tactileHaptics = p.getBoolean(KEY_TACTILE_HAPTICS, defaults.tactileHaptics),
             cellularStreaming = p.getString(KEY_CELLULAR_STREAMING, defaults.cellularStreaming)
                 ?: defaults.cellularStreaming,
