@@ -775,28 +775,26 @@ fun AppleSettingsScreen(
                                     )
                                 }
                             }
-                            minimisedMainSections.second.forEach { section ->
+                            // One grouped card: every row opens its own screen (no spacing, no option counts).
+                            val navEntries = minimisedMainSections.second.mapNotNull { section ->
                                 val visibleEntries = section.entries.filter { it.id !in devAboutIds }
-                                if (visibleEntries.isEmpty()) return@forEach
-                                item(key = "nav_${section.id}") {
+                                if (visibleEntries.isEmpty()) return@mapNotNull null
+                                SettingsEntry.Action(
+                                    id = "nav_${section.id}",
+                                    title = section.title,
+                                    subtitle = null,
+                                    iconRes = visibleEntries.first().iconRes,
+                                    keywords = emptyList(),
+                                    onAction = {
+                                        haptics.play(Haptic.Tap)
+                                        activeSectionId = section.id
+                                    },
+                                )
+                            }
+                            if (navEntries.isNotEmpty()) {
+                                item(key = "sec_minimised_nav") {
                                     SettingsGroupBlock(
-                                        section = SettingsSection(
-                                            id = "nav_${section.id}",
-                                            title = "",
-                                            entries = listOf(
-                                                SettingsEntry.Action(
-                                                    id = "nav_${section.id}",
-                                                    title = section.title,
-                                                    subtitle = "${visibleEntries.size} options",
-                                                    iconRes = visibleEntries.first().iconRes,
-                                                    keywords = emptyList(),
-                                                    onAction = {
-                                                        haptics.play(Haptic.Tap)
-                                                        activeSectionId = section.id
-                                                    },
-                                                ),
-                                            ),
-                                        ),
+                                        section = SettingsSection("minimised_nav", "", navEntries),
                                         useBackdropGlass = glassActive,
                                         haptics = haptics,
                                         onOpenPicker = { picker -> activePicker = picker },
