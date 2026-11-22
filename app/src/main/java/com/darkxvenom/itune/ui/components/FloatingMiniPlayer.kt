@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.components
 
+import com.darkxvenom.itune.ui.artist.components.backdrop.Backdrop
+import com.darkxvenom.itune.ui.artist.components.liquidGlass
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -74,6 +77,7 @@ fun FloatingMiniPlayer(
     realTrack: MusicTrack? = null,
     isLoading: Boolean = false,
     showEmptyPlaceholder: Boolean = false,
+    liquidGlassBackdrop: Backdrop? = null,
     modifier: Modifier = Modifier
 ) {
     val hasActiveTrack = realTrack != null || currentTrack != null
@@ -84,23 +88,32 @@ fun FloatingMiniPlayer(
             .fillMaxWidth()
             .padding(horizontal = 14.dp)
             .height(54.dp)
-            .shadow(
-                elevation = 14.dp,
-                shape = CircleShape,
-                ambientColor = Color.Black,
-                spotColor = Color.Black
+            .then(
+                if (liquidGlassBackdrop != null) {
+                    // Liquid glass: same effect the artist screen's popup uses.
+                    Modifier.liquidGlass(CircleShape, backdropOverride = liquidGlassBackdrop)
+                } else {
+                    Modifier
+                        .shadow(
+                            elevation = 14.dp,
+                            shape = CircleShape,
+                            ambientColor = Color.Black,
+                            spotColor = Color.Black
+                        )
+                        .clip(CircleShape)
+                        .background(AppleGlassMiniPlayer)
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.White.copy(alpha = 0.06f),
+                                    Color.Transparent
+                                )
+                            )
+                        )
+                        .border(0.75.dp, AppleGlassBorder, CircleShape)
+                }
             )
             .clip(CircleShape)
-            .background(AppleGlassMiniPlayer)
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = 0.06f),
-                        Color.Transparent
-                    )
-                )
-            )
-            .border(0.75.dp, AppleGlassBorder, CircleShape)
             .clickable { onClick() }
             .padding(start = 10.dp, end = 8.dp),
         contentAlignment = Alignment.Center
