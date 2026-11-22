@@ -13,7 +13,6 @@ package com.darkxvenom.itune.ui.auth
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -181,11 +180,7 @@ fun GoogleLoginScreen(
                     onSignedIn()
                 } catch (e: Throwable) {
                     capturedOnce = false
-                    if (manualTrigger) {
-                        Toast.makeText(context, e.message ?: "Sign-in verification failed", Toast.LENGTH_LONG).show()
-                    } else {
-                        Log.w("GoogleLogin", "Automatic capture verification failed: ${e.message}")
-                    }
+                    Toast.makeText(context, e.message ?: "Sign-in verification failed", Toast.LENGTH_LONG).show()
                 } finally {
                     isCapturing = false
                 }
@@ -334,7 +329,7 @@ fun GoogleLoginScreen(
                                     canConfirm = hasSid
                                     if (fullLogin && mode == WebSessionMode.SIGN_IN && !capturedOnce) {
                                         scope.launch {
-                                            delay(if (returnImmediatelyOnCapture) 1600L else 1800L)
+                                            delay(if (returnImmediatelyOnCapture) 1600L else 850L)
                                             if (!capturedOnce && !isCapturing) {
                                                 finishCapture(view, manualTrigger = false)
                                             }

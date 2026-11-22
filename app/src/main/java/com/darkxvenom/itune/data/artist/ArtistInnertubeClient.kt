@@ -14,7 +14,6 @@ package com.darkxvenom.itune.data.artist
 import android.util.Log
 import com.darkxvenom.itune.backend.Net
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
-import com.darkxvenom.itune.data.auth.GoogleClock
 import com.darkxvenom.itune.data.auth.YouTubeAccountParsers
 import com.darkxvenom.itune.data.auth.buildFullSapisidAuthorization
 import com.darkxvenom.itune.data.auth.delegatedSessionId
@@ -483,17 +482,9 @@ object ArtistInnertubeClient {
      */
     suspend fun verifyAuthenticatedLibraryAccess(persistScope: Boolean = true) {
         requireSession()
-        ensureSessionScope(persistScope)
+        refreshSessionScope(persistScope)
         val failures = mutableListOf<String>()
-
-        // 1. Probes YouTube Music library endpoints. FEmusic_library_landing is the primary
-        // entrypoint for library access across all account types (brand & personal).
-        val libraryProbes = listOf(
-            "FEmusic_library_landing",
-            "FEmusic_liked_playlists",
-            "FEmusic_liked_videos",
-        )
-        for (browseId in libraryProbes) {
+        for (browseId in listOf("FEmusic_liked_playlists", "FEmusic_liked_videos")) {
             try {
                 browse(
                     browseId = browseId,
@@ -504,51 +495,12 @@ object ArtistInnertubeClient {
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Throwable) {
-                val reason = (e as? HttpStatusException)?.let { "HTTP ${it.code} ${it.responseSnippet.take(70)}" } ?: (e.message?.take(100) ?: e.javaClass.simpleName)
-                failures += "$browseId: $reason"
+                failures += "$browseId: ${e.message?.take(160) ?: e.javaClass.simpleName}"
             }
         }
-
-        // 2. Fallback probe: account_menu. If YouTube Music returned an account popup with an
-        // activeAccountHeaderRenderer, this session is confirmed authenticated on Innertube.
-        try {
-            val menu = accountMenu()
-            val hasActiveAccount = menu.optJSONArray("actions")?.let { actions ->
-                (0 until actions.length()).any { i ->
-                    actions.optJSONObject(i)
-                        ?.optJSONObject("openPopupAction")
-                        ?.optJSONObject("popup")
-                        ?.optJSONObject("multiPageMenuRenderer")
-                        ?.optJSONObject("header")
-                        ?.has("activeAccountHeaderRenderer") == true
-                }
-            } ?: false
-            if (hasActiveAccount) {
-                Log.i(TAG, "verifyAuthenticatedLibraryAccess verified via account_menu fallback")
-                return
-            }
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Throwable) {
-            val reason = (e as? HttpStatusException)?.let { "HTTP ${it.code} ${it.responseSnippet.take(70)}" } ?: (e.message?.take(100) ?: e.javaClass.simpleName)
-            failures += "account_menu: $reason"
-        }
-
-        // 3. Fallback probe: YouTube WEB client browse (FEhistory).
-        try {
-            postWebBrowse("FEhistory")
-            Log.i(TAG, "verifyAuthenticatedLibraryAccess verified via WEB FEhistory fallback")
-            return
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Throwable) {
-            val reason = (e as? HttpStatusException)?.let { "HTTP ${it.code} ${it.responseSnippet.take(70)}" } ?: (e.message?.take(100) ?: e.javaClass.simpleName)
-            failures += "FEhistory: $reason"
-        }
-
         throw IOException(
             "Google sign-in succeeded, but YouTube Music did not authorize private library access. " +
-                failures.joinToString("; ") + if (GoogleClock.isDeviceClockOff) " — Device date/time differs from Google by about ${kotlin.math.abs(GoogleClock.offsetSeconds) / 60} min. Enable Automatic date & time and sign in again." else "",
+                failures.joinToString("; "),
         )
     }
 
@@ -932,12 +884,6 @@ object ArtistInnertubeClient {
     }
 
     private suspend fun fetchSessionScope(sessionCookie: String): SessionScope? = withContext(Dispatchers.IO) {
-        val session = scope
-        val override = channelOverride
-        val activePageId = override?.pageId ?: session?.pageId
-        val activeAuthUser = override?.authUser ?: session?.authUser ?: "0"
-        val activeDataSyncId = override?.dataSyncId ?: session?.dataSyncId
-
         val builder = Request.Builder()
             .url("$MUSIC_ORIGIN/")
             .get()
@@ -945,19 +891,8 @@ object ArtistInnertubeClient {
             .header("Accept-Language", acceptLanguageHeader)
             .header("Cookie", sessionCookie)
             .header("X-Youtube-Bootstrap-Logged-In", "true")
-
-        if (activeAuthUser.isNotBlank()) {
-            builder.header("X-Goog-AuthUser", activeAuthUser)
-        }
-        if (!activePageId.isNullOrBlank()) {
-            builder.header("X-Goog-PageId", activePageId)
-        }
-        buildFullSapisidAuthorization(
-            cookieHeader = sessionCookie,
-            origin = MUSIC_ORIGIN,
-            userSessionId = activeDataSyncId,
-        )?.let { builder.header("Authorization", it) }
-
+        // Read ytcfg with the browser cookie only. Do not use the previously stored
+        // delegated/user IDs here: older builds may have persisted those fields swapped.
         val html = Net.client.newCall(builder.build()).execute().use { res ->
             GoogleAuthStore.absorbSetCookies(res.headers("Set-Cookie"))
             res.body?.string().orEmpty()
@@ -965,23 +900,15 @@ object ArtistInnertubeClient {
         val signedIn = CONFIG_LOGGED_IN.find(html)?.groupValues?.get(1) == "true"
         val clientVersion = CONFIG_CLIENT_VERSION.find(html)?.groupValues?.get(1)
         if (!signedIn) {
-            // If the HTML scraping didn't find LOGGED_IN=true (e.g. client-side SPA shell),
-            // do not wipe a previously adopted authenticated scope!
-            val existing = scope
-            if (existing != null && (!existing.pageId.isNullOrBlank() || !existing.dataSyncId.isNullOrBlank())) {
-                return@withContext existing.copy(clientVersion = clientVersion ?: existing.clientVersion)
-            }
             return@withContext clientVersion?.let { SessionScope(null, null, "0", it) }
         }
         val rawDataSync = CONFIG_DATASYNC_ID.find(html)?.groupValues?.get(1)?.trim()
         val pageId = CONFIG_PAGE_ID.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }
-            ?: activePageId
             ?: delegatedSessionId(rawDataSync)
         // DATASYNC_ID stores USER_SESSION_ID (or DELEGATED_SESSION_ID||USER_SESSION_ID).
         // DELEGATED_SESSION_ID is a separate header value and must never replace it.
-        val dataSyncId = normalizeDataSyncId(rawDataSync) ?: activeDataSyncId
-        val authUser = CONFIG_SESSION_INDEX.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }
-            ?: activeAuthUser
+        val dataSyncId = normalizeDataSyncId(rawDataSync)
+        val authUser = CONFIG_SESSION_INDEX.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() } ?: "0"
         CONFIG_VISITOR_DATA.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }?.let {
             visitorData = it
         }
@@ -1077,10 +1004,7 @@ object ArtistInnertubeClient {
         persistScopeRecovery: Boolean = true,
         bodyExtras: JSONObject.() -> Unit,
     ): JSONObject {
-        if (!anonymous && cookie != null) {
-            GoogleClock.ensureSynced()
-            ensureSessionScope(persistScope = persistScopeRecovery)
-        }
+        if (!anonymous && cookie != null) ensureSessionScope(persistScope = persistScopeRecovery)
         val session = scope
         val resolvedVersion = if (clientName == "WEB_REMIX") currentClientVersion() else clientVersion
 
@@ -1132,28 +1056,7 @@ object ArtistInnertubeClient {
                     TAG,
                     "Auth call rejected (${e.code}) on $finalUrl [obou=${activeDataSyncId != null}, page=${activePageId != null}, vd=${visitorData != null}]: ${e.responseSnippet}",
                 )
-                // Retry 1: Keep activePageId (vital for Brand Accounts), but try standard single SAPISIDHASH without userSessionId marker
-                val withPageOnly = if (activePageId != null) {
-                    runCatching {
-                        executeInnertubePost(
-                            finalUrl = finalUrl,
-                            payload = buildPayload(includeVisitorData = true),
-                            origin = origin,
-                            clientId = clientId,
-                            clientVersion = resolvedVersion,
-                            activeCookie = activeCookie,
-                            authUser = activeAuthUser,
-                            pageId = activePageId,
-                            userSessionId = null,
-                            singleHashOnly = true,
-                        )
-                    }.getOrNull()
-                } else {
-                    null
-                }
-
-                // Retry 2: Without delegation pageId, with single hash
-                val withoutDelegation = withPageOnly ?: if (activeDataSyncId != null || activePageId != null) {
+                val withoutDelegation = if (activeDataSyncId != null || activePageId != null) {
                     runCatching {
                         executeInnertubePost(
                             finalUrl = finalUrl,
@@ -1164,8 +1067,7 @@ object ArtistInnertubeClient {
                             activeCookie = activeCookie,
                             authUser = activeAuthUser,
                             pageId = null,
-                            userSessionId = null,
-                            singleHashOnly = true,
+                            userSessionId = activeDataSyncId,
                         )
                     }.onSuccess {
                         // Only the delegated channel header was removed; preserve USER_SESSION_ID.
@@ -1178,7 +1080,6 @@ object ArtistInnertubeClient {
                     null
                 }
 
-                // Retry 3: Minimal auth
                 val minimalAuth = withoutDelegation ?: runCatching {
                     executeInnertubePost(
                         finalUrl = finalUrl,
@@ -1272,7 +1173,6 @@ object ArtistInnertubeClient {
         }
         val request = builder.post(payload.toRequestBody(JSON_MEDIA_TYPE)).build()
         Net.client.newCall(request).execute().use { res ->
-            GoogleClock.syncFromDateHeader(res.header("Date"))
             GoogleAuthStore.absorbSetCookies(res.headers("Set-Cookie"))
             val text = res.body?.string().orEmpty()
             if (!res.isSuccessful) {

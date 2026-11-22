@@ -81,14 +81,12 @@ object BrowserSession {
             cm.setAcceptCookie(true)
             val entries = parseCookieHeader(cookieHeader)
             entries.forEach { (name, value) ->
-                val secure = if (name.startsWith("__Secure-")) "; Secure" else ""
                 if (name.startsWith("__Host-")) {
                     cm.setCookie("https://music.youtube.com", "$name=$value; Path=/; Secure")
                 } else {
+                    val secure = if (name.startsWith("__Secure-")) "; Secure" else ""
                     cm.setCookie("https://.youtube.com", "$name=$value; Domain=.youtube.com; Path=/$secure")
                     cm.setCookie("https://.google.com", "$name=$value; Domain=.google.com; Path=/$secure")
-                    cm.setCookie("https://music.youtube.com", "$name=$value; Path=/$secure")
-                    cm.setCookie("https://www.youtube.com", "$name=$value; Path=/$secure")
                 }
             }
             cm.flush()
@@ -97,24 +95,23 @@ object BrowserSession {
 
     fun readMergedYouTubeCookies(): String? = runCatching {
         val cm = CookieManager.getInstance()
+        val musicHeader = cm.getCookie("https://music.youtube.com")?.takeIf { it.isNotBlank() }
+        if (looksSignedInCookies(musicHeader)) {
+            return@runCatching musicHeader
+        }
         val merged = linkedMapOf<String, String>()
-        // Query root auth domains first, then YouTube domains, so music.youtube.com specific cookies take precedence.
+        // Put root origins first so music.youtube.com origin cookies win on collisions.
         listOf(
-            "https://accounts.google.com",
-            "https://google.com",
-            "https://.google.com",
             "https://youtube.com",
-            "https://.youtube.com",
             "https://www.youtube.com",
             "https://music.youtube.com",
         ).forEach { url ->
-            cm.getCookie(url)?.takeIf { it.isNotBlank() }?.let { header ->
-                parseCookieHeader(header).forEach { (k, v) ->
-                    if (v.isNotBlank()) merged[k] = v
-                }
+            cm.getCookie(url)?.let { header ->
+                parseCookieHeader(header).forEach { (k, v) -> merged[k] = v }
             }
         }
-        if (merged.isEmpty()) return@runCatching null
-        merged.entries.joinToString("; ") { (k, v) -> "$k=$v" }
+        merged.takeIf { it.isNotEmpty() }
+            ?.entries
+            ?.joinToString("; ") { (k, v) -> "$k=$v" }
     }.getOrNull()
 }
