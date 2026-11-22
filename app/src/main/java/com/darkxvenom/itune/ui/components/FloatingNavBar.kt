@@ -11,6 +11,19 @@
 
 package com.darkxvenom.itune.ui.components
 
+import android.os.Build
+import androidx.compose.ui.zIndex
+import com.darkxvenom.itune.ui.artist.components.backdrop.Backdrop
+import com.darkxvenom.itune.ui.artist.components.backdrop.backdrops.layerBackdrop
+import com.darkxvenom.itune.ui.artist.components.backdrop.backdrops.rememberCombinedBackdrop
+import com.darkxvenom.itune.ui.artist.components.backdrop.backdrops.rememberLayerBackdrop
+import com.darkxvenom.itune.ui.artist.components.backdrop.drawBackdrop
+import com.darkxvenom.itune.ui.artist.components.backdrop.effects.colorControls
+import com.darkxvenom.itune.ui.artist.components.backdrop.effects.lens
+import com.darkxvenom.itune.ui.artist.components.backdrop.highlight.Highlight
+import com.darkxvenom.itune.ui.artist.components.backdrop.shadow.Shadow
+import com.darkxvenom.itune.ui.artist.components.liquidGlass
+
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -90,12 +103,21 @@ fun FloatingNavBar(
     isSearchActive: Boolean = false,
     onTabSelected: (NavTab) -> Unit,
     onSearchClick: () -> Unit,
+    liquidGlassBackdrop: Backdrop? = null,
     modifier: Modifier = Modifier
 ) {
     val dockHeight = 58.dp
     val containerHeight = 66.dp
 
     val density = LocalDensity.current
+
+    // Liquid glass mode: the dock and search button are real glass, and the hold-bubble is a lens that
+    // refracts and magnifies what is under it (the app content AND the tab icons).
+    val glass = liquidGlassBackdrop != null
+    val tabsBackdrop = rememberLayerBackdrop()
+    val bubbleBackdrop = rememberCombinedBackdrop(liquidGlassBackdrop ?: tabsBackdrop, tabsBackdrop)
+    val lensHeightPx = with(density) { 16.dp.toPx() }
+    val lensAmountPx = with(density) { 30.dp.toPx() }
     val coroutineScope = rememberCoroutineScope()
 
     val currentSelectedTab by rememberUpdatedState(selectedTab)
@@ -260,14 +282,21 @@ fun FloatingNavBar(
                     .fillMaxWidth()
                     .height(dockHeight)
                     .align(Alignment.Center)
-                    .shadow(
-                        elevation = 16.dp,
-                        shape = RoundedCornerShape(percent = 50),
-                        ambientColor = Color.Black,
-                        spotColor = Color.Black
+                    .then(
+                        if (glass) {
+                            Modifier.liquidGlass(RoundedCornerShape(percent = 50), backdropOverride = liquidGlassBackdrop)
+                        } else {
+                            Modifier
+                                .shadow(
+                                    elevation = 16.dp,
+                                    shape = RoundedCornerShape(percent = 50),
+                                    ambientColor = Color.Black,
+                                    spotColor = Color.Black
+                                )
+                                .background(AppleGlassDock, shape = RoundedCornerShape(percent = 50))
+                                .border(0.75.dp, AppleGlassBorder, shape = RoundedCornerShape(percent = 50))
+                        }
                     )
-                    .background(AppleGlassDock, shape = RoundedCornerShape(percent = 50))
-                    .border(0.75.dp, AppleGlassBorder, shape = RoundedCornerShape(percent = 50))
             )
 
             // Layer 2: Selected Indicator (Normal resting shade by default; sleek glassy bubble ONLY on hold)
@@ -276,26 +305,56 @@ fun FloatingNavBar(
                     modifier = Modifier
                         .offset { IntOffset(currentBubbleX.roundToInt(), 0) }
                         .align(Alignment.CenterStart)
+                        .zIndex(if (glass && holdingProgress > 0.01f) 1f else 0f)
                         .width(currentBubbleWidthDp)
                         .height(currentBubbleHeightDp)
                         .graphicsLayer {
                             alpha = bubbleAlpha
                         }
-                        .shadow(
-                            elevation = (12.dp * holdingProgress),
-                            shape = RoundedCornerShape(percent = 50),
-                            ambientColor = Color.Black.copy(alpha = 0.50f * holdingProgress),
-                            spotColor = Color.Black.copy(alpha = 0.70f * holdingProgress)
-                        )
-                        .clip(RoundedCornerShape(percent = 50))
-                        // Resting Normal Shade (subtle dark oval, matches media_1794248305825_dc654f82.png)
-                        .background(
-                            Color.White.copy(alpha = 0.12f * (1f - holdingProgress * 0.4f)),
-                            shape = RoundedCornerShape(percent = 50)
+                        .then(
+                            if (glass && holdingProgress > 0.01f) {
+                                // Water-bubble lens: refracts + magnifies the content under it while you hold and drag.
+                                Modifier.drawBackdrop(
+                                    backdrop = bubbleBackdrop,
+                                    shape = { RoundedCornerShape(percent = 50) },
+                                    effects = {
+                                        colorControls(saturation = 1.35f)
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                            lens(
+                                                refractionHeight = lensHeightPx,
+                                                refractionAmount = lensAmountPx,
+                                                depthEffect = true,
+                                                chromaticAberration = true,
+                                            )
+                                        }
+                                    },
+                                    highlight = { Highlight.Default.copy(alpha = holdingProgress) },
+                                    shadow = { Shadow(alpha = holdingProgress) },
+                                    layerBlock = {
+                                        scaleX = 1f + 0.45f * holdingProgress
+                                        scaleY = 1f + 0.55f * holdingProgress
+                                    },
+                                    onDrawSurface = { drawRect(Color.White.copy(alpha = 0.05f * holdingProgress)) },
+                                )
+                            } else {
+                                Modifier
+                                    .shadow(
+                                        elevation = (12.dp * holdingProgress),
+                                        shape = RoundedCornerShape(percent = 50),
+                                        ambientColor = Color.Black.copy(alpha = 0.50f * holdingProgress),
+                                        spotColor = Color.Black.copy(alpha = 0.70f * holdingProgress)
+                                    )
+                                    .clip(RoundedCornerShape(percent = 50))
+                                    // Resting Normal Shade (subtle dark oval)
+                                    .background(
+                                        Color.White.copy(alpha = 0.12f * (1f - holdingProgress * 0.4f)),
+                                        shape = RoundedCornerShape(percent = 50)
+                                    )
+                            }
                         )
                 ) {
                     // Glassy Water Droplet Overlay (Comes alive ONLY on tap-and-hold, height 48dp)
-                    if (holdingProgress > 0.01f) {
+                    if (!glass && holdingProgress > 0.01f) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -369,7 +428,8 @@ fun FloatingNavBar(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(dockHeight)
-                    .align(Alignment.Center),
+                    .align(Alignment.Center)
+                    .then(if (glass) Modifier.layerBackdrop(tabsBackdrop) else Modifier),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -411,20 +471,31 @@ fun FloatingNavBar(
         Box(
             modifier = Modifier
                 .size(dockHeight)
-                .shadow(
-                    elevation = 16.dp,
-                    shape = CircleShape,
-                    ambientColor = if (isSearchActive) AppleMusicRed.copy(alpha = 0.35f) else Color.Black,
-                    spotColor = if (isSearchActive) AppleMusicRed.copy(alpha = 0.35f) else Color.Black
-                )
-                .clip(CircleShape)
-                .background(
-                    if (isSearchActive) Color(0x38FFFFFF) else AppleGlassDock
-                )
-                .border(
-                    width = 0.75.dp,
-                    color = if (isSearchActive) AppleMusicRed.copy(alpha = 0.60f) else AppleGlassBorder,
-                    shape = CircleShape
+                .then(
+                    if (glass) {
+                        Modifier
+                            .liquidGlass(CircleShape, backdropOverride = liquidGlassBackdrop)
+                            .then(
+                                if (isSearchActive) Modifier.border(0.75.dp, AppleMusicRed.copy(alpha = 0.60f), CircleShape) else Modifier
+                            )
+                    } else {
+                        Modifier
+                            .shadow(
+                                elevation = 16.dp,
+                                shape = CircleShape,
+                                ambientColor = if (isSearchActive) AppleMusicRed.copy(alpha = 0.35f) else Color.Black,
+                                spotColor = if (isSearchActive) AppleMusicRed.copy(alpha = 0.35f) else Color.Black
+                            )
+                            .clip(CircleShape)
+                            .background(
+                                if (isSearchActive) Color(0x38FFFFFF) else AppleGlassDock
+                            )
+                            .border(
+                                width = 0.75.dp,
+                                color = if (isSearchActive) AppleMusicRed.copy(alpha = 0.60f) else AppleGlassBorder,
+                                shape = CircleShape
+                            )
+                    }
                 )
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
