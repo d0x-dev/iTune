@@ -34,6 +34,7 @@ data class HomeFeedItem(
     val albumName: String? = null,
     val albumId: String? = null,
     val isExplicit: Boolean = false,
+    val views: String? = null,
 ) {
     val stableKey: String
         get() = "${kind.name}:${videoId ?: browseId ?: watchPlaylistId ?: title}"
@@ -47,7 +48,7 @@ data class HomeFeedItem(
         return MusicTrack(
             id = id,
             title = title,
-            artists = artistName.ifBlank { subtitle },
+            artists = artistName.ifBlank { if (kind == HomeItemKind.EPISODE) subtitle else "Unknown artist" },
             artistId = artistId,
             album = albumName,
             albumId = albumId,

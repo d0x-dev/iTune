@@ -158,7 +158,7 @@ fun sapisidFrom(cookieHeader: String): String? {
 fun buildSapisidHash(
     sapisid: String,
     origin: String = MUSIC_ORIGIN,
-    timestampSeconds: Long = System.currentTimeMillis() / 1000L,
+    timestampSeconds: Long = GoogleClock.nowSeconds(),
     scheme: String = "SAPISIDHASH",
     userSessionId: String? = null,
 ): String {
@@ -182,7 +182,7 @@ fun buildSapisidHash(
 fun buildFullSapisidAuthorization(
     cookieHeader: String,
     origin: String = MUSIC_ORIGIN,
-    timestampSeconds: Long = System.currentTimeMillis() / 1000L,
+    timestampSeconds: Long = GoogleClock.nowSeconds(),
     userSessionId: String? = null,
 ): String? {
     val jar = parseCookieHeader(cookieHeader)

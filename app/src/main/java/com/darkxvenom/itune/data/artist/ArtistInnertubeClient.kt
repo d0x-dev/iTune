@@ -14,6 +14,7 @@ package com.darkxvenom.itune.data.artist
 import android.util.Log
 import com.darkxvenom.itune.backend.Net
 import com.darkxvenom.itune.data.auth.GoogleAuthStore
+import com.darkxvenom.itune.data.auth.GoogleClock
 import com.darkxvenom.itune.data.auth.YouTubeAccountParsers
 import com.darkxvenom.itune.data.auth.buildFullSapisidAuthorization
 import com.darkxvenom.itune.data.auth.delegatedSessionId
@@ -495,12 +496,13 @@ object ArtistInnertubeClient {
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Throwable) {
-                failures += "$browseId: ${e.message?.take(160) ?: e.javaClass.simpleName}"
+                val reason = (e as? HttpStatusException)?.let { "HTTP ${it.code} ${it.responseSnippet.take(70)}" } ?: (e.message?.take(100) ?: e.javaClass.simpleName)
+                failures += "$browseId: $reason"
             }
         }
         throw IOException(
             "Google sign-in succeeded, but YouTube Music did not authorize private library access. " +
-                failures.joinToString("; "),
+                failures.joinToString("; ") + if (GoogleClock.isDeviceClockOff) " — Device date/time differs from Google by about ${kotlin.math.abs(GoogleClock.offsetSeconds) / 60} min. Enable Automatic date & time and sign in again." else "",
         )
     }
 
@@ -1004,7 +1006,10 @@ object ArtistInnertubeClient {
         persistScopeRecovery: Boolean = true,
         bodyExtras: JSONObject.() -> Unit,
     ): JSONObject {
-        if (!anonymous && cookie != null) ensureSessionScope(persistScope = persistScopeRecovery)
+        if (!anonymous && cookie != null) {
+            GoogleClock.ensureSynced()
+            ensureSessionScope(persistScope = persistScopeRecovery)
+        }
         val session = scope
         val resolvedVersion = if (clientName == "WEB_REMIX") currentClientVersion() else clientVersion
 
@@ -1173,6 +1178,7 @@ object ArtistInnertubeClient {
         }
         val request = builder.post(payload.toRequestBody(JSON_MEDIA_TYPE)).build()
         Net.client.newCall(request).execute().use { res ->
+            GoogleClock.syncFromDateHeader(res.header("Date"))
             GoogleAuthStore.absorbSetCookies(res.headers("Set-Cookie"))
             val text = res.body?.string().orEmpty()
             if (!res.isSuccessful) {

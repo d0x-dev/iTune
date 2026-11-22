@@ -98,4 +98,13 @@ class HomeFeedParserTest {
         assertFalse(artist.isPlayableTrack)
         assertTrue(HomeFeedShelf("k", "t", items = listOf(artist)).isArtistShelf)
     }
+    @Test
+    fun parse_keepsViewCountOutOfTheArtistName() {
+        val runs = """[{"text":"Naresh NK"},{"text":" • "},{"text":"5.6m views"}]"""
+        val json = JSONObject("""{"contents":{"singleColumnBrowseResultsRenderer":{"tabs":[{"tabRenderer":{"content":{"sectionListRenderer":{"contents":[{"musicCarouselShelfRenderer":{"header":{"musicCarouselShelfBasicHeaderRenderer":{"title":{"runs":[{"text":"Trending"}]}}},"contents":[{"musicResponsiveListItemRenderer":{"playlistItemData":{"videoId":"a"},"flexColumns":[{"musicResponsiveListItemFlexColumnRenderer":{"text":{"runs":[{"text":"Arz Kiya Hai"}]}}},{"musicResponsiveListItemFlexColumnRenderer":{"text":{"runs":$runs}}}]}}]}}]}}}}]}}}""")
+        val item = HomeFeedParser.parse(json, HomeShelfGroup.FEED, "t").shelves.single().items.single()
+        assertEquals("Naresh NK", item.artistName)
+        assertEquals("5.6m views", item.views)
+        assertEquals("Naresh NK", item.toMusicTrack()?.artists)
+    }
 }
