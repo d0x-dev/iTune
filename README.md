@@ -1,4 +1,5 @@
-<img width="1671" height="941" alt="image" src="https://github.com/user-attachments/assets/62749dee-2da9-4d1c-83b3-1b1f7aa378dd" />
+<img width="1671" height="941" alt="image" src="https://github.com/user-attachments/assets/a3e8059a-1f0e-46db-8916-c60394696a56" />
+
 
 <h1 align="center">iTune for Android</h1>
 
