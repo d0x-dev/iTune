@@ -7,9 +7,10 @@
 :root {
   --hermes-primary: #0000f2;
   --hermes-blue-dark: #0000c2;
-  --hermes-midnight: #0d0d24;
-  --hermes-paper: #11112b;
-  --hermes-plate: #08081a;
+  --hermes-border-rail: #2e30c3;
+  --hermes-midnight: #0f0f27;
+  --hermes-paper: #141432;
+  --hermes-plate: #09091c;
   --hermes-white: #f2f2f2;
   --hermes-ink: #ffffff;
   --hermes-muted: #9ba3c7;
@@ -39,12 +40,13 @@ html.lenis body {
 
 /* Custom Scrollbar */
 html.lenis {
-  scrollbar-color: rgba(0, 0, 242, 0.55) transparent;
+  scrollbar-color: rgba(46, 48, 195, 0.6) transparent;
   scrollbar-width: thin;
 }
 
 /* ========================================================
    1. VIEWPORT AMBIENT ANIMATED BORDER FRAME (.hw-frame)
+   Matches Hermes Agent exact perimeter rail (#2e30c3)
    ======================================================== */
 .hw-frame {
   position: fixed;
@@ -59,8 +61,8 @@ html.lenis {
   pointer-events: none;
   overflow: clip;
   contain: strict;
-  opacity: 0.4;
-  animation: 42s ease-in-out infinite hw-frame-bloom;
+  background: var(--hermes-border-rail, #2e30c3);
+  box-shadow: 0 0 10px rgba(46, 48, 195, 0.7);
 }
 
 .hw-frame-top {
@@ -91,68 +93,29 @@ html.lenis {
   width: 2px;
 }
 
-.hw-frame-ambient::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 300%;
-  height: 300%;
-  background: linear-gradient(
-    160deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.85) 15%,
-    rgba(255, 196, 0, 0.75) 20%,
-    #0000f2 25%,
-    transparent 35% 40%,
-    rgba(255, 255, 255, 0.85) 55%,
-    rgba(255, 196, 0, 0.75) 60%,
-    #0000f2 65%,
-    transparent 75% 80%,
-    rgba(255, 255, 255, 0.85) 95%,
-    rgba(255, 196, 0, 0.75) 100%
-  );
-  animation: 14s linear infinite alternate hw-frame-arc;
-}
-
-@keyframes hw-frame-arc {
-  0% { transform: translate(-10%, -10%); }
-  100% { transform: translate(-50%, -50%); }
-}
-
-@keyframes hw-frame-bloom {
-  0%, 68%, 92%, 100% { opacity: 0.38; }
-  80% { opacity: 0.88; }
-}
-
 /* ========================================================
-   2. HERMES BACKGROUND ATMOSPHERE & MULTI-PLANE PARALLAX
+   2. HERMES BACKGROUND ATMOSPHERE (Pure #0f0f27 Void)
    ======================================================== */
+html,
 body {
-  background: var(--hermes-midnight, #0d0d24) !important;
+  background: var(--hermes-midnight, #0f0f27) !important;
   color: var(--hermes-white, #f2f2f2) !important;
 }
 
 .ambient {
   position: fixed !important;
   z-index: -2 !important;
-  inset: -15% !important;
-  overflow: hidden !important;
-  background:
-    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(0, 0, 242, 0.45), transparent 70%),
-    radial-gradient(ellipse 75% 55% at 88% 45%, rgba(0, 0, 194, 0.32), transparent 60%),
-    radial-gradient(ellipse 65% 50% at 15% 75%, rgba(0, 0, 242, 0.25), transparent 60%),
-    radial-gradient(ellipse 85% 65% at 50% 95%, rgba(0, 0, 194, 0.42), transparent 70%),
-    var(--hermes-midnight, #0d0d24) !important;
-  transform: translate3d(0, calc(var(--py-bg, 0px) * 0.2), 0) !important;
-  will-change: transform !important;
-  animation: hermesAtmosphere 24s ease-in-out infinite alternate !important;
+  inset: 0 !important;
+  background: var(--hermes-midnight, #0f0f27) !important;
 }
 
-@keyframes hermesAtmosphere {
-  0% { transform: scale(1) translate3d(0, 0, 0); }
-  50% { transform: scale(1.04) translate3d(-1.5%, 1%, 0); }
-  100% { transform: scale(0.98) translate3d(1.5%, -1%, 0); }
+.ambient::before,
+.ambient::after {
+  display: none !important;
+}
+
+.page::before {
+  display: none !important;
 }
 
 /* ========================================================
@@ -161,14 +124,15 @@ body {
 .hero {
   position: relative !important;
   overflow: clip !important;
+  background: transparent !important;
 }
 
 .hero::after {
   content: "";
   position: absolute;
   inset: auto 0 0 0;
-  height: 140px;
-  background: linear-gradient(to bottom, transparent, rgba(13, 13, 36, 0.85) 65%, #0d0d24 100%);
+  height: 120px;
+  background: linear-gradient(to bottom, transparent, var(--hermes-midnight, #0f0f27));
   pointer-events: none;
   z-index: 2;
 }
@@ -176,8 +140,8 @@ body {
 /* Phone Frame: fully rounded corners and soft bottom gradient mask */
 .device-frame {
   border-radius: 44px !important;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 64%, rgba(0, 0, 0, 0.4) 82%, transparent 96%) !important;
-  mask-image: linear-gradient(to bottom, #000 0%, #000 64%, rgba(0, 0, 0, 0.4) 82%, transparent 96%) !important;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 64%, rgba(0, 0, 0, 0.35) 80%, transparent 96%) !important;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 64%, rgba(0, 0, 0, 0.35) 80%, transparent 96%) !important;
 }
 
 .device-frame.itune-hero-parallax {
@@ -203,11 +167,11 @@ body {
   width: min(1500px, calc(100% - 9vw)) !important;
   padding: 10px 22px !important;
   border-radius: 999px !important;
-  background: rgba(13, 13, 36, 0.85) !important;
+  background: rgba(15, 15, 39, 0.88) !important;
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(0, 0, 242, 0.45) !important;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7), 0 0 24px rgba(0, 0, 242, 0.25) !important;
+  border: 1px solid rgba(46, 48, 195, 0.5) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7), 0 0 20px rgba(46, 48, 195, 0.3) !important;
   z-index: 100 !important;
   transition: padding 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
 }
@@ -226,18 +190,18 @@ body {
 /* ========================================================
    5. HERMES FEATURE CARDS & PLATES STYLING
    ======================================================== */
-.section-bg-radial {
-  background:
-    radial-gradient(ellipse 75% 55% at 80% 30%, rgba(0, 0, 242, 0.25), transparent 60%),
-    radial-gradient(ellipse 65% 50% at 20% 45%, rgba(0, 0, 194, 0.2), transparent 60%),
-    radial-gradient(ellipse 85% 65% at 50% 85%, rgba(0, 0, 194, 0.38), transparent 70%),
-    linear-gradient(180deg, rgba(13, 13, 36, 0.5) 0%, rgba(10, 10, 28, 0.9) 40%, #0d0d24 100%) !important;
+.section-bg-mount {
+  background: var(--hermes-midnight, #0f0f27) !important;
 }
 
-/* CardSwap / Feature Cards */
+.section-bg-radial {
+  background: var(--hermes-midnight, #0f0f27) !important;
+}
+
+/* CardSwap / Feature Cards (Hermes Plates) */
 .custom-swap-card {
-  background: linear-gradient(165deg, rgba(22, 22, 54, 0.96) 0%, rgba(13, 13, 36, 0.98) 100%) !important;
-  border: 1px solid rgba(0, 0, 242, 0.38) !important;
+  background: linear-gradient(165deg, rgba(20, 20, 50, 0.96) 0%, rgba(15, 15, 39, 0.98) 100%) !important;
+  border: 1px solid rgba(46, 48, 195, 0.42) !important;
   box-shadow: 0 16px 44px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
   border-radius: 20px !important;
 }
@@ -249,9 +213,9 @@ body {
   font-size: 0.72rem !important;
   font-weight: 700 !important;
   background: rgba(0, 0, 242, 0.22) !important;
-  border: 1px solid rgba(0, 0, 242, 0.55) !important;
+  border: 1px solid rgba(46, 48, 195, 0.6) !important;
   color: #9eb5ff !important;
-  box-shadow: 0 0 12px rgba(0, 0, 242, 0.2) !important;
+  box-shadow: 0 0 12px rgba(46, 48, 195, 0.25) !important;
 }
 
 .swap-card-index {
@@ -275,7 +239,7 @@ body {
 
 .card-graphic-box {
   background: #09091c !important;
-  border: 1px solid rgba(0, 0, 242, 0.28) !important;
+  border: 1px solid rgba(46, 48, 195, 0.3) !important;
   border-radius: 14px !important;
   box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.65), 0 6px 18px rgba(0, 0, 0, 0.4) !important;
 }
@@ -283,13 +247,13 @@ body {
 /* Feature Tabs Controller */
 .feature-tab {
   background: rgba(20, 20, 50, 0.7) !important;
-  border: 1px solid rgba(0, 0, 242, 0.24) !important;
+  border: 1px solid rgba(46, 48, 195, 0.3) !important;
   color: rgba(255, 255, 255, 0.75) !important;
 }
 
 .feature-tab:hover {
   background: rgba(28, 28, 70, 0.85) !important;
-  border-color: rgba(0, 0, 242, 0.5) !important;
+  border-color: rgba(46, 48, 195, 0.65) !important;
   color: #ffffff !important;
 }
 
@@ -310,8 +274,8 @@ body {
 .project-item,
 .release-card,
 .release-section {
-  background: linear-gradient(145deg, rgba(22, 22, 54, 0.95), rgba(13, 13, 36, 0.98)) !important;
-  border: 1px solid rgba(0, 0, 242, 0.35) !important;
+  background: linear-gradient(145deg, rgba(22, 22, 54, 0.95), rgba(15, 15, 39, 0.98)) !important;
+  border: 1px solid rgba(46, 48, 195, 0.4) !important;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
   border-radius: 24px !important;
 }
@@ -427,10 +391,5 @@ body {
     transform: none !important;
     opacity: 1 !important;
     filter: none !important;
-  }
-  .hw-frame-ambient,
-  .hw-frame-ambient::before,
-  .ambient {
-    animation: none !important;
   }
 }
