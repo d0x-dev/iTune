@@ -75,7 +75,7 @@
     const vh = window.innerHeight;
 
     // 1. Hero fade/blur progress (Hermes Agent --hw-hero-progress)
-    const heroProgress = Math.min(Math.max(scrollY / 420, 0), 1);
+    const heroProgress = Math.min(Math.max(scrollY / 360, 0), 1);
     docRoot.style.setProperty('--hw-hero-progress', heroProgress.toFixed(3));
 
     // 2. Background parallax drift (Hermes deep multi-plane space)

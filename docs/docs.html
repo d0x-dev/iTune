@@ -3,24 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#050506">
+  <meta name="theme-color" content="#0f0f27">
   <title>iTune Docs — Features, Privacy, Security &amp; License</title>
   <meta name="description" content="Explore iTune for Android: music discovery, synchronized lyrics, audio controls, downloads, privacy, security, licensing, and build instructions.">
   <link rel="canonical" href="https://d0x-dev.github.io/iTune/docs.html">
   <link rel="icon" href="./images/ic-itune-waves.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./css/scroll-effect.css">
+  <link rel="stylesheet" href="./css/scroll-effect.css?v=20261123-hermes-final">
   <style>
     @font-face { font-family:"iTune SF"; src:url("./fonts/sf-pro-display-bold.woff2") format("woff2"); font-weight:700 900; font-display:swap; }
-    :root { color-scheme:dark; --bg:#050506; --panel:#101012; --line:#ffffff16; --text:#f5f5f7; --muted:#a1a1aa; --gold:#dfc56f; }
+    :root { color-scheme:dark; --bg:#0f0f27; --panel:#141432; --line:rgba(46, 48, 195, 0.35); --text:#f5f5f7; --muted:#9ba3c7; --gold:#ffc400; }
     * { box-sizing:border-box; }
     html { scroll-behavior:smooth; scroll-padding-top:90px; }
-    html { scrollbar-color:#ffffff35 transparent; scrollbar-width:thin; }
+    html { scrollbar-color:rgba(46, 48, 195, 0.6) transparent; scrollbar-width:thin; }
     ::-webkit-scrollbar { width:8px; height:8px; }
     ::-webkit-scrollbar-track { background:transparent; }
-    ::-webkit-scrollbar-thumb { border:2px solid transparent; border-radius:999px; background:#ffffff35; background-clip:padding-box; }
-    ::-webkit-scrollbar-thumb:hover { background:#ffffff66; background-clip:padding-box; }
+    ::-webkit-scrollbar-thumb { border:2px solid transparent; border-radius:999px; background:rgba(46, 48, 195, 0.5); background-clip:padding-box; }
+    ::-webkit-scrollbar-thumb:hover { background:rgba(46, 48, 195, 0.8); background-clip:padding-box; }
     ::-webkit-scrollbar-corner { background:transparent; }
-    body { margin:0; min-height:100vh; background:var(--bg); color:var(--text); font:15px/1.65 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif; }
+    body { margin:0; min-height:100vh; background:#0f0f27 !important; color:var(--text); font:15px/1.65 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif; }
     a { color:inherit; }
     .topbar { position:sticky; z-index:10; top:0; display:flex; height:72px; align-items:center; gap:23px; padding:0 30px; border-bottom:1px solid var(--line); background:#050506eF; backdrop-filter:blur(26px); }
     .brand { display:flex; flex:none; align-items:center; gap:9px; color:#fff; text-decoration:none; }
@@ -260,7 +260,7 @@
       sections.forEach((section) => navObserver.observe(section));
     })();
   </script>
-  <script src="./js/lenis.min.js"></script>
-  <script src="./js/scroll-effects.js" defer></script>
+  <script src="./js/lenis.min.js?v=20261123-hermes-final"></script>
+  <script src="./js/scroll-effects.js?v=20261123-hermes-final" defer></script>
 </body>
 </html>
