@@ -1,17 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-marketing-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0f0f27">
+  <meta name="theme-color" content="#0D0D24">
   <title>iTune Docs — Features, Privacy, Security &amp; License</title>
   <meta name="description" content="Explore iTune for Android: music discovery, synchronized lyrics, audio controls, downloads, privacy, security, licensing, and build instructions.">
   <link rel="canonical" href="https://d0x-dev.github.io/iTune/docs.html">
   <link rel="icon" href="./images/ic-itune-waves.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./css/scroll-effect.css?v=20261123-hermes-final">
+  <link rel="stylesheet" href="./css/scroll-effect.css?v=20261123-noise-grain">
   <style>
     @font-face { font-family:"iTune SF"; src:url("./fonts/sf-pro-display-bold.woff2") format("woff2"); font-weight:700 900; font-display:swap; }
-    :root { color-scheme:dark; --bg:#0f0f27; --panel:#141432; --line:rgba(46, 48, 195, 0.35); --text:#f5f5f7; --muted:#9ba3c7; --gold:#ffc400; }
+    :root { color-scheme:dark; --bg:#0D0D24; --panel:#141432; --line:rgba(46, 48, 195, 0.35); --text:#f5f5f7; --muted:#9ba3c7; --gold:#ffc400; }
     * { box-sizing:border-box; }
     html { scroll-behavior:smooth; scroll-padding-top:90px; }
     html { scrollbar-color:rgba(46, 48, 195, 0.6) transparent; scrollbar-width:thin; }
@@ -20,7 +20,36 @@
     ::-webkit-scrollbar-thumb { border:2px solid transparent; border-radius:999px; background:rgba(46, 48, 195, 0.5); background-clip:padding-box; }
     ::-webkit-scrollbar-thumb:hover { background:rgba(46, 48, 195, 0.8); background-clip:padding-box; }
     ::-webkit-scrollbar-corner { background:transparent; }
-    body { margin:0; min-height:100vh; background:#0f0f27 !important; color:var(--text); font:15px/1.65 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif; }
+    body { margin:0; min-height:100vh; background-color:#0D0D24 !important; color:var(--text); font:15px/1.65 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif; }
+    .ambient {
+      position: fixed !important;
+      z-index: -2 !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      pointer-events: none !important;
+      overflow: hidden !important;
+      background-color: #0D0D24 !important;
+      background-image: radial-gradient(ellipse 120% 90% at 50% 15%, #12122d 0%, #0d0d24 55%, #070715 100%) !important;
+      background-attachment: fixed !important;
+    }
+    .ambient::before { display: none !important; }
+    .ambient::after {
+      content: "" !important;
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      pointer-events: none !important;
+      z-index: -1 !important;
+      background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.055'/%3E%3C/svg%3E"),
+        url("./images/noise.png") !important;
+      background-repeat: repeat !important;
+      background-size: 180px 180px, 256px 256px !important;
+      opacity: 0.85 !important;
+      mix-blend-mode: overlay !important;
+    }
     a { color:inherit; }
     .topbar { position:sticky; z-index:10; top:0; display:flex; height:72px; align-items:center; gap:23px; padding:0 30px; border-bottom:1px solid var(--line); background:#050506eF; backdrop-filter:blur(26px); }
     .brand { display:flex; flex:none; align-items:center; gap:9px; color:#fff; text-decoration:none; }
@@ -103,6 +132,7 @@
     <div class="hw-frame-ambient hw-frame-left"></div>
     <div class="hw-frame-ambient hw-frame-right"></div>
   </div>
+  <div class="ambient" aria-hidden="true"></div>
   <header class="topbar">
     <a class="brand" href="./" aria-label="iTune home"><img src="./images/ic-itune-waves.svg" alt=""><span class="brand-name"><i>i</i>Tune</span></a>
     <span class="top-divider" aria-hidden="true"></span>

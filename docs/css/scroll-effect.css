@@ -8,7 +8,7 @@
   --hermes-primary: #0000f2;
   --hermes-blue-dark: #0000c2;
   --hermes-border-rail: #2e30c3;
-  --hermes-midnight: #0f0f27;
+  --hermes-midnight: #0D0D24;
   --hermes-paper: #141432;
   --hermes-plate: #09091c;
   --hermes-white: #f2f2f2;
@@ -94,25 +94,58 @@ html.lenis {
 }
 
 /* ========================================================
-   2. HERMES BACKGROUND ATMOSPHERE (Pure #0f0f27 Void)
+   2. BACKGROUND ATMOSPHERE — Fine grain noise over #0D0D24
+   Matches reference: dark midnight navy, subtle gradient,
+   fine-grain noise texture, no dots/particles/patterns.
    ======================================================== */
+:root {
+  --bg-midnight: #0D0D24;
+}
+
 html,
-body,
-.page,
-.ambient {
-  background: var(--hermes-midnight, #0f0f27) !important;
+body {
+  background-color: var(--bg-midnight) !important;
   color: var(--hermes-white, #f2f2f2) !important;
+}
+
+.page {
+  position: relative !important;
+  isolation: isolate !important;
+  background: transparent !important;
 }
 
 .ambient {
   position: fixed !important;
   z-index: -2 !important;
   inset: 0 !important;
-  background: var(--hermes-midnight, #0f0f27) !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+  background-color: var(--bg-midnight) !important;
+  background-image: radial-gradient(ellipse 120% 90% at 50% 15%, #12122d 0%, #0d0d24 55%, #070715 100%) !important;
+  background-attachment: fixed !important;
+}
+
+/* Subtle Realistic Fine-Grain Noise Overlay (SVG feTurbulence + Texture Tile) */
+.ambient::after {
+  content: "" !important;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.055'/%3E%3C/svg%3E"),
+    url("../images/noise.png") !important;
+  background-repeat: repeat !important;
+  background-size: 180px 180px, 256px 256px !important;
+  opacity: 0.85 !important;
+  mix-blend-mode: overlay !important;
 }
 
 .ambient::before,
-.ambient::after,
 .page::before,
 .section-bg-mount,
 .section-bg-mount::before,
@@ -120,6 +153,12 @@ body,
 .showcase-right::before,
 .hero::after {
   display: none !important;
+}
+
+/* Canvas overlay removed — reference has no dot/particle pattern */
+.hermes-canvas-overlay {
+  display: none !important;
+  opacity: 0 !important;
 }
 
 /* ========================================================
@@ -186,11 +225,11 @@ body,
    5. HERMES FEATURE CARDS & PLATES STYLING
    ======================================================== */
 .section-bg-mount {
-  background: var(--hermes-midnight, #0f0f27) !important;
+  background: var(--bg-midnight, #0D0D24) !important;
 }
 
 .section-bg-radial {
-  background: var(--hermes-midnight, #0f0f27) !important;
+  background: var(--bg-midnight, #0D0D24) !important;
 }
 
 /* CardSwap / Feature Cards (Hermes Plates) */

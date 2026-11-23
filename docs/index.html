@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-marketing-theme="dark">
 <head>
   <meta name="google-site-verification" content="oEiOxwF7GEYw9A7E_iehGJChT0sikTbsY7Aj_FX64tU" />
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0f0f27">
+  <meta name="theme-color" content="#0D0D24">
   <link rel="icon" href="./images/ic-itune-waves.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./css/CardSwap.css?v=20261123-hermes-final">
-  <link rel="stylesheet" href="./css/SpecularButton.css?v=20261123-hermes-final">
-  <link rel="stylesheet" href="./css/release-modal.css?v=20261123-hermes-final">
-  <link rel="stylesheet" href="./css/scroll-effect.css?v=20261123-hermes-final">
+  <link rel="stylesheet" href="./css/CardSwap.css?v=20261123-noise-grain">
+  <link rel="stylesheet" href="./css/SpecularButton.css?v=20261123-noise-grain">
+  <link rel="stylesheet" href="./css/release-modal.css?v=20261123-noise-grain">
+  <link rel="stylesheet" href="./css/scroll-effect.css?v=20261123-noise-grain">
   <title>iTune — Android Music Player with Synchronized Lyrics</title>
   <meta name="description" content="Discover iTune, an open-source Android music player with synchronized lyrics, offline listening, an equalizer, radio, and a customizable full-screen player.">
   <meta name="robots" content="index, follow, max-image-preview:large">
@@ -52,7 +52,7 @@
       color-scheme: dark;
       --hermes-primary: #0000f2;
       --hermes-blue-dark: #0000c2;
-      --hermes-midnight: #0f0f27;
+      --hermes-midnight: #0D0D24;
       --hermes-paper: #141432;
       --ink: #f2f2f2;
       --muted: #a6adbb;
@@ -71,10 +71,37 @@
     ::-webkit-scrollbar-thumb { border:2px solid transparent; border-radius:999px; background:rgba(46, 48, 195, 0.5); background-clip:padding-box; }
     ::-webkit-scrollbar-thumb:hover { background:rgba(46, 48, 195, 0.8); background-clip:padding-box; }
     ::-webkit-scrollbar-corner { background:transparent; }
-    body { margin:0; min-height:100vh; overflow-x:clip; background:#0f0f27 !important; color:#f2f2f2; font:16px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
+    body { margin:0; min-height:100vh; overflow-x:clip; background-color:#0D0D24 !important; color:#f2f2f2; font:16px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
     a { color:inherit; }
-    .ambient { position:fixed; z-index:-2; inset:0; background:#0f0f27 !important; }
-    .ambient::before,.ambient::after { display:none !important; }
+    .ambient {
+      position: fixed !important;
+      z-index: -2 !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      pointer-events: none !important;
+      overflow: hidden !important;
+      background-color: #0D0D24 !important;
+      background-image: radial-gradient(ellipse 120% 90% at 50% 15%, #12122d 0%, #0d0d24 55%, #070715 100%) !important;
+      background-attachment: fixed !important;
+    }
+    .ambient::before { display:none !important; }
+    .ambient::after {
+      content: "" !important;
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      pointer-events: none !important;
+      z-index: -1 !important;
+      background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.055'/%3E%3C/svg%3E"),
+        url("./images/noise.png") !important;
+      background-repeat: repeat !important;
+      background-size: 180px 180px, 256px 256px !important;
+      opacity: 0.85 !important;
+      mix-blend-mode: overlay !important;
+    }
     .splash { position:fixed; z-index:20; inset:0; display:grid; place-items:center; overflow:hidden; background:radial-gradient(ellipse at center,#1a1208 0%,#09090b 55%,#050506 100%); opacity:1; transition:opacity .24s ease; }
     .splash[hidden] { display:none; }
     .splash::before,.splash::after { content:""; position:absolute; inset:-12%; pointer-events:none; will-change:transform,opacity; }
@@ -91,7 +118,7 @@
     .splash-exit { opacity:0; pointer-events:none; }
     .page.splash-locked > .masthead,.page.splash-locked > main { opacity:0; }
     .page > .masthead,.page > main { transition:opacity .55s ease; }
-    .page { position:relative; isolation:isolate; background:#0f0f27 !important; }
+    .page { position:relative; isolation:isolate; background:transparent !important; }
     .page::before { display:none !important; }
     .shell { width:min(1500px,calc(100% - 9vw)); margin-inline:auto; }
     .masthead { position:absolute; z-index:3; inset:0 0 auto; display:flex; align-items:center; justify-content:space-between; padding-top:clamp(23px,5vh,54px); pointer-events:none; }
@@ -172,7 +199,7 @@
       overflow: hidden;
     }
 
-    /* Dedicated Section Atmospheric Backdrop (Hermes Pure #0f0f27 Void) */
+    /* Dedicated Section Atmospheric Backdrop (Hermes Pure #0D0D24 Void) */
     .section-bg-mount,
     .section-bg-mount::before,
     .section-bg-radial {

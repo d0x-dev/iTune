@@ -1,17 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-marketing-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0f0f27">
+  <meta name="theme-color" content="#0D0D24">
   <title>Get iTune for Android — Official APK Downloads &amp; Releases | iTune</title>
   <meta name="description" content="Download official iTune APK packages for Android. Pristine audio fidelity, synchronized lyrics, 10-band equalizer, and offline listening. 100% free and open source.">
   <link rel="canonical" href="https://d0x-dev.github.io/iTune/downloads.html">
   <link rel="icon" href="./images/ic-itune-waves.svg" type="image/svg+xml">
   <link rel="preload" href="./fonts/sf-pro-display-bold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="./css/SpecularButton.css?v=20261123-hermes-final">
-  <link rel="stylesheet" href="./css/release-modal.css?v=20261123-hermes-final">
-  <link rel="stylesheet" href="./css/scroll-effect.css?v=20261123-hermes-final">
+  <link rel="stylesheet" href="./css/SpecularButton.css?v=20261123-noise-grain">
+  <link rel="stylesheet" href="./css/release-modal.css?v=20261123-noise-grain">
+  <link rel="stylesheet" href="./css/scroll-effect.css?v=20261123-noise-grain">
 
   <!-- OpenGraph & Social Graph -->
   <meta property="og:type" content="website">
@@ -99,40 +99,41 @@
       margin: 0;
       min-height: 100vh;
       overflow-x: clip;
-      background: #0f0f27 !important;
+      background-color: #0D0D24 !important;
       color: var(--ink);
       font: 16px/1.55 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     a { color: inherit; }
 
-    /* Hermes Solid Midnight Backdrop */
+    /* Midnight Navy Subtle Gradient & Fine-Grain Noise Atmosphere */
     .ambient {
-      position: fixed;
-      z-index: -2;
-      inset: 0;
-      background: #0f0f27 !important;
+      position: fixed !important;
+      z-index: -2 !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      pointer-events: none !important;
+      overflow: hidden !important;
+      background-color: #0D0D24 !important;
+      background-image: radial-gradient(ellipse 120% 90% at 50% 15%, #12122d 0%, #0d0d24 55%, #070715 100%) !important;
+      background-attachment: fixed !important;
     }
-    .ambient::before, .ambient::after {
-      display: none !important;
-    }
-    @keyframes ambient-colors {
-      0%, 100% { --base:#0a031d; --center:#280659; --top-glow:#ff0080; --left-glow:#ff8800; --right-glow:#130533; }
-      14.2857% { --base:#030304; --center:#140204; --top-glow:#df0024; --left-glow:#ce001e; --right-glow:#040406; }
-      28.5714% { --base:#020309; --center:#040b22; --top-glow:#0047ff; --left-glow:#0043ff; --right-glow:#02050e; }
-      42.8571% { --base:#63264d; --center:#532149; --top-glow:#ff629c; --left-glow:#ffb26b; --right-glow:#663d7f; }
-      57.1428% { --base:#1f062c; --center:#3d0b4e; --top-glow:#ff5c9d; --left-glow:#ff9e54; --right-glow:#1c0b36; }
-      71.4285% { --base:#0b1026; --center:#182046; --top-glow:#5272ff; --left-glow:#00c2ff; --right-glow:#09122c; }
-      85.7142% { --base:#281040; --center:#331350; --top-glow:#ff3a88; --left-glow:#ff9a38; --right-glow:#231144; }
-    }
-    @keyframes ambient-orbit-a {
-      0% { transform: translate3d(0,0,0) scale(1); }
-      50% { transform: translate3d(-2.8%,3%,0) scale(1.06); }
-      100% { transform: translate3d(0,0,0) scale(1); }
-    }
-    @keyframes ambient-orbit-b {
-      0% { transform: translate3d(0,0,0) scale(1); }
-      50% { transform: translate3d(2.8%,-3%,0) scale(1.06); }
-      100% { transform: translate3d(0,0,0) scale(1); }
+    .ambient::before { display: none !important; }
+    .ambient::after {
+      content: "" !important;
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      pointer-events: none !important;
+      z-index: -1 !important;
+      background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.055'/%3E%3C/svg%3E"),
+        url("./images/noise.png") !important;
+      background-repeat: repeat !important;
+      background-size: 180px 180px, 256px 256px !important;
+      opacity: 0.85 !important;
+      mix-blend-mode: overlay !important;
     }
 
     .wrap {
