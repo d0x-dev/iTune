@@ -104,54 +104,41 @@ html.lenis {
 
 html,
 body {
-  background-color: var(--bg-midnight) !important;
+  background-color: #070716 !important;
   color: var(--hermes-white, #f2f2f2) !important;
-}
-
-.page {
-  position: relative !important;
-  isolation: isolate !important;
-  background: transparent !important;
 }
 
 .ambient {
   position: fixed !important;
-  z-index: -2 !important;
   inset: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
+  z-index: 0 !important;
   pointer-events: none !important;
-  overflow: hidden !important;
-  background-color: var(--bg-midnight) !important;
-  background-image: radial-gradient(ellipse 120% 90% at 50% 15%, #12122d 0%, #0d0d24 55%, #070715 100%) !important;
+  background-color: #050512 !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.085 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse 120% 90% at 50% 18%, #11112e 0%, #0d0d24 50%, #060614 100%) !important;
+  background-repeat: repeat, no-repeat !important;
   background-attachment: fixed !important;
 }
 
-/* Subtle Realistic Fine-Grain Noise Overlay (SVG feTurbulence + Texture Tile) */
-.ambient::after {
-  content: "" !important;
-  position: fixed !important;
-  inset: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  pointer-events: none !important;
-  z-index: -1 !important;
-  background-image:
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.055'/%3E%3C/svg%3E"),
-    url("../images/noise.png") !important;
-  background-repeat: repeat !important;
-  background-size: 180px 180px, 256px 256px !important;
-  opacity: 0.85 !important;
-  mix-blend-mode: overlay !important;
+.page {
+  position: relative !important;
+  z-index: 1 !important;
+  background: transparent !important;
 }
 
 .ambient::before,
+.ambient::after,
 .page::before,
 .section-bg-mount,
 .section-bg-mount::before,
 .section-bg-radial,
 .showcase-right::before,
-.hero::after {
+.hero::after,
+.hw-frame,
+.splash {
   display: none !important;
 }
 
