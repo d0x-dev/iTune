@@ -11,6 +11,7 @@
   <link rel="preload" href="./fonts/sf-pro-display-bold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="./css/SpecularButton.css">
   <link rel="stylesheet" href="./css/release-modal.css">
+  <link rel="stylesheet" href="./css/scroll-effect.css">
 
   <!-- OpenGraph & Social Graph -->
   <meta property="og:type" content="website">
@@ -975,6 +976,12 @@
   </style>
 </head>
 <body>
+  <div class="hw-frame" aria-hidden="true">
+    <div class="hw-frame-ambient hw-frame-top"></div>
+    <div class="hw-frame-ambient hw-frame-bottom"></div>
+    <div class="hw-frame-ambient hw-frame-left"></div>
+    <div class="hw-frame-ambient hw-frame-right"></div>
+  </div>
   <!-- Ambient Hardware-Accelerated Atmosphere -->
   <div class="ambient" aria-hidden="true"></div>
 
@@ -1187,8 +1194,12 @@
   </main>
 
   <!-- Clean, Architectural Apple-Tier Footer (Cohesive with index.html) -->
-  <footer class="site-footer" role="contentinfo" aria-label="Site footer">
-    <div class="footer-ambient-edge" aria-hidden="true"></div>
+  <div class="site-footer-curtain-wrapper">
+    <div class="site-footer-curtain-spacer" aria-hidden="true"></div>
+    <div class="site-footer-curtain-mount">
+      <footer class="site-footer" role="contentinfo" aria-label="Site footer">
+        <p aria-hidden="true" class="fit-text hw-teams-ghost select-none">iTune</p>
+        <div class="footer-ambient-edge" aria-hidden="true"></div>
     <div class="wrap footer-inner">
       <!-- Top Row: Brand & Mission & Quick Stat Badges -->
       <div class="footer-top">
@@ -1286,24 +1297,12 @@
       </div>
     </div>
   </footer>
+    </div>
+  </div>
 
   <script src="./js/specular.js"></script>
   <script src="./js/github-releases.js" defer></script>
-  <script>
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
-        const hash = this.getAttribute('href');
-        if (hash && hash !== '#') {
-          const target = document.querySelector(hash);
-          if (target) {
-            e.preventDefault();
-            target.scrollIntoView({ behavior: 'smooth' });
-            try { history.pushState(null, '', hash); } catch(_) {}
-          }
-        }
-      });
-    });
-  </script>
+  <script src="./js/lenis.min.js"></script>
+  <script src="./js/scroll-effects.js" defer></script>
 </body>
 </html>

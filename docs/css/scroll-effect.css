@@ -1,0 +1,436 @@
+/* ========================================================
+   iTune Smooth Scroll & Parallax Architecture (Hermes-Style)
+   Powered by Lenis + GPU CSS Custom Properties
+   ======================================================== */
+
+/* Hermes Agent Theme Palette */
+:root {
+  --hermes-primary: #0000f2;
+  --hermes-blue-dark: #0000c2;
+  --hermes-midnight: #0d0d24;
+  --hermes-paper: #11112b;
+  --hermes-plate: #08081a;
+  --hermes-white: #f2f2f2;
+  --hermes-ink: #ffffff;
+  --hermes-muted: #9ba3c7;
+}
+
+/* Lenis Core Engine Styles */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Custom Scrollbar */
+html.lenis {
+  scrollbar-color: rgba(0, 0, 242, 0.55) transparent;
+  scrollbar-width: thin;
+}
+
+/* ========================================================
+   1. VIEWPORT AMBIENT ANIMATED BORDER FRAME (.hw-frame)
+   ======================================================== */
+.hw-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hw-frame-ambient {
+  position: absolute;
+  pointer-events: none;
+  overflow: clip;
+  contain: strict;
+  opacity: 0.4;
+  animation: 42s ease-in-out infinite hw-frame-bloom;
+}
+
+.hw-frame-top {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+}
+
+.hw-frame-bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+}
+
+.hw-frame-left {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+}
+
+.hw-frame-right {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 2px;
+}
+
+.hw-frame-ambient::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 300%;
+  height: 300%;
+  background: linear-gradient(
+    160deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.85) 15%,
+    rgba(255, 196, 0, 0.75) 20%,
+    #0000f2 25%,
+    transparent 35% 40%,
+    rgba(255, 255, 255, 0.85) 55%,
+    rgba(255, 196, 0, 0.75) 60%,
+    #0000f2 65%,
+    transparent 75% 80%,
+    rgba(255, 255, 255, 0.85) 95%,
+    rgba(255, 196, 0, 0.75) 100%
+  );
+  animation: 14s linear infinite alternate hw-frame-arc;
+}
+
+@keyframes hw-frame-arc {
+  0% { transform: translate(-10%, -10%); }
+  100% { transform: translate(-50%, -50%); }
+}
+
+@keyframes hw-frame-bloom {
+  0%, 68%, 92%, 100% { opacity: 0.38; }
+  80% { opacity: 0.88; }
+}
+
+/* ========================================================
+   2. HERMES BACKGROUND ATMOSPHERE & MULTI-PLANE PARALLAX
+   ======================================================== */
+body {
+  background: var(--hermes-midnight, #0d0d24) !important;
+  color: var(--hermes-white, #f2f2f2) !important;
+}
+
+.ambient {
+  position: fixed !important;
+  z-index: -2 !important;
+  inset: -15% !important;
+  overflow: hidden !important;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(0, 0, 242, 0.45), transparent 70%),
+    radial-gradient(ellipse 75% 55% at 88% 45%, rgba(0, 0, 194, 0.32), transparent 60%),
+    radial-gradient(ellipse 65% 50% at 15% 75%, rgba(0, 0, 242, 0.25), transparent 60%),
+    radial-gradient(ellipse 85% 65% at 50% 95%, rgba(0, 0, 194, 0.42), transparent 70%),
+    var(--hermes-midnight, #0d0d24) !important;
+  transform: translate3d(0, calc(var(--py-bg, 0px) * 0.2), 0) !important;
+  will-change: transform !important;
+  animation: hermesAtmosphere 24s ease-in-out infinite alternate !important;
+}
+
+@keyframes hermesAtmosphere {
+  0% { transform: scale(1) translate3d(0, 0, 0); }
+  50% { transform: scale(1.04) translate3d(-1.5%, 1%, 0); }
+  100% { transform: scale(0.98) translate3d(1.5%, -1%, 0); }
+}
+
+/* ========================================================
+   3. HERO PARALLAX & PHONE LOWER EDGE MASKING
+   ======================================================== */
+.hero {
+  position: relative !important;
+  overflow: clip !important;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 140px;
+  background: linear-gradient(to bottom, transparent, rgba(13, 13, 36, 0.85) 65%, #0d0d24 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Phone Frame: fully rounded corners and soft bottom gradient mask */
+.device-frame {
+  border-radius: 44px !important;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 64%, rgba(0, 0, 0, 0.4) 82%, transparent 96%) !important;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 64%, rgba(0, 0, 0, 0.4) 82%, transparent 96%) !important;
+}
+
+.device-frame.itune-hero-parallax {
+  transform: translate3d(0, calc(20px + var(--py-hero, 0px) * 0.45), 0) !important;
+  will-change: transform;
+}
+
+/* Hermes Hero Fade & Blur on Scroll */
+.hw-hero-fade {
+  opacity: calc(1 - 0.88 * var(--hw-hero-progress, 0));
+  filter: blur(calc(8px * var(--hw-hero-progress, 0)));
+  will-change: opacity, filter;
+}
+
+/* ========================================================
+   4. FLOATING MORPHING STICKY HEADER
+   ======================================================== */
+.masthead.is-sticky {
+  position: fixed !important;
+  top: 14px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(1500px, calc(100% - 9vw)) !important;
+  padding: 10px 22px !important;
+  border-radius: 999px !important;
+  background: rgba(13, 13, 36, 0.85) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(0, 0, 242, 0.45) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7), 0 0 24px rgba(0, 0, 242, 0.25) !important;
+  z-index: 100 !important;
+  transition: padding 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.masthead.is-sticky .brand img {
+  width: 34px !important;
+  height: 34px !important;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.masthead.is-sticky .brand-word {
+  font-size: 30px !important;
+  transition: font-size 0.3s ease;
+}
+
+/* ========================================================
+   5. HERMES FEATURE CARDS & PLATES STYLING
+   ======================================================== */
+.section-bg-radial {
+  background:
+    radial-gradient(ellipse 75% 55% at 80% 30%, rgba(0, 0, 242, 0.25), transparent 60%),
+    radial-gradient(ellipse 65% 50% at 20% 45%, rgba(0, 0, 194, 0.2), transparent 60%),
+    radial-gradient(ellipse 85% 65% at 50% 85%, rgba(0, 0, 194, 0.38), transparent 70%),
+    linear-gradient(180deg, rgba(13, 13, 36, 0.5) 0%, rgba(10, 10, 28, 0.9) 40%, #0d0d24 100%) !important;
+}
+
+/* CardSwap / Feature Cards */
+.custom-swap-card {
+  background: linear-gradient(165deg, rgba(22, 22, 54, 0.96) 0%, rgba(13, 13, 36, 0.98) 100%) !important;
+  border: 1px solid rgba(0, 0, 242, 0.38) !important;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  border-radius: 20px !important;
+}
+
+.swap-card-tag {
+  font-family: monospace, ui-monospace, sans-serif !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  background: rgba(0, 0, 242, 0.22) !important;
+  border: 1px solid rgba(0, 0, 242, 0.55) !important;
+  color: #9eb5ff !important;
+  box-shadow: 0 0 12px rgba(0, 0, 242, 0.2) !important;
+}
+
+.swap-card-index {
+  font-family: monospace, ui-monospace, sans-serif !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+.swap-card-heading {
+  font-family: "iTune SF", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  font-size: 1.42rem !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  letter-spacing: -0.03em !important;
+}
+
+.swap-card-description {
+  color: rgba(242, 242, 242, 0.75) !important;
+  font-size: 0.88rem !important;
+  line-height: 1.55 !important;
+}
+
+.card-graphic-box {
+  background: #09091c !important;
+  border: 1px solid rgba(0, 0, 242, 0.28) !important;
+  border-radius: 14px !important;
+  box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.65), 0 6px 18px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Feature Tabs Controller */
+.feature-tab {
+  background: rgba(20, 20, 50, 0.7) !important;
+  border: 1px solid rgba(0, 0, 242, 0.24) !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.feature-tab:hover {
+  background: rgba(28, 28, 70, 0.85) !important;
+  border-color: rgba(0, 0, 242, 0.5) !important;
+  color: #ffffff !important;
+}
+
+.feature-tab.is-active {
+  background: linear-gradient(135deg, rgba(0, 0, 242, 0.42), rgba(18, 18, 48, 0.95)) !important;
+  border-color: #0000f2 !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 32px rgba(0, 0, 242, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
+.feature-tab.is-active .feature-tab-icon {
+  background: #0000f2 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 242, 0.55) !important;
+}
+
+/* Project & Release Cards (Hermes Plates) */
+.project-item,
+.release-card,
+.release-section {
+  background: linear-gradient(145deg, rgba(22, 22, 54, 0.95), rgba(13, 13, 36, 0.98)) !important;
+  border: 1px solid rgba(0, 0, 242, 0.35) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  border-radius: 24px !important;
+}
+
+.project-item:hover {
+  border-color: #0000f2 !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 242, 0.3) !important;
+}
+
+.itune-parallax {
+  transform: translateY(var(--py-parallax, 0px));
+  will-change: transform;
+}
+
+/* ========================================================
+   6. HERMES COBALT FOOTER & WATERMARK LIFT EFFECT
+   ======================================================== */
+.site-footer-curtain-wrapper {
+  position: relative;
+  isolation: isolate;
+  z-index: 2;
+}
+
+.site-footer {
+  background: #0000c2 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #e2e7ff !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.hw-teams-ghost {
+  font-family: "iTune SF", -apple-system, sans-serif !important;
+  font-size: clamp(6.5rem, 19vw, 17rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.06em !important;
+  line-height: 0.82 !important;
+  color: #ffffff !important;
+  opacity: 0.13 !important;
+  text-transform: uppercase !important;
+  text-align: center !important;
+  pointer-events: none !important;
+  width: 100% !important;
+  user-select: none !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 0 -24px 0 !important;
+}
+
+.site-footer a {
+  color: rgba(255, 255, 255, 0.8) !important;
+  transition: color 0.2s ease, transform 0.2s ease !important;
+}
+
+.site-footer a:hover {
+  color: #ffffff !important;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.5) !important;
+}
+
+.footer-col-title {
+  color: #ffffff !important;
+  font-family: monospace, ui-monospace, sans-serif !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+@media (min-width: 769px) {
+  .site-footer-curtain-spacer {
+    height: clamp(340px, 48vh, 500px);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .site-footer-curtain-mount {
+    position: relative;
+    margin-top: calc(-1 * clamp(340px, 48vh, 500px));
+    z-index: 5;
+    pointer-events: var(--itune-footer-pe, none);
+  }
+
+  .site-footer-curtain-mount .site-footer {
+    position: sticky;
+    bottom: 0;
+    transform: translateY(var(--itune-footer-lift, 200px));
+    opacity: calc(0.3 + 0.7 * var(--itune-footer-opacity, 0));
+    filter: blur(calc(8px * (1 - var(--itune-footer-opacity, 0))));
+    will-change: transform, opacity, filter;
+  }
+}
+
+@media (max-width: 768px) {
+  .site-footer-curtain-spacer {
+    display: none;
+  }
+  .site-footer-curtain-mount {
+    margin-top: 0;
+    pointer-events: auto;
+  }
+  .site-footer-curtain-mount .site-footer {
+    position: relative;
+    transform: none;
+    opacity: 1;
+    filter: none;
+  }
+}
+
+/* Reduced Motion Safety */
+@media (prefers-reduced-motion: reduce) {
+  .device-frame.itune-hero-parallax,
+  .itune-parallax,
+  .site-footer-curtain-mount .site-footer,
+  .hw-hero-fade {
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
+  .hw-frame-ambient,
+  .hw-frame-ambient::before,
+  .ambient {
+    animation: none !important;
+  }
+}

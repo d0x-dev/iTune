@@ -1,6 +1,4 @@
-/*
- * Copyright (C) 2026 DxV Studio ~~ Dark
- *
+/* Copyright (C) 2026 DxV Studio ~~ Dark
  * Originally created by DxV Studio ~~ Dark.
  * Credits: DxV Studio, AirBeats, and Dark.
  *
@@ -39,9 +37,12 @@ object StreamClientUtils {
 
     data class OriginReferer(val origin: String?, val referer: String?)
 
-    /**
-     * Resolve the correct User-Agent for a YouTube media request based on
+    /** Resolve the correct User-Agent for a YouTube media request based on
      * the `c` query parameter from the stream URL.
+     * 
+     * YouTube periodically updates client parameter values. This function maps
+     * known client identifiers to appropriate User-Agent strings for Google CDN bypass.
+     * Defaults to iOS client for maximum compatibility with Google's CDN.
      */
     fun resolveUserAgent(clientParam: String): String {
         val client = clientParam.trim().uppercase(Locale.US)
@@ -55,12 +56,12 @@ object StreamClientUtils {
             client.startsWith("ANDROID_VR") -> USER_AGENT_ANDROID_VR
             client.startsWith("ANDROID") -> USER_AGENT_ANDROID
             client.startsWith("VISIONOS") -> USER_AGENT_VISIONOS
-            else -> USER_AGENT_IOS // default to iOS for maximum Google CDN bypass compatibility
+            // New/unknown clients: default to iOS for Google CDN bypass compatibility
+            else -> USER_AGENT_IOS
         }
     }
 
-    /**
-     * Determine the correct Origin and Referer for a YouTube media request.
+    /** Determine the correct Origin and Referer for a YouTube media request.
      * Web-type clients need YouTube Music origin; TV clients need YouTube origin.
      */
     fun resolveOriginReferer(clientParam: String): OriginReferer {
@@ -73,9 +74,7 @@ object StreamClientUtils {
         }
     }
 
-    /**
-     * Checks if the host belongs to YouTube / Google Video media CDNs.
-     */
+    /** Checks if the host belongs to YouTube / Google Video media CDNs. */
     fun isYouTubeMediaHost(host: String): Boolean {
         return host.endsWith("googlevideo.com") ||
             host.endsWith("googleusercontent.com") ||
@@ -84,9 +83,7 @@ object StreamClientUtils {
             host.endsWith("ytimg.com")
     }
 
-    /**
-     * Applies appropriate User-Agent, Origin, and Referer headers based on client parameters.
-     */
+    /** Applies appropriate User-Agent, Origin, and Referer headers based on client parameters. */
     fun applyHeaders(requestBuilder: Request.Builder, url: HttpUrl): Request.Builder {
         val clientParam = url.queryParameter("c")?.trim().orEmpty()
         val userAgent = resolveUserAgent(clientParam)
