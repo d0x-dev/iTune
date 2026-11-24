@@ -141,6 +141,7 @@ import com.darkxvenom.itune.ui.player.FloatingRadioMiniPlayer
 import com.darkxvenom.itune.ui.radio.OnlineRadioScreen
 import com.darkxvenom.itune.ui.search.SearchScreen
 import com.darkxvenom.itune.ui.settings.AppleSettingsScreen
+import com.darkxvenom.itune.ui.settings.SourcesScreen
 import com.darkxvenom.itune.ui.settings.DeveloperNewsScreen
 import com.darkxvenom.itune.ui.settings.DynamicIslandScreen
 import com.darkxvenom.itune.data.news.DeveloperNewsManager
@@ -431,6 +432,7 @@ fun HomeScreen(
     var isPlaying by remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) }
     var showSettings by remember { mutableStateOf(false) }
+    var showSources by remember { mutableStateOf(false) }
     var showIShare by remember { mutableStateOf(false) }
     var showDynamicIsland by remember { mutableStateOf(false) }
     var showAvatarDialog by remember { mutableStateOf(false) }
@@ -480,6 +482,7 @@ fun HomeScreen(
     ) { /* Permission result handled silently on startup; Download popup re-checks before notifying */ }
 
     LaunchedEffect(Unit) {
+        com.darkxvenom.itune.data.sources.PlaybackSources.ensureInit(context)
         OnlineRadioController.ensureInit(context)
         OnlineRadioController.ensureCatalogLoaded()
     }
@@ -965,7 +968,20 @@ fun HomeScreen(
                     switchingSourceBounds = bounds
                     switchingTargetAccount = target
                 },
+                onOpenSources = {
+                    showSettings = false
+                    showSources = true
+                },
             )
+        }
+
+        AnimatedVisibility(
+            visible = showSources,
+            enter = fadeIn(tween(190)) + slideInHorizontally(tween(240)) { it / 9 },
+            exit = fadeOut(tween(170)) + slideOutHorizontally(tween(210)) { it / 9 },
+        ) {
+            BackHandler(enabled = showSources && !MusicPlayerState.expanded) { showSources = false }
+            SourcesScreen(onBack = { showSources = false })
         }
 
         // Apple iPhone SharePlay-styled Listen Together ("iShare") Screen Overlay

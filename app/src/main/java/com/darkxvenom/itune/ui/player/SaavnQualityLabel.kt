@@ -42,7 +42,7 @@ import com.darkxvenom.itune.data.saavn.SaavnStatus
 
 /**
  * Player capsule content while the JioSaavn provider is on:
- * "Upgrading Quality" (breathing pulse while the search runs) → "Lossless" (shimmer once found).
+ * "Finding a better stream" (breathing pulse while searching) → "High Quality AAC" when found.
  */
 @Composable
 fun SaavnQualityLabel(status: SaavnStatus) {
@@ -71,9 +71,9 @@ fun SaavnQualityLabel(status: SaavnStatus) {
         androidx.compose.foundation.layout.Spacer(Modifier.width(6.dp))
         val style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
         if (upgrading) {
-            Text("Upgrading Quality", style = style, color = Color.White.copy(alpha = 0.7f), maxLines = 1)
+            Text("Finding a better stream", style = style, color = Color.White.copy(alpha = 0.7f), maxLines = 1)
         } else {
-            ShimmerLabel("Lossless", style)
+            ShimmerLabel("High Quality AAC", style)
         }
     }
 }

@@ -1727,9 +1727,13 @@ fun ITuneMusicPlayer(
                 // Center Dynamic Audio Engine & Quality Badge Pill (iMusic 128k / Dolby Atmos / 8D Audio / Bit-Perfect)
                 val pillBadge = audioEngineState.pillBadge
                 val saavnStatuses by com.darkxvenom.itune.data.saavn.SaavnQuality.statuses.collectAsStateWithLifecycle()
+                val streamTraces by com.darkxvenom.itune.audio.StreamTraceStore.traces.collectAsStateWithLifecycle()
                 val saavnStatus = if (settingsState.jioSaavnProvider) {
                     saavnStatuses[track.id]?.takeIf { it != com.darkxvenom.itune.data.saavn.SaavnStatus.FALLBACK }
                 } else null
+                val sourceQuality = streamTraces[track.id]?.takeIf {
+                    it.source.startsWith("Extension", true) || it.source.startsWith("Addon", true)
+                }?.quality?.takeIf { it.isNotBlank() }
                 Box(
                     modifier = Modifier
                             .graphicsLayer { alpha = canvasChromeAlpha }
@@ -1758,10 +1762,10 @@ fun ITuneMusicPlayer(
                     contentAlignment = Alignment.Center
                 ) {
                     AnimatedContent(
-                        targetState = pillBadge to saavnStatus,
+                        targetState = Triple(pillBadge, saavnStatus, sourceQuality),
                         transitionSpec = { fadeIn(tween(180)) togetherWith fadeOut(tween(140)) },
                         label = "audioEnginePillContent",
-                    ) { (badge, saavn) ->
+                    ) { (badge, saavn, extensionQuality) ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -1773,7 +1777,11 @@ fun ITuneMusicPlayer(
                                 contentScale = ContentScale.Fit,
                                 modifier = Modifier.size(14.dp)
                             )
-                            if (badge.isBrandedITune && saavn != null) {
+                            if (extensionQuality != null) {
+                                Text(extensionQuality, color = Color.White,
+                                    style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay, fontWeight = FontWeight.SemiBold),
+                                    maxLines = 1)
+                            } else if (badge.isBrandedITune && saavn != null) {
                                 SaavnQualityLabel(saavn)
                             } else if (badge.isBrandedITune) {
                                 Text(

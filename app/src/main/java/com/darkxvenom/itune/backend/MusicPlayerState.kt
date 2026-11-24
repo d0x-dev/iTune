@@ -292,6 +292,7 @@ object MusicPlayerState : Player.Listener {
         this.appContext = appContext
         com.darkxvenom.itune.data.discord.DiscordPresenceManager.initialize(appContext)
         SettingsStore.ensureInit(appContext)
+        com.darkxvenom.itune.data.remote.RemoteLibraryStore.ensureInit(appContext)
         MusicBackend.init(appContext)
         LibraryStore.ensureInit(appContext)
         com.darkxvenom.itune.data.library.ListeningProfileStore.ensureInit(appContext)
@@ -352,7 +353,7 @@ object MusicPlayerState : Player.Listener {
     @OptIn(UnstableApi::class)
     private fun buildExoPlayer(context: Context, dualProc: SimultaneousAudioProcessor): ExoPlayer {
         val httpDataSourceFactory = OkHttpDataSource.Factory(Net.client).setUserAgent(Net.USER_AGENT)
-        val dataSourceFactory = DefaultDataSource.Factory(context, httpDataSourceFactory)
+        val dataSourceFactory = SmbDataSource.RoutingFactory(DefaultDataSource.Factory(context, httpDataSourceFactory))
         val floatOutput = SettingsStore.state.value.pcmOutputFormat == "32-bit float PCM"
         val renderersFactory = object : DefaultRenderersFactory(context) {
             override fun buildAudioSink(
@@ -641,7 +642,7 @@ object MusicPlayerState : Player.Listener {
                         ),
                     )
                     when (MusicCacheManager.cachedSource(track.id)) {
-                        "saavn" -> com.darkxvenom.itune.data.saavn.SaavnQuality.set(track.id, com.darkxvenom.itune.data.saavn.SaavnStatus.LOSSLESS)
+                        "saavn" -> com.darkxvenom.itune.data.saavn.SaavnQuality.set(track.id, com.darkxvenom.itune.data.saavn.SaavnStatus.HIGH_QUALITY)
                         else -> {
                             com.darkxvenom.itune.data.saavn.SaavnQuality.clear(track.id)
                             val st = SettingsStore.state.value
@@ -860,7 +861,7 @@ object MusicPlayerState : Player.Listener {
                 val url = com.darkxvenom.itune.data.saavn.JioSaavnProvider.lookup(track.title, track.artists) ?: return@launch
                 MusicCacheManager.cacheSaavnStream(track, url, replaceExisting = true) { ok ->
                     if (ok && currentTrack?.id == track.id) {
-                        com.darkxvenom.itune.data.saavn.SaavnQuality.set(track.id, com.darkxvenom.itune.data.saavn.SaavnStatus.LOSSLESS)
+                        com.darkxvenom.itune.data.saavn.SaavnQuality.set(track.id, com.darkxvenom.itune.data.saavn.SaavnStatus.HIGH_QUALITY)
                     }
                 }
             } finally {
@@ -879,10 +880,10 @@ object MusicPlayerState : Player.Listener {
         val track = currentTrack ?: return
         if (upgradingQuality) return
         val saavn = com.darkxvenom.itune.data.saavn.SaavnQuality.statuses.value[track.id]
-        val alreadyLossless = saavn == com.darkxvenom.itune.data.saavn.SaavnStatus.LOSSLESS ||
+        val alreadyOnSaavn = saavn == com.darkxvenom.itune.data.saavn.SaavnStatus.HIGH_QUALITY ||
             MusicCacheManager.cachedSource(track.id) == "saavn"
-        if (alreadyLossless) {
-            Toast.makeText(ctx, "Song already playing in Lossless Quality", Toast.LENGTH_SHORT).show()
+        if (alreadyOnSaavn) {
+            Toast.makeText(ctx, "A JioSaavn high-bitrate AAC stream is already playing", Toast.LENGTH_SHORT).show()
             return
         }
         if (!SettingsStore.state.value.jioSaavnProvider) {
@@ -899,7 +900,7 @@ object MusicPlayerState : Player.Listener {
                 com.darkxvenom.itune.data.saavn.SaavnQuality.set(track.id, com.darkxvenom.itune.data.saavn.SaavnStatus.SEARCHING)
                 val url = com.darkxvenom.itune.data.saavn.JioSaavnProvider.resolve(track.id, track.title, track.artists, emptySet(), force = true)
                 if (url == null) {
-                    Toast.makeText(ctx, "No lossless version found for this song", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(ctx, "No JioSaavn stream with a higher bitrate was found", Toast.LENGTH_SHORT).show()
                     return@launch
                 }
                 if (currentTrack?.id != track.id) return@launch // user moved on meanwhile
@@ -1628,7 +1629,8 @@ object MusicPlayerState : Player.Listener {
         ).any(errorText::contains) ||
             (("bot" in errorText || "robot" in errorText) &&
                 ("sign in" in errorText || "login" in errorText || "confirm" in errorText || "prove" in errorText))
-        val message = if (isBotChallenge) {
+        val showChallengeGuidance = com.darkxvenom.itune.data.sources.PlaybackSources.captchaGuidance.value
+        val message = if (isBotChallenge && showChallengeGuidance) {
             "Please log in with your Google account to avoid this playback issue."
         } else {
             "Couldn't play this song. Please try again."

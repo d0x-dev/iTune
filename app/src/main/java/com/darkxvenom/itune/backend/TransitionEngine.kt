@@ -522,7 +522,7 @@ object TransitionEngine {
         tail?.let { return it }
         val ctx = appContext ?: return null
         val httpFactory = OkHttpDataSource.Factory(Net.client).setUserAgent(Net.USER_AGENT)
-        val dataSourceFactory = DefaultDataSource.Factory(ctx, httpFactory)
+        val dataSourceFactory = SmbDataSource.RoutingFactory(DefaultDataSource.Factory(ctx, httpFactory))
         val player = ExoPlayer.Builder(ctx)
             .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
             .setLooper(Looper.getMainLooper())

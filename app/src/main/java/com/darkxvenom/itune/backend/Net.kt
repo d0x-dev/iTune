@@ -35,14 +35,18 @@ object Net {
             .addInterceptor { chain ->
                 val request = chain.request()
                 val host = request.url.host
+                val davAuth = com.darkxvenom.itune.data.remote.webdav.WebDavAuth.headerFor(host)
+                val scopedRequest = if (davAuth != null && request.header("Authorization") == null) {
+                    request.newBuilder().header("Authorization", davAuth).build()
+                } else request
 
                 // Apply YouTube CDN client headers (User-Agent, Origin, Referer) based on stream client parameter
                 val finalRequest = if (StreamClientUtils.isYouTubeMediaHost(host)) {
-                    val builder = request.newBuilder()
-                    StreamClientUtils.applyHeaders(builder, request.url)
+                    val builder = scopedRequest.newBuilder()
+                    StreamClientUtils.applyHeaders(builder, scopedRequest.url)
                     builder.build()
                 } else {
-                    request
+                    scopedRequest
                 }
 
                 val response = chain.proceed(finalRequest)

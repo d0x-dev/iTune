@@ -835,19 +835,63 @@ object MusicBackend {
     ): String? = withContext(Dispatchers.IO) {
         try {
             com.darkxvenom.itune.audio.StreamTraceStore.begin(videoId)
-            // Optional JioSaavn provider: tried first, any miss falls through to YouTube below.
-            if (SettingsStore.state.value.jioSaavnProvider && !title.isNullOrBlank() && !artist.isNullOrBlank()) {
-                if (forceRefresh) {
-                    // A retry means the previous stream failed: don't hand the same provider back.
-                    com.darkxvenom.itune.data.saavn.SaavnQuality.set(videoId, com.darkxvenom.itune.data.saavn.SaavnStatus.FALLBACK)
-                } else {
-                    val blocked = appContext?.let(::isCellularConnection) == true &&
-                        SettingsStore.state.value.cellularStreaming.equals("Off", ignoreCase = true)
-                    if (!blocked) {
-                        com.darkxvenom.itune.data.saavn.JioSaavnProvider.resolve(videoId, title, artist, excludedUrls)
+            if (videoId.startsWith("webdav:")) {
+                val url = videoId.removePrefix("webdav:").takeIf { it.startsWith("https://") || it.startsWith("http://") }
+                if (url != null) {
+                    com.darkxvenom.itune.audio.StreamTraceStore.put(videoId, com.darkxvenom.itune.audio.StreamTrace("WebDAV", "Remote audio file", listOf("Streaming the selected file directly from its WebDAV server")))
+                    return@withContext url
+                }
+            }
+            if (videoId.startsWith("smb://")) {
+                com.darkxvenom.itune.audio.StreamTraceStore.put(videoId, com.darkxvenom.itune.audio.StreamTrace("SMB", "Remote audio file", listOf("Streaming the selected file directly from its SMB share")))
+                return@withContext videoId
+            }
+            // Configured sources are checked in the user's Sources-screen order. The original
+            // YouTube extractor remains the guaranteed fallback for misses and offline addons.
+            for (sourceId in com.darkxvenom.itune.data.sources.PlaybackSources.order.value) {
+                if (sourceId == "youtube") {
+                    if (com.darkxvenom.itune.data.sources.PlaybackSources.youtubeEnabled.value) break
+                    continue
+                }
+                val blocked = appContext?.let(::isCellularConnection) == true &&
+                    SettingsStore.state.value.cellularStreaming.equals("Off", ignoreCase = true)
+                if (blocked || title.isNullOrBlank() || artist.isNullOrBlank()) continue
+                when {
+                    sourceId == "jiosaavn" && SettingsStore.state.value.jioSaavnProvider -> {
+                        if (forceRefresh) {
+                            // A retry means the previous stream failed: don't return it again.
+                            com.darkxvenom.itune.data.saavn.SaavnQuality.set(videoId, com.darkxvenom.itune.data.saavn.SaavnStatus.FALLBACK)
+                        } else {
+                            com.darkxvenom.itune.data.saavn.JioSaavnProvider.resolve(videoId, title, artist, excludedUrls)
+                                ?.let { return@withContext it }
+                        }
+                    }
+                    sourceId.startsWith("addon-") || sourceId.startsWith("extension-") -> {
+                        val settings = SettingsStore.state.value
+                        val onCellular = appContext?.let(::isCellularConnection) == true
+                        val cellularMode = settings.cellularStreaming
+                        val lossless = if (onCellular) cellularMode.equals("Lossless", true) else settings.losslessAudio
+                        val quality = if (onCellular) {
+                            when (cellularMode) {
+                                "High Efficiency" -> "LOW"
+                                "High Quality" -> "HIGH"
+                                else -> settings.audioQuality
+                            }
+                        } else settings.audioQuality
+                        val qualityTier = when {
+                            lossless -> "LOSSLESS"
+                            quality.equals("Low", true) || quality.equals("Data Saver", true) -> "LOW"
+                            else -> "HIGH"
+                        }
+                        com.darkxvenom.itune.data.sources.PlaybackSources.resolveAddon(videoId, title, artist, sourceId, qualityTier)
+                            ?.url?.takeIf { it !in excludedUrls }
                             ?.let { return@withContext it }
                     }
                 }
+            }
+            if (!com.darkxvenom.itune.data.sources.PlaybackSources.youtubeEnabled.value) {
+                com.darkxvenom.itune.audio.StreamTraceStore.addStep(videoId, "YouTube Music is disabled in Sources")
+                return@withContext null
             }
             com.darkxvenom.itune.audio.StreamTraceStore.addStep(videoId, "Asked YouTube Music (stream extractor) for watch?v=$videoId")
             val info = getOrLoadStreamInfo(videoId, forceRefresh = forceRefresh)

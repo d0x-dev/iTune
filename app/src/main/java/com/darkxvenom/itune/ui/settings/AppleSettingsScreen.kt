@@ -307,6 +307,7 @@ fun AppleSettingsScreen(
     onOpenDynamicIsland: () -> Unit = {},
     onAddNewAccount: () -> Unit = {},
     onSwitchAccount: (UserAccount, Rect?) -> Unit = { _, _ -> },
+    onOpenSources: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -507,6 +508,7 @@ fun AppleSettingsScreen(
             onOpenIShare = onOpenIShare,
             onOpenDynamicIsland = onOpenDynamicIsland,
             onOpenAudioEffect = { page -> activeAudioEffectPage = page },
+            onOpenSources = onOpenSources,
             onOpenLyricsSettings = { showLyricsSettings = true },
             onOpenDeveloperNews = { showDeveloperNews = true },
             onToggleBool = { key, enabled ->
@@ -2705,6 +2707,7 @@ private fun buildSettingsSections(
     onOpenIShare: () -> Unit,
     onOpenDynamicIsland: () -> Unit,
     onOpenAudioEffect: (EnginePopupPage) -> Unit,
+    onOpenSources: () -> Unit,
     onOpenLyricsSettings: () -> Unit,
     onOpenDeveloperNews: () -> Unit,
     onToggleBool: (String, Boolean) -> Unit,
@@ -2934,6 +2937,15 @@ private fun buildSettingsSections(
             id = "audio_playback",
             title = "Audio & Playback",
             entries = listOf(
+                SettingsEntry.Action(
+                    id = "music_sources",
+                    title = "Sources",
+                    subtitle = "Manage YouTube Music, JioSaavn, installable extensions, WebDAV, SMB, and playback priority",
+                    iconRes = R.drawable.ic_settings_streaming_quality,
+                    keywords = listOf("sources", "addons", "extensions", "jiosaavn", "youtube music", "priority"),
+                    trailingValue = "Manage",
+                    onAction = onOpenSources,
+                ),
                 SettingsEntry.Toggle(
                     id = "auto_skip_on_error",
                     title = "Auto Skip When Error Occurs",
@@ -2972,19 +2984,6 @@ private fun buildSettingsSections(
                     keywords = listOf("flac", "alac", "hires", "studio", "fidelity", "quality", "lossless"),
                     checked = state.losslessAudio,
                     onToggle = { onToggleBool(SettingsStore.KEY_LOSSLESS_AUDIO, it) },
-                ),
-                SettingsEntry.Toggle(
-                    id = "jiosaavn_provider",
-                    title = "JioSaavn Provider",
-                    subtitle = if (state.jioSaavnProvider) {
-                        "Playing from JioSaavn (up to 320 kbps) when a match is found · YouTube otherwise"
-                    } else {
-                        "Off · Songs play from YouTube Music"
-                    },
-                    iconRes = R.drawable.ic_settings_jiosaavn,
-                    keywords = listOf("jiosaavn", "saavn", "source", "provider", "320", "quality", "lossless"),
-                    checked = state.jioSaavnProvider,
-                    onToggle = { onToggleBool(SettingsStore.KEY_JIOSAAVN_PROVIDER, it) },
                 ),
                 SettingsEntry.Toggle(
                     id = "upgrade_cached_songs",

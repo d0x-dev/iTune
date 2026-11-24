@@ -66,6 +66,9 @@ dependencies {
     implementation("androidx.media3:media3-datasource-okhttp:$media3")
     implementation("androidx.media3:media3-database:$media3")
     implementation("com.github.TeamNewPipe:NewPipeExtractor:v0.26.5")
+    implementation("io.github.dokar3:quickjs-kt-android:1.0.14")
+    implementation("com.hierynomus:smbj:0.15.0")
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     implementation("com.google.protobuf:protobuf-javalite:4.29.3")
@@ -102,3 +105,5 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }
+
+

@@ -30,7 +30,7 @@ import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
 /** What the player pill should say for a track while the JioSaavn provider is on. */
-enum class SaavnStatus { SEARCHING, LOSSLESS, FALLBACK }
+enum class SaavnStatus { SEARCHING, HIGH_QUALITY, FALLBACK }
 
 /** Per-track JioSaavn status, observed by the player's quality capsule. */
 object SaavnQuality {
@@ -50,7 +50,7 @@ object SaavnQuality {
  *
  * For a YouTube Music track it searches JioSaavn, accepts only a confident match
  * (title + artist, then title + first word of the artist) and returns a 320/160kbps
- * AAC stream. Any miss returns null so the caller falls back to YouTube.
+ * lossy AAC stream. It is never labelled lossless. Any miss returns null so the caller falls back to YouTube.
  */
 object JioSaavnProvider {
     private const val TAG = "JioSaavn"
@@ -71,7 +71,7 @@ object JioSaavnProvider {
             cached?.trace?.let { StreamTraceStore.put(trackId, it) }
             if (!force && cached != null && System.currentTimeMillis() - cached.at < CACHE_TTL_MS) {
                 val url = cached.url?.takeIf { it !in excludedUrls }
-                SaavnQuality.set(trackId, if (url != null) SaavnStatus.LOSSLESS else SaavnStatus.FALLBACK)
+                SaavnQuality.set(trackId, if (url != null) SaavnStatus.HIGH_QUALITY else SaavnStatus.FALLBACK)
                 return@withContext url
             }
             SaavnQuality.set(trackId, SaavnStatus.SEARCHING)
@@ -92,7 +92,7 @@ object JioSaavnProvider {
             }
             StreamTraceStore.put(trackId, trace)
             cache[trackId] = Cached(url, System.currentTimeMillis(), trace)
-            SaavnQuality.set(trackId, if (url != null) SaavnStatus.LOSSLESS else SaavnStatus.FALLBACK)
+            SaavnQuality.set(trackId, if (url != null) SaavnStatus.HIGH_QUALITY else SaavnStatus.FALLBACK)
             url
         }
 
