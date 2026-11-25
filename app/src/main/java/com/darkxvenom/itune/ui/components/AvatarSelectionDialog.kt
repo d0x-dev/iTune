@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.components
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import android.os.Build
 import android.view.WindowManager
 import android.widget.Toast
@@ -147,7 +150,7 @@ fun AvatarSelectionDialog(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
-                    text = "Choose Avatar",
+                    text = stringResource(R.string.ui_choose_avatar),
                     color = AppleTextPrimary,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -158,7 +161,7 @@ fun AvatarSelectionDialog(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
-                    text = "Select a profile avatar to personalize your iTune experience across all screens.",
+                    text = stringResource(R.string.ui_select_a_profile_avatar_to_personalize_your_itune_expe),
                     color = AppleTextSecondary,
                     fontSize = 12.5.sp,
                     lineHeight = 16.sp,
@@ -224,7 +227,7 @@ fun AvatarSelectionDialog(
                                         .data(avatarUrl)
                                         .crossfade(true)
                                         .build(),
-                                    contentDescription = "Avatar $avatarId",
+                                    contentDescription = stringResource(R.string.avatar_number, avatarId.toString()),
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier.fillMaxSize()
                                 )
@@ -269,13 +272,13 @@ fun AvatarSelectionDialog(
                         .height(48.dp)
                         .clickable {
                             AvatarManager.setAvatar(context, selectedId)
-                            Toast.makeText(context, "Profile avatar updated", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_profile_avatar_updated), Toast.LENGTH_SHORT).show()
                             onDismiss()
                         },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Save",
+                        text = stringResource(R.string.save),
                         color = AppleMusicRed,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -300,7 +303,7 @@ fun AvatarSelectionDialog(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel),
                         color = Color(0xFF8E8E93),
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Normal,
