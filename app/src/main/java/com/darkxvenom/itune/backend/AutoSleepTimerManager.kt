@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.backend
 
+
+import com.darkxvenom.itune.R
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
@@ -81,9 +83,7 @@ object AutoSleepTimerManager {
             val now = System.currentTimeMillis()
             if (now - lastPausedNoticeMs > 60_000L) {
                 lastPausedNoticeMs = now
-                Toast.makeText(
-                    context,
-                    "Auto Sleep Timer active · Playback paused",
+                Toast.makeText(context, context.getString(R.string.toast_auto_sleep_timer_active_playback_paused),
                     Toast.LENGTH_SHORT
                 ).show()
             }
