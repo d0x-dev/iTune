@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.recognition
 
+
+import androidx.compose.ui.res.stringResource
 import android.Manifest
 import android.widget.Toast
 import android.app.Activity
@@ -230,12 +232,12 @@ fun IRecognitionScreen(
                 IconButton(onClick = onClose) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = "Close iReconization",
+                        contentDescription = stringResource(R.string.ui_close_ireconization),
                         tint = Color.White,
                     )
                 }
                 Text(
-                    text = "iReconization",
+                    text = stringResource(R.string.ui_ireconization),
                     modifier = Modifier.weight(1f),
                     color = Color.White,
                     fontSize = 17.sp,
@@ -428,7 +430,7 @@ fun IRecognitionScreen(
                 uiState !is IRecognitionUiState.Error
             ) {
                 Text(
-                    text = "Identify music playing around you",
+                    text = stringResource(R.string.ui_identify_music_playing_around_you),
                     modifier = Modifier.padding(bottom = 25.dp),
                     color = Color(0xFF66666E),
                     fontSize = 12.sp,
@@ -511,10 +513,10 @@ private fun RecognitionResultCard(
                                 MusicPlayerState.play(track, tracks, expandPlayer = true)
                                 onClose()
                             } else {
-                                Toast.makeText(context, "Song not found in iTune", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_song_not_found_in_itune), Toast.LENGTH_SHORT).show()
                             }
                         } catch (_: Exception) {
-                            Toast.makeText(context, "Playback failed, try again", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_playback_failed_try_again), Toast.LENGTH_SHORT).show()
                         } finally {
                             isPlayLoading = false
                         }
@@ -539,7 +541,7 @@ private fun RecognitionResultCard(
                 )
             }
             Spacer(Modifier.size(8.dp))
-            Text("Play", fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.play), fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.weight(1f))
         }
         if (!result.shazamUrl.isNullOrBlank()) {
@@ -549,7 +551,7 @@ private fun RecognitionResultCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
             ) {
-                Text("View on Shazam", color = Color.White)
+                Text(stringResource(R.string.ui_view_on_shazam), color = Color.White)
                 Spacer(Modifier.weight(1f))
                 Icon(Icons.Rounded.OpenInNew, contentDescription = null, tint = Color.White)
             }
@@ -578,10 +580,10 @@ private fun PermissionCard(onRequest: () -> Unit) {
             Icon(Icons.Rounded.Mic, contentDescription = null, tint = RecognitionRed, modifier = Modifier.size(46.dp))
         }
         Spacer(Modifier.height(22.dp))
-        Text("Allow microphone access", color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.ui_allow_microphone_access), color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(8.dp))
         Text(
-            "iReconization listens for a few seconds to create a music fingerprint. Audio is not saved.",
+            stringResource(R.string.ui_ireconization_listens_for_a_few_seconds_to_create_a_mu),
             color = RecognitionSecondary,
             textAlign = TextAlign.Center,
             fontSize = 14.sp,
@@ -595,7 +597,7 @@ private fun PermissionCard(onRequest: () -> Unit) {
         ) {
             Icon(Icons.Rounded.Settings, contentDescription = null)
             Spacer(Modifier.size(8.dp))
-            Text("Allow Microphone")
+            Text(stringResource(R.string.ui_allow_microphone))
         }
     }
 }
