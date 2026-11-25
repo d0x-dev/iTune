@@ -1172,9 +1172,7 @@ fun ArtistScreenOverlayPopups(
                         controller.withBrowseSongs(target) { list ->
                             list.asReversed().forEach { MusicPlayerState.playNext(it.toMusicTrack()) }
                             if (list.isNotEmpty()) {
-                                Toast.makeText(
-                                    controller.context,
-                                    "Playing ${target.title} next",
+                                Toast.makeText(controller.context, controller.context.getString(R.string.toast_playing_next_0f0c851c, target.title),
                                     Toast.LENGTH_SHORT,
                                 ).show()
                             }
@@ -1185,9 +1183,7 @@ fun ArtistScreenOverlayPopups(
                         controller.withBrowseSongs(target) { list ->
                             if (list.isNotEmpty()) {
                                 MusicPlayerState.addToQueue(list.map { it.toMusicTrack() })
-                                Toast.makeText(
-                                    controller.context,
-                                    "Added ${target.title} to queue",
+                                Toast.makeText(controller.context, controller.context.getString(R.string.toast_added_to_queue_88e96c25, target.title),
                                     Toast.LENGTH_SHORT,
                                 ).show()
                             }
