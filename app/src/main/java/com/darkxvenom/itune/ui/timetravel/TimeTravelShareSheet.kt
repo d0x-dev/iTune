@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.timetravel
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -136,13 +139,13 @@ fun TimeTravelShareSheet(
             Spacer(Modifier.height(18.dp))
 
             Text(
-                text = "Share my Replay",
+                text = stringResource(R.string.ui_share_my_replay),
                 color = AppleTextPrimary,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.ExtraBold,
             )
             Text(
-                text = "A full picture with top songs, artists, albums and habits.",
+                text = stringResource(R.string.ui_a_full_picture_with_top_songs_artists_albums_and_habit),
                 color = AppleTextSecondary,
                 fontSize = 13.5.sp,
                 textAlign = TextAlign.Center,
@@ -165,14 +168,14 @@ fun TimeTravelShareSheet(
                     image != null -> {
                         Image(
                             bitmap = image.asImageBitmap(),
-                            contentDescription = "Replay Poster",
+                            contentDescription = stringResource(R.string.ui_replay_poster),
                             contentScale = ContentScale.Fit,
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
                     failed -> {
                         Text(
-                            text = "Could not render replay image",
+                            text = stringResource(R.string.ui_could_not_render_replay_image),
                             color = AppleTextSecondary,
                             fontSize = 12.sp,
                             textAlign = TextAlign.Center,
@@ -214,7 +217,7 @@ fun TimeTravelShareSheet(
                 )
                 Spacer(Modifier.width(10.dp))
                 Text(
-                    text = "Share Replay",
+                    text = stringResource(R.string.ui_share_replay),
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
@@ -232,7 +235,7 @@ fun TimeTravelShareSheet(
                         val img = poster ?: return@clickable
                         scope.launch {
                             saveBitmapToGallery(context, img, "iTune_Replay_${System.currentTimeMillis()}")
-                            Toast.makeText(context, "Saved to Gallery!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_saved_to_gallery), Toast.LENGTH_SHORT).show()
                             onDismiss()
                         }
                     }
@@ -248,7 +251,7 @@ fun TimeTravelShareSheet(
                 )
                 Spacer(Modifier.width(10.dp))
                 Text(
-                    text = "Save to Gallery",
+                    text = stringResource(R.string.ui_save_to_gallery),
                     color = AppleTextPrimary,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
