@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.aod
 
+
+import androidx.compose.ui.res.stringResource
 import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -272,7 +274,7 @@ fun AppleAlwaysOnDisplayOverlay(
                         // Previous Track (<<)
                         Icon(
                             painter = painterResource(id = R.drawable.skip_previous),
-                            contentDescription = "Previous",
+                            contentDescription = stringResource(R.string.ui_previous),
                             tint = Color.White,
                             modifier = Modifier
                                 .size(32.dp)
@@ -325,7 +327,7 @@ fun AppleAlwaysOnDisplayOverlay(
                                 // Play Triangle (▶)
                                 Icon(
                                     painter = painterResource(id = R.drawable.play),
-                                    contentDescription = "Play",
+                                    contentDescription = stringResource(R.string.play),
                                     tint = Color.White,
                                     modifier = Modifier.size(38.dp),
                                 )
@@ -335,7 +337,7 @@ fun AppleAlwaysOnDisplayOverlay(
                         // Next Track (>>)
                         Icon(
                             painter = painterResource(id = R.drawable.skip_next),
-                            contentDescription = "Next",
+                            contentDescription = stringResource(R.string.ui_next),
                             tint = Color.White,
                             modifier = Modifier
                                 .size(32.dp)
@@ -388,7 +390,7 @@ fun AppleAlwaysOnDisplayOverlay(
                         ) {
                             Icon(
                                 painter = painterResource(id = activeDeviceIcon),
-                                contentDescription = "Audio Output",
+                                contentDescription = stringResource(R.string.ui_audio_output),
                                 tint = Color.White,
                                 modifier = Modifier.size(17.dp),
                             )
@@ -598,7 +600,7 @@ private fun AodVolumeSlider(
         // Low speaker icon
         Icon(
             painter = painterResource(id = R.drawable.ic_aod_volume_low),
-            contentDescription = "Low Volume",
+            contentDescription = stringResource(R.string.ui_low_volume),
             tint = Color.White.copy(alpha = 0.55f),
             modifier = Modifier.size(16.dp),
         )
@@ -649,7 +651,7 @@ private fun AodVolumeSlider(
         // High speaker icon with sound waves
         Icon(
             painter = painterResource(id = R.drawable.volume_up),
-            contentDescription = "High Volume",
+            contentDescription = stringResource(R.string.ui_high_volume),
             tint = Color.White.copy(alpha = 0.55f),
             modifier = Modifier.size(19.dp),
         )
