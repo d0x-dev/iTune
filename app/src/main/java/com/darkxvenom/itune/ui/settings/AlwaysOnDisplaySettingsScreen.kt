@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.settings
 
+
+import androidx.compose.ui.res.stringResource
 import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -142,7 +144,7 @@ fun AlwaysOnDisplaySettingsScreen(
 
                         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             Text(
-                                text = "Always On Display",
+                                text = stringResource(R.string.ui_always_on_display),
                                 color = Color.White,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -175,7 +177,7 @@ fun AlwaysOnDisplaySettingsScreen(
             // Card 2: Auto-Activation Idle Timeout Section
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(
-                    text = "AUTO-ACTIVATION TIMEOUT",
+                    text = stringResource(R.string.ui_auto_activation_timeout),
                     color = Color.White.copy(alpha = 0.45f),
                     fontSize = 11.5.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -227,7 +229,7 @@ fun AlwaysOnDisplaySettingsScreen(
                                 if (isSelected) {
                                     Icon(
                                         imageVector = Icons.Rounded.Check,
-                                        contentDescription = "Selected",
+                                        contentDescription = stringResource(R.string.ui_selected),
                                         tint = AodAppleRed,
                                         modifier = Modifier.size(18.dp),
                                     )
@@ -248,7 +250,7 @@ fun AlwaysOnDisplaySettingsScreen(
                 }
 
                 Text(
-                    text = "When music is playing, Always On Display turns on if no touch occurs on the screen for the chosen time. Only activates while inside the app.",
+                    text = stringResource(R.string.ui_when_music_is_playing_always_on_display_turns_on_if_no),
                     color = Color.White.copy(alpha = 0.45f),
                     fontSize = 11.5.sp,
                     lineHeight = 15.sp,
@@ -259,7 +261,7 @@ fun AlwaysOnDisplaySettingsScreen(
             // Card 3: Display & Full-Screen Options
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(
-                    text = "DISPLAY & FULL SCREEN",
+                    text = stringResource(R.string.ui_display_full_screen),
                     color = Color.White.copy(alpha = 0.45f),
                     fontSize = 11.5.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -287,13 +289,13 @@ fun AlwaysOnDisplaySettingsScreen(
                                 verticalArrangement = Arrangement.spacedBy(2.dp),
                             ) {
                                 Text(
-                                    text = "Immersive Mode (Full Screen)",
+                                    text = stringResource(R.string.ui_immersive_mode_full_screen),
                                     color = Color.White,
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Medium,
                                 )
                                 Text(
-                                    text = "Hides Android status bar and navigation bar for seamless pure OLED black.",
+                                    text = stringResource(R.string.ui_hides_android_status_bar_and_navigation_bar_for_seamle),
                                     color = Color.White.copy(alpha = 0.50f),
                                     fontSize = 12.sp,
                                     lineHeight = 15.sp,
@@ -337,13 +339,13 @@ fun AlwaysOnDisplaySettingsScreen(
                                 verticalArrangement = Arrangement.spacedBy(2.dp),
                             ) {
                                 Text(
-                                    text = "Keep Screen On",
+                                    text = stringResource(R.string.ui_keep_screen_on),
                                     color = Color.White,
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Medium,
                                 )
                                 Text(
-                                    text = "Prevents device display from turning off while Always On Display is active.",
+                                    text = stringResource(R.string.ui_prevents_device_display_from_turning_off_while_always),
                                     color = Color.White.copy(alpha = 0.50f),
                                     fontSize = 12.sp,
                                     lineHeight = 15.sp,
@@ -392,13 +394,13 @@ fun AlwaysOnDisplaySettingsScreen(
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
-                            text = "Preview Always On Display",
+                            text = stringResource(R.string.ui_preview_always_on_display),
                             color = Color.White,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
                         )
                         Text(
-                            text = "Tap to immediately activate Always On Display now",
+                            text = stringResource(R.string.ui_tap_to_immediately_activate_always_on_display_now),
                             color = Color.White.copy(alpha = 0.50f),
                             fontSize = 12.sp,
                         )
@@ -411,7 +413,7 @@ fun AlwaysOnDisplaySettingsScreen(
                             .padding(horizontal = 12.dp, vertical = 6.dp),
                     ) {
                         Text(
-                            text = "Activate",
+                            text = stringResource(R.string.ui_activate),
                             color = AodAppleRed,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -441,7 +443,7 @@ fun AlwaysOnDisplaySettingsScreen(
             centerContent = {
                 FrostedTopBarTitlePill(hazeState = hazeState) {
                     Text(
-                        text = "Always On Display",
+                        text = stringResource(R.string.ui_always_on_display),
                         color = Color.White,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
