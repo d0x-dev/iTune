@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.share
 
+
+import androidx.compose.ui.res.stringResource
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -50,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.darkxvenom.itune.MainActivity
 import com.darkxvenom.itune.R
+import com.darkxvenom.itune.data.library.AppLocaleManager
 import com.darkxvenom.itune.backend.MusicBackend
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.ui.theme.AppleOledBlack
@@ -57,6 +61,10 @@ import com.darkxvenom.itune.ui.theme.ITuneTheme
 import kotlinx.coroutines.launch
 
 class ShareToIdentifyActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLocaleManager.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -111,7 +119,7 @@ private fun ShareIdentifyScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Identify Music",
+                text = stringResource(R.string.tile_identify_music),
                 color = Color.White,
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold
@@ -121,10 +129,10 @@ private fun ShareIdentifyScreen(
             if (loading) {
                 CircularProgressIndicator(color = Color(0xFF1A73E8), modifier = Modifier.size(44.dp))
                 Spacer(Modifier.height(18.dp))
-                Text("Listening to the shared audio…", color = Color.White, textAlign = TextAlign.Center)
+                Text(stringResource(R.string.ui_listening_to_the_shared_audio), color = Color.White, textAlign = TextAlign.Center)
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "Extracting a short audio fingerprint",
+                    stringResource(R.string.ui_extracting_a_short_audio_fingerprint),
                     color = Color.Gray,
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.Center
@@ -134,7 +142,7 @@ private fun ShareIdentifyScreen(
                 if (result != null) {
                     AsyncImage(
                         model = result.artworkUrl,
-                        contentDescription = "Album artwork",
+                        contentDescription = stringResource(R.string.ui_album_artwork),
                         modifier = Modifier
                             .size(190.dp)
                             .background(Color(0xFF171717), RoundedCornerShape(18.dp))
@@ -154,7 +162,7 @@ private fun ShareIdentifyScreen(
                         Text(result.album, color = Color.Gray, fontSize = 13.sp, textAlign = TextAlign.Center)
                     }
                     Spacer(Modifier.height(28.dp))
-                    Text("Identified with Shazam", color = Color(0xFF8AB4F8), style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.ui_identified_with_shazam), color = Color(0xFF8AB4F8), style = MaterialTheme.typography.labelMedium)
                     Spacer(Modifier.height(20.dp))
                     Button(
                         onClick = {
@@ -173,10 +181,10 @@ private fun ShareIdentifyScreen(
                                             context.startActivity(mainIntent)
                                             onClose()
                                         } else {
-                                            Toast.makeText(context, "Song not found in iTune", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.toast_song_not_found_in_itune), Toast.LENGTH_SHORT).show()
                                         }
                                     } catch (_: Exception) {
-                                        Toast.makeText(context, "Playback failed", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, context.getString(R.string.toast_playback_failed), Toast.LENGTH_SHORT).show()
                                     } finally {
                                         isPlayingTrack = false
                                     }
@@ -198,7 +206,7 @@ private fun ShareIdentifyScreen(
                             )
                         }
                         Spacer(Modifier.size(8.dp))
-                        Text("Play in iTune", fontWeight = FontWeight.SemiBold, color = Color.White)
+                        Text(stringResource(R.string.ui_play_in_itune), fontWeight = FontWeight.SemiBold, color = Color.White)
                     }
                 } else {
                     Text(
@@ -212,7 +220,7 @@ private fun ShareIdentifyScreen(
 
             Spacer(Modifier.height(36.dp))
             Button(onClick = onClose, modifier = Modifier.fillMaxWidth()) {
-                Text(if (loading) "Cancel" else "Done")
+                Text(stringResource(if (loading) R.string.cancel else R.string.done))
             }
         }
     }
