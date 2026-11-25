@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.timetravel
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -160,7 +162,7 @@ fun ReplayCreditCard(
             // Header: "YOUR LISTENING EXPERIENCE" + iTune Logo
             Row(verticalAlignment = Alignment.Top) {
                 Text(
-                    text = "YOUR LISTENING EXPERIENCE".uppercase(Locale.getDefault()),
+                    text = stringResource(R.string.ui_your_listening_experience).uppercase(Locale.getDefault()),
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.W700,
                     letterSpacing = 1.4.sp,
@@ -223,7 +225,7 @@ fun ReplayCreditCard(
                     Spacer(Modifier.width(10.dp))
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
-                            text = "MEMBER SINCE",
+                            text = stringResource(R.string.ui_member_since),
                             style = MaterialTheme.typography.labelSmall,
                             fontSize = 7.sp,
                             lineHeight = 8.sp,
