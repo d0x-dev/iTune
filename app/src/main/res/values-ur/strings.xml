@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">منسوخ کریں۔</string>
+    <string name="save">محفوظ کریں۔</string>
+    <string name="close">بند</string>
+    <string name="done">ہو گیا</string>
+    <string name="back">پیچھے</string>
+    <string name="play">کھیلیں</string>
+    <string name="shuffle">شفل</string>
+    <string name="retry">دوبارہ کوشش کریں۔</string>
+    <string name="try_again">دوبارہ کوشش کریں۔</string>
+    <string name="more">مزید</string>
+    <string name="less">کم</string>
+    <string name="share">شیئر کریں۔</string>
+    <string name="show_all">سب دکھائیں۔</string>
+    <string name="top_songs">سرفہرست گانے</string>
+    <string name="suggested">تجویز کردہ</string>
+    <string name="subscribers">%1$s سبسکرائبرز</string>
+    <string name="monthly_listeners">%1$s ماہانہ سامعین</string>
+    <string name="signed_by">%1$s کے ذریعے دستخط شدہ</string>
+    <string name="about_artist">فنکار کے بارے میں</string>
+    <string name="about_album">البم کے بارے میں</string>
+    <string name="recent_album">حالیہ البم</string>
+    <string name="recent_ep">حالیہ ای پی</string>
+    <string name="recent_single">حالیہ سنگل</string>
+    <string name="subscribe">سبسکرائب کریں۔</string>
+    <string name="unsubscribe">ان سبسکرائب کریں۔</string>
+    <string name="add_to_library">لائبریری میں شامل کریں۔</string>
+    <string name="remove_from_library">لائبریری سے ہٹا دیں۔</string>
+    <string name="add_to_playlist">پلے لسٹ میں شامل کریں۔</string>
+    <string name="remove_from_playlist">اس پلے لسٹ سے ہٹا دیں۔</string>
+    <string name="play_next">اگلا کھیلیں</string>
+    <string name="add_to_queue">قطار میں شامل کریں۔</string>
+    <string name="start_radio">ریڈیو شروع کریں۔</string>
+    <string name="open">کھولیں۔</string>
+    <string name="open_album">البم کھولیں۔</string>
+    <string name="open_artist">اوپن آرٹسٹ</string>
+    <string name="open_playlist">پلے لسٹ کھولیں۔</string>
+    <string name="song_info">گانے کی معلومات</string>
+    <string name="song_info_album">البم</string>
+    <string name="song_info_release_date">ریلیز کی تاریخ</string>
+    <string name="song_info_views">ڈرامے / مناظر</string>
+    <string name="song_info_likes">پسند کرتا ہے۔</string>
+    <string name="song_info_comments">تبصرے</string>
+    <string name="song_info_unavailable">دستیاب نہیں۔</string>
+    <string name="song_info_error">کچھ معلومات کو لوڈ نہیں کیا جا سکا۔</string>
+    <string name="song_info_retry">دوبارہ کوشش کریں۔</string>
+    <string name="like">پسند</string>
+    <string name="dislike">ناپسندیدگی</string>
+    <string name="download">ڈاؤن لوڈ کریں۔</string>
+    <string name="download_all">تمام ڈاؤن لوڈ کریں۔</string>
+    <string name="downloaded">ڈاؤن لوڈ کیا گیا۔</string>
+    <string name="downloading">ڈاؤن لوڈ ہو رہا ہے۔</string>
+    <string name="download_notification_title">ڈاؤن لوڈ ہو رہا ہے۔</string>
+    <string name="delete_download">ڈاؤن لوڈ کو حذف کریں۔</string>
+    <string name="delete_download_confirmation">اس آلہ سے "%1$s" کو ہٹائیں؟ تصدیق کرنے کے لیے دوبارہ تھپتھپائیں۔</string>
+    <string name="delete">حذف کریں۔</string>
+    <string name="queued">قطار میں لگ گیا۔</string>
+    <string name="saved_to_downloads">ڈاؤن لوڈز میں محفوظ کیا گیا۔</string>
+    <string name="search_this_list">اس فہرست کو تلاش کریں۔</string>
+    <string name="clear_search">تلاش صاف کریں۔</string>
+    <string name="close_search">تلاش بند کریں۔</string>
+    <string name="nothing_matches">یہاں کچھ بھی "%1$s" سے مماثل نہیں ہے</string>
+    <string name="sort_songs">گانے ترتیب دیں۔</string>
+    <string name="artist">فنکار</string>
+    <string name="album">البم</string>
+    <string name="playlist">پلے لسٹ</string>
+    <string name="folder">فولڈر</string>
+    <string name="songs">گانے</string>
+    <string name="song_count">%1$d گانا</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$d ٹریک</item>
+        <item quantity="other">%1$d ٹریکس</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$d منٹ</item>
+        <item quantity="other">%1$d منٹ</item>
+    </plurals>
+    <string name="one_hour">1 گھنٹہ</string>
+    <string name="hours_minutes_short">%1$dh %2$dm</string>
+    <string name="minutes_short">%1$d منٹ</string>
+    <string name="pin">پن</string>
+    <string name="unpin">پن کھول دیں۔</string>
+    <string name="tile_identify_music">موسیقی کی شناخت کریں۔</string>
+    <string name="tile_identify_music_desc">iTune کے ساتھ اپنے ارد گرد چلنے والے گانوں کی شناخت کریں۔</string>
+    <string name="widget_itune_description">اپنی ہوم اسکرین سے iTune پلے بیک کو کنٹرول کریں۔</string>
+    <string name="favorite">پسندیدہ</string>
+    <string name="tap_to_start_listening">سننا شروع کرنے کے لیے تھپتھپائیں۔</string>
+    <string name="time_zero" formatted="false">0:00</string>
+    <string name="previous">پچھلا</string>
+    <string name="play_or_pause">چلائیں یا توقف کریں۔</string>
+    <string name="next">اگلا</string>
+    <string name="repeat">دہرائیں۔</string>
+    <string name="open_title_options">%1$s اختیارات کھولیں۔</string>
+    <string name="reset_page_title">%1$s ری سیٹ کریں۔</string>
+    <string name="remove_device">%1$s کو ہٹا دیں۔</string>
+    <string name="profile_name">%1$s پروفائل</string>
+    <string name="download_option">%1$s ڈاؤن لوڈ کریں۔</string>
+    <string name="open_entry_options">%1$s اختیارات کھولیں۔</string>
+    <string name="avatar_number">اوتار %1$s</string>
+    <string name="options_for_track">%1$s کے لیے اختیارات</string>
+    <string name="preparing">تیار ہو رہا ہے…</string>
+    <string name="share_image">تصویر شیئر کریں۔</string>
+    <string name="speed_pitch_locked">رفتار اور پچ ایک ساتھ بند ہیں۔</string>
+    <string name="independent_bpm_tempo_key_pitch">آزاد بی پی ایم ٹیمپو اور کلیدی پچ</string>
+    <string name="spatial_reflections_delay">مقامی عکاسی (%1$d ms)</string>
+    <string name="on">پر</string>
+    <string name="off">آف</string>
+    <string name="dynamic_island_active">متحرک جزیرہ فعال</string>
+    <string name="dynamic_island_description">پلے بیک کے دوران iTune کے باہر آسانی سے دکھاتا ہے۔</string>
+    <string name="preparing_download">ڈاؤن لوڈ کی تیاری ہو رہی ہے…</string>
+    <string name="listening_for_music">موسیقی سن رہا ہے…</string>
+    <string name="hold_phone_near_sound_source">فون کو آواز کے منبع کے قریب پکڑیں۔</string>
+    <string name="unable_to_recognize_audio">آڈیو کو پہچاننے سے قاصر</string>
+    <string name="song_identified">گانے کی شناخت</string>
+    <string name="play_in_itune">iTune میں کھیلیں</string>
+    <string name="view_details">تفصیلات دیکھیں</string>
+    <string name="no_match_found">کوئی مماثلت نہیں ملی</string>
+    <string name="recognition_retry_message">گانے کی شناخت نہیں ہو سکی۔ دوبارہ کوشش کرنے کے لیے تھپتھپائیں۔</string>
+    <string name="microphone_permission_needed">مائیکروفون کی اجازت درکار ہے۔</string>
+    <string name="microphone_permission_help">مائکروفون تک رسائی کی اجازت دینے کے لیے تھپتھپائیں تاکہ iTune موسیقی کی شناخت کر سکے۔</string>
+    <string name="recognition_failed">شناخت ناکام ہو گئی۔</string>
+    <string name="tap_install_to_continue">جاری رکھنے کے لیے انسٹال پر ٹیپ کریں۔</string>
+    <string name="detail_artist">فنکار</string>
+    <string name="detail_album">البم</string>
+    <string name="set_default_ringtone_target">بطور ڈیفالٹ %1$s سیٹ کریں!</string>
+    <string name="added_ringtone_target">%1$s میں شامل کیا گیا۔ اسے آواز کی ترتیبات میں منتخب کریں۔</string>
+    <string name="last_fm_connected_as">Last.fm %1$s کے بطور منسلک ہے۔</string>
+    <string name="discord_connected_as">Discord %1$s کے بطور منسلک ہے۔</string>
+    <string name="tv_encrypted_backup_saved">انکرپٹڈ بیک اپ محفوظ کیا گیا (%1$d KB)!</string>
+    <string name="sign_in_verification_failed">سائن ان کی توثیق ناکام ہو گئی۔</string>
+    <string name="could_not_rename_playlist">YouTube Music پر پلے لسٹ کا نام تبدیل نہیں کیا جا سکا</string>
+    <string name="could_not_create_playlist">پلے لسٹ نہیں بن سکی</string>
+    <string name="daily_encrypted_backup_enabled">روزانہ انکرپٹڈ بیک اپ فعال ہے۔</string>
+    <string name="cookie_login_failed">کوکی لاگ ان ناکام ہو گیا۔</string>
+    <string name="could_not_open_last_fm">Last.fm نہیں کھول سکا</string>
+    <string name="last_fm_sign_in_failed">Last.fm سائن ان ناکام ہو گیا۔</string>
+    <string name="discord_sign_in_failed">Discord سائن ان ناکام ہو گیا۔</string>
+    <string name="could_not_open_android_installer">Android کا انسٹالر نہیں کھول سکا</string>
+    <string name="added_title_to_queue">"%1$s" کو قطار میں شامل کر دیا گیا۔</string>
+    <string name="automatic_backup_disabled">خودکار بیک اپ غیر فعال ہے۔</string>
+    <string name="download_failed">ڈاؤن لوڈ ناکام ہو گیا۔</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">انسٹال کریں۔</string>
+    <string name="ui_text_9ef6a80f91" formatted="false">#1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">%+.1f</string>
+    <string name="ui_accounts" formatted="false">+ اکاؤنٹس</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0.0s</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5.0s</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">-</string>
+    <string name="ui_text_7be28ad40e" formatted="false">-5.0 سیکنڈ</string>
+    <string name="ui_text_a6dee6102d" formatted="false">11 PM</string>
+    <string name="ui_text_1a19c52178" formatted="false">12 AM</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">12 PM</string>
+    <string name="ui_text_4e37ece023" formatted="false">15ms مخالف کان میں تاخیر شدہ کم پاس مرکب</string>
+    <string name="ui_text_76b322ac42" formatted="false">2 ایکس تیز رفتار</string>
+    <string name="ui_text_505c74ed85" formatted="false">3D پنگ پونگ باؤنس</string>
+    <string name="ui_text_db9b8df506" formatted="false">صبح 6 بجے</string>
+    <string name="ui_text_2812537f20" formatted="false">شام 6 بجے</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080</string>
+    <string name="ui_text_05a79f06cf" formatted="false">:</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">سرفہرست گانوں، فنکاروں، البمز اور عادات کے ساتھ ایک مکمل تصویر۔</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">ایک نیا ورژن تیار ہے۔</string>
+    <string name="ui_account" formatted="false">اکاؤنٹ</string>
+    <string name="ui_account_options" formatted="false">اکاؤنٹ کے اختیارات</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">اکاؤنٹس</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">اکوسٹک ہیڈ شیڈو کراس فیڈ</string>
+    <string name="ui_activate" formatted="false">چالو کریں۔</string>
+    <string name="ui_active" formatted="false">فعال</string>
+    <string name="ui_active_days" formatted="false">فعال دن</string>
+    <string name="ui_active_profile" formatted="false">ایکٹو پروفائل</string>
+    <string name="ui_activity_by_day" formatted="false">دن کی سرگرمی</string>
+    <string name="ui_add_account" formatted="false">اکاؤنٹ شامل کریں۔</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">حسب ضرورت HTTP ایڈون سرورز (بولتے ہوئے /manifest.json، /search، /stream) یا سینڈ باکس سے الگ تھلگ QuickJS ماڈیولز شامل کریں۔</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">مستقبل کے گانے خود بخود شامل کریں۔</string>
+    <string name="ui_add_streaming_source" formatted="false">سٹریمنگ ماخذ شامل کریں۔</string>
+    <string name="ui_add_to_playlist" formatted="false">پلے لسٹ میں شامل کریں۔</string>
+    <string name="ui_added_playlists" formatted="false">شامل کردہ پلے لسٹس</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">مربع البم آرٹ ورک کے کونے کے کنارے کو ایڈجسٹ کریں۔</string>
+    <string name="ui_advanced_cookie_login" formatted="false">اعلی درجے کی کوکی لاگ ان</string>
+    <string name="ui_advanced_login" formatted="false">ایڈوانسڈ لاگ ان</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">ایڈوانس لاگ ان</string>
+    <string name="ui_ai_engine" formatted="false">اے آئی انجن</string>
+    <string name="ui_ai_provider" formatted="false">AI فراہم کنندہ</string>
+    <string name="ui_albums" formatted="false">البمز</string>
+    <string name="ui_all_news" formatted="false">تمام خبریں۔</string>
+    <string name="ui_allow_downloads" formatted="false">ڈاؤن لوڈ کی اجازت دیں۔</string>
+    <string name="ui_allow_microphone" formatted="false">مائیکروفون کی اجازت دیں۔</string>
+    <string name="ui_allow_microphone_access" formatted="false">مائکروفون تک رسائی کی اجازت دیں۔</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">متبادل عکاسی L &lt;-&gt; R</string>
+    <string name="ui_always_on_display" formatted="false">ہمیشہ ڈسپلے پر</string>
+    <string name="ui_am" formatted="false">AM</string>
+    <string name="ui_api_base_url" formatted="false">API بیس یو آر ایل</string>
+    <string name="ui_artist" formatted="false">فنکار</string>
+    <string name="ui_artist_name" formatted="false">فنکار کا نام</string>
+    <string name="ui_artists" formatted="false">فنکار</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">فنکار، گانے، البمز، پلے لسٹس…</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">فنکار، گانے، دھن اور بہت کچھ</string>
+    <string name="ui_at_least_8_characters" formatted="false">کم از کم 8 حروف</string>
+    <string name="ui_auto_sleep_timer" formatted="false">آٹو سلیپ ٹائمر</string>
+    <string name="ui_auto_activation_timeout" formatted="false">آٹو ایکٹیویشن کا ٹائم آؤٹ</string>
+    <string name="ui_avatar" formatted="false">اوتار</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">بیک اپ iTune (AES-256)</string>
+    <string name="ui_backup_password" formatted="false">بیک اپ پاس ورڈ</string>
+    <string name="ui_bluetooth_device_access" formatted="false">Bluetooth ڈیوائس تک رسائی</string>
+    <string name="ui_browse" formatted="false">براؤز کریں۔</string>
+    <string name="ui_browse_by_country" formatted="false">ملک کے لحاظ سے براؤز کریں۔</string>
+    <string name="ui_browse_extensions" formatted="false">ایکسٹینشنز کو براؤز کریں۔</string>
+    <string name="ui_browse_live_online_radio" formatted="false">لائیو آن لائن ریڈیو کو براؤز کریں۔</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">صرف اکاؤنٹ کو حذف نہیں کیا جا سکتا</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">کینوس فراہم کرنے والے (لوک اپ آرڈر)</string>
+    <string name="ui_captcha_guidance" formatted="false">کیپچا گائیڈنس</string>
+    <string name="ui_cast_wireless_devices" formatted="false">کاسٹ اور وائرلیس آلات</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">آڈیو پلے بیک سٹریمنگ کے ذرائع، نقصان کے بغیر درجات، اور فال بیک ترجیح کا انتخاب کریں۔</string>
+    <string name="ui_choose_avatar" formatted="false">اوتار کا انتخاب کریں۔</string>
+    <string name="ui_choose_charts_region" formatted="false">چارٹس کا علاقہ منتخب کریں۔</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">منتخب کریں کہ iTune آپ کی ہوم اسکرین پر کیسے ظاہر ہوتا ہے۔ اپنے لانچر سے ویجیٹ کا سائز تبدیل کریں۔</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">جاری رکھنے کے لیے اپنا پروفائل منتخب کریں۔</string>
+    <string name="ui_choose_youtube_channel" formatted="false">YouTube چینل کا انتخاب کریں۔</string>
+    <string name="ui_clear" formatted="false">صاف</string>
+    <string name="ui_clear_use_default" formatted="false">صاف کریں اور ڈیفالٹ استعمال کریں۔</string>
+    <string name="ui_clear_all" formatted="false">تمام صاف کریں۔</string>
+    <string name="ui_confirm" formatted="false">تصدیق کریں۔</string>
+    <string name="ui_confirm_password" formatted="false">پاس ورڈ کی تصدیق کریں۔</string>
+    <string name="ui_connect_discord" formatted="false">Discord جڑیں۔</string>
+    <string name="ui_connect_last_fm" formatted="false">Last.fm جڑیں۔</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">کینوس لوپنگ موشن ویڈیو آرٹ ورک کو فعال کرنے اور اپنی Spotify لائبریری کو ہم آہنگ کرنے کے لیے اپنے Spotify اکاؤنٹ کو مربوط کریں۔</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">YouTube Music کو سیشن کوکیز کے ساتھ جوڑیں۔</string>
+    <string name="ui_connect" formatted="false">جڑیں ›</string>
+    <string name="ui_connecting_spotify" formatted="false">Spotify منسلک ہو رہا ہے...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">YouTube Music منسلک ہو رہا ہے...</string>
+    <string name="ui_continue" formatted="false">جاری رکھیں</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">اس کے بجائے براؤزر میں جاری رکھیں</string>
+    <string name="ui_continue_with_google" formatted="false">Google کے ساتھ جاری رکھیں</string>
+    <string name="ui_continue_with_spotify" formatted="false">Spotify کے ساتھ جاری رکھیں</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">کوکی کی اسناد کو iTune کے انکرپٹڈ اکاؤنٹ اسٹوریج میں اسٹور کیا جاتا ہے اور محفوظ ہونے سے پہلے YouTube Music سے چیک کیا جاتا ہے۔</string>
+    <string name="ui_copy_song_name" formatted="false">گانے کا نام کاپی کریں۔</string>
+    <string name="ui_copy_text" formatted="false">متن کاپی کریں۔</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">کاپی رائٹ © 2026 iTune پروجیکٹ۔ یہ سافٹ ویئر بغیر وارنٹی کے فراہم کیا جاتا ہے۔ آپ اسے ذیل میں دکھائے گئے GNU GPL شرائط کے تحت دوبارہ تقسیم اور ترمیم کر سکتے ہیں۔</string>
+    <string name="ui_corner_length" formatted="false">کونے کی لمبائی</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">ری پلے امیج کو رینڈر نہیں کیا جا سکا</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">ابھی موسیقی لوڈ نہیں ہو سکی۔ دوبارہ کوشش کرنے کے لیے نیچے کھینچیں۔</string>
+    <string name="ui_create" formatted="false">بنائیں</string>
+    <string name="ui_create_add" formatted="false">بنائیں اور شامل کریں۔</string>
+    <string name="ui_current_account" formatted="false">کرنٹ اکاؤنٹ</string>
+    <string name="ui_custom_instructions" formatted="false">حسب ضرورت ہدایات</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">کسٹم ریپوزٹری انڈیکس یا URL</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">اپنے ہوم اسکرین پلیئر کو حسب ضرورت بنائیں</string>
+    <string name="ui_customize_your_itune_card" formatted="false">اپنے iTune کارڈ کو حسب ضرورت بنائیں</string>
+    <string name="ui_d" formatted="false">ڈی</string>
+    <string name="ui_delete_account" formatted="false">اکاؤنٹ حذف کریں۔</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">اکاؤنٹ حذف کریں؟</string>
+    <string name="ui_developer_announcements" formatted="false">ڈویلپر کے اعلانات</string>
+    <string name="ui_disconnect" formatted="false">منقطع کرنا</string>
+    <string name="ui_disconnect_discord" formatted="false">Discord منقطع کریں۔</string>
+    <string name="ui_discord_rich_presence" formatted="false">Discord بھرپور موجودگی</string>
+    <string name="ui_dismiss" formatted="false">برطرف کرنا</string>
+    <string name="ui_display_full_screen" formatted="false">ڈسپلے اور فل سکرین</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">گانے کے عنوان کے اوپر متحرک مطابقت پذیر دھن دکھائیں جب کہ کینوس کنٹرولز پوشیدہ ہوں۔</string>
+    <string name="ui_display_name" formatted="false">ڈسپلے کا نام</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">DJ بائپولر کلب فلٹر</string>
+    <string name="ui_downloaded_cached" formatted="false">ڈاؤن لوڈ اور کیشڈ</string>
+    <string name="ui_dp" formatted="false">ڈی پی</string>
+    <string name="ui_dynamic_island" formatted="false">متحرک جزیرہ</string>
+    <string name="ui_e" formatted="false">ای</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">جیسے 127.0.0.1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">جیسے نظموں کے ساتھ شاعرانہ ہنگلیش میں ترجمہ کریں۔</string>
+    <string name="ui_enable_auto_sleep" formatted="false">آٹو سلیپ کو فعال کریں۔</string>
+    <string name="ui_enable_proxy" formatted="false">پراکسی کو فعال کریں۔</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">Spotify کینوس اور پلے لسٹس کو فعال کرنا</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">خفیہ کاری پاس ورڈ (کم سے کم 8 حروف)</string>
+    <string name="ui_end_of_current_track" formatted="false">موجودہ ٹریک کا اختتام</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">اس اکاؤنٹ کے لیے ایک نیا نام درج کریں۔</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">ایک HTTP ایڈون مینی فیسٹ یو آر ایل، کوئیک جے ایس ماڈیول انڈیکس، یا ٹائیڈل انسٹینس اینڈ پوائنٹ درج کریں۔</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">جب آپ کا .itune بیک اپ بنایا گیا تھا استعمال کیا گیا پاس ورڈ درج کریں۔</string>
+    <string name="ui_enter_your_name" formatted="false">اپنا نام درج کریں۔</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">iTune کو ذاتی بنانے کے لیے اپنا نام درج کریں۔</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">ہر تال، دیر رات کا ترانہ، اور راگ جس کے ساتھ آپ رہتے تھے — ایک سفر میں جمع ہوئے۔</string>
+    <string name="ui_everything" formatted="false">سب کچھ</string>
+    <string name="ui_explore_categories" formatted="false">زمرے دریافت کریں۔</string>
+    <string name="ui_exporting_audio" formatted="false">آڈیو برآمد ہو رہا ہے…</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">ایک مختصر آڈیو فنگر پرنٹ نکالنا</string>
+    <string name="ui_favorite_stations" formatted="false">پسندیدہ اسٹیشنز</string>
+    <string name="ui_favorites" formatted="false">پسندیدہ</string>
+    <string name="ui_featured_hit" formatted="false">نمایاں ہٹ</string>
+    <string name="ui_featured_playlists" formatted="false">نمایاں پلے لسٹس</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">آڈیو کی خصوصیات حاصل کی جا رہی ہیں…</string>
+    <string name="ui_fetching_live_catalog" formatted="false">لائیو کیٹلاگ حاصل کر رہا ہے...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">ایک بہتر سلسلہ تلاش کرنا</string>
+    <string name="ui_full_view" formatted="false">مکمل نظارہ</string>
+    <string name="ui_g" formatted="false">جی</string>
+    <string name="ui_genre" formatted="false">GENRE</string>
+    <string name="ui_genres_styles" formatted="false">انواع اور طرزیں</string>
+    <string name="ui_github_repository" formatted="false">GitHub ذخیرہ</string>
+    <string name="ui_github_repository_open_source" formatted="false">GitHub ذخیرہ · اوپن سورس</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 یا بعد کا</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 یا بعد میں · کاپی رائٹ © 2026 iTune پروجیکٹ</string>
+    <string name="ui_grant" formatted="false">گرانٹ</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">ایئربڈز کا نام اور لائیو بیٹری % دکھانے کے لیے گرانٹ</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">ہارڈ ویئر لاؤڈنس بڑھانے والا (+18 ڈی بی تک)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">ہموار خالص OLED سیاہ کے لیے Android اسٹیٹس بار اور نیویگیشن بار کو چھپاتا ہے۔</string>
+    <string name="ui_history" formatted="false">تاریخ</string>
+    <string name="ui_host" formatted="false">میزبان</string>
+    <string name="ui_host_a_session" formatted="false">ایک سیشن کی میزبانی کریں۔</string>
+    <string name="ui_host_controls_playback" formatted="false">میزبان پلے بیک کو کنٹرول کرتا ہے۔</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">اپنی کوکیز کیسے حاصل کریں۔</string>
+    <string name="ui_hq" formatted="false">ہیڈکوارٹر</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">Shazam سے شناخت شدہ</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">اپنے ارد گرد چلنے والی موسیقی کی شناخت کریں۔</string>
+    <string name="ui_immersion" formatted="false">وسرجن</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">عمیق موڈ (مکمل اسکرین)</string>
+    <string name="ui_import" formatted="false">درآمد کریں۔</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">عوامی اور نجی پلے لسٹس درآمد کریں • خودکار مطابقت پذیری</string>
+    <string name="ui_import_spotify_playlist" formatted="false">Spotify پلے لسٹ درآمد کریں۔</string>
+    <string name="ui_in_use" formatted="false">استعمال میں</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">درون ایپ رہنمائی جب آڈیو فراہم کرنے والے اینٹی بوٹ چیک کو چیلنج کرتے ہیں۔</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">پہلے سے شامل کردہ مورنی کمیونٹی ایکسٹینشنز انسٹال کریں یا حسب ضرورت ریپوزٹری انڈیکس اسکین کریں۔</string>
+    <string name="ui_installed" formatted="false">انسٹال</string>
+    <string name="ui_interactive_dot_curve" formatted="false">انٹرایکٹو ڈاٹ وکر</string>
+    <string name="ui_irecognition" formatted="false">iRecognition</string>
+    <string name="ui_ireconization" formatted="false">iReconization</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">iReconization موسیقی فنگر پرنٹ بنانے کے لیے چند سیکنڈ کے لیے سنتا ہے۔ آڈیو محفوظ نہیں ہے۔</string>
+    <string name="ui_ishare" formatted="false">iShare</string>
+    <string name="ui_itune_license" formatted="false">iTune لائسنس</string>
+    <string name="ui_itune_music" formatted="false">iTune موسیقی</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTune نیچے دی گئی عین ترجیح میں دھن کے سوالات کرتا ہے۔ اگر سب سے زیادہ فعال فراہم کنندہ کے پاس کوئی مطابقت پذیر دھن نہیں ہے، تو iTune بغیر کسی رکاوٹ کے اگلے والے پر واپس آجاتا ہے۔</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">دکھایا گیا ترتیب میں iTune سوالات کے ذرائع۔ پلے بیک کی ترجیح کو ایڈجسٹ کرنے کے لیے انسٹال کردہ ایکسٹینشنز اور فراہم کنندگان کو گھسیٹیں۔</string>
+    <string name="ui_itune_time_travel" formatted="false">iTune ٹائم ٹریول</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">جیٹ فلانجر سووش</string>
+    <string name="ui_join" formatted="false">شمولیت</string>
+    <string name="ui_keep_screen_on" formatted="false">اسکرین کو آن رکھیں</string>
+    <string name="ui_l" formatted="false">ایل</string>
+    <string name="ui_lan_port" formatted="false">LAN پورٹ</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">زبان کی ترجیح (اختیاری، جیسے ہندی، پنجابی…)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fm سکروبلنگ</string>
+    <string name="ui_layout" formatted="false">لے آؤٹ</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">اس فراہم کنندہ کے لیے ڈیفالٹ اینڈ پوائنٹ استعمال کرنے کے لیے خالی چھوڑ دیں۔</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">ایل ایف او سویپٹ جیٹ فیز ماڈیولیشن</string>
+    <string name="ui_library" formatted="false">لائبریری</string>
+    <string name="ui_license" formatted="false">لائسنس</string>
+    <string name="ui_liked_songs" formatted="false">پسند کردہ گانے</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">سائن ان ہونے کے دوران شامل کردہ لائکس مقامی طور پر اور YouTube Music دونوں پر محفوظ کیے جاتے ہیں، اس لیے وہ سائن آؤٹ کرنے کے بعد بھی آپ کی لائبریری میں رہتے ہیں۔</string>
+    <string name="ui_listening_patterns" formatted="false">سننے کے پیٹرنز</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">مشترکہ آڈیو سن رہا ہے…</string>
+    <string name="ui_live" formatted="false">لائیو</string>
+    <string name="ui_live_radio_stations" formatted="false">لائیو ریڈیو اسٹیشنز</string>
+    <string name="ui_loading_announcements" formatted="false">اعلانات لوڈ ہو رہے ہیں…</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">فنکاروں، پلے لسٹس اور تاریخ کو لوڈ کیا جا رہا ہے۔</string>
+    <string name="ui_lossless" formatted="false">بے نقصان</string>
+    <string name="ui_lossless_audio_preference" formatted="false">بے نقصان آڈیو ترجیح</string>
+    <string name="ui_lyrics" formatted="false">بول</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">اس گانے کے بول دستیاب نہیں ہیں۔</string>
+    <string name="ui_lyrics_providers" formatted="false">دھن فراہم کرنے والے</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">دھن کا کامیابی کے ساتھ ترجمہ کیا گیا!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">ماسٹر ایمپلیفائر بوسٹ</string>
+    <string name="ui_member_since" formatted="false">تب سے ممبر</string>
+    <string name="ui_memoji_style" formatted="false">میموجی اور انداز</string>
+    <string name="ui_minutes_listened" formatted="false">منٹ سنے گئے۔</string>
+    <string name="ui_mirror_vol" formatted="false">آئینہ والیوم</string>
+    <string name="ui_model" formatted="false">ماڈل</string>
+    <string name="ui_model_68c2cc7f" formatted="false">ماڈل</string>
+    <string name="ui_moods_activities" formatted="false">مزاج اور سرگرمیاں</string>
+    <string name="ui_moods_moments" formatted="false">موڈز اور لمحات</string>
+    <string name="ui_music_by_genre" formatted="false">سٹائل کی طرف سے موسیقی</string>
+    <string name="ui_music_language_preference" formatted="false">موسیقی کی زبان کی ترجیح</string>
+    <string name="ui_music_services" formatted="false">موسیقی کی خدمات</string>
+    <string name="ui_name" formatted="false">نام</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">قریبی WI-FI میزبان</string>
+    <string name="ui_network_proxy" formatted="false">نیٹ ورک پراکسی</string>
+    <string name="ui_new" formatted="false">نیا</string>
+    <string name="ui_new_playlist" formatted="false">نئی پلے لسٹ</string>
+    <string name="ui_new_releases" formatted="false">نئی ریلیز</string>
+    <string name="ui_news_from_dev" formatted="false">دیو سے خبریں۔</string>
+    <string name="ui_next_up" formatted="false">اگلا</string>
+    <string name="ui_no_albums_found" formatted="false">کوئی البمز نہیں ملے</string>
+    <string name="ui_no_artist_information_available" formatted="false">کوئی فنکار کی معلومات دستیاب نہیں ہے۔</string>
+    <string name="ui_no_artists_found" formatted="false">کوئی فنکار نہیں ملا</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">آپ کی لائبریری میں ابھی تک کوئی فنکار نہیں ہے۔</string>
+    <string name="ui_no_playlists_found" formatted="false">کوئی پلے لسٹ نہیں ملی</string>
+    <string name="ui_no_results_on_spotify" formatted="false">Spotify پر کوئی نتیجہ نہیں۔</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">آپ کی لائبریری میں کوئی محفوظ کردہ البمز نہیں ہیں۔</string>
+    <string name="ui_no_songs_found" formatted="false">کوئی گانے نہیں ملے</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">اس ریلیز میں کوئی گانا نہیں ملا</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">اس سیکشن میں کوئی گانا نہیں ملا</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">کوئی صارف پلے لسٹ نہیں ملی۔ لائبریری میں ایک بنائیں!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">ابھی تک سننا کافی نہیں ہے۔</string>
+    <string name="ui_now_playing" formatted="false">اب چل رہا ہے۔</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">اب کھیل رہے ہیں۔</string>
+    <string name="ui_on_heavy_repeat" formatted="false">بھاری دہرانے پر</string>
+    <string name="ui_options" formatted="false">اختیارات</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">یا SP_DC کوکی داخل کریں۔</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">مدار کی شدت اور رفتار</string>
+    <string name="ui_pair_join_a_device" formatted="false">جوڑا بنائیں اور ایک ڈیوائس میں شامل ہوں۔</string>
+    <string name="ui_password_optional" formatted="false">پاس ورڈ (اختیاری)</string>
+    <string name="ui_passwords_dont_match" formatted="false">پاس ورڈز مماثل نہیں ہیں۔</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">یہاں sp_dc ٹوکن چسپاں کریں…</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">اپنی API کلید یہاں چسپاں کریں۔</string>
+    <string name="ui_play_in_itune" formatted="false">iTune میں کھیلیں</string>
+    <string name="ui_play_next" formatted="false">اگلا کھیلیں</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">ایک ہی وقت میں بڈز اور فون اسپیکر/AUX پر چلائیں۔</string>
+    <string name="ui_playlist_name" formatted="false">پلے لسٹ کا نام</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">پلے لسٹ کا نام</string>
+    <string name="ui_playlist_spotify" formatted="false">پلے لسٹ • Spotify</string>
+    <string name="ui_playlists" formatted="false">پلے لسٹس</string>
+    <string name="ui_plays" formatted="false">ڈرامے</string>
+    <string name="ui_pm" formatted="false">پی ایم</string>
+    <string name="ui_port" formatted="false">بندرگاہ</string>
+    <string name="ui_pre_added_extensions" formatted="false">پہلے سے شامل کردہ ایکسٹینشنز</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">دستیاب ہونے پر بٹ پرفیکٹ FLAC/ALAC کو 24-bit / 192 kHz تک ترجیح دیں</string>
+    <string name="ui_preparing_audio_preview" formatted="false">آڈیو پیش منظر تیار ہو رہا ہے…</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">آلے آن ڈسپلے کے فعال ہونے پر آلے کے ڈسپلے کو بند ہونے سے روکتا ہے۔</string>
+    <string name="ui_preview" formatted="false">پیش نظارہ</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">پیش نظارہ</string>
+    <string name="ui_preview_always_on_display" formatted="false">پیش نظارہ ہمیشہ ڈسپلے پر</string>
+    <string name="ui_profile" formatted="false">پروفائل</string>
+    <string name="ui_profiles_in_backup" formatted="false">بیک اپ میں پروفائلز</string>
+    <string name="ui_prompt_type" formatted="false">فوری قسم</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">فراہم کنندہ کی ترجیح (فال بیک آرڈر)</string>
+    <string name="ui_queue" formatted="false">قطار</string>
+    <string name="ui_queue_is_empty" formatted="false">قطار خالی ہے۔</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">اگلا کھیلنے کے لیے قطار میں لگے ہوئے ٹریک</string>
+    <string name="ui_radio" formatted="false">ریڈیو</string>
+    <string name="ui_read_more" formatted="false">مزید پڑھیں</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">لائیو آڈیو کے ساتھ ریئل ٹائم سلیبل اور لائن سکرولنگ</string>
+    <string name="ui_recent_searches" formatted="false">حالیہ تلاشیں۔</string>
+    <string name="ui_recently_added" formatted="false">حال ہی میں شامل کیا گیا۔</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">بار بار چلنے والا نیند کا شیڈول · خود کار طریقے سے پلے بیک کو روکتا ہے۔</string>
+    <string name="ui_remote_music_library" formatted="false">ریموٹ میوزک لائبریری</string>
+    <string name="ui_remove" formatted="false">ہٹا دیں۔</string>
+    <string name="ui_rename" formatted="false">نام تبدیل کریں۔</string>
+    <string name="ui_rename_account" formatted="false">اکاؤنٹ کا نام تبدیل کریں۔</string>
+    <string name="ui_replay" formatted="false">دوبارہ چلائیں۔</string>
+    <string name="ui_replay_c0f85d66" formatted="false">ری پلے</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">Bit-Perfect Lossless آؤٹ پٹ کی ضرورت ہے۔</string>
+    <string name="ui_reset" formatted="false">دوبارہ ترتیب دیں۔</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">پرووائیڈر آرڈر اور ڈیفالٹس کو ری سیٹ کریں۔</string>
+    <string name="ui_reset_to_default_url" formatted="false">ڈیفالٹ URL پر ری سیٹ کریں۔</string>
+    <string name="ui_restore_default_sources" formatted="false">پہلے سے طے شدہ ذرائع کو بحال کریں۔</string>
+    <string name="ui_restore_itune_backup" formatted="false">iTune بیک اپ بحال کریں۔</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">JioSaavn اور YouTube Music کو ڈیفالٹ ترتیب میں بحال کرتا ہے۔ JioSaavn شروع ہوتا ہے اور YouTube Music شروع ہوتا ہے۔</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">LRC Lib، KuGou، اور SimpMusic کو اعلی ترجیحی فراہم کنندگان کے طور پر بحال کرتا ہے اور تمام 11 ذرائع کو دوبارہ فعال کرتا ہے۔</string>
+    <string name="ui_resume" formatted="false">دوبارہ شروع کریں۔</string>
+    <string name="ui_rhythm_by_hour" formatted="false">تال بہ گھنٹہ</string>
+    <string name="ui_room_permissions" formatted="false">کمرے کی اجازت</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">HTTP یا SOCKS پراکسی کے ذریعے ایپ نیٹ ورک ٹریفک کو روٹ کریں۔</string>
+    <string name="ui_save_proxy" formatted="false">پراکسی کو محفوظ کریں۔</string>
+    <string name="ui_save_schedule" formatted="false">شیڈول کو محفوظ کریں۔</string>
+    <string name="ui_save_to_gallery" formatted="false">گیلری میں محفوظ کریں۔</string>
+    <string name="ui_save_token" formatted="false">ٹوکن محفوظ کریں۔</string>
+    <string name="ui_saved_to_your_library" formatted="false">آپ کی لائبریری میں محفوظ!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">Android کیسٹور کا استعمال کرتے ہوئے محفوظ کیا گیا۔ بیک اپ فائلز PBKDF2-HMAC-SHA256 (310,000 راؤنڈز) اور AES-256-GCM استعمال کرتی ہیں۔</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">ڈاؤن لوڈز/itune/بیک اپ میں محفوظ کرتا ہے۔</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">کوئی گانا، فنکار، البم، یا دھن بولیں۔</string>
+    <string name="ui_search" formatted="false">تلاش کریں۔</string>
+    <string name="ui_search_identify" formatted="false">تلاش کریں اور شناخت کریں۔</string>
+    <string name="ui_search_announcements" formatted="false">اعلانات تلاش کریں…</string>
+    <string name="ui_search_country" formatted="false">ملک تلاش کریں...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">گانے، فنکار، البمز اور پلے لسٹ تلاش کریں۔</string>
+    <string name="ui_search_languages" formatted="false">زبانیں تلاش کریں...</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">ماڈل کی شناخت تلاش کریں یا ٹائپ کریں۔</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">گانے، فنکار، البمز، یا پلے لسٹ تلاش کریں۔</string>
+    <string name="ui_searching_lyrics" formatted="false">دھن تلاش کر رہے ہیں…</string>
+    <string name="ui_searching_spotify" formatted="false">Spotify تلاش کر رہا ہے…</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">سیکنڈری آئینے کا سنک</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">تمام اسکرینوں پر اپنے iTune تجربے کو ذاتی بنانے کے لیے ایک پروفائل اوتار منتخب کریں۔</string>
+    <string name="ui_select_language" formatted="false">زبان منتخب کریں۔</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">دھن کے ترجمے کے لیے ڈیفالٹ پرامپٹ ٹیمپلیٹ کو منتخب کریں۔</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">سطر بہ سطر دھن کے ترجمہ کے لیے استعمال کرنے کے لیے انجن کو منتخب کریں۔</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">دھن کے ترجمے کے لیے ہدف کی زبان منتخب کریں۔</string>
+    <string name="ui_server_host_ip" formatted="false">سرور ہوسٹ/آئی پی</string>
+    <string name="ui_server_url_manifest" formatted="false">سرور یو آر ایل / مینی فیسٹ</string>
+    <string name="ui_settings_appearance" formatted="false">ترتیبات کی ظاہری شکل</string>
+    <string name="ui_share_lyrics" formatted="false">بول شیئر کریں۔</string>
+    <string name="ui_share_my_replay" formatted="false">میرا ری پلے شیئر کریں۔</string>
+    <string name="ui_share_replay" formatted="false">ری پلے شیئر کریں۔</string>
+    <string name="ui_share_this_story" formatted="false">اس کہانی کو شیئر کریں۔</string>
+    <string name="ui_share_your_time_travel" formatted="false">اپنا ٹائم ٹریول شیئر کریں۔</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">کینوس پر مطابقت پذیر دھن دکھائیں۔</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">ڈیسک ٹاپ براؤزر میں music.youtube.com میں سائن ان کریں۔ ڈیولپر ٹولز → ایپلیکیشن → کوکیز کھولیں، پھر سائن ان سیشن ویلیوز کاپی کریں۔ ان اقدار کو اپنے پاس ورڈ کی طرح سمجھیں۔</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">اپنے Last.fm اکاؤنٹ کے ساتھ سائن ان کریں۔</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">تمام اکاؤنٹس سے سائن آؤٹ کریں۔</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">بیک وقت دوہری آؤٹ پٹ</string>
+    <string name="ui_skip_sign_in" formatted="false">سائن ان کرنا چھوڑ دیں۔</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">تیز دھن کے لیے آگے کی طرف سلائیڈ کریں · سست کے لیے پیچھے کی طرف · آڈیو غیر متاثر</string>
+    <string name="ui_snap_0" formatted="false">سنیپ 0</string>
+    <string name="ui_soundstage_width" formatted="false">ساؤنڈ اسٹیج کی چوڑائی</string>
+    <string name="ui_sources" formatted="false">ذرائع</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">مقامی آڈیو اور لوازم</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotify اور کینوس</string>
+    <string name="ui_spotify_account" formatted="false">Spotify اکاؤنٹ</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">Spotify کینوس، Apple Music، سمندری اور کمیونٹی موشن کور</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">Spotify فی الحال منسلک ہے۔ موشن آرٹ ورک (کینوس) اور Spotify پلے لسٹ سنکرونائزیشن فعال ہیں۔</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">Spotify تلاش ناکام ہوگئی۔ دوبارہ کوشش کریں۔</string>
+    <string name="ui_station" formatted="false">اسٹیشن</string>
+    <string name="ui_stereo_echo_delay" formatted="false">سٹیریو ایکو اور تاخیر</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">اس لنک کو اسٹور کرتا ہے اور کھلے ایپ پر کوئی بھی نیا گانا خودکار طور پر شامل کرتا ہے۔</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">ذاتی نیٹ ورک شیئرز یا نیکسٹ کلاؤڈ سے براہ راست اپنی بٹ پرفیکٹ لازلیس لائبریری کو اسٹریم کریں۔</string>
+    <string name="ui_streaming_sources" formatted="false">سلسلہ بندی کے ذرائع</string>
+    <string name="ui_style" formatted="false">اسٹائل</string>
+    <string name="ui_suggestions" formatted="false">تجاویز</string>
+    <string name="ui_switch" formatted="false">سوئچ کریں۔</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">اپنی مرضی کے مطابق کرنے کے لیے اوتار کو تھپتھپائیں۔</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">براؤز کرنے کے لیے بائیں یا دائیں تھپتھپائیں • توقف کے لیے دبائے رکھیں</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">اب ہمیشہ ہمیشہ آن ڈسپلے کو فعال کرنے کے لیے تھپتھپائیں۔</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">ملک اور شہر FM نشریات کو منتخب کرنے کے لیے تھپتھپائیں۔</string>
+    <string name="ui_target_language" formatted="false">ہدف کی زبان</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">ہدف کی زبان</string>
+    <string name="ui_test" formatted="false">ٹیسٹ</string>
+    <string name="ui_test_proxy_connection" formatted="false">پراکسی کنکشن کی جانچ کریں۔</string>
+    <string name="ui_testing_proxy" formatted="false">پراکسی کی جانچ ہو رہی ہے…</string>
+    <string name="ui_that_s_your_story" formatted="false">یہ آپ کی کہانی ہے۔</string>
+    <string name="ui_this_account" formatted="false">یہ اکاؤنٹ</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">یہ پلے لسٹ خالی ہے۔ پلیئر سے گانے شامل کریں یا تلاش کریں!</string>
+    <string name="ui_time_travel" formatted="false">ٹائم ٹریول</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">ٹائم ٹریول</string>
+    <string name="ui_time_travel_wrap" formatted="false">ٹائم ٹریول ریپ</string>
+    <string name="ui_time_synced_lyrics" formatted="false">وقت کے ساتھ مطابقت پذیر دھن</string>
+    <string name="ui_top_picks" formatted="false">ٹاپ پکس</string>
+    <string name="ui_top_result" formatted="false">سرفہرست نتیجہ</string>
+    <string name="ui_top_song" formatted="false">ٹاپ گانا</string>
+    <string name="ui_top_songs" formatted="false">سرفہرست گانے</string>
+    <string name="ui_top_streamed" formatted="false">ٹاپ اسٹریم شدہ</string>
+    <string name="ui_total_listening_time" formatted="false">کل سننے کا وقت</string>
+    <string name="ui_total_time" formatted="false">کل وقت</string>
+    <string name="ui_translate_actual_lines" formatted="false">اصل لائنوں کا ترجمہ کریں۔</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">پلیئر مینو سے کسی بھی گانے کی مانگ پر دھن کا ترجمہ کریں (... &gt; بول &gt; ترجمہ)۔ جب \'اصل لائنوں کا ترجمہ کریں\' آف ہوتا ہے، ترجمہ اصل متن کے نیچے ذیلی عنوانات کے طور پر ظاہر ہوتا ہے۔</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">درج ذیل گانے کے بول لائنوں کا انگریزی میں ترجمہ کریں۔ شاعرانہ روانی کو محفوظ رکھیں۔</string>
+    <string name="ui_translating_lyrics" formatted="false">دھن کا ترجمہ کیا جا رہا ہے...</string>
+    <string name="ui_translation_mode" formatted="false">ترجمہ موڈ</string>
+    <string name="ui_translation_prompt" formatted="false">ترجمہ پرامپٹ</string>
+    <string name="ui_trending_artists" formatted="false">رجحان ساز فنکار</string>
+    <string name="ui_turn_off_timer" formatted="false">ٹائمر کو آف کریں۔</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">سیٹنگز میں اپنے Apple ID پروفائل کارڈ پر دکھائے گئے نام کو اپ ڈیٹ کریں۔</string>
+    <string name="ui_username_optional" formatted="false">صارف نام (اختیاری)</string>
+    <string name="ui_view" formatted="false">دیکھیں</string>
+    <string name="ui_view_on_shazam" formatted="false">Shazam پر دیکھیں</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">ونائل ٹرنٹیبل لنک</string>
+    <string name="ui_whats_new" formatted="false">نیا کیا ہے۔</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">جب میوزک چل رہا ہوتا ہے، ہمیشہ آن ڈسپلے آن ہو جاتا ہے اگر منتخب وقت کے لیے اسکرین پر کوئی ٹچ نہیں ہوتا ہے۔ صرف ایپ کے اندر رہتے ہوئے چالو ہوتا ہے۔</string>
+    <string name="ui_who_is_listening" formatted="false">کون سن رہا ہے؟</string>
+    <string name="ui_widget" formatted="false">ویجیٹ</string>
+    <string name="ui_you" formatted="false">آپ</string>
+    <string name="ui_your_1_artist" formatted="false">آپ کا #1 آرٹسٹ</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">آپ کی API کلید کو آلہ پر محفوظ طریقے سے اسٹور کیا جاتا ہے اور کبھی شیئر نہیں کیا جاتا ہے۔</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">آپ کے Discord سیشن ٹوکن کو اس ڈیوائس پر انکرپٹڈ اسٹور کیا جاتا ہے اور صرف امیر کی موجودگی کے لیے استعمال کیا جاتا ہے۔</string>
+    <string name="ui_your_favourite_song" formatted="false">آپ کا پسندیدہ گانا</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">آپ کی لائبریری، پلے لسٹس اور سیٹنگز کو کم از کم 8 حروف کے پاس ورڈ کے ساتھ انکرپٹ کیا جائے گا۔</string>
+    <string name="ui_your_listening_experience" formatted="false">آپ کا سننے کا تجربہ</string>
+    <string name="ui_your_listening_pattern" formatted="false">آپ کا سننے کا نمونہ</string>
+    <string name="ui_your_listening_persona" formatted="false">آپ کا سننے والا شخص</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">آپ کا میوزک ری پلے اور شماریات</string>
+    <string name="ui_your_musical_anchor" formatted="false">آپ کا میوزیکل اینکر</string>
+    <string name="ui_your_name" formatted="false">آپ کا نام</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">آپ کا پاس ورڈ صرف سیشن بنانے کے لیے Last.fm پر بھیجا جاتا ہے۔ iTune اسے محفوظ نہیں کرتا ہے۔</string>
+    <string name="ui_your_playlists" formatted="false">آپ کی پلے لسٹس</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">آپ کی پلے لسٹس</string>
+    <string name="ui_your_sonic_peak" formatted="false">آپ کی آواز کی چوٹی</string>
+    <string name="ui_your_spotify_playlists" formatted="false">آپ کی Spotify پلے لسٹس</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">آپ کی Spotify پلے لسٹس (عوامی اور نجی)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSIC اور GOOGLE</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube Music سیشن کوکیز</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">·</string>
+    <string name="ui_text_a118c40635" formatted="false">━━━ ━━━━━</string>
+    <string name="ui_album_artwork" formatted="false">البم آرٹ ورک</string>
+    <string name="ui_itune_waves" formatted="false">iTune لہریں۔</string>
+    <string name="ui_previous" formatted="false">پچھلا</string>
+    <string name="ui_next" formatted="false">اگلا</string>
+    <string name="ui_audio_output" formatted="false">آڈیو آؤٹ پٹ</string>
+    <string name="ui_low_volume" formatted="false">کم والیوم</string>
+    <string name="ui_high_volume" formatted="false">ہائی والیوم</string>
+    <string name="ui_filter" formatted="false">فلٹر</string>
+    <string name="ui_refresh" formatted="false">ریفریش کریں۔</string>
+    <string name="ui_options_6bf5da9c" formatted="false">اختیارات</string>
+    <string name="ui_user_profile_avatar" formatted="false">یوزر پروفائل اوتار</string>
+    <string name="ui_news" formatted="false">خبریں</string>
+    <string name="ui_no_song_playing" formatted="false">کوئی گانا نہیں چل رہا ہے۔</string>
+    <string name="ui_next_track" formatted="false">اگلا ٹریک</string>
+    <string name="ui_see_all_songs" formatted="false">تمام گانے دیکھیں</string>
+    <string name="ui_favorite_radio" formatted="false">پسندیدہ ریڈیو</string>
+    <string name="ui_live_65c821a5" formatted="false">جیو</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTune برانڈ لہریں۔</string>
+    <string name="ui_refresh_network" formatted="false">نیٹ ورک ریفریش کریں۔</string>
+    <string name="ui_edit_display_name" formatted="false">ڈسپلے نام میں ترمیم کریں۔</string>
+    <string name="ui_remove_from_queue" formatted="false">قطار سے ہٹا دیں۔</string>
+    <string name="ui_search_new_releases" formatted="false">نئی ریلیز تلاش کریں۔</string>
+    <string name="ui_refresh_new_releases" formatted="false">نئی ریلیز کو ریفریش کریں۔</string>
+    <string name="ui_refresh_downloads" formatted="false">ڈاؤن لوڈز کو ریفریش کریں۔</string>
+    <string name="ui_clear_cache" formatted="false">کیشے صاف کریں۔</string>
+    <string name="ui_sort" formatted="false">چھانٹنا</string>
+    <string name="ui_see_all_new_releases" formatted="false">تمام نئی ریلیز دیکھیں</string>
+    <string name="ui_identify" formatted="false">شناخت کریں۔</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">پلے لسٹ درآمد کریں۔</string>
+    <string name="ui_create_playlist" formatted="false">پلے لسٹ بنائیں</string>
+    <string name="ui_liked" formatted="false">پسند کیا۔</string>
+    <string name="ui_paste" formatted="false">چسپاں کریں۔</string>
+    <string name="ui_checked" formatted="false">چیک کیا گیا۔</string>
+    <string name="ui_google_account_playlist" formatted="false">Google اکاؤنٹ پلے لسٹ</string>
+    <string name="ui_spotify_playlist" formatted="false">Spotify پلے لسٹ</string>
+    <string name="ui_local_playlist" formatted="false">مقامی پلے لسٹ</string>
+    <string name="ui_back_to_audio_engine" formatted="false">آڈیو انجن پر واپس جائیں۔</string>
+    <string name="ui_bluetooth_settings" formatted="false">Bluetooth ترتیبات</string>
+    <string name="ui_scan_output_devices" formatted="false">آؤٹ پٹ ڈیوائسز کو اسکین کریں۔</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">بیک وقت دوہری آڈیو</string>
+    <string name="ui_selected" formatted="false">منتخب</string>
+    <string name="ui_copy" formatted="false">کاپی</string>
+    <string name="ui_copy_link" formatted="false">لنک کاپی کریں۔</string>
+    <string name="ui_upgrade_quality" formatted="false">معیار کو اپ گریڈ کریں۔</string>
+    <string name="ui_fm_radio" formatted="false">ایف ایم ریڈیو</string>
+    <string name="ui_next_station" formatted="false">اگلا اسٹیشن</string>
+    <string name="ui_minimize" formatted="false">کم سے کم کرنا</string>
+    <string name="ui_favorite" formatted="false">پسندیدہ</string>
+    <string name="ui_more_options" formatted="false">مزید اختیارات</string>
+    <string name="ui_previous_station" formatted="false">پچھلا اسٹیشن</string>
+    <string name="ui_sleep_timer" formatted="false">نیند کا ٹائمر</string>
+    <string name="ui_audio_output_devices" formatted="false">آڈیو آؤٹ پٹ ڈیوائسز</string>
+    <string name="ui_station_list" formatted="false">اسٹیشن کی فہرست</string>
+    <string name="ui_volume" formatted="false">حجم</string>
+    <string name="ui_open_lyrics" formatted="false">دھن کھولیں۔</string>
+    <string name="ui_mute_volume" formatted="false">والیوم خاموش کریں۔</string>
+    <string name="ui_max_volume" formatted="false">زیادہ سے زیادہ حجم</string>
+    <string name="ui_endless_queue" formatted="false">نہ ختم ہونے والی قطار</string>
+    <string name="ui_repeat" formatted="false">دہرائیں۔</string>
+    <string name="ui_refresh_stations" formatted="false">ریفریش اسٹیشنز</string>
+    <string name="ui_favorite_station" formatted="false">پسندیدہ اسٹیشن</string>
+    <string name="ui_close_ireconization" formatted="false">iReconization بند کریں۔</string>
+    <string name="ui_cancel_voice_search" formatted="false">صوتی تلاش کو منسوخ کریں۔</string>
+    <string name="ui_microphone" formatted="false">مائیکروفون</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">مزید اختیارات</string>
+    <string name="ui_voice_search" formatted="false">صوتی تلاش</string>
+    <string name="ui_saved" formatted="false">محفوظ کیا گیا۔</string>
+    <string name="ui_fill_search_query" formatted="false">تلاش کے استفسار کو پُر کریں۔</string>
+    <string name="ui_remove_from_history" formatted="false">تاریخ سے ہٹا دیں۔</string>
+    <string name="ui_itune_icon" formatted="false">iTune آئیکن</string>
+    <string name="ui_artwork_preview" formatted="false">آرٹ ورک کا پیش نظارہ</string>
+    <string name="ui_decrease" formatted="false">کمی</string>
+    <string name="ui_increase" formatted="false">اضافہ</string>
+    <string name="ui_open_link" formatted="false">لنک کھولیں۔</string>
+    <string name="ui_reset_geometry" formatted="false">جیومیٹری کو دوبارہ ترتیب دیں۔</string>
+    <string name="ui_reorder_provider" formatted="false">فراہم کنندہ کو دوبارہ ترتیب دیں۔</string>
+    <string name="ui_save_name" formatted="false">نام محفوظ کریں۔</string>
+    <string name="ui_editable_name" formatted="false">قابل ترمیم نام</string>
+    <string name="ui_google" formatted="false">Google</string>
+    <string name="ui_remove_account" formatted="false">اکاؤنٹ ہٹا دیں۔</string>
+    <string name="ui_reorder_source_priority" formatted="false">سورس کی ترجیح کو دوبارہ ترتیب دیں۔</string>
+    <string name="ui_refresh_playlists" formatted="false">پلے لسٹس کو ریفریش کریں۔</string>
+    <string name="ui_replay_poster" formatted="false">پوسٹر دوبارہ چلائیں۔</string>
+    <string name="ui_settings" formatted="false">ترتیبات</string>
+    <string name="ui_artist_radio" formatted="false">آرٹسٹ ریڈیو</string>
+    <string name="ui_play_all" formatted="false">سب کھیلیں</string>
+    <string name="ui_delete_playlist" formatted="false">پلے لسٹ کو حذف کریں۔</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">نہ ختم ہونے والی قطار</string>
+    <string name="ui_artist_info" formatted="false">فنکار کی معلومات</string>
+    <string name="ui_enabled" formatted="false">فعال</string>
+    <string name="ui_search_icon" formatted="false">تلاش کا آئیکن</string>
+    <string name="ui_region">علاقہ: %1$s</string>
+    <string name="ui_connected_devices">منسلک آلات (%1$s)</string>
+    <string name="ui_up_next">اوپر اگلا (%1$s)</string>
+    <string name="ui_text_da5c3629fd">%1$s ›</string>
+    <string name="ui_active_7c6a4064">%1$s • %2$s فعال</string>
+    <string name="ui_no_new_available_right_now">ابھی کوئی نیا %1$s دستیاب نہیں ہے۔</string>
+    <string name="ui_tracks">%1$s ٹریکس • %2$s</string>
+    <string name="ui_songs">%1$s گانے • %2$s • %3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s • %2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c">%1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$s ٹریک (زبانیں) مماثل نہیں ہو سکے:</string>
+    <string name="ui_text_a3edb2b714">%1$s - %2$s</string>
+    <string name="ui_d_eeda119e">%1$sD</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+%1$s dB</string>
+    <string name="ui_connected">%1$s منسلک ہے۔</string>
+    <string name="ui_open_web_player">اوپن ویب پلیئر (%1$s)</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">ملک: %1$s (%2$s)</string>
+    <string name="ui_city_state">شہر / ریاست: %1$s</string>
+    <string name="ui_codec_bitrate">کوڈیک / بٹریٹ: %1$s</string>
+    <string name="ui_language">زبان: %1$s</string>
+    <string name="ui_tags">ٹیگز: %1$s</string>
+    <string name="ui_stream">سلسلہ: %1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">API کلید %1$s کے لیے کنفیگر نہیں ہے۔ براہ کرم اسے سیٹنگز &gt; بول میں سیٹ کریں۔</string>
+    <string name="ui_s_clip">%1$ss کلپ</string>
+    <string name="ui_loading_more_fm_stations_loaded">مزید ایف ایم اسٹیشنز لوڈ ہو رہے ہیں (%1$s لوڈ)...</string>
+    <string name="ui_found">%1$s ملا</string>
+    <string name="ui_version">ورژن %1$s (%2$s)</string>
+    <string name="ui_of_active">%1$s of %2$s ایکٹو</string>
+    <string name="ui_text_adebc50ade">#%1$s</string>
+    <string name="ui_api_key">%1$s API کلید</string>
+    <string name="ui_channel">چینل: %1$s</string>
+    <string name="ui_sync_issue">مطابقت پذیری کا مسئلہ: %1$s</string>
+    <string name="ui_enter">%1$s درج کریں۔</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">کیا آپ واقعی "%1$s" کو حذف کرنا چاہتے ہیں؟ اس اکاؤنٹ میں موجود تمام ڈیٹا، پلے لسٹس، پسندیدہ، تاریخ اور ترتیبات کو مستقل طور پر حذف کر دیا جائے گا۔</string>
+    <string name="ui_peak">چوٹی: %1$s</string>
+    <string name="ui_welcome">خوش آمدید، %1$s</string>
+    <string name="ui_songs_played">%1$s گانے چلائے گئے۔</string>
+    <string name="ui_around">%1$s کے ارد گرد</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">جب دنیا مصروف ہو جاتی ہے، تو آپ %2$s کے ارد گرد %1$ss پر زیادہ تر دیکھتے ہیں۔</string>
+    <string name="ui_itune_time_travel_575a110d">iTune ٹائم ٹریول • %1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s · %2$s</string>
+    <string name="ui_your_biggest_day_was">آپ کا سب سے بڑا دن %1$s تھا۔</string>
+    <string name="ui_listening_recap">%1$s سننے کی ریکپ</string>
+    <string name="ui_busiest_day">مصروف ترین دن: %1$s</string>
+    <string name="ui_peak_hour_00">چوٹی کا وقت: %1$s:00</string>
+    <string name="ui_loading">%1$s لوڈ ہو رہا ہے…</string>
+    <string name="ui_about">%1$s کے بارے میں</string>
+    <string name="ui_songs_9b614dc8">%1$s گانے</string>
+    <string name="ui_current_offset_ms">موجودہ آفسیٹ: %1$s ms</string>
+    <string name="ui_connected_session">مربوط سیشن: %1$s</string>
+    <string name="ui_k">%1$sk</string>
+    <string name="ui_top_result_c5e5adab">بہترین نتیجہ • %1$s</string>
+    <string name="toast_song_not_found_in_itune">گانا iTune میں نہیں ملا</string>
+    <string name="toast_playback_failed_try_again">پلے بیک ناکام ہوگیا، دوبارہ کوشش کریں۔</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">آٹو سلیپ ٹائمر فعال۔ پلے بیک موقوف ہے۔</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">آف لائن موڈ: یہ گانا ڈاؤن لوڈ نہیں ہوا ہے۔</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">آف لائن موڈ: معیار کو اپ گریڈ نہیں کر سکتا</string>
+    <string name="toast_upgrading_quality">معیار کو اپ گریڈ کرنا</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">ذرائع میں کوئی لاز لیس اسٹریمنگ ذرائع فعال نہیں ہیں۔</string>
+    <string name="app_language">ایپ کی زبان</string>
+    <string name="app_language_subtitle">مینو، بٹن اور پیغامات کے لیے زبان</string>
+    <string name="app_language_description">iTune انٹرفیس کے لیے استعمال ہونے والی زبان کا انتخاب کریں۔</string>
+    <string name="system_default_language">سسٹم ڈیفالٹ</string>
+    <string name="follow_device_language">آلہ کی زبان پر عمل کریں۔</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">انگریزی انٹرفیس استعمال کریں۔</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface">انٹرفیس کے لیے ہندی کا استعمال کریں۔</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">ہسپانوی انٹرفیس استعمال کریں۔</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">فرانسیسی انٹرفیس استعمال کریں۔</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">ڈچ انٹرفیس استعمال کریں۔</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">روسی انٹرفیس استعمال کریں۔</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">اردو انٹرفیس استعمال کریں۔</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">چینی انٹرفیس استعمال کریں۔</string>
+    <string name="hindi_interface_language">ہندی انٹرفیس کی زبان</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">فعال ذرائع میں کوئی اعلیٰ معیار کا سلسلہ نہیں ملا</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">شفل کو ترتیبات میں مستقل شفل کے ذریعے مقفل کر دیا گیا ہے۔</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">موسیقی کی شناخت کے لیے مائیکروفون کی اجازت درکار ہے۔</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">شناختی پاپ اپ کے لیے دیگر ایپس پر ڈسپلے کی اجازت درکار ہے۔</string>
+    <string name="toast_playback_failed">پلے بیک ناکام ہو گیا۔</string>
+    <string name="toast_complete_google_sign_in_first">پہلے Google سائن ان مکمل کریں۔</string>
+    <string name="toast_waiting_for_youtube_music_session">YouTube Music سیشن کا انتظار کر رہا ہے...</string>
+    <string name="toast_couldn_t_load_tracks">ٹریکس لوڈ نہیں ہو سکے۔</string>
+    <string name="toast_copied_to_clipboard">کلپ بورڈ پر کاپی ہو گیا۔</string>
+    <string name="toast_profile_avatar_updated">پروفائل کا اوتار اپ ڈیٹ ہو گیا۔</string>
+    <string name="toast_no_tracks_found">کوئی ٹریک نہیں ملا</string>
+    <string name="toast_google_account_connected">Google اکاؤنٹ منسلک ہے۔</string>
+    <string name="toast_link_copied">لنک کاپی ہو گیا۔</string>
+    <string name="toast_could_not_open_browser">براؤزر نہیں کھول سکا</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">1024 اور 65535 کے درمیان پورٹ درج کریں۔</string>
+    <string name="toast_cached_music_cleared">کیش شدہ موسیقی صاف کر دی گئی۔</string>
+    <string name="toast_no_tracks_available_to_add">شامل کرنے کے لیے کوئی ٹریک دستیاب نہیں ہے۔</string>
+    <string name="toast_enter_a_playlist_name">پلے لسٹ کا نام درج کریں۔</string>
+    <string name="toast_system_sound_panel_opened">سسٹم ساؤنڈ پینل کھل گیا۔</string>
+    <string name="toast_download_started_check_notification">ڈاؤن لوڈ شروع ہوا · نوٹیفکیشن چیک کریں۔</string>
+    <string name="toast_playback_will_stop_after_current_track">موجودہ ٹریک کے بعد پلے بیک بند ہو جائے گا۔</string>
+    <string name="toast_sleep_timer_turned_off">سلیپ ٹائمر آف ہو گیا۔</string>
+    <string name="toast_stream_url_copied">سلسلہ یو آر ایل کاپی ہو گیا۔</string>
+    <string name="toast_couldn_t_create_lyrics_card">بول کارڈ نہیں بنایا جا سکا</string>
+    <string name="toast_restored_online_lyrics">آن لائن دھن کو بحال کیا گیا۔</string>
+    <string name="toast_lyrics_saved">غزلیں محفوظ ہو گئیں۔</string>
+    <string name="toast_translation_cleared">ترجمہ صاف ہو گیا۔</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">براہ کرم پہلے اپنی API کلید کو سیٹنگز &gt; بول میں سیٹ کریں۔</string>
+    <string name="toast_no_lyrics_found_for_this_song">اس گانے کے لیے کوئی بول نہیں ملے</string>
+    <string name="toast_could_not_create_audio_clip">آڈیو کلپ نہیں بن سکا</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">ٹکڑا Music/iTune/Snippets میں محفوظ کیا گیا۔</string>
+    <string name="toast_playing_next">اگلا چل رہا ہے۔</string>
+    <string name="toast_added_to_queue">قطار میں شامل کر دیا گیا۔</string>
+    <string name="toast_download_started_check_notifications">ڈاؤن لوڈ شروع ہوا · نوٹیفیکیشن چیک کریں۔</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">YouTube Music پر یہ گانا نہیں مل سکا</string>
+    <string name="toast_couldn_t_start_mix">مکس شروع نہیں ہو سکا</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">YouTube Music پر ٹریکس نہیں مل سکے۔</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">پاس ورڈ کو محفوظ طریقے سے انکرپٹ نہیں کیا جا سکا۔ خودکار بیک اپ تبدیل نہیں ہوا تھا۔</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">ڈاؤن لوڈز میں بیک اپ محفوظ کرنے کے لیے اسٹوریج کی اجازت درکار ہے۔</string>
+    <string name="toast_choose_an_itune_backup_file">ایک .itune بیک اپ فائل منتخب کریں۔</string>
+    <string name="toast_audio_artwork_cache_cleared">آڈیو اور آرٹ ورک کیشے کو صاف کر دیا گیا۔</string>
+    <string name="toast_could_not_open_github">GitHub نہیں کھول سکا</string>
+    <string name="toast_profile_name_updated">پروفائل کا نام اپ ڈیٹ کر دیا گیا۔</string>
+    <string name="toast_search_history_cleared">تلاش کی سرگزشت صاف کر دی گئی۔</string>
+    <string name="toast_listening_history_cleared">سننے کی تاریخ صاف کر دی گئی۔</string>
+    <string name="toast_cached_songs_cleared">کیش شدہ گانے صاف ہو گئے۔</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">دیگر ایپس پر ڈسپلے دینے کے لیے سسٹم کی ترتیبات کھولیں۔</string>
+    <string name="toast_dynamic_island_geometry_reset">ڈائنامک آئی لینڈ جیومیٹری ری سیٹ</string>
+    <string name="toast_geometry_reset">جیومیٹری ری سیٹ</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">دھن فراہم کرنے والے ڈیفالٹس پر دوبارہ ترتیب دیتے ہیں۔</string>
+    <string name="toast_api_key_saved">API کلید محفوظ ہو گئی۔</string>
+    <string name="toast_base_url_updated">بنیادی URL کو اپ ڈیٹ کر دیا گیا۔</string>
+    <string name="toast_translation_prompt_updated">ترجمے کے پرامپٹ کو اپ ڈیٹ کر دیا گیا۔</string>
+    <string name="toast_equalizer_reset_to_flat">ایکویلائزر کو فلیٹ پر ری سیٹ کر دیا گیا۔</string>
+    <string name="toast_dj_console_reset">DJ کنسول ری سیٹ</string>
+    <string name="toast_name_saved">نام محفوظ کر لیا گیا۔</string>
+    <string name="toast_syncing_youtube_music_library">YouTube Music لائبریری کی مطابقت پذیری...</string>
+    <string name="toast_signed_out_local_likes_preserved">سائن آؤٹ (مقامی لائکس محفوظ)</string>
+    <string name="toast_signed_out_of_all_google_accounts">تمام Google اکاؤنٹس سے سائن آؤٹ ہو گئے۔</string>
+    <string name="toast_discord_disconnected">Discord منقطع ہو گیا۔</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">ایک درست سائن ان YouTube Music کوکی درج کریں (SAPISID اور ایک سیشن کوکی)</string>
+    <string name="toast_youtube_music_account_connected">YouTube Music اکاؤنٹ منسلک ہے۔</string>
+    <string name="toast_account_renamed">اکاؤنٹ کا نام تبدیل کر دیا گیا۔</string>
+    <string name="toast_account_deleted">اکاؤنٹ حذف کر دیا گیا۔</string>
+    <string name="toast_cannot_delete_your_only_account">آپ کا واحد اکاؤنٹ حذف نہیں کیا جا سکتا</string>
+    <string name="toast_sources_restored_to_defaults">ذرائع کو ڈیفالٹس پر بحال کر دیا گیا۔</string>
+    <string name="toast_spotify_disconnected">Spotify منقطع ہو گیا۔</string>
+    <string name="toast_spotify_sp_dc_token_saved">Spotify sp_dc ٹوکن محفوظ ہو گیا۔</string>
+    <string name="toast_spotify_connected">Spotify منسلک ہے!</string>
+    <string name="toast_complete_spotify_sign_in_first">پہلے Spotify سائن ان مکمل کریں۔</string>
+    <string name="toast_saved_to_gallery">گیلری میں محفوظ!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">جاری رکھنے کے لیے iTune کو اپ ڈیٹس انسٹال کرنے کی اجازت دیں۔</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">ڈاؤن لوڈ کردہ اپ ڈیٹ APK دستیاب نہیں ہے۔</string>
+    <string name="toast_added_to_queue_next">اگلی قطار میں شامل کر دیا گیا۔</string>
+    <string name="toast_link_copied_to_clipboard">لنک کلپ بورڈ پر کاپی ہو گیا۔</string>
+    <string name="toast_song_link_copied_to_clipboard">گانے کا لنک کلپ بورڈ پر کاپی ہو گیا۔</string>
+    <string name="toast_left_ishare_session">بائیں iShare سیشن</string>
+    <string name="toast_ishare_lan_host_started">iShare LAN میزبان شروع ہوا!</string>
+    <string name="toast_scanning_lan_for_sessions">سیشنز کے لیے LAN سکین کیا جا رہا ہے…</string>
+    <string name="toast_cache_cleared">کیشے صاف ہو گیا۔</string>
+    <string name="toast_signed_out_successfully">کامیابی سے سائن آؤٹ ہو گیا۔</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">پاس ورڈز کا مماثل ہونا چاہیے اور ان میں کم از کم 8 حروف ہوں۔</string>
+    <string name="toast_no_backup_file_found_in_storage">اسٹوریج میں کوئی بیک اپ فائل نہیں ملی</string>
+    <string name="toast_library_settings_restored">لائبریری اور ترتیبات بحال!</string>
+    <string name="toast_enter_your_backup_password">اپنا بیک اپ پاس ورڈ درج کریں۔</string>
+    <string name="toast_syncing_spotify_library">Spotify لائبریری کی مطابقت پذیری...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify منسلک!</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">براہ کرم ایک درست SP_DC کوکی درج کریں۔</string>
+    <string name="toast_playing">%%1$s چل رہا ہے…</string>
+    <string name="toast_upgraded_to_lossless_kbps">نقصان کے بغیر • %%1$s kbps پر اپ گریڈ کیا گیا۔</string>
+    <string name="toast_playing_next_0f0c851c">اگلا %%1$s چل رہا ہے۔</string>
+    <string name="toast_added_to_queue_88e96c25">%%1$s کو قطار میں شامل کر دیا گیا۔</string>
+    <string name="toast_playing_cb1fb3de">%%1$s چل رہا ہے...</string>
+    <string name="toast_playing_next_e0082d95">اگلا چل رہا ہے: %%1$s</string>
+    <string name="toast_couldn_t_load">%%1$s لوڈ نہیں ہو سکا</string>
+    <string name="toast_opening">%%1$s کھول رہا ہے…</string>
+    <string name="toast_couldn_t_open">%%1$s کو نہیں کھولا جا سکا</string>
+    <string name="toast_couldn_t_play">%%1$s نہیں چل سکا</string>
+    <string name="toast_library_pin">لائبریری پن: %%1$s</string>
+    <string name="toast_copied">کاپی کیا گیا: %%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">سلیپ ٹائمر %%1$s منٹ کے لیے سیٹ کیا گیا ہے۔</string>
+    <string name="toast_lyrics_applied">دھن لاگو (%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">%%1$s ٹریکس کو قطار میں شامل کیا گیا۔</string>
+    <string name="toast_switched_feed_to">فیڈ کو %%1$s میں تبدیل کر دیا گیا۔</string>
+    <string name="toast_provider_updated_to">فراہم کنندہ کو %%1$s میں اپ ڈیٹ کر دیا گیا۔</string>
+    <string name="toast_target_language_set_to">ہدف کی زبان کو %%1$s پر سیٹ کیا گیا۔</string>
+    <string name="toast_translation_mode_set_to">ترجمہ موڈ %%1$s پر سیٹ ہے۔</string>
+    <string name="toast_added_source">شامل کردہ ذریعہ: %%1$s</string>
+    <string name="toast_installed_extension_s">انسٹال شدہ %%1$s ایکسٹینشن</string>
+    <string name="toast_imported_songs">درآمد شدہ \'%%1$s\' (%%2$s گانے)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">YouTube Music پر \'%%1$s\' نہیں مل سکا</string>
+    <string name="toast_added_songs_to">%%1$s گانے %%2$s میں شامل کیے گئے</string>
+    <string name="toast_joining">%%1$s میں شامل ہو رہا ہے…</string>
+    <string name="toast_added_to">%%1$s میں شامل کر دیا گیا۔</string>
+    <string name="toast_itune_v_for_android_tv">iTune v%%1$s Android TV کے لیے</string>
+    <string name="toast_backup_failed">بیک اپ ناکام ہو گیا: %%1$s</string>
+    <string name="toast_restore_failed">بحالی ناکام: %%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">iShare، متحرک جزیرہ اور اسٹینڈ بائی</string>
+    <string name="settings_ishare" formatted="false">iShare</string>
+    <string name="settings_dynamic_island" formatted="false">متحرک جزیرہ</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">iTune کے باہر تیرتا ہوا پانی کا بلبلا کنٹرولر</string>
+    <string name="settings_always_on_display" formatted="false">ہمیشہ ڈسپلے پر</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">آڈیو انجن اور صوتی اثرات</string>
+    <string name="settings_dolby_atmos" formatted="false">ڈولبی ایٹموس</string>
+    <string name="settings_text_8948f8179a" formatted="false">8D آڈیو</string>
+    <string name="settings_spatial_audio" formatted="false">مقامی آڈیو</string>
+    <string name="settings_equalizer_eq" formatted="false">ایکویلائزر (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">کم پاس فلٹرنگ</string>
+    <string name="settings_dj_studio_panel" formatted="false">ڈی جے اسٹوڈیو پینل</string>
+    <string name="settings_audio_normalization" formatted="false">آڈیو نارملائزیشن</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB Bit-Perfect DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">خالص آڈیو بائی پاس</string>
+    <string name="settings_signal_pipeline" formatted="false">سگنل پائپ لائن</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">${audioEngine.pillBadge.text} -&gt; $activeOutputName</string>
+    <string name="settings_audio_playback" formatted="false">آڈیو اور پلے بیک</string>
+    <string name="settings_sources" formatted="false">ذرائع</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">YouTube Music، JioSaavn، قابل تنصیب ایکسٹینشنز، WebDAV، SMB، اور پلے بیک کی ترجیح کا نظم کریں</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">خرابی پیش آنے پر آٹو سکپ کریں۔</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">اگر پلے بیک ناکام ہوجاتا ہے تو اگلے قطار والے گانے پر جائیں۔</string>
+    <string name="settings_download_quality" formatted="false">کوالٹی ڈاؤن لوڈ کریں۔</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">گانا ڈاؤن لوڈ کی کارروائیوں کے ذریعے استعمال ہونے والا ڈیفالٹ معیار</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">ایپ میں ڈاؤن لوڈز کے لیے ڈیفالٹ آڈیو کوالٹی کا انتخاب کریں۔</string>
+    <string name="settings_lossless_audio" formatted="false">بے نقصان آڈیو</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">کیشڈ گانوں کے معیار کو اپ گریڈ کریں۔</string>
+    <string name="settings_streaming_quality" formatted="false">سلسلہ بندی کا معیار</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">اپنے پسندیدہ اسٹریمنگ آڈیو کوالٹی کو منتخب کریں۔</string>
+    <string name="settings_pcm_output_format" formatted="false">PCM آؤٹ پٹ فارمیٹ</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">موجودہ پوزیشن پر پلے بیک کو دوبارہ بناتا ہے۔</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">Android کے آڈیو آؤٹ پٹ سے درخواست کردہ PCM فارمیٹ کا انتخاب کریں۔ ایک USB DAC اسے اس فارمیٹ میں تبدیل کر سکتا ہے جسے وہ سپورٹ کرتا ہے۔</string>
+    <string name="settings_crossfade" formatted="false">کراس فیڈ</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">اختتامی ٹریک کے فیڈ آؤٹ کو اگلے کے آغاز کے ساتھ اوورلیپ کریں۔</string>
+    <string name="settings_automix" formatted="false">آٹو مکس</string>
+    <string name="settings_afterglow" formatted="false">آفٹرگلو</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">ہر گانے کے منتخب آخری سیکنڈز کے دوران وہی لو-پاس ایکویلائزر اثر لگائیں۔ آفٹرگلو فعال ہونے پر آٹو مکس اور کراس فیڈ کو روکتا ہے۔</string>
+    <string name="settings_permanent_shuffle" formatted="false">مستقل شفل</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">پلیئر میں شفل کو مستقل طور پر بند رکھیں</string>
+    <string name="settings_pause_at_volume_0" formatted="false">والیوم 0 پر توقف کریں۔</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">حجم صفر تک پہنچنے پر پلے بیک کو خودکار طور پر روک دیں۔</string>
+    <string name="settings_volume_bar" formatted="false">والیوم بار</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">جب آپ والیوم بٹن دباتے ہیں تو ${state.volumeBarSide.lowercase()} کنارے پر دکھایا جاتا ہے۔</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">منتخب کریں کہ اسکرین کے کس کنارے پر ایپ والیوم بار ظاہر ہوتا ہے۔</string>
+    <string name="settings_content" formatted="false">مواد</string>
+    <string name="settings_default_content_language" formatted="false">پہلے سے طے شدہ مواد کی زبان</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">مزاج، براؤز اور تلاش کے لیے زبان</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">براؤز، موڈز اور انواع، پلے لسٹس اور نئی ریلیز میں استعمال ہونے والی ترجیحی کیٹلاگ زبان کو منتخب کریں۔</string>
+    <string name="settings_default_content_country" formatted="false">پہلے سے طے شدہ مواد کا ملک</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">چارٹس، پلے لسٹس اور نئی ریلیز کے لیے علاقہ</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">نئے شامل کیے گئے البمز، علاقائی موڈز، اور نمایاں پلے لسٹس کے لیے استعمال ہونے والے علاقائی اسٹور فرنٹ کا انتخاب کریں۔</string>
+    <string name="settings_hide_explicit_content" formatted="false">غیر واضح مواد چھپائیں۔</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">تمام موڈز، براؤز اور تلاش میں واضح گانوں کو فلٹر کریں۔</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">اب چل رہا ہے اور مائع گلاس</string>
+    <string name="settings_splash_screen" formatted="false">سپلیش اسکرین</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">ایپ لانچ برانڈ اینیمیشن اور فلوڈ ٹائٹل کا انکشاف</string>
+    <string name="settings_animated_cover_art" formatted="false">اینیمیٹڈ کور آرٹ</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">Spotify کینوس، Apple Music، ٹائیڈل اور کمیونٹی موشن کور</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">Spotify اور کینوس سیٹ اپ</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">کینوس کنٹرولز کو خودکار طور پر چھپائیں۔</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">5s کے بعد کنٹرولز کو کم سے کم کریں جب کینوس چل رہا ہو (ٹوگل کرنے کے لیے کینوس کو تھپتھپائیں)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">کینوس پر مطابقت پذیر دھن دکھائیں۔</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">کینوس کنٹرولز چھپنے پر گانے کے نام کے اوپر متحرک مطابقت پذیر دھن دکھائیں۔</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">Spotify کینوس کو ترجیح دیں۔</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">Apple Music، سمندری اور کمیونٹی سے پہلے Spotify کینوس آزمائیں</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">سیلولر پر متحرک کور کھیلیں</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">موبائل ڈیٹا پر کینوس ویڈیوز کو لوپ کرنے کی اجازت دیں۔</string>
+    <string name="settings_player_type" formatted="false">پلیئر کی قسم</string>
+    <string name="settings_player_style" formatted="false">پلیئر اسٹائل</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">پلیئر ڈائنامک کلرنگ</string>
+    <string name="settings_full_screen_cover_art" formatted="false">فل سکرین کور آرٹ</string>
+    <string name="settings_corner_length" formatted="false">کونے کی لمبائی</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">مربع البم آرٹ ورک کے کونے کے رداس کو ایڈجسٹ کریں۔</string>
+    <string name="settings_hide_quality_tag" formatted="false">کوالٹی ٹیگ چھپائیں۔</string>
+    <string name="settings_hide_volume_bar" formatted="false">والیوم بار چھپائیں۔</string>
+    <string name="settings_home_top_card_style" formatted="false">ہوم ٹاپ کارڈ اسٹائل</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">Liquid Glass Nav &amp; Mini Player</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">گلاس بار اور منی پلیئر، ہولڈ پر واٹر ببل لینس کے ساتھ</string>
+    <string name="settings_time_synced_lyrics" formatted="false">وقت کے ساتھ مطابقت پذیر دھن</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">حقیقی وقت میں لفظ اور لائن کی دھن پر عمل کریں۔</string>
+    <string name="settings_app_font" formatted="false">ایپ فونٹ</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">ایپ ٹائپوگرافی کو تبدیل کریں؛ پلیئر کنٹرولز اپنے ڈیزائن کردہ ٹائپ فیس کو برقرار رکھتے ہیں۔</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">ایپ انٹرفیس کے لیے ٹائپ فیس کا انتخاب کریں۔</string>
+    <string name="settings_lyrics_providers" formatted="false">دھن فراہم کرنے والے</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 ذرائع • فال بیک آرڈر کو ترجیح دیں اور ٹوگل کریں۔</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">مائع گلاس کروم</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">ریفریکٹیو پارباسی ہیڈر اور ڈاک کارڈز</string>
+    <string name="settings_tactile_haptics" formatted="false">ٹیکٹائل ہیپٹکس</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">پلیئر کنٹرولز میں ٹھیک ٹھیک پلس فیڈ بیک</string>
+    <string name="settings_downloads_storage" formatted="false">ڈاؤن لوڈز اور اسٹوریج</string>
+    <string name="settings_cellular_streaming" formatted="false">سیلولر اسٹریمنگ</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">موبائل ڈیٹا پر آڈیو بینڈوتھ</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">Wi-Fi سے دور ہوتے وقت آڈیو فیڈیلیٹی کو کنٹرول کریں۔</string>
+    <string name="settings_download_over_wi_fi" formatted="false">Wi-Fi سے زیادہ ڈاؤن لوڈ کریں۔</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">خودکار ڈاؤن لوڈز سے پہلے Wi-Fi کا انتظار کریں۔</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">پلے بیک کے بعد کیش گانے</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">گانا چلانا ختم ہونے کے بعد اسے آف لائن اسٹوریج میں محفوظ کریں۔</string>
+    <string name="settings_cache_quality" formatted="false">کیشے کا معیار</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">کم معیار اسٹوریج کو بچاتا ہے۔</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">پلے بیک مکمل ہونے کے بعد محفوظ کردہ گانوں کا معیار منتخب کریں۔ اب سے کیش کردہ گانوں پر لاگو ہوتا ہے۔</string>
+    <string name="settings_song_storage_limit" formatted="false">گانا ذخیرہ کرنے کی حد</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">زیادہ سے زیادہ ڈسک اسٹوریج آف لائن آڈیو کیش کے لیے مختص کیا گیا ہے اس سے پہلے کہ پرانے بغیر چلائے گئے گانوں کو نکال دیا جائے۔</string>
+    <string name="settings_clear_cached_songs" formatted="false">کیشڈ گانے صاف کریں۔</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">${MusicCacheManager.cachedTracks.size} گانے • ${MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)}</string>
+    <string name="settings_automatic_downloads" formatted="false">خودکار ڈاؤن لوڈز</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">نئے پسند کردہ اور شامل کردہ ٹریکس کو آف لائن محفوظ کریں۔</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">ایپ بفر کیشے کو صاف کریں۔</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">عارضی کور آرٹ اور نیٹ ورک بفرز کو ہٹا دیں۔</string>
+    <string name="settings_library_listening" formatted="false">لائبریری اور سننا</string>
+    <string name="settings_sync_library" formatted="false">مطابقت پذیری لائبریری</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">فنکاروں، پلے لسٹس اور البمز کو اپ ڈیٹ رکھیں</string>
+    <string name="settings_listening_history" formatted="false">سننے کی تاریخ</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">شکل پرسنلائزڈ مکسز اور حال ہی میں چلائے گئے</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">اس ڈیوائس پر لائکس رکھیں</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">سائن آؤٹ ہونے پر پسند کردہ گانوں کو iTune میں رکھیں</string>
+    <string name="settings_notifications_general" formatted="false">اطلاعات اور جنرل</string>
+    <string name="settings_offline_mode" formatted="false">آف لائن موڈ</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">پلے بیک شروع کرنے کے لیے ڈاؤن لوڈ کردہ کاپی درکار ہے۔</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">ٹاسک کلیئر پر موسیقی بند کریں۔</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">جب iTune حالیہ سے ہٹ جائے تو پلے بیک بند کریں۔</string>
+    <string name="settings_auto_sleep_timer" formatted="false">آٹو سلیپ ٹائمر</string>
+    <string name="settings_network_proxy" formatted="false">نیٹ ورک پراکسی</string>
+    <string name="settings_profile_name" formatted="false">پروفائل کا نام</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">اپنی ترتیبات کے پروفائل ڈسپلے نام کو حسب ضرورت بنائیں</string>
+    <string name="settings_news_from_dev" formatted="false">دیو سے خبریں۔</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">اعلانات، ریلیز اور چینج لاگ</string>
+    <string name="settings_general_about" formatted="false">جنرل اور اس کے بارے میں</string>
+    <string name="settings_home_screen_widget" formatted="false">ہوم اسکرین ویجیٹ</string>
+    <string name="settings_widget_customization" formatted="false">ویجیٹ حسب ضرورت</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">سائز کا پیش نظارہ، آرٹ ورک، کنٹرولز اور ویجیٹ اسٹائل کا انتخاب کریں۔</string>
+    <string name="settings_backup_restore" formatted="false">بیک اپ اور بحال کریں۔</string>
+    <string name="settings_automatic_daily_backup" formatted="false">خودکار ڈیلی بیک اپ</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">خفیہ کردہ روزانہ بیک اپ • ڈاؤن لوڈز/iTune/بیک اپ</string>
+    <string name="settings_back_up_itune" formatted="false">بیک اپ iTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">اکاؤنٹس، تمام ترتیبات، آڈیو اثرات، لائبریری ڈیٹا اور اعدادوشمار کو محفوظ کریں۔</string>
+    <string name="settings_restore_from_backup" formatted="false">بیک اپ سے بحال کریں۔</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">itune سے ترتیبات، آڈیو اثرات، اکاؤنٹس یا لائبریری ڈیٹا کو بحال کریں</string>
+    <string name="settings_privacy" formatted="false">رازداری</string>
+    <string name="settings_pause_search_history" formatted="false">تلاش کی سرگزشت کو روکیں۔</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">تلاش کے نئے سوالات کو تاریخ میں محفوظ نہ کریں۔</string>
+    <string name="settings_clear_search_history" formatted="false">تلاش کی سرگزشت صاف کریں۔</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">تلاش سے حالیہ سوالات کو ہٹا دیں۔</string>
+    <string name="settings_pause_listening_history" formatted="false">سننے کی تاریخ کو روکیں۔</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">چلائے گئے گانوں کو ریکارڈ نہ کریں یا سفارشات کو اپ ڈیٹ نہ کریں۔</string>
+    <string name="settings_clear_listening_history" formatted="false">سننے کی تاریخ صاف کریں۔</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">پلے بیک ہسٹری کو ہٹائیں اور ذائقہ پروفائل کو دوبارہ ترتیب دیں۔</string>
+    <string name="settings_disable_screenshot" formatted="false">اسکرین شاٹ کو غیر فعال کریں۔</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">تمام ایپ میں اسکرین شاٹس اور اسکرین ریکارڈنگ کو مسدود کریں۔</string>
+    <string name="settings_best_available" formatted="false">بہترین دستیاب</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">سب سے زیادہ دستیاب ذریعہ معیار کا استعمال کریں</string>
+    <string name="settings_maximum" formatted="false">زیادہ سے زیادہ</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">سب سے زیادہ بٹ ریٹ کا سلسلہ منتخب کریں۔</string>
+    <string name="settings_high" formatted="false">اعلی</string>
+    <string name="settings_target_about_160_kbps" formatted="false">160 kbps کے بارے میں ہدف بنائیں</string>
+    <string name="settings_standard" formatted="false">معیاری</string>
+    <string name="settings_target_about_128_kbps" formatted="false">128 kbps کے بارے میں ہدف بنائیں</string>
+    <string name="settings_data_saver" formatted="false">ڈیٹا سیور</string>
+    <string name="settings_target_about_64_kbps" formatted="false">64 kbps کے بارے میں ہدف بنائیں</string>
+    <string name="settings_extreme" formatted="false">انتہائی</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">زیادہ سے زیادہ مخلص (256+ kbps)</string>
+    <string name="settings_high_b1a5954a" formatted="false">اعلی</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">اعلی معیار کی آڈیو (~160 kbps)</string>
+    <string name="settings_medium" formatted="false">درمیانہ</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">معیاری آڈیو کوالٹی (~128 kbps)</string>
+    <string name="settings_low" formatted="false">کم</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">ڈیٹا سیور آڈیو (~48-64 kbps)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">16 بٹ PCM</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">معیاری عدد PCM آؤٹ پٹ؛ USB آڈیو کلاس DACs کے ساتھ وسیع پیمانے پر ہم آہنگ</string>
+    <string name="settings_text_6697202e38" formatted="false">32 بٹ فلوٹ PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">Android اور منسلک آڈیو پاتھ کے ذریعے سپورٹ ہونے پر PCM آؤٹ پٹ کو فلوٹ کریں</string>
+    <string name="settings_off" formatted="false">آف</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">پٹریوں کو صاف ستھرا چلائیں۔</string>
+    <string name="settings_text_6597740315" formatted="false">2 سیکنڈ</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">ٹھیک ٹھیک منتقلی اوورلیپ</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 سیکنڈ</string>
+    <string name="settings_short_seamless_fade" formatted="false">مختصر ہموار دھندلا</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 سیکنڈ</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">متوازن DJ طرز کی منتقلی۔</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8 سیکنڈ</string>
+    <string name="settings_smooth_extended_blend" formatted="false">ہموار بڑھا ہوا مرکب</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 سیکنڈ</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">زیادہ سے زیادہ مسلسل مرکب مرکب</string>
+    <string name="settings_off_e3de5ab0" formatted="false">آف</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">عام پلے بیک اثرات اور ٹرانزیشن رکھیں</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 سیکنڈ</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">ہر گانے کے آخری 5 سیکنڈ کے دوران لو-پاس لگائیں۔</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 سیکنڈ</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">ہر گانے کے آخری 10 سیکنڈ کے دوران لو-پاس لگائیں۔</string>
+    <string name="settings_text_eb4354110e" formatted="false">15 سیکنڈ</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">ہر گانے کے آخری 15 سیکنڈ کے دوران لو-پاس لگائیں۔</string>
+    <string name="settings_right" formatted="false">ٹھیک ہے۔</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">دائیں کنارے پر والیوم بار دکھائیں (پہلے سے طے شدہ)</string>
+    <string name="settings_left" formatted="false">بائیں</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">بائیں کنارے پر والیوم بار دکھائیں۔</string>
+    <string name="settings_high_efficiency" formatted="false">اعلی کارکردگی</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">کم سے کم سیلولر ڈیٹا استعمال کریں۔</string>
+    <string name="settings_high_quality" formatted="false">اعلی معیار</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 kbps متوازن موبائل پلے بیک</string>
+    <string name="settings_lossless" formatted="false">بے نقصان</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">5G/LTE نیٹ ورکس پر مکمل نقصان کے بغیر</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">آف</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">صرف Wi-Fi پر سلسلہ بندی کی اجازت دیں۔</string>
+    <string name="settings_text_03a001f575" formatted="false">500 MB</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">کومپیکٹ کیشے (~70 گانے)</string>
+    <string name="settings_text_33015e637f" formatted="false">1 جی بی</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">معتدل کیش (~150 گانے)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 جی بی</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">تجویز کردہ ڈیفالٹ (~300 گانے)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5 جی بی</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">بڑا آف لائن مجموعہ (~800 گانے)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10 جی بی</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">بہت بڑی لائبریری (~1,600 گانے)</string>
+    <string name="settings_unlimited" formatted="false">لا محدود</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">کیش شدہ گانوں کو کبھی بھی بے دخل نہ کریں۔</string>
+    <string name="settings_pipeline_output">%1$s → %2$s</string>
+    <string name="settings_volume_bar_side">جب آپ والیوم بٹن دباتے ہیں تو %1$s کنارے پر دکھایا جاتا ہے۔</string>
+    <string name="settings_corner_radius_value">%1$d dp</string>
+    <string name="settings_active_lyrics_providers">%1$d ایکٹو</string>
+    <string name="settings_cached_song_count_size">%1$d گانے • %2$s</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">جرمن انٹرفیس استعمال کریں۔</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">پرتگالی انٹرفیس استعمال کریں۔</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">اطالوی انٹرفیس استعمال کریں۔</string>
+    <string name="japanese_language">日本語</string>
+    <string name="japanese_interface">جاپانی انٹرفیس استعمال کریں۔</string>
+    <string name="favorite_artist">پسندیدہ فنکار</string>
+    <string name="remove_favorite_artist">پسندیدہ فنکاروں سے ہٹا دیں۔</string>
+    <string name="add_to_favorite_artists">پسندیدہ فنکاروں میں شامل کریں۔</string>
+    <string name="removed_from_artists">فنکاروں سے ہٹا دیا گیا۔</string>
+    <string name="added_to_artists">فنکاروں میں شامل کیا گیا۔</string>
+    <string name="play_top_songs">سرفہرست گانے چلائیں۔</string>
+    <string name="play_album">البم چلائیں۔</string>
+    <string name="play_playlist">پلے لسٹ چلائیں۔</string>
+    <string name="create_new_playlist">نئی پلے لسٹ بنائیں</string>
+    <string name="create_playlist">پلے لسٹ بنائیں</string>
+    <string name="radio">ریڈیو</string>
+    <string name="search">تلاش کریں۔</string>
+    <string name="share_playlist_link">پلے لسٹ کا لنک شیئر کریں۔</string>
+    <string name="copy_share_link">شیئر لنک کاپی کریں۔</string>
+    <string name="rename_playlist">پلے لسٹ کا نام تبدیل کریں۔</string>
+    <string name="delete_playlist">پلے لسٹ کو حذف کریں۔</string>
+    <string name="share_link_copied">اشتراک کا لنک کاپی ہو گیا۔</string>
+    <string name="playlist_removed">پلے لسٹ ہٹا دی گئی۔</string>
+    <string name="playlist_no_longer_available">یہ پلے لسٹ اب دستیاب نہیں ہے۔</string>
+    <string name="empty_playlist">خالی پلے لسٹ</string>
+    <string name="filter_playlists">پلے لسٹس کو فلٹر کریں...</string>
+    <string name="filter_albums">البمز کو فلٹر کریں...</string>
+    <string name="library_playlist_count_one">%1$d پلے لسٹ</string>
+    <string name="library_playlist_count_many">%1$d پلے لسٹس</string>
+    <string name="library_album_count_one">%1$d شامل کردہ البم</string>
+    <string name="library_album_count_many">%1$d شامل کردہ البمز</string>
+    <string name="remove_from_favorites">پسندیدہ سے ہٹا دیں۔</string>
+    <string name="play_top_album">ٹاپ البم چلائیں۔</string>
+    <string name="open_in_spotify">Spotify میں کھولیں</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">한국어 인터페이스</string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Svenskt gränssnitt</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">الواجهة العربية</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Use the Azerbaijani interface</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Use the Bengali interface</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Use the Bulgarian interface</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Use the Catalan interface</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">Use the Czech interface</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Use the Danish interface</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Use the Finnish interface</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Use the Greek interface</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Use the Hebrew interface</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Use the Hungarian interface</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Use the Indonesian interface</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Use the Malay interface</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Use the Norwegian interface</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Use the Persian interface</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Use the Polish interface</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Use the Romanian interface</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Use the Slovak interface</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Use the Thai interface</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Use the Turkish interface</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Use the Ukrainian interface</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Use the Vietnamese interface</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Use the Swahili interface</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Use the Filipino interface</string>
+</resources>
