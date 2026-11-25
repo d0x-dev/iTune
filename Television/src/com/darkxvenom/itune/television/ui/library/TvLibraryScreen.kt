@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.television.ui.library
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -299,7 +301,7 @@ fun TvLibraryScreen(
                 item {
                     Spacer(Modifier.height(18.dp))
                     Text(
-                        text = "GENRE",
+                        text = stringResource(R.string.ui_genre),
                         color = Color.White.copy(alpha = 0.35f),
                         fontSize = 11.5.sp,
                         fontFamily = SFProDisplay,
@@ -366,7 +368,7 @@ fun TvLibraryScreen(
                         // Play All Action
                         TvCircleActionButton(
                             icon = Icons.Rounded.PlayArrow,
-                            contentDescription = "Play All",
+                            contentDescription = stringResource(R.string.ui_play_all),
                             onClick = {
                                 val tracks = when {
                                     viewingPlaylist != null -> viewingPlaylist?.songs?.mapNotNull { it.toMusicTrack() }.orEmpty()
@@ -383,7 +385,7 @@ fun TvLibraryScreen(
                         // Shuffle All Action
                         TvCircleActionButton(
                             icon = Icons.Rounded.Shuffle,
-                            contentDescription = "Shuffle",
+                            contentDescription = stringResource(R.string.shuffle),
                             onClick = {
                                 val tracks = when {
                                     viewingPlaylist != null -> viewingPlaylist?.songs?.mapNotNull { it.toMusicTrack() }?.shuffled().orEmpty()
@@ -400,7 +402,7 @@ fun TvLibraryScreen(
                         // Sort / Menu Action
                         TvCircleActionButton(
                             icon = Icons.AutoMirrored.Rounded.Sort,
-                            contentDescription = "Sort",
+                            contentDescription = stringResource(R.string.ui_sort),
                             onClick = { /* Sort order cycling */ },
                         )
                     }
@@ -600,7 +602,7 @@ private fun TvArtistsGridView(
     if (artists.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
-                text = "No artists in your library yet",
+                text = stringResource(R.string.ui_no_artists_in_your_library_yet),
                 color = Color.White.copy(alpha = 0.50f),
                 fontSize = 16.sp,
                 fontFamily = SFProDisplay,
@@ -724,7 +726,7 @@ private fun TvPlaylistsGridView(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Add,
-                        contentDescription = "New Playlist",
+                        contentDescription = stringResource(R.string.ui_new_playlist),
                         tint = if (isFocused) Color.White else Color.White.copy(alpha = 0.65f),
                         modifier = Modifier.size(48.dp),
                     )
@@ -733,7 +735,7 @@ private fun TvPlaylistsGridView(
                 Spacer(Modifier.height(8.dp))
 
                 Text(
-                    text = "New Playlist",
+                    text = stringResource(R.string.ui_new_playlist),
                     color = Color.White,
                     fontSize = 14.5.sp,
                     fontFamily = SFProDisplay,
@@ -800,7 +802,7 @@ private fun TvPlaylistsGridView(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
                 )
                 Text(
-                    text = "${playlist.songs.size} songs",
+                    text = stringResource(R.string.ui_songs_9b614dc8, playlist.songs.size),
                     color = Color.White.copy(alpha = 0.55f),
                     fontSize = 12.sp,
                     fontFamily = SFProDisplay,
@@ -821,7 +823,7 @@ private fun TvAlbumsGridView(
     if (albums.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
-                text = "No saved albums in your library",
+                text = stringResource(R.string.ui_no_saved_albums_in_your_library),
                 color = Color.White.copy(alpha = 0.50f),
                 fontSize = 16.sp,
                 fontFamily = SFProDisplay,
@@ -905,7 +907,7 @@ private fun TvSongsListView(
     if (songs.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
-                text = "No songs found in this section",
+                text = stringResource(R.string.ui_no_songs_found_in_this_section),
                 color = Color.White.copy(alpha = 0.50f),
                 fontSize = 16.sp,
                 fontFamily = SFProDisplay,
@@ -1287,7 +1289,7 @@ private fun TvPlaylistDetailView(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "${playlist.songs.size} songs",
+                text = stringResource(R.string.ui_songs_9b614dc8, playlist.songs.size),
                 color = Color.White.copy(alpha = 0.55f),
                 fontSize = 14.sp,
                 fontFamily = SFProDisplay,
@@ -1295,7 +1297,7 @@ private fun TvPlaylistDetailView(
 
             TvCircleActionButton(
                 icon = Icons.Rounded.Delete,
-                contentDescription = "Delete Playlist",
+                contentDescription = stringResource(R.string.ui_delete_playlist),
                 onClick = onDelete,
             )
         }
@@ -1303,7 +1305,7 @@ private fun TvPlaylistDetailView(
         if (playlist.songs.isEmpty()) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(
-                    text = "This playlist is empty. Add songs from player or search!",
+                    text = stringResource(R.string.ui_this_playlist_is_empty_add_songs_from_player_or_search),
                     color = Color.White.copy(alpha = 0.50f),
                     fontSize = 16.sp,
                     fontFamily = SFProDisplay,
@@ -1434,7 +1436,7 @@ private fun TvCreatePlaylistDialog(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "New Playlist",
+                text = stringResource(R.string.ui_new_playlist),
                 color = Color.White,
                 fontSize = 20.sp,
                 fontFamily = SFProDisplay,
@@ -1466,7 +1468,7 @@ private fun TvCreatePlaylistDialog(
                 decorationBox = { innerTextField ->
                     if (name.isEmpty()) {
                         Text(
-                            text = "Playlist name",
+                            text = stringResource(R.string.ui_playlist_name_544f7553),
                             color = Color.White.copy(alpha = 0.40f),
                             fontSize = 16.sp,
                             fontFamily = SFProDisplay,
@@ -1501,7 +1503,7 @@ private fun TvCreatePlaylistDialog(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel),
                         color = Color.White,
                         fontSize = 15.sp,
                         fontFamily = SFProDisplay,
@@ -1528,7 +1530,7 @@ private fun TvCreatePlaylistDialog(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "Create",
+                        text = stringResource(R.string.ui_create),
                         color = if (createFocused) Color.Black else Color.White,
                         fontSize = 15.sp,
                         fontFamily = SFProDisplay,
