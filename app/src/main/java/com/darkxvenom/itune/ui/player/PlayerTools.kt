@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.player
 
+
+import androidx.compose.ui.res.stringResource
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -423,7 +425,7 @@ internal fun PlayerToolsDialog(
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Text(
-                                    text = "Preparing audio preview…",
+                                    text = stringResource(R.string.ui_preparing_audio_preview),
                                     color = AppleTextSecondary,
                                     fontSize = 12.5.sp
                                 )
@@ -501,7 +503,7 @@ internal fun PlayerToolsDialog(
                                         )
                                         val clipSec = ((range.endInclusive - range.start) / 1000f).toInt()
                                         Text(
-                                            text = "${clipSec}s clip",
+                                            text = stringResource(R.string.ui_s_clip, clipSec),
                                             color = AppleMusicRed,
                                             fontSize = 12.sp,
                                             fontWeight = FontWeight.SemiBold
@@ -617,7 +619,7 @@ internal fun PlayerToolsDialog(
 
                                 working = false
                                 if (resultUri == null) {
-                                    Toast.makeText(context, "Could not create audio clip", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(context, context.getString(R.string.toast_could_not_create_audio_clip), Toast.LENGTH_LONG).show()
                                 } else if (mode == PlayerToolMode.RINGTONE) {
                                     val applied = PlayerToolsAudio.applyAsSystemRingtone(
                                         context,
@@ -627,13 +629,13 @@ internal fun PlayerToolsDialog(
                                     if (applied) {
                                         Toast.makeText(
                                             context,
-                                            "Set as default ${selectedRingtoneTarget.label.lowercase()}!",
+                                            context.getString(R.string.set_default_ringtone_target, selectedRingtoneTarget.label.lowercase()),
                                             Toast.LENGTH_LONG
                                         ).show()
                                     } else {
                                         Toast.makeText(
                                             context,
-                                            "Added to ${selectedRingtoneTarget.label.lowercase()}s. Choose it in Sound settings.",
+                                            context.getString(R.string.added_ringtone_target, selectedRingtoneTarget.label.lowercase() + "s"),
                                             Toast.LENGTH_LONG
                                         ).show()
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.System.canWrite(context)) {
@@ -672,9 +674,7 @@ internal fun PlayerToolsDialog(
                                     onDismiss()
                                 } else {
                                     if (selectedSnippetAction == SnippetAction.SAVE) {
-                                        Toast.makeText(
-                                            context,
-                                            "Snippet saved to Music/iTune/Snippets",
+                                        Toast.makeText(context, context.getString(R.string.toast_snippet_saved_to_music_itune_snippets),
                                             Toast.LENGTH_LONG
                                         ).show()
                                     } else {
@@ -705,7 +705,7 @@ internal fun PlayerToolsDialog(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Exporting Audio…",
+                                text = stringResource(R.string.ui_exporting_audio),
                                 color = AppleMusicRed,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold
@@ -742,7 +742,7 @@ internal fun PlayerToolsDialog(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel),
                         color = AppleTextSecondary,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Normal,
