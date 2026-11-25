@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.player
 
+
+import androidx.compose.ui.res.stringResource
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -138,8 +140,8 @@ internal fun LyricsShareCardDialog(
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Column {
-                        Text("Share Lyrics", color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Bold)
-                        Text("Customize your iTune card", color = Color.White.copy(alpha = .6f), fontSize = 13.sp)
+                        Text(stringResource(R.string.ui_share_lyrics), color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.ui_customize_your_itune_card), color = Color.White.copy(alpha = .6f), fontSize = 13.sp)
                     }
                     Icon(Icons.Rounded.Close, "Close", tint = Color.White.copy(alpha = .75f), modifier = Modifier
                         .clip(CircleShape).clickable(onClick = onDismiss).padding(9.dp).size(20.dp))
@@ -210,7 +212,7 @@ internal fun LyricsShareCardDialog(
 
                 Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 14.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(
-                        "Copy text", color = Color.White, textAlign = TextAlign.Center, fontSize = 14.sp, fontWeight = FontWeight.SemiBold,
+                        stringResource(R.string.ui_copy_text), color = Color.White, textAlign = TextAlign.Center, fontSize = 14.sp, fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.weight(1f).clip(RoundedCornerShape(16.dp)).background(Color.White.copy(alpha = .1f)).clickable {
                             val text = lines.joinToString("\n") { it.text } + "\n\n$songTitle · $artists"
                             val clipboard = context.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
@@ -234,14 +236,14 @@ internal fun LyricsShareCardDialog(
                                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                     }
                                     context.startActivity(Intent.createChooser(intent, "Share Lyrics")); onDismiss()
-                                }.onFailure { android.widget.Toast.makeText(context, "Couldn't create lyrics card", android.widget.Toast.LENGTH_SHORT).show() }
+                                }.onFailure { android.widget.Toast.makeText(context, context.getString(R.string.toast_couldn_t_create_lyrics_card), android.widget.Toast.LENGTH_SHORT).show() }
                                 isSharing = false
                             }
                         }, enabled = !isSharing, modifier = Modifier.weight(1.2f), shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = ShareTeal, contentColor = Color.Black),
                     ) {
                         Icon(Icons.Rounded.Share, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp))
-                        Text(if (isSharing) "Preparing…" else "Share image", fontWeight = FontWeight.Bold)
+                        Text(stringResource(if (isSharing) R.string.preparing else R.string.share_image), fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -309,7 +311,7 @@ private fun LyricsShareCardPreview(
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(7.dp),
                     modifier = if (centered) Modifier.align(Alignment.CenterHorizontally) else Modifier) {
                     Image(painterResource(R.drawable.ic_itune_waves), null, Modifier.size(22.dp))
-                    Text("iTune", color = ShareTeal, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                    Text(stringResource(R.string.app_name), color = ShareTeal, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
                 }
             }
         }
