@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.settings
 
+
+import androidx.compose.ui.res.stringResource
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -198,7 +200,7 @@ fun DynamicIslandScreen(
             }
             context.startActivity(intent)
         }.onFailure {
-            Toast.makeText(context, "Open system settings to grant Display over other apps", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_open_system_settings_to_grant_display_over_other_a), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -232,7 +234,7 @@ fun DynamicIslandScreen(
                 ) {
                     item(key = "di_title") {
                         Text(
-                            text = "Dynamic Island",
+                            text = stringResource(R.string.ui_dynamic_island),
                             color = Color.White,
                             fontSize = 34.sp,
                             fontWeight = FontWeight.Bold,
@@ -411,7 +413,7 @@ fun DynamicIslandScreen(
                                 onClick = {
                                     haptics.play(Haptic.Tap)
                                     DynamicIslandStore.resetGeometry(context, isLandscapeTab)
-                                    Toast.makeText(context, "Dynamic Island geometry reset", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.toast_dynamic_island_geometry_reset), Toast.LENGTH_SHORT).show()
                                 },
                             )
                         }
@@ -607,7 +609,7 @@ fun DynamicIslandScreen(
                         androidx.compose.animation.AnimatedVisibility(visible = isScrolled) {
                             FrostedTopBarTitlePill(hazeState = hazeState) {
                                 Text(
-                                    text = "Dynamic Island",
+                                    text = stringResource(R.string.ui_dynamic_island),
                                     color = Color.White,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
@@ -620,12 +622,12 @@ fun DynamicIslandScreen(
                             onClick = {
                                 haptics.play(Haptic.Tap)
                                 DynamicIslandStore.resetGeometry(context, isLandscapeTab)
-                                Toast.makeText(context, "Geometry reset", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_geometry_reset), Toast.LENGTH_SHORT).show()
                             },
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.ic_di_reset),
-                                contentDescription = "Reset Geometry",
+                                contentDescription = stringResource(R.string.ui_reset_geometry),
                                 colorFilter = ColorFilter.tint(Color.White),
                                 modifier = Modifier.size(20.dp),
                             )
