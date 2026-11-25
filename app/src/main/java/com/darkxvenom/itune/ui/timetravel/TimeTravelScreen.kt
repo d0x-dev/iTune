@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.timetravel
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -354,7 +356,7 @@ fun TimeTravelScreen(
             centerContent = {
                 FrostedTopBarTitlePill(hazeState = null) {
                     Text(
-                        text = "Time Travel",
+                        text = stringResource(R.string.ui_time_travel_88c82a47),
                         color = AppleTextPrimary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
@@ -365,7 +367,7 @@ fun TimeTravelScreen(
                 IconButton(onClick = { showShareSheet = true }) {
                     Icon(
                         imageVector = Icons.Rounded.IosShare,
-                        contentDescription = "Share Replay",
+                        contentDescription = stringResource(R.string.ui_share_replay),
                         tint = AppleTextPrimary,
                         modifier = Modifier.size(20.dp),
                     )
@@ -412,7 +414,7 @@ private fun HeadingSection(
     ) {
         Spacer(Modifier.height(18.dp))
         Text(
-            text = "Replay",
+            text = stringResource(R.string.ui_replay_c0f85d66),
             style = MaterialTheme.typography.displayLarge,
             fontWeight = FontWeight.W800,
             color = Color.White,
@@ -589,7 +591,7 @@ private fun SongChartRow(
             )
             val durationText = "${stat.durationSec / 60}m ${stat.durationSec % 60}s"
             Text(
-                text = "${stat.artist} · $durationText",
+                text = stringResource(R.string.ui_text_c1aacd9629, stat.artist, durationText),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.55f),
                 maxLines = 1,
@@ -734,7 +736,7 @@ private fun RankBadge(rank: Int) {
 private fun HabitsSection(stats: TimeTravelStats) {
     Column(Modifier.padding(horizontal = PAGE_GUTTER + 4.dp)) {
         Text(
-            text = "Your listening pattern",
+            text = stringResource(R.string.ui_your_listening_pattern),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.W800,
             color = Color.White,
@@ -757,7 +759,7 @@ private fun HabitsSection(stats: TimeTravelStats) {
         if (stats.busiestDay != null) {
             Spacer(Modifier.height(6.dp))
             Text(
-                text = "Your biggest day was ${stats.busiestDay}.",
+                text = stringResource(R.string.ui_your_biggest_day_was, stats.busiestDay.orEmpty()),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.6f),
             )
@@ -805,7 +807,7 @@ private fun EmptyReplayView(period: ListeningPeriod) {
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            text = "Not enough listening yet",
+            text = stringResource(R.string.ui_not_enough_listening_yet),
             style = MaterialTheme.typography.titleLarge,
             color = Color.White,
             textAlign = TextAlign.Center,
