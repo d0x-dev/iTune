@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">لغو</string>
+    <string name="save">ذخیره</string>
+    <string name="close">بستن</string>
+    <string name="done">انجام شد</string>
+    <string name="back">بازگشت</string>
+    <string name="play">پخش</string>
+    <string name="shuffle">پخش تصادفی</string>
+    <string name="retry">تلاش دوباره</string>
+    <string name="try_again">دوباره امتحان کنید</string>
+    <string name="more">بیشتر</string>
+    <string name="less">کمتر</string>
+    <string name="share">اشتراک‌گذاری</string>
+    <string name="show_all">نمایش همه</string>
+    <string name="top_songs">آهنگ های Top Songs</string>
+    <string name="suggested">پیشنهاد</string>
+    <string name="subscribers">%1$sمشترکین</string>
+    <string name="monthly_listeners">%1$sشنوندگان ماهانه</string>
+    <string name="signed_by">امضای%1$s</string>
+    <string name="about_artist">درباره هنرمند</string>
+    <string name="about_album">درباره آلبوم</string>
+    <string name="recent_album">آلبوم اخیر</string>
+    <string name="recent_ep">جدیدترین EP</string>
+    <string name="recent_single">آخرین تک تک</string>
+    <string name="subscribe">اشتراک</string>
+    <string name="unsubscribe">لغو اشتراک</string>
+    <string name="add_to_library">افزودن به کتابخانه</string>
+    <string name="remove_from_library">حذف کتابخانه</string>
+    <string name="add_to_playlist">اضافه کردن به لیست پخش</string>
+    <string name="remove_from_playlist">حذف از این لیست</string>
+    <string name="play_next">بازی بعدی</string>
+    <string name="add_to_queue">اضافه کردن به صف</string>
+    <string name="start_radio">شروع رادیو</string>
+    <string name="open">Open Open</string>
+    <string name="open_album">آلبوم باز</string>
+    <string name="open_artist">هنرمند باز</string>
+    <string name="open_playlist">Open Open List</string>
+    <string name="song_info">آهنگساز: Song Info</string>
+    <string name="song_info_album">آلبوم آلبوم</string>
+    <string name="song_info_release_date">تاریخ انتشار</string>
+    <string name="song_info_views">بازی / بازدید</string>
+    <string name="song_info_likes">همانند</string>
+    <string name="song_info_comments">نظرات</string>
+    <string name="song_info_unavailable">در دسترس نیست</string>
+    <string name="song_info_error">برخی اطلاعات را نمی توان بارگذاری کرد.</string>
+    <string name="song_info_retry">Retry</string>
+    <string name="like">مانند</string>
+    <string name="dislike">عدم تفاوت</string>
+    <string name="download">بارگیری</string>
+    <string name="download_all">دانلود همه</string>
+    <string name="downloaded">Downloaded</string>
+    <string name="downloading">Downloading</string>
+    <string name="download_notification_title">Downloading</string>
+    <string name="delete_download">دانلود بازی Delete Download</string>
+    <string name="delete_download_confirmation">حذف "%1$sاز این دستگاه؟ دوباره ضربه بزنید تا تایید شود.</string>
+    <string name="delete">حذف</string>
+    <string name="queued">Queu</string>
+    <string name="saved_to_downloads">ذخیره شده برای دانلود</string>
+    <string name="search_this_list">جستجو در این لیست</string>
+    <string name="clear_search">جستجوی شفاف</string>
+    <string name="close_search">جستجوی نزدیک</string>
+    <string name="nothing_matches">هیچ چیز در اینجا با "%1$s""</string>
+    <string name="sort_songs">آهنگ های مرتب</string>
+    <string name="artist">هنرمند هنرمند هنرمند</string>
+    <string name="album">آلبوم آلبوم</string>
+    <string name="playlist">لیست لیست لیست لیست</string>
+    <string name="folder">Folder</string>
+    <string name="songs">ترانه های ترانه آهنگ Songs</string>
+    <string name="song_count">%1$dآهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$dمسیر</item>
+        <item quantity="other">%1$dآهنگ ها</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$dدقیقه</item>
+        <item quantity="other">%1$dدقیقه</item>
+    </plurals>
+    <string name="one_hour">1 ساعت</string>
+    <string name="hours_minutes_short">%1$dh h%2$dm m</string>
+    <string name="minutes_short">%1$dدقیقه ها</string>
+    <string name="pin">Pin</string>
+    <string name="unpin">Unpin</string>
+    <string name="tile_identify_music">شناسایی موسیقی</string>
+    <string name="tile_identify_music_desc">شناسایی آهنگ های بازی در اطراف شما باiTune</string>
+    <string name="widget_itune_description">کنترل کنترلiTuneپخش از صفحه نمایش خانگی</string>
+    <string name="app_language">زبان برنامه</string>
+    <string name="app_language_subtitle">زبان برای منوها، دکمه ها و پیام ها</string>
+    <string name="app_language_description">زبان مورد استفاده برایiTuneرابط</string>
+    <string name="system_default_language">سیستم پیش فرض</string>
+    <string name="follow_device_language">زبان دستگاه را دنبال کنید</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">استفاده از رابط انگلیسی</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface" />
+    <string name="hindi_interface_language">زبان هندی</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">استفاده از رابط اسپانیایی</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">استفاده از رابط فرانسوی</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">استفاده از رابط هلندی</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">استفاده از رابط روسی</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">استفاده از رابط اردو</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">استفاده از رابط چینی</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">استفاده از رابط آلمانی</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">استفاده از رابط پرتغالی</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">استفاده از رابط ایتالیایی</string>
+    <string name="japanese_language">日本語</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">한국어 인터페이스</string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Svenskt gränsnitt</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">دانلود زیرنویس فارسی فیلم The Bastardcelate</string>
+    <string name="japanese_interface">استفاده از رابط ژاپنی</string>
+    <string name="favorite_artist">هنرمند مورد علاقه</string>
+    <string name="remove_favorite_artist">حذف هنرمندان مورد علاقه</string>
+    <string name="add_to_favorite_artists">اضافه کردن به هنرمندان مورد علاقه</string>
+    <string name="removed_from_artists">حذف هنرمندان</string>
+    <string name="added_to_artists">اضافه شدن به هنرمندان</string>
+    <string name="play_top_songs">آهنگ های Top Songs</string>
+    <string name="play_album">آلبوم بازی</string>
+    <string name="play_playlist">بازی Playlist</string>
+    <string name="create_new_playlist">Create New Playlist</string>
+    <string name="create_playlist">Create Playlist</string>
+    <string name="radio">رادیو رادیویی</string>
+    <string name="search">جستجو</string>
+    <string name="share_playlist_link">Share Playlist Link</string>
+    <string name="copy_share_link">Share Link</string>
+    <string name="rename_playlist">نام بازی</string>
+    <string name="delete_playlist">حذف Playlist</string>
+    <string name="share_link_copied">Share link کپی شده</string>
+    <string name="playlist_removed">Playlist حذف شد</string>
+    <string name="playlist_no_longer_available">این لیست دیگر در دسترس نیست.</string>
+    <string name="empty_playlist">بازی های خالی</string>
+    <string name="filter_playlists">فیلترها ...</string>
+    <string name="filter_albums">آلبوم های فیلتر ...</string>
+    <string name="favorite">محبوب ترین</string>
+    <string name="tap_to_start_listening">شروع به گوش دادن</string>
+    <string name="time_zero" formatted="false">0:00</string>
+    <string name="previous">Previous Previous Previous post</string>
+    <string name="play_or_pause">بازی یا مکث</string>
+    <string name="next">بعدی Next Next Next Next</string>
+    <string name="repeat">تکرار تکراری</string>
+    <string name="open_title_options">Open Open%1$sگزینه ها</string>
+    <string name="reset_page_title">تنظیم مجدد%1$s</string>
+    <string name="remove_device">حذف%1$s</string>
+    <string name="profile_name">%1$sپروفایل پروفایل پروفایل پروفایل</string>
+    <string name="download_option">Download%1$s</string>
+    <string name="open_entry_options">Open Open%1$sگزینه ها</string>
+    <string name="avatar_number">آواتار Avatar%1$s</string>
+    <string name="options_for_track">گزینه هایی برای%1$s</string>
+    <string name="preparing">آماده سازی ...</string>
+    <string name="share_image">تصویر مشترک</string>
+    <string name="speed_pitch_locked">سرعت و زمین قفل شده با هم</string>
+    <string name="independent_bpm_tempo_key_pitch">مستقل BPM tempo &amp; Key</string>
+    <string name="spatial_reflections_delay">انعکاس فضایی (%1$dms)</string>
+    <string name="on">On On</string>
+    <string name="off">Off Off Off</string>
+    <string name="dynamic_island_active">Dynamic Island فعال</string>
+    <string name="dynamic_island_description">نمایش ها در خارجiTuneهنگام پخش</string>
+    <string name="preparing_download">آماده سازی دانلود ...</string>
+    <string name="listening_for_music">گوش دادن به موسیقی ...</string>
+    <string name="hold_phone_near_sound_source">نگه داشتن تلفن در نزدیکی منبع صدا</string>
+    <string name="unable_to_recognize_audio">غیر قابل تشخیص صوتی</string>
+    <string name="song_identified">دانلود آهنگ Identified</string>
+    <string name="play_in_itune">بازی درiTune</string>
+    <string name="view_details">مشاهده جزئیات</string>
+    <string name="no_match_found">هیچ مسابقه ای پیدا نشد</string>
+    <string name="recognition_retry_message">نمی تواند آهنگ را شناسایی کند. دوباره تلاش کنید.</string>
+    <string name="microphone_permission_needed">مجوز میکروفون مورد نیاز</string>
+    <string name="microphone_permission_help">ضربه زدن به اجازه دسترسی میکروفون به اینiTuneمی تواند موسیقی را شناسایی کند.</string>
+    <string name="recognition_failed">تشخیص شکست خورده</string>
+    <string name="tap_install_to_continue">نصب برای ادامه</string>
+    <string name="detail_artist">هنرمند هنرمند هنرمند</string>
+    <string name="detail_album">آلبوم آلبوم</string>
+    <string name="set_default_ringtone_target">تنظیم به صورت پیش فرض%1$s!</string>
+    <string name="added_ringtone_target">اضافه شده%1$sآن را در تنظیمات صدا انتخاب کنید.</string>
+    <string name="last_fm_connected_as">Last.fmمتصل به%1$s</string>
+    <string name="discord_connected_as">Discord%1$s</string>
+    <string name="tv_encrypted_backup_saved">نسخه پشتیبان رمزگذاری شده ( Encrypted Backupd)%1$dKB!</string>
+    <string name="sign_in_verification_failed">تایید ثبت نام شکست خورد</string>
+    <string name="could_not_rename_playlist">نمی تواند تغییر نام در لیستYouTube Music</string>
+    <string name="could_not_create_playlist">نمی تواند لیست پخش را ایجاد کند</string>
+    <string name="daily_encrypted_backup_enabled">پشتیبانی رمزگذاری شده روزانه فعال شده</string>
+    <string name="cookie_login_failed">ورود کوکی ها شکست خورد</string>
+    <string name="could_not_open_last_fm">نمی توان باز کردLast.fm</string>
+    <string name="last_fm_sign_in_failed">Last.fmنشانه شکست در شکست</string>
+    <string name="discord_sign_in_failed">ثبت نام در شکست</string>
+    <string name="could_not_open_android_installer">نمی تواند نصب کننده اندروید را باز کند</string>
+    <string name="added_title_to_queue">اضافه شده "%1$sبرای صف</string>
+    <string name="automatic_backup_disabled">خودکار پشتیبان غیرفعال</string>
+    <string name="download_failed">دانلود بازی شکست خورده</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">نصب نصب</string>
+    <string name="ui_text_9ef6a80f91" formatted="false"># 1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">درصد +1f</string>
+    <string name="ui_accounts" formatted="false">+حساب ها</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0.0s</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5.0s</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">-</string>
+    <string name="ui_text_7be28ad40e" formatted="false">-5.0s</string>
+    <string name="ui_text_a6dee6102d" formatted="false">11 PM</string>
+    <string name="ui_text_1a19c52178" formatted="false">12 AM</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">12 PM</string>
+    <string name="ui_text_4e37ece023" formatted="false">15ام مخالف با تاخیر در ترکیب کم نمک</string>
+    <string name="ui_text_76b322ac42" formatted="false">۲- سرعت سریع</string>
+    <string name="ui_text_505c74ed85" formatted="false">3D Ping-Pong Bounce</string>
+    <string name="ui_text_db9b8df506" formatted="false">6 AM</string>
+    <string name="ui_text_2812537f20" formatted="false">6 PM</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080</string>
+    <string name="ui_text_05a79f06cf" formatted="false">:</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">یک تصویر کامل با آهنگ های بالا، هنرمندان، آلبوم ها و عادات.</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">نسخه جدید آماده است</string>
+    <string name="ui_account" formatted="false">حساب حساب حساب</string>
+    <string name="ui_account_options" formatted="false">گزینه های Account Options</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">ACUNTS</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">تغذیه با Head-Shadow Crossfeed</string>
+    <string name="ui_activate" formatted="false">فعال کردن</string>
+    <string name="ui_active" formatted="false">Active Active Active</string>
+    <string name="ui_active_days" formatted="false">ACTIVE DAYS</string>
+    <string name="ui_active_profile" formatted="false">Active Profile</string>
+    <string name="ui_activity_by_day" formatted="false">فعالیت در روز</string>
+    <string name="ui_add_account" formatted="false">Add Account</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">به سرورهای HTTP Addon سفارشی (زبان /manifest.json، / Search، /stream) یا ماژول های QuickJS با روکش sandbox اضافه کنید.</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">دانلود آهنگ های آینده به صورت خودکار</string>
+    <string name="ui_add_streaming_source" formatted="false">Add Source</string>
+    <string name="ui_add_to_playlist" formatted="false">اضافه کردن به Playlist</string>
+    <string name="ui_added_playlists" formatted="false">اضافه کردن Playlists</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">لبه گوشه ای از آثار آلبوم مربع را تنظیم کنید.</string>
+    <string name="ui_advanced_cookie_login" formatted="false">Advanced Cookie Login</string>
+    <string name="ui_advanced_login" formatted="false">ADVANCED LOGIN</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">پیشرفته ورود</string>
+    <string name="ui_ai_engine" formatted="false">AI ENGINE</string>
+    <string name="ui_ai_provider" formatted="false">ارائه دهنده AI</string>
+    <string name="ui_albums" formatted="false">آلبوم ها</string>
+    <string name="ui_all_news" formatted="false">همه اخبار</string>
+    <string name="ui_allow_downloads" formatted="false">اجازه دانلود</string>
+    <string name="ui_allow_microphone" formatted="false">اجازه دهید میکروفون</string>
+    <string name="ui_allow_microphone_access" formatted="false">اجازه دسترسی میکروفون</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">انعکاس های تغییر یافته L &lt;-&gt; R</string>
+    <string name="ui_always_on_display" formatted="false">Always On Display</string>
+    <string name="ui_am" formatted="false">AM AM AM</string>
+    <string name="ui_api_base_url" formatted="false">API Base URL</string>
+    <string name="ui_artist" formatted="false">هنرمند هنرمند هنرمند</string>
+    <string name="ui_artist_name" formatted="false">نام هنرمند</string>
+    <string name="ui_artists" formatted="false">هنرمندان</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">هنرمندان، ترانه ها، آلبوم ها، Playlists ...</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">هنرمندان، ترانه ها، Lyrics و More</string>
+    <string name="ui_at_least_8_characters" formatted="false">حداقل 8 کاراکتر</string>
+    <string name="ui_auto_sleep_timer" formatted="false">زمان خواب خودکار</string>
+    <string name="ui_auto_activation_timeout" formatted="false">دانلود زیرنویس فارسی فیلم The Time</string>
+    <string name="ui_avatar" formatted="false">آواتار Avatar</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">بازگشت به عقبiTune(AES-256)</string>
+    <string name="ui_backup_password" formatted="false">پشتیبان گیری Password</string>
+    <string name="ui_bluetooth_device_access" formatted="false">Bluetoothدسترسی دستگاه</string>
+    <string name="ui_browse" formatted="false">مرور</string>
+    <string name="ui_browse_by_country" formatted="false">بازدید از کشور</string>
+    <string name="ui_browse_extensions" formatted="false">مرور افزونه ها</string>
+    <string name="ui_browse_live_online_radio" formatted="false">دانلود فیلم Live Online Radio</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">نمی تواند فقط حساب را حذف کند</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">ارائه دهندگان بوم (lookup Order)</string>
+    <string name="ui_captcha_guidance" formatted="false">راهنمای CAPTCHA</string>
+    <string name="ui_cast_wireless_devices" formatted="false">CAST &amp; WIRELESS</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">منابع پخش صوتی، کراوات های بی ضرر و اولویت سقوط را انتخاب کنید</string>
+    <string name="ui_choose_avatar" formatted="false">انتخاب آواتار</string>
+    <string name="ui_choose_charts_region" formatted="false">انتخاب Charts</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">انتخاب کنید چگونهiTuneدر صفحه اصلی شما ظاهر می شود. ویجت را از راه اندازی خود تغییر دهید.</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">پروفایل خود را انتخاب کنید تا ادامه دهید</string>
+    <string name="ui_choose_youtube_channel" formatted="false">انتخاب انتخاب انتخابYouTubeکانال کانال کانال</string>
+    <string name="ui_clear" formatted="false">وضوح روشن</string>
+    <string name="ui_clear_use_default" formatted="false">روشن و استفاده از پیش فرض</string>
+    <string name="ui_clear_all" formatted="false">همه چیز روشن</string>
+    <string name="ui_confirm" formatted="false">تایید</string>
+    <string name="ui_confirm_password" formatted="false">تایید رمز عبور</string>
+    <string name="ui_connect_discord" formatted="false">اتصال Discord</string>
+    <string name="ui_connect_last_fm" formatted="false">اتصال ConnectLast.fm</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">اتصال شماSpotifyحساب کاربری برای فعال کردن آثار ویدئویی متحرک و همگام سازی شماSpotifyکتابخانه</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">اتصال ConnectYouTube Musicکوکی های جلسه</string>
+    <string name="ui_connect" formatted="false">ارتباط »</string>
+    <string name="ui_connecting_spotify" formatted="false">اتصالSpotify...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">اتصالYouTube Music...</string>
+    <string name="ui_continue" formatted="false">ادامه ادامه ادامه</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">ادامه در مرورگر به جای</string>
+    <string name="ui_continue_with_google" formatted="false">ادامه با Google</string>
+    <string name="ui_continue_with_spotify" formatted="false">ادامه دادن باSpotify</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">اعتبار کوکی ها درiTuneذخیره سازی حساب رمزگذاری شده و بررسی شده باYouTube Musicقبل از اینکه نجات یابند.</string>
+    <string name="ui_copy_song_name" formatted="false">نام بازی Copy Song</string>
+    <string name="ui_copy_text" formatted="false">متن کپی رایت</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">کپی رایت © 2026iTuneپروژه این نرم افزار بدون ضمانت ارائه شده است. شما ممکن است آن را تحت شرایط GNU GPL که در زیر نشان داده شده، توزیع و اصلاح کنید.</string>
+    <string name="ui_corner_length" formatted="false">طول</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">نمی تواند تصویر را دوباره پخش کند</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">می توان\'در حال حاضر موسیقی را بارگیری کنید. برای دوباره امتحان کنید.</string>
+    <string name="ui_create" formatted="false">ایجاد آفرینش</string>
+    <string name="ui_create_add" formatted="false">ایجاد و Add</string>
+    <string name="ui_current_account" formatted="false">حساب فعلی</string>
+    <string name="ui_custom_instructions" formatted="false">دانلود بازی CUSTOM INSTRUCTIONS</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">CUSTOM REPOSITORY INDEX یا URL</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">سفارشی کردن Home Screen Player</string>
+    <string name="ui_customize_your_itune_card" formatted="false">سفارشی کردن خودiTuneکارت</string>
+    <string name="ui_d" formatted="false">D</string>
+    <string name="ui_delete_account" formatted="false">حذف حساب</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">حذف حساب؟</string>
+    <string name="ui_developer_announcements" formatted="false">معرفی توسعه دهنده</string>
+    <string name="ui_disconnect" formatted="false">عدم اتصال</string>
+    <string name="ui_disconnect_discord" formatted="false">Disconnect Discord</string>
+    <string name="ui_discord_rich_presence" formatted="false">حضور ثروتمند</string>
+    <string name="ui_dismiss" formatted="false">عدم فرار</string>
+    <string name="ui_display_full_screen" formatted="false">بازی های دیسک و Full SCREEN</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">نمایش اشعار همگام سازی شده بالاتر از عنوان آهنگ در حالی که کنترل بوم پنهان</string>
+    <string name="ui_display_name" formatted="false">نام نمایش</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">دانلود موسیقی متن فیلم Bipolar Club Filter</string>
+    <string name="ui_downloaded_cached" formatted="false">دانلود و cached</string>
+    <string name="ui_dp" formatted="false">dp</string>
+    <string name="ui_dynamic_island" formatted="false">جزیره دینامیک</string>
+    <string name="ui_e" formatted="false">E</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">127.0.0.1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">به عنوان مثال، ترجمه به چاشنی شاعرانه با ریتم ها</string>
+    <string name="ui_enable_auto_sleep" formatted="false">خواب خودکار</string>
+    <string name="ui_enable_proxy" formatted="false">فعال کردن Proxy</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">دانلود بازی EnablingSpotifyدانلود بازی Canvas &amp; Lists</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">رمزگذاری رمز عبور (مین 8 chars)</string>
+    <string name="ui_end_of_current_track" formatted="false">پایان مسیر فعلی</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">یک نام جدید برای این حساب وارد کنید.</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">یک URL مانیفست HTTP Addon، یک نمایه ماژول QuickJS یا یک نقطه پایانی نمونه Tidal را وارد کنید.</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">رمز عبور مورد استفاده را هنگام استفاده از آن وارد کنید.ituneپشتیبان گیری ایجاد شد.</string>
+    <string name="ui_enter_your_name" formatted="false">نام خود را وارد کنید</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">نام خود را برای شخصی سازی وارد کنیدiTune</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">هر ریتم، سرود آخر شب و ملودی که با آن زندگی می کردید، در یک سفر جمع شده اند.</string>
+    <string name="ui_everything" formatted="false">همه چیز</string>
+    <string name="ui_explore_categories" formatted="false">دسته های کاوش</string>
+    <string name="ui_exporting_audio" formatted="false">صادرات صدا ...</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">استخراج یک اثر انگشت صوتی کوتاه</string>
+    <string name="ui_favorite_stations" formatted="false">ایستگاه های مورد علاقه</string>
+    <string name="ui_favorites" formatted="false">FAVORITES</string>
+    <string name="ui_featured_hit" formatted="false">بازیگران</string>
+    <string name="ui_featured_playlists" formatted="false">ویژگی های بازی</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">ویژگی های صوتی Fetching ...</string>
+    <string name="ui_fetching_live_catalog" formatted="false">خرید کاتالوگ زنده ...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">پیدا کردن یک جریان بهتر</string>
+    <string name="ui_full_view" formatted="false">Full View</string>
+    <string name="ui_g" formatted="false">G G G</string>
+    <string name="ui_genre" formatted="false">→</string>
+    <string name="ui_genres_styles" formatted="false">Genres &amp; Styles</string>
+    <string name="ui_github_repository" formatted="false">GitHub Repository</string>
+    <string name="ui_github_repository_open_source" formatted="false">منبع باز GitHub</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v 3.0 یا بعدا</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v 3.0 یا بعد از آن © 2026iTuneپروژه</string>
+    <string name="ui_grant" formatted="false">گرانت</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">گرانت برای نشان دادن نام و باتری زنده</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">سخت افزار LoudnessEnhancer (تا +18 dB)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">Hides Android Status bar و نوار ناوبری برای رنگ خالص OLED سیاه.</string>
+    <string name="ui_history" formatted="false">تاریخ تاریخ تاریخ</string>
+    <string name="ui_host" formatted="false">بیشتر</string>
+    <string name="ui_host_a_session" formatted="false">A SESSION</string>
+    <string name="ui_host_controls_playback" formatted="false">کنترل های Host Control</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">چگونه کوکی های خود را دریافت کنید</string>
+    <string name="ui_hq" formatted="false">HQ</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">آشنایی با Shazam</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">شناسایی موسیقی در اطراف شما</string>
+    <string name="ui_immersion" formatted="false">IMMERS</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">Immersive Mode (کل صفحه نمایش)</string>
+    <string name="ui_import" formatted="false">واردات واردات</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">لیست های عمومی و خصوصی واردات – Auto-sync</string>
+    <string name="ui_import_spotify_playlist" formatted="false">واردات وارداتSpotifyPlaylist</string>
+    <string name="ui_in_use" formatted="false">در استفاده</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">راهنمایی در برنامه زمانی که ارائه دهندگان صوتی چک ضد بوت را به چالش می کشند</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">نصب افزونه های جامعه قبل از اضافه یا اسکن یک شاخص مخزن سفارشی.</string>
+    <string name="ui_installed" formatted="false">نصب شده</string>
+    <string name="ui_interactive_dot_curve" formatted="false">Interactive Dot Curve</string>
+    <string name="ui_irecognition" formatted="false">شناخت</string>
+    <string name="ui_ireconization" formatted="false">iReconization</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">iReconization چند ثانیه گوش می دهد تا یک اثر انگشت موسیقی ایجاد کند. صدا نجات داده نمی شود.</string>
+    <string name="ui_ishare" formatted="false">iShare</string>
+    <string name="ui_itune_license" formatted="false">iTuneمجوز مجوز</string>
+    <string name="ui_itune_music" formatted="false">iTuneموسیقی موسیقی</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTuneاشعار در اولویت دقیق زیر اگر بالاترین ارائه دهنده فعال هیچ متن همگام سازی نداشته باشد،iTuneبه طرف دیگر باز می گردد.</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTuneمنابع را در دستور نشان داده شده است. نصب افزونه ها و ارائه دهندگان برای تنظیم اولویت پخش</string>
+    <string name="ui_itune_time_travel" formatted="false">iTuneزمان سفر</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">دانلود بازی Thewoosh</string>
+    <string name="ui_join" formatted="false">Join</string>
+    <string name="ui_keep_screen_on" formatted="false">Keep Screen On</string>
+    <string name="ui_l" formatted="false">L</string>
+    <string name="ui_lan_port" formatted="false">پورت LAN</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">ترجیح زبان (اختیاری، به عنوان مثال هندی، پنجاب ...)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fmScrobbling</string>
+    <string name="ui_layout" formatted="false">سخنرانی بدون</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">خالی برای استفاده از نقطه پایانی پیش فرض برای این ارائه دهنده.</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">LFO چرخش فاز جت</string>
+    <string name="ui_library" formatted="false">کتابخانه کتابخانه کتابخانه</string>
+    <string name="ui_license" formatted="false">مجوز مجوز</string>
+    <string name="ui_liked_songs" formatted="false">آهنگ های مشابه</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">همانطور که در هنگام ثبت نام در هر دو به صورت محلی و در صورتYouTube Musicآنها حتی پس از ثبت نام در کتابخانه شما باقی می مانند.</string>
+    <string name="ui_listening_patterns" formatted="false">دانلود بازی PATTERNS</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">گوش دادن به صدای مشترک ...</string>
+    <string name="ui_live" formatted="false">زندگی زنده</string>
+    <string name="ui_live_radio_stations" formatted="false">ایستگاه های رادیویی زنده</string>
+    <string name="ui_loading_announcements" formatted="false">اعلانات ...</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">بارگذاری هنرمندان، لیست ها و تاریخ</string>
+    <string name="ui_lossless" formatted="false">بی ضرر</string>
+    <string name="ui_lossless_audio_preference" formatted="false">از دست دادن پیش داوری صوتی</string>
+    <string name="ui_lyrics" formatted="false">Lyrics</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">ترانه ها برای این آهنگ در دسترس نیستند</string>
+    <string name="ui_lyrics_providers" formatted="false">ارائه دهندگان Lyrics</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">ترانه ها با موفقیت ترجمه شدند!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">تقویت کننده Master  Boost</string>
+    <string name="ui_member_since" formatted="false">MEMBER SINCE</string>
+    <string name="ui_memoji_style" formatted="false">Memoji &amp; Style</string>
+    <string name="ui_minutes_listened" formatted="false">دانلود زیرنویس فارسی فیلم</string>
+    <string name="ui_mirror_vol" formatted="false">آینه Vol</string>
+    <string name="ui_model" formatted="false">MODEL</string>
+    <string name="ui_model_68c2cc7f" formatted="false">مدل مدل مدل</string>
+    <string name="ui_moods_activities" formatted="false">روابط و فعالیت ها</string>
+    <string name="ui_moods_moments" formatted="false">MOODS &amp; MOAGES</string>
+    <string name="ui_music_by_genre" formatted="false">موسیقی: Genre</string>
+    <string name="ui_music_language_preference" formatted="false">ترجیح زبان موسیقی</string>
+    <string name="ui_music_services" formatted="false">خدمات MUSIC</string>
+    <string name="ui_name" formatted="false">نام</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">دانلود زیرنویس فارسی فیلم AOSTS</string>
+    <string name="ui_network_proxy" formatted="false">شبکه Proxy</string>
+    <string name="ui_new" formatted="false">جدید جدید</string>
+    <string name="ui_new_playlist" formatted="false">New Playlist</string>
+    <string name="ui_new_releases" formatted="false">آزادی های جدید</string>
+    <string name="ui_news_from_dev" formatted="false">اخبار از dev</string>
+    <string name="ui_next_up" formatted="false">بعدی بالا</string>
+    <string name="ui_no_albums_found" formatted="false">هیچ آلبومی پیدا نشد</string>
+    <string name="ui_no_artist_information_available" formatted="false">هیچ اطلاعات هنرمند در دسترس نیست</string>
+    <string name="ui_no_artists_found" formatted="false">هیچ هنرمند پیدا نشد</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">هیچ هنرمند در کتابخانه شما هنوز</string>
+    <string name="ui_no_playlists_found" formatted="false">هیچ لیستی پیدا نشد</string>
+    <string name="ui_no_results_on_spotify" formatted="false">هیچ نتیجه ای درSpotify</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">آلبوم های ذخیره شده در کتابخانه شما</string>
+    <string name="ui_no_songs_found" formatted="false">هیچ آهنگی پیدا نشد</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">هیچ آهنگی در این آزادی یافت نشد</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">هیچ آهنگی در این بخش پیدا نشد</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">هیچ لیستی از کاربران پیدا نشد. یکی را در کتابخانه بسازید!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">گوش دادن کافی نیست</string>
+    <string name="ui_now_playing" formatted="false">بازی Now</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">بازی Now</string>
+    <string name="ui_on_heavy_repeat" formatted="false">↑ HEAVY REPEAT</string>
+    <string name="ui_options" formatted="false">*</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">یا ENTER SP DC COOKIE</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">سرعت و سرعت</string>
+    <string name="ui_pair_join_a_device" formatted="false">PAIR &amp; JOIN A DevelopmentICE</string>
+    <string name="ui_password_optional" formatted="false">Password (اختیاری)</string>
+    <string name="ui_passwords_dont_match" formatted="false">پسوردها مطابقت ندارند</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">توکن Sp dc در اینجا ...</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">کلید API خود را در اینجا قرار دهید</string>
+    <string name="ui_play_in_itune" formatted="false">بازی درiTune</string>
+    <string name="ui_play_next" formatted="false">بازی بعدی</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">بازی در دوستان و سخنران تلفن / AUX در همان زمان</string>
+    <string name="ui_playlist_name" formatted="false">نام بازی</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">نام بازی</string>
+    <string name="ui_playlist_spotify" formatted="false">PlaylistSpotify</string>
+    <string name="ui_playlists" formatted="false">Playlists</string>
+    <string name="ui_plays" formatted="false">بازی ها</string>
+    <string name="ui_pm" formatted="false">نخست وزیر</string>
+    <string name="ui_port" formatted="false">پورت پورت پورت</string>
+    <string name="ui_pre_added_extensions" formatted="false">PRE-ADED EXTENSIONS</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">ترجیح می دهید کمی کامل FLAC/ALAC تا 24 بیتی / 192 کیلوهرتز در دسترس در دسترس</string>
+    <string name="ui_preparing_audio_preview" formatted="false">آماده سازی پیش نمایش صوتی ...</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">جلوگیری از نمایش دستگاه از خاموش شدن در حالی که همیشه On Display فعال است.</string>
+    <string name="ui_preview" formatted="false">PRE View</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">Preview Preview</string>
+    <string name="ui_preview_always_on_display" formatted="false">دانلود بازی Preview Always On Display</string>
+    <string name="ui_profile" formatted="false">مقدماتی</string>
+    <string name="ui_profiles_in_backup" formatted="false">بازگشت به عقب</string>
+    <string name="ui_prompt_type" formatted="false">PROMPT TYPE</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">PRIORITY (FALLBACK ORDER)</string>
+    <string name="ui_queue" formatted="false">Queue</string>
+    <string name="ui_queue_is_empty" formatted="false">Queue خالی است</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">آهنگ های Queued برای بازی بعدی</string>
+    <string name="ui_radio" formatted="false">رادیو رادیویی</string>
+    <string name="ui_read_more" formatted="false">Read More Read More</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">دانلود آهنگ real-time syllable and line Scrolling با Live Audio</string>
+    <string name="ui_recent_searches" formatted="false">جستجوی اخیر</string>
+    <string name="ui_recently_added" formatted="false">اخیرا اضافه شده</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">برنامه خواب مجدد · توقف خودکار</string>
+    <string name="ui_remote_music_library" formatted="false">کتابخانه موسیقی Remote Music Library</string>
+    <string name="ui_remove" formatted="false">حذف</string>
+    <string name="ui_rename" formatted="false">Rename</string>
+    <string name="ui_rename_account" formatted="false">Rename Account</string>
+    <string name="ui_replay" formatted="false">بازی Replay</string>
+    <string name="ui_replay_c0f85d66" formatted="false">بازی Replay</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">نیاز به Bit-Perfect Lossless</string>
+    <string name="ui_reset" formatted="false">تنظیم مجدد</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">سفارش و پیش فرض ها</string>
+    <string name="ui_reset_to_default_url" formatted="false">تنظیم URL پیش فرض</string>
+    <string name="ui_restore_default_sources" formatted="false">بازگرداندن منابع پیش فرض</string>
+    <string name="ui_restore_itune_backup" formatted="false">بازگشتiTuneپشتیبان گیری</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">بازگشتJioSaavnوYouTube Musicدر دستور پیش فرضJioSaavnشروع کنید وYouTube Musicشروع کنید.</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">LRC Lib، KuGou و SimpMusic را به عنوان ارائه دهندگان برتر و دوباره همه 11 منبع بازسازی می کند.</string>
+    <string name="ui_resume" formatted="false">Next post</string>
+    <string name="ui_rhythm_by_hour" formatted="false">ریتم ساعت</string>
+    <string name="ui_room_permissions" formatted="false">ROOM PERMISSIONS</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">ترافیک شبکه از طریق HTTP یا SOCKS پروکسی</string>
+    <string name="ui_save_proxy" formatted="false">Save Proxy</string>
+    <string name="ui_save_schedule" formatted="false">برنامه Save</string>
+    <string name="ui_save_to_gallery" formatted="false">صرفه جویی در گالری</string>
+    <string name="ui_save_token" formatted="false">Save Token</string>
+    <string name="ui_saved_to_your_library" formatted="false">در کتابخانه خود صرفه جویی کنید!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">صرفه جویی در استفاده از Android Keystore فایل های پشتیبان از PBKDF2-HMAC-SHA256 (310,000 دور) و AES-256-GCM استفاده می کنند.</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">صرفه جویی در دانلود / دانلودituneبازگشت</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">یک آهنگ، هنرمند، آلبوم یا ترانه بگویید</string>
+    <string name="ui_search" formatted="false">جستجو جستجو</string>
+    <string name="ui_search_identify" formatted="false">جستجو و شناسایی</string>
+    <string name="ui_search_announcements" formatted="false">آگهی های جستجو ...</string>
+    <string name="ui_search_country" formatted="false">کشور جستجو ...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">جستجو برای آهنگ ها، هنرمندان، آلبوم ها و لیست ها</string>
+    <string name="ui_search_languages" formatted="false">زبان های جستجو ...</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">جستجو یا تایپ یک مدل</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">آهنگ های جستجو، هنرمندان، آلبوم ها یا لیست های پخش</string>
+    <string name="ui_searching_lyrics" formatted="false">جستجوی اشعار ...</string>
+    <string name="ui_searching_spotify" formatted="false">جستجوSpotify...</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">RROR SINK</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">یک آواتار پروفایل را انتخاب کنید تا شخصی سازی کنیدiTuneتجربه در تمام صفحه نمایش</string>
+    <string name="ui_select_language" formatted="false">انتخاب زبان</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">قالب پیش فرض را برای ترجمه اشعار انتخاب کنید.</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">موتور را برای استفاده برای ترجمه متن خط به خط انتخاب کنید.</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">زبان هدف را برای ترجمه اشعار انتخاب کنید.</string>
+    <string name="ui_server_host_ip" formatted="false">سرور میزبان / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">URL / Manifest</string>
+    <string name="ui_settings_appearance" formatted="false">تنظیمات View</string>
+    <string name="ui_share_lyrics" formatted="false">اشتراک گذاری Lyrics</string>
+    <string name="ui_share_my_replay" formatted="false">دانلود بازی My Replay</string>
+    <string name="ui_share_replay" formatted="false">Share Replay</string>
+    <string name="ui_share_this_story" formatted="false">این داستان را به اشتراک بگذارید</string>
+    <string name="ui_share_your_time_travel" formatted="false">سفر زمان خود را به اشتراک بگذارید</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">Synced Lyrics Over Canvas</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">ثبت نام در موسیقیyoutube.com در یک مرورگر دسکتاپ Open Developer Tools – Application – cookies، سپس مقادیر جلسه امضا شده را کپی کنید. با این ارزش ها مانند رمز عبور خود رفتار کنید.</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">ثبت نام با شماLast.fmحساب حساب کاربری</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">ثبت نام تمام حساب ها</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">خروجی دوگانه همزمان</string>
+    <string name="ui_skip_sign_in" formatted="false">ثبت نام در</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">اسلاید رو به جلو برای اشعار سریع تر - به عقب برای آهسته تر</string>
+    <string name="ui_snap_0" formatted="false">صفحه 0</string>
+    <string name="ui_soundstage_width" formatted="false">Soundstage عرض</string>
+    <string name="ui_sources" formatted="false">منابع</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">صدای فضایی و ملزومات</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotifyو بوم</string>
+    <string name="ui_spotify_account" formatted="false">Spotifyحساب حساب حساب</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">Spotifyبوم، Apple Music، Tidal و Community Motion</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">Spotifyدر حال حاضر متصل است. نمایش آثار هنری (Canvas) وSpotifyهماهنگ سازی لیست امکان پذیر است.</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">Spotifyجستجو شکست خورد. دوباره امتحان کنید.</string>
+    <string name="ui_station" formatted="false">ایستگاه ایستگاه</string>
+    <string name="ui_stereo_echo_delay" formatted="false">استریو اکو و تاخیر</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">این لینک و Auto-adds هر آهنگ جدید در برنامه باز</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">کتابخانه بی نقص خود را به طور مستقیم از سهام شبکه شخصی یا Nextcloud جریان دهید.</string>
+    <string name="ui_streaming_sources" formatted="false">ویژگی های SOURCES</string>
+    <string name="ui_style" formatted="false">STYLE</string>
+    <string name="ui_suggestions" formatted="false">پیشنهادات</string>
+    <string name="ui_switch" formatted="false">Switch Switch</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">ضربه زدن به آواتار برای سفارشی کردن</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">سمت چپ یا راست برای مرور – سعی کنید مکث کنید</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">ضربه زدن به سرعت فعال کردن Always On Display</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">دانلود بازی State and City FM پخش</string>
+    <string name="ui_target_language" formatted="false">TARGET LANGUAGE</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">زبان هدف</string>
+    <string name="ui_test" formatted="false">آزمون تست</string>
+    <string name="ui_test_proxy_connection" formatted="false">تست Proxy Connection</string>
+    <string name="ui_testing_proxy" formatted="false">تست Proxy ...</string>
+    <string name="ui_that_s_your_story" formatted="false">این است که\'داستان شما</string>
+    <string name="ui_this_account" formatted="false">این حساب</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">این لیست خالی است. آهنگ ها را از بازیکن یا جستجو اضافه کنید!</string>
+    <string name="ui_time_travel" formatted="false">زمان TRAVEL</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">زمان سفر</string>
+    <string name="ui_time_travel_wrap" formatted="false">زمان TRAVEL WRAP</string>
+    <string name="ui_time_synced_lyrics" formatted="false">دانلود آهنگ Time-Synced Lyrics</string>
+    <string name="ui_top_picks" formatted="false">Top Picks</string>
+    <string name="ui_top_result" formatted="false">نتایج بالا</string>
+    <string name="ui_top_song" formatted="false">Top Song</string>
+    <string name="ui_top_songs" formatted="false">آهنگ های Top Songs</string>
+    <string name="ui_top_streamed" formatted="false">TOP STREAMED</string>
+    <string name="ui_total_listening_time" formatted="false">مجموع زمان گوش دادن</string>
+    <string name="ui_total_time" formatted="false">مجموع زمان</string>
+    <string name="ui_translate_actual_lines" formatted="false">خطوط واقعی ترجمه</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">ترجمه متن بر روی تقاضا برای هر آهنگ از منوی بازیکن ( ... &gt; Lyrics &gt; Translate). وقتی\'خطوط واقعی ترجمه\'خاموش است، ترجمه به عنوان زیرنویس زیر متن اصلی ظاهر می شود.</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">ترجمه آهنگ های زیر به انگلیسی حفظ جریان شاعرانه</string>
+    <string name="ui_translating_lyrics" formatted="false">ترجمه متن ...</string>
+    <string name="ui_translation_mode" formatted="false">حالت ترجمه</string>
+    <string name="ui_translation_prompt" formatted="false">ترجمه سریع</string>
+    <string name="ui_trending_artists" formatted="false">هنرمندان</string>
+    <string name="ui_turn_off_timer" formatted="false">خاموش کردن Timer</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">به روز رسانی نام نشان داده شده در کارت پروفایل Apple ID خود را در تنظیمات.</string>
+    <string name="ui_username_optional" formatted="false">نام کاربری (اختیاری)</string>
+    <string name="ui_view" formatted="false">View View</string>
+    <string name="ui_view_on_shazam" formatted="false">مشاهده Shazam</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">Steam Turntable Link</string>
+    <string name="ui_whats_new" formatted="false">What’s New</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">هنگامی که موسیقی بازی می کند، همیشه On Display روشن می شود اگر هیچ لمسی روی صفحه نمایش برای زمان انتخاب شده رخ ندهد. فقط در حالی که در داخل برنامه فعال می شود.</string>
+    <string name="ui_who_is_listening" formatted="false">چه کسی گوش می دهد؟</string>
+    <string name="ui_widget" formatted="false">Widget</string>
+    <string name="ui_you" formatted="false">You You You You</string>
+    <string name="ui_your_1_artist" formatted="false"># 1 هنرمند</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">کلید API شما به طور ایمن بر روی دستگاه ذخیره می شود و هرگز به اشتراک گذاشته نمی شود.</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">توکن جلسه Discord شما بر روی این دستگاه رمزگذاری شده و تنها برای حضور ثروتمند استفاده می شود.</string>
+    <string name="ui_your_favourite_song" formatted="false">آهنگ Favourite</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">کتابخانه، لیست ها و تنظیمات شما با رمز عبور حداقل 8 کاراکتر رمزگذاری خواهد شد.</string>
+    <string name="ui_your_listening_experience" formatted="false">دانلود زیرنویس فارسی فیلم Your LISTING</string>
+    <string name="ui_your_listening_pattern" formatted="false">الگوی گوش دادن شما</string>
+    <string name="ui_your_listening_persona" formatted="false">دانلود زیرنویس فارسی فیلم Your LISTING</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">موسیقی Replay &amp; Statistics</string>
+    <string name="ui_your_musical_anchor" formatted="false">هوش هیجانی شما</string>
+    <string name="ui_your_name" formatted="false">نام شما</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">رمز عبور شما ارسال می شودLast.fmفقط برای ایجاد یک جلسهiTuneآن را نجات نمی دهد.</string>
+    <string name="ui_your_playlists" formatted="false">بازی خود را</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">نام بازی شما</string>
+    <string name="ui_your_sonic_peak" formatted="false">Sonic Peak</string>
+    <string name="ui_your_spotify_playlists" formatted="false">شماSpotifyPlaylists</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">شماSpotifyلیست ها (Public &amp; Private)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSICGOOGLE</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube Musicکوکی های جلسه</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">· ·</string>
+    <string name="ui_text_a118c40635" formatted="false">━━━ ━━━━━</string>
+    <string name="ui_album_artwork" formatted="false">آلبوم آثار هنری</string>
+    <string name="ui_itune_waves" formatted="false">iTuneموج</string>
+    <string name="ui_previous" formatted="false">Previous Previous Previous post</string>
+    <string name="ui_next" formatted="false">بعدی Next Next Next Next</string>
+    <string name="ui_audio_output" formatted="false">خروجی صوتی</string>
+    <string name="ui_low_volume" formatted="false">حجم پایین</string>
+    <string name="ui_high_volume" formatted="false">High Volume</string>
+    <string name="ui_filter" formatted="false">فیلتر فیلتر</string>
+    <string name="ui_refresh" formatted="false">بازسازی</string>
+    <string name="ui_options_6bf5da9c" formatted="false">گزینه های Options</string>
+    <string name="ui_user_profile_avatar" formatted="false">User Profile Avatar</string>
+    <string name="ui_news" formatted="false">اخبار اخبار</string>
+    <string name="ui_no_song_playing" formatted="false">آهنگ بازی No Song</string>
+    <string name="ui_next_track" formatted="false">Next Track</string>
+    <string name="ui_see_all_songs" formatted="false">همه آهنگ ها را ببینید</string>
+    <string name="ui_favorite_radio" formatted="false">رادیو مورد علاقه</string>
+    <string name="ui_live_65c821a5" formatted="false">Live Live Live</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTuneنام تجاری Waves</string>
+    <string name="ui_refresh_network" formatted="false">شبکه بازسازی</string>
+    <string name="ui_edit_display_name" formatted="false">نام بازی Edit Display</string>
+    <string name="ui_remove_from_queue" formatted="false">حذف از صف</string>
+    <string name="ui_search_new_releases" formatted="false">جستجو برای New Releases</string>
+    <string name="ui_refresh_new_releases" formatted="false">بازسازی آزادی های جدید</string>
+    <string name="ui_refresh_downloads" formatted="false">آرشیوهای برچسب های جدید</string>
+    <string name="ui_clear_cache" formatted="false">پنهان کردن</string>
+    <string name="ui_sort" formatted="false">دسته بندی</string>
+    <string name="ui_see_all_new_releases" formatted="false">نگاهی به تمام آزادی های جدید</string>
+    <string name="ui_identify" formatted="false">شناسایی</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">لیست بازی Import List</string>
+    <string name="ui_create_playlist" formatted="false">Create Playlist</string>
+    <string name="ui_liked" formatted="false">مانند</string>
+    <string name="ui_paste" formatted="false">پاستور</string>
+    <string name="ui_checked" formatted="false">بررسی</string>
+    <string name="ui_google_account_playlist" formatted="false">Google Account Playlist</string>
+    <string name="ui_spotify_playlist" formatted="false">SpotifyPlaylist</string>
+    <string name="ui_local_playlist" formatted="false">Local Playlist</string>
+    <string name="ui_back_to_audio_engine" formatted="false">بازگشت به Audio Engine</string>
+    <string name="ui_bluetooth_settings" formatted="false">Bluetoothتنظیمات</string>
+    <string name="ui_scan_output_devices" formatted="false">تجهیزات خروجی اسکن</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">صدای دوگانه</string>
+    <string name="ui_selected" formatted="false">انتخاب شده</string>
+    <string name="ui_copy" formatted="false">کپی رایت</string>
+    <string name="ui_copy_link" formatted="false">کپی لینک</string>
+    <string name="ui_upgrade_quality" formatted="false">ارتقاء کیفیت</string>
+    <string name="ui_fm_radio" formatted="false">رادیو FM</string>
+    <string name="ui_next_station" formatted="false">ایستگاه بعدی</string>
+    <string name="ui_minimize" formatted="false">Minimize</string>
+    <string name="ui_favorite" formatted="false">محبوب ترین</string>
+    <string name="ui_more_options" formatted="false">گزینه های بیشتر</string>
+    <string name="ui_previous_station" formatted="false">ایستگاه قبلی</string>
+    <string name="ui_sleep_timer" formatted="false">زمان خواب</string>
+    <string name="ui_audio_output_devices" formatted="false">تجهیزات خروجی Audio Output</string>
+    <string name="ui_station_list" formatted="false">ایستگاه لیست</string>
+    <string name="ui_volume" formatted="false">Volume Volume</string>
+    <string name="ui_open_lyrics" formatted="false">متن باز</string>
+    <string name="ui_mute_volume" formatted="false">دانلود آهنگ Mute Volume</string>
+    <string name="ui_max_volume" formatted="false">Max Volume</string>
+    <string name="ui_endless_queue" formatted="false">نام انگلیسی : Endless Queue</string>
+    <string name="ui_repeat" formatted="false">تکرار تکراری</string>
+    <string name="ui_refresh_stations" formatted="false">ایستگاه های بازسازی</string>
+    <string name="ui_favorite_station" formatted="false">ایستگاه مورد علاقه</string>
+    <string name="ui_close_ireconization" formatted="false">نزدیک iReconization</string>
+    <string name="ui_cancel_voice_search" formatted="false">دانلود آهنگ Search</string>
+    <string name="ui_microphone" formatted="false">میکروفون میکروفون</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">گزینه های بیشتر</string>
+    <string name="ui_voice_search" formatted="false">جستجوی صوتی Voice Search</string>
+    <string name="ui_saved" formatted="false">نجات</string>
+    <string name="ui_fill_search_query" formatted="false">Full Search</string>
+    <string name="ui_remove_from_history" formatted="false">حذف تاریخ</string>
+    <string name="ui_itune_icon" formatted="false">iTuneآیکون</string>
+    <string name="ui_artwork_preview" formatted="false">دانلود بازی Artwork Preview</string>
+    <string name="ui_decrease" formatted="false">کاهش کاهش</string>
+    <string name="ui_increase" formatted="false">افزایش افزایش</string>
+    <string name="ui_open_link" formatted="false">Open Link</string>
+    <string name="ui_reset_geometry" formatted="false">بازسازی Geometry</string>
+    <string name="ui_reorder_provider" formatted="false">Reorder Provider</string>
+    <string name="ui_save_name" formatted="false">نام Save</string>
+    <string name="ui_editable_name" formatted="false">نام قابل ویرایش</string>
+    <string name="ui_google" formatted="false">Google Google</string>
+    <string name="ui_remove_account" formatted="false">حذف حساب</string>
+    <string name="ui_reorder_source_priority" formatted="false">اولویت منبع</string>
+    <string name="ui_refresh_playlists" formatted="false">لیست های جدید</string>
+    <string name="ui_replay_poster" formatted="false">دانلود بازی Replay</string>
+    <string name="ui_settings" formatted="false">تنظیمات</string>
+    <string name="ui_artist_radio" formatted="false">هنرمند رادیو</string>
+    <string name="ui_play_all" formatted="false">بازی All</string>
+    <string name="ui_delete_playlist" formatted="false">حذف Playlist</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">صف بی پایان</string>
+    <string name="ui_artist_info" formatted="false">هنرمند : Info</string>
+    <string name="ui_enabled" formatted="false">فعال سازی</string>
+    <string name="ui_search_icon" formatted="false">جستجو Icon</string>
+    <string name="ui_region">منطقه:%1$s</string>
+    <string name="ui_connected_devices">(Concted DevelopmentICES)%1$s))</string>
+    <string name="ui_up_next">Next post (%1$s))</string>
+    <string name="ui_text_da5c3629fd">%1$s&gt;&gt;</string>
+    <string name="ui_active_7c6a4064">%1$s•%2$sفعال فعال فعال</string>
+    <string name="ui_no_new_available_right_now">هیچ چیز جدید%1$sدر حال حاضر در دسترس</string>
+    <string name="ui_tracks">%1$s• آهنگ ها%2$s</string>
+    <string name="ui_songs">%1$sآهنگ ها%2$s•%3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s•%2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c">•%1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$sمسیر (بازدید کنندگان)\'مطابقت:</string>
+    <string name="ui_text_a3edb2b714">•%1$s-%2$s</string>
+    <string name="ui_d_eeda119e">%1$sD</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+ +%1$sdB</string>
+    <string name="ui_connected">%1$sمتصل متصل</string>
+    <string name="ui_open_web_player">Open Web Player%1$s))</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">کشور:%1$s()%2$s))</string>
+    <string name="ui_city_state">شهر / ایالت:%1$s</string>
+    <string name="ui_codec_bitrate">Codec / Bitrate:%1$s</string>
+    <string name="ui_language">زبان:%1$s</string>
+    <string name="ui_tags">برچسب ها:%1$s</string>
+    <string name="ui_stream">جریان:%1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">کلید API پیکربندی نشده برای%1$sلطفا آن را در تنظیمات &gt; Lyrics تنظیم کنید.</string>
+    <string name="ui_s_clip">%1$sکلیپ</string>
+    <string name="ui_loading_more_fm_stations_loaded">بارگیری ایستگاه های FM بیشتر (%1$sبارگذاری شده ...</string>
+    <string name="ui_found">%1$sپیدا شده</string>
+    <string name="ui_version">نسخه Version%1$s()%2$s))</string>
+    <string name="ui_of_active">%1$sاز%2$sActive Active Active</string>
+    <string name="ui_text_adebc50ade">##%1$s</string>
+    <string name="ui_api_key">%1$sAPI Key</string>
+    <string name="ui_channel">کانال:%1$s</string>
+    <string name="ui_sync_issue">موضوع Sync :%1$s</string>
+    <string name="ui_enter">وارد شوید%1$s</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">مطمئن هستید که می خواهید حذف کنید “%1$sتمام داده ها، لیست ها، مورد علاقه ها، تاریخ و تنظیمات موجود در این حساب به طور دائمی حذف خواهند شد.</string>
+    <string name="ui_peak">اوج:%1$s</string>
+    <string name="ui_welcome">خوش آمدید،%1$s</string>
+    <string name="ui_songs_played">%1$sترانه ها</string>
+    <string name="ui_around">اطراف اطراف اطراف%1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">هنگامی که جهان شلوغ می شود، شما در اکثر موارد لباس می زنید.%1$sاطراف%2$s...</string>
+    <string name="ui_itune_time_travel_575a110d">iTuneسفر زمان%1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s· ·%2$s</string>
+    <string name="ui_your_biggest_day_was">بزرگترین روز شما بود%1$s...</string>
+    <string name="ui_listening_recap">%1$sگوش دادن دوباره</string>
+    <string name="ui_busiest_day">شلوغ ترین روز:%1$s</string>
+    <string name="ui_peak_hour_00">ساعت اوج:%1$sساعت</string>
+    <string name="ui_loading">بارگیری%1$s...</string>
+    <string name="ui_about">درباره%1$s</string>
+    <string name="ui_songs_9b614dc8">%1$sآهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ آهنگ</string>
+    <string name="ui_current_offset_ms">دانلود زیرنویس فارسی فیلم Current 0%1$sms</string>
+    <string name="ui_connected_session">جلسه اتصال:%1$s</string>
+    <string name="ui_k">%1$sk</string>
+    <string name="ui_top_result_c5e5adab">بالا RESULT%1$s</string>
+    <string name="toast_song_not_found_in_itune">آهنگی که در آن پیدا نشدiTune</string>
+    <string name="toast_playback_failed_try_again">بازی شکست خورد، دوباره امتحان کنید</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">دانلود فیلم Auto Sleep Timer Active</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">حالت آفلاین: این آهنگ دانلود نشده است</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">حالت آفلاین: نمی تواند کیفیت را ارتقا دهد</string>
+    <string name="toast_upgrading_quality">ارتقاء کیفیت</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">بدون از دست دادن منابع جریان در منابع</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">هیچ جریان کیفیت بالاتر یافت شده در سراسر منابع فعال</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">Shddle توسط دائمی Shddle در تنظیمات قفل شده است</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">اجازه میکروفون برای شناسایی موسیقی لازم است</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">نمایش بر روی سایر برنامه های اجازه برای تشخیص پاپ آپ مورد نیاز است</string>
+    <string name="toast_playback_failed">بازی شکست خورد</string>
+    <string name="toast_complete_google_sign_in_first">Google Sign-in First</string>
+    <string name="toast_waiting_for_youtube_music_session">انتظار برایYouTube Musicجلسه ...</string>
+    <string name="toast_couldn_t_load_tracks">می توان\'آهنگ t Load</string>
+    <string name="toast_copied_to_clipboard">نصب شده برای Clipboard</string>
+    <string name="toast_profile_avatar_updated">پروفایل آواتار به روز شده</string>
+    <string name="toast_no_tracks_found">هیچ آهنگی پیدا نشد</string>
+    <string name="toast_google_account_connected">Google account متصل</string>
+    <string name="toast_link_copied">لینک کپی شده</string>
+    <string name="toast_could_not_open_browser">نمی تواند مرورگر را باز کند</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">یک پورت بین 1024 تا 65۳۵ را وارد کنید</string>
+    <string name="toast_cached_music_cleared">موسیقی پاک شده</string>
+    <string name="toast_no_tracks_available_to_add">هیچ آهنگ در دسترس برای اضافه کردن</string>
+    <string name="toast_enter_a_playlist_name">وارد یک نام لیست</string>
+    <string name="toast_system_sound_panel_opened">پانل صوتی سیستم باز شد</string>
+    <string name="toast_download_started_check_notification">دانلود بازی Start · Check notification</string>
+    <string name="toast_playback_will_stop_after_current_track">Playback پس از مسیر فعلی متوقف خواهد شد</string>
+    <string name="toast_sleep_timer_turned_off">تایمر خواب خاموش شد</string>
+    <string name="toast_stream_url_copied">جریان URL کپی شده</string>
+    <string name="toast_couldn_t_create_lyrics_card">می توان\'ایجاد کارت شعر</string>
+    <string name="toast_restored_online_lyrics">دانلود آهنگ های آنلاین</string>
+    <string name="toast_lyrics_saved">Lyrics نجات یافت</string>
+    <string name="toast_translation_cleared">ترجمه متن ترجمه :</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">لطفا کلید API خود را در تنظیمات تنظیم کنید &gt; اولین ترانه ها</string>
+    <string name="toast_no_lyrics_found_for_this_song">هیچ ترانه ای برای این آهنگ پیدا نشد</string>
+    <string name="toast_could_not_create_audio_clip">نمی تواند کلیپ صوتی ایجاد کند</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">Snippet ذخیره شده به موسیقی /iTune/ Snippets</string>
+    <string name="toast_playing_next">بازی بعدی</string>
+    <string name="toast_added_to_queue">اضافه شده به صف</string>
+    <string name="toast_download_started_check_notifications">دانلود بازی Start · Check notification</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">می توان\'این آهنگ را روی این آهنگ پیدا کنیدYouTube Music</string>
+    <string name="toast_couldn_t_start_mix">می توان\'شروع مخلوط</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">می توان\'آهنگ ها را پیدا کنیدYouTube Music</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">نمی تواند رمز عبور را به طور ایمن رمزگذاری کند. پشتیبان گیری خودکار تغییر نکرد.</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">مجوز ذخیره سازی برای صرفه جویی در پشتیبان گیری در دانلود ها ضروری است</string>
+    <string name="toast_choose_an_itune_backup_file">یک را انتخاب کنید.ituneفایل پشتیبان</string>
+    <string name="toast_audio_artwork_cache_cleared">حافظه صوتی و هنری پاک شده</string>
+    <string name="toast_could_not_open_github">نمی تواند GitHub را باز کند</string>
+    <string name="toast_profile_name_updated">نام پروفایل به روز شده</string>
+    <string name="toast_search_history_cleared">تاریخچه جستجو پاک شده</string>
+    <string name="toast_listening_history_cleared">تاریخ گوش دادن پاک شد</string>
+    <string name="toast_cached_songs_cleared">آهنگ های پاک شده</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">تنظیمات سیستم باز برای ارائه نمایش در سایر برنامه ها</string>
+    <string name="toast_dynamic_island_geometry_reset">Dynamic Island ARC Reset</string>
+    <string name="toast_geometry_reset">تنظیم مجدد Geometry</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">ارائه دهندگان Lyrics به طور پیش فرض تنظیم می شوند</string>
+    <string name="toast_api_key_saved">کلید API Save</string>
+    <string name="toast_base_url_updated">URL به روز شده</string>
+    <string name="toast_translation_prompt_updated">ترجمه سریع</string>
+    <string name="toast_equalizer_reset_to_flat">تنظیم مجدد برابر برای تخت</string>
+    <string name="toast_dj_console_reset">بازبینی شده در</string>
+    <string name="toast_name_saved">نام ذخیره شده</string>
+    <string name="toast_syncing_youtube_music_library">SyncingYouTube Musicکتابخانه ...</string>
+    <string name="toast_signed_out_local_likes_preserved">ثبت نام ( محلی مانند حفظ شده)</string>
+    <string name="toast_signed_out_of_all_google_accounts">ثبت نام از تمام حساب های Google</string>
+    <string name="toast_discord_disconnected">Discord قطع شد</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">ورود به یک امضا معتبرYouTube Musicکوکی (SAPISID و کوکی جلسه)</string>
+    <string name="toast_youtube_music_account_connected">YouTube Musicحساب متصل</string>
+    <string name="toast_account_renamed">تغییر نام حساب</string>
+    <string name="toast_account_deleted">حساب حذف شده</string>
+    <string name="toast_cannot_delete_your_only_account">نمی توانید تنها حساب خود را حذف کنید</string>
+    <string name="toast_sources_restored_to_defaults">منابع بازسازی شده به پیش فرض</string>
+    <string name="toast_spotify_disconnected">Spotifyقطع نشده</string>
+    <string name="toast_spotify_sp_dc_token_saved">Spotifyتوکن های ذخیره شده</string>
+    <string name="toast_spotify_connected">Spotify connect😉</string>
+    <string name="toast_complete_spotify_sign_in_first">کاملSpotifyثبت نام در ابتدا</string>
+    <string name="toast_saved_to_gallery">پس انداز گالری!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">اجازه دادنiTuneنصب به روز رسانی برای ادامه</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">دانلود بازی Downloaded Update APK در دسترس نیست</string>
+    <string name="toast_added_to_queue_next">اضافه شدن به صف بعدی</string>
+    <string name="toast_link_copied_to_clipboard">لینک کپی شده به Clipboard</string>
+    <string name="toast_song_link_copied_to_clipboard">آهنگ های کپی شده به Clipboard</string>
+    <string name="toast_left_ishare_session">بازی iShare</string>
+    <string name="toast_ishare_lan_host_started">iShare LAN Host شروع شد!</string>
+    <string name="toast_scanning_lan_for_sessions">اسکن LAN برای جلسات ...</string>
+    <string name="toast_cache_cleared">پنهان کردن</string>
+    <string name="toast_signed_out_successfully">امضای موفقیت آمیز</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">پسوردها باید مطابقت داشته باشند و حداقل 8 کاراکتر داشته باشند.</string>
+    <string name="toast_no_backup_file_found_in_storage">هیچ فایل پشتیبان موجود در ذخیره سازی</string>
+    <string name="toast_library_settings_restored">کتابخانه و تنظیمات بازسازی شده!</string>
+    <string name="toast_enter_your_backup_password">پسورد پشتیبان خود را وارد کنید</string>
+    <string name="toast_syncing_spotify_library">SyncingSpotifyکتابخانه ...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify Connect😉</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">یک کوکی معتبر SP DC را وارد کنید</string>
+    <string name="toast_playing">بازی%%1$s...</string>
+    <string name="toast_upgraded_to_lossless_kbps">ارتقاء به بی ضرر •%%1$sbps</string>
+    <string name="toast_playing_next_0f0c851c">بازی%%1$sبعدی بعدی بعدی بعدی</string>
+    <string name="toast_added_to_queue_88e96c25">اضافه شده اضافه شده%%1$sبرای صف</string>
+    <string name="toast_playing_cb1fb3de">بازی%%1$s...</string>
+    <string name="toast_playing_next_e0082d95">بازی بعدی:%%1$s</string>
+    <string name="toast_couldn_t_load">می توان\'t Load%%1$s</string>
+    <string name="toast_opening">افتتاح%%1$s...</string>
+    <string name="toast_couldn_t_open">می توان\'باز%%1$s</string>
+    <string name="toast_couldn_t_play">می توان\'بازی%%1$s</string>
+    <string name="toast_library_pin">کتابخانه پین:%%1$s</string>
+    <string name="toast_copied">اخراج:%%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">تنظیم زمان خواب برای%%1$sدقیقه ها</string>
+    <string name="toast_lyrics_applied">Lyrics اعمال شده (%%1$s))</string>
+    <string name="toast_added_tracks_to_queue">اضافه شده اضافه شده%%1$sدانلود آهنگ To صف</string>
+    <string name="toast_switched_feed_to">تغذیه سوئیچ شده برای%%1$s</string>
+    <string name="toast_provider_updated_to">ارائه دهنده به روز شده%%1$s</string>
+    <string name="toast_target_language_set_to">زبان هدف گذاری برای%%1$s</string>
+    <string name="toast_translation_mode_set_to">حالت ترجمه تنظیم شده برای%%1$s</string>
+    <string name="toast_added_source">منبع اضافه شده:%%1$s</string>
+    <string name="toast_installed_extension_s">نصب شده%%1$sپسوند (ها)</string>
+    <string name="toast_imported_songs">واردات\'%%1$s\'()%%2$sآهنگ ها)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">می توان\'پیدا کردن\'%%1$s\'درYouTube Music</string>
+    <string name="toast_added_songs_to">اضافه شده اضافه شده%%1$sآهنگ ها%%2$s</string>
+    <string name="toast_joining">پیوستن به%%1$s...</string>
+    <string name="toast_added_to">اضافه شده%%1$s</string>
+    <string name="toast_itune_v_for_android_tv">iTunev v v%%1$sAndroid TV</string>
+    <string name="toast_backup_failed">پشتیبانی شکست خورده:%%1$s</string>
+    <string name="toast_restore_failed">شکست خورده:%%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">iShare، Dynamic Island و Stand By</string>
+    <string name="settings_ishare" formatted="false">iShare</string>
+    <string name="settings_dynamic_island" formatted="false">جزیره دینامیک</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">کنترل کننده آب شناور در خارجiTune</string>
+    <string name="settings_always_on_display" formatted="false">Always On Display</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">Audio Engine &amp; Sound Effects</string>
+    <string name="settings_dolby_atmos" formatted="false">Dolby Atmos</string>
+    <string name="settings_text_8948f8179a" formatted="false">8D Audio</string>
+    <string name="settings_spatial_audio" formatted="false">صدای فضایی</string>
+    <string name="settings_equalizer_eq" formatted="false">برابر کننده (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">فیلتر پایین-Pass</string>
+    <string name="settings_dj_studio_panel" formatted="false">DJ Studio Panel</string>
+    <string name="settings_audio_normalization" formatted="false">عادی سازی صدا</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB Bit-Perfect DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">Pure Audio Bypass</string>
+    <string name="settings_signal_pipeline" formatted="false">خط لوله سیگنال</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">{{audioEngine.pill Badge}} $activeOutputName</string>
+    <string name="settings_audio_playback" formatted="false">Audio &amp; Playback</string>
+    <string name="settings_sources" formatted="false">منابع</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">مدیریت مدیریتYouTube Music,JioSaavnافزونه های قابل نصب،WebDAV,SMBو اولویت پخش</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">وقتی خطای Occurs</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">حرکت به آهنگ بعدی صف اگر پخش شکست</string>
+    <string name="settings_download_quality" formatted="false">Download Quality</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">کیفیت پیش فرض استفاده شده توسط آهنگ download Action</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">کیفیت صوتی پیش فرض را برای بارگیری در سراسر برنامه انتخاب کنید.</string>
+    <string name="settings_lossless_audio" formatted="false">از دست دادن صدا</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">ارتقاء کیفیت آهنگ های پنهان</string>
+    <string name="settings_streaming_quality" formatted="false">کیفیت بازی</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">کیفیت صوتی ترجیحی خود را انتخاب کنید.</string>
+    <string name="settings_pcm_output_format" formatted="false">PCM Output Format</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">پخش Rebuilds در موقعیت فعلی</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">فرمت PCM درخواست شده از Android را انتخاب کنید\'خروجی صوتی یک USB DAC ممکن است آن را به فرمتی که از آن پشتیبانی می کند تبدیل کند.</string>
+    <string name="settings_crossfade" formatted="false">صلیب</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">پایان مسیر پایان را با شروع بعدی به پایان برسانید.</string>
+    <string name="settings_automix" formatted="false">AutoMix</string>
+    <string name="settings_afterglow" formatted="false">Afterglow</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">همان اثر برابر کننده پایین را در طول ثانیه های نهایی انتخاب شده از هر آهنگ اعمال کنید. پس از وقفه های آهسته AutoMix و Crossfade در حالی که فعال است.</string>
+    <string name="settings_permanent_shuffle" formatted="false">دائمی Shddle</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">به طور دائم در بازیکن قفل شده باشید</string>
+    <string name="settings_pause_at_volume_0" formatted="false">استفاده در Volume 0</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">به طور خودکار توقف پخش زمانی که حجم به صفر برسد</string>
+    <string name="settings_volume_bar" formatted="false">دانلود آهنگ Bar</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">نشان داده شده در $ [state.volumeBarSide. cutcase()] لبه زمانی که دکمه های حجم را فشار دهید</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">انتخاب کنید که کدام لبه صفحه نوار حجم داخل برنامه ظاهر می شود.</string>
+    <string name="settings_content" formatted="false">محتوا Content Content</string>
+    <string name="settings_default_content_language" formatted="false">الگوریتم Content Failure Language</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">زبان برای درک، مرور و جستجو</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">زبان کاتالوگ ترجیحی مورد استفاده در سراسر مرور، Moods و Genres، Playlists و New Releases را انتخاب کنید.</string>
+    <string name="settings_default_content_country" formatted="false">شکست محتوا کشور</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">منطقه برای نمودارها، Playlists و New Releases</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">فروشگاه منطقه ای را انتخاب کنید که برای آلبوم های جدید اضافه شده، Moods منطقه ای و Playlists برجسته استفاده می شود.</string>
+    <string name="settings_hide_explicit_content" formatted="false">دانلود فیلم Hide Exp Request Content</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">فیلتر آهنگ های صریح در سراسر Moods، مرور و جستجو</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">بازی و مایع Glass</string>
+    <string name="settings_splash_screen" formatted="false">دانلود بازی Splash Screen</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">App راه اندازی نام تجاری و عنوان مایع نشان می دهد</string>
+    <string name="settings_animated_cover_art" formatted="false">دانلود بازی Animated Cover Art</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">Spotifyبوم، Apple Music، Tidal و Community Motion</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">Spotifyراه اندازی</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">Auto-Hide Canvas Controls</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">کنترل های مینی پس از 5s در حالی که بوم بازی می کند (حافظه کار کنید تا به سرعت حرکت کنید)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">Synced Lyrics Over Canvas</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">نمایش اشعار همگام سازی شده بالاتر از نام آهنگ زمانی که کنترل بوم پنهان</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">اولویت بندیSpotifyبوم بوم بوم</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">سعی کنیدSpotifyبوم قبل از Apple Music، Tidal و Community</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">دانلود بازی Animated Cover Over Cellular</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">اجازه می دهد تا فیلم های بوم را بر روی داده های موبایل ضبط کنید</string>
+    <string name="settings_player_type" formatted="false">بازیگران Type</string>
+    <string name="settings_player_style" formatted="false">بازی Player Style</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">بازیگران Dynamic Coloring</string>
+    <string name="settings_full_screen_cover_art" formatted="false">پوشش کامل هنر</string>
+    <string name="settings_corner_length" formatted="false">طول</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">تنظیم شعاع گوشه ای از آلبوم مربع</string>
+    <string name="settings_hide_quality_tag" formatted="false">دانلود بازی Hide Quality Tag</string>
+    <string name="settings_hide_volume_bar" formatted="false">دانلود بازی Hide Volume Bar</string>
+    <string name="settings_home_top_card_style" formatted="false">Home Top Card Style</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">Glass Liquid Nav &amp; Mini Player</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">Glass bar و mini Player، با یک لنز آب در نگه داشتن</string>
+    <string name="settings_time_synced_lyrics" formatted="false">دانلود آهنگ Time-Synced Lyrics</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">متن کلمه و خط را در زمان واقعی دنبال کنید</string>
+    <string name="settings_app_font" formatted="false">App Font</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">تغییر تایپوگرافی برنامه؛ کنترل بازیکن حفظ نوع طراحی شده خود را</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">یک تایپ برای رابط برنامه انتخاب کنید.</string>
+    <string name="settings_lyrics_providers" formatted="false">ارائه دهندگان Lyrics</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 منبع - اولویت بندی و ضرب و شتم</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">شیشه ای Chrome</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">دانلود بازی Reractive Translucent headers &amp; Dock Cards</string>
+    <string name="settings_tactile_haptics" formatted="false">Tactile Haptics</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">بازخورد پالس زیر پا در سراسر کنترل بازیکن</string>
+    <string name="settings_downloads_storage" formatted="false">دانلود و ذخیره سازی</string>
+    <string name="settings_cellular_streaming" formatted="false">جریان سلولی</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">پهنای باند صوتی در داده های موبایل</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">کنترل وفاداری صوتی در هنگام پخش از Wi-Fi</string>
+    <string name="settings_download_over_wi_fi" formatted="false">دانلود بازی Over Wi-Fi</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">منتظر Wi-Fi قبل از بارگیری خودکار</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">دانلود آهنگ های After Playback</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">صرفه جویی در یک آهنگ به ذخیره سازی آفلاین پس از پایان بازی</string>
+    <string name="settings_cache_quality" formatted="false">کیفیت</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">کیفیت پایین تر ذخیره سازی را ذخیره می کند</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">کیفیت آهنگ های ذخیره شده پس از پخش کامل را انتخاب کنید. آهنگ هایی که از الان پنهان شده اند</string>
+    <string name="settings_song_storage_limit" formatted="false">محدود کردن Song Storage Limit</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">حداکثر ذخیره سازی دیسک اختصاص داده شده برای حافظه صوتی آفلاین قبل از آهنگ های بدون پخش قدیمی evicted است.</string>
+    <string name="settings_clear_cached_songs" formatted="false">دانلود موسیقی متن فیلم The Songs</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">{موسیقیCacheManager.cachedTracks.size • آهنگ های {MusicCacheManager.formatStorageize (موسیقی CacheManager.TotalStorage Bytes)</string>
+    <string name="settings_automatic_downloads" formatted="false">دانلود فیلم خودکار</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">دانلود آهنگ های جدید Save New Friend &amp; Add</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">نرم افزار Clear app Buffer cache</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">حذف موقت پوشش هنر و بافر شبکه</string>
+    <string name="settings_library_listening" formatted="false">کتابخانه و گوش دادن</string>
+    <string name="settings_sync_library" formatted="false">کتابخانه Sync</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">هنرمندان، لیست ها و آلبوم های به روز شده را نگه دارید</string>
+    <string name="settings_listening_history" formatted="false">تاریخ گوش دادن</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">بازی Shape Personal Mixes و به تازگی بازیگران</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">دوست داشته باشید در این دستگاه</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">آهنگ های دوست داشتنی را درiTuneوقتی امضا شد</string>
+    <string name="settings_notifications_general" formatted="false">اعلان ها و ژنرال ها</string>
+    <string name="settings_offline_mode" formatted="false">Offline Mode</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">یک کپی دانلود شده برای شروع پخش</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">توقف موسیقی در Task Clear</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">توقف پخش زمانیiTuneدور زدن از اخیر</string>
+    <string name="settings_auto_sleep_timer" formatted="false">زمان خواب خودکار</string>
+    <string name="settings_network_proxy" formatted="false">شبکه Proxy</string>
+    <string name="settings_profile_name" formatted="false">نام پروفایل</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">سفارشی سازی نمایه تنظیمات نام</string>
+    <string name="settings_news_from_dev" formatted="false">اخبار از dev</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">معرفی، انتشار و تغییر</string>
+    <string name="settings_general_about" formatted="false">عمومی و درباره</string>
+    <string name="settings_home_screen_widget" formatted="false">Home Screen Widget</string>
+    <string name="settings_widget_customization" formatted="false">سفارشی سازی Widget Customization</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">پیش نمایش اندازه، هنر، کنترل و سبک ویجت را انتخاب کنید</string>
+    <string name="settings_backup_restore" formatted="false">پشتیبان گیری و بازیابی</string>
+    <string name="settings_automatic_daily_backup" formatted="false">Daily Backup</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">نسخه پشتیبان گیری روزانه رمزگذاری شده – download/iTuneبازگشت</string>
+    <string name="settings_back_up_itune" formatted="false">بازگشت به عقبiTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">حساب های ذخیره، تمام تنظیمات، اثرات صوتی، داده های کتابخانه و آمار رمزگذاری شده</string>
+    <string name="settings_restore_from_backup" formatted="false">بازگشت از Backup</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">بازیابی تنظیمات، اثرات صوتی، حساب ها یا داده های کتابخانه از.itune</string>
+    <string name="settings_privacy" formatted="false">حریم خصوصی Privacy</string>
+    <string name="settings_pause_search_history" formatted="false">تاریخچه جستجو</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">جستجوی جدید را به تاریخ ذخیره نکنید</string>
+    <string name="settings_clear_search_history" formatted="false">تاریخچه جستجو واضح</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">حذف سوالات اخیر از Search</string>
+    <string name="settings_pause_listening_history" formatted="false">تاریخچه گوش دادن</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">آهنگ ها یا توصیه های به روز رسانی را ثبت نکنید</string>
+    <string name="settings_clear_listening_history" formatted="false">تاریخ گوش دادن واضح</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">حذف تاریخ پخش و پروفایل طعم مجدد</string>
+    <string name="settings_disable_screenshot" formatted="false">صفحه نمایش Disable Screenshot</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">تصاویر بلوک و ضبط صفحه نمایش در سراسر برنامه</string>
+    <string name="settings_best_available" formatted="false">بهترین موجود</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">استفاده از بالاترین کیفیت منبع موجود</string>
+    <string name="settings_maximum" formatted="false">حداکثر حداکثر حداکثر</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">بهترین جریان را انتخاب کنید</string>
+    <string name="settings_high" formatted="false">ارتفاع بالا</string>
+    <string name="settings_target_about_160_kbps" formatted="false">هدف حدود 160 کیلوبایت</string>
+    <string name="settings_standard" formatted="false">استاندارد استاندارد</string>
+    <string name="settings_target_about_128_kbps" formatted="false">هدف در مورد 128 کیلوبایت</string>
+    <string name="settings_data_saver" formatted="false">داده های Saver</string>
+    <string name="settings_target_about_64_kbps" formatted="false">هدف حدود 64 کیلوبایت</string>
+    <string name="settings_extreme" formatted="false">شدید شدید</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">حداکثر وفاداری (256+ کیلوبایت)</string>
+    <string name="settings_high_b1a5954a" formatted="false">ارتفاع بالا</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">صدای با کیفیت بالا (~160 کیلوبایت)</string>
+    <string name="settings_medium" formatted="false">متوسط متوسط</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">کیفیت صوتی استاندارد (~128 کیلوبایت)</string>
+    <string name="settings_low" formatted="false">پایین</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">ذخیره سازی داده ها (~48-64 کیلوبایت)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">16 بیتی PCM</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">استاندارد صحیح PCM خروجی؛ به طور گسترده سازگار با USB Audio Class DACs</string>
+    <string name="settings_text_6697202e38" formatted="false">32 بیتی شناور PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">FLat PCM خروجی زمانی که توسط Android و مسیر صوتی متصل پشتیبانی می شود</string>
+    <string name="settings_off" formatted="false">Off Off Off</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">آهنگ های Cleanly back-to-back</string>
+    <string name="settings_text_6597740315" formatted="false">2</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">انتقال زیرکانه همپوشانی دارد</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 فرقه</string>
+    <string name="settings_short_seamless_fade" formatted="false">کوتاه  fade</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 فرقه</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">تغییر سبک دی جی متعادل</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8</string>
+    <string name="settings_smooth_extended_blend" formatted="false">صافی</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 فرقه</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">حداکثر ترکیب مداوم</string>
+    <string name="settings_off_e3de5ab0" formatted="false">Off Off Off</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">اثرات پخش طبیعی و انتقال را حفظ کنید</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 فرقه</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">استفاده از Low-Pass در 5 ثانیه آخر آهنگ</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 فرقه</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">استفاده از Low-Pass در طول 10 ثانیه آخر آهنگ</string>
+    <string name="settings_text_eb4354110e" formatted="false">15</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">استفاده از Low-Pass در طول 15 ثانیه آخر آهنگ</string>
+    <string name="settings_right" formatted="false">حق راست</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">نشان دادن نوار حجم در لبه راست (default)</string>
+    <string name="settings_left" formatted="false">چپ چپ</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">نشان دادن نوار حجم در سمت چپ</string>
+    <string name="settings_high_efficiency" formatted="false">کارایی بالا</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">استفاده از حداقل داده های سلولی</string>
+    <string name="settings_high_quality" formatted="false">کیفیت بالا</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 کیلوبایت پخش موبایل متعادل</string>
+    <string name="settings_lossless" formatted="false">بی ضرر</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">از دست دادن کامل بیش از شبکه های 5G / LTE</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">Off Off Off</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">اجازه دهید جریان در Wi-Fi تنها</string>
+    <string name="settings_text_03a001f575" formatted="false">۵۰۰ مگابایت</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">حافظه فشرده (~ ۷۰ آهنگ)</string>
+    <string name="settings_text_33015e637f" formatted="false">1 GB 1</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">حافظه حالت (~150 آهنگ)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 گیگابایت</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">پیش فرض (~300 آهنگ)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5 گیگابایت</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">مجموعه بزرگ آفلاین (~ 800 آهنگ)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10 گیگابایت</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">کتابخانه بسیار بزرگ (~1600 آهنگ)</string>
+    <string name="settings_unlimited" formatted="false">نامحدود نامحدود</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">دانلود آهنگ Never evict cacheed Songs</string>
+    <string name="settings_pipeline_output">%1$s→%2$s</string>
+    <string name="settings_volume_bar_side">نمایش در%1$sلبه زمانی که دکمه های حجم را فشار دهید</string>
+    <string name="settings_corner_radius_value">%1$ddp</string>
+    <string name="settings_active_lyrics_providers">%1$dActive Active Active</string>
+    <string name="settings_cached_song_count_size">%1$dآهنگ ها%2$s</string>
+    <string name="library_playlist_count_one">%1$dPlaylist</string>
+    <string name="library_playlist_count_many">%1$dPlaylists</string>
+    <string name="library_album_count_one">%1$dآلبوم اضافه شده</string>
+    <string name="library_album_count_many">%1$dاضافه کردن آلبوم</string>
+    <string name="remove_from_favorites">حذف از مورد علاقه</string>
+    <string name="play_top_album">بازی Top Album</string>
+    <string name="open_in_spotify">باز درSpotify</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">استفاده از رابط آذربایجانی</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">استفاده از رابط بنگالی</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">استفاده از رابط بلغاری</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">استفاده از رابط کاتالان</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">استفاده از رابط چک</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">استفاده از رابط دانمارکی</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">استفاده از رابط فنلاندی</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">استفاده از رابط یونانی</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">استفاده از رابط عبری</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">استفاده از رابط مجارستان</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">استفاده از رابط اندونزیایی</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">استفاده از رابط مالایی</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">استفاده از رابط نروژی</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">رابط فارسی</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">استفاده از رابط لهستانی</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">استفاده از رابط رومانیایی</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">استفاده از رابط اسلواکی</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">استفاده از رابط تایلندی</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">استفاده از رابط ترکی</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">استفاده از رابط اوکراینی</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">استفاده از رابط ویتنامی</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">استفاده از رابط Swahili</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">استفاده از رابط فیلیپینی</string>
+</resources>
