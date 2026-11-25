@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.library
 
+
+import androidx.compose.ui.res.stringResource
 import android.widget.Toast
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -86,6 +88,7 @@ import com.darkxvenom.itune.data.model.LibraryMenuItem
 import com.darkxvenom.itune.data.model.LibraryPinItem
 import com.darkxvenom.itune.data.model.LibraryRecentAlbum
 import com.darkxvenom.itune.data.model.artworkAt
+import com.darkxvenom.itune.data.repository.ImageCacheManager
 import com.darkxvenom.itune.data.repository.MusicRepository
 import com.darkxvenom.itune.ui.artist.components.CoverPlaceholder
 import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
@@ -197,7 +200,7 @@ fun LibraryScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Library",
+                            text = stringResource(R.string.ui_library),
                             color = AppleTextPrimary,
                             fontSize = 34.sp,
                             fontWeight = FontWeight.Bold,
@@ -337,7 +340,7 @@ fun LibraryScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Recently Added",
+                        text = stringResource(R.string.ui_recently_added),
                         color = AppleTextPrimary,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
@@ -346,7 +349,7 @@ fun LibraryScreen(
                     )
                     Icon(
                         imageVector = Icons.Default.ChevronRight,
-                        contentDescription = "See all New Releases",
+                        contentDescription = stringResource(R.string.ui_see_all_new_releases),
                         tint = Color(0x99FFFFFF),
                         modifier = Modifier.size(22.dp)
                     )
@@ -509,14 +512,14 @@ private fun LibraryRedRecognitionCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "iRecognition",
+                    text = stringResource(R.string.ui_irecognition),
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    text = "Identify music playing around you",
+                    text = stringResource(R.string.ui_identify_music_playing_around_you),
                     color = Color.White.copy(alpha = 0.85f),
                     fontSize = 12.sp,
                     maxLines = 1,
@@ -526,7 +529,7 @@ private fun LibraryRedRecognitionCard(
 
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Identify",
+                contentDescription = stringResource(R.string.ui_identify),
                 tint = Color.White.copy(alpha = 0.8f),
                 modifier = Modifier.size(22.dp),
             )
@@ -578,7 +581,7 @@ private fun LibraryGreenSpotifyCard(
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_spotify),
-                    contentDescription = "Spotify",
+                    contentDescription = stringResource(R.string.ui_spotify),
                     modifier = Modifier.size(26.dp),
                 )
             }
@@ -587,14 +590,14 @@ private fun LibraryGreenSpotifyCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Import Spotify Playlist",
+                    text = stringResource(R.string.ui_import_spotify_playlist),
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    text = "Import public & private playlists • Auto-sync",
+                    text = stringResource(R.string.ui_import_public_private_playlists_auto_sync),
                     color = Color.White.copy(alpha = 0.85f),
                     fontSize = 12.sp,
                     maxLines = 1,
@@ -604,7 +607,7 @@ private fun LibraryGreenSpotifyCard(
 
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Import",
+                contentDescription = stringResource(R.string.ui_import),
                 tint = Color.White.copy(alpha = 0.8f),
                 modifier = Modifier.size(22.dp),
             )
@@ -670,14 +673,14 @@ private fun LibraryTimeTravelCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Time Travel",
+                    text = stringResource(R.string.ui_time_travel_88c82a47),
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    text = "Your Music Replay & Statistics",
+                    text = stringResource(R.string.ui_your_music_replay_statistics),
                     color = Color.White.copy(alpha = 0.82f),
                     fontSize = 12.5.sp,
                 )
@@ -690,7 +693,7 @@ private fun LibraryTimeTravelCard(
                     .padding(horizontal = 10.dp, vertical = 4.dp),
             ) {
                 Text(
-                    text = "REPLAY",
+                    text = stringResource(R.string.ui_replay),
                     color = Color.White,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
@@ -792,7 +795,7 @@ private fun LibraryMenuRow(
 
         Icon(
             imageVector = Icons.Default.ChevronRight,
-            contentDescription = "Open",
+            contentDescription = stringResource(R.string.open),
             tint = Color(0x66FFFFFF),
             modifier = Modifier.size(19.dp)
         )
@@ -817,7 +820,7 @@ private fun LibraryLikedSongsMenuRow(
     ) {
         Icon(
             imageVector = SfIcons.StarFill,
-            contentDescription = "Liked Songs",
+            contentDescription = stringResource(R.string.ui_liked_songs),
             tint = LibraryCrimsonAccent,
             modifier = Modifier.size(22.dp)
         )
@@ -825,7 +828,7 @@ private fun LibraryLikedSongsMenuRow(
         Spacer(modifier = Modifier.width(17.dp))
 
         Text(
-            text = "Liked Songs",
+            text = stringResource(R.string.ui_liked_songs),
             color = AppleTextPrimary,
             fontSize = 17.sp,
             fontWeight = FontWeight.Normal,
@@ -845,7 +848,7 @@ private fun LibraryLikedSongsMenuRow(
 
         Icon(
             imageVector = Icons.Default.ChevronRight,
-            contentDescription = "Open",
+            contentDescription = stringResource(R.string.open),
             tint = Color(0x66FFFFFF),
             modifier = Modifier.size(19.dp)
         )
@@ -871,7 +874,7 @@ private fun LibraryCachedSongsMenuRow(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_settings_downloads),
-            contentDescription = "Downloaded & Cached",
+            contentDescription = stringResource(R.string.ui_downloaded_cached),
             tint = Color(0xFF007AFF),
             modifier = Modifier.size(22.dp)
         )
@@ -879,7 +882,7 @@ private fun LibraryCachedSongsMenuRow(
         Spacer(modifier = Modifier.width(17.dp))
 
         Text(
-            text = "Downloaded & Cached",
+            text = stringResource(R.string.ui_downloaded_cached),
             color = AppleTextPrimary,
             fontSize = 17.sp,
             fontWeight = FontWeight.Normal,
@@ -889,7 +892,7 @@ private fun LibraryCachedSongsMenuRow(
 
         if (count > 0) {
             Text(
-                text = "$count • $sizeText",
+                text = stringResource(R.string.ui_text_c75f125c6f, count, sizeText),
                 color = Color(0x99FFFFFF),
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
@@ -899,7 +902,7 @@ private fun LibraryCachedSongsMenuRow(
 
         Icon(
             imageVector = Icons.Default.ChevronRight,
-            contentDescription = "Open",
+            contentDescription = stringResource(R.string.open),
             tint = Color(0x66FFFFFF),
             modifier = Modifier.size(19.dp)
         )
@@ -1002,6 +1005,16 @@ private fun LibraryRecentAlbumCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    var cachedUrl by remember(album.imageUrl) {
+        mutableStateOf(ImageCacheManager.cachedImageUrl(album.imageUrl, context))
+    }
+
+    LaunchedEffect(album.imageUrl) {
+        ImageCacheManager.cacheImage(album.imageUrl, context)
+        cachedUrl = ImageCacheManager.cachedImageUrl(album.imageUrl, context)
+    }
+
     Column(
         modifier = modifier
             .clickable(
@@ -1010,7 +1023,7 @@ private fun LibraryRecentAlbumCard(
             ) { onClick() }
     ) {
         AsyncImage(
-            model = album.imageUrl,
+            model = cachedUrl,
             contentDescription = album.title,
             contentScale = ContentScale.Crop,
             modifier = Modifier
