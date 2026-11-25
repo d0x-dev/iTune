@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.components
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import com.darkxvenom.itune.ui.artist.components.backdrop.Backdrop
 import com.darkxvenom.itune.ui.artist.components.liquidGlass
 
@@ -167,7 +170,7 @@ fun FloatingMiniPlayer(
                 ) {
                     Icon(
                         imageVector = Icons.Default.MusicNote,
-                        contentDescription = "No song playing",
+                        contentDescription = stringResource(R.string.ui_no_song_playing),
                         tint = AppleTextSecondary,
                         modifier = Modifier.size(19.dp)
                     )
@@ -249,7 +252,7 @@ fun FloatingMiniPlayer(
                 ) {
                     Icon(
                         imageVector = Icons.Default.FastForward,
-                        contentDescription = "Next Track",
+                        contentDescription = stringResource(R.string.ui_next_track),
                         tint = if (hasActiveTrack) AppleTextPrimary else Color.White.copy(alpha = 0.34f),
                         modifier = Modifier.size(22.dp)
                     )
