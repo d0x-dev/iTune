@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">Скасувати</string>
+    <string name="save">Зберегти</string>
+    <string name="close">Закрити</string>
+    <string name="done">Готово</string>
+    <string name="back">Назад</string>
+    <string name="play">Відтворити</string>
+    <string name="shuffle">Перемішати</string>
+    <string name="retry">Спробувати ще раз</string>
+    <string name="try_again">Зареєструватися</string>
+    <string name="more">Більше</string>
+    <string name="less">Менше</string>
+    <string name="share">Поділитися</string>
+    <string name="show_all">Показати всі</string>
+    <string name="top_songs">Кращі пісні</string>
+    <string name="suggested">Пробити</string>
+    <string name="subscribers">%1$sПідписка</string>
+    <string name="monthly_listeners">%1$sщомісячні слухачі</string>
+    <string name="signed_by">Зареєструватися%1$s</string>
+    <string name="about_artist">Про художника</string>
+    <string name="about_album">Про альбом</string>
+    <string name="recent_album">Останні альбоми</string>
+    <string name="recent_ep">Останні новини</string>
+    <string name="recent_single">Найпопулярніші</string>
+    <string name="subscribe">Підписатися</string>
+    <string name="unsubscribe">Скасувати підписку</string>
+    <string name="add_to_library">Додати до бібліотеки</string>
+    <string name="remove_from_library">Видалити з бібліотеки</string>
+    <string name="add_to_playlist">Додати до списку відтворення</string>
+    <string name="remove_from_playlist">Видалити з цього списку відтворення</string>
+    <string name="play_next">Грати</string>
+    <string name="add_to_queue">Додати у чергу</string>
+    <string name="start_radio">Старт радіо</string>
+    <string name="open">Відкрито</string>
+    <string name="open_album">Відкритий альбом</string>
+    <string name="open_artist">Відкритий художник</string>
+    <string name="open_playlist">Відкритий список відтворення</string>
+    <string name="song_info">Новини</string>
+    <string name="song_info_album">Фотоальбоми</string>
+    <string name="song_info_release_date">Дата виходу</string>
+    <string name="song_info_views">Plays / переглядів</string>
+    <string name="song_info_likes">Смоктати</string>
+    <string name="song_info_comments">Коментарі</string>
+    <string name="song_info_unavailable">Не доступний</string>
+    <string name="song_info_error">Деякі дані не можуть бути завантажені.</string>
+    <string name="song_info_retry">птиця</string>
+    <string name="like">Як</string>
+    <string name="dislike">Немов</string>
+    <string name="download">Завантажити</string>
+    <string name="download_all">Завантажити все</string>
+    <string name="downloaded">Завантажити</string>
+    <string name="downloading">Завантаження</string>
+    <string name="download_notification_title">Завантаження</string>
+    <string name="delete_download">Видалити завантажити</string>
+    <string name="delete_download_confirmation">Видалити “%1$s” з цього пристрою? Зареєструватися</string>
+    <string name="delete">Видалити</string>
+    <string name="queued">Закінчення</string>
+    <string name="saved_to_downloads">Збережено до завантаження</string>
+    <string name="search_this_list">Пошук списку</string>
+    <string name="clear_search">Очистити пошук</string>
+    <string name="close_search">Пошук</string>
+    <string name="nothing_matches">Ніщо тут відповідає «%1$sй</string>
+    <string name="sort_songs">Сортувати пісні</string>
+    <string name="artist">художник</string>
+    <string name="album">Новини</string>
+    <string name="playlist">Список відтворення</string>
+    <string name="folder">Склад</string>
+    <string name="songs">Пісні</string>
+    <string name="song_count">%1$dПісня</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$dгульні</item>
+        <item quantity="other">%1$dгульні</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$dхв</item>
+        <item quantity="other">%1$dхвилини</item>
+    </plurals>
+    <string name="one_hour">1 час</string>
+    <string name="hours_minutes_short">%1$dж%2$dм.кв</string>
+    <string name="minutes_short">%1$dхв</string>
+    <string name="pin">Помилка</string>
+    <string name="unpin">Непін</string>
+    <string name="tile_identify_music">Визначте музику</string>
+    <string name="tile_identify_music_desc">Визначте пісні, граючи навколо вас зiTune</string>
+    <string name="widget_itune_description">КонтрольiTuneвідтворення з вашого домашнього екрану</string>
+    <string name="app_language">Мова додатка</string>
+    <string name="app_language_subtitle">Мова для меню, кнопки та повідомлення</string>
+    <string name="app_language_description">Виберіть мову, яка використовується дляiTuneінтерфейс.</string>
+    <string name="system_default_language">За замовчуванням</string>
+    <string name="follow_device_language">Перейдіть на мову пристрою</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">Використовуйте англійський інтерфейс</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface">й</string>
+    <string name="hindi_interface_language">Мова інтерфейсу Hindi</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">Використовуйте іспанський інтерфейс</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">Використовуйте французький інтерфейс</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">Використовуйте голландський інтерфейс</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">Використовуйте російський інтерфейс</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">Використовуйте інтерфейс Urdu</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">Використовуйте китайський інтерфейс</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">Використовуйте німецький інтерфейс</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">Використовуйте португальський інтерфейс</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">Використовуйте італійський інтерфейс</string>
+    <string name="japanese_language">日本語</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">й</string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Вентилятор</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">اللغة العربية</string>
+    <string name="japanese_interface">Використання японського інтерфейсу</string>
+    <string name="favorite_artist">Улюблений художник</string>
+    <string name="remove_favorite_artist">Видалити з улюблених митців</string>
+    <string name="add_to_favorite_artists">Додати до улюблених митців</string>
+    <string name="removed_from_artists">Вилучені з художників</string>
+    <string name="added_to_artists">Додати до художників</string>
+    <string name="play_top_songs">Грати Топ Пісні</string>
+    <string name="play_album">Грати альбом</string>
+    <string name="play_playlist">Грати</string>
+    <string name="create_new_playlist">Створити новий список відтворення</string>
+    <string name="create_playlist">Створити список відтворення</string>
+    <string name="radio">Радіо</string>
+    <string name="search">Пошук</string>
+    <string name="share_playlist_link">Поділитися посиланням</string>
+    <string name="copy_share_link">Статус на сервери</string>
+    <string name="rename_playlist">Перейменувати список відтворення</string>
+    <string name="delete_playlist">Видалити список відтворення</string>
+    <string name="share_link_copied">Обмін посиланням</string>
+    <string name="playlist_removed">Список відтворення</string>
+    <string name="playlist_no_longer_available">Цей список відтворення не доступний.</string>
+    <string name="empty_playlist">Empty Ігровий список</string>
+    <string name="filter_playlists">Фільтр списки відтворення...</string>
+    <string name="filter_albums">Фільтри</string>
+    <string name="favorite">Вибрані</string>
+    <string name="tap_to_start_listening">Натисніть, щоб почати прослуховування</string>
+    <string name="time_zero" formatted="false">000.00 р.</string>
+    <string name="previous">Попереднє</string>
+    <string name="play_or_pause">Грати або пауза</string>
+    <string name="next">Про нас</string>
+    <string name="repeat">Повторити</string>
+    <string name="open_title_options">Відкрито%1$sПараметри</string>
+    <string name="reset_page_title">Зареєструватися%1$s</string>
+    <string name="remove_device">Прибрати%1$s</string>
+    <string name="profile_name">%1$sПрофіль</string>
+    <string name="download_option">Завантажити%1$s</string>
+    <string name="open_entry_options">Відкрито%1$sПараметри</string>
+    <string name="avatar_number">Аватар%1$s</string>
+    <string name="options_for_track">Варіанти%1$s</string>
+    <string name="preparing">Підготовка...</string>
+    <string name="share_image">Посилання</string>
+    <string name="speed_pitch_locked">Швидкість і блокування кроку разом</string>
+    <string name="independent_bpm_tempo_key_pitch">Незалежний BPM темпо &amp; ключ крок</string>
+    <string name="spatial_reflections_delay">Просторові рефлексії%1$dмс)</string>
+    <string name="on">Про нас</string>
+    <string name="off">Відправити</string>
+    <string name="dynamic_island_active">Динамічний острів активний</string>
+    <string name="dynamic_island_description">Виставки плавно зовніiTuneпід час відтворення</string>
+    <string name="preparing_download">Підготовка завантаження...</string>
+    <string name="listening_for_music">Слухати музику...</string>
+    <string name="hold_phone_near_sound_source">Утриманий телефон біля джерела звуку</string>
+    <string name="unable_to_recognize_audio">Неможливо розпізнати аудіо</string>
+    <string name="song_identified">Пісня Ідентифікована</string>
+    <string name="play_in_itune">Грати вiTune</string>
+    <string name="view_details">Переглянути подробиці</string>
+    <string name="no_match_found">Не знайдено</string>
+    <string name="recognition_retry_message">Не можна визначити пісню. Натисніть, щоб спробувати знову.</string>
+    <string name="microphone_permission_needed">Microphone дозвіл</string>
+    <string name="microphone_permission_help">Натисніть, щоб дозволити доступ до мікрофона такiTuneможе визначити музику.</string>
+    <string name="recognition_failed">Визнання не вдалося</string>
+    <string name="tap_install_to_continue">Встановити та продовжити</string>
+    <string name="detail_artist">Мистецтво</string>
+    <string name="detail_album">Фотоальбоми</string>
+    <string name="set_default_ringtone_target">Налаштування за замовчуванням%1$s!</string>
+    <string name="added_ringtone_target">Додати до%1$s. Виберіть його в налаштуваннях звуку.</string>
+    <string name="last_fm_connected_as">Last.fmпідключений як%1$s</string>
+    <string name="discord_connected_as">Зареєструватися підключено%1$s</string>
+    <string name="tv_encrypted_backup_saved">Зашифрований Резервне копіювання Збережено (%1$dКБ</string>
+    <string name="sign_in_verification_failed">Не вдалося перевірити підпис</string>
+    <string name="could_not_rename_playlist">Не перейменувати список відтворенняYouTube Music</string>
+    <string name="could_not_create_playlist">Чи не створювати списки відтворення</string>
+    <string name="daily_encrypted_backup_enabled">Щоденне зашифроване резервне копіювання</string>
+    <string name="cookie_login_failed">Файли cookie</string>
+    <string name="could_not_open_last_fm">Не вдалося відкритиLast.fm</string>
+    <string name="last_fm_sign_in_failed">Last.fmУвійти</string>
+    <string name="discord_sign_in_failed">Зареєструвати знак не вдалося</string>
+    <string name="could_not_open_android_installer">Не вдалося відкрити Android інсталятор</string>
+    <string name="added_title_to_queue">Додати “%1$s” в чергу</string>
+    <string name="automatic_backup_disabled">Автоматичні резервні копії</string>
+    <string name="download_failed">Завантажити не вдалося</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">Встановити</string>
+    <string name="ui_text_9ef6a80f91" formatted="false">1 час</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">%+.1ф</string>
+    <string name="ui_accounts" formatted="false">+ акаунти</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0.0 км</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5.0 км</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">до</string>
+    <string name="ui_text_7be28ad40e" formatted="false">-5.0 км</string>
+    <string name="ui_text_a6dee6102d" formatted="false">11 Мар</string>
+    <string name="ui_text_1a19c52178" formatted="false">12 хв</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">12 хв</string>
+    <string name="ui_text_4e37ece023" formatted="false">15ms надземна затримка низькопроходної суміші</string>
+    <string name="ui_text_76b322ac42" formatted="false">2X Швидка швидкість</string>
+    <string name="ui_text_505c74ed85" formatted="false">3D Понг-Понг Бун</string>
+    <string name="ui_text_db9b8df506" formatted="false">6 хв</string>
+    <string name="ui_text_2812537f20" formatted="false">6 хв</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080р.</string>
+    <string name="ui_text_05a79f06cf" formatted="false">:</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">Повна картина з топовими піснями, артистами, альбомами та звичаями.</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">Нова версія готова</string>
+    <string name="ui_account" formatted="false">Написати</string>
+    <string name="ui_account_options" formatted="false">Параметри облікового запису</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">Акупункти</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">Acoustic Head-Shadow Crossfeed</string>
+    <string name="ui_activate" formatted="false">Активувати</string>
+    <string name="ui_active" formatted="false">Активний</string>
+    <string name="ui_active_days" formatted="false">АКТИВНІ ДНІ</string>
+    <string name="ui_active_profile" formatted="false">Активний профіль</string>
+    <string name="ui_activity_by_day" formatted="false">Діяльність за днем</string>
+    <string name="ui_add_account" formatted="false">Додати обліковий запис</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">Додавання користувацьких серверів HTTP (language /manifest.json, /search, /stream) або пісочниці-ізольовані модулі QuickJS.</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">Додати майбутні пісні Автоматично</string>
+    <string name="ui_add_streaming_source" formatted="false">Додавання джерела потоку</string>
+    <string name="ui_add_to_playlist" formatted="false">Додати до списку відтворення</string>
+    <string name="ui_added_playlists" formatted="false">Додано списки відтворення</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">Налаштуйте кутовий край художньої картини.</string>
+    <string name="ui_advanced_cookie_login" formatted="false">Розширені файли cookie</string>
+    <string name="ui_advanced_login" formatted="false">АДВАНСОВА ЛОГІН</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">Про нас</string>
+    <string name="ui_ai_engine" formatted="false">АІ ENGINE</string>
+    <string name="ui_ai_provider" formatted="false">AI Постачальник</string>
+    <string name="ui_albums" formatted="false">Альбоми</string>
+    <string name="ui_all_news" formatted="false">Новини</string>
+    <string name="ui_allow_downloads" formatted="false">Завантаження</string>
+    <string name="ui_allow_microphone" formatted="false">Allow Мікрофон</string>
+    <string name="ui_allow_microphone_access" formatted="false">Доступ до мікрофона Allow</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">Альтернативні відбиття L &lt;-&gt; R</string>
+    <string name="ui_always_on_display" formatted="false">Завжди на дисплеї</string>
+    <string name="ui_am" formatted="false">Про нас</string>
+    <string name="ui_api_base_url" formatted="false">Статус на сервери</string>
+    <string name="ui_artist" formatted="false">Мистецтво</string>
+    <string name="ui_artist_name" formatted="false">Назва художника</string>
+    <string name="ui_artists" formatted="false">Мистецтво</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">Художники, Пісні, Альбоми, списки відтворення</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">Художники, Пісні, Лірики та інші</string>
+    <string name="ui_at_least_8_characters" formatted="false">принаймні 8 символів</string>
+    <string name="ui_auto_sleep_timer" formatted="false">Авто таймер сну</string>
+    <string name="ui_auto_activation_timeout" formatted="false">АВТО-АКТИВАЦІЯ ЧАСУ</string>
+    <string name="ui_avatar" formatted="false">Аватар</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">ЗареєструватисяiTune(АЕС-256)</string>
+    <string name="ui_backup_password" formatted="false">Зареєструвати пароль</string>
+    <string name="ui_bluetooth_device_access" formatted="false">BluetoothДоступ до пристрою</string>
+    <string name="ui_browse" formatted="false">Поза «Ложки»</string>
+    <string name="ui_browse_by_country" formatted="false">Перегляд країни</string>
+    <string name="ui_browse_extensions" formatted="false">Подовжувачі</string>
+    <string name="ui_browse_live_online_radio" formatted="false">Перегляд онлайн радіо</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">Не видаляти тільки обліковий запис</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">Полотно Постачальники (Наказ на замовлення)</string>
+    <string name="ui_captcha_guidance" formatted="false">CAPTCHA Гуіденс</string>
+    <string name="ui_cast_wireless_devices" formatted="false">CAST і WIRELESS DEVICES</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">Виберіть джерела потокового передавання звуку, без втрат яруси, і початковий пріоритет</string>
+    <string name="ui_choose_avatar" formatted="false">Виберіть Avatar</string>
+    <string name="ui_choose_charts_region" formatted="false">Виберіть Регіон діаграми</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">Як вибратиiTuneз\'являється на вашому головному екрані. Замініть віджет з вашого запуску.</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">Виберіть профіль для продовження</string>
+    <string name="ui_choose_youtube_channel" formatted="false">ОбратиYouTubeКанали</string>
+    <string name="ui_clear" formatted="false">Очистити</string>
+    <string name="ui_clear_use_default" formatted="false">За замовчуванням</string>
+    <string name="ui_clear_all" formatted="false">Очистити все</string>
+    <string name="ui_confirm" formatted="false">Підтвердження</string>
+    <string name="ui_confirm_password" formatted="false">Підтвердити пароль</string>
+    <string name="ui_connect_discord" formatted="false">Роз\'єм</string>
+    <string name="ui_connect_last_fm" formatted="false">Роз\'ємLast.fm</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">Зв\'язатися з намиSpotifyобліковий запис, щоб увімкнути Canvas петлі руху відеоарти і скрутити вашSpotifyБібліотека.</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">Роз\'ємYouTube Musicз файлами сеансу</string>
+    <string name="ui_connect" formatted="false">Контакти</string>
+    <string name="ui_connecting_spotify" formatted="false">ПідключенняSpotify...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">ПідключенняYouTube Music...</string>
+    <string name="ui_continue" formatted="false">Продовжити</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">Продовжити роботу в браузері</string>
+    <string name="ui_continue_with_google" formatted="false">Про нас</string>
+    <string name="ui_continue_with_spotify" formatted="false">ПродовжитиSpotify</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">Працівники cookie зберігаються вiTuneЗашифроване зберігання облікового запису та перевіртеYouTube Musicперед тим, як вони зберігаються.</string>
+    <string name="ui_copy_song_name" formatted="false">Статус на сервери</string>
+    <string name="ui_copy_text" formatted="false">Скопіювати текст</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">浜у 涓 蹇iTuneПроект. Це програмне забезпечення надається без гарантії. Ви можете переоцінити і змінити його на умовах GNU GPL, показано нижче.</string>
+    <string name="ui_corner_length" formatted="false">Довжина кукурудзи</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">Не дозволяйте відтворювати зображення</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">Місяці\'t завантажити музику прямо зараз. Намагатися знову.</string>
+    <string name="ui_create" formatted="false">Зареєструватися</string>
+    <string name="ui_create_add" formatted="false">Створити та додати</string>
+    <string name="ui_current_account" formatted="false">Поточний рахунок</string>
+    <string name="ui_custom_instructions" formatted="false">ІНСТРУМЕНТИ СУСТОМ</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">CUSTOM REPOSITORY INDEX OR URL</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">Налаштування вашого домашнього екрану</string>
+    <string name="ui_customize_your_itune_card" formatted="false">НалаштуванняiTuneКарта сайту</string>
+    <string name="ui_d" formatted="false">Р</string>
+    <string name="ui_delete_account" formatted="false">Видалити обліковий запис</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">Видалити обліковий запис?</string>
+    <string name="ui_developer_announcements" formatted="false">Анонси подій</string>
+    <string name="ui_disconnect" formatted="false">Відключення</string>
+    <string name="ui_disconnect_discord" formatted="false">Відключення</string>
+    <string name="ui_discord_rich_presence" formatted="false">Дикорд Rich Presence</string>
+    <string name="ui_dismiss" formatted="false">Відмова</string>
+    <string name="ui_display_full_screen" formatted="false">DISPLAY &amp; FULL СКРІН</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">Відображення анімованих текстів над назвою пісні в той час як приховані керування полотном</string>
+    <string name="ui_display_name" formatted="false">Ім\'я користувача</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">DJ Bipolar клубний фільтр</string>
+    <string name="ui_downloaded_cached" formatted="false">Завантажити і придбати</string>
+    <string name="ui_dp" formatted="false">дп</string>
+    <string name="ui_dynamic_island" formatted="false">Динамічний острів</string>
+    <string name="ui_e" formatted="false">Етикети</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">Наприклад, 127.0.0.1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">е.g. перевести в поетичний хінгліст з ригідами</string>
+    <string name="ui_enable_auto_sleep" formatted="false">Увімкнути автоматичний сон</string>
+    <string name="ui_enable_proxy" formatted="false">Увімкнути проксі</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">ЗняттяSpotifyCanvas &amp; списки відтворення</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">Шифрування пароля (min 8 chars)</string>
+    <string name="ui_end_of_current_track" formatted="false">Кінець поточного треку</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">Введіть нове ім\'я для цього облікового запису.</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">Введіть URL-адресу HTTP, індекс модуля QuickJS або кінцеву точку Tidal екземпляра.</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">Введіть пароль, який Ви використовуєте.ituneстворено резервне копіювання.</string>
+    <string name="ui_enter_your_name" formatted="false">Введіть ім\'я</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">Введіть ім\'я користувачаiTune</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">Кожний ритм, нескінченний атем, і мелодія ви проживали — зібрані в одну подорож.</string>
+    <string name="ui_everything" formatted="false">Про нас</string>
+    <string name="ui_explore_categories" formatted="false">Категорії</string>
+    <string name="ui_exporting_audio" formatted="false">Експорт аудіо ...</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">Вилучення короткого аудіо відбитка</string>
+    <string name="ui_favorite_stations" formatted="false">Популярні станції</string>
+    <string name="ui_favorites" formatted="false">ФАВОРИТ</string>
+    <string name="ui_featured_hit" formatted="false">Популярні хіти</string>
+    <string name="ui_featured_playlists" formatted="false">Популярні списки відтворення</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">Fetching аудіо якості...</string>
+    <string name="ui_fetching_live_catalog" formatted="false">Живий каталог...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">Знайти кращий потік</string>
+    <string name="ui_full_view" formatted="false">Повний перегляд</string>
+    <string name="ui_g" formatted="false">Р</string>
+    <string name="ui_genre" formatted="false">ГЕНР</string>
+    <string name="ui_genres_styles" formatted="false">Жанри та стилі</string>
+    <string name="ui_github_repository" formatted="false">GitHub Репозиторій</string>
+    <string name="ui_github_repository_open_source" formatted="false">GitHub репозиторій · Відкритий джерело</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 або пізніше</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 або пізніше · авторське право 2026iTuneПроекти</string>
+    <string name="ui_grant" formatted="false">Гранти</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">Гранти для показання назв вушників та живої батареї %</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">Апаратний датчик (до +18 дБ)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">Приховує панель стану Android та навігаційний рядок для безшовного пюре OLED black.</string>
+    <string name="ui_history" formatted="false">Історія</string>
+    <string name="ui_host" formatted="false">ХОСТ</string>
+    <string name="ui_host_a_session" formatted="false">СЕСІЙНИЙ СЕСІОН</string>
+    <string name="ui_host_controls_playback" formatted="false">Хост контролю відтворення</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">Як отримати файли cookie</string>
+    <string name="ui_hq" formatted="false">Шпалери</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">Визначений з Шазам</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">Визначте музику, граючи навколо вас</string>
+    <string name="ui_immersion" formatted="false">ІМЕРСІЯ</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">Імперсивний режим (повний екран)</string>
+    <string name="ui_import" formatted="false">Імпорт</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">Імпорт публічних та приватних списків • Автосинк</string>
+    <string name="ui_import_spotify_playlist" formatted="false">ІмпортSpotifyПлейлист</string>
+    <string name="ui_in_use" formatted="false">Вживати</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">У додатку, коли аудіо-провайдери викликають анти-бот перевірки</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">Встановити попередньо задані розширення спільноти Mornye або сканування індексу репозиторій.</string>
+    <string name="ui_installed" formatted="false">Встановити</string>
+    <string name="ui_interactive_dot_curve" formatted="false">Інтерактивний Dot Curve</string>
+    <string name="ui_irecognition" formatted="false">Визнання</string>
+    <string name="ui_ireconization" formatted="false">ІРеконізація</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">iReconization слухає кілька секунд для створення музичного відбитка пальців. Аудіо не збережено.</string>
+    <string name="ui_ishare" formatted="false">ІШар</string>
+    <string name="ui_itune_license" formatted="false">iTuneЛіцензії</string>
+    <string name="ui_itune_music" formatted="false">iTuneМузика</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTuneзапитує слова в точну прецеденцію нижче. Якщо у найбільш активному провайдеру немає чітких текстів,iTuneБезшовно падає на наступну.</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTuneджерела запитів в порядку, показаному. Перетягніть встановлені розширення та постачальники для налаштування пріоритету відтворення.</string>
+    <string name="ui_itune_time_travel" formatted="false">iTuneЧас подорожі</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">Jet Flanger Свонош</string>
+    <string name="ui_join" formatted="false">Увійти</string>
+    <string name="ui_keep_screen_on" formatted="false">Тримайте екран</string>
+    <string name="ui_l" formatted="false">Р</string>
+    <string name="ui_lan_port" formatted="false">LAN Порт</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">(за бажанням, наприклад, Hindi, Punjabi ...)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fmСкробблінг</string>
+    <string name="ui_layout" formatted="false">Увійти</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">Залиште порожній, щоб використовувати кінцеву точку за замовчуванням для цього постачальника.</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">Модуляція фази LFO</string>
+    <string name="ui_library" formatted="false">Новини</string>
+    <string name="ui_license" formatted="false">Ліцензії</string>
+    <string name="ui_liked_songs" formatted="false">Солодкі Пісні</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">Як додано в той час як підписаний в місцевому порядку і наYouTube Music, щоб вони залишалися у вашій бібліотеці навіть після реєстрації.</string>
+    <string name="ui_listening_patterns" formatted="false">ІСТОРІНГОВІ ПАТЕРНИ</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">Слухати загальний аудіо...</string>
+    <string name="ui_live" formatted="false">ЖИТТЯ</string>
+    <string name="ui_live_radio_stations" formatted="false">Онлайн радіостанцій</string>
+    <string name="ui_loading_announcements" formatted="false">Завантаження оголошення...</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">Завантаження артистів, плейлистів та історії</string>
+    <string name="ui_lossless" formatted="false">Без втрат</string>
+    <string name="ui_lossless_audio_preference" formatted="false">Без втрат аудіо переваги</string>
+    <string name="ui_lyrics" formatted="false">Лірики</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">Тексти пісень, а це означає: Ліри не доступні для цієї пісні</string>
+    <string name="ui_lyrics_providers" formatted="false">Лірики Постачальники</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">Тексти пісень, а це означає: Тексти пісень, переведені успішно!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">Майстер підсилювач Boost</string>
+    <string name="ui_member_since" formatted="false">МЕМБЕР СІНЦЕ</string>
+    <string name="ui_memoji_style" formatted="false">M смайли та стиль</string>
+    <string name="ui_minutes_listened" formatted="false">МІНУТОВІ ЛІСТЕНЦІЇ</string>
+    <string name="ui_mirror_vol" formatted="false">Дзеркало Вол</string>
+    <string name="ui_model" formatted="false">МОДЕЛЬ</string>
+    <string name="ui_model_68c2cc7f" formatted="false">Модель</string>
+    <string name="ui_moods_activities" formatted="false">Муси та розваги</string>
+    <string name="ui_moods_moments" formatted="false">Продукція</string>
+    <string name="ui_music_by_genre" formatted="false">Музика Жанри</string>
+    <string name="ui_music_language_preference" formatted="false">Переваги музичної мови</string>
+    <string name="ui_music_services" formatted="false">МУЗИЧНІ ПОСЛУГИ</string>
+    <string name="ui_name" formatted="false">Ім\'я</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">НУКБИ WI-FI HOSTS</string>
+    <string name="ui_network_proxy" formatted="false">Прокси</string>
+    <string name="ui_new" formatted="false">Нові</string>
+    <string name="ui_new_playlist" formatted="false">Новий список відтворення</string>
+    <string name="ui_new_releases" formatted="false">Нові релізи</string>
+    <string name="ui_news_from_dev" formatted="false">Новини від dev</string>
+    <string name="ui_next_up" formatted="false">Далі</string>
+    <string name="ui_no_albums_found" formatted="false">Не знайдено альбоми</string>
+    <string name="ui_no_artist_information_available" formatted="false">Немає інформації про художника</string>
+    <string name="ui_no_artists_found" formatted="false">Немає художників</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">Немає артистів у вашій бібліотеці</string>
+    <string name="ui_no_playlists_found" formatted="false">Не знайдено списки відтворення</string>
+    <string name="ui_no_results_on_spotify" formatted="false">Немає результатівSpotify</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">Не збережені альбоми у вашій бібліотеці</string>
+    <string name="ui_no_songs_found" formatted="false">Не знайдено пісень</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">Не знайдено пісень в цьому випуску</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">Не знайдено пісень в цьому розділі</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">Не знайдено списки користувачів. Створюйте свою бібліотеку!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">Не вистачає прослуховування</string>
+    <string name="ui_now_playing" formatted="false">Грати зараз</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">Тепер грати</string>
+    <string name="ui_on_heavy_repeat" formatted="false">НА ЗДОРОВ’Я</string>
+    <string name="ui_options" formatted="false">ОПЦІЇ</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">OR ENTER SP DC COOKIE</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">Орбіт інтенсивність і швидкість</string>
+    <string name="ui_pair_join_a_device" formatted="false">PAIR &amp; JOIN DEVICE</string>
+    <string name="ui_password_optional" formatted="false">Пароль (Optional)</string>
+    <string name="ui_passwords_dont_match" formatted="false">Пароль не відповідає</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">Паста sp dc токен тут ...</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">Вставити ключ API</string>
+    <string name="ui_play_in_itune" formatted="false">Грати вiTune</string>
+    <string name="ui_play_next" formatted="false">Грати</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">Грати на бутони та телефонний динамік / AUX одночасно</string>
+    <string name="ui_playlist_name" formatted="false">Ім\'я файлу</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">Ім\'я файлу</string>
+    <string name="ui_playlist_spotify" formatted="false">Плейлист •Spotify</string>
+    <string name="ui_playlists" formatted="false">Списки</string>
+    <string name="ui_plays" formatted="false">Грати</string>
+    <string name="ui_pm" formatted="false">ПАРТНЕРИ</string>
+    <string name="ui_port" formatted="false">Портфоліо</string>
+    <string name="ui_pre_added_extensions" formatted="false">ПРОПОЗИЦІЇ</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">До 24-біт / 192 кГц при наявності</string>
+    <string name="ui_preparing_audio_preview" formatted="false">Підготовка аудіо попереднього перегляду ...</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">Запобігає відображення пристрою від вимкнення під час роботи на дисплеї.</string>
+    <string name="ui_preview" formatted="false">ПЕРЕГЛЯД</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">Огляд</string>
+    <string name="ui_preview_always_on_display" formatted="false">Попередній перегляд завжди на дисплеї</string>
+    <string name="ui_profile" formatted="false">Профілактика</string>
+    <string name="ui_profiles_in_backup" formatted="false">ПРОФІЛІ В АККУПІ</string>
+    <string name="ui_prompt_type" formatted="false">ПРОМПТ ТИП</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">ПРОВЕДЕННЯ ПРІОРИТЕТУ (ЗАМОВЛЕННЯ ЗАМОВЛЕННЯ)</string>
+    <string name="ui_queue" formatted="false">Клей</string>
+    <string name="ui_queue_is_empty" formatted="false">Нудота є порожнім</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">Перевірені треки для відтворення наступного</string>
+    <string name="ui_radio" formatted="false">Радіо</string>
+    <string name="ui_read_more" formatted="false">Детальніше</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">В режимі реального часу синхронний та лінійний прокручування з живим аудіо</string>
+    <string name="ui_recent_searches" formatted="false">Останні пошуки</string>
+    <string name="ui_recently_added" formatted="false">Нещодавно додано</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">Відшкодування сну графік · автоматичні паузи відтворення</string>
+    <string name="ui_remote_music_library" formatted="false">Дистанційна музична бібліотека</string>
+    <string name="ui_remove" formatted="false">Прибрати</string>
+    <string name="ui_rename" formatted="false">Ім\'я</string>
+    <string name="ui_rename_account" formatted="false">Статус на сервери</string>
+    <string name="ui_replay" formatted="false">Репла</string>
+    <string name="ui_replay_c0f85d66" formatted="false">Респлей</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">Вимагати Bit-Perfect без втрат</string>
+    <string name="ui_reset" formatted="false">Зареєструватися</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">Замовлення та за замовчуванням</string>
+    <string name="ui_reset_to_default_url" formatted="false">Відновити URL-адресу за замовчуванням</string>
+    <string name="ui_restore_default_sources" formatted="false">Відновлення за замовчуванням Джерела</string>
+    <string name="ui_restore_itune_backup" formatted="false">ВідновитиiTuneЗареєструватися</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">ВідновитиJioSaavnіYouTube Musicв порядку за замовчуванням.JioSaavnпочаток іYouTube Musicпочинається.</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">Відновлює LRC Lib, KuGou, і SimpMusic, як найпопулярніші виробники і авторитетні всі 11 джерел.</string>
+    <string name="ui_resume" formatted="false">Резюме</string>
+    <string name="ui_rhythm_by_hour" formatted="false">Ритм за час</string>
+    <string name="ui_room_permissions" formatted="false">Полулюкс</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">Маршрутний мобільний додаток через HTTP або SOCKS проксі</string>
+    <string name="ui_save_proxy" formatted="false">Зберегти проксі</string>
+    <string name="ui_save_schedule" formatted="false">Зберегти графік</string>
+    <string name="ui_save_to_gallery" formatted="false">Зберегти в галереї</string>
+    <string name="ui_save_token" formatted="false">Зберегти Token</string>
+    <string name="ui_saved_to_your_library" formatted="false">Збережена до бібліотеки!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">Збережено за допомогою Android Keystore. Файли резервного копіювання використовують PBKDF2-HMAC-SHA256 (310,000 раундів) та AES-256-GCM.</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">Заощаджує до завантаження /ituneКонтакти</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">Скажіть пісню, художник, альбом або слова</string>
+    <string name="ui_search" formatted="false">Пошук</string>
+    <string name="ui_search_identify" formatted="false">Пошук та визначення</string>
+    <string name="ui_search_announcements" formatted="false">Пошук оголошення</string>
+    <string name="ui_search_country" formatted="false">Пошук країни ...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">Пошук пісень, артистів, альбомів та плейлистів</string>
+    <string name="ui_search_languages" formatted="false">Пошук мов</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">Пошук або тип ідентифікатора моделі</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">Пошук пісень, артистів, альбомів або списки відтворення</string>
+    <string name="ui_searching_lyrics" formatted="false">Пошук текстів...</string>
+    <string name="ui_searching_spotify" formatted="false">ПошукSpotify...</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">СЕКОНАРНИЙ МІРОР СИНК</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">Виберіть аватар профілю для персоналізаціїiTuneдосвід роботи по всіх екранах.</string>
+    <string name="ui_select_language" formatted="false">Виберіть мову</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">Виберіть шаблон за замовчуванням для перекладу текстів.</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">Виберіть двигун для перекладу рядків.</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">Виберіть мову для перекладу текстів.</string>
+    <string name="ui_server_host_ip" formatted="false">Сервер Хост / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">Статус на сервери</string>
+    <string name="ui_settings_appearance" formatted="false">Налаштування Зовнішній вигляд</string>
+    <string name="ui_share_lyrics" formatted="false">Поділитися ліриками</string>
+    <string name="ui_share_my_replay" formatted="false">Поділитися моїм</string>
+    <string name="ui_share_replay" formatted="false">Надіслати резюме</string>
+    <string name="ui_share_this_story" formatted="false">Поділитися цим сюжетом</string>
+    <string name="ui_share_your_time_travel" formatted="false">Час подорожі</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">Показати Synced Тексти пісень над полотном</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">Підписатися на музику.youtube.com в настільному браузері. Відкрити інструменти розробника → Заявка → Печиво, потім скопіювати реєстраційні значення сеансу. Використовуйте ці значення, такі як пароль.</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">УвійтиLast.fmУвійти</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">Підписатися на всі рахунки</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">Синхронний подвійний вихід</string>
+    <string name="ui_skip_sign_in" formatted="false">Зареєструватися</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">Відхилити вперед для швидших текстів · назад для повільного · Аудіо неаффектований</string>
+    <string name="ui_snap_0" formatted="false">Снап 0</string>
+    <string name="ui_soundstage_width" formatted="false">Ширина звуку</string>
+    <string name="ui_sources" formatted="false">Джерела</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">Просторові аудіо та магніти</string>
+    <string name="ui_spotify_canvas" formatted="false">SpotifyПолотно</string>
+    <string name="ui_spotify_account" formatted="false">SpotifyНаписати</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">SpotifyПолотно, Apple Music, Tidal &amp; Community охоплює</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">SpotifyЗараз підключено. Художня робота (канва) іSpotifyУвімкнено синхронізацію відтворення.</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">Spotifyпошук не вдалося. Спробуйте ще раз.</string>
+    <string name="ui_station" formatted="false">Станція</string>
+    <string name="ui_stereo_echo_delay" formatted="false">Stereo Echo &amp; Деле</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">Зберігайте це посилання і автоматично напишіть будь-які нові пісні на сайті</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">Переглядайте бібліотеку, що втратить біт-перфект, безпосередньо з акцій мережі або Nextcloud.</string>
+    <string name="ui_streaming_sources" formatted="false">СКЛАДНІ ЧАСТИНИ</string>
+    <string name="ui_style" formatted="false">Стилі</string>
+    <string name="ui_suggestions" formatted="false">Сугести</string>
+    <string name="ui_switch" formatted="false">Перемикач</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">Тап аватар для налаштування</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">Натисніть лівий або правий для перегляду • Зареєструватися</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">Натисніть, щоб негайно активувати Завжди на дисплеї</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">Натисніть, щоб вибрати Country &amp; City FM транслює</string>
+    <string name="ui_target_language" formatted="false">ТАРГЕТ ПЛАН</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">Мета</string>
+    <string name="ui_test" formatted="false">Тести</string>
+    <string name="ui_test_proxy_connection" formatted="false">Тест Проксі підключення</string>
+    <string name="ui_testing_proxy" formatted="false">Тестування Proxy ...</string>
+    <string name="ui_that_s_your_story" formatted="false">Що\'Історія</string>
+    <string name="ui_this_account" formatted="false">Зареєструватися</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">Цей список відтворення порожній. Додати пісні з гравця або пошуку!</string>
+    <string name="ui_time_travel" formatted="false">ЧАС ТРЕВЕЛ</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">Час подорожі</string>
+    <string name="ui_time_travel_wrap" formatted="false">ЧАС ТРЕВЕЛ ВРАП</string>
+    <string name="ui_time_synced_lyrics" formatted="false">Синхронізація часу</string>
+    <string name="ui_top_picks" formatted="false">Топ Піки</string>
+    <string name="ui_top_result" formatted="false">Головна</string>
+    <string name="ui_top_song" formatted="false">Топ Пісня</string>
+    <string name="ui_top_songs" formatted="false">Топ Пісні</string>
+    <string name="ui_top_streamed" formatted="false">Найкращі</string>
+    <string name="ui_total_listening_time" formatted="false">Загальний час прослуховування</string>
+    <string name="ui_total_time" formatted="false">Загальний час</string>
+    <string name="ui_translate_actual_lines" formatted="false">Переклад фактичних ліній</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">Переклад текстів на будь-якій пісні з меню гравця (... &gt; Лірики &gt; Переклад). Коли\'Переклад фактичних ліній\'вимкнено, переклади з\'являються як субтитри нижче оригінального тексту.</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">Translate the наступні пісні рядків to English. Збережіть поетичний потік.</string>
+    <string name="ui_translating_lyrics" formatted="false">Переклад текстів...</string>
+    <string name="ui_translation_mode" formatted="false">Режим перекладу</string>
+    <string name="ui_translation_prompt" formatted="false">Переклад</string>
+    <string name="ui_trending_artists" formatted="false">Тенденції художників</string>
+    <string name="ui_turn_off_timer" formatted="false">Вимкніть таймер</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">Оновити ім\'я, показано на карті профілю Apple ID у налаштуваннях.</string>
+    <string name="ui_username_optional" formatted="false">Ім\'я користувача (обов\'язково)</string>
+    <string name="ui_view" formatted="false">Переглянути</string>
+    <string name="ui_view_on_shazam" formatted="false">Дивитися на Shazam</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">Вініл Turntable Link</string>
+    <string name="ui_whats_new" formatted="false">Що нового</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">Коли музика грає, завжди на дисплеї обертається, якщо на екрані немає натискання. Тільки активується в додатку.</string>
+    <string name="ui_who_is_listening" formatted="false">Хто слухати?</string>
+    <string name="ui_widget" formatted="false">Віджети</string>
+    <string name="ui_you" formatted="false">Ви</string>
+    <string name="ui_your_1_artist" formatted="false">Ваш #1 Художник</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">Ваш ключ API зберігається безпечно на пристрої та ніколи не поділиться.</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">Зашифрований на цьому пристрої і використовується тільки для Rich Presence.</string>
+    <string name="ui_your_favourite_song" formatted="false">Ваш Улюблена пісня</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">Бібліотека, списки відтворення та налаштування будуть зашифровані паролем не менше 8 символів.</string>
+    <string name="ui_your_listening_experience" formatted="false">ВАША ІСТОРІЯ</string>
+    <string name="ui_your_listening_pattern" formatted="false">Візерунок для прослуховування</string>
+    <string name="ui_your_listening_persona" formatted="false">ВАША СПИСКА ПЕРСОНА</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">Респлей та статистика вашої музики</string>
+    <string name="ui_your_musical_anchor" formatted="false">МУЗИЧНИЙ АНХОР</string>
+    <string name="ui_your_name" formatted="false">Ваше ім\'я</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">Ваш пароль відправленоLast.fmтільки створити сеанс.iTuneне зберігати його.</string>
+    <string name="ui_your_playlists" formatted="false">ПЛАСТИ</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">Списки відтворення</string>
+    <string name="ui_your_sonic_peak" formatted="false">Ваш Соник Пік</string>
+    <string name="ui_your_spotify_playlists" formatted="false">Ваше ім\'яSpotifyСписки</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">Ваше ім\'яSpotifyПлейлисти (Публічний та приватний)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSIC&amp; GOOGLE</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube Musicвеб камера</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">до</string>
+    <string name="ui_text_a118c40635" formatted="false">й</string>
+    <string name="ui_album_artwork" formatted="false">Фотоальбоми</string>
+    <string name="ui_itune_waves" formatted="false">iTuneХвилі</string>
+    <string name="ui_previous" formatted="false">Попереднє</string>
+    <string name="ui_next" formatted="false">Про нас</string>
+    <string name="ui_audio_output" formatted="false">Звуковий вихід</string>
+    <string name="ui_low_volume" formatted="false">Низький обсяг</string>
+    <string name="ui_high_volume" formatted="false">Високий обсяг</string>
+    <string name="ui_filter" formatted="false">Фільтри</string>
+    <string name="ui_refresh" formatted="false">Реверс</string>
+    <string name="ui_options_6bf5da9c" formatted="false">Варіанти</string>
+    <string name="ui_user_profile_avatar" formatted="false">Профіль користувача Avatar</string>
+    <string name="ui_news" formatted="false">Новини</string>
+    <string name="ui_no_song_playing" formatted="false">Немає пісні</string>
+    <string name="ui_next_track" formatted="false">Відстеження</string>
+    <string name="ui_see_all_songs" formatted="false">Переглянути всі пісні</string>
+    <string name="ui_favorite_radio" formatted="false">Улюблене радіо</string>
+    <string name="ui_live_65c821a5" formatted="false">Житло</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTuneБренд Хвилі</string>
+    <string name="ui_refresh_network" formatted="false">Веб-сайт</string>
+    <string name="ui_edit_display_name" formatted="false">Редагувати ім\'я дисплея</string>
+    <string name="ui_remove_from_queue" formatted="false">Видалити з черги</string>
+    <string name="ui_search_new_releases" formatted="false">Пошук нових релізів</string>
+    <string name="ui_refresh_new_releases" formatted="false">Refresh Нові релізи</string>
+    <string name="ui_refresh_downloads" formatted="false">Refresh Завантаження</string>
+    <string name="ui_clear_cache" formatted="false">Очистити кеш</string>
+    <string name="ui_sort" formatted="false">Сортувати</string>
+    <string name="ui_see_all_new_releases" formatted="false">Переглянути всі нові релізи</string>
+    <string name="ui_identify" formatted="false">Визначити</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">Імпортний список відтворення</string>
+    <string name="ui_create_playlist" formatted="false">Створити список відтворення</string>
+    <string name="ui_liked" formatted="false">Смоктати</string>
+    <string name="ui_paste" formatted="false">Паста</string>
+    <string name="ui_checked" formatted="false">Перевірити</string>
+    <string name="ui_google_account_playlist" formatted="false">Список відтворення облікового запису Google</string>
+    <string name="ui_spotify_playlist" formatted="false">SpotifyПлейлист</string>
+    <string name="ui_local_playlist" formatted="false">Місцевий список відтворення</string>
+    <string name="ui_back_to_audio_engine" formatted="false">Зворотній зв\'язок</string>
+    <string name="ui_bluetooth_settings" formatted="false">BluetoothНалаштування</string>
+    <string name="ui_scan_output_devices" formatted="false">Відеоспостереження</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">Симулятивний подвійний аудіо</string>
+    <string name="ui_selected" formatted="false">Вибрані</string>
+    <string name="ui_copy" formatted="false">Зареєструватися</string>
+    <string name="ui_copy_link" formatted="false">Статус на сервери</string>
+    <string name="ui_upgrade_quality" formatted="false">Підвищення якості</string>
+    <string name="ui_fm_radio" formatted="false">Радіо FM</string>
+    <string name="ui_next_station" formatted="false">Станція</string>
+    <string name="ui_minimize" formatted="false">Мінімізації</string>
+    <string name="ui_favorite" formatted="false">Вибрані</string>
+    <string name="ui_more_options" formatted="false">Додаткові параметри</string>
+    <string name="ui_previous_station" formatted="false">Попередня станція</string>
+    <string name="ui_sleep_timer" formatted="false">Час сну</string>
+    <string name="ui_audio_output_devices" formatted="false">Аудіо Вихідні пристрої</string>
+    <string name="ui_station_list" formatted="false">Список станцій</string>
+    <string name="ui_volume" formatted="false">Об\'єм</string>
+    <string name="ui_open_lyrics" formatted="false">Відкрити слова</string>
+    <string name="ui_mute_volume" formatted="false">Об\'єм матки</string>
+    <string name="ui_max_volume" formatted="false">Макс. Об\'єм</string>
+    <string name="ui_endless_queue" formatted="false">Безперервний Queue</string>
+    <string name="ui_repeat" formatted="false">Повторити</string>
+    <string name="ui_refresh_stations" formatted="false">Рефреш станції</string>
+    <string name="ui_favorite_station" formatted="false">Популярні станції</string>
+    <string name="ui_close_ireconization" formatted="false">Закрита iReconization</string>
+    <string name="ui_cancel_voice_search" formatted="false">Скасувати голосовий пошук</string>
+    <string name="ui_microphone" formatted="false">Мікрофони</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">Додаткові параметри</string>
+    <string name="ui_voice_search" formatted="false">Пошук голосу</string>
+    <string name="ui_saved" formatted="false">Смоктати</string>
+    <string name="ui_fill_search_query" formatted="false">Заповнити запит</string>
+    <string name="ui_remove_from_history" formatted="false">Видалити з історії</string>
+    <string name="ui_itune_icon" formatted="false">iTuneІкона</string>
+    <string name="ui_artwork_preview" formatted="false">Художня рецензія</string>
+    <string name="ui_decrease" formatted="false">Десерти</string>
+    <string name="ui_increase" formatted="false">Збільшення</string>
+    <string name="ui_open_link" formatted="false">Контакти</string>
+    <string name="ui_reset_geometry" formatted="false">Заміна геометрії</string>
+    <string name="ui_reorder_provider" formatted="false">Партнерство</string>
+    <string name="ui_save_name" formatted="false">Зберегти ім\'я</string>
+    <string name="ui_editable_name" formatted="false">Ім\'я</string>
+    <string name="ui_google" formatted="false">Українська</string>
+    <string name="ui_remove_account" formatted="false">Видалити обліковий запис</string>
+    <string name="ui_reorder_source_priority" formatted="false">Пріоритет джерела замовлення</string>
+    <string name="ui_refresh_playlists" formatted="false">Refresh списки відтворення</string>
+    <string name="ui_replay_poster" formatted="false">Релей Постер</string>
+    <string name="ui_settings" formatted="false">Налаштування</string>
+    <string name="ui_artist_radio" formatted="false">Радіо художника</string>
+    <string name="ui_play_all" formatted="false">Грати</string>
+    <string name="ui_delete_playlist" formatted="false">Видалити список відтворення</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">Безкінцева черга</string>
+    <string name="ui_artist_info" formatted="false">Інформація про художника</string>
+    <string name="ui_enabled" formatted="false">Увімкнути</string>
+    <string name="ui_search_icon" formatted="false">Ікона підкорення</string>
+    <string name="ui_region">Регіон:%1$s</string>
+    <string name="ui_connected_devices">ВИКОНАВЧІ ВИЗНАЧЕННЯ (%1$sй</string>
+    <string name="ui_up_next">НЕКСТ%1$sй</string>
+    <string name="ui_text_da5c3629fd">%1$s› › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › › ›</string>
+    <string name="ui_active_7c6a4064">%1$s•%2$sактивний</string>
+    <string name="ui_no_new_available_right_now">Немає нових%1$sзараз</string>
+    <string name="ui_tracks">%1$sтреки •%2$s</string>
+    <string name="ui_songs">%1$sпісні •%2$s•%3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s•%2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c">•%1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$sтреки (s)\'t відповідати:</string>
+    <string name="ui_text_a3edb2b714">•%1$sдо%2$s</string>
+    <string name="ui_d_eeda119e">%1$sР</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">до +%1$sдБ</string>
+    <string name="ui_connected">%1$sпідключений</string>
+    <string name="ui_open_web_player">Відкритий веб-плеєр%1$sй</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">Країна:%1$s(Українська)%2$sй</string>
+    <string name="ui_city_state">Місто / держава:%1$s</string>
+    <string name="ui_codec_bitrate">Кодк / бітрейт:%1$s</string>
+    <string name="ui_language">Мова:%1$s</string>
+    <string name="ui_tags">Мітки:%1$s</string>
+    <string name="ui_stream">Потік:%1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">API ключ не налаштований для%1$s. Будь ласка, встановіть його в налаштуваннях &gt; Лірики.</string>
+    <string name="ui_s_clip">%1$ss кліп</string>
+    <string name="ui_loading_more_fm_stations_loaded">Завантаження більше FM-станцій%1$sЗавантажено) ...</string>
+    <string name="ui_found">%1$sГоловна</string>
+    <string name="ui_version">Редагування%1$s(Українська)%2$sй</string>
+    <string name="ui_of_active">%1$sз%2$sАктивний</string>
+    <string name="ui_text_adebc50ade">Нема%1$s</string>
+    <string name="ui_api_key">%1$sAPI ключ</string>
+    <string name="ui_channel">Канал:%1$s</string>
+    <string name="ui_sync_issue">Питання синхронізації:%1$s</string>
+    <string name="ui_enter">Увійти%1$s</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">Ви хочете видалити “%1$s”? Всі дані, списки відтворення, фаворити, історія та налаштування в цьому обліковому записі будуть остаточно видалені.</string>
+    <string name="ui_peak">Піак:%1$s</string>
+    <string name="ui_welcome">Привіт,%1$s</string>
+    <string name="ui_songs_played">%1$sпісні</string>
+    <string name="ui_around">з%1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">Коли світ отримує зайнятість, ви налаштуєте в більшості%1$sй%2$sй</string>
+    <string name="ui_itune_time_travel_575a110d">iTuneчас подорожі •%1$s</string>
+    <string name="ui_text_c1aacd9629">%1$sдо%2$s</string>
+    <string name="ui_your_biggest_day_was">Найвищий день%1$sй</string>
+    <string name="ui_listening_recap">%1$sслухати рапс</string>
+    <string name="ui_busiest_day">Найсучасніший день:%1$s</string>
+    <string name="ui_peak_hour_00">Час Піка:%1$s1 час</string>
+    <string name="ui_loading">Завантаження%1$s...</string>
+    <string name="ui_about">Про нас%1$s</string>
+    <string name="ui_songs_9b614dc8">%1$sпісні</string>
+    <string name="ui_current_offset_ms">Поточний офсет:%1$sмс</string>
+    <string name="ui_connected_session">Підключена сесія:%1$s</string>
+    <string name="ui_k">%1$sдо</string>
+    <string name="ui_top_result_c5e5adab">ТОП РЕЗУЛЬТАТИ •%1$s</string>
+    <string name="toast_song_not_found_in_itune">Не знайдено пісеньiTune</string>
+    <string name="toast_playback_failed_try_again">Не вдалося, спробуйте знову</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">Авто Sleep Timer Активний · Відтворення пауда</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">Режим офлайн: ця пісня не завантажується</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">Режим автономної роботи: не можна модернізувати якість</string>
+    <string name="toast_upgrading_quality">Підвищення якості</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">Без втрат джерела потокового передавання в джерелах</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">Немає більш високої якості потоку, знайдених у включених джерелах</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">Шафль закривається перманентним шпоном в налаштуваннях</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">Microphone дозвіл необхідно визначити музику</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">Відобразити інші додатки дозволу на розпізнавання</string>
+    <string name="toast_playback_failed">Не вдалося</string>
+    <string name="toast_complete_google_sign_in_first">Повний запис Google</string>
+    <string name="toast_waiting_for_youtube_music_session">ОчікуєтьсяYouTube MusicСесія</string>
+    <string name="toast_couldn_t_load_tracks">Місяці\'т навантажувальні доріжки</string>
+    <string name="toast_copied_to_clipboard">Скопіювати до буфера обміну</string>
+    <string name="toast_profile_avatar_updated">Профіль avatar оновлений</string>
+    <string name="toast_no_tracks_found">Не знайдено треків</string>
+    <string name="toast_google_account_connected">Підключення облікового запису Google</string>
+    <string name="toast_link_copied">Посилання</string>
+    <string name="toast_could_not_open_browser">Не вдалося відкрити браузер</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">Вкажіть порт між 1024 і 65535</string>
+    <string name="toast_cached_music_cleared">Кетд музика очищена</string>
+    <string name="toast_no_tracks_available_to_add">Немає треків, доступних для додавання</string>
+    <string name="toast_enter_a_playlist_name">Введіть ім\'я списку відтворення</string>
+    <string name="toast_system_sound_panel_opened">Відкрита панель звуку системи</string>
+    <string name="toast_download_started_check_notification">Завантажити розпочато · Перевірити повідомлення</string>
+    <string name="toast_playback_will_stop_after_current_track">Плеймейт зупиниться після поточного треку</string>
+    <string name="toast_sleep_timer_turned_off">Сонце таймер вимкнено</string>
+    <string name="toast_stream_url_copied">Статус на сервери</string>
+    <string name="toast_couldn_t_create_lyrics_card">Місяці\'t створювати карти текстів</string>
+    <string name="toast_restored_online_lyrics">Реставрація онлайн текстів</string>
+    <string name="toast_lyrics_saved">Збережені риси</string>
+    <string name="toast_translation_cleared">Переклад</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">Будь ласка, встановіть ключ API в налаштуваннях &gt; Лірики перші</string>
+    <string name="toast_no_lyrics_found_for_this_song">Не знайдено слова для цієї пісні</string>
+    <string name="toast_could_not_create_audio_clip">Не створювати аудіо кліп</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">Сніппе врятував музику/iTuneУкраїнська</string>
+    <string name="toast_playing_next">Грати</string>
+    <string name="toast_added_to_queue">Додано в чергу</string>
+    <string name="toast_download_started_check_notifications">Завантажити розпочато · Перевірити сповіщення</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">Місяці\'t знайти цю пісню наYouTube Music</string>
+    <string name="toast_couldn_t_start_mix">Місяці\'t стартова суміш</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">Місяці\'Знайти треки наYouTube Music</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">Не можна зашифрувати пароль надійно. Автоматичне резервне копіювання не було змінено.</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">Для збереження резервних копій у завантаженнях</string>
+    <string name="toast_choose_an_itune_backup_file">Виберіть .ituneрезервний файл</string>
+    <string name="toast_audio_artwork_cache_cleared">Аудіо та графічне кешування</string>
+    <string name="toast_could_not_open_github">Не вдалося відкрити GitHub</string>
+    <string name="toast_profile_name_updated">Ім\'я користувача</string>
+    <string name="toast_search_history_cleared">Історія пошуку</string>
+    <string name="toast_listening_history_cleared">Прослуховування історії</string>
+    <string name="toast_cached_songs_cleared">Вибрані пісні</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">Налаштування системи Open для надання відображення інших додатків</string>
+    <string name="toast_dynamic_island_geometry_reset">Електронне регулювання геометрії острова</string>
+    <string name="toast_geometry_reset">Геометрія скидання</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">Лірики, що скидають на за замовчуванням</string>
+    <string name="toast_api_key_saved">API ключ збережений</string>
+    <string name="toast_base_url_updated">Базовий URL оновлений</string>
+    <string name="toast_translation_prompt_updated">Підказка перекладу</string>
+    <string name="toast_equalizer_reset_to_flat">Equalizer скидання на Flat</string>
+    <string name="toast_dj_console_reset">DJ Консоль скидання</string>
+    <string name="toast_name_saved">Ім\'я</string>
+    <string name="toast_syncing_youtube_music_library">СинхронізаціяYouTube MusicБібліотека...</string>
+    <string name="toast_signed_out_local_likes_preserved">Ознайомитися (збережені кальмари)</string>
+    <string name="toast_signed_out_of_all_google_accounts">Ознайомитися з усіма обліковими записами Google</string>
+    <string name="toast_discord_disconnected">Відключений відключений</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">Введіть дійсний підписанийYouTube Musiccookie (SAPISID та cookie сеансу)</string>
+    <string name="toast_youtube_music_account_connected">YouTube Musicпідключений обліковий запис</string>
+    <string name="toast_account_renamed">Обліковий запис</string>
+    <string name="toast_account_deleted">Видалено обліковий запис</string>
+    <string name="toast_cannot_delete_your_only_account">Не можна видалити єдиний обліковий запис</string>
+    <string name="toast_sources_restored_to_defaults">Джерела відновлені за замовчуванням</string>
+    <string name="toast_spotify_disconnected">Spotifyвідключений</string>
+    <string name="toast_spotify_sp_dc_token_saved">Spotifysp dc token збережений</string>
+    <string name="toast_spotify_connected">Spotify connectз</string>
+    <string name="toast_complete_spotify_sign_in_first">КомплектиSpotifyперший</string>
+    <string name="toast_saved_to_gallery">Збережена до галереї!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">СмоктатиiTuneвстановити оновлення для продовження</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">Завантажити оновлення APK 0</string>
+    <string name="toast_added_to_queue_next">Додано в чергу наступного</string>
+    <string name="toast_link_copied_to_clipboard">Посилання копіюється на буфер обміну</string>
+    <string name="toast_song_link_copied_to_clipboard">Плеймейт зв\'язаний до буферу</string>
+    <string name="toast_left_ishare_session">Сесія iShare</string>
+    <string name="toast_ishare_lan_host_started">iShare LAN Хост починається!</string>
+    <string name="toast_scanning_lan_for_sessions">Сканування LAN для сеансів...</string>
+    <string name="toast_cache_cleared">Cache Очищений</string>
+    <string name="toast_signed_out_successfully">Зроблено успішно</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">Паролі повинні відповідати і мати принаймні 8 символів</string>
+    <string name="toast_no_backup_file_found_in_storage">Немає файлів резервного копіювання, знайденого в пам\'яті</string>
+    <string name="toast_library_settings_restored">Реставрація та налаштування</string>
+    <string name="toast_enter_your_backup_password">Введіть пароль</string>
+    <string name="toast_syncing_spotify_library">СинхронізаціяSpotifyБібліотека...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify Connectз</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">Будь ласка, введіть дійсний файл SP DC</string>
+    <string name="toast_playing">Грати%%1$s...</string>
+    <string name="toast_upgraded_to_lossless_kbps">Оновлення без втрат •%%1$sкбіт</string>
+    <string name="toast_playing_next_0f0c851c">Грати%%1$sУвійти</string>
+    <string name="toast_added_to_queue_88e96c25">Додати%%1$sдо черги</string>
+    <string name="toast_playing_cb1fb3de">Грати%%1$s...</string>
+    <string name="toast_playing_next_e0082d95">Грати далі:%%1$s</string>
+    <string name="toast_couldn_t_load">Місяці\'т навантаження%%1$s</string>
+    <string name="toast_opening">Відкрито%%1$s...</string>
+    <string name="toast_couldn_t_open">Місяці\'t відкрити%%1$s</string>
+    <string name="toast_couldn_t_play">Місяці\'t грати%%1$s</string>
+    <string name="toast_library_pin">Бібліотека:%%1$s</string>
+    <string name="toast_copied">Скопіювати:%%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">Набір таймера сну для%%1$sхв</string>
+    <string name="toast_lyrics_applied">Лірики, що застосовуються (04/07/2019)%%1$sй</string>
+    <string name="toast_added_tracks_to_queue">Додати%%1$sтреки в чергу</string>
+    <string name="toast_switched_feed_to">Перемикач корму%%1$s</string>
+    <string name="toast_provider_updated_to">Оновлено постачальника%%1$s</string>
+    <string name="toast_target_language_set_to">Цільова мова встановлюється на%%1$s</string>
+    <string name="toast_translation_mode_set_to">Налаштування режиму перекладу%%1$s</string>
+    <string name="toast_added_source">Додано джерело:%%1$s</string>
+    <string name="toast_installed_extension_s">Встановити%%1$sрозширення(и)</string>
+    <string name="toast_imported_songs">Імпорт\'%%1$s\'(Українська)%%2$sпісні</string>
+    <string name="toast_couldn_t_find_on_youtube_music">Місяці\'Пошук\'%%1$s\'наYouTube Music</string>
+    <string name="toast_added_songs_to">Додати%%1$sпісні%%2$s</string>
+    <string name="toast_joining">Приєднуватися%%1$s...</string>
+    <string name="toast_added_to">Додати до%%1$s</string>
+    <string name="toast_itune_v_for_android_tv">iTuneб%%1$sна Андроїд</string>
+    <string name="toast_backup_failed">Не вдалося:%%1$s</string>
+    <string name="toast_restore_failed">Відновлення не вдалося:%%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">iShare, динамічний острів і стенд</string>
+    <string name="settings_ishare" formatted="false">ІШар</string>
+    <string name="settings_dynamic_island" formatted="false">Динамічний острів</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">Floating water-bubble контролер зовніiTune</string>
+    <string name="settings_always_on_display" formatted="false">Завжди на дисплеї</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">Аудіодвигун та звукові ефекти</string>
+    <string name="settings_dolby_atmos" formatted="false">Дельби Атмос</string>
+    <string name="settings_text_8948f8179a" formatted="false">8D аудіо</string>
+    <string name="settings_spatial_audio" formatted="false">Просторовий аудіо</string>
+    <string name="settings_equalizer_eq" formatted="false">Еквалайзер (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">Фільтрування низького тиску</string>
+    <string name="settings_dj_studio_panel" formatted="false">DJ Studio Панель</string>
+    <string name="settings_audio_normalization" formatted="false">Нормалізація аудіо</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB Bit-Perfect DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">Чистий аудіообхід</string>
+    <string name="settings_signal_pipeline" formatted="false">Signal трубопровід</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">${audioEngine.pillBadge.text} -&gt; $activeOutputName</string>
+    <string name="settings_audio_playback" formatted="false">Аудіо та відтворення</string>
+    <string name="settings_sources" formatted="false">Джерела</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">МапаYouTube MusicйJioSaavn, встановлених розширень,WebDAVйSMB, пріоритети відтворення</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">Автопрокат Коли помилка Occurs</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">Перемістити в наступну чергану пісню, якщо відтворення не виходить</string>
+    <string name="settings_download_quality" formatted="false">Завантажити якість</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">Якість за замовчуванням використовується діями для завантаження пісень</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">Виберіть якість за замовчуванням для завантаження через додаток.</string>
+    <string name="settings_lossless_audio" formatted="false">Без втрат аудіо</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">Підвищення якості похідних пісень</string>
+    <string name="settings_streaming_quality" formatted="false">Якість потоку</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">Виберіть бажану якість потокового аудіо.</string>
+    <string name="settings_pcm_output_format" formatted="false">Формат виведення ПКМ</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">Відновлює відтворення на поточному положенні</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">Виберіть формат PCM, який вимагає від Android\'s аудіо вихід. USB DAC може перетворити його в формат, який він підтримує.</string>
+    <string name="settings_crossfade" formatted="false">Хрещатик</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">Поверніть появу на закінчення треку з стартом наступного.</string>
+    <string name="settings_automix" formatted="false">АвтоМікс</string>
+    <string name="settings_afterglow" formatted="false">Помилки</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">Застосувати той же ефект низького тиску під час обраних фінальних секунд кожної пісні. Після того, як ввімкнено паузи AutoMix і Crossfade.</string>
+    <string name="settings_permanent_shuffle" formatted="false">Перманентний шфл</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">Зберігати шматочок назавжди заблоковано у гравця</string>
+    <string name="settings_pause_at_volume_0" formatted="false">Пауза на Volume 0</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">Автоматичне відтворення паузи при об\'ємі досягає нуля</string>
+    <string name="settings_volume_bar" formatted="false">Об\'ємний бар</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">Про нас край при натисканні кнопки об\'єму</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">Виберіть який край екрана з\'являється в додатку об\'ємного бруса.</string>
+    <string name="settings_content" formatted="false">Зміст</string>
+    <string name="settings_default_content_language" formatted="false">Ім\'я користувача</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">Мова для настрій, Перегляд та пошук</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">Виберіть бажану мову каталогу, яка використовується в Browse, Moods &amp; Genres, Playlists та New Releases.</string>
+    <string name="settings_default_content_country" formatted="false">Статус на сервери</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">Регіон для діаграм, списки відтворення та нові релізи</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">Виберіть регіональний магазин, який використовується для нових альбомів, обласних Moods, і Рекомендованих Playlists.</string>
+    <string name="settings_hide_explicit_content" formatted="false">Приховати контент</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">Фільтр явних пісень по Мумі, Перегляд &amp; Пошук</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">Тепер Грати &amp; Рідке скло</string>
+    <string name="settings_splash_screen" formatted="false">Сплеск екрана</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">Відкрито запуск бренда анімація та назва рідини</string>
+    <string name="settings_animated_cover_art" formatted="false">Анімований чохол мистецтво</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">SpotifyПолотно, Apple Music, Tidal &amp; Community охоплює</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">Spotify&amp; Настроювання полотна</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">Авто-приховати полотнища</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">Мінімізувати контроль після 5-х в той час як грає полотно (tap Canvas to toggle)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">Показати Synced Тексти пісень над полотном</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">Відображення анімованих текстів над ім\'ям пісні, коли Canvas контролює ховати</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">ГоловнаSpotifyПолотно</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">Про насSpotifyПолотно перед Apple Music, Tidal &amp; Community</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">Грати анімовані кришки над стільниковим</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">Дозволити петлі Полотно відео над мобільними даними</string>
+    <string name="settings_player_type" formatted="false">Тип гравця</string>
+    <string name="settings_player_style" formatted="false">Стиль гравця</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">Динамічний колір гравця</string>
+    <string name="settings_full_screen_cover_art" formatted="false">Повний екран кришка мистецтво</string>
+    <string name="settings_corner_length" formatted="false">Довжина кукурудзи</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">Регулювання кутового радіусу роботи квадратних альбомів</string>
+    <string name="settings_hide_quality_tag" formatted="false">Приховати теги якості</string>
+    <string name="settings_hide_volume_bar" formatted="false">Приховати об\'єм Бара</string>
+    <string name="settings_home_top_card_style" formatted="false">Головна Top Card стиль</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">Рідке скло Nav &amp; Mini Player</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">Скляний брус і міні-плеєр, з водяним міхуром лінзи на утримання</string>
+    <string name="settings_time_synced_lyrics" formatted="false">Синхронізація часу</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">Дотримуйтесь слів та текстів рядків у режимі реального часу</string>
+    <string name="settings_app_font" formatted="false">Додаток</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">Змінити типографію додатків; керування гравцями зберігають свою призначену функцію</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">Виберіть тему для інтерфейсу програми.</string>
+    <string name="settings_lyrics_providers" formatted="false">Лірики Постачальники</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 джерел • Пріоритетизація та переключення замовлень</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">Рідкий Скло Хром</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">Бібліотечні головки та карти док</string>
+    <string name="settings_tactile_haptics" formatted="false">Tactile Хаптика</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">Відстеження пульсового зворотного зв\'язку через керування гравцями</string>
+    <string name="settings_downloads_storage" formatted="false">Завантаження та зберігання</string>
+    <string name="settings_cellular_streaming" formatted="false">стільниковий потік</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">Аудіо пропускна здатність на мобільних даних</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">Контролювати аудіо fidelity при потоковні від Wi-Fi.</string>
+    <string name="settings_download_over_wi_fi" formatted="false">Завантажити Wi-Fi</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">Очікується Wi-Fi до автоматичного завантаження</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">Cache Songs Після відтворення</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">Заощаджуйте пісню до автономного зберігання після закінчення гри</string>
+    <string name="settings_cache_quality" formatted="false">Якість кешу</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">Низька якість зберігає зберігання</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">Виберіть якість пісень, збережених після завершення відтворення. Відповіді на пісні.</string>
+    <string name="settings_song_storage_limit" formatted="false">Ліміт зберігання пісень</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">Максимальне зберігання диска, виділене для автономного аудіо кешу перед старшими неслухняними піснями.</string>
+    <string name="settings_clear_cached_songs" formatted="false">Очистити кед пісні</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">Türkçe, English, Українська...</string>
+    <string name="settings_automatic_downloads" formatted="false">Автоматичні завантаження</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">Збережіть нові вподобані та додані треки в автономному режимі</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">Очистити додаток Buffer кеш</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">Видаліть тимчасові чохли арт-мережі буфери</string>
+    <string name="settings_library_listening" formatted="false">Бібліотека та прослуховування</string>
+    <string name="settings_sync_library" formatted="false">Бібліотека синхронізації</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">Зберігати художників, списки відтворення та альбомів оновлені</string>
+    <string name="settings_listening_history" formatted="false">Історія</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">Форма персоналізованих сумішей і нещодавно зіграно</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">Зареєструватися на цьому пристрої</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">Зберігайте подобові пісніiTuneпри підписанні</string>
+    <string name="settings_notifications_general" formatted="false">Повідомлення та Загальні положення</string>
+    <string name="settings_offline_mode" formatted="false">Режим офлайн</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">Потрібні завантажені копії для запуску відтворення</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">Зупинити музику на задачі ясно</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">Стоп відтворення приiTuneвідхиляється від недавців</string>
+    <string name="settings_auto_sleep_timer" formatted="false">Авто таймер сну</string>
+    <string name="settings_network_proxy" formatted="false">Прокси</string>
+    <string name="settings_profile_name" formatted="false">Назва профілю</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">Налаштування імені профілю налаштувань</string>
+    <string name="settings_news_from_dev" formatted="false">Новини від dev</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">Анонси, релізи та зміни</string>
+    <string name="settings_general_about" formatted="false">Про компанію</string>
+    <string name="settings_home_screen_widget" formatted="false">Головна Екран Віджет</string>
+    <string name="settings_widget_customization" formatted="false">Налаштування Widget</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">Виберіть розмір попередній перегляд, мистецтво, елементи керування та стиль віджетів</string>
+    <string name="settings_backup_restore" formatted="false">Резервне копіювання та відновлення</string>
+    <string name="settings_automatic_daily_backup" formatted="false">Автоматичний щоденний Backup</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">Зашифровані щоденні резервні копії • Завантаження /iTuneУкраїнська</string>
+    <string name="settings_back_up_itune" formatted="false">ЗареєструватисяiTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">Заощаджуйте рахунки, всі налаштування, аудіо ефекти, бібліотечні дані та статистика, зашифровані</string>
+    <string name="settings_restore_from_backup" formatted="false">Відновити від Backup</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">Відновлення параметрів, аудіо ефектів, облікових записів або даних бібліотеки з .itune</string>
+    <string name="settings_privacy" formatted="false">Контакти</string>
+    <string name="settings_pause_search_history" formatted="false">Історія пошуку</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">Не зберігайте нові пошукові запити</string>
+    <string name="settings_clear_search_history" formatted="false">Історія пошуку</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">Видалити останні запити з пошуку</string>
+    <string name="settings_pause_listening_history" formatted="false">Історія</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">Не записувати відтворення пісень або оновлення рекомендацій</string>
+    <string name="settings_clear_listening_history" formatted="false">Історія</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">Видалити історію відтворення та скидання профілю смаку</string>
+    <string name="settings_disable_screenshot" formatted="false">Вимкнути скріншот</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">Блок скріншоти та запис екрану на додаток</string>
+    <string name="settings_best_available" formatted="false">Кращі доступні</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">Використовуйте найвищу якість джерела</string>
+    <string name="settings_maximum" formatted="false">Макс.</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">Виберіть найвищий бітрейт потік</string>
+    <string name="settings_high" formatted="false">Висока якість</string>
+    <string name="settings_target_about_160_kbps" formatted="false">Мішень близько 160 кбіт/с</string>
+    <string name="settings_standard" formatted="false">Стандарти</string>
+    <string name="settings_target_about_128_kbps" formatted="false">Ціль про 128 кбіт/с</string>
+    <string name="settings_data_saver" formatted="false">Збереження даних</string>
+    <string name="settings_target_about_64_kbps" formatted="false">Мета: 64 кбіт</string>
+    <string name="settings_extreme" formatted="false">Екстремальна</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">Максимальна точність (256+ кбіт)</string>
+    <string name="settings_high_b1a5954a" formatted="false">Висока якість</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">Висока якість аудіо (~160 кбіт)</string>
+    <string name="settings_medium" formatted="false">Середній</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">Стандартна якість аудіо (~128 кбіт)</string>
+    <string name="settings_low" formatted="false">Низький</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">English, Українська, Français...</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">16-розрядний ПКМ</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">Стандартний загальний вихід PCM; широко сумісний з USB аудіо клас DAC</string>
+    <string name="settings_text_6697202e38" formatted="false">32-bit float PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">Float PCM вихід при підтримується Android і підключений аудіо шлях</string>
+    <string name="settings_off" formatted="false">Відправити</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">Грати треки чисто назад</string>
+    <string name="settings_text_6597740315" formatted="false">2 сек</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">Перехідний перекриття</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 сек</string>
+    <string name="settings_short_seamless_fade" formatted="false">Коротка безшовна кришка</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 сек</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">Збалансований перехід DJ-style</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8 сек</string>
+    <string name="settings_smooth_extended_blend" formatted="false">Смуга розширена суміш</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 сек</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">Максимальна суміш безперервної суміші</string>
+    <string name="settings_off_e3de5ab0" formatted="false">Відправити</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">Зберігати нормальні ефекти відтворення та переходи</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 сек</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">Застосувати Low-Pass під час фінальної пісні 5 секунд</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 сек</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">Застосувати Low-Pass під час фінальної пісні 10 секунд</string>
+    <string name="settings_text_eb4354110e" formatted="false">15 сек</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">Застосувати Low-Pass під час фінальної пісні 15 секунд</string>
+    <string name="settings_right" formatted="false">Головна</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">Показати об\'ємний брус на правому краю (за замовчуванням)</string>
+    <string name="settings_left" formatted="false">Увійти</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">Показати об\'ємний брус на лівому краю</string>
+    <string name="settings_high_efficiency" formatted="false">Висока ефективність</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">Використання мінімальних клітинних даних</string>
+    <string name="settings_high_quality" formatted="false">Висока якість</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 kbps збалансований мобільний відтворення</string>
+    <string name="settings_lossless" formatted="false">Без втрат</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">Повна без втрат понад 5G / LTE мереж</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">Відправити</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">Потокове потокове відео на Wi-Fi тільки</string>
+    <string name="settings_text_03a001f575" formatted="false">500 Мб</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">Компактний кеш (~70 пісень)</string>
+    <string name="settings_text_33015e637f" formatted="false">1 ГБ</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">Поміряти кеш (~150 пісень)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 ГБ</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">Рекомендований за замовчуванням (~300 пісень)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">КСНУМКС МБ</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">Великий офлайн колекції (~800 пісень)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">КСНУМКС МБ</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">Дуже велика бібліотека (~1,600 пісень)</string>
+    <string name="settings_unlimited" formatted="false">Без категорії</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">Ніколи не виселення кедових пісень</string>
+    <string name="settings_pipeline_output">%1$s→%2$s</string>
+    <string name="settings_volume_bar_side">Показати на%1$sкрай при натисканні кнопки об\'єму</string>
+    <string name="settings_corner_radius_value">%1$dдп</string>
+    <string name="settings_active_lyrics_providers">%1$dАктивний</string>
+    <string name="settings_cached_song_count_size">%1$dпісні •%2$s</string>
+    <string name="library_playlist_count_one">%1$dПлейлист</string>
+    <string name="library_playlist_count_many">%1$dСписки</string>
+    <string name="library_album_count_one">%1$dАльбоми</string>
+    <string name="library_album_count_many">%1$dДодано альбоми</string>
+    <string name="remove_from_favorites">Видалити з вподобань</string>
+    <string name="play_top_album">Грати Top Альбом</string>
+    <string name="open_in_spotify">УвійтиSpotify</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Використовуйте інтерфейс Азербайджану</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Використовуйте інтерфейс Bengali</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Використовуйте болгарський інтерфейс</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Використовуйте каталонський інтерфейс</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">Використовуйте чеський інтерфейс</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Використовуйте данський інтерфейс</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Використовуйте фінський інтерфейс</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Використовуйте грецький інтерфейс</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Використання інтерфейсу івриту</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Використовуйте угорський інтерфейс</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Використання інтерфейсу індонезійці</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Використання інтерфейсу Malay</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Використовуйте Норвезький інтерфейс</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Використання персидського інтерфейсу</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Використання польського інтерфейсу</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Використовуйте румунський інтерфейс</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Використовуйте Slovak інтерфейс</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Використовуйте тайський інтерфейс</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Використовуйте турецький інтерфейс</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Український інтерфейс</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Використовуйте в\'єтнамський інтерфейс</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Використовуйте інтерфейс Swahili</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Використання інтерфейсу філіппінки</string>
+</resources>
