@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.components
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -200,7 +202,7 @@ fun TopHeaderBar(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_itune_waves),
-                    contentDescription = "iTune Brand Waves",
+                    contentDescription = stringResource(R.string.ui_itune_brand_waves),
                     modifier = Modifier.fillMaxSize(),
                     colorFilter = ColorFilter.tint(if (festivalActive) festivalColor else Color.White)
                 )
