@@ -295,8 +295,8 @@ fun LibraryPlaylistsScreen(
                     ) {
                         Column(Modifier.weight(1f)) {
                             LibraryScreenTitleHeader(
-                                title = "Playlists",
-                                countText = if (totalCount == 1) "1 Playlist" else "$totalCount Playlists",
+                                title = stringResource(R.string.ui_playlists),
+                                countText = stringResource(if (totalCount == 1) R.string.library_playlist_count_one else R.string.library_playlist_count_many, totalCount),
                             )
                         }
                         Row(
@@ -314,12 +314,12 @@ fun LibraryPlaylistsScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Rounded.PlaylistAdd,
-                                    contentDescription = "Import playlist",
+                                    contentDescription = stringResource(R.string.ui_import_playlist),
                                     tint = LibraryCrimsonAccent,
                                     modifier = Modifier.size(18.dp),
                                 )
                                 Spacer(Modifier.width(5.dp))
-                                Text("Import", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                                Text(stringResource(R.string.ui_import), color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
                             }
                             Row(
                                 modifier = Modifier
@@ -333,12 +333,12 @@ fun LibraryPlaylistsScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Rounded.Add,
-                                    contentDescription = "Create Playlist",
+                                    contentDescription = stringResource(R.string.ui_create_playlist),
                                     tint = LibraryCrimsonAccent,
                                     modifier = Modifier.size(18.dp),
                                 )
                                 Spacer(Modifier.width(5.dp))
-                                Text("New", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                                Text(stringResource(R.string.ui_new), color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
                             }
                         }
                     }
@@ -349,7 +349,7 @@ fun LibraryPlaylistsScreen(
                         onClose = controller::toggleSearch,
                         autoFocus = controller.focusSearchNext,
                         onFocused = { controller.focusSearchNext = false },
-                        placeholder = "Filter playlists...",
+                        placeholder = stringResource(R.string.filter_playlists),
                     )
                 }
             }
@@ -357,7 +357,7 @@ fun LibraryPlaylistsScreen(
             if (filteredUserPlaylists.isNotEmpty()) {
                 item(span = { GridItemSpan(2) }, key = "playlists_custom_label") {
                     Text(
-                        text = "Your Playlists",
+                        text = stringResource(R.string.ui_your_playlists_b2cd0ef2),
                         color = Color.White,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
@@ -376,7 +376,7 @@ fun LibraryPlaylistsScreen(
             if (filteredPlaylists.isNotEmpty()) {
                 item(span = { GridItemSpan(2) }, key = "playlists_section_label") {
                     Text(
-                        text = "Added Playlists",
+                        text = stringResource(R.string.ui_added_playlists),
                         color = Color.White,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
@@ -617,8 +617,8 @@ fun LibraryAlbumsScreen(
             item(span = { GridItemSpan(2) }, key = "albums_header") {
                 Column {
                     LibraryScreenTitleHeader(
-                        title = "Albums",
-                        countText = if (albums.size == 1) "1 Added Album" else "${albums.size} Added Albums",
+                        title = stringResource(R.string.ui_albums),
+                        countText = stringResource(if (albums.size == 1) R.string.library_album_count_one else R.string.library_album_count_many, albums.size),
                     )
                     LibraryFilterBar(
                         visible = controller.searchOpen,
@@ -627,7 +627,7 @@ fun LibraryAlbumsScreen(
                         onClose = controller::toggleSearch,
                         autoFocus = controller.focusSearchNext,
                         onFocused = { controller.focusSearchNext = false },
-                        placeholder = "Filter albums...",
+                        placeholder = stringResource(R.string.filter_albums),
                     )
                     if (filteredAlbums.isNotEmpty()) {
                         Spacer(Modifier.height(10.dp))
@@ -897,7 +897,7 @@ fun LibrarySongsScreen(
                             {
                                 Icon(
                                     imageVector = SfIcons.StarFill,
-                                    contentDescription = "Liked",
+                                    contentDescription = stringResource(R.string.ui_liked),
                                     tint = LibraryCrimsonAccent,
                                     modifier = Modifier.size(14.dp),
                                 )
@@ -1254,8 +1254,8 @@ fun UserPlaylistDetailScreen(
             ) {
                 LibraryGlassEmptyCard(
                     icon = Icons.AutoMirrored.Rounded.QueueMusic,
-                    title = "Playlist Removed",
-                    subtitle = "This playlist is no longer available.",
+                    title = stringResource(R.string.playlist_removed),
+                    subtitle = stringResource(R.string.playlist_no_longer_available),
                     actionLabel = "Back to Playlists",
                     onAction = onBack,
                 )
@@ -1374,7 +1374,7 @@ fun UserPlaylistDetailScreen(
                             Box(Modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
                                 LibraryGlassEmptyCard(
                                     icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
-                                    title = "Empty Playlist",
+                                    title = stringResource(R.string.empty_playlist),
                                     subtitle = "Open \u22EE on any song in Search, Artist pages, Album pages, or Library and tap Add to Playlist to populate this playlist.",
                                     actionLabel = "Add Songs from Search",
                                     onAction = onExploreClick,
