@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.player
 
+
+import androidx.compose.ui.res.stringResource
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -178,7 +180,7 @@ fun AppleISharePopup(
                 val shareValue = if (isCurrentlyOnline) room.code else "http://${room.code}"
                 HeaderCircleActionButton(
                     iconRes = R.drawable.ic_menu_copy_link,
-                    contentDescription = "Copy",
+                    contentDescription = stringResource(R.string.ui_copy),
                     onClick = {
                         view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                         copyPopupText(context, "iShare", shareValue)
@@ -186,7 +188,7 @@ fun AppleISharePopup(
                 )
                 HeaderCircleActionButton(
                     iconRes = R.drawable.ic_menu_share,
-                    contentDescription = "Share",
+                    contentDescription = stringResource(R.string.share),
                     onClick = {
                         view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                         val msg = if (isCurrentlyOnline) {
@@ -216,7 +218,7 @@ fun AppleISharePopup(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Refresh,
-                        contentDescription = "Refresh Network",
+                        contentDescription = stringResource(R.string.ui_refresh_network),
                         tint = Color.White.copy(alpha = 0.90f),
                         modifier = Modifier.size(18.dp),
                     )
@@ -474,7 +476,7 @@ private fun ISharePopupActiveBody(
                     )
                 }
                 Text(
-                    text = "$deviceCount connected",
+                    text = stringResource(R.string.ui_connected, deviceCount),
                     color = Color.White.copy(alpha = 0.65f),
                     fontSize = 11.5.sp,
                     fontWeight = FontWeight.Medium,
@@ -519,7 +521,7 @@ private fun ISharePopupActiveBody(
                 }
                 Icon(
                     imageVector = Icons.Rounded.ContentCopy,
-                    contentDescription = "Copy",
+                    contentDescription = stringResource(R.string.ui_copy),
                     tint = Color.White.copy(alpha = 0.72f),
                     modifier = Modifier.size(16.dp),
                 )
@@ -546,7 +548,7 @@ private fun ISharePopupActiveBody(
                     )
                     Spacer(Modifier.width(6.dp))
                     Text(
-                        text = "Open Web Player (${session.code})",
+                        text = stringResource(R.string.ui_open_web_player, session.code),
                         color = Color.White,
                         fontSize = 12.5.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -578,7 +580,7 @@ private fun ISharePopupActiveBody(
                 .padding(horizontal = 14.dp, vertical = 10.dp),
         ) {
             Text(
-                text = "CONNECTED DEVICES ($deviceCount)",
+                text = stringResource(R.string.ui_connected_devices, deviceCount),
                 color = Color.White.copy(alpha = 0.52f),
                 fontSize = 10.5.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -633,7 +635,7 @@ private fun ISharePopupActiveBody(
                                 .padding(horizontal = 8.dp, vertical = 2.dp),
                         ) {
                             Text(
-                                text = "HOST",
+                                text = stringResource(R.string.ui_host),
                                 color = Color(0xFFFF7A8C),
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
@@ -646,7 +648,7 @@ private fun ISharePopupActiveBody(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.PersonRemove,
-                                contentDescription = "Disconnect",
+                                contentDescription = stringResource(R.string.ui_disconnect),
                                 tint = AppleMusicRed,
                                 modifier = Modifier.size(16.dp),
                             )
@@ -678,7 +680,7 @@ private fun ISharePopupActiveBody(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "Full View",
+                    text = stringResource(R.string.ui_full_view),
                     color = Color.White,
                     fontSize = 13.5.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -874,7 +876,7 @@ private fun ISharePopupIdleBody(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "Join",
+                        text = stringResource(R.string.ui_join),
                         color = Color.White,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -890,7 +892,7 @@ private fun ISharePopupIdleBody(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = "NEARBY WI-FI HOSTS",
+                        text = stringResource(R.string.ui_nearby_wi_fi_hosts),
                         color = Color.White.copy(alpha = 0.50f),
                         fontSize = 10.5.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -926,7 +928,7 @@ private fun ISharePopupIdleBody(
                             )
                             Spacer(Modifier.width(8.dp))
                             Text(
-                                text = "${host.hostName} • ${host.address}",
+                                text = stringResource(R.string.ui_text_c75f125c6f, host.hostName, host.address),
                                 color = Color.White,
                                 fontSize = 12.5.sp,
                                 modifier = Modifier.weight(1f),
@@ -934,7 +936,7 @@ private fun ISharePopupIdleBody(
                                 overflow = TextOverflow.Ellipsis,
                             )
                             Text(
-                                text = "${host.participants}",
+                                text = stringResource(R.string.ui_text_c79f71243f, host.participants),
                                 color = Color.White.copy(alpha = 0.6f),
                                 fontSize = 11.5.sp,
                             )
@@ -957,5 +959,5 @@ private fun ISharePopupIdleBody(
 private fun copyPopupText(context: Context, label: String, text: String) {
     val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
     cm?.setPrimaryClip(ClipData.newPlainText(label, text))
-    Toast.makeText(context, "Copied: $text", Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, context.getString(R.string.toast_copied, text), Toast.LENGTH_SHORT).show()
 }
