@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.account
 
+
+import androidx.compose.ui.res.stringResource
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -313,7 +315,7 @@ fun WhoIsListeningScreen(
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_itune_waves),
-                        contentDescription = "iTune Waves",
+                        contentDescription = stringResource(R.string.ui_itune_waves),
                         modifier = Modifier.fillMaxSize(),
                         colorFilter = ColorFilter.tint(Color.White),
                     )
@@ -321,7 +323,7 @@ fun WhoIsListeningScreen(
 
                 // Top-right "iTune" wordmark
                 Text(
-                    text = "iTune",
+                    text = stringResource(R.string.app_name),
                     color = Color.White,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
@@ -342,7 +344,7 @@ fun WhoIsListeningScreen(
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = "Who is Listening?",
+                    text = stringResource(R.string.ui_who_is_listening),
                     color = Color.White,
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
@@ -354,7 +356,7 @@ fun WhoIsListeningScreen(
                 Spacer(Modifier.height(10.dp))
 
                 Text(
-                    text = "Choose your profile to continue",
+                    text = stringResource(R.string.ui_choose_your_profile_to_continue),
                     color = Color.White.copy(alpha = 0.65f),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Normal,
@@ -398,14 +400,14 @@ fun WhoIsListeningScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Rounded.Add,
-                                    contentDescription = "Add Account",
+                                    contentDescription = stringResource(R.string.ui_add_account),
                                     tint = Color.White,
                                     modifier = Modifier.size(34.dp),
                                 )
                             }
                             Spacer(Modifier.height(12.dp))
                             Text(
-                                text = "Add Account",
+                                text = stringResource(R.string.ui_add_account),
                                 color = Color.White.copy(alpha = 0.82f),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Medium,
