@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.library
 
+
+import androidx.compose.ui.res.stringResource
 import android.os.Build
 import android.view.WindowManager
 import androidx.compose.foundation.Image
@@ -277,7 +279,7 @@ internal fun PlaylistImportDialog(
                 ) {
                     Image(
                         painter = painterResource(R.drawable.ic_spotify),
-                        contentDescription = "Spotify",
+                        contentDescription = stringResource(R.string.ui_spotify),
                         modifier = Modifier.size(28.dp),
                     )
                 }
@@ -331,7 +333,7 @@ internal fun PlaylistImportDialog(
                                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                                 ) {
                                     Text(
-                                        text = "Your Spotify Playlists (Public & Private)",
+                                        text = stringResource(R.string.ui_your_spotify_playlists_public_private),
                                         fontSize = 11.5.sp,
                                         fontWeight = FontWeight.Medium,
                                         color = SPOTIFY_GREEN,
@@ -417,7 +419,7 @@ internal fun PlaylistImportDialog(
                             ),
                             placeholder = {
                                 Text(
-                                    "https://open.spotify.com/playlist/…",
+                                    stringResource(R.string.ui_https_open_spotify_com_playlist),
                                     color = Color.White.copy(alpha = 0.35f),
                                     fontSize = 13.sp,
                                 )
@@ -427,7 +429,7 @@ internal fun PlaylistImportDialog(
                                     IconButton(onClick = { link = ""; error = null }) {
                                         Icon(
                                             Icons.Rounded.Clear,
-                                            contentDescription = "Clear",
+                                            contentDescription = stringResource(R.string.ui_clear),
                                             tint = Color.White.copy(alpha = 0.6f),
                                         )
                                     }
@@ -441,7 +443,7 @@ internal fun PlaylistImportDialog(
                                     }) {
                                         Icon(
                                             Icons.Rounded.ContentPaste,
-                                            contentDescription = "Paste",
+                                            contentDescription = stringResource(R.string.ui_paste),
                                             tint = SPOTIFY_GREEN,
                                         )
                                     }
@@ -482,7 +484,7 @@ internal fun PlaylistImportDialog(
                                 if (autoAddFutureSongs) {
                                     Icon(
                                         imageVector = Icons.Rounded.Check,
-                                        contentDescription = "Checked",
+                                        contentDescription = stringResource(R.string.ui_checked),
                                         tint = Color.Black,
                                         modifier = Modifier.size(16.dp),
                                     )
@@ -490,13 +492,13 @@ internal fun PlaylistImportDialog(
                             }
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Add Future Songs Automatically",
+                                    text = stringResource(R.string.ui_add_future_songs_automatically),
                                     color = Color.White,
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.SemiBold,
                                 )
                                 Text(
-                                    text = "Stores this link and auto-adds any new songs on app open",
+                                    text = stringResource(R.string.ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op),
                                     color = AppleTextSecondary,
                                     fontSize = 11.sp,
                                     lineHeight = 14.5.sp,
@@ -507,7 +509,7 @@ internal fun PlaylistImportDialog(
                         // Language chips
                         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                             Text(
-                                text = "Music language preference",
+                                text = stringResource(R.string.ui_music_language_preference),
                                 fontSize = 11.5.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = AppleTextSecondary,
@@ -598,7 +600,7 @@ internal fun PlaylistImportDialog(
                             )
                             Column {
                                 Text(
-                                    text = "Saved to your library!",
+                                    text = stringResource(R.string.ui_saved_to_your_library),
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color.White,
                                     fontSize = 13.5.sp,
@@ -639,7 +641,7 @@ internal fun PlaylistImportDialog(
                     val unmatched = result?.unmatched.orEmpty()
                     if (unmatched.isNotEmpty()) {
                         Text(
-                            text = "${unmatched.size} track(s) couldn't be matched:",
+                            text = stringResource(R.string.ui_track_s_couldn_t_be_matched, unmatched.size),
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White.copy(alpha = 0.8f),
                             fontSize = 12.sp,
@@ -656,7 +658,7 @@ internal fun PlaylistImportDialog(
                         ) {
                             unmatched.forEach { track ->
                                 Text(
-                                    text = "• ${track.title} - ${track.artist}",
+                                    text = stringResource(R.string.ui_text_a3edb2b714, track.title, track.artist),
                                     color = Color.White.copy(alpha = 0.60f),
                                     fontSize = 11.5.sp,
                                     maxLines = 1,
@@ -712,7 +714,7 @@ internal fun PlaylistImportDialog(
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
-                            text = "Cancel",
+                            text = stringResource(R.string.cancel),
                             color = AppleTextSecondary,
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Normal,
