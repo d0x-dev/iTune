@@ -385,7 +385,7 @@ private fun LikedSongsHeroSection(
                 )
                 Spacer(Modifier.width(5.dp))
                 Text(
-                    text = "FAVORITES",
+                    text = stringResource(R.string.ui_favorites),
                     color = Color.White,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
@@ -397,7 +397,7 @@ private fun LikedSongsHeroSection(
         Spacer(Modifier.height(18.dp))
 
         Text(
-            text = "Liked Songs",
+            text = stringResource(R.string.ui_liked_songs),
             color = Color.White,
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold,
@@ -416,14 +416,14 @@ private fun LikedSongsHeroSection(
             horizontalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = "$countPart$durationPart",
+                text = stringResource(R.string.ui_text_0726b053ba, countPart, durationPart),
                 color = Color.White.copy(alpha = 0.72f),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
             )
             if (songCount > 0) {
                 Text(
-                    text = " • $sortLabel",
+                    text = stringResource(R.string.ui_text_620b6e059c, sortLabel),
                     color = LibraryCrimsonAccent.copy(alpha = 0.92f),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
@@ -536,7 +536,7 @@ private fun StartRadioLiquidButton(
                 .padding(horizontal = 8.dp, vertical = 3.dp),
         ) {
             Text(
-                text = "Station",
+                text = stringResource(R.string.ui_station),
                 color = Color.White.copy(alpha = if (enabled) 0.84f else 0.35f),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Medium,
