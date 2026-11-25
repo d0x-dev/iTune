@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.television.ui.search
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -201,7 +204,7 @@ fun TvSearchScreen(
         ) {
             // ── Top: Search Title & TV Input ──────────────────────────────────
             Text(
-                text = "Search",
+                text = stringResource(R.string.ui_search),
                 color = Color.White,
                 fontSize = 28.sp,
                 fontFamily = SFProDisplay,
@@ -235,7 +238,7 @@ fun TvSearchScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Search,
-                        contentDescription = "Search Icon",
+                        contentDescription = stringResource(R.string.ui_search_icon),
                         tint = if (isInputFocused) Color.White else Color.White.copy(alpha = 0.50f),
                         modifier = Modifier.size(22.dp),
                     )
@@ -268,7 +271,7 @@ fun TvSearchScreen(
                         decorationBox = { innerTextField ->
                             if (searchQuery.isEmpty()) {
                                 Text(
-                                    text = "Artists, Songs, Albums, Playlists…",
+                                    text = stringResource(R.string.ui_artists_songs_albums_playlists),
                                     color = Color.White.copy(alpha = 0.38f),
                                     fontSize = 16.sp,
                                     fontFamily = SFProDisplay,
@@ -281,7 +284,7 @@ fun TvSearchScreen(
                     if (searchQuery.isNotEmpty()) {
                         Icon(
                             imageVector = Icons.Rounded.Clear,
-                            contentDescription = "Clear",
+                            contentDescription = stringResource(R.string.ui_clear),
                             tint = Color.White.copy(alpha = 0.60f),
                             modifier = Modifier
                                 .size(20.dp)
@@ -367,7 +370,7 @@ fun TvSearchScreen(
                             item(key = "top_result_section") {
                                 Column(modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)) {
                                     Text(
-                                        text = "Top Result",
+                                        text = stringResource(R.string.ui_top_result),
                                         color = Color.White,
                                         fontSize = 20.sp,
                                         fontFamily = SFProDisplay,
@@ -402,7 +405,7 @@ fun TvSearchScreen(
                         if ((activeFilter == TvSearchFilter.ALL || activeFilter == TvSearchFilter.SONGS) && searchResults.songs.isNotEmpty()) {
                             item(key = "songs_header") {
                                 Text(
-                                    text = "Songs",
+                                    text = stringResource(R.string.songs),
                                     color = Color.White,
                                     fontSize = 20.sp,
                                     fontFamily = SFProDisplay,
@@ -427,7 +430,7 @@ fun TvSearchScreen(
                         if ((activeFilter == TvSearchFilter.ALL || activeFilter == TvSearchFilter.ARTISTS) && searchResults.artists.isNotEmpty()) {
                             item(key = "artists_header") {
                                 Text(
-                                    text = "Artists",
+                                    text = stringResource(R.string.ui_artists),
                                     color = Color.White,
                                     fontSize = 20.sp,
                                     fontFamily = SFProDisplay,
@@ -457,7 +460,7 @@ fun TvSearchScreen(
                         if ((activeFilter == TvSearchFilter.ALL || activeFilter == TvSearchFilter.ALBUMS) && searchResults.albums.isNotEmpty()) {
                             item(key = "albums_header") {
                                 Text(
-                                    text = "Albums",
+                                    text = stringResource(R.string.ui_albums),
                                     color = Color.White,
                                     fontSize = 20.sp,
                                     fontFamily = SFProDisplay,
@@ -490,7 +493,7 @@ fun TvSearchScreen(
                         if ((activeFilter == TvSearchFilter.ALL || activeFilter == TvSearchFilter.PLAYLISTS) && searchResults.playlists.isNotEmpty()) {
                             item(key = "playlists_header") {
                                 Text(
-                                    text = "Playlists",
+                                    text = stringResource(R.string.ui_playlists),
                                     color = Color.White,
                                     fontSize = 20.sp,
                                     fontFamily = SFProDisplay,
@@ -524,7 +527,7 @@ fun TvSearchScreen(
                 // Search Suggestions View
                 Column(modifier = Modifier.fillMaxSize()) {
                     Text(
-                        text = "Suggestions",
+                        text = stringResource(R.string.ui_suggestions),
                         color = Color.White.copy(alpha = 0.50f),
                         fontSize = 14.sp,
                         fontFamily = SFProDisplay,
@@ -591,7 +594,7 @@ fun TvSearchScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "Recent Searches",
+                            text = stringResource(R.string.ui_recent_searches),
                             color = Color.White,
                             fontSize = 19.sp,
                             fontFamily = SFProDisplay,
@@ -603,7 +606,7 @@ fun TvSearchScreen(
                             val isClearFocused by clearInteraction.collectIsFocusedAsState()
 
                             Text(
-                                text = "Clear All",
+                                text = stringResource(R.string.ui_clear_all),
                                 color = if (isClearFocused) Color.White else AppleMusicRed,
                                 fontSize = 13.5.sp,
                                 fontFamily = SFProDisplay,
@@ -626,7 +629,7 @@ fun TvSearchScreen(
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
-                                text = "Search for songs, artists, albums, and playlists",
+                                text = stringResource(R.string.ui_search_for_songs_artists_albums_and_playlists),
                                 color = Color.White.copy(alpha = 0.38f),
                                 fontSize = 15.5.sp,
                                 fontFamily = SFProDisplay,
@@ -690,7 +693,7 @@ fun TvSearchScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Rounded.Close,
-                                            contentDescription = "Remove",
+                                            contentDescription = stringResource(R.string.ui_remove),
                                             tint = if (isDelFocused) Color.White else Color.White.copy(alpha = 0.40f),
                                             modifier = Modifier.size(16.dp),
                                         )
@@ -787,7 +790,7 @@ private fun TvTopResultHeroCard(
                     .padding(horizontal = 7.dp, vertical = 2.dp),
             ) {
                 Text(
-                    text = "TOP RESULT • $kindLabel",
+                    text = stringResource(R.string.ui_top_result_c5e5adab, kindLabel),
                     color = Color.White.copy(alpha = 0.85f),
                     fontSize = 10.sp,
                     fontFamily = SFProDisplay,
@@ -832,7 +835,7 @@ private fun TvTopResultHeroCard(
         ) {
             Icon(
                 imageVector = Icons.Rounded.PlayArrow,
-                contentDescription = "Play",
+                contentDescription = stringResource(R.string.play),
                 tint = if (isFocused) Color.Black else Color.White,
                 modifier = Modifier.size(26.dp),
             )
@@ -880,7 +883,7 @@ private fun TvSearchSongRow(
                 AnimatedEqualizer(isPlaying = true, color = AppleMusicRed, size = 16.dp)
             } else {
                 Text(
-                    text = "$index",
+                    text = stringResource(R.string.ui_text_c79f71243f, index),
                     color = if (isCurrent) AppleMusicRed else Color.White.copy(alpha = 0.45f),
                     fontSize = 14.sp,
                     fontFamily = SFProDisplay,
