@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.library
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -166,7 +169,7 @@ fun AppleNewReleasesScreen(
                 IconButton(onClick = controller::toggleSearch) {
                     Icon(
                         imageVector = ITubeIcons.Search,
-                        contentDescription = "Search New Releases",
+                        contentDescription = stringResource(R.string.ui_search_new_releases),
                         tint = if (controller.searchOpen) LibraryCrimsonAccent else Color.White,
                         modifier = Modifier.size(21.dp),
                     )
@@ -174,7 +177,7 @@ fun AppleNewReleasesScreen(
                 IconButton(onClick = { NewReleasesRepository.refresh() }) {
                     Icon(
                         imageVector = Icons.Rounded.Refresh,
-                        contentDescription = "Refresh New Releases",
+                        contentDescription = stringResource(R.string.ui_refresh_new_releases),
                         tint = Color.White,
                         modifier = Modifier.size(21.dp),
                     )
@@ -218,7 +221,7 @@ fun AppleNewReleasesScreen(
                                 .padding(horizontal = 2.dp, vertical = 4.dp),
                         ) {
                             Text(
-                                text = "New Releases",
+                                text = stringResource(R.string.ui_new_releases),
                                 color = Color.White,
                                 fontSize = 32.sp,
                                 fontWeight = FontWeight.Bold,
@@ -611,7 +614,7 @@ private fun FilterCategoryEmptyNotice(label: String) {
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = "No new $label available right now",
+            text = stringResource(R.string.ui_no_new_available_right_now, label),
             color = AppleTextSecondary,
             fontSize = 14.5.sp,
         )
