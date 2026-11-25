@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.player
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import android.view.HapticFeedbackConstants
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -316,12 +319,12 @@ internal fun MorePopupLyricsSearchSection(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Search,
-                            contentDescription = "Search",
+                            contentDescription = stringResource(R.string.ui_search),
                             tint = Color.Black,
                             modifier = Modifier.size(16.dp)
                         )
                         Text(
-                            text = "Search",
+                            text = stringResource(R.string.ui_search),
                             fontFamily = SFProDisplay,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 13.5.sp,
@@ -352,7 +355,7 @@ internal fun MorePopupLyricsSearchSection(
                             modifier = Modifier.size(24.dp)
                         )
                         Text(
-                            text = "Searching lyrics…",
+                            text = stringResource(R.string.ui_searching_lyrics),
                             fontFamily = SFProDisplay,
                             fontSize = 13.sp,
                             color = Color.White.copy(alpha = 0.68f)
@@ -392,7 +395,7 @@ internal fun MorePopupLyricsSearchSection(
                                     MusicPlayerState.applyCustomLyrics(track, item.rawText)
                                     MusicPlayerState.queueOpen = false
                                     MusicPlayerState.lyricsOpen = true
-                                    Toast.makeText(context, "Lyrics applied (${item.provider})", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.toast_lyrics_applied, item.provider), Toast.LENGTH_SHORT).show()
                                     onLyricsSelected()
                                 }
                                 .padding(horizontal = 16.dp, vertical = 10.dp)
@@ -545,7 +548,7 @@ internal fun MorePopupLyricsEditSection(
                         .padding(horizontal = 14.dp, vertical = 8.dp)
                 ) {
                     Text(
-                        text = "Clear",
+                        text = stringResource(R.string.ui_clear),
                         fontFamily = SFProDisplay,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
@@ -561,13 +564,13 @@ internal fun MorePopupLyricsEditSection(
                             .clickable {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                 MusicPlayerState.resetCustomLyrics(track)
-                                Toast.makeText(context, "Restored online lyrics", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_restored_online_lyrics), Toast.LENGTH_SHORT).show()
                                 onSaved()
                             }
                             .padding(horizontal = 14.dp, vertical = 8.dp)
                     ) {
                         Text(
-                            text = "Reset",
+                            text = stringResource(R.string.ui_reset),
                             fontFamily = SFProDisplay,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -587,13 +590,13 @@ internal fun MorePopupLyricsEditSection(
                             MusicPlayerState.applyCustomLyrics(track, draftText)
                             MusicPlayerState.queueOpen = false
                             MusicPlayerState.lyricsOpen = true
-                            Toast.makeText(context, "Lyrics saved", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_lyrics_saved), Toast.LENGTH_SHORT).show()
                             onSaved()
                         }
                         .padding(horizontal = 20.dp, vertical = 8.dp)
                 ) {
                     Text(
-                        text = "Save",
+                        text = stringResource(R.string.save),
                         fontFamily = SFProDisplay,
                         fontSize = 13.5.sp,
                         fontWeight = FontWeight.Bold,
@@ -648,7 +651,7 @@ internal fun MorePopupLyricsOffsetSection(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Slide forward for faster lyrics · backward for slower · Audio unaffected",
+                text = stringResource(R.string.ui_slide_forward_for_faster_lyrics_backward_for_slower_au),
                 fontFamily = SFProDisplay,
                 fontSize = 11.5.sp,
                 color = Color.White.copy(alpha = 0.62f)
@@ -679,19 +682,19 @@ internal fun MorePopupLyricsOffsetSection(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "-5.0s",
+                    text = stringResource(R.string.ui_text_7be28ad40e),
                     fontFamily = SFProDisplay,
                     fontSize = 11.5.sp,
                     color = Color.White.copy(alpha = 0.56f)
                 )
                 Text(
-                    text = "+0.0s",
+                    text = stringResource(R.string.ui_text_4d4026c0de),
                     fontFamily = SFProDisplay,
                     fontSize = 11.5.sp,
                     color = Color.White.copy(alpha = 0.56f)
                 )
                 Text(
-                    text = "+5.0s",
+                    text = stringResource(R.string.ui_text_88c8b670f9),
                     fontFamily = SFProDisplay,
                     fontSize = 11.5.sp,
                     color = Color.White.copy(alpha = 0.56f)
@@ -895,7 +898,7 @@ internal fun MorePopupLyricsTranslateSection(
 
             // Target Language Row
             Text(
-                text = "TARGET LANGUAGE",
+                text = stringResource(R.string.ui_target_language),
                 fontFamily = SFProDisplay,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -948,7 +951,7 @@ internal fun MorePopupLyricsTranslateSection(
 
             // Inbuilt Prompt Types / Mode
             Text(
-                text = "PROMPT TYPE",
+                text = stringResource(R.string.ui_prompt_type),
                 fontFamily = SFProDisplay,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -993,7 +996,7 @@ internal fun MorePopupLyricsTranslateSection(
 
             // AI Provider selector
             Text(
-                text = "AI ENGINE",
+                text = stringResource(R.string.ui_ai_engine),
                 fontFamily = SFProDisplay,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -1046,7 +1049,7 @@ internal fun MorePopupLyricsTranslateSection(
 
             Spacer(Modifier.height(12.dp))
             Text(
-                text = "MODEL",
+                text = stringResource(R.string.ui_model),
                 fontFamily = SFProDisplay,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -1099,7 +1102,7 @@ internal fun MorePopupLyricsTranslateSection(
             // Custom Prompt Field (shown if mode is Custom or can add custom nuances)
             if (settingsState.lyricsTranslateMode == "Custom") {
                 Text(
-                    text = "CUSTOM INSTRUCTIONS",
+                    text = stringResource(R.string.ui_custom_instructions),
                     fontFamily = SFProDisplay,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -1117,7 +1120,7 @@ internal fun MorePopupLyricsTranslateSection(
                 ) {
                     if (customPromptText.isEmpty()) {
                         Text(
-                            text = "e.g. translate into poetic hinglish with rhymes",
+                            text = stringResource(R.string.ui_e_g_translate_into_poetic_hinglish_with_rhymes),
                             fontFamily = SFProDisplay,
                             fontSize = 13.sp,
                             color = Color.White.copy(alpha = 0.35f)
@@ -1155,7 +1158,7 @@ internal fun MorePopupLyricsTranslateSection(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Translate actual lines",
+                            text = stringResource(R.string.ui_translate_actual_lines),
                             fontFamily = SFProDisplay,
                             fontSize = 14.5.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -1204,7 +1207,7 @@ internal fun MorePopupLyricsTranslateSection(
                         )
                         Spacer(Modifier.width(10.dp))
                         Text(
-                            text = "API Key not configured for ${settingsState.lyricsTranslationProvider}. Please set it in Settings > Lyrics.",
+                            text = stringResource(R.string.ui_api_key_not_configured_for_please_set_it_in_settin, settingsState.lyricsTranslationProvider),
                             fontFamily = SFProDisplay,
                             fontSize = 12.sp,
                             color = Color.White.copy(alpha = 0.95f),
@@ -1234,7 +1237,7 @@ internal fun MorePopupLyricsTranslateSection(
                             Spacer(Modifier.width(12.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Translating lyrics...",
+                                    text = stringResource(R.string.ui_translating_lyrics),
                                     fontFamily = SFProDisplay,
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.SemiBold,
@@ -1260,7 +1263,7 @@ internal fun MorePopupLyricsTranslateSection(
                                     .padding(horizontal = 8.dp, vertical = 4.dp)
                             ) {
                                 Text(
-                                    text = "Cancel",
+                                    text = stringResource(R.string.cancel),
                                     fontFamily = SFProDisplay,
                                     fontSize = 12.sp,
                                     color = Color(0xFFFF453A)
@@ -1315,7 +1318,7 @@ internal fun MorePopupLyricsTranslateSection(
                             )
                             Spacer(Modifier.width(8.dp))
                             Text(
-                                text = "Lyrics translated successfully!",
+                                text = stringResource(R.string.ui_lyrics_translated_successfully),
                                 fontFamily = SFProDisplay,
                                 fontSize = 12.5.sp,
                                 fontWeight = FontWeight.Medium,
@@ -1345,12 +1348,12 @@ internal fun MorePopupLyricsTranslateSection(
                             .clickable {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                 LyricsTranslationHelper.clearSongTranslation(context, track.id)
-                                Toast.makeText(context, "Translation cleared", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_translation_cleared), Toast.LENGTH_SHORT).show()
                             },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Clear",
+                            text = stringResource(R.string.ui_clear),
                             fontFamily = SFProDisplay,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -1368,16 +1371,14 @@ internal fun MorePopupLyricsTranslateSection(
                         .clickable(enabled = !isTranslating) {
                             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                             if (!hasApiKey) {
-                                Toast.makeText(
-                                    context,
-                                    "Please set your API Key in Settings > Lyrics first",
+                                Toast.makeText(context, context.getString(R.string.toast_please_set_your_api_key_in_settings_lyrics_first),
                                     Toast.LENGTH_LONG
                                 ).show()
                                 return@clickable
                             }
                             val lines = rawLyricsLines
                             if (lines.isEmpty()) {
-                                Toast.makeText(context, "No lyrics found for this song", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_no_lyrics_found_for_this_song), Toast.LENGTH_SHORT).show()
                                 return@clickable
                             }
                             LyricsTranslationHelper.translateSong(
@@ -1454,7 +1455,7 @@ internal fun AiLanguageSelectorDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Select Language",
+                        text = stringResource(R.string.ui_select_language),
                         fontFamily = SFProDisplay,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
@@ -1469,7 +1470,7 @@ internal fun AiLanguageSelectorDialog(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Close,
-                            contentDescription = "Close",
+                            contentDescription = stringResource(R.string.close),
                             tint = Color.White,
                             modifier = Modifier.size(16.dp)
                         )
@@ -1489,7 +1490,7 @@ internal fun AiLanguageSelectorDialog(
                 ) {
                     if (searchQuery.isEmpty()) {
                         Text(
-                            text = "Search languages...",
+                            text = stringResource(R.string.ui_search_languages),
                             fontFamily = SFProDisplay,
                             fontSize = 13.sp,
                             color = Color.White.copy(alpha = 0.4f)
