@@ -222,7 +222,7 @@ fun LibraryHistoryScreen(
                 Column(Modifier.padding(horizontal = 16.dp)) {
                     Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 4.dp)) {
                         Text(
-                            text = "History",
+                            text = stringResource(R.string.ui_history),
                             color = Color.White,
                             fontSize = 32.sp,
                             fontWeight = FontWeight.Bold,
