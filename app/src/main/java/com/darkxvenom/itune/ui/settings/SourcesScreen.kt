@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.settings
 
+
+import androidx.compose.ui.res.stringResource
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -225,7 +227,7 @@ fun SourcesScreen(
                 // Header Title
                 item(key = "sources_header_title") {
                     Text(
-                        text = "Sources",
+                        text = stringResource(R.string.ui_sources),
                         color = Color.White,
                         fontSize = 34.sp,
                         fontWeight = FontWeight.Bold,
@@ -234,7 +236,7 @@ fun SourcesScreen(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Choose audio playback streaming sources, lossless tiers, and fallback priority",
+                        text = stringResource(R.string.ui_choose_audio_playback_streaming_sources_lossless_tiers),
                         color = AppleTextSecondary,
                         fontSize = 13.sp,
                         lineHeight = 17.sp,
@@ -253,14 +255,14 @@ fun SourcesScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "STREAMING SOURCES",
+                            text = stringResource(R.string.ui_streaming_sources),
                             color = Color(0xFF8E8E93),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
                             letterSpacing = 0.5.sp,
                         )
                         Text(
-                            text = "$activeCount of ${configs.size} Active",
+                            text = stringResource(R.string.ui_of_active, activeCount, configs.size),
                             color = AppleTextSecondary,
                             fontSize = 11.5.sp,
                             fontWeight = FontWeight.Normal,
@@ -308,7 +310,7 @@ fun SourcesScreen(
                         }
                     }
                     Text(
-                        text = "iTune queries sources in the order shown. Drag installed extensions and providers to adjust playback priority.",
+                        text = stringResource(R.string.ui_itune_queries_sources_in_the_order_shown_drag_installe),
                         color = Color(0xFF636366),
                         fontSize = 12.sp,
                         lineHeight = 16.sp,
@@ -355,7 +357,7 @@ fun SourcesScreen(
                         )
                     }
                     Text(
-                        text = "Add custom HTTP addon servers (speaking /manifest.json, /search, /stream) or sandbox-isolated QuickJS modules.",
+                        text = stringResource(R.string.ui_add_custom_http_addon_servers_speaking_manifest_json_s),
                         color = Color(0xFF636366),
                         fontSize = 12.sp,
                         lineHeight = 16.sp,
@@ -412,7 +414,7 @@ fun SourcesScreen(
                         )
                     }
                     Text(
-                        text = "Stream your bit-perfect lossless library directly from personal network shares or Nextcloud.",
+                        text = stringResource(R.string.ui_stream_your_bit_perfect_lossless_library_directly_from),
                         color = Color(0xFF636366),
                         fontSize = 12.sp,
                         lineHeight = 16.sp,
@@ -451,14 +453,14 @@ fun SourcesScreen(
                             Spacer(modifier = Modifier.width(12.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "CAPTCHA Guidance",
+                                    text = stringResource(R.string.ui_captcha_guidance),
                                     color = Color.White,
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.SemiBold,
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = "In-app guidance when audio providers challenge anti-bot checks",
+                                    text = stringResource(R.string.ui_in_app_guidance_when_audio_providers_challenge_anti_bo),
                                     color = AppleTextSecondary,
                                     fontSize = 12.sp,
                                     lineHeight = 15.sp,
@@ -503,14 +505,14 @@ fun SourcesScreen(
                             Spacer(modifier = Modifier.width(12.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Lossless Audio Preference",
+                                    text = stringResource(R.string.ui_lossless_audio_preference),
                                     color = Color.White,
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.SemiBold,
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = "Prefer bit-perfect FLAC/ALAC up to 24-bit / 192 kHz when available",
+                                    text = stringResource(R.string.ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when),
                                     color = AppleTextSecondary,
                                     fontSize = 12.sp,
                                     lineHeight = 15.sp,
@@ -539,13 +541,13 @@ fun SourcesScreen(
                                     haptics.play(Haptic.Tap)
                                     val reset = SourceRegistry.sourcesForInit(emptyList(), forceJioSaavnOff = false)
                                     SourceRegistry.reorderAll(reset.map { it.id })
-                                    Toast.makeText(context, "Sources restored to defaults", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.toast_sources_restored_to_defaults), Toast.LENGTH_SHORT).show()
                                 }
                                 .padding(vertical = 14.dp),
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
-                                text = "Restore Default Sources",
+                                text = stringResource(R.string.ui_restore_default_sources),
                                 color = AppleMusicRed,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -554,7 +556,7 @@ fun SourcesScreen(
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "Restores JioSaavn and YouTube Music in the default order. JioSaavn starts off and YouTube Music starts on.",
+                        text = stringResource(R.string.ui_restores_jiosaavn_and_youtube_music_in_the_default_ord),
                         color = Color(0xFF636366),
                         fontSize = 12.sp,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -590,7 +592,7 @@ fun SourcesScreen(
                     ) {
                         FrostedTopBarTitlePill(hazeState = hazeState) {
                             Text(
-                                text = "Sources",
+                                text = stringResource(R.string.ui_sources),
                                 color = Color.White,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -608,7 +610,7 @@ fun SourcesScreen(
                 onAdd = { newConfig ->
                     SourceRegistry.add(newConfig)
                     addSourceDialog = false
-                    Toast.makeText(context, "Added source: ${newConfig.displayName}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_added_source, newConfig.displayName), Toast.LENGTH_SHORT).show()
                 },
             )
         }
@@ -629,7 +631,7 @@ fun SourcesScreen(
                         )
                     }
                     browseExtensionsDialog = false
-                    Toast.makeText(context, "Installed ${chosen.size} extension(s)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_installed_extension_s, chosen.size), Toast.LENGTH_SHORT).show()
                 },
             )
         }
@@ -847,7 +849,7 @@ private fun SourceConfigRowView(
             itemStep = 58.dp,
             tint = Color(0xFF8E8E93),
             modifier = Modifier.size(28.dp),
-            contentDescription = "Reorder source priority",
+            contentDescription = stringResource(R.string.ui_reorder_source_priority),
             onDragDistance = { dragOffsetPx += it },
             onDragFinished = { dragOffsetPx = 0f },
         )
@@ -1034,7 +1036,7 @@ private fun SourceConfigDialog(
 
                     if (config.kind.isUserAdded) {
                         Text(
-                            text = "Server URL / Manifest",
+                            text = stringResource(R.string.ui_server_url_manifest),
                             color = AppleTextSecondary,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
@@ -1068,7 +1070,7 @@ private fun SourceConfigDialog(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text("Allow Downloads", color = Color.White, fontSize = 13.sp)
+                            Text(stringResource(R.string.ui_allow_downloads), color = Color.White, fontSize = 13.sp)
                             AppleGlassSwitch(
                                 checked = allowDownloads,
                                 onCheckedChange = { allowDownloads = it },
@@ -1082,7 +1084,7 @@ private fun SourceConfigDialog(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text("Require Bit-Perfect Lossless Output", color = Color.White, fontSize = 13.sp)
+                            Text(stringResource(R.string.ui_require_bit_perfect_lossless_output), color = Color.White, fontSize = 13.sp)
                             AppleGlassSwitch(
                                 checked = checkValidLossless,
                                 onCheckedChange = { checkValidLossless = it },
@@ -1136,7 +1138,7 @@ private fun SourceConfigDialog(
                     ) {
                         if (config.kind.isUserAdded) {
                             Text(
-                                text = "Remove",
+                                text = stringResource(R.string.ui_remove),
                                 color = Color(0xFFFF453A),
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 15.sp,
@@ -1176,7 +1178,7 @@ private fun SourceConfigDialog(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
-                                text = "Cancel",
+                                text = stringResource(R.string.cancel),
                                 color = AppleTextSecondary,
                                 fontSize = 15.sp,
                                 modifier = Modifier
@@ -1204,7 +1206,7 @@ private fun SourceConfigDialog(
                                 contentAlignment = Alignment.Center,
                             ) {
                                 Text(
-                                    text = "Done",
+                                    text = stringResource(R.string.done),
                                     color = Color.White,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
@@ -1295,7 +1297,7 @@ private fun AddSourceDialog(
                             )
                         }
                         Text(
-                            text = "Add Streaming Source",
+                            text = stringResource(R.string.ui_add_streaming_source),
                             color = Color.White,
                             fontSize = 19.sp,
                             fontWeight = FontWeight.Bold,
@@ -1304,7 +1306,7 @@ private fun AddSourceDialog(
 
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Enter an HTTP addon manifest URL, a QuickJS module index, or a Tidal instance endpoint.",
+                        text = stringResource(R.string.ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde),
                         color = AppleTextSecondary,
                         fontSize = 13.sp,
                         lineHeight = 17.sp,
@@ -1330,7 +1332,7 @@ private fun AddSourceDialog(
                             ) {
                                 if (url.isBlank()) {
                                     Text(
-                                        text = "https://example.com/manifest.json",
+                                        text = stringResource(R.string.ui_https_example_com_manifest_json),
                                         color = Color.White.copy(alpha = 0.35f),
                                         fontSize = 14.sp,
                                     )
@@ -1384,7 +1386,7 @@ private fun AddSourceDialog(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "Cancel",
+                            text = stringResource(R.string.cancel),
                             color = AppleTextSecondary,
                             fontSize = 15.sp,
                             modifier = Modifier
@@ -1613,7 +1615,7 @@ private fun BrowseExtensionsDialog(
                             )
                         }
                         Text(
-                            text = "Browse Extensions",
+                            text = stringResource(R.string.ui_browse_extensions),
                             color = Color.White,
                             fontSize = 19.sp,
                             fontWeight = FontWeight.Bold,
@@ -1622,7 +1624,7 @@ private fun BrowseExtensionsDialog(
 
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Install pre-added Mornye community extensions or scan a custom repository index.",
+                        text = stringResource(R.string.ui_install_pre_added_mornye_community_extensions_or_scan),
                         color = AppleTextSecondary,
                         fontSize = 12.5.sp,
                         lineHeight = 16.sp,
@@ -1638,7 +1640,7 @@ private fun BrowseExtensionsDialog(
                     ) {
                         item(key = "hdr_presets") {
                             Text(
-                                text = "PRE-ADDED EXTENSIONS",
+                                text = stringResource(R.string.ui_pre_added_extensions),
                                 color = Color(0xFF8E8E93),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -1716,7 +1718,7 @@ private fun BrowseExtensionsDialog(
 
                                 if (isInstalled) {
                                     Text(
-                                        text = "Installed",
+                                        text = stringResource(R.string.ui_installed),
                                         color = AppleTextSecondary,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Medium,
@@ -1745,7 +1747,7 @@ private fun BrowseExtensionsDialog(
 
                         item(key = "hdr_custom") {
                             Text(
-                                text = "CUSTOM REPOSITORY INDEX OR URL",
+                                text = stringResource(R.string.ui_custom_repository_index_or_url),
                                 color = Color(0xFF8E8E93),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -1773,7 +1775,7 @@ private fun BrowseExtensionsDialog(
                                     ) {
                                         if (url.isBlank()) {
                                             Text(
-                                                text = "https://example.com/index.json",
+                                                text = stringResource(R.string.ui_https_example_com_index_json),
                                                 color = Color.White.copy(alpha = 0.35f),
                                                 fontSize = 13.5.sp,
                                             )
@@ -1864,7 +1866,7 @@ private fun BrowseExtensionsDialog(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "Cancel",
+                            text = stringResource(R.string.cancel),
                             color = AppleTextSecondary,
                             fontSize = 15.sp,
                             modifier = Modifier
@@ -2108,7 +2110,7 @@ private fun RemoteLibraryDialog(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "Cancel",
+                            text = stringResource(R.string.cancel),
                             color = AppleTextSecondary,
                             fontSize = 15.sp,
                             modifier = Modifier
@@ -2116,7 +2118,7 @@ private fun RemoteLibraryDialog(
                                 .padding(horizontal = 12.dp, vertical = 10.dp),
                         )
                         Text(
-                            text = "Test",
+                            text = stringResource(R.string.ui_test),
                             color = AppleMusicRed,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -2164,7 +2166,7 @@ private fun RemoteLibraryDialog(
                                     )
                                 }
                                 Text(
-                                    text = "Browse",
+                                    text = stringResource(R.string.ui_browse),
                                     color = Color.White,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
@@ -2287,7 +2289,7 @@ private fun RemoteTracksDialog(
                         .padding(22.dp),
                 ) {
                     Text(
-                        text = "Remote Music Library",
+                        text = stringResource(R.string.ui_remote_music_library),
                         color = Color.White,
                         fontSize = 19.sp,
                         fontWeight = FontWeight.Bold,
@@ -2380,7 +2382,7 @@ private fun RemoteTracksDialog(
                         horizontalArrangement = Arrangement.End,
                     ) {
                         Text(
-                            text = "Done",
+                            text = stringResource(R.string.done),
                             color = AppleMusicRed,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 15.sp,
