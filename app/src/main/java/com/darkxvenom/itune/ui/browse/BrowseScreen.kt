@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.browse
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -66,6 +69,7 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.data.library.BrowseMoodsRepository
+import com.darkxvenom.itune.data.repository.ImageCacheManager
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
 import com.darkxvenom.itune.data.library.NewReleasesRepository
 import com.darkxvenom.itune.data.library.SettingsStore
@@ -198,7 +202,7 @@ fun BrowseScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Browse",
+                            text = stringResource(R.string.ui_browse),
                             color = AppleTextPrimary,
                             fontSize = 34.sp,
                             fontWeight = FontWeight.Bold,
@@ -276,7 +280,7 @@ fun BrowseScreen(
                     if (genres.isNotEmpty()) {
                         item(span = { GridItemSpan(2) }, key = "genres_section_header") {
                             Text(
-                                text = "Genres & Styles",
+                                text = stringResource(R.string.ui_genres_styles),
                                 color = AppleTextPrimary,
                                 fontSize = 19.sp,
                                 fontWeight = FontWeight.Bold,
@@ -430,6 +434,16 @@ private fun BrowseCategoryCardItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    var cachedUrl by remember(item.imageUrl) {
+        mutableStateOf(ImageCacheManager.cachedImageUrl(item.imageUrl, context))
+    }
+
+    LaunchedEffect(item.imageUrl) {
+        ImageCacheManager.cacheImage(item.imageUrl, context)
+        cachedUrl = ImageCacheManager.cachedImageUrl(item.imageUrl, context)
+    }
+
     val accentPair = remember(item.id) {
         val palettes = listOf(
             Color(0xFF2B2440) to Color(0xFF1A1626),
@@ -456,7 +470,7 @@ private fun BrowseCategoryCardItem(
     ) {
         if (item.imageUrl.isNotBlank()) {
             AsyncImage(
-                model = item.imageUrl,
+                model = cachedUrl,
                 contentDescription = item.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
