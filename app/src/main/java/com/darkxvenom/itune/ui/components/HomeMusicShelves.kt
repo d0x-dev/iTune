@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.components
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -123,7 +126,7 @@ fun HomeCollectionShelf(
                     Spacer(Modifier.height(7.dp))
                     Text(item.title, color = AppleTextPrimary, fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    Text(item.author.ifBlank { if (item.isAlbum) "Album" else "YouTube Music" },
+                    Text(item.author.ifBlank { if (item.isAlbum) stringResource(R.string.detail_album) else stringResource(R.string.youtube_music) },
                         color = AppleTextSecondary, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
@@ -160,7 +163,7 @@ fun HomeArtistShelf(
                     Spacer(Modifier.height(7.dp))
                     Text(artist.name, color = AppleTextPrimary, fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    Text("Artist", color = AppleTextSecondary, fontSize = 12.sp)
+                    Text(stringResource(R.string.ui_artist), color = AppleTextSecondary, fontSize = 12.sp)
                 }
             }
         }
