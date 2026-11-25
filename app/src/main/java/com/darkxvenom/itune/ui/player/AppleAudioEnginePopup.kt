@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.player
 
+
+import androidx.compose.ui.res.stringResource
 import android.os.Build
 import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
@@ -237,7 +239,7 @@ fun AppleAudioEnginePopup(
         headerActions = {
             if (activePage != EnginePopupPage.MAIN) {
                 EngineHeaderIconButton(
-                    contentDescription = "Back to Audio Engine",
+                    contentDescription = stringResource(R.string.ui_back_to_audio_engine),
                     onClick = {
                         view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                         activePage = EnginePopupPage.MAIN
@@ -245,7 +247,7 @@ fun AppleAudioEnginePopup(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.back),
                         tint = Color.White,
                         modifier = Modifier.size(18.dp),
                     )
@@ -253,7 +255,7 @@ fun AppleAudioEnginePopup(
             }
             if (activePage == EnginePopupPage.EQUALIZER || activePage == EnginePopupPage.DJ_CONSOLE) {
                 EngineHeaderIconButton(
-                    contentDescription = "Reset",
+                    contentDescription = stringResource(R.string.ui_reset),
                     onClick = {
                         view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                         if (activePage == EnginePopupPage.EQUALIZER) {
@@ -265,7 +267,7 @@ fun AppleAudioEnginePopup(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Refresh,
-                        contentDescription = "Reset",
+                        contentDescription = stringResource(R.string.ui_reset),
                         tint = Color.White,
                         modifier = Modifier.size(17.dp),
                     )
@@ -618,7 +620,7 @@ private fun DolbyAtmosOptionsPage(
             onClick = {
                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                 if (!onOpenSystemDolby()) {
-                    android.widget.Toast.makeText(context, "System sound panel opened", android.widget.Toast.LENGTH_SHORT).show()
+                    android.widget.Toast.makeText(context, context.getString(R.string.toast_system_sound_panel_opened), android.widget.Toast.LENGTH_SHORT).show()
                 }
             },
         )
@@ -660,13 +662,13 @@ private fun EightDOptionsPage(state: AudioEngineUiState) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Orbit Intensity & Speed",
+                    text = stringResource(R.string.ui_orbit_intensity_speed),
                     color = Color.White,
                     fontSize = 13.5.sp,
                     fontWeight = FontWeight.SemiBold,
                 )
                 Text(
-                    text = "${state.eightDAudioLevel}D",
+                    text = stringResource(R.string.ui_d_eeda119e, state.eightDAudioLevel),
                     color = EngineActiveGreen,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
@@ -752,7 +754,7 @@ private fun SpatialAudioOptionsPage(state: AudioEngineUiState) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text("Soundstage Width", color = Color.White, fontSize = 13.5.sp, fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.ui_soundstage_width), color = Color.White, fontSize = 13.5.sp, fontWeight = FontWeight.SemiBold)
                 Text("${"%.2f".format(state.spatialWidth)}x", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
             }
             EngineCapsuleSlider(
@@ -769,8 +771,8 @@ private fun SpatialAudioOptionsPage(state: AudioEngineUiState) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("Acoustic Head-Shadow Crossfeed", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Medium)
-                    Text("15ms opposite-ear delayed low-pass blend", color = Color.White.copy(alpha = 0.56f), fontSize = 11.sp)
+                    Text(stringResource(R.string.ui_acoustic_head_shadow_crossfeed), color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                    Text(stringResource(R.string.ui_text_4e37ece023), color = Color.White.copy(alpha = 0.56f), fontSize = 11.sp)
                 }
                 AppleGlassSwitch(
                     checked = state.spatialCrossfeed,
@@ -873,7 +875,7 @@ private fun EqualizerOptionsPage(state: AudioEngineUiState) {
                             modifier = Modifier.weight(1f),
                         )
                         Text(
-                            text = "%+.1f".format(db),
+                            text = stringResource(R.string.ui_text_c6a3564f1d).format(db),
                             color = if (levelMb == 0) Color.White.copy(alpha = 0.50f) else Color.White,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -955,7 +957,7 @@ private fun EqualizerDotCurveCard(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text("Interactive Dot Curve", color = Color.White, fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.ui_interactive_dot_curve), color = Color.White, fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold)
             val statusText = if (activeBandIdx in bandsMb.indices) {
                 val db = bandsMb[activeBandIdx] / 100f
                 "%+.1f dB".format(db)
@@ -1193,11 +1195,11 @@ private fun DjMasterTab(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column {
-                    Text("Master Amplifier Boost", color = Color.White, fontSize = 13.5.sp, fontWeight = FontWeight.SemiBold)
-                    Text("Hardware LoudnessEnhancer (up to +18 dB)", color = Color.White.copy(alpha = 0.56f), fontSize = 11.sp)
+                    Text(stringResource(R.string.ui_master_amplifier_boost), color = Color.White, fontSize = 13.5.sp, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.ui_hardware_loudnessenhancer_up_to_18_db), color = Color.White.copy(alpha = 0.56f), fontSize = 11.sp)
                 }
                 Text(
-                    text = "${state.djBoostPercent}%",
+                    text = stringResource(R.string.ui_text_fc9db15ab9, state.djBoostPercent),
                     color = if (state.djBoostPercent > 100) EngineActiveGreen else Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
@@ -1293,8 +1295,12 @@ private fun DjEchoTab(state: AudioEngineUiState) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("Stereo Echo & Delay", color = Color.White, fontSize = 13.5.sp, fontWeight = FontWeight.SemiBold)
-                Text("Spatial reflections (${state.echoDelayMs} ms)", color = Color.White.copy(alpha = 0.58f), fontSize = 11.sp)
+                Text(stringResource(R.string.ui_stereo_echo_delay), color = Color.White, fontSize = 13.5.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    stringResource(R.string.spatial_reflections_delay, state.echoDelayMs),
+                    color = Color.White.copy(alpha = 0.58f),
+                    fontSize = 11.sp,
+                )
             }
             AppleGlassSwitch(checked = state.echoEnabled, onCheckedChange = AudioEngineManager::setEchoEnabled)
         }
@@ -1309,8 +1315,8 @@ private fun DjEchoTab(state: AudioEngineUiState) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("3D Ping-Pong Bounce", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Medium)
-                Text("Alternates reflections L <-> R", color = Color.White.copy(alpha = 0.56f), fontSize = 11.sp)
+                Text(stringResource(R.string.ui_text_505c74ed85), color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                Text(stringResource(R.string.ui_alternates_reflections_l_r), color = Color.White.copy(alpha = 0.56f), fontSize = 11.sp)
             }
             AppleGlassSwitch(checked = state.echoPingPong, onCheckedChange = AudioEngineManager::setEchoPingPong)
         }
@@ -1363,7 +1369,7 @@ private fun DjMixerTab(state: AudioEngineUiState) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("DJ Bipolar Club Filter", color = Color.White, fontSize = 13.5.sp, fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.ui_dj_bipolar_club_filter), color = Color.White, fontSize = 13.5.sp, fontWeight = FontWeight.SemiBold)
                 Text(
                     text = when {
                         state.filterSweep < -0.04f -> "Low-Pass Muffle (${(state.filterSweep * 100).roundToInt()}%)"
@@ -1385,7 +1391,7 @@ private fun DjMixerTab(state: AudioEngineUiState) {
                     }
                     .padding(horizontal = 10.dp, vertical = 5.dp),
             ) {
-                Text("Snap 0", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.ui_snap_0), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
             }
         }
 
@@ -1401,8 +1407,8 @@ private fun DjMixerTab(state: AudioEngineUiState) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("Jet Flanger Swoosh", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Medium)
-                Text("LFO swept jet phase modulation", color = Color.White.copy(alpha = 0.56f), fontSize = 11.sp)
+                Text(stringResource(R.string.ui_jet_flanger_swoosh), color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                Text(stringResource(R.string.ui_lfo_swept_jet_phase_modulation), color = Color.White.copy(alpha = 0.56f), fontSize = 11.sp)
             }
             AppleGlassSwitch(checked = state.flangerEnabled, onCheckedChange = AudioEngineManager::setFlangerEnabled)
         }
@@ -1444,8 +1450,12 @@ private fun DjDeckTab(state: AudioEngineUiState) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("Vinyl Turntable Link", color = Color.White, fontSize = 13.5.sp, fontWeight = FontWeight.SemiBold)
-                Text(if (state.turntableLinked) "Speed & pitch locked together" else "Independent BPM tempo & key pitch", color = Color.White.copy(alpha = 0.56f), fontSize = 11.sp)
+                Text(stringResource(R.string.ui_vinyl_turntable_link), color = Color.White, fontSize = 13.5.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    stringResource(if (state.turntableLinked) R.string.speed_pitch_locked else R.string.independent_bpm_tempo_key_pitch),
+                    color = Color.White.copy(alpha = 0.56f),
+                    fontSize = 11.sp,
+                )
             }
             AppleGlassSwitch(checked = state.turntableLinked, onCheckedChange = AudioEngineManager::setDjTurntableLinked)
         }
@@ -1802,7 +1812,7 @@ private fun EngineToggleCardRow(
                 )
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                    contentDescription = "Open $title options",
+                    contentDescription = stringResource(R.string.open_title_options, title),
                     tint = Color.White.copy(alpha = 0.42f),
                     modifier = Modifier.size(16.dp),
                 )
@@ -1954,7 +1964,7 @@ private fun DjEnergyDialCard(
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(title, color = AppleTextSecondary, fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 0.8.sp)
-            Text("+$dbValue dB", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.ui_db, dbValue), color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
