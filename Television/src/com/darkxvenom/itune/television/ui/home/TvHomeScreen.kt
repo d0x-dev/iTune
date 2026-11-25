@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.television.ui.home
 
+
+import androidx.compose.ui.res.stringResource
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
@@ -204,7 +206,7 @@ fun TvHomeScreen(
                                 MusicPlayerState.play(tracks.first(), tracks)
                                 onOpenPlayer()
                             } else {
-                                Toast.makeText(context, "Couldn't load ${item.title}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_couldn_t_load, item.title), Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
@@ -231,7 +233,7 @@ fun TvHomeScreen(
         item(key = "home_top_picks_section") {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "Top Picks",
+                    text = stringResource(R.string.ui_top_picks),
                     color = Color.White,
                     fontSize = 21.sp,
                     fontFamily = SFProDisplay,
@@ -419,7 +421,7 @@ private fun TvPortraitHeroCard(
                 )
                 Spacer(modifier = Modifier.width(3.dp))
                 Text(
-                    text = "iTune",
+                    text = stringResource(R.string.app_name),
                     color = Color.White,
                     fontFamily = SFProDisplay,
                     fontSize = 10.5.sp,
@@ -664,7 +666,7 @@ private fun TvArtistCircleCard(
             )
 
             Text(
-                text = "Artist",
+                text = stringResource(R.string.ui_artist),
                 color = Color.White.copy(alpha = 0.55f),
                 fontSize = 11.sp,
                 fontFamily = SFProDisplay,
