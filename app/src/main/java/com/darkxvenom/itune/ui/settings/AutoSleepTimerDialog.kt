@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.settings
 
+
+import androidx.compose.ui.res.stringResource
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -152,7 +154,7 @@ fun AutoSleepTimerDialog(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = "Auto Sleep Timer",
+                    text = stringResource(R.string.ui_auto_sleep_timer),
                     color = AppleTextPrimary,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -160,7 +162,7 @@ fun AutoSleepTimerDialog(
                 )
 
                 Text(
-                    text = "Recurring sleep schedule · auto pauses playback",
+                    text = stringResource(R.string.ui_recurring_sleep_schedule_auto_pauses_playback),
                     color = AppleTextSecondary,
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center,
@@ -182,7 +184,7 @@ fun AutoSleepTimerDialog(
                 ) {
                     Column {
                         Text(
-                            text = "Enable Auto Sleep",
+                            text = stringResource(R.string.ui_enable_auto_sleep),
                             color = AppleTextPrimary,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium
@@ -253,7 +255,7 @@ fun AutoSleepTimerDialog(
 
                 // Days Selection Title
                 Text(
-                    text = "ACTIVE DAYS",
+                    text = stringResource(R.string.ui_active_days),
                     color = AppleTextSecondary,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -333,10 +335,10 @@ fun AutoSleepTimerDialog(
                             SettingsStore.setAutoSleepConfig(
                                 context = context,
                                 enabled = enabled,
-                                startH = startHour24,
-                                startM = startMinute,
-                                endH = endHour24,
-                                endM = endMinute,
+                                startHour = startHour24,
+                                startMinute = startMinute,
+                                endHour = endHour24,
+                                endMinute = endMinute,
                                 days = finalDays
                             )
                             onDismiss()
@@ -344,7 +346,7 @@ fun AutoSleepTimerDialog(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Save Schedule",
+                        text = stringResource(R.string.ui_save_schedule),
                         color = AppleMusicRed,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -369,7 +371,7 @@ fun AutoSleepTimerDialog(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel),
                         color = AppleTextSecondary,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Normal,
@@ -427,7 +429,7 @@ private fun AppleTimeSelectorRow(
                 }
             )
 
-            Text(text = ":", color = AppleTextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.ui_text_05a79f06cf), color = AppleTextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
 
             // Minute Controller
             AppleStepperBox(
@@ -465,7 +467,7 @@ private fun AppleTimeSelectorRow(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "AM",
+                        text = stringResource(R.string.ui_am),
                         color = if (!isPm) Color.White else AppleTextSecondary,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold
@@ -486,7 +488,7 @@ private fun AppleTimeSelectorRow(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "PM",
+                        text = stringResource(R.string.ui_pm),
                         color = if (isPm) Color.White else AppleTextSecondary,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold
@@ -521,7 +523,7 @@ private fun AppleStepperBox(
                 },
             contentAlignment = Alignment.Center
         ) {
-            Icon(Icons.Default.Remove, contentDescription = "Decrease", tint = AppleTextSecondary, modifier = Modifier.size(12.dp))
+            Icon(Icons.Default.Remove, contentDescription = stringResource(R.string.ui_decrease), tint = AppleTextSecondary, modifier = Modifier.size(12.dp))
         }
 
         Text(
@@ -541,7 +543,7 @@ private fun AppleStepperBox(
                 },
             contentAlignment = Alignment.Center
         ) {
-            Icon(Icons.Default.Add, contentDescription = "Increase", tint = AppleTextSecondary, modifier = Modifier.size(12.dp))
+            Icon(Icons.Default.Add, contentDescription = stringResource(R.string.ui_increase), tint = AppleTextSecondary, modifier = Modifier.size(12.dp))
         }
     }
 }
