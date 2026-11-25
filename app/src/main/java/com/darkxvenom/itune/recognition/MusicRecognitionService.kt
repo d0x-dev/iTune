@@ -109,8 +109,8 @@ class MusicRecognitionService : Service() {
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_recognition_mic)
-            .setContentTitle("Listening for music…")
-            .setContentText("Hold phone near sound source")
+            .setContentTitle(getString(R.string.listening_for_music))
+            .setContentText(getString(R.string.hold_phone_near_sound_source))
             .setProgress(0, 0, true)
             .setOngoing(true)
             .setContentIntent(openPendingIntent)
@@ -175,7 +175,7 @@ class MusicRecognitionService : Service() {
             } catch (_: RecognitionPermissionException) {
                 showPermissionRequiredNotification()
             } catch (e: Exception) {
-                showErrorNotification(e.message ?: "Unable to recognize audio")
+                showErrorNotification(e.message ?: getString(R.string.unable_to_recognize_audio))
             } finally {
                 isRecognizing = false
                 requestTileUpdate(applicationContext)
@@ -235,14 +235,14 @@ class MusicRecognitionService : Service() {
             .setSmallIcon(R.drawable.ic_recognition_mic)
             .setContentTitle(result.title)
             .setContentText(subtitle)
-            .setSubText("Song Identified")
+            .setSubText(getString(R.string.song_identified))
             .apply { artworkBitmap?.let { setLargeIcon(it) } }
             .setContentIntent(playPendingIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setDefaults(Notification.DEFAULT_ALL)
-            .addAction(R.drawable.play, "Play in iTune", playPendingIntent)
-            .addAction(R.drawable.more_horiz, "View Details", openPendingIntent)
+            .addAction(R.drawable.play, getString(R.string.play_in_itune), playPendingIntent)
+            .addAction(R.drawable.more_horiz, getString(R.string.view_details), openPendingIntent)
             .build()
 
         notificationManager.notify(NOTIFICATION_ID_RESULT, notification)
@@ -261,8 +261,8 @@ class MusicRecognitionService : Service() {
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_recognition_mic)
-            .setContentTitle("No match found")
-            .setContentText("Could not identify the song. Tap to try again.")
+            .setContentTitle(getString(R.string.no_match_found))
+            .setContentText(getString(R.string.recognition_retry_message))
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(retryPendingIntent)
@@ -286,8 +286,8 @@ class MusicRecognitionService : Service() {
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_recognition_mic)
-            .setContentTitle("Microphone permission needed")
-            .setContentText("Tap to allow microphone access so iTune can identify music.")
+            .setContentTitle(getString(R.string.microphone_permission_needed))
+            .setContentText(getString(R.string.microphone_permission_help))
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(openPendingIntent)
@@ -309,7 +309,7 @@ class MusicRecognitionService : Service() {
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_recognition_mic)
-            .setContentTitle("Recognition failed")
+            .setContentTitle(getString(R.string.recognition_failed))
             .setContentText(message)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
