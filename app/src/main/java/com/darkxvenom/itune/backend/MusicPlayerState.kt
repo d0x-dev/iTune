@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.backend
 
+
+import com.darkxvenom.itune.R
 import android.content.Context
 import android.net.Uri
 import android.net.ConnectivityManager
@@ -538,7 +540,7 @@ object MusicPlayerState : Player.Listener {
         ensureProgressLoopRunning()
         if (AutoSleepTimerManager.isSleepWindowActive()) {
             appContext?.let {
-                android.widget.Toast.makeText(it, "Auto Sleep Timer active · Playback paused", android.widget.Toast.LENGTH_SHORT).show()
+                android.widget.Toast.makeText(it, it.getString(R.string.toast_auto_sleep_timer_active_playback_paused), android.widget.Toast.LENGTH_SHORT).show()
             }
             pause()
             return
@@ -689,7 +691,7 @@ object MusicPlayerState : Player.Listener {
                 if (streamUrl.isNullOrBlank()) {
                     Log.e(TAG, "Failed to resolve stream URL for track: ${track.id}")
                     if (SettingsStore.state.value.offlineMode && cachedFile == null) {
-                        appContext?.let { Toast.makeText(it, "Offline mode: this song is not downloaded", Toast.LENGTH_SHORT).show() }
+                        appContext?.let { Toast.makeText(it, it.getString(R.string.toast_offline_mode_this_song_is_not_downloaded), Toast.LENGTH_SHORT).show() }
                     }
                     showPlaybackFailure(track.id, null)
                     resolvingStream = false
@@ -950,12 +952,12 @@ object MusicPlayerState : Player.Listener {
         val track = currentTrack ?: return
         if (upgradingQuality) return
         if (SettingsStore.state.value.offlineMode) {
-            Toast.makeText(ctx, "Offline mode: cannot upgrade quality", Toast.LENGTH_SHORT).show()
+            Toast.makeText(ctx, ctx.getString(R.string.toast_offline_mode_cannot_upgrade_quality), Toast.LENGTH_SHORT).show()
             return
         }
 
         // Show immediate default toast on phone as requested:
-        Toast.makeText(ctx, "Upgrading Quality", Toast.LENGTH_SHORT).show()
+        Toast.makeText(ctx, ctx.getString(R.string.toast_upgrading_quality), Toast.LENGTH_SHORT).show()
         upgradingQuality = true
 
         val activeSources = com.darkxvenom.itune.data.sources.SourceRegistry.activeForPlayback()
@@ -963,7 +965,7 @@ object MusicPlayerState : Player.Listener {
 
         if (activeSources.isEmpty()) {
             upgradingQuality = false
-            Toast.makeText(ctx, "No lossless streaming sources enabled in Sources", Toast.LENGTH_SHORT).show()
+            Toast.makeText(ctx, ctx.getString(R.string.toast_no_lossless_streaming_sources_enabled_in_sources), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -1062,7 +1064,7 @@ object MusicPlayerState : Player.Listener {
                         )
                     )
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(ctx, "No higher quality stream found across enabled sources", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(ctx, ctx.getString(R.string.toast_no_higher_quality_stream_found_across_enabled_sour), Toast.LENGTH_SHORT).show()
                     }
                     return@launch
                 }
@@ -1096,7 +1098,7 @@ object MusicPlayerState : Player.Listener {
                         player.setPlaybackSpeed(if (holdingFast) 2f else playbackSpeed)
                         player.playWhenReady = wasPlaying
                     }
-                    Toast.makeText(ctx, "Upgraded to Lossless • $kbps kbps", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(ctx, ctx.getString(R.string.toast_upgraded_to_lossless_kbps, kbps), Toast.LENGTH_SHORT).show()
                 }
 
                 // Update signal pipeline trace store with the winning streamer and full evaluation steps
@@ -1283,7 +1285,7 @@ object MusicPlayerState : Player.Listener {
             shuffleEnabled = true
             exoPlayer?.shuffleModeEnabled = true
             appContext?.let {
-                android.widget.Toast.makeText(it, "Shuffle is locked by Permanent Shuffle in Settings", android.widget.Toast.LENGTH_SHORT).show()
+                android.widget.Toast.makeText(it, it.getString(R.string.toast_shuffle_is_locked_by_permanent_shuffle_in_settings), android.widget.Toast.LENGTH_SHORT).show()
             }
             return
         }
