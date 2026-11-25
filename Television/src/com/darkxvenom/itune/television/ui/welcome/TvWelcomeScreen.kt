@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.television.ui.welcome
 
+
+import androidx.compose.ui.res.stringResource
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -576,7 +578,7 @@ fun TvWelcomeScreen(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_itune_waves),
-                    contentDescription = "iTune Waves",
+                    contentDescription = stringResource(R.string.ui_itune_waves),
                     colorFilter = ColorFilter.tint(cornerWaveColor),
                     modifier = Modifier
                         .size(34.dp)
@@ -586,7 +588,7 @@ fun TvWelcomeScreen(
                 )
 
                 Text(
-                    text = "iTune",
+                    text = stringResource(R.string.app_name),
                     color = cornerBrandColor,
                     fontFamily = SFProDisplay,
                     fontSize = 20.sp,
@@ -699,7 +701,7 @@ fun TvWelcomeScreen(
                                         ) {
                                             if (nameText.isEmpty()) {
                                                 Text(
-                                                    text = "Your Name",
+                                                    text = stringResource(R.string.ui_your_name),
                                                     color = placeholderColor,
                                                     fontFamily = WelcomeSFPro,
                                                     fontSize = 17.sp,
@@ -724,7 +726,7 @@ fun TvWelcomeScreen(
                                     exit = fadeOut(tween(180)),
                                 ) {
                                     Text(
-                                        text = "Enter your name to personalize iTune",
+                                        text = stringResource(R.string.ui_enter_your_name_to_personalize_itune),
                                         color = WelcomeCrimson,
                                         fontFamily = WelcomeSFPro,
                                         fontSize = 13.sp,
@@ -774,7 +776,7 @@ fun TvWelcomeScreen(
                             ) {
                                 Image(
                                     painter = painterResource(R.drawable.ic_google_logo),
-                                    contentDescription = "Google",
+                                    contentDescription = stringResource(R.string.ui_google),
                                     modifier = Modifier.size(30.dp),
                                 )
                             }
@@ -1107,7 +1109,7 @@ private fun TvWelcomeOutroTravelingBrand(
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.ic_itune_waves),
-            contentDescription = "iTune Waves",
+            contentDescription = stringResource(R.string.ui_itune_waves),
             colorFilter = ColorFilter.tint(iconColor),
             modifier = Modifier
                 .offset { IntOffset(iconTopLeft.x.roundToInt(), iconTopLeft.y.roundToInt()) }
@@ -1311,7 +1313,7 @@ private fun TvWelcomeContinueButton(
             .padding(horizontal = 28.dp),
     ) {
         Text(
-            text = "Continue",
+            text = stringResource(R.string.ui_continue),
             color = Color.White,
             fontFamily = SFProDisplay,
             fontSize = 17.5.sp,
@@ -1320,7 +1322,7 @@ private fun TvWelcomeContinueButton(
         )
         Icon(
             imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
-            contentDescription = "Continue",
+            contentDescription = stringResource(R.string.ui_continue),
             tint = Color.White,
             modifier = Modifier
                 .align(Alignment.CenterEnd)
@@ -1401,13 +1403,13 @@ private fun TvWelcomeGoogleContinueButton(
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_google_logo),
-                    contentDescription = "Google",
+                    contentDescription = stringResource(R.string.ui_google),
                     modifier = Modifier.size(18.dp),
                 )
             }
             Spacer(modifier = Modifier.size(12.dp))
             Text(
-                text = "Continue with Google",
+                text = stringResource(R.string.ui_continue_with_google),
                 color = Color.White,
                 fontFamily = SFProDisplay,
                 fontSize = 17.sp,
@@ -1467,7 +1469,7 @@ private fun TvWelcomeSkipSignInButton(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = "Skip Sign In",
+            text = stringResource(R.string.ui_skip_sign_in),
             color = textColor,
             fontFamily = SFProDisplay,
             fontSize = 16.sp,
