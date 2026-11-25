@@ -6,8 +6,19 @@
 .kotlin/
 .DS_Store
 /build
+*/build
 /captures
 .externalNativeBuild
 .cxx
+/app/.cxx
 local.properties
-/app/release/
+*.log
+
+# Temp & foreign scripts
+.env
+*.session
+*.session-journal
+__pycache__/
+*.pyc
+media_downloads/
+logs/
