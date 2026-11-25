@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">Zrušiť</string>
+    <string name="save">Uložiť</string>
+    <string name="close">Zavrieť</string>
+    <string name="done">Hotovo</string>
+    <string name="back">Späť</string>
+    <string name="play">Prehrať</string>
+    <string name="shuffle">Náhodne</string>
+    <string name="retry">Skúsiť znova</string>
+    <string name="try_again">Skús to znova</string>
+    <string name="more">Viac</string>
+    <string name="less">Menej</string>
+    <string name="share">Zdieľať</string>
+    <string name="show_all">Zobraziť všetko</string>
+    <string name="top_songs">Najlepšie piesne</string>
+    <string name="suggested">Navrhované</string>
+    <string name="subscribers">%1$spredplatitelia</string>
+    <string name="monthly_listeners">%1$smesačný poslucháč</string>
+    <string name="signed_by">Podpis%1$s</string>
+    <string name="about_artist">O umelcovi</string>
+    <string name="about_album">O albume</string>
+    <string name="recent_album">Nedávny album</string>
+    <string name="recent_ep">Európsky parlament</string>
+    <string name="recent_single">Nedávny samostatný</string>
+    <string name="subscribe">Odoberať</string>
+    <string name="unsubscribe">Zrušiť odber</string>
+    <string name="add_to_library">Pridať do knižnice</string>
+    <string name="remove_from_library">Odstrániť z knižnice</string>
+    <string name="add_to_playlist">Pridať do zoznamu skladieb</string>
+    <string name="remove_from_playlist">Odstrániť z tohto zoznamu skladieb</string>
+    <string name="play_next">Prehrať ďalej</string>
+    <string name="add_to_queue">Pridať do fronty</string>
+    <string name="start_radio">Spustiť rádio</string>
+    <string name="open">Otvoriť</string>
+    <string name="open_album">Otvoriť album</string>
+    <string name="open_artist">Otvorený umelec</string>
+    <string name="open_playlist">Otvoriť zoznam skladieb</string>
+    <string name="song_info">Pieseň info</string>
+    <string name="song_info_album">Album</string>
+    <string name="song_info_release_date">Dátum vydania</string>
+    <string name="song_info_views">Hra / pohľady</string>
+    <string name="song_info_likes">Lásky</string>
+    <string name="song_info_comments">Poznámky</string>
+    <string name="song_info_unavailable">Nie je k dispozícii</string>
+    <string name="song_info_error">Niektoré informácie nemohli byť načítané.</string>
+    <string name="song_info_retry">Obraz</string>
+    <string name="like">Ako</string>
+    <string name="dislike">Nepáči sa mi</string>
+    <string name="download">Stiahnuť</string>
+    <string name="download_all">Stiahnuť všetko</string>
+    <string name="downloaded">Stiahnuté</string>
+    <string name="downloading">Sťahovanie</string>
+    <string name="download_notification_title">Sťahovanie</string>
+    <string name="delete_download">Odstrániť sťahovanie</string>
+    <string name="delete_download_confirmation">Odstrániť%1$sZ tohto zariadenia? Ťuknite znovu na potvrdenie.</string>
+    <string name="delete">Odstrániť</string>
+    <string name="queued">Hľadaný</string>
+    <string name="saved_to_downloads">Uložené na stiahnutie</string>
+    <string name="search_this_list">Hľadať tento zoznam</string>
+    <string name="clear_search">Vymazať vyhľadávanie</string>
+    <string name="close_search">Zavrieť vyhľadávanie</string>
+    <string name="nothing_matches">Nič sa tu nezhoduje%1$s</string>
+    <string name="sort_songs">Triediť piesne</string>
+    <string name="artist">umelec</string>
+    <string name="album">album</string>
+    <string name="playlist">Zoznam skladieb</string>
+    <string name="folder">Priečinok</string>
+    <string name="songs">Piesne</string>
+    <string name="song_count">%1$dspev</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$dstopa</item>
+        <item quantity="other">%1$dstopy</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$dminúta</item>
+        <item quantity="other">%1$dminúty</item>
+    </plurals>
+    <string name="one_hour">1 hodina</string>
+    <string name="hours_minutes_short">%1$dh%2$dm</string>
+    <string name="minutes_short">%1$dmin</string>
+    <string name="pin">Pin</string>
+    <string name="unpin">Roztočiť</string>
+    <string name="tile_identify_music">Identifikovať hudbu</string>
+    <string name="tile_identify_music_desc">Identifikovať piesne hrajúce sa okolo vásiTune</string>
+    <string name="widget_itune_description">KontrolaiTuneprehrávanie z domovskej obrazovky</string>
+    <string name="app_language">Jazyk aplikácie</string>
+    <string name="app_language_subtitle">Jazyk pre menu, tlačidlá a správy</string>
+    <string name="app_language_description">Vyberte jazyk použitý preiTunerozhranie.</string>
+    <string name="system_default_language">Štandardný systém</string>
+    <string name="follow_device_language">Postupujte podľa jazyka zariadenia</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">Použiť anglické rozhranie</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface" />
+    <string name="hindi_interface_language">Hindčina jazyk rozhrania</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">Použiť španielske rozhranie</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">Použiť francúzske rozhranie</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">Použiť holandské rozhranie</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">Použiť ruské rozhranie</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">Použiť rozhranie Urdu</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">Použiť čínske rozhranie</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">Použiť nemecké rozhranie</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">Použiť portugalské rozhranie</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">Použite talianske rozhranie</string>
+    <string name="japanese_language">日本語</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface" />
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Svenskt gränssnitt</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">-</string>
+    <string name="japanese_interface">Použiť japonské rozhranie</string>
+    <string name="favorite_artist">Obľúbený umelec</string>
+    <string name="remove_favorite_artist">Odstrániť z obľúbených umelcov</string>
+    <string name="add_to_favorite_artists">Pridať k obľúbeným umelcom</string>
+    <string name="removed_from_artists">Odstránené od umelcov</string>
+    <string name="added_to_artists">Pridané pre umelcov</string>
+    <string name="play_top_songs">Hrať Top Piesne</string>
+    <string name="play_album">Prehrať album</string>
+    <string name="play_playlist">Playlist</string>
+    <string name="create_new_playlist">Vytvoriť nový zoznam skladieb</string>
+    <string name="create_playlist">Vytvoriť zoznam skladieb</string>
+    <string name="radio">Rádio</string>
+    <string name="search">Hľadať</string>
+    <string name="share_playlist_link">Zdieľať odkaz na zoznam skladieb</string>
+    <string name="copy_share_link">Kopírovať odkaz zdieľania</string>
+    <string name="rename_playlist">Premenovať zoznam skladieb</string>
+    <string name="delete_playlist">Odstrániť zoznam skladieb</string>
+    <string name="share_link_copied">Zdieľať odkaz skopírovaný</string>
+    <string name="playlist_removed">Odstránený zoznam skladieb</string>
+    <string name="playlist_no_longer_available">Tento zoznam skladieb už nie je dostupný.</string>
+    <string name="empty_playlist">Prázdny zoznam skladieb</string>
+    <string name="filter_playlists">Zoznam skladieb filtrov...</string>
+    <string name="filter_albums">Filtrovať albumy...</string>
+    <string name="favorite">Obľúbené</string>
+    <string name="tap_to_start_listening">Ťuknite na položku Začnite počúvať</string>
+    <string name="time_zero" formatted="false">0:00</string>
+    <string name="previous">Predchádzajúca</string>
+    <string name="play_or_pause">Prehrať alebo pauzovať</string>
+    <string name="next">Nasledujúci</string>
+    <string name="repeat">Opakovanie</string>
+    <string name="open_title_options">Otvoriť%1$sopcie</string>
+    <string name="reset_page_title">Resetovať%1$s</string>
+    <string name="remove_device">Odstrániť%1$s</string>
+    <string name="profile_name">%1$sprofil</string>
+    <string name="download_option">Stiahnuť%1$s</string>
+    <string name="open_entry_options">Otvoriť%1$sopcie</string>
+    <string name="avatar_number">Avatar%1$s</string>
+    <string name="options_for_track">Možnosti%1$s</string>
+    <string name="preparing">Príprava...</string>
+    <string name="share_image">Zdieľať obrázok</string>
+    <string name="speed_pitch_locked">Rýchlosť &amp; rozstup zamknutý dohromady</string>
+    <string name="independent_bpm_tempo_key_pitch">Samostatné tempo &amp; kľúč</string>
+    <string name="spatial_reflections_delay">Priestorové odrazy (%1$dms)</string>
+    <string name="on">Na</string>
+    <string name="off">Vypnuté</string>
+    <string name="dynamic_island_active">Dynamický ostrov aktívny</string>
+    <string name="dynamic_island_description">Zobrazí sa hladko vonkuiTunepočas prehrávania</string>
+    <string name="preparing_download">Príprava na stiahnutie...</string>
+    <string name="listening_for_music">Počúvanie hudby...</string>
+    <string name="hold_phone_near_sound_source">Podržte telefón blízko zdroja zvuku</string>
+    <string name="unable_to_recognize_audio">Nepodarilo sa rozpoznať zvuk</string>
+    <string name="song_identified">Identifikovaná pieseň</string>
+    <string name="play_in_itune">Hrať viTune</string>
+    <string name="view_details">Zobraziť detaily</string>
+    <string name="no_match_found">Žiadna zhoda nájdená</string>
+    <string name="recognition_retry_message">Nepodarilo sa identifikovať pieseň. Ťuknite a skúste to znova.</string>
+    <string name="microphone_permission_needed">Potrebné povolenie na mikrofón</string>
+    <string name="microphone_permission_help">Ťuknite na možnosť prístupu mikrofónuiTunedokáže identifikovať hudbu.</string>
+    <string name="recognition_failed">Uznanie zlyhalo</string>
+    <string name="tap_install_to_continue">Ťuknite na položku Inštalovať pre pokračovanie</string>
+    <string name="detail_artist">Umelec</string>
+    <string name="detail_album">Album</string>
+    <string name="set_default_ringtone_target">Nastaviť ako štandardné%1$s!</string>
+    <string name="added_ringtone_target">Pridané do%1$s. Vyberte si ju v nastaveniach zvuku.</string>
+    <string name="last_fm_connected_as">Last.fmpripojený ako%1$s</string>
+    <string name="discord_connected_as">Discord pripojený ako%1$s</string>
+    <string name="tv_encrypted_backup_saved">Zašifrovaná záloha uložená (%1$dKB)!</string>
+    <string name="sign_in_verification_failed">Overenie prihlásenia zlyhalo</string>
+    <string name="could_not_rename_playlist">Nepodarilo sa premenovať zoznam skladieb naYouTube Music</string>
+    <string name="could_not_create_playlist">Nepodarilo sa vytvoriť zoznam skladieb</string>
+    <string name="daily_encrypted_backup_enabled">Denné šifrované zálohovanie povolené</string>
+    <string name="cookie_login_failed">Prihlásenie cookie zlyhalo</string>
+    <string name="could_not_open_last_fm">Nemôžem otvoriťLast.fm</string>
+    <string name="last_fm_sign_in_failed">Last.fmprihlásiť zlyhalo</string>
+    <string name="discord_sign_in_failed">Signál Discord zlyhal</string>
+    <string name="could_not_open_android_installer">Nepodarilo sa otvoriť inštalačný systém Android</string>
+    <string name="added_title_to_queue">Pridané%1$s</string>
+    <string name="automatic_backup_disabled">Automatické zálohovanie vypnuté</string>
+    <string name="download_failed">Sťahovanie zlyhalo</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">Inštalovať</string>
+    <string name="ui_text_9ef6a80f91" formatted="false"># 1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">% + 1, 1 f</string>
+    <string name="ui_accounts" formatted="false">+ Účty</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0,0s</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5,0s</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">-</string>
+    <string name="ui_text_7be28ad40e" formatted="false">- 5. 0s</string>
+    <string name="ui_text_a6dee6102d" formatted="false">11 PM</string>
+    <string name="ui_text_1a19c52178" formatted="false">12:00</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">12 PM</string>
+    <string name="ui_text_4e37ece023" formatted="false">15 ms oproti zrkadlu oneskorená nízkopriepustná zmes</string>
+    <string name="ui_text_76b322ac42" formatted="false">2X Rýchla rýchlosť</string>
+    <string name="ui_text_505c74ed85" formatted="false">3D Ping-pong Bounce</string>
+    <string name="ui_text_db9b8df506" formatted="false">6:00</string>
+    <string name="ui_text_2812537f20" formatted="false">6:00</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080</string>
+    <string name="ui_text_05a79f06cf" formatted="false">:</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">Kompletný obrázok s top piesňami, umelcami, albummi a návykmi.</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">Nová verzia je pripravená</string>
+    <string name="ui_account" formatted="false">Účet</string>
+    <string name="ui_account_options" formatted="false">Možnosti účtu</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">ÚČTY</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">Akustický križovač hlavy</string>
+    <string name="ui_activate" formatted="false">Aktivovať</string>
+    <string name="ui_active" formatted="false">Aktívny</string>
+    <string name="ui_active_days" formatted="false">AKTÍVNE DNI</string>
+    <string name="ui_active_profile" formatted="false">Aktívny profil</string>
+    <string name="ui_activity_by_day" formatted="false">Aktivita cez deň</string>
+    <string name="ui_add_account" formatted="false">Pridať účet</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">Pridať vlastné HTTP addon servery (hovorí /manifest.json, /search, /stream) alebo sandbox-izolovaný QuickJS moduly.</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">Automaticky pridať budúce piesne</string>
+    <string name="ui_add_streaming_source" formatted="false">Pridať zdroj prúdu</string>
+    <string name="ui_add_to_playlist" formatted="false">Pridať do zoznamu skladieb</string>
+    <string name="ui_added_playlists" formatted="false">Pridané zoznamy skladieb</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">Nastavte rohový okraj štvorcového albumu.</string>
+    <string name="ui_advanced_cookie_login" formatted="false">Pokročilé prihlásenie súborov cookie</string>
+    <string name="ui_advanced_login" formatted="false">PREDCHÁDZAJÚCI LOGÍN</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">Pokročilé prihlásenie</string>
+    <string name="ui_ai_engine" formatted="false">MOTOR AI</string>
+    <string name="ui_ai_provider" formatted="false">Poskytovateľ AI</string>
+    <string name="ui_albums" formatted="false">Albumy</string>
+    <string name="ui_all_news" formatted="false">Všetky novinky</string>
+    <string name="ui_allow_downloads" formatted="false">Povoliť sťahovanie</string>
+    <string name="ui_allow_microphone" formatted="false">Povoliť mikrofón</string>
+    <string name="ui_allow_microphone_access" formatted="false">Povoliť prístup k mikrofónu</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">Náhradné odrazy L &lt; - &gt; R</string>
+    <string name="ui_always_on_display" formatted="false">Vždy na displeji</string>
+    <string name="ui_am" formatted="false">AM</string>
+    <string name="ui_api_base_url" formatted="false">Základné URL API</string>
+    <string name="ui_artist" formatted="false">Umelec</string>
+    <string name="ui_artist_name" formatted="false">Meno interpreta</string>
+    <string name="ui_artists" formatted="false">Umelci</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">Umelci, piesne, albumy, playlisty...</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">Umelci, piesne, texty a ďalšie</string>
+    <string name="ui_at_least_8_characters" formatted="false">Minimálne 8 znakov</string>
+    <string name="ui_auto_sleep_timer" formatted="false">Automatický časovač spánku</string>
+    <string name="ui_auto_activation_timeout" formatted="false">ČAS OCHRANY</string>
+    <string name="ui_avatar" formatted="false">Avatar</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">NaspäťiTune(AES-256)</string>
+    <string name="ui_backup_password" formatted="false">Zálohovacie heslo</string>
+    <string name="ui_bluetooth_device_access" formatted="false">BluetoothPrístup k zariadeniu</string>
+    <string name="ui_browse" formatted="false">Prechádzať</string>
+    <string name="ui_browse_by_country" formatted="false">Prechádzať podľa krajín</string>
+    <string name="ui_browse_extensions" formatted="false">Prechádzať rozšírenia</string>
+    <string name="ui_browse_live_online_radio" formatted="false">Prechádzať naživo Online Radio</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">Nie je možné zmazať iba účet</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">Poskytovatelia Canvas (objednávka vyhľadávania)</string>
+    <string name="ui_captcha_guidance" formatted="false">Usmernenie CAPTCHA</string>
+    <string name="ui_cast_wireless_devices" formatted="false">CAST A WIRELESS ZARIADENIA</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">Vyberte si audio prehrávanie zdrojov, bezstratové úrovne, a núdzové priority</string>
+    <string name="ui_choose_avatar" formatted="false">Vyberte Avatar</string>
+    <string name="ui_choose_charts_region" formatted="false">Vyberte oblasť grafov</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">Vyberte akoiTunesa objaví na domovskej obrazovke. Zmeniť veľkosť widgetu zo štartéra.</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">Vyberte si profil pokračovať</string>
+    <string name="ui_choose_youtube_channel" formatted="false">VybraťYouTubeKanál</string>
+    <string name="ui_clear" formatted="false">Vyčistiť</string>
+    <string name="ui_clear_use_default" formatted="false">Vyčistiť &amp; štandardne</string>
+    <string name="ui_clear_all" formatted="false">Vyčistiť všetko</string>
+    <string name="ui_confirm" formatted="false">Potvrdiť</string>
+    <string name="ui_confirm_password" formatted="false">Potvrdiť heslo</string>
+    <string name="ui_connect_discord" formatted="false">Pripojiť nesúlad</string>
+    <string name="ui_connect_last_fm" formatted="false">PripojiťLast.fm</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">PripojteSpotifyúčet, ktorý umožňuje Canvas slučky pohybové video umenie a synchronizáciuSpotifyKnižnica.</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">PripojiťYouTube Musics cookies relácie</string>
+    <string name="ui_connect" formatted="false">Pripojiť ›</string>
+    <string name="ui_connecting_spotify" formatted="false">PripojenieSpotify...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">PripojenieYouTube Music...</string>
+    <string name="ui_continue" formatted="false">Pokračovať</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">Pokračovať namiesto toho v prehliadači</string>
+    <string name="ui_continue_with_google" formatted="false">Pokračovať v službe Google</string>
+    <string name="ui_continue_with_spotify" formatted="false">Pokračujte sSpotify</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">Potvrdenia cookie sú uložené viTuneYouTube Musicpredtým ako budú zachránení.</string>
+    <string name="ui_copy_song_name" formatted="false">Kopírovať meno piesne</string>
+    <string name="ui_copy_text" formatted="false">Kopírovať text</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">Copyright © 2026iTuneProjekt. Tento softvér je k dispozícii bez záruky. Môžete ho prerozdeliť a upraviť podľa nižšie uvedených termínov GNU GPL.</string>
+    <string name="ui_corner_length" formatted="false">Dĺžka rohu</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">Nepodarilo sa prehrať obrázok</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">Mohol\'T načítať hudbu práve teraz. Skús to znova.</string>
+    <string name="ui_create" formatted="false">Vytvoriť</string>
+    <string name="ui_create_add" formatted="false">Vytvoriť &amp; Pridať</string>
+    <string name="ui_current_account" formatted="false">Bežný účet</string>
+    <string name="ui_custom_instructions" formatted="false">NÁVOD</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">NÁMORNÝ INDEX ALEBO URL</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">Prispôsobte si prehrávač domovskej obrazovky</string>
+    <string name="ui_customize_your_itune_card" formatted="false">PrispôsobiťiTunekarta</string>
+    <string name="ui_d" formatted="false">D</string>
+    <string name="ui_delete_account" formatted="false">Odstrániť účet</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">Vymazať účet?</string>
+    <string name="ui_developer_announcements" formatted="false">Developerské oznámenia</string>
+    <string name="ui_disconnect" formatted="false">Odpojiť</string>
+    <string name="ui_disconnect_discord" formatted="false">Odpojiť nesúlad</string>
+    <string name="ui_discord_rich_presence" formatted="false">Skazená prítomnosť</string>
+    <string name="ui_dismiss" formatted="false">Odchod</string>
+    <string name="ui_display_full_screen" formatted="false">DISPLAY A FULL SCREEN</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">Zobraziť animované synchronizované texty nad titulkom skladby, zatiaľ čo ovládače Canvas sú skryté</string>
+    <string name="ui_display_name" formatted="false">Názov zobrazenia</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">DJ Bipolárny klub filter</string>
+    <string name="ui_downloaded_cached" formatted="false">Stiahnuté &amp; cached</string>
+    <string name="ui_dp" formatted="false">dp</string>
+    <string name="ui_dynamic_island" formatted="false">Dynamický ostrov</string>
+    <string name="ui_e" formatted="false">E</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">napr. 127,0.0,1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">napr. preložiť do poetického hinglish s rýmami</string>
+    <string name="ui_enable_auto_sleep" formatted="false">Povoliť automatické spanie</string>
+    <string name="ui_enable_proxy" formatted="false">Povoliť proxy</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">PovolenieSpotify&amp; Zoznam skladieb Canvas</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">Šifrovacie heslo (min 8 znakov)</string>
+    <string name="ui_end_of_current_track" formatted="false">Koniec aktuálnej koľaje</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">Zadajte nové meno pre tento účet.</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">Zadajte HTTP addon manifest URL, index modulu QuickJS alebo koncový bod Tidal inštancie.</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">Zadajte heslo použité, keď vaše .itunezáloha bola vytvorená.</string>
+    <string name="ui_enter_your_name" formatted="false">Zadajte svoje meno</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">Zadajte svoje meno na personalizáciuiTune</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">Každý rytmus, neskorá nočná hymna a melódia, s ktorou ste žili, sa zhromaždili na jednej ceste.</string>
+    <string name="ui_everything" formatted="false">Všetko</string>
+    <string name="ui_explore_categories" formatted="false">Preskúmať kategórie</string>
+    <string name="ui_exporting_audio" formatted="false">Exportujem zvuk...</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">Extrakcia krátkeho zvukového otlačku</string>
+    <string name="ui_favorite_stations" formatted="false">Obľúbené stanice</string>
+    <string name="ui_favorites" formatted="false">FAVORITY</string>
+    <string name="ui_featured_hit" formatted="false">Odporúčaný hit</string>
+    <string name="ui_featured_playlists" formatted="false">Odporúčané zoznamy skladieb</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">Sťahujem zvukové vlastnosti...</string>
+    <string name="ui_fetching_live_catalog" formatted="false">Sťahujem živý katalóg...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">Hľadanie lepšieho prúdu</string>
+    <string name="ui_full_view" formatted="false">Celý pohľad</string>
+    <string name="ui_g" formatted="false">G</string>
+    <string name="ui_genre" formatted="false">GENRE</string>
+    <string name="ui_genres_styles" formatted="false">Žánre a štýly</string>
+    <string name="ui_github_repository" formatted="false">GitHub repository</string>
+    <string name="ui_github_repository_open_source" formatted="false">Description</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 alebo neskôr</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 alebo novšie · Copyright © 2026iTuneProjekt</string>
+    <string name="ui_grant" formatted="false">Grant</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">Grant na zobrazenie názvu slúchadiel a živej batérie %</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">Hardware HlasnýEnhancer (do +18 dB)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">Skryje Android status bar a navigačný panel pre bezproblémovú čistú OLED čiernu.</string>
+    <string name="ui_history" formatted="false">História</string>
+    <string name="ui_host" formatted="false">HOST</string>
+    <string name="ui_host_a_session" formatted="false">HOST A SESION</string>
+    <string name="ui_host_controls_playback" formatted="false">Name</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">Ako získať svoje cookies</string>
+    <string name="ui_hq" formatted="false">HQ</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">Identifikovaná so Shazamom</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">Identifikovať hudbu, ktorá sa okolo teba hrá</string>
+    <string name="ui_immersion" formatted="false">IMERZIA</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">Ponorový mód (celá obrazovka)</string>
+    <string name="ui_import" formatted="false">Dovoz</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">Importovať verejné a súkromné zoznamy skladieb • Auto-sync</string>
+    <string name="ui_import_spotify_playlist" formatted="false">DovozSpotifyZoznam skladieb</string>
+    <string name="ui_in_use" formatted="false">Používané</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">Návod v aplikácii, ak poskytovatelia zvuku napádajú protibotové kontroly</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">Nainštalovať pred-pridanej Mornye komunitné rozšírenia alebo skenovať vlastný register úložiska.</string>
+    <string name="ui_installed" formatted="false">Inštalované</string>
+    <string name="ui_interactive_dot_curve" formatted="false">Interaktívna krivka bodky</string>
+    <string name="ui_irecognition" formatted="false">iRecognition</string>
+    <string name="ui_ireconization" formatted="false">iReconizácia</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">iReconizácia načúva na niekoľko sekúnd, aby vytvorila odtlačok prsta hudby. Audio nie je uložené.</string>
+    <string name="ui_ishare" formatted="false">iShare</string>
+    <string name="ui_itune_license" formatted="false">iTuneLicencia</string>
+    <string name="ui_itune_music" formatted="false">iTuneHudba</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTuneotázky texty v presnom poradí nižšie. Ak najvyšší aktívny poskytovateľ nemá synchronizované texty,iTunebezproblémovo spadne späť do ďalšieho.</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTunezdroje otázok v zobrazenom poradí. Presuňte nainštalované rozšírenia a poskytovatelia upraviť prioritu prehrávania.</string>
+    <string name="ui_itune_time_travel" formatted="false">iTuneCestovanie časom</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">Jet Flanger Swoosh</string>
+    <string name="ui_join" formatted="false">Pripojiť</string>
+    <string name="ui_keep_screen_on" formatted="false">Zapnúť obrazovku</string>
+    <string name="ui_l" formatted="false">L</string>
+    <string name="ui_lan_port" formatted="false">LAN prístav</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">Jazykové preferencie (nepovinné, napr. Hindi, Punjabi...)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fmŠkrkanie</string>
+    <string name="ui_layout" formatted="false">LÁSKA</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">Ponechať prázdne pre použitie predvoleného koncového ukazovateľa pre tohto poskytovateľa.</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">Modulácia fázy prúdenia LFO</string>
+    <string name="ui_library" formatted="false">Knižnica</string>
+    <string name="ui_license" formatted="false">Licencia</string>
+    <string name="ui_liked_songs" formatted="false">Piesne sa mi páčili</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">Likes pridané pri prihlásení sú uložené lokálne aj naYouTube MusicTakže zostanú vo vašej knižnici aj po odhlásení.</string>
+    <string name="ui_listening_patterns" formatted="false">POČÚVANIE PATTERNOV</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">Počúvanie zdieľaného zvuku...</string>
+    <string name="ui_live" formatted="false">ŽIVOT</string>
+    <string name="ui_live_radio_stations" formatted="false">Live Radio Stations</string>
+    <string name="ui_loading_announcements" formatted="false">Načítavam oznámenia...</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">Načítavam umelcov, zoznam skladieb a históriu</string>
+    <string name="ui_lossless" formatted="false">Strata</string>
+    <string name="ui_lossless_audio_preference" formatted="false">Bezstratová audio preferencia</string>
+    <string name="ui_lyrics" formatted="false">Texty</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">Texty nie sú k dispozícii pre túto pieseň</string>
+    <string name="ui_lyrics_providers" formatted="false">Poskytovatelia textov</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">Texty úspešne preložené!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">@ info: tooltip</string>
+    <string name="ui_member_since" formatted="false">ČLENSTVO OD</string>
+    <string name="ui_memoji_style" formatted="false">&amp; Štýl memoji</string>
+    <string name="ui_minutes_listened" formatted="false">POČÚVALI MINUTY</string>
+    <string name="ui_mirror_vol" formatted="false">Zrkadlo Vol</string>
+    <string name="ui_model" formatted="false">VZOR</string>
+    <string name="ui_model_68c2cc7f" formatted="false">Vzor</string>
+    <string name="ui_moods_activities" formatted="false">Nálady a aktivity</string>
+    <string name="ui_moods_moments" formatted="false">MOODY A MOMENTY</string>
+    <string name="ui_music_by_genre" formatted="false">Hudba podľa žánru</string>
+    <string name="ui_music_language_preference" formatted="false">Preferovanie hudobného jazyka</string>
+    <string name="ui_music_services" formatted="false">HUDOBNÉ SLUŽBY</string>
+    <string name="ui_name" formatted="false">Názov</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">NEARBY WI-FI HOSTS</string>
+    <string name="ui_network_proxy" formatted="false">Sieťové proxy</string>
+    <string name="ui_new" formatted="false">Nové</string>
+    <string name="ui_new_playlist" formatted="false">Nový zoznam skladieb</string>
+    <string name="ui_new_releases" formatted="false">Nové vydania</string>
+    <string name="ui_news_from_dev" formatted="false">Novinky z dev</string>
+    <string name="ui_next_up" formatted="false">Ďalší</string>
+    <string name="ui_no_albums_found" formatted="false">Nenašli sa žiadne albumy</string>
+    <string name="ui_no_artist_information_available" formatted="false">Nie sú k dispozícii žiadne umelecké informácie</string>
+    <string name="ui_no_artists_found" formatted="false">Nenájdení umelci</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">V knižnici zatiaľ nie sú žiadni umelci.</string>
+    <string name="ui_no_playlists_found" formatted="false">Nenájdený zoznam skladieb</string>
+    <string name="ui_no_results_on_spotify" formatted="false">Žiadne výsledkySpotify</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">Žiadne uložené albumy vo vašej knižnici</string>
+    <string name="ui_no_songs_found" formatted="false">Nenašli sa žiadne piesne</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">Žiadne piesne nájdené v tomto vydaní</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">V tejto sekcii sa nenašli žiadne piesne</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">Nenájdený zoznam skladieb. Vytvorte jeden v knižnici!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">Nestačí počúvať</string>
+    <string name="ui_now_playing" formatted="false">Teraz hrá</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">Teraz hrá</string>
+    <string name="ui_on_heavy_repeat" formatted="false">NA THEAVY REPEAT</string>
+    <string name="ui_options" formatted="false">MOŽNOSTI</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">OR ENTER SP DC COOKIE</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">Orbitálna intenzita a rýchlosť</string>
+    <string name="ui_pair_join_a_device" formatted="false">PAIR &amp; JOIN A ZARIADENIE</string>
+    <string name="ui_password_optional" formatted="false">Heslo (nepovinné)</string>
+    <string name="ui_passwords_dont_match" formatted="false">Heslá nezhodujú</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">Vložiť sp dc token tu...</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">Tu vložte kľúč API</string>
+    <string name="ui_play_in_itune" formatted="false">Hrať viTune</string>
+    <string name="ui_play_next" formatted="false">Prehrať ďalej</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">Hrať na buds &amp; telefón reproduktor/AUX súčasne</string>
+    <string name="ui_playlist_name" formatted="false">Názov zoznamu skladieb</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">Názov zoznamu skladieb</string>
+    <string name="ui_playlist_spotify" formatted="false">Playlist •Spotify</string>
+    <string name="ui_playlists" formatted="false">Zoznam skladieb</string>
+    <string name="ui_plays" formatted="false">Hra</string>
+    <string name="ui_pm" formatted="false">PM</string>
+    <string name="ui_port" formatted="false">Prístav</string>
+    <string name="ui_pre_added_extensions" formatted="false">PREDVSTUPOVÉ ROZŠÍRENIA</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">Prednostne perfektný FLAC/ALAC do 24 bitov / 192 kHz, ak je k dispozícii</string>
+    <string name="ui_preparing_audio_preview" formatted="false">Príprava náhľadu zvuku...</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">Zabraňuje displeju zariadenia vypnúť, zatiaľ čo je Zapnutý displej aktívny.</string>
+    <string name="ui_preview" formatted="false">Nabudúce</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">Náhľad</string>
+    <string name="ui_preview_always_on_display" formatted="false">Náhľad vždy na displeji</string>
+    <string name="ui_profile" formatted="false">KTO TO BOL:</string>
+    <string name="ui_profiles_in_backup" formatted="false">PROFILY V BACKUPE</string>
+    <string name="ui_prompt_type" formatted="false">TYP PROMPTU</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">POSKYTOVATEĽSKÉ PRIORITY (NÁZOVNÁ OBJEDNÁVKA)</string>
+    <string name="ui_queue" formatted="false">Rady</string>
+    <string name="ui_queue_is_empty" formatted="false">Tvár je prázdna</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">Hľadané skladby hrať ďalej</string>
+    <string name="ui_radio" formatted="false">Rádio</string>
+    <string name="ui_read_more" formatted="false">Čítať viac</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">V reálnom čase slabika a riadok rolovanie so živým zvukom</string>
+    <string name="ui_recent_searches" formatted="false">Nedávne hľadanie</string>
+    <string name="ui_recently_added" formatted="false">Nedávno pridané</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">Opakovaná schéma spánku · auto pauzy prehrávanie</string>
+    <string name="ui_remote_music_library" formatted="false">Diaľková knižnica hudby</string>
+    <string name="ui_remove" formatted="false">Odstrániť</string>
+    <string name="ui_rename" formatted="false">Premenovať</string>
+    <string name="ui_rename_account" formatted="false">Premenovať účet</string>
+    <string name="ui_replay" formatted="false">REPLAY</string>
+    <string name="ui_replay_c0f85d66" formatted="false">Prehrať</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">Požadovať bit-perfektný stratový výstup</string>
+    <string name="ui_reset" formatted="false">Resetovať</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">Vrátiť príkaz poskytovateľa</string>
+    <string name="ui_reset_to_default_url" formatted="false">Resetovať na štandardné URL</string>
+    <string name="ui_restore_default_sources" formatted="false">Obnoviť štandardné zdroje</string>
+    <string name="ui_restore_itune_backup" formatted="false">ObnoviťiTuneZáloha</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">ObnovujeJioSaavnaYouTube Musicv predvolenom poradí.JioSaavnzačína aYouTube Musiczačína.</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">Obnovuje LRC Lib, KuGou a SimpMusic ako top preferovaných poskytovateľov a znovu umožňuje všetkých 11 zdrojov.</string>
+    <string name="ui_resume" formatted="false">Pokračovať</string>
+    <string name="ui_rhythm_by_hour" formatted="false">Rytmus za hodinu</string>
+    <string name="ui_room_permissions" formatted="false">POTVRDENIE IZBY</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">Trasa app sieťová prevádzka cez HTTP alebo SOCKS proxy</string>
+    <string name="ui_save_proxy" formatted="false">Uložiť proxy</string>
+    <string name="ui_save_schedule" formatted="false">Uložiť plán</string>
+    <string name="ui_save_to_gallery" formatted="false">Uložiť do galérie</string>
+    <string name="ui_save_token" formatted="false">Uložiť token</string>
+    <string name="ui_saved_to_your_library" formatted="false">Zachránený do vašej knižnice!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">Uložené pomocou Android Keystore. Zálohovacie súbory používajú PBKDF2-HMAC-SHA256 (31 000 kôl) a AES-256-GCM.</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">Ukladá sa do sťahovania/itune/ zálohy</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">Povedz pieseň, umelec, album alebo texty</string>
+    <string name="ui_search" formatted="false">Hľadať</string>
+    <string name="ui_search_identify" formatted="false">Hľadať &amp; Identifikovať</string>
+    <string name="ui_search_announcements" formatted="false">Vyhľadávanie oznámení...</string>
+    <string name="ui_search_country" formatted="false">Krajina hľadania...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">Hľadať skladby, umelcov, albumy a playlisty</string>
+    <string name="ui_search_languages" formatted="false">Hľadať jazyky...</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">Vyhľadať alebo zadať ID modelu</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">Vyhľadávanie skladieb, umelcov, albumov alebo playlistov</string>
+    <string name="ui_searching_lyrics" formatted="false">Hľadám texty...</string>
+    <string name="ui_searching_spotify" formatted="false">HľadanieSpotify...</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">Secondary MIRROR SINK</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">Vyberte profil avatar na prispôsobenieiTuneskúsenosti na všetkých obrazovkách.</string>
+    <string name="ui_select_language" formatted="false">Vybrať jazyk</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">Vyberte predvolenú promptnú šablónu pre textový preklad.</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">Vyberte motor na použitie pre texty podľa riadkov.</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">Vyberte cieľový jazyk pre textový preklad.</string>
+    <string name="ui_server_host_ip" formatted="false">Server Host / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">URL servera / Manifest</string>
+    <string name="ui_settings_appearance" formatted="false">Nastavenie Vzhľad</string>
+    <string name="ui_share_lyrics" formatted="false">Zdieľať texty</string>
+    <string name="ui_share_my_replay" formatted="false">Zdieľajte moju opakovanú hru</string>
+    <string name="ui_share_replay" formatted="false">Zdielať opakovaný záznam</string>
+    <string name="ui_share_this_story" formatted="false">Zdieľať tento príbeh</string>
+    <string name="ui_share_your_time_travel" formatted="false">Zdieľajte cestovanie časom</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">Zobraziť synchronizované texty cez Canvas</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">Podpíšte sa do hudby.youtube.com v stolovom prehliadači. Otvorte vývojové nástroje → Aplikácia → Súbory cookie, potom skopírujte podpísané hodnoty sedenia. Zaobchádzajte s týmito hodnotami ako s heslom.</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">Prihláste saLast.fmúčet</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">Odhlásiť všetky účty</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">Súčasný duálny výstup</string>
+    <string name="ui_skip_sign_in" formatted="false">Preskočiť prihlásenie</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">Posuňte sa dopredu pre rýchlejšie texty · dozadu pre pomalšie · Audio neovplyvnené</string>
+    <string name="ui_snap_0" formatted="false">Snap 0</string>
+    <string name="ui_soundstage_width" formatted="false">Šírka zvukovej fázy</string>
+    <string name="ui_sources" formatted="false">Zdroje</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">Priestorové audio &amp; podstatné</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotify&amp; Kanva</string>
+    <string name="ui_spotify_account" formatted="false">SpotifyÚčet</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">SpotifyCanvas, Apple Music, Tidal &amp; Community pohybu kryty</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">Spotifyje v súčasnosti pripojený. Filmové práce (Canvas) aSpotifysynchronizácia zoznamu skladieb je povolená.</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">Spotifyhľadanie zlyhalo. Skús to znova.</string>
+    <string name="ui_station" formatted="false">Stanica</string>
+    <string name="ui_stereo_echo_delay" formatted="false">Stereo Echo a oneskorenie</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">Uloží tento odkaz a automaticky pridá všetky nové skladby do aplikácie otvorené</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">Stream svoje bit-perfektné stratené knižnice priamo z osobných sieťových akcií alebo Nextcloud.</string>
+    <string name="ui_streaming_sources" formatted="false">ZDROJE NA ZAMERANIE</string>
+    <string name="ui_style" formatted="false">STYLE</string>
+    <string name="ui_suggestions" formatted="false">Návrhy</string>
+    <string name="ui_switch" formatted="false">Prepínač</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">Ťuknite na avatar pre prispôsobenie</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">• Držte pauzu</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">Ťuknite na položku pre okamžité aktivovanie Vždy na displeji</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">Ťuknite na položku Vybrať vysielanie Country &amp; City FM</string>
+    <string name="ui_target_language" formatted="false">CIEĽOVÝ JAZYK</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">Cieľový jazyk</string>
+    <string name="ui_test" formatted="false">Skúška</string>
+    <string name="ui_test_proxy_connection" formatted="false">Test Proxy Connection</string>
+    <string name="ui_testing_proxy" formatted="false">Testovanie proxy...</string>
+    <string name="ui_that_s_your_story" formatted="false">To\'Váš príbeh</string>
+    <string name="ui_this_account" formatted="false">Tento účet</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">Tento zoznam skladieb je prázdny. Pridať skladby od hráča alebo hľadať!</string>
+    <string name="ui_time_travel" formatted="false">ČASOVÁ CESTA</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">Cestovanie časom</string>
+    <string name="ui_time_travel_wrap" formatted="false">ČASOVÝ CESTOVNÝ OBAL</string>
+    <string name="ui_time_synced_lyrics" formatted="false">Časovo synchronizovaný text</string>
+    <string name="ui_top_picks" formatted="false">Najlepšie výbery</string>
+    <string name="ui_top_result" formatted="false">Najvyšší výsledok</string>
+    <string name="ui_top_song" formatted="false">Horná pieseň</string>
+    <string name="ui_top_songs" formatted="false">Top Piesne</string>
+    <string name="ui_top_streamed" formatted="false">Constellation name (optional)</string>
+    <string name="ui_total_listening_time" formatted="false">Celkový čas počúvania</string>
+    <string name="ui_total_time" formatted="false">Celkový čas</string>
+    <string name="ui_translate_actual_lines" formatted="false">Preložiť skutočné riadky</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">Preložiť texty na požiadanie pre akúkoľvek skladbu z ponuky hráčov (... &gt; Texty &gt; Preložiť). Kedy\'Preložiť skutočné riadky\'je vypnuté, preklady sa objavujú ako titulky pod pôvodným textom.</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">Preložte nasledujúce texty skladby do angličtiny. Zachovať poetický tok.</string>
+    <string name="ui_translating_lyrics" formatted="false">Prekladám texty...</string>
+    <string name="ui_translation_mode" formatted="false">Režim prekladu</string>
+    <string name="ui_translation_prompt" formatted="false">Comment</string>
+    <string name="ui_trending_artists" formatted="false">Trendujúci umelci</string>
+    <string name="ui_turn_off_timer" formatted="false">Časovač vypnutia</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">Aktualizovať meno zobrazené na vašej profilovej karte Apple ID v Nastaveniach.</string>
+    <string name="ui_username_optional" formatted="false">Užívateľské meno (nepovinné)</string>
+    <string name="ui_view" formatted="false">Zobraziť</string>
+    <string name="ui_view_on_shazam" formatted="false">Pohľad na Shazam</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">Vinyl Turnable Link</string>
+    <string name="ui_whats_new" formatted="false">ČO NOVÁ</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">Pri prehrávaní hudby sa vždy zapne On Display, ak sa na obrazovke počas zvoleného času nedostaví dotyk. Aktivuje sa iba vo vnútri aplikácie.</string>
+    <string name="ui_who_is_listening" formatted="false">Kto počúva?</string>
+    <string name="ui_widget" formatted="false">Komponent</string>
+    <string name="ui_you" formatted="false">Ty</string>
+    <string name="ui_your_1_artist" formatted="false">Váš 1 umelec</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">Váš API kľúč je bezpečne uložený na zariadení a nikdy zdieľaný.</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">Váš token Discord relácie je uložený zašifrované na tomto zariadení a používa sa len pre bohatú prítomnosť.</string>
+    <string name="ui_your_favourite_song" formatted="false">Vaša obľúbená pieseň</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">Vaša knižnica, zoznam skladieb a nastavenia budú zašifrované heslom najmenej 8 znakov.</string>
+    <string name="ui_your_listening_experience" formatted="false">VAŠA POČÚVAJÚCA SKÚSENOSŤ</string>
+    <string name="ui_your_listening_pattern" formatted="false">Váš vzor počúvania</string>
+    <string name="ui_your_listening_persona" formatted="false">VAŠA POČÚVAJÚCA OSONA</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">Vaša hudobná štatistika</string>
+    <string name="ui_your_musical_anchor" formatted="false">VAŠE HUDOBNÉ ANALY</string>
+    <string name="ui_your_name" formatted="false">Vaše meno</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">Vaše heslo je poslanéLast.fmlen pre vytvorenie sedenia.iTuneto nezachráni.</string>
+    <string name="ui_your_playlists" formatted="false">VAŠE AKTIVITY</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">Vaše zoznamy skladieb</string>
+    <string name="ui_your_sonic_peak" formatted="false">Váš Sonic Peak</string>
+    <string name="ui_your_spotify_playlists" formatted="false">VášSpotifyZoznam skladieb</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">VášSpotifyZoznam skladieb (verejné a súkromné)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSIC&amp; GOOGLE</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube Musiccookies relácie</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">·</string>
+    <string name="ui_text_a118c40635" formatted="false">-</string>
+    <string name="ui_album_artwork" formatted="false">Album</string>
+    <string name="ui_itune_waves" formatted="false">iTuneVlny</string>
+    <string name="ui_previous" formatted="false">Predchádzajúca</string>
+    <string name="ui_next" formatted="false">Nasledujúci</string>
+    <string name="ui_audio_output" formatted="false">Zvukový výstup</string>
+    <string name="ui_low_volume" formatted="false">Nízky objem</string>
+    <string name="ui_high_volume" formatted="false">Vysoký objem</string>
+    <string name="ui_filter" formatted="false">Filter</string>
+    <string name="ui_refresh" formatted="false">Obnoviť</string>
+    <string name="ui_options_6bf5da9c" formatted="false">Možnosti</string>
+    <string name="ui_user_profile_avatar" formatted="false">Profil užívateľa Avatar</string>
+    <string name="ui_news" formatted="false">Novinky</string>
+    <string name="ui_no_song_playing" formatted="false">Žiadna pieseň.</string>
+    <string name="ui_next_track" formatted="false">Nasledujúca skladba</string>
+    <string name="ui_see_all_songs" formatted="false">Pozri všetky piesne</string>
+    <string name="ui_favorite_radio" formatted="false">Obľúbené rádio</string>
+    <string name="ui_live_65c821a5" formatted="false">Živé</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTuneZnačka vlny</string>
+    <string name="ui_refresh_network" formatted="false">Obnoviť sieť</string>
+    <string name="ui_edit_display_name" formatted="false">Upraviť meno zobrazenia</string>
+    <string name="ui_remove_from_queue" formatted="false">Odstrániť z fronty</string>
+    <string name="ui_search_new_releases" formatted="false">Hľadať nové správy</string>
+    <string name="ui_refresh_new_releases" formatted="false">Obnoviť nové vydania</string>
+    <string name="ui_refresh_downloads" formatted="false">Obnoviť sťahovanie</string>
+    <string name="ui_clear_cache" formatted="false">Vyčistiť cache</string>
+    <string name="ui_sort" formatted="false">Triediť</string>
+    <string name="ui_see_all_new_releases" formatted="false">Zobraziť všetky nové vydania</string>
+    <string name="ui_identify" formatted="false">Identifikácia</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">Importovať zoznam skladieb</string>
+    <string name="ui_create_playlist" formatted="false">Vytvoriť zoznam skladieb</string>
+    <string name="ui_liked" formatted="false">Obľúbený</string>
+    <string name="ui_paste" formatted="false">Vložiť</string>
+    <string name="ui_checked" formatted="false">Skontrolované</string>
+    <string name="ui_google_account_playlist" formatted="false">Prehrávací zoznam účtu Google</string>
+    <string name="ui_spotify_playlist" formatted="false">SpotifyZoznam skladieb</string>
+    <string name="ui_local_playlist" formatted="false">Lokálny zoznam skladieb</string>
+    <string name="ui_back_to_audio_engine" formatted="false">Späť do audio motora</string>
+    <string name="ui_bluetooth_settings" formatted="false">BluetoothNastavenie</string>
+    <string name="ui_scan_output_devices" formatted="false">Skenovanie výstupných zariadení</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">Súčasný duálny zvuk</string>
+    <string name="ui_selected" formatted="false">Vybrané</string>
+    <string name="ui_copy" formatted="false">Kopírovať</string>
+    <string name="ui_copy_link" formatted="false">Kopírovať odkaz</string>
+    <string name="ui_upgrade_quality" formatted="false">Kvalita aktualizácie</string>
+    <string name="ui_fm_radio" formatted="false">FM Radio</string>
+    <string name="ui_next_station" formatted="false">Nasledujúca stanica</string>
+    <string name="ui_minimize" formatted="false">Minimalizovať</string>
+    <string name="ui_favorite" formatted="false">Obľúbené</string>
+    <string name="ui_more_options" formatted="false">Ďalšie možnosti</string>
+    <string name="ui_previous_station" formatted="false">Predchádzajúca stanica</string>
+    <string name="ui_sleep_timer" formatted="false">Časovač spánku</string>
+    <string name="ui_audio_output_devices" formatted="false">Zvukové výstupné zariadenia</string>
+    <string name="ui_station_list" formatted="false">Zoznam staníc</string>
+    <string name="ui_volume" formatted="false">Objem</string>
+    <string name="ui_open_lyrics" formatted="false">Otvorené slová</string>
+    <string name="ui_mute_volume" formatted="false">Zrušiť hlasitosť</string>
+    <string name="ui_max_volume" formatted="false">Maximálny objem</string>
+    <string name="ui_endless_queue" formatted="false">Nekonečná fronta</string>
+    <string name="ui_repeat" formatted="false">Opakovanie</string>
+    <string name="ui_refresh_stations" formatted="false">Obnovovacie stanice</string>
+    <string name="ui_favorite_station" formatted="false">Obľúbená stanica</string>
+    <string name="ui_close_ireconization" formatted="false">Zavrieť iReconizáciu</string>
+    <string name="ui_cancel_voice_search" formatted="false">Zrušiť vyhľadávanie hlasu</string>
+    <string name="ui_microphone" formatted="false">Mikrofón</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">Ďalšie možnosti</string>
+    <string name="ui_voice_search" formatted="false">Hlasové vyhľadávanie</string>
+    <string name="ui_saved" formatted="false">Uložené</string>
+    <string name="ui_fill_search_query" formatted="false">Vyplniť vyhľadávanie</string>
+    <string name="ui_remove_from_history" formatted="false">Odstrániť z histórie</string>
+    <string name="ui_itune_icon" formatted="false">iTuneikona</string>
+    <string name="ui_artwork_preview" formatted="false">Náhľad</string>
+    <string name="ui_decrease" formatted="false">Zníženie</string>
+    <string name="ui_increase" formatted="false">Zvýšenie</string>
+    <string name="ui_open_link" formatted="false">Otvoriť odkaz</string>
+    <string name="ui_reset_geometry" formatted="false">Resetovať geometriu</string>
+    <string name="ui_reorder_provider" formatted="false">Poskytovateľ objednávania</string>
+    <string name="ui_save_name" formatted="false">Uložiť meno</string>
+    <string name="ui_editable_name" formatted="false">Editovateľné meno</string>
+    <string name="ui_google" formatted="false">Google</string>
+    <string name="ui_remove_account" formatted="false">Odstrániť účet</string>
+    <string name="ui_reorder_source_priority" formatted="false">Priorita nového zdroja</string>
+    <string name="ui_refresh_playlists" formatted="false">Obnoviť zoznam skladieb</string>
+    <string name="ui_replay_poster" formatted="false">Prehrať plagát</string>
+    <string name="ui_settings" formatted="false">Nastavenie</string>
+    <string name="ui_artist_radio" formatted="false">Rádio interpreta</string>
+    <string name="ui_play_all" formatted="false">Prehrať všetko</string>
+    <string name="ui_delete_playlist" formatted="false">Odstrániť zoznam skladieb</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">Nekonečný front</string>
+    <string name="ui_artist_info" formatted="false">Informácie pre umelca</string>
+    <string name="ui_enabled" formatted="false">Povolené</string>
+    <string name="ui_search_icon" formatted="false">Hľadať ikonu</string>
+    <string name="ui_region">Región:%1$s</string>
+    <string name="ui_connected_devices">ZARIADENIE (%1$s)</string>
+    <string name="ui_up_next">UP NEXT (%1$s)</string>
+    <string name="ui_text_da5c3629fd">%1$s›</string>
+    <string name="ui_active_7c6a4064">%1$s•%2$saktívny</string>
+    <string name="ui_no_new_available_right_now">Žiadne nové%1$sk dispozícii práve teraz</string>
+    <string name="ui_tracks">%1$sstopy •%2$s</string>
+    <string name="ui_songs">%1$spiesne%2$s•%3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s•%2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c">•%1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$strať (-y) nehybná\'t sa zhoduje:</string>
+    <string name="ui_text_a3edb2b714">•%1$s-%2$s</string>
+    <string name="ui_d_eeda119e">%1$sD</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+%1$sdB</string>
+    <string name="ui_connected">%1$spripojený</string>
+    <string name="ui_open_web_player">Otvoriť webového hráča (%1$s)</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">Krajina:%1$s(%2$s)</string>
+    <string name="ui_city_state">Mesto/štát:%1$s</string>
+    <string name="ui_codec_bitrate">Kodek / Dusičnan:%1$s</string>
+    <string name="ui_language">Jazyk:%1$s</string>
+    <string name="ui_tags">Tags:%1$s</string>
+    <string name="ui_stream">Stream:%1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">API kľúč nie je nastavený pre%1$s. Prosím, nastavte ho v Nastaveniach &gt; Texty.</string>
+    <string name="ui_s_clip">%1$ss</string>
+    <string name="ui_loading_more_fm_stations_loaded">Načítavam viac staníc FM (%1$snaložené)...</string>
+    <string name="ui_found">%1$snájdený</string>
+    <string name="ui_version">Verzia%1$s(%2$s)</string>
+    <string name="ui_of_active">%1$sz%2$sAktívny</string>
+    <string name="ui_text_adebc50ade">#%1$s</string>
+    <string name="ui_api_key">%1$sAPI kľúč</string>
+    <string name="ui_channel">Kanál:%1$s</string>
+    <string name="ui_sync_issue">Synchronizácia:%1$s</string>
+    <string name="ui_enter">Vložiť%1$s</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">Ste si istý, že chcete odstrániť%1$sVšetky dáta, playlisty, obľúbené, história, a nastavenia v tomto účte budú trvalo vymazané.</string>
+    <string name="ui_peak">Pík:%1$s</string>
+    <string name="ui_welcome">Vitajte.%1$s</string>
+    <string name="ui_songs_played">%1$sskladby</string>
+    <string name="ui_around">okolo%1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">Keď sa svet zaneprázdni, naladíš sa na%1$sr okolo%2$s.</string>
+    <string name="ui_itune_time_travel_575a110d">iTuneCestovanie časom •%1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s·%2$s</string>
+    <string name="ui_your_biggest_day_was">Tvoj najväčší deň bol%1$s.</string>
+    <string name="ui_listening_recap">%1$s@ info: tooltip</string>
+    <string name="ui_busiest_day">Najrušnejší deň:%1$s</string>
+    <string name="ui_peak_hour_00">Maximálna hodina:%1$s00</string>
+    <string name="ui_loading">Nakládka%1$s...</string>
+    <string name="ui_about">O%1$s</string>
+    <string name="ui_songs_9b614dc8">%1$spiesne</string>
+    <string name="ui_current_offset_ms">Aktuálna Offset:%1$sms</string>
+    <string name="ui_connected_session">Pripojené sedenie:%1$s</string>
+    <string name="ui_k">%1$sk</string>
+    <string name="ui_top_result_c5e5adab">VÝSLEDOK •%1$s</string>
+    <string name="toast_song_not_found_in_itune">Pieseň nenájdená viTune</string>
+    <string name="toast_playback_failed_try_again">Prehrávanie zlyhalo, skúste to znova</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">Automatický spánkový časovač aktívny · prehrávanie zastavené</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">Režim offline: táto skladba nie je stiahnutá</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">Režim offline: nie je možné aktualizovať kvalitu</string>
+    <string name="toast_upgrading_quality">Kvalita modernizácie</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">V Sources nie sú povolené žiadne bezstratové streamovacie zdroje</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">Nenájdený prúd vyššej kvality cez povolené zdroje</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">Shuffle je zamknutý trvalým miešaním v Nastaveniach</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">Na identifikáciu hudby je potrebné povolenie mikrofónu</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">Zobraziť cez iné aplikácie povolenie je potrebné pre rozpoznávanie popup</string>
+    <string name="toast_playback_failed">Prehrávanie zlyhalo</string>
+    <string name="toast_complete_google_sign_in_first">Kompletné Google prihlásenie prvý</string>
+    <string name="toast_waiting_for_youtube_music_session">ČakanieYouTube MusicSedenie...</string>
+    <string name="toast_couldn_t_load_tracks">Mohol\'t nákladové stopy</string>
+    <string name="toast_copied_to_clipboard">Kopírované do schránky</string>
+    <string name="toast_profile_avatar_updated">Profil avatar aktualizovaný</string>
+    <string name="toast_no_tracks_found">Nenájdené žiadne stopy</string>
+    <string name="toast_google_account_connected">Pripojený účet Google</string>
+    <string name="toast_link_copied">Kopírovať odkaz</string>
+    <string name="toast_could_not_open_browser">Nepodarilo sa otvoriť prehliadač</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">Zadajte prístav medzi 1024 a 65535</string>
+    <string name="toast_cached_music_cleared">Cached hudba vyčistená</string>
+    <string name="toast_no_tracks_available_to_add">Žiadne stopy nie sú k dispozícii na pridanie</string>
+    <string name="toast_enter_a_playlist_name">Zadajte názov zoznamu skladieb</string>
+    <string name="toast_system_sound_panel_opened">Otvorený systémový zvukový panel</string>
+    <string name="toast_download_started_check_notification">Stiahnutie spustené · Kontrola oznámenia</string>
+    <string name="toast_playback_will_stop_after_current_track">Prehrávanie sa zastaví po aktuálnej skladbe</string>
+    <string name="toast_sleep_timer_turned_off">Časovač spánku vypnutý</string>
+    <string name="toast_stream_url_copied">Stream URL kopírovať</string>
+    <string name="toast_couldn_t_create_lyrics_card">Mohol\'t vytvoriť textovú kartu</string>
+    <string name="toast_restored_online_lyrics">Obnovené texty online</string>
+    <string name="toast_lyrics_saved">Uložené texty</string>
+    <string name="toast_translation_cleared">Vyrovnaný preklad</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">Prosím, nastavte kľúč API v nastaveniach &gt; Texty najprv</string>
+    <string name="toast_no_lyrics_found_for_this_song">Žiadne texty nájdené pre túto pieseň</string>
+    <string name="toast_could_not_create_audio_clip">Nepodarilo sa vytvoriť audio klip</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">Snippet uložený do hudby /iTune"Snippets"</string>
+    <string name="toast_playing_next">Nasledujúci</string>
+    <string name="toast_added_to_queue">Pridané do fronty</string>
+    <string name="toast_download_started_check_notifications">Stiahnutie spustené · Kontrola oznámení</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">Mohol\'t nájsť túto pieseň naYouTube Music</string>
+    <string name="toast_couldn_t_start_mix">Mohol\'t štartový mix</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">Mohol\'t nájsť stopy naYouTube Music</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">Nepodarilo sa zašifrovať heslo bezpečne. Automatická záloha nebola zmenená.</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">Povolenie na ukladanie záloh v Stiahnutí</string>
+    <string name="toast_choose_an_itune_backup_file">Vyberte si .itunezálohovací súbor</string>
+    <string name="toast_audio_artwork_cache_cleared">Comment</string>
+    <string name="toast_could_not_open_github">Nepodarilo sa otvoriť GitHub</string>
+    <string name="toast_profile_name_updated">Názov profilu aktualizovaný</string>
+    <string name="toast_search_history_cleared">História vyhľadávania vyčistená</string>
+    <string name="toast_listening_history_cleared">História počúvania vyčistená</string>
+    <string name="toast_cached_songs_cleared">Cached piesne vyčistené</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">Otvoriť systémové nastavenia na udelenie displeja cez iné aplikácie</string>
+    <string name="toast_dynamic_island_geometry_reset">Vynulovanie dynamickej geometrie ostrova</string>
+    <string name="toast_geometry_reset">Geometria reset</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">Comment</string>
+    <string name="toast_api_key_saved">Uložený kľúč API</string>
+    <string name="toast_base_url_updated">Základná URL aktualizácia</string>
+    <string name="toast_translation_prompt_updated">Rýchla aktualizácia prekladu</string>
+    <string name="toast_equalizer_reset_to_flat">Equalizer reset na plochý</string>
+    <string name="toast_dj_console_reset">DJ Console reset</string>
+    <string name="toast_name_saved">Uložené meno</string>
+    <string name="toast_syncing_youtube_music_library">SynchronizáciaYouTube Musicknižnica...</string>
+    <string name="toast_signed_out_local_likes_preserved">Odhlásený (lokálne sa zachoval)</string>
+    <string name="toast_signed_out_of_all_google_accounts">Odhlásený zo všetkých účtov Google</string>
+    <string name="toast_discord_disconnected">Odpojený nesúlad</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">Zadajte platné prihlásenieYouTube Musiccookie (SAPISID a cookie relácie)</string>
+    <string name="toast_youtube_music_account_connected">YouTube Musicpripojený účet</string>
+    <string name="toast_account_renamed">Účet premenovaný na</string>
+    <string name="toast_account_deleted">Vymazaný účet</string>
+    <string name="toast_cannot_delete_your_only_account">Nie je možné zmazať váš jediný účet</string>
+    <string name="toast_sources_restored_to_defaults">Zdroje obnovené na štandardné</string>
+    <string name="toast_spotify_disconnected">Spotifyodpojené</string>
+    <string name="toast_spotify_sp_dc_token_saved">Spotifysp dc uložený token</string>
+    <string name="toast_spotify_connected">Spotify connectEd!</string>
+    <string name="toast_complete_spotify_sign_in_first">ÚplnáSpotifyprvý podpis</string>
+    <string name="toast_saved_to_gallery">Zachránení do Galérie!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">PovoliťiTuneinštalovať aktualizácie pokračovať</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">Stiahnutá aktualizácia APK nie je k dispozícii</string>
+    <string name="toast_added_to_queue_next">Pridané do ďalšieho frontu</string>
+    <string name="toast_link_copied_to_clipboard">Odkaz skopírovaný do schránky</string>
+    <string name="toast_song_link_copied_to_clipboard">Pieseň odkaz skopírovaný do schránky</string>
+    <string name="toast_left_ishare_session">Left iShare Session</string>
+    <string name="toast_ishare_lan_host_started">iShare LAN hostiteľ začal!</string>
+    <string name="toast_scanning_lan_for_sessions">Skenovanie LAN pre sedenia...</string>
+    <string name="toast_cache_cleared">Cache vyčistené</string>
+    <string name="toast_signed_out_successfully">Úspešne podpísaný</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">Heslá musia zodpovedať a mať aspoň 8 znakov</string>
+    <string name="toast_no_backup_file_found_in_storage">V úložisku nebol nájdený žiadny záložný súbor</string>
+    <string name="toast_library_settings_restored">Obnovené nastavenia knižnice!</string>
+    <string name="toast_enter_your_backup_password">Zadajte heslo zálohy</string>
+    <string name="toast_syncing_spotify_library">SynchronizáciaSpotifyknižnica...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify ConnectEd!</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">Zadajte platný súbor cookie SP DC</string>
+    <string name="toast_playing">Prehrávanie%%1$s...</string>
+    <string name="toast_upgraded_to_lossless_kbps">Aktualizované na bezstratové •%%1$skbps</string>
+    <string name="toast_playing_next_0f0c851c">Prehrávanie%%1$sNasledujúci</string>
+    <string name="toast_added_to_queue_88e96c25">Pridané%%1$sdo fronty</string>
+    <string name="toast_playing_cb1fb3de">Prehrávanie%%1$s...</string>
+    <string name="toast_playing_next_e0082d95">Hraj ďalej:%%1$s</string>
+    <string name="toast_couldn_t_load">Mohol\'t zaťaženie%%1$s</string>
+    <string name="toast_opening">Otvorenie%%1$s...</string>
+    <string name="toast_couldn_t_open">Mohol\'t otvorený%%1$s</string>
+    <string name="toast_couldn_t_play">Mohol\'t hra%%1$s</string>
+    <string name="toast_library_pin">Knižnica Pin:%%1$s</string>
+    <string name="toast_copied">Kopírované:%%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">Spánkový časovač nastavený pre%%1$smin</string>
+    <string name="toast_lyrics_applied">Použité texty (%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">Pridané%%1$sstopy do fronty</string>
+    <string name="toast_switched_feed_to">Prepnúť na%%1$s</string>
+    <string name="toast_provider_updated_to">Poskytovateľ aktualizovaný na%%1$s</string>
+    <string name="toast_target_language_set_to">Cieľový jazyk nastavený na%%1$s</string>
+    <string name="toast_translation_mode_set_to">Režim prekladu nastavený na%%1$s</string>
+    <string name="toast_added_source">Pridaný zdroj:%%1$s</string>
+    <string name="toast_installed_extension_s">Inštalované%%1$srozšírenie (s)</string>
+    <string name="toast_imported_songs">Dovoz\'%%1$s\'(%%2$spiesne)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">Mohol\'t\'%%1$s\'oYouTube Music</string>
+    <string name="toast_added_songs_to">Pridané%%1$spiesní%%2$s</string>
+    <string name="toast_joining">Pripojenie%%1$s...</string>
+    <string name="toast_added_to">Pridané do%%1$s</string>
+    <string name="toast_itune_v_for_android_tv">iTunev%%1$spre Android TV</string>
+    <string name="toast_backup_failed">Záloha zlyhala:%%1$s</string>
+    <string name="toast_restore_failed">Obnoviť zlyhalo:%%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">iShare, Dynamic Island &amp; Standby</string>
+    <string name="settings_ishare" formatted="false">iShare</string>
+    <string name="settings_dynamic_island" formatted="false">Dynamický ostrov</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">Regulátor plávajúcej vody - bubliny vonkuiTune</string>
+    <string name="settings_always_on_display" formatted="false">Vždy na displeji</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">Zvukový motor a zvukové efekty</string>
+    <string name="settings_dolby_atmos" formatted="false">Dolby Atmos</string>
+    <string name="settings_text_8948f8179a" formatted="false">8D zvuk</string>
+    <string name="settings_spatial_audio" formatted="false">Priestorový zvuk</string>
+    <string name="settings_equalizer_eq" formatted="false">Equalizér (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">Filtrovanie s nízkou rýchlosťou</string>
+    <string name="settings_dj_studio_panel" formatted="false">DJ Studio Panel</string>
+    <string name="settings_audio_normalization" formatted="false">Štandardizácia zvuku</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB Bit perfektný DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">Čistý audio bypass</string>
+    <string name="settings_signal_pipeline" formatted="false">Potrubie signálu</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">- &gt; $activeOutputName</string>
+    <string name="settings_audio_playback" formatted="false">&amp; Prehrávanie zvuku</string>
+    <string name="settings_sources" formatted="false">Zdroje</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">SpravovaťYouTube Music,JioSaavn, nainštalovateľné rozšírenia,WebDAV,SMB, a prehrávanie priority</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">Automatické preskočenie pri chybe</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">Presunúť do ďalšej skladby v čakacom rade, ak prehrávanie zlyhá</string>
+    <string name="settings_download_quality" formatted="false">Kvalita sťahovania</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">Štandardná kvalita použitá akciami na stiahnutie skladby</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">Vyberte predvolenú kvalitu zvuku na stiahnutie v celej aplikácii.</string>
+    <string name="settings_lossless_audio" formatted="false">Bezstratový zvuk</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">Aktualizácia kvality Cached piesní</string>
+    <string name="settings_streaming_quality" formatted="false">Zvyšovanie kvality</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">Vyberte si preferované streamovanie kvality zvuku.</string>
+    <string name="settings_pcm_output_format" formatted="false">Formát výstupu PCM</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">Obnoví prehrávanie na aktuálnej pozícii</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">Vyberte formát PCM požadovaný od Android\'s audio výstup. USB DAC ho môže previesť do formátu, ktorý podporuje.</string>
+    <string name="settings_crossfade" formatted="false">Crossfade</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">Preceňte vyblednutie koncovej trate so začiatkom ďalšej.</string>
+    <string name="settings_automix" formatted="false">AutoMix</string>
+    <string name="settings_afterglow" formatted="false">Afterglow</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">Aplikujte rovnaký efekt Low-Pass Equalizer počas vybraných posledných sekúnd každej skladby. Afterglow pauzy AutoMix a Crossfade, kým je povolené.</string>
+    <string name="settings_permanent_shuffle" formatted="false">Trvalé miešanie</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">Udržujte shuffle trvalo zamknuté v prehrávači</string>
+    <string name="settings_pause_at_volume_0" formatted="false">Pozastaviť pri zväzku 0</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">Automaticky zastaviť prehrávanie, keď hlasitosť dosiahne nulu</string>
+    <string name="settings_volume_bar" formatted="false">Panel hlasitosti</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">Zobrazené na ${state.objemBarSide.lowcase()} okraj pri stlačení tlačidiel hlasitosti</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">Vyberte, ktorý okraj obrazovky sa zobrazí v aplikácii.</string>
+    <string name="settings_content" formatted="false">Obsah</string>
+    <string name="settings_default_content_language" formatted="false">Štandardný jazyk obsahu</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">Jazyk pre nálady, prehliadanie a vyhľadávanie</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">Vyberte preferovaný katalóg používaný v celom Prehliadanie, Moody &amp; Žánre, Playlisty a nové vydania.</string>
+    <string name="settings_default_content_country" formatted="false">Štandardná krajina obsahu</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">Región pre grafy, playlisty a nové vydania</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">Vyberte si regionálny obchod používaný pre novo pridané albumy, regionálne Moods, a Odporúčané Playlists.</string>
+    <string name="settings_hide_explicit_content" formatted="false">Skryť explicitný obsah</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">Filtrovať explicitné skladby cez Moods, prechádzať &amp; Hľadať</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">Teraz prehrávanie a tekuté sklo</string>
+    <string name="settings_splash_screen" formatted="false">Name</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">Spustenie značky animácie &amp; fluid titul odhaliť</string>
+    <string name="settings_animated_cover_art" formatted="false">Animované krycie umenie</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">SpotifyCanvas, Apple Music, Tidal &amp; Community pohybu kryty</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">SpotifyNastavenie &amp; Canvas</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">Automatické schovávanie kanálov</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">Minimalizovať ovládanie po 5s, zatiaľ čo Canvas hrá (tap Canvas toggle)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">Zobraziť synchronizované texty cez Canvas</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">Zobraziť animované synchronizované texty nad názvom skladby pri ovládaní Canvas skryť</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">PrioritaSpotifyKanva</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">SkúsSpotifyCanvas pred Apple Music, Tidal &amp; Community</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">Hrať Animovaný kryt cez celular</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">Povoliť spájanie videí Canvas cez mobilné dáta</string>
+    <string name="settings_player_type" formatted="false">Typ hráča</string>
+    <string name="settings_player_style" formatted="false">Štýl hráča</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">Dynamické sfarbenie hráča</string>
+    <string name="settings_full_screen_cover_art" formatted="false">Full screen cover art</string>
+    <string name="settings_corner_length" formatted="false">Dĺžka rohu</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">Nastavenie polomeru rohu štvorcového albumu</string>
+    <string name="settings_hide_quality_tag" formatted="false">Skryť značku kvality</string>
+    <string name="settings_hide_volume_bar" formatted="false">Skryť panel hlasitosti</string>
+    <string name="settings_home_top_card_style" formatted="false">Domov Top Card štýl</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">Tekuté sklo Nav &amp; Mini Player</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">Sklenený bar a mini prehrávač, s vodnými bublinkami objektívu na držanie</string>
+    <string name="settings_time_synced_lyrics" formatted="false">Časovo synchronizovaný text</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">Sledujte slová a texty v reálnom čase</string>
+    <string name="settings_app_font" formatted="false">Písmo aplikácie</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">Zmena typografie aplikácií; ovládanie hráča si zachováva svoju navrhovanú typovú tvár</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">Vyberte typface pre rozhranie aplikácie.</string>
+    <string name="settings_lyrics_providers" formatted="false">Poskytovatelia textov</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 zdrojov</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">Chróm tekutého skla</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">Refrakčné priesvitné hlavičky a dokové karty</string>
+    <string name="settings_tactile_haptics" formatted="false">Haptika</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">Jemná pulzná spätná väzba medzi ovládacími prvkami prehrávača</string>
+    <string name="settings_downloads_storage" formatted="false">Sťahuje &amp; úložisko</string>
+    <string name="settings_cellular_streaming" formatted="false">Bunkové prúdenie</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">Šírka pásma zvuku na mobilných dátach</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">Ovládanie audio vernosť pri streamovaní preč od Wi-Fi.</string>
+    <string name="settings_download_over_wi_fi" formatted="false">Stiahnuť cez Wi-Fi</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">Čakať na Wi-Fi pred automatickým sťahovaním</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">Piesne Cache po prehrávaní</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">Uložiť pieseň offline skladovanie po dokončení prehrávania</string>
+    <string name="settings_cache_quality" formatted="false">Kvalita cache</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">Nižšia kvalita šetrí úložisko</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">Vyberte si kvalitu skladieb uložených po dokončení prehrávania. Aplikuje sa na skladby, ktoré sa odteraz vyrovnávajú.</string>
+    <string name="settings_song_storage_limit" formatted="false">Limit skladovania piesní</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">Maximum úložiska disku pridelené pre offline audio cache pred vysťahovaním starších neprehrávaných skladieb.</string>
+    <string name="settings_clear_cached_songs" formatted="false">Vyčistiť Cached piesne</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">${MusicCacheManager.cachedTracks.size} piesne • ${MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)}</string>
+    <string name="settings_automatic_downloads" formatted="false">Automatické sťahovanie</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">Uložiť nové &amp; pridané skladby offline</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">Vyčistiť vyrovnávaciu pamäť aplikácie</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">Odstrániť dočasné pokrytie art &amp; sieťových nárazníkov</string>
+    <string name="settings_library_listening" formatted="false">Knižnica a počúvanie</string>
+    <string name="settings_sync_library" formatted="false">Synchronizácia knižnice</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">Udržujte umelcov, zoznam skladieb a albumy aktualizované</string>
+    <string name="settings_listening_history" formatted="false">Počúvanie histórie</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">Tvar personalizované zmesi &amp; nedávno prehrávané</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">Držať sa rád na tomto zariadení</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">Majte rád piesne viTunepri odhlásení</string>
+    <string name="settings_notifications_general" formatted="false">Oznámenia a všeobecné</string>
+    <string name="settings_offline_mode" formatted="false">Režim vypnutia</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">Požadovať stiahnutú kópiu na spustenie prehrávania</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">Zastaviť hudbu pri odstránení úlohy</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">Zastaviť prehrávanieiTuneje potiahnutý od nedávnej</string>
+    <string name="settings_auto_sleep_timer" formatted="false">Automatický časovač spánku</string>
+    <string name="settings_network_proxy" formatted="false">Sieťové proxy</string>
+    <string name="settings_profile_name" formatted="false">Názov profilu</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">Prispôsobiť zobrazenie profilu Nastavenia</string>
+    <string name="settings_news_from_dev" formatted="false">Novinky z dev</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">Oznámenie, vydanie &amp; changelog</string>
+    <string name="settings_general_about" formatted="false">Všeobecné &amp; informácie</string>
+    <string name="settings_home_screen_widget" formatted="false">Domovská obrazovka</string>
+    <string name="settings_widget_customization" formatted="false">Prispôsobenie komponentu</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">Vyberte si náhľad veľkosti, umelecké diela, ovládacie prvky a štýl widgetu</string>
+    <string name="settings_backup_restore" formatted="false">Zálohovať a obnoviť</string>
+    <string name="settings_automatic_daily_backup" formatted="false">Automatické denné zálohovanie</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">Zašifrované denné zálohy • Stiahnutia/iTune/Zálohy</string>
+    <string name="settings_back_up_itune" formatted="false">NaspäťiTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">Uložiť kontá, všetky nastavenia, zvukové efekty, dáta knižnice a štatistiky zašifrované</string>
+    <string name="settings_restore_from_backup" formatted="false">Obnoviť z zálohy</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">Obnoviť nastavenia, zvukové efekty, účty alebo knižnica dát z .itune</string>
+    <string name="settings_privacy" formatted="false">Súkromie</string>
+    <string name="settings_pause_search_history" formatted="false">Pozastaviť históriu hľadania</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">Neukladať nové vyhľadávacie otázky do histórie</string>
+    <string name="settings_clear_search_history" formatted="false">Vyčistiť históriu hľadania</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">Odstrániť najnovšie otázky z vyhľadávania</string>
+    <string name="settings_pause_listening_history" formatted="false">Pozastaviť počúvanie histórie</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">Nenahrávať prehrané skladby alebo aktualizovať odporúčania</string>
+    <string name="settings_clear_listening_history" formatted="false">Vyčistiť históriu počúvania</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">Odstrániť históriu prehrávania a resetovať chuťový profil</string>
+    <string name="settings_disable_screenshot" formatted="false">Zakázať snímku obrazovky</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">Blokové snímky obrazovky a nahrávanie obrazovky cez aplikáciu</string>
+    <string name="settings_best_available" formatted="false">Najlepšie dostupné</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">Použite najvyššiu dostupnú kvalitu zdroja</string>
+    <string name="settings_maximum" formatted="false">Maximálne</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">Vyberte najvyšší dátový tok</string>
+    <string name="settings_high" formatted="false">Vysoká</string>
+    <string name="settings_target_about_160_kbps" formatted="false">Cieľová asi 160 kbps</string>
+    <string name="settings_standard" formatted="false">Štandard</string>
+    <string name="settings_target_about_128_kbps" formatted="false">Cieľová asi 128 kbps</string>
+    <string name="settings_data_saver" formatted="false">Šetrič dát</string>
+    <string name="settings_target_about_64_kbps" formatted="false">Cieľ asi 64 kbps</string>
+    <string name="settings_extreme" formatted="false">Extrémna</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">Maximálna vernosť (256+ kbps)</string>
+    <string name="settings_high_b1a5954a" formatted="false">Vysoká</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">Vysoká kvalita zvuku (~160 kbps)</string>
+    <string name="settings_medium" formatted="false">Stredná</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">Štandardná kvalita zvuku (~128 kbps)</string>
+    <string name="settings_low" formatted="false">nízka</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">šetrič dát audio (~48-64 kbps)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">16- bit PCM</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">Štandardné celé PCM výstup; široko kompatibilný s USB Audio Class DACs</string>
+    <string name="settings_text_6697202e38" formatted="false">32-bitový plavák PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">Float PCM výstup, ak podporuje Android a pripojená audio cesta</string>
+    <string name="settings_off" formatted="false">Vypnuté</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">Prehrávanie skladieb bez problémov</string>
+    <string name="settings_text_6597740315" formatted="false">2 sekundy</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">Jemné prekrývanie prechodu</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 sekundy</string>
+    <string name="settings_short_seamless_fade" formatted="false">Krátky bezproblémový vyblednutie</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 sekúnd</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">Vyvážený prechod v štýle DJ</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8 sek</string>
+    <string name="settings_smooth_extended_blend" formatted="false">Hladká rozšírená zmes</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 sek</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">Maximálna nepretržitá zmes</string>
+    <string name="settings_off_e3de5ab0" formatted="false">Vypnuté</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">Udržať normálne prehrávanie efekty a prechody</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 sekúnd</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">Aplikujte Low-Pass počas každej piesne</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 sek</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">Aplikujte Low-Pass počas každej piesne a posledných 10 sekúnd</string>
+    <string name="settings_text_eb4354110e" formatted="false">15 sek</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">Aplikovať Low-Pass počas každej piesne a záverečných 15 sekúnd</string>
+    <string name="settings_right" formatted="false">Správne</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">Zobraziť lištu hlasitosti na pravom okraji (predvolená)</string>
+    <string name="settings_left" formatted="false">Vľavo</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">Zobraziť medzeru hlasitosti na ľavom okraji</string>
+    <string name="settings_high_efficiency" formatted="false">Vysoká účinnosť</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">Použiť minimálne bunkové dáta</string>
+    <string name="settings_high_quality" formatted="false">Vysoká kvalita</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 kbps vyvážený mobilný prehrávanie</string>
+    <string name="settings_lossless" formatted="false">Strata</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">Úplná strata nad 5G/LTE sieťami</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">Vypnuté</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">Povoliť streamovanie len na Wi-Fi</string>
+    <string name="settings_text_03a001f575" formatted="false">500 MB</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">Kompaktná vyrovnávacia pamäť (~70 skladieb)</string>
+    <string name="settings_text_33015e637f" formatted="false">1 GB</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">Stredná vyrovnávacia pamäť (~150 skladieb)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 GB</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">Odporúčané predvolené (~300 piesní)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5 GB</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">Veľká offline kolekcia (~800 piesní)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10 GB</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">Veľmi veľká knižnica (~ 1600 piesní)</string>
+    <string name="settings_unlimited" formatted="false">Neobmedzené</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">Nikdy vysťahovať skladby</string>
+    <string name="settings_pipeline_output">%1$s→%2$s</string>
+    <string name="settings_volume_bar_side">Zobrazené na%1$sokraj pri stlačení tlačidiel hlasitosti</string>
+    <string name="settings_corner_radius_value">%1$ddp</string>
+    <string name="settings_active_lyrics_providers">%1$dAktívny</string>
+    <string name="settings_cached_song_count_size">%1$dpiesne%2$s</string>
+    <string name="library_playlist_count_one">%1$dZoznam skladieb</string>
+    <string name="library_playlist_count_many">%1$dZoznam skladieb</string>
+    <string name="library_album_count_one">%1$dPridaný album</string>
+    <string name="library_album_count_many">%1$dPridané albumy</string>
+    <string name="remove_from_favorites">Odstrániť z obľúbených</string>
+    <string name="play_top_album">Prehrať horný album</string>
+    <string name="open_in_spotify">OtvoriťSpotify</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Použite azerbajdžanské rozhranie</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Použite rozhranie Bengali</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Použiť bulharské rozhranie</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Použite katalánske rozhranie</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">Použiť české rozhranie</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Použiť dánske rozhranie</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Použite fínske rozhranie</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Použiť grécke rozhranie</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Použiť hebrejské rozhranie</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Použiť maďarské rozhranie</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Použiť indonézske rozhranie</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Použiť rozhranie Malay</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Použiť nórske rozhranie</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Použiť perzské rozhranie</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Použiť poľské rozhranie</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Použiť rumunské rozhranie</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Slovenské rozhranie</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Použiť thajské rozhranie</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Použiť turecké rozhranie</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Použiť ukrajinské rozhranie</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Použiť vietnamské rozhranie</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Použite swahilské rozhranie</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Použiť filipínske rozhranie</string>
+</resources>
