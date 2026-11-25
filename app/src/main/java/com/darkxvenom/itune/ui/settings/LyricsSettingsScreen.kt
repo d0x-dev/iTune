@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.settings
 
+
+import androidx.compose.ui.res.stringResource
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
@@ -174,7 +176,7 @@ fun LyricsSettingsScreen(
                 // Header Title
                 item(key = "lyrics_header_title") {
                     Text(
-                        text = "Lyrics",
+                        text = stringResource(R.string.ui_lyrics),
                         color = Color.White,
                         fontSize = 34.sp,
                         fontWeight = FontWeight.Bold,
@@ -213,14 +215,14 @@ fun LyricsSettingsScreen(
                             Spacer(modifier = Modifier.width(14.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Time-Synced Lyrics",
+                                    text = stringResource(R.string.ui_time_synced_lyrics),
                                     color = Color.White,
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.SemiBold,
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = "Real-time syllable and line scrolling with live audio",
+                                    text = stringResource(R.string.ui_real_time_syllable_and_line_scrolling_with_live_audio),
                                     color = AppleTextSecondary,
                                     fontSize = 12.sp,
                                     lineHeight = 15.sp,
@@ -263,14 +265,14 @@ fun LyricsSettingsScreen(
                             Spacer(modifier = Modifier.width(14.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Show Synced Lyrics Over Canvas",
+                                    text = stringResource(R.string.ui_show_synced_lyrics_over_canvas),
                                     color = Color.White,
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.SemiBold,
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = "Display animated synced lyrics above the song title while Canvas controls are hidden",
+                                    text = stringResource(R.string.ui_display_animated_synced_lyrics_above_the_song_title_wh),
                                     color = AppleTextSecondary,
                                     fontSize = 12.sp,
                                     lineHeight = 15.sp,
@@ -303,21 +305,21 @@ fun LyricsSettingsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "PROVIDER PRIORITY (FALLBACK ORDER)",
+                            text = stringResource(R.string.ui_provider_priority_fallback_order),
                             color = Color(0xFF8E8E93),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
                             letterSpacing = 0.5.sp,
                         )
                         Text(
-                            text = "$activeCount of ${orderedProviders.size} Active",
+                            text = stringResource(R.string.ui_of_active, activeCount, orderedProviders.size),
                             color = if (activeCount > 0) Color(0xFF34C759) else Color(0xFFFF453A),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
                         )
                     }
                     Text(
-                        text = "iTune queries lyrics in the exact precedence below. If the highest active provider has no synced lyrics, iTune seamlessly falls back to the next one.",
+                        text = stringResource(R.string.ui_itune_queries_lyrics_in_the_exact_precedence_below_if),
                         color = Color(0xFF636366),
                         fontSize = 12.sp,
                         lineHeight = 16.sp,
@@ -534,7 +536,7 @@ fun LyricsSettingsScreen(
                                 Spacer(modifier = Modifier.width(14.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Translate actual lines",
+                                        text = stringResource(R.string.ui_translate_actual_lines),
                                         color = Color.White,
                                         fontSize = 15.5.sp,
                                         fontWeight = FontWeight.SemiBold,
@@ -563,7 +565,7 @@ fun LyricsSettingsScreen(
                     }
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Translate lyrics on-demand for any song from the player menu (... > Lyrics > Translate). When 'Translate actual lines' is off, translations appear as subtitles below the original text.",
+                        text = stringResource(R.string.ui_translate_lyrics_on_demand_for_any_song_from_the_playe),
                         color = Color(0xFF636366),
                         fontSize = 12.sp,
                         lineHeight = 16.sp,
@@ -581,7 +583,7 @@ fun LyricsSettingsScreen(
                                 .clickable {
                                     haptics.play(Haptic.Tap)
                                     SettingsStore.resetLyricsProviders(context)
-                                    Toast.makeText(context, "Lyrics providers reset to defaults", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.toast_lyrics_providers_reset_to_defaults), Toast.LENGTH_SHORT).show()
                                 }
                                 .padding(horizontal = 16.dp, vertical = 14.dp),
                             verticalAlignment = Alignment.CenterVertically,
@@ -595,7 +597,7 @@ fun LyricsSettingsScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Reset Provider Order & Defaults",
+                                text = stringResource(R.string.ui_reset_provider_order_defaults),
                                 color = AppleMusicRed,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -604,7 +606,7 @@ fun LyricsSettingsScreen(
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "Restores LRC Lib, KuGou, and SimpMusic as top preferred providers and re-enables all 11 sources.",
+                        text = stringResource(R.string.ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred),
                         color = Color(0xFF636366),
                         fontSize = 12.sp,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -635,7 +637,7 @@ fun LyricsSettingsScreen(
                 centerContent = {
                     FrostedTopBarTitlePill(hazeState = hazeState) {
                         Text(
-                            text = "Lyrics Providers",
+                            text = stringResource(R.string.ui_lyrics_providers),
                             color = Color.White,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -658,7 +660,7 @@ fun LyricsSettingsScreen(
                     SettingsStore.setLyricsTranslationProvider(context, providerId)
                     LyricsTranslationHelper.clearCache()
                     showProviderDialog = false
-                    Toast.makeText(context, "Provider updated to $providerId", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_provider_updated_to, providerId), Toast.LENGTH_SHORT).show()
                 },
                 onDismiss = { showProviderDialog = false },
             )
@@ -676,7 +678,7 @@ fun LyricsSettingsScreen(
                     SettingsStore.setLyricsTranslationApiKey(context, key)
                     LyricsTranslationHelper.clearCache()
                     showApiKeyDialog = false
-                    Toast.makeText(context, "API Key saved", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_api_key_saved), Toast.LENGTH_SHORT).show()
                 },
                 onDismiss = { showApiKeyDialog = false },
             )
@@ -692,7 +694,7 @@ fun LyricsSettingsScreen(
                     SettingsStore.setLyricsTranslationBaseUrl(context, url)
                     LyricsTranslationHelper.clearCache()
                     showBaseUrlDialog = false
-                    Toast.makeText(context, "Base URL updated", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_base_url_updated), Toast.LENGTH_SHORT).show()
                 },
                 onDismiss = { showBaseUrlDialog = false },
             )
@@ -727,7 +729,7 @@ fun LyricsSettingsScreen(
                     SettingsStore.setLyricsTranslationCustomPrompt(context, prompt)
                     LyricsTranslationHelper.clearCache()
                     showPromptDialog = false
-                    Toast.makeText(context, "Translation prompt updated", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_translation_prompt_updated), Toast.LENGTH_SHORT).show()
                 },
                 onDismiss = { showPromptDialog = false },
             )
@@ -742,7 +744,7 @@ fun LyricsSettingsScreen(
                     LyricsTranslationHelper.clearCache()
                     showLanguageDialog = false
                     val langName = LyricsTranslationHelper.AiTranslationLanguages[code] ?: code
-                    Toast.makeText(context, "Target language set to $langName", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_target_language_set_to, langName), Toast.LENGTH_SHORT).show()
                 },
                 onDismiss = { showLanguageDialog = false },
             )
@@ -756,7 +758,7 @@ fun LyricsSettingsScreen(
                     SettingsStore.setLyricsTranslateMode(context, mode)
                     LyricsTranslationHelper.clearCache()
                     showModeDialog = false
-                    Toast.makeText(context, "Translation mode set to $mode", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_translation_mode_set_to, mode), Toast.LENGTH_SHORT).show()
                 },
                 onDismiss = { showModeDialog = false },
             )
@@ -826,7 +828,7 @@ private fun LyricsProviderRow(
                         .padding(horizontal = 6.dp, vertical = 2.dp),
                 ) {
                     Text(
-                        text = "#$rank",
+                        text = stringResource(R.string.ui_text_adebc50ade, rank),
                         color = Color(0xFF8E8E93),
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
@@ -853,7 +855,7 @@ private fun LyricsProviderRow(
             itemStep = 58.dp,
             tint = Color(0xFF8E8E93),
             modifier = Modifier.size(28.dp),
-            contentDescription = "Reorder provider",
+            contentDescription = stringResource(R.string.ui_reorder_provider),
             onDragDistance = { dragOffsetPx += it },
             onDragFinished = { dragOffsetPx = 0f },
         )
@@ -965,7 +967,7 @@ private fun AiProviderPickerDialog(
     SettingsModalFrame(onDismiss = onDismiss) {
         Spacer(Modifier.height(18.dp))
         Text(
-            text = "AI Provider",
+            text = stringResource(R.string.ui_ai_provider),
             color = Color.White,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
@@ -974,7 +976,7 @@ private fun AiProviderPickerDialog(
         )
         Spacer(Modifier.height(5.dp))
         Text(
-            text = "Select the engine to use for line-by-line lyrics translation.",
+            text = stringResource(R.string.ui_select_the_engine_to_use_for_line_by_line_lyrics_trans),
             color = AppleTextSecondary,
             fontSize = 12.5.sp,
             lineHeight = 16.sp,
@@ -1025,7 +1027,7 @@ private fun AiProviderPickerDialog(
                     if (selected) {
                         Icon(
                             imageVector = Icons.Rounded.Check,
-                            contentDescription = "Selected",
+                            contentDescription = stringResource(R.string.ui_selected),
                             tint = AppleMusicRed,
                             modifier = Modifier.size(19.dp),
                         )
@@ -1045,7 +1047,7 @@ private fun AiProviderPickerDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Cancel",
+                text = stringResource(R.string.cancel),
                 color = Color(0xFF8E8E93),
                 fontSize = 16.5.sp,
                 fontWeight = FontWeight.Medium,
@@ -1080,7 +1082,7 @@ private fun AiApiKeyDialog(
     SettingsModalFrame(onDismiss = onDismiss) {
         Spacer(Modifier.height(20.dp))
         Text(
-            text = "$providerName API Key",
+            text = stringResource(R.string.ui_api_key, providerName),
             color = Color.White,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
@@ -1089,7 +1091,7 @@ private fun AiApiKeyDialog(
         )
         Spacer(Modifier.height(5.dp))
         Text(
-            text = "Your API key is stored securely on device and never shared.",
+            text = stringResource(R.string.ui_your_api_key_is_stored_securely_on_device_and_never_sh),
             color = AppleTextSecondary,
             fontSize = 12.5.sp,
             textAlign = TextAlign.Center,
@@ -1108,7 +1110,7 @@ private fun AiApiKeyDialog(
         ) {
             if (fieldValue.text.isEmpty()) {
                 Text(
-                    text = "Paste your API key here",
+                    text = stringResource(R.string.ui_paste_your_api_key_here),
                     color = Color.White.copy(alpha = 0.38f),
                     fontSize = 14.sp,
                 )
@@ -1152,7 +1154,7 @@ private fun AiApiKeyDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Save",
+                text = stringResource(R.string.save),
                 color = AppleMusicRed,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -1169,7 +1171,7 @@ private fun AiApiKeyDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Cancel",
+                text = stringResource(R.string.cancel),
                 color = Color(0xFF8E8E93),
                 fontSize = 16.5.sp,
                 fontWeight = FontWeight.Medium,
@@ -1204,7 +1206,7 @@ private fun AiBaseUrlDialog(
     SettingsModalFrame(onDismiss = onDismiss) {
         Spacer(Modifier.height(20.dp))
         Text(
-            text = "API Base URL",
+            text = stringResource(R.string.ui_api_base_url),
             color = Color.White,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
@@ -1213,7 +1215,7 @@ private fun AiBaseUrlDialog(
         )
         Spacer(Modifier.height(5.dp))
         Text(
-            text = "Leave empty to use default endpoint for this provider.",
+            text = stringResource(R.string.ui_leave_empty_to_use_default_endpoint_for_this_provider),
             color = AppleTextSecondary,
             fontSize = 12.5.sp,
             textAlign = TextAlign.Center,
@@ -1278,7 +1280,7 @@ private fun AiBaseUrlDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Save",
+                text = stringResource(R.string.save),
                 color = AppleMusicRed,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -1298,7 +1300,7 @@ private fun AiBaseUrlDialog(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "Reset to Default URL",
+                    text = stringResource(R.string.ui_reset_to_default_url),
                     color = Color(0xFF0A84FF),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
@@ -1316,7 +1318,7 @@ private fun AiBaseUrlDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Cancel",
+                text = stringResource(R.string.cancel),
                 color = Color(0xFF8E8E93),
                 fontSize = 16.5.sp,
                 fontWeight = FontWeight.Medium,
@@ -1350,7 +1352,7 @@ private fun AiCustomPromptDialog(
     SettingsModalFrame(onDismiss = onDismiss) {
         Spacer(Modifier.height(20.dp))
         Text(
-            text = "Translation Prompt",
+            text = stringResource(R.string.ui_translation_prompt),
             color = Color.White,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
@@ -1379,7 +1381,7 @@ private fun AiCustomPromptDialog(
         ) {
             if (fieldValue.text.isEmpty()) {
                 Text(
-                    text = "Translate the following song lyrics lines to English. Preserve poetic flow.",
+                    text = stringResource(R.string.ui_translate_the_following_song_lyrics_lines_to_english_p),
                     color = Color.White.copy(alpha = 0.35f),
                     fontSize = 13.sp,
                     lineHeight = 17.sp,
@@ -1420,7 +1422,7 @@ private fun AiCustomPromptDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Save",
+                text = stringResource(R.string.save),
                 color = AppleMusicRed,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -1440,7 +1442,7 @@ private fun AiCustomPromptDialog(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "Clear & Use Default",
+                    text = stringResource(R.string.ui_clear_use_default),
                     color = Color(0xFF0A84FF),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
@@ -1458,7 +1460,7 @@ private fun AiCustomPromptDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Cancel",
+                text = stringResource(R.string.cancel),
                 color = Color(0xFF8E8E93),
                 fontSize = 16.5.sp,
                 fontWeight = FontWeight.Medium,
@@ -1486,7 +1488,7 @@ private fun AiLanguagePickerDialog(
     SettingsModalFrame(onDismiss = onDismiss) {
         Spacer(Modifier.height(18.dp))
         Text(
-            text = "Target Language",
+            text = stringResource(R.string.ui_target_language_ec8afa0d),
             color = Color.White,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
@@ -1495,7 +1497,7 @@ private fun AiLanguagePickerDialog(
         )
         Spacer(Modifier.height(5.dp))
         Text(
-            text = "Select the target language for lyrics translation.",
+            text = stringResource(R.string.ui_select_the_target_language_for_lyrics_translation),
             color = AppleTextSecondary,
             fontSize = 12.5.sp,
             lineHeight = 16.sp,
@@ -1516,7 +1518,7 @@ private fun AiLanguagePickerDialog(
         ) {
             if (searchQuery.isEmpty()) {
                 Text(
-                    text = "Search languages...",
+                    text = stringResource(R.string.ui_search_languages),
                     color = Color.White.copy(alpha = 0.4f),
                     fontSize = 13.sp,
                 )
@@ -1583,7 +1585,7 @@ private fun AiLanguagePickerDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Cancel",
+                text = stringResource(R.string.cancel),
                 color = Color(0xFF8E8E93),
                 fontSize = 16.5.sp,
                 fontWeight = FontWeight.Medium,
@@ -1610,7 +1612,7 @@ private fun AiModePickerDialog(
     SettingsModalFrame(onDismiss = onDismiss) {
         Spacer(Modifier.height(18.dp))
         Text(
-            text = "Translation Mode",
+            text = stringResource(R.string.ui_translation_mode),
             color = Color.White,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
@@ -1619,7 +1621,7 @@ private fun AiModePickerDialog(
         )
         Spacer(Modifier.height(5.dp))
         Text(
-            text = "Select the default prompt template for lyrics translation.",
+            text = stringResource(R.string.ui_select_the_default_prompt_template_for_lyrics_translat),
             color = AppleTextSecondary,
             fontSize = 12.5.sp,
             lineHeight = 16.sp,
@@ -1679,7 +1681,7 @@ private fun AiModePickerDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Cancel",
+                text = stringResource(R.string.cancel),
                 color = Color(0xFF8E8E93),
                 fontSize = 16.5.sp,
                 fontWeight = FontWeight.Medium,
@@ -1728,7 +1730,7 @@ private fun AiModelPickerDialog(
     SettingsModalFrame(onDismiss = onDismiss) {
         Spacer(Modifier.height(18.dp))
         Text(
-            text = "Model",
+            text = stringResource(R.string.ui_model_68c2cc7f),
             color = Color.White,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
@@ -1761,7 +1763,7 @@ private fun AiModelPickerDialog(
         ) {
             if (query.isEmpty()) {
                 Text(
-                    text = "Search or type a model id",
+                    text = stringResource(R.string.ui_search_or_type_a_model_id),
                     color = Color.White.copy(alpha = 0.38f),
                     fontSize = 14.sp,
                 )
@@ -1833,7 +1835,7 @@ private fun AiModelPickerDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Cancel",
+                text = stringResource(R.string.cancel),
                 color = Color(0xFF8E8E93),
                 fontSize = 16.5.sp,
                 fontWeight = FontWeight.Medium,
@@ -1873,7 +1875,7 @@ private fun ModelRow(
         if (selected) {
             Icon(
                 imageVector = Icons.Rounded.Check,
-                contentDescription = "Selected",
+                contentDescription = stringResource(R.string.ui_selected),
                 tint = AppleMusicRed,
                 modifier = Modifier.size(19.dp),
             )
