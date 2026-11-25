@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.components
 
+
+import androidx.compose.ui.res.stringResource
 import android.os.Build
 import androidx.compose.ui.zIndex
 import com.darkxvenom.itune.ui.artist.components.backdrop.Backdrop
@@ -509,7 +511,7 @@ fun FloatingNavBar(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_nav_search),
-                    contentDescription = "Search",
+                    contentDescription = stringResource(R.string.ui_search),
                     tint = if (isSearchActive) AppleMusicRed else Color.White.copy(alpha = 0.95f),
                     modifier = Modifier.size(if (isSearchActive) 20.dp else 23.dp)
                 )
@@ -517,7 +519,7 @@ fun FloatingNavBar(
                     Spacer(modifier = Modifier.height(1.dp))
                     @Suppress("DEPRECATION")
                     Text(
-                        text = "Search",
+                        text = stringResource(R.string.ui_search),
                         color = AppleMusicRed,
                         fontSize = 9.5.sp,
                         fontWeight = FontWeight.Bold,
