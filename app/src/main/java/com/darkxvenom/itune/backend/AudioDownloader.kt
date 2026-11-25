@@ -38,6 +38,7 @@ import coil.imageLoader
 import coil.request.ImageRequest
 import coil.size.Size
 import com.darkxvenom.itune.MainActivity
+import com.darkxvenom.itune.R
 import com.darkxvenom.itune.backend.lyrics.LyricsHelper
 import com.darkxvenom.itune.backend.tagger.MediaTagger
 import kotlinx.coroutines.CancellationException
@@ -175,7 +176,7 @@ object AudioDownloader {
 
         return NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle("iTune Downloads")
-            .setContentText("Preparing download…")
+            .setContentText(context.getString(R.string.preparing_download))
             .setSmallIcon(android.R.drawable.stat_sys_download)
             .setProgress(100, 0, true)
             .setOngoing(true)
