@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.timetravel
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -185,7 +188,7 @@ private fun TimeTravelCard(card: TimeTravelCardData, displayName: String) {
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
                 Column {
-                    Text("TIME TRAVEL", color = Color.White.copy(alpha = 0.38f), fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                    Text(stringResource(R.string.ui_time_travel), color = Color.White.copy(alpha = 0.38f), fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
                     Text(displayName, color = Color.White.copy(alpha = 0.72f), fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 Text(card.detail, color = Color.White.copy(alpha = 0.55f), fontSize = 12.sp)
