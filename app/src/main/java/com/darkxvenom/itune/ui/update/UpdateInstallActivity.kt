@@ -11,6 +11,10 @@
 
 package com.darkxvenom.itune.ui.update
 
+
+import com.darkxvenom.itune.R
+import com.darkxvenom.itune.data.library.AppLocaleManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -25,6 +29,10 @@ import java.io.File
 
 /** Opens Android's package installer and resumes the install flow after the unknown-app setting. */
 class UpdateInstallActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLocaleManager.wrap(newBase))
+    }
+
     private var apkFile: File? = null
     private val installPermissionSettings = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(),
@@ -32,7 +40,7 @@ class UpdateInstallActivity : ComponentActivity() {
         if (AppUpdateManager.canRequestPackageInstalls(this)) {
             launchPackageInstaller()
         } else {
-            Toast.makeText(this, "Allow iTune to install updates to continue", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, this.getString(R.string.toast_allow_itune_to_install_updates_to_continue), Toast.LENGTH_LONG).show()
             finish()
         }
     }
@@ -44,7 +52,7 @@ class UpdateInstallActivity : ComponentActivity() {
         val expectedDirectory = File(cacheDir, "updates").canonicalFile
         val candidate = runCatching { File(path).canonicalFile }.getOrNull()
         if (candidate == null || !candidate.isFile || candidate.length() <= 0L || candidate.parentFile != expectedDirectory) {
-            Toast.makeText(this, "Downloaded update APK is unavailable", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, this.getString(R.string.toast_downloaded_update_apk_is_unavailable), Toast.LENGTH_LONG).show()
             finish()
             return
         }
@@ -70,7 +78,7 @@ class UpdateInstallActivity : ComponentActivity() {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             })
         }.onFailure {
-            Toast.makeText(this, it.localizedMessage ?: "Could not open Android's installer", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, it.localizedMessage ?: getString(R.string.could_not_open_android_installer), Toast.LENGTH_LONG).show()
         }
         finish()
     }
