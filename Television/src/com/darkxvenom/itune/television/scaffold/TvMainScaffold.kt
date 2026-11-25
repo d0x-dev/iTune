@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.television.scaffold
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
@@ -295,7 +297,7 @@ private fun TvAppleTopBar(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_itune_waves),
-                contentDescription = "iTune Brand Waves",
+                contentDescription = stringResource(R.string.ui_itune_brand_waves),
                 colorFilter = ColorFilter.tint(Color.White),
                 modifier = Modifier
                     .size(26.dp)
@@ -310,7 +312,7 @@ private fun TvAppleTopBar(
             Spacer(modifier = Modifier.width(8.dp))
 
             Text(
-                text = "iTune",
+                text = stringResource(R.string.app_name),
                 color = Color.White,
                 fontFamily = SFProDisplay,
                 fontSize = 19.sp,
@@ -370,7 +372,7 @@ private fun TvAppleTopBar(
             // Search Icon Tab
             TvTopTabIconButton(
                 icon = Icons.Rounded.Search,
-                contentDescription = "Search",
+                contentDescription = stringResource(R.string.ui_search),
                 isSelected = selectedDestination == TvNavDestination.SEARCH,
                 onClick = { onDestinationSelected(TvNavDestination.SEARCH) },
             )
@@ -378,7 +380,7 @@ private fun TvAppleTopBar(
             // Settings Icon Tab
             TvTopTabIconButton(
                 icon = Icons.Rounded.Settings,
-                contentDescription = "Settings",
+                contentDescription = stringResource(R.string.ui_settings),
                 isSelected = selectedDestination == TvNavDestination.SETTINGS,
                 onClick = { onDestinationSelected(TvNavDestination.SETTINGS) },
             )
