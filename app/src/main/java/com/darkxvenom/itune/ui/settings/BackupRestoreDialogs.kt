@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.settings
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -86,7 +89,7 @@ internal fun BackupOptionsDialog(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "This account",
+                    text = stringResource(R.string.ui_this_account),
                     fontSize = 13.sp,
                     fontWeight = if (backupScopeMode == "this_account") FontWeight.Bold else FontWeight.Medium,
                     color = Color.White
@@ -102,7 +105,7 @@ internal fun BackupOptionsDialog(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Everything",
+                    text = stringResource(R.string.ui_everything),
                     fontSize = 13.sp,
                     fontWeight = if (backupScopeMode == "everything") FontWeight.Bold else FontWeight.Medium,
                     color = Color.White
@@ -128,7 +131,7 @@ internal fun BackupOptionsDialog(
         BackupPasswordField(password, onPasswordChange, "Encryption password")
         BackupPasswordField(confirmation, { confirmation = it }, "Confirm password")
         if (confirmation.isNotEmpty() && password != confirmation) {
-            Text("Passwords don’t match", color = Color(0xFFFF453A), fontSize = 12.sp, modifier = Modifier.padding(bottom = 7.dp))
+            Text(stringResource(R.string.ui_passwords_dont_match), color = Color(0xFFFF453A), fontSize = 12.sp, modifier = Modifier.padding(bottom = 7.dp))
         }
         val isReady = ((backupScopeMode == "everything") || account || library) && password.length >= 8 && password == confirmation
         BackupAction("Save Encrypted Backup", enabled = isReady) {
@@ -195,7 +198,7 @@ internal fun RestoreOptionsDialog(
             Spacer(Modifier.height(4.dp))
 
             Text(
-                text = "PROFILES IN BACKUP",
+                text = stringResource(R.string.ui_profiles_in_backup),
                 color = BackupSecondary,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -343,7 +346,7 @@ internal fun AutoBackupDialog(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(if (enabled) "On" else "Off", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            Text(stringResource(if (enabled) R.string.on else R.string.off), color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             androidx.compose.foundation.layout.Box(
                 Modifier.size(width = 48.dp, height = 28.dp).clip(CircleShape)
                     .background(if (enabled) Color(0xFF30D158) else Color(0xFF48484A)),
@@ -356,12 +359,12 @@ internal fun AutoBackupDialog(
             Spacer(Modifier.size(12.dp))
             BackupPasswordField(password, { password = it }, "Backup password")
             Text(
-                "Saved using Android Keystore. Backup files use PBKDF2-HMAC-SHA256 (310,000 rounds) and AES-256-GCM.",
+                stringResource(R.string.ui_saved_using_android_keystore_backup_files_use_pbkdf2_h),
                 color = BackupSecondary, fontSize = 11.sp, lineHeight = 15.sp,
                 modifier = Modifier.padding(top = 2.dp, bottom = 8.dp),
             )
         }
-        Text("Saves to  Downloads/itune/backups", color = Color.White, fontSize = 13.sp,
+        Text(stringResource(R.string.ui_saves_to_downloads_itune_backups), color = Color.White, fontSize = 13.sp,
             modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(13.dp)).background(Color(0xFF171719))
                 .padding(horizontal = 14.dp, vertical = 14.dp))
         BackupAction("Save", enabled = !enabled || password.length >= 8) { onSave(enabled, password) }
@@ -424,7 +427,7 @@ private fun BackupPasswordField(value: String, onValueChange: (String) -> Unit, 
         modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(13.dp)).background(Color(0xFF171719))
             .padding(horizontal = 14.dp, vertical = 14.dp),
     )
-    Text("At least 8 characters", color = BackupSecondary, fontSize = 11.sp, modifier = Modifier.padding(top = 6.dp, bottom = 9.dp))
+    Text(stringResource(R.string.ui_at_least_8_characters), color = BackupSecondary, fontSize = 11.sp, modifier = Modifier.padding(top = 6.dp, bottom = 9.dp))
 }
 
 @Composable
