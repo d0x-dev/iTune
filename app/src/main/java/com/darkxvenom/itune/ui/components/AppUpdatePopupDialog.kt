@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.components
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -135,13 +137,13 @@ fun AppUpdatePopupDialog(
                     ) {
                         Image(
                             painter = painterResource(R.drawable.ic_itune_waves),
-                            contentDescription = "iTune",
+                            contentDescription = stringResource(R.string.app_name),
                             modifier = Modifier.size(46.dp),
                         )
                     }
                     Spacer(Modifier.height(10.dp))
                     Text(
-                        text = "iTune",
+                        text = stringResource(R.string.app_name),
                         color = Color.White,
                         fontFamily = LocalAppFontFamily.current,
                         fontSize = 22.sp,
@@ -149,7 +151,7 @@ fun AppUpdatePopupDialog(
                     )
                     Spacer(Modifier.height(5.dp))
                     Text(
-                        text = "A new version is ready",
+                        text = stringResource(R.string.ui_a_new_version_is_ready),
                         color = Color.White.copy(alpha = 0.72f),
                         fontFamily = LocalAppFontFamily.current,
                         fontSize = 14.sp,
@@ -158,7 +160,7 @@ fun AppUpdatePopupDialog(
 
                     if (release.notes.isNotBlank()) {
                         Text(
-                            text = "WHAT’S NEW",
+                            text = stringResource(R.string.ui_whats_new),
                             color = Color.White.copy(alpha = 0.50f),
                             fontFamily = LocalAppFontFamily.current,
                             fontSize = 11.sp,
