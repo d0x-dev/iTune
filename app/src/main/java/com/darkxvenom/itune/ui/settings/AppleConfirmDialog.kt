@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.settings
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import android.os.Build
 import android.view.WindowManager
 import androidx.compose.foundation.BorderStroke
@@ -162,7 +165,7 @@ internal fun AppleConfirmDialog(
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
-                            text = "Cancel",
+                            text = stringResource(R.string.cancel),
                             color = Color.White.copy(alpha = 0.86f),
                             fontFamily = LocalAppFontFamily.current,
                             fontSize = 16.sp,
