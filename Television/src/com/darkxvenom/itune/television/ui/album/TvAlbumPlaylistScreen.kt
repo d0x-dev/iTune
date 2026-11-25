@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.television.ui.album
 
+
+import androidx.compose.ui.res.stringResource
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -303,7 +305,7 @@ fun TvAlbumPlaylistScreen(
                             color = Color.White.copy(alpha = 0.50f),
                         )
                         Text(
-                            text = "·",
+                            text = stringResource(R.string.ui_text_1fdf0d90c3),
                             fontSize = 13.sp,
                             color = Color.White.copy(alpha = 0.40f),
                         )
@@ -312,12 +314,12 @@ fun TvAlbumPlaylistScreen(
                     // Lossless Audio Wave Badge
                     Icon(
                         painter = painterResource(R.drawable.ic_settings_lossless),
-                        contentDescription = "Lossless",
+                        contentDescription = stringResource(R.string.ui_lossless),
                         tint = Color.White.copy(alpha = 0.65f),
                         modifier = Modifier.size(13.dp),
                     )
                     Text(
-                        text = "Lossless",
+                        text = stringResource(R.string.ui_lossless),
                         fontSize = 12.sp,
                         fontFamily = SFProDisplay,
                         fontWeight = FontWeight.Medium,
@@ -415,7 +417,7 @@ fun TvAlbumPlaylistScreen(
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
-                            text = "No songs found in this release",
+                            text = stringResource(R.string.ui_no_songs_found_in_this_release),
                             color = Color.White.copy(alpha = 0.50f),
                             fontFamily = SFProDisplay,
                             fontSize = 15.sp,
@@ -558,7 +560,7 @@ private fun TvCircleMoreButton(
     ) {
         Icon(
             painter = painterResource(iconRes),
-            contentDescription = "More Options",
+            contentDescription = stringResource(R.string.ui_more_options),
             tint = if (isFocused) Color.Black else Color.White,
             modifier = Modifier.size(20.dp),
         )
@@ -619,14 +621,14 @@ private fun TvAlbumSongRow(
         } else if (isFocused) {
             Icon(
                 painter = painterResource(R.drawable.play),
-                contentDescription = "Play",
+                contentDescription = stringResource(R.string.play),
                 tint = Color.Black,
                 modifier = Modifier.size(14.dp),
             )
             Spacer(Modifier.width(12.dp))
         } else {
             Text(
-                text = "$index",
+                text = stringResource(R.string.ui_text_c79f71243f, index),
                 color = Color.White.copy(alpha = 0.40f),
                 fontFamily = SFProDisplay,
                 fontWeight = FontWeight.Medium,
@@ -725,13 +727,13 @@ private fun TvReleaseOptionsPopup(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.back),
                         tint = Color.White.copy(alpha = 0.80f),
                         modifier = Modifier.size(20.dp),
                     )
                     Spacer(Modifier.width(10.dp))
                     Text(
-                        text = "Add to Playlist",
+                        text = stringResource(R.string.ui_add_to_playlist),
                         color = Color.White,
                         fontSize = 17.sp,
                         fontFamily = SFProDisplay,
@@ -742,7 +744,7 @@ private fun TvReleaseOptionsPopup(
 
                 if (userPlaylists.isEmpty()) {
                     Text(
-                        text = "No user playlists found. Create one in Library!",
+                        text = stringResource(R.string.ui_no_user_playlists_found_create_one_in_library),
                         color = Color.White.copy(alpha = 0.50f),
                         fontSize = 14.sp,
                         fontFamily = SFProDisplay,
@@ -774,7 +776,7 @@ private fun TvReleaseOptionsPopup(
                                         )
                                     }
                                     LibraryStore.addSongsToUserPlaylist(context, p.id, metadataList)
-                                    Toast.makeText(context, "Added ${metadataList.size} songs to ${p.name}", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.toast_added_songs_to, metadataList.size, p.name), Toast.LENGTH_SHORT).show()
                                     onDismiss()
                                 },
                             )
@@ -814,7 +816,11 @@ private fun TvReleaseOptionsPopup(
                         focusRequester = firstFocus,
                         onClick = {
                             ArtistStateStore.toggleReleaseSaved(context, browseId, title, subtitle)
-                            Toast.makeText(context, if (isSaved) "Removed from Library" else "Saved to Library", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(if (isSaved) R.string.remove_from_library else R.string.add_to_library),
+                                Toast.LENGTH_SHORT,
+                            ).show()
                             onDismiss()
                         },
                     )
@@ -838,7 +844,7 @@ private fun TvReleaseOptionsPopup(
                     onClick = {
                         val tracks = songs.map { it.toMusicTrack() }
                         tracks.reversed().forEach { MusicPlayerState.playNext(it) }
-                        Toast.makeText(context, "Added to queue next", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_added_to_queue_next), Toast.LENGTH_SHORT).show()
                         onDismiss()
                     },
                 )
@@ -864,7 +870,7 @@ private fun TvReleaseOptionsPopup(
                         val link = "https://music.youtube.com/playlist?list=$cleanId"
                         val clip = ClipData.newPlainText("iTune Album Link", link)
                         clipboard?.setPrimaryClip(clip)
-                        Toast.makeText(context, "Link copied to clipboard", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_link_copied_to_clipboard), Toast.LENGTH_SHORT).show()
                         onDismiss()
                     },
                 )
