@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">Ghairi</string>
+    <string name="save">Hifadhi</string>
+    <string name="close">Funga</string>
+    <string name="done">Imekamilika</string>
+    <string name="back">Rudi nyuma</string>
+    <string name="play">Cheza</string>
+    <string name="shuffle">Changanya</string>
+    <string name="retry">Jaribu tena</string>
+    <string name="try_again">Jaribu tena</string>
+    <string name="more">Zaidi</string>
+    <string name="less">Chache</string>
+    <string name="share">Shiriki</string>
+    <string name="show_all">Onyesha zote</string>
+    <string name="top_songs">Nyimbo za Juu</string>
+    <string name="suggested">Mapendekezo ya</string>
+    <string name="subscribers">%1$sWajumbe wa</string>
+    <string name="monthly_listeners">%1$sWasomaji wa kila mwezi</string>
+    <string name="signed_by">Imeandikwa na%1$s</string>
+    <string name="about_artist">Kuhusu msanii</string>
+    <string name="about_album">Kuhusu albamu</string>
+    <string name="recent_album">Albamu ya hivi karibuni</string>
+    <string name="recent_ep">EP ya hivi karibuni</string>
+    <string name="recent_single">Karibuni Single</string>
+    <string name="subscribe">Jisajili</string>
+    <string name="unsubscribe">Jiondoe</string>
+    <string name="add_to_library">Ongeza kwenye maktaba</string>
+    <string name="remove_from_library">Kuondolewa kutoka kwa maktaba</string>
+    <string name="add_to_playlist">Kuongeza orodha ya kucheza</string>
+    <string name="remove_from_playlist">Download mchezo Orodha hii</string>
+    <string name="play_next">Kucheza mchezo ujao</string>
+    <string name="add_to_queue">Ongeza kwenye foleni</string>
+    <string name="start_radio">Kuanzisha redio</string>
+    <string name="open">Ufunguzi wa Open Open Open</string>
+    <string name="open_album">Ufunguzi wa albamu</string>
+    <string name="open_artist">Msanii wa Open</string>
+    <string name="open_playlist">Orodha ya kucheza</string>
+    <string name="song_info">Maelezo ya mchezo</string>
+    <string name="song_info_album">Albamu ya Album</string>
+    <string name="song_info_release_date">Tarehe ya kuzaliwa</string>
+    <string name="song_info_views">Kucheza / maoni</string>
+    <string name="song_info_likes">Kocha</string>
+    <string name="song_info_comments">Maoni</string>
+    <string name="song_info_unavailable">Haiwezi kupatikana</string>
+    <string name="song_info_error">Baadhi ya taarifa hazikuweza kupatikana.</string>
+    <string name="song_info_retry">Resume ya</string>
+    <string name="like">Kama vile</string>
+    <string name="dislike">Kuchanganyikiwa</string>
+    <string name="download">Pakua</string>
+    <string name="download_all">Download kila kitu</string>
+    <string name="downloaded">Kuondolewa</string>
+    <string name="downloading">Download ya</string>
+    <string name="download_notification_title">Download ya</string>
+    <string name="delete_download">Pakua faili ya download</string>
+    <string name="delete_download_confirmation">Kuondoa “%1$s“Kwa mfumo huu? Bonyeza tena ili kuthibitisha.</string>
+    <string name="delete">Futa</string>
+    <string name="queued">Kuwa makini</string>
+    <string name="saved_to_downloads">Kuokolewa kwa downloads</string>
+    <string name="search_this_list">Angalia orodha hii</string>
+    <string name="clear_search">Utafutaji wa wazi</string>
+    <string name="close_search">Utafutaji wa karibu</string>
+    <string name="nothing_matches">"Hakuna chochote hapa kinacholingana"%1$s“ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘’ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘’ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘ ‘</string>
+    <string name="sort_songs">Baadhi ya nyimbo</string>
+    <string name="artist">Msanii wa msanii</string>
+    <string name="album">Albamu ya albamu</string>
+    <string name="playlist">Orodha ya kucheza</string>
+    <string name="folder">Ufungaji</string>
+    <string name="songs">Nyimbo za nyimbo</string>
+    <string name="song_count">%1$dWimbo wa wimbo</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$dUfuatiliaji wa kufuatilia</item>
+        <item quantity="other">%1$dBarabara ya</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$dDakika ya dakika</item>
+        <item quantity="other">%1$dDakika ya dakika</item>
+    </plurals>
+    <string name="one_hour">Saa ya 1</string>
+    <string name="hours_minutes_short">%1$dwa wa wa wa wa wa%2$dm m m m m m</string>
+    <string name="minutes_short">%1$dDakika ya</string>
+    <string name="pin">Pin ya Pin Pin</string>
+    <string name="unpin">wa wa wa wa wa</string>
+    <string name="tile_identify_music">Kutambua muziki</string>
+    <string name="tile_identify_music_desc">Chagua nyimbo zinazokuzungukaiTune</string>
+    <string name="widget_itune_description">Udhibiti wa UdhibitiiTuneKucheza kutoka screen yako nyumbani</string>
+    <string name="app_language">Lugha ya programu</string>
+    <string name="app_language_subtitle">Lugha kwa ajili ya menus, vifungo &amp; ujumbe</string>
+    <string name="app_language_description">Chagua lugha unayotumiaiTuneya interface.</string>
+    <string name="system_default_language">Mfumo wa default</string>
+    <string name="follow_device_language">Kufuata lugha ya kifaa</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">Tumia interface ya Kiingereza</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface">Kwa mfano;</string>
+    <string name="hindi_interface_language">Lugha ya Kihindi interface</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">Tumia interface ya Kihispania</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">Tumia interface ya Kifaransa</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">Tumia interface ya Kiholanzi</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">Tumia interface ya Kirusi</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">Tumia interface ya Urdu</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">Tumia interface ya Kichina</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">Tumia interface ya Ujerumani</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">Tumia interface ya Kireno</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">Tumia interface ya Italia</string>
+    <string name="japanese_language">日本語</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">Kwa mfano,</string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Svensk ya gränsnit</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">Kwa mfano,</string>
+    <string name="japanese_interface">Tumia interface ya Kijapani</string>
+    <string name="favorite_artist">Msanii maarufu</string>
+    <string name="remove_favorite_artist">Kutoka kwa wasanii wa favorite</string>
+    <string name="add_to_favorite_artists">Kuongeza kwa wasanii favorite</string>
+    <string name="removed_from_artists">Kufukuzwa kutoka kwa wasanii</string>
+    <string name="added_to_artists">Aliongeza kuwa wasanii</string>
+    <string name="play_top_songs">Kucheza nyimbo za juu</string>
+    <string name="play_album">Kucheza albamu</string>
+    <string name="play_playlist">Wachezaji wa Playlist</string>
+    <string name="create_new_playlist">Kujenga orodha mpya ya kucheza</string>
+    <string name="create_playlist">Kujenga orodha ya kucheza</string>
+    <string name="radio">Redio ya redio</string>
+    <string name="search">Tafuta</string>
+    <string name="share_playlist_link">Bonyeza Playlist Link</string>
+    <string name="copy_share_link">Kuunganisha Link</string>
+    <string name="rename_playlist">Orodha ya Playlist</string>
+    <string name="delete_playlist">Download mchezo Orodha ya kucheza</string>
+    <string name="share_link_copied">Kuunganisha Link Iliyonakiliwa</string>
+    <string name="playlist_removed">Download mchezo Kuondolewa</string>
+    <string name="playlist_no_longer_available">Orodha hii ya kucheza haipatikani tena.</string>
+    <string name="empty_playlist">Michezo ya bure</string>
+    <string name="filter_playlists">Orodha ya Filters ...</string>
+    <string name="filter_albums">Orodha ya albamu ...</string>
+    <string name="favorite">Kocha favorite</string>
+    <string name="tap_to_start_listening">Bonyeza hapa kuanza kusikiliza</string>
+    <string name="time_zero" formatted="false">Saa ya 00</string>
+    <string name="previous">Kabla ya</string>
+    <string name="play_or_pause">Kucheza au kupumzika</string>
+    <string name="next">Baadaye</string>
+    <string name="repeat">Mara kwa mara</string>
+    <string name="open_title_options">Ufunguzi wa Open Open Open%1$sChaguzi za chaguzi</string>
+    <string name="reset_page_title">Kuundwa upya%1$s</string>
+    <string name="remove_device">Kuondoa%1$s</string>
+    <string name="profile_name">%1$sMaelezo ya profile</string>
+    <string name="download_option">Download mchezo Download%1$s</string>
+    <string name="open_entry_options">Ufunguzi wa Open Open Open%1$sChaguzi za chaguzi</string>
+    <string name="avatar_number">Avatar Avatar Avatar Avatar%1$s</string>
+    <string name="options_for_track">Chaguzi kwa ajili ya%1$s</string>
+    <string name="preparing">Maandalizi ya ...</string>
+    <string name="share_image">Kushiriki picha</string>
+    <string name="speed_pitch_locked">Treni na treni zimefungwa pamoja</string>
+    <string name="independent_bpm_tempo_key_pitch">Huru BPM tempo na muhimu ya</string>
+    <string name="spatial_reflections_delay">Maoni ya Spatial (%1$dya ya)</string>
+    <string name="on">Juu ya</string>
+    <string name="off">Mbali ya</string>
+    <string name="dynamic_island_active">Kisiwa cha Dynamic</string>
+    <string name="dynamic_island_description">Onyesha vizuri njeiTuneWakati wa kucheza</string>
+    <string name="preparing_download">Maandalizi ya kupakua ...</string>
+    <string name="listening_for_music">Kusikiliza muziki...</string>
+    <string name="hold_phone_near_sound_source">Weka simu karibu na chanzo cha sauti</string>
+    <string name="unable_to_recognize_audio">Kushindwa kutambua sauti</string>
+    <string name="song_identified">Wimbo umetayarishwa</string>
+    <string name="play_in_itune">Kucheza katikaiTune</string>
+    <string name="view_details">Angalia maelezo</string>
+    <string name="no_match_found">Hakuna mechi iliyopigwa</string>
+    <string name="recognition_retry_message">Haikuweza kufahamika wimbo huo. Bonyeza hapa kujaribu tena.</string>
+    <string name="microphone_permission_needed">Ruhusa ya Microphone inahitajika</string>
+    <string name="microphone_permission_help">Bonyeza hapa ili kuwezesha upatikanaji wa kipaza sautiiTuneInaweza kutambua muziki.</string>
+    <string name="recognition_failed">Utambuzi wa kushindwa</string>
+    <string name="tap_install_to_continue">Bonyeza hapa kuendelea</string>
+    <string name="detail_artist">Msanii wa Msanii</string>
+    <string name="detail_album">Albamu ya Album</string>
+    <string name="set_default_ringtone_target">Kuwa default%1$sya ! ! !</string>
+    <string name="added_ringtone_target">Aliongeza kuwa%1$sChagua katika mipangilio ya sauti.</string>
+    <string name="last_fm_connected_as">Last.fmKuwasiliana kama%1$s</string>
+    <string name="discord_connected_as">Kuunganishwa kama%1$s</string>
+    <string name="tv_encrypted_backup_saved">Backup ya Backup (inahifadhiwa)%1$dya ya ya !</string>
+    <string name="sign_in_verification_failed">Ushahidi wa ndani umeshindwa</string>
+    <string name="could_not_rename_playlist">Haiwezi kubadilisha orodha ya kucheza kwenye orodhaYouTube Music</string>
+    <string name="could_not_create_playlist">Haiwezi kuunda orodha ya kucheza</string>
+    <string name="daily_encrypted_backup_enabled">Backup ya kila siku iliyotolewa</string>
+    <string name="cookie_login_failed">Cookie login kushindwa kushindwa</string>
+    <string name="could_not_open_last_fm">Haiwezi kufunguaLast.fm</string>
+    <string name="last_fm_sign_in_failed">Last.fmIshara ya kushindwa</string>
+    <string name="discord_sign_in_failed">Ishara ya kushindwa</string>
+    <string name="could_not_open_android_installer">Haiwezi kufungua mfumo wa Android</string>
+    <string name="added_title_to_queue">Aliongeza “%1$s“Kwa ajili ya</string>
+    <string name="automatic_backup_disabled">Msaada wa Backup</string>
+    <string name="download_failed">Download mchezo kushindwa</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">Ufungaji</string>
+    <string name="ui_text_9ef6a80f91" formatted="false">#1 #1 #1 #1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">Asilimia ya 1f</string>
+    <string name="ui_accounts" formatted="false">Akaunti ya +</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0 ya</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+ 5.0 ya</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</string>
+    <string name="ui_text_7be28ad40e" formatted="false">5.0 ya</string>
+    <string name="ui_text_a6dee6102d" formatted="false">11 PM ya PM</string>
+    <string name="ui_text_1a19c52178" formatted="false">12 AM ya</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">12 ya PM</string>
+    <string name="ui_text_4e37ece023" formatted="false">15ms kinyume-ear kuchelewa-pass blend</string>
+    <string name="ui_text_76b322ac42" formatted="false">2X kasi ya haraka</string>
+    <string name="ui_text_505c74ed85" formatted="false">3D Ping-Pong Bounce</string>
+    <string name="ui_text_db9b8df506" formatted="false">6 AM ya</string>
+    <string name="ui_text_2812537f20" formatted="false">6 PM ya 6</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">Miaka ya 80</string>
+    <string name="ui_text_05a79f06cf" formatted="false">:</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">Picha kamili na nyimbo za juu, wasanii, albamu na tabia.</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">Toleo jipya ni tayari</string>
+    <string name="ui_account" formatted="false">Akaunti ya akaunti</string>
+    <string name="ui_account_options" formatted="false">Chaguzi za Akaunti</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">Akaunti ya</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">Acoustic kichwa-Shadow Crossfeed</string>
+    <string name="ui_activate" formatted="false">Utekelezaji</string>
+    <string name="ui_active" formatted="false">Kazi ya Active Active</string>
+    <string name="ui_active_days" formatted="false">Siku tano za kazi</string>
+    <string name="ui_active_profile" formatted="false">Wasifu wa Active</string>
+    <string name="ui_activity_by_day" formatted="false">Shughuli za siku</string>
+    <string name="ui_add_account" formatted="false">Kuongeza akaunti</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">Ongeza seva za kawaida za HTTP (akizungumza /manifest.json, /search, /stream) au moduli za QuickJS za sandbox.</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">Ongeza nyimbo za baadaye moja kwa moja</string>
+    <string name="ui_add_streaming_source" formatted="false">Kuongeza chanzo cha Streaming</string>
+    <string name="ui_add_to_playlist" formatted="false">Ongeza kwenye orodha ya kucheza</string>
+    <string name="ui_added_playlists" formatted="false">Kuongeza wachezaji</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">Ongeza makali ya kona ya sanaa ya albamu ya mraba.</string>
+    <string name="ui_advanced_cookie_login" formatted="false">Kikoa cha juu cha Cookie Login</string>
+    <string name="ui_advanced_login" formatted="false">Kwa bahati mbaya</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">Juu ya Login</string>
+    <string name="ui_ai_engine" formatted="false">wa wa wa wa wa wa wa</string>
+    <string name="ui_ai_provider" formatted="false">Mtoa huduma</string>
+    <string name="ui_albums" formatted="false">Albamu za</string>
+    <string name="ui_all_news" formatted="false">Habari zote</string>
+    <string name="ui_allow_downloads" formatted="false">Kuruhusu downloads</string>
+    <string name="ui_allow_microphone" formatted="false">Kuwezesha Microphone</string>
+    <string name="ui_allow_microphone_access" formatted="false">Kuwezesha upatikanaji wa kipaza sauti</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">Picha zote na Wizara ya Mambo ya Ndani ya Nchi. ....................................................................</string>
+    <string name="ui_always_on_display" formatted="false">Daima juu ya kuonyesha</string>
+    <string name="ui_am" formatted="false">kuwa</string>
+    <string name="ui_api_base_url" formatted="false">Msingi wa URL</string>
+    <string name="ui_artist" formatted="false">Msanii wa Msanii</string>
+    <string name="ui_artist_name" formatted="false">Jina la Msanii</string>
+    <string name="ui_artists" formatted="false">Wasanii</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">Wasanii, Nyimbo, Albamu, Playlists ...</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">Wasanii, Nyimbo, Lyrics &amp; Zaidi</string>
+    <string name="ui_at_least_8_characters" formatted="false">Wachezaji wasiopungua 8</string>
+    <string name="ui_auto_sleep_timer" formatted="false">Muda wa gari</string>
+    <string name="ui_auto_activation_timeout" formatted="false">Muda wa kuendesha gari</string>
+    <string name="ui_avatar" formatted="false">Avatar Avatar Avatar Avatar</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">Nyuma juuiTune(Kifungu cha 256)</string>
+    <string name="ui_backup_password" formatted="false">Backup ya password</string>
+    <string name="ui_bluetooth_device_access" formatted="false">BluetoothUpatikanaji wa vifaa</string>
+    <string name="ui_browse" formatted="false">↑</string>
+    <string name="ui_browse_by_country" formatted="false">Zanzibar kwa nchi</string>
+    <string name="ui_browse_extensions" formatted="false">Vifungu vya ziada</string>
+    <string name="ui_browse_live_online_radio" formatted="false">Maisha ya mtandaoni ya Radio</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">Haiwezi kufuta akaunti</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">Wafanyakazi wa Canvas (Angalia Order)</string>
+    <string name="ui_captcha_guidance" formatted="false">Mwongozo wa CAPTCHA</string>
+    <string name="ui_cast_wireless_devices" formatted="false">Fedha na matumizi mabaya</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">Chagua vyanzo vya kusambaza sauti, tiers zisizo na hasara, na kipaumbele cha kurudi</string>
+    <string name="ui_choose_avatar" formatted="false">Chagua Avatar</string>
+    <string name="ui_choose_charts_region" formatted="false">Chagua Mkoa wa Charts</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">Chagua jinsi ya kuchaguaiTuneInaonekana kwenye skrini yako ya nyumbani. Badilisha widget kutoka kwa launcher yako.</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">Chagua profile yako ili kuendelea</string>
+    <string name="ui_choose_youtube_channel" formatted="false">Chagua kuchaguaYouTubeKituo cha Channel Channel</string>
+    <string name="ui_clear" formatted="false">wazi wazi wazi wazi</string>
+    <string name="ui_clear_use_default" formatted="false">wazi na matumizi ya default</string>
+    <string name="ui_clear_all" formatted="false">wazi kila kitu</string>
+    <string name="ui_confirm" formatted="false">Uthibitisho wa kuthibitisha</string>
+    <string name="ui_confirm_password" formatted="false">Kuweka password</string>
+    <string name="ui_connect_discord" formatted="false">Kuunganisha Discord</string>
+    <string name="ui_connect_last_fm" formatted="false">KuunganishaLast.fm</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">Kuunganisha yakoSpotifyakaunti ili kuwezesha Canvas loops mwendo video sanaa na sync yakoSpotifyMaktaba ya.</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">KuunganishaYouTube MusicWakati wa cookies</string>
+    <string name="ui_connect" formatted="false">Kuunganisha »</string>
+    <string name="ui_connecting_spotify" formatted="false">Kuunganisha KuunganishaSpotify... ... ... ...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">Kuunganisha KuunganishaYouTube Music... ... ... ...</string>
+    <string name="ui_continue" formatted="false">Endelea Endelea Endelea Endelea Endelea</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">Nenda kwenye browser badala yake</string>
+    <string name="ui_continue_with_google" formatted="false">Endelea na Google</string>
+    <string name="ui_continue_with_spotify" formatted="false">Endelea kuwaSpotify</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">Vyeti vya Cookie vimehifadhiwa katikaiTuneHifadhi ya akaunti ya encrypted na checked naYouTube Musickabla ya kuokolewa.</string>
+    <string name="ui_copy_song_name" formatted="false">Jina la wimbo</string>
+    <string name="ui_copy_text" formatted="false">Nakala ya maandishi</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">Haki miliki ya picha © 2026iTuneMradi wa. Programu hii hutolewa bila udhamini. Unaweza kugawanya tena na kuibadilisha chini ya maneno ya GNU GPL yaliyoonyeshwa hapa chini.</string>
+    <string name="ui_corner_length" formatted="false">Kiwango cha juu</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">Haiwezi kufuta picha ya replay</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">Haikuwezekana\'muziki kwa sasa. Bonyeza hapa chini kujaribu tena.</string>
+    <string name="ui_create" formatted="false">Uumbaji wa Uumbaji</string>
+    <string name="ui_create_add" formatted="false">Kujenga na kuongeza</string>
+    <string name="ui_current_account" formatted="false">Akaunti ya sasa</string>
+    <string name="ui_custom_instructions" formatted="false">Tathmini ya baadaye</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">Maoni kwenye InDEX au URL</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">Customize screen yako ya nyumbani</string>
+    <string name="ui_customize_your_itune_card" formatted="false">Customize yakoiTuneKadi ya kadi</string>
+    <string name="ui_d" formatted="false">D ya D</string>
+    <string name="ui_delete_account" formatted="false">Kufuta Akaunti</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">Kufuta akaunti?</string>
+    <string name="ui_developer_announcements" formatted="false">Matangazo ya Developer</string>
+    <string name="ui_disconnect" formatted="false">Kuunganisha</string>
+    <string name="ui_disconnect_discord" formatted="false">Kuunganisha Discord</string>
+    <string name="ui_discord_rich_presence" formatted="false">Uwepo wa utajiri</string>
+    <string name="ui_dismiss" formatted="false">Kukosekana kwa</string>
+    <string name="ui_display_full_screen" formatted="false">Elimu ya Juu na Sayansi Kamili</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">Kuonyesha animated synced lyrics juu ya jina la wimbo wakati udhibiti Canvas ni siri</string>
+    <string name="ui_display_name" formatted="false">Kuonyesha jina</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">DJ Bipolar Klabu ya Filter</string>
+    <string name="ui_downloaded_cached" formatted="false">Kuondolewa &amp; Cached</string>
+    <string name="ui_dp" formatted="false">wa wa wa</string>
+    <string name="ui_dynamic_island" formatted="false">Kisiwa cha Dynamic</string>
+    <string name="ui_e" formatted="false">ya ya ya</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">Kifungu cha 127.0.0.1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">e.g. kutafsiri katika Kiswahili cha ushairi na rhymes</string>
+    <string name="ui_enable_auto_sleep" formatted="false">Kupumua kwa Auto</string>
+    <string name="ui_enable_proxy" formatted="false">Kuwa na Proxy</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">KuwezeshaSpotifyCanvas &amp; Orodha ya kucheza</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">Neno la siri (min 8 chars)</string>
+    <string name="ui_end_of_current_track" formatted="false">Mwisho wa njia ya sasa</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">Ingiza jina jipya la akaunti hii.</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">Ingiza URL ya wazi ya HTTP, index ya moduli ya QuickJS, au mwisho wa mfano wa Tidal.</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">Kuingia password yako wakati wewe kutumia.ituneUlinzi umeimarishwa.</string>
+    <string name="ui_enter_your_name" formatted="false">Ingiza jina lako</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">Ingiza jina lako la kibinafsiiTune</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">Kila rhythm, wimbo wa jioni, na wimbo ulioishi pamoja nao - ulikusanyika katika safari moja.</string>
+    <string name="ui_everything" formatted="false">Kila kitu kila kitu</string>
+    <string name="ui_explore_categories" formatted="false">Kuchunguza makundi</string>
+    <string name="ui_exporting_audio" formatted="false">Uzalishaji wa Audio ...</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">Kukamata fingerprint ya sauti ndogo</string>
+    <string name="ui_favorite_stations" formatted="false">Vituo vya favorite</string>
+    <string name="ui_favorites" formatted="false">Wafanyakazi wa</string>
+    <string name="ui_featured_hit" formatted="false">Waliojeruhiwa</string>
+    <string name="ui_featured_playlists" formatted="false">Wachezaji maarufu</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">Sifa za audio za ...</string>
+    <string name="ui_fetching_live_catalog" formatted="false">Orodha ya kuishi ya ...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">Kutafuta njia bora zaidi</string>
+    <string name="ui_full_view" formatted="false">Maoni kamili</string>
+    <string name="ui_g" formatted="false">G wa G</string>
+    <string name="ui_genre" formatted="false">ya jeni</string>
+    <string name="ui_genres_styles" formatted="false">Mitindo ya nywele &amp; Styles</string>
+    <string name="ui_github_repository" formatted="false">Tovuti ya GitHub</string>
+    <string name="ui_github_repository_open_source" formatted="false">Hifadhi ya GitHub · Chanzo wazi</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 au ya baadaye</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 au baadaye · Haki miliki © 2026iTuneMradi wa Mradi</string>
+    <string name="ui_grant" formatted="false">Msaada wa Grant</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">Kutoa kuonyesha earbuds jina &amp; kuishi betri %</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">Vifaa LoudnessEnhancer (hadi +18 dB)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">Inaficha bar ya hali ya Android na bar ya urambazaji kwa nyeusi safi ya OLED.</string>
+    <string name="ui_history" formatted="false">Historia ya historia</string>
+    <string name="ui_host" formatted="false">Maji ya joto</string>
+    <string name="ui_host_a_session" formatted="false">Saa moja baadaye</string>
+    <string name="ui_host_controls_playback" formatted="false">Udhibiti wa Player</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">Jinsi ya kupata cookies yako</string>
+    <string name="ui_hq" formatted="false">HQ ya</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">Kuzaliwa kwa Shazam</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">Kuangalia muziki kucheza karibu na wewe</string>
+    <string name="ui_immersion" formatted="false">Uhamiaji</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">Njia ya Kuingiliana (Full Screen)</string>
+    <string name="ui_import" formatted="false">Uwekezaji wa</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">Uagizaji wa orodha za umma na za kibinafsi · Auto-sync</string>
+    <string name="ui_import_spotify_playlist" formatted="false">Uwekezaji waSpotifyOrodha ya Playlist</string>
+    <string name="ui_in_use" formatted="false">Kwa matumizi</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">Mwongozo wa ndani wa programu wakati watoa sauti changamoto ya ukaguzi wa anti-bot</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">Sakinisha upanuzi wa jamii ya Mornye kabla ya kuongeza au pima index ya kuhifadhi desturi.</string>
+    <string name="ui_installed" formatted="false">Kuundwa kwa</string>
+    <string name="ui_interactive_dot_curve" formatted="false">Kuingiliana Dot Curve</string>
+    <string name="ui_irecognition" formatted="false">Utambuzi wa</string>
+    <string name="ui_ireconization" formatted="false">Kukubaliana</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">IReconization inachukua sekunde kadhaa kuunda alama ya muziki. Sauti haiwezi kuhifadhiwa.</string>
+    <string name="ui_ishare" formatted="false">ya ya</string>
+    <string name="ui_itune_license" formatted="false">iTuneLeseni ya Leseni</string>
+    <string name="ui_itune_music" formatted="false">iTuneMuziki wa Muziki</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTuneMaswali ya lyrics katika utangulizi halisi hapa chini. Kama huna sifa za msingi,iTuneInarudi nyuma kwa moja.</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTuneMajibu ya maswali yaliyoonyeshwa katika amri. Drag imewekwa upanuzi na watoa kurekebisha kipaumbele cha uchezaji.</string>
+    <string name="ui_itune_time_travel" formatted="false">iTuneMuda wa kusafiri</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">Jet Flanger Swoosh</string>
+    <string name="ui_join" formatted="false">Kujiunga kujiunga</string>
+    <string name="ui_keep_screen_on" formatted="false">Nenda kwenye Screen</string>
+    <string name="ui_l" formatted="false">L ya L</string>
+    <string name="ui_lan_port" formatted="false">Mkoa wa Pwani</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">Lugha ya upendeleo (kwa mfano, Kihindi, Punjabi ...)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fmKuogelea</string>
+    <string name="ui_layout" formatted="false">ya ya</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">Acha tupu kutumia mwisho wa default kwa mtoa huduma huyu.</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">LFO ya moduli ya awamu ya jet</string>
+    <string name="ui_library" formatted="false">Library Library Library</string>
+    <string name="ui_license" formatted="false">Leseni ya Leseni</string>
+    <string name="ui_liked_songs" formatted="false">Kocha wa nyimbo</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">Kama ilivyoahidiwa wakati wa kusainiwa kwa makubaliano hayo ni salama ndani naYouTube MusicKwa hiyo, bado wako katika maktaba hata baada ya kujiandikisha.</string>
+    <string name="ui_listening_patterns" formatted="false">Kusikiliza kwa makini</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">Sikiliza kwa sauti ya pamoja...</string>
+    <string name="ui_live" formatted="false">Maisha ya kuishi</string>
+    <string name="ui_live_radio_stations" formatted="false">Vituo vya redio vya kuishi</string>
+    <string name="ui_loading_announcements" formatted="false">Tangazo la ...</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">Kupakia wasanii, orodha za kucheza na historia</string>
+    <string name="ui_lossless" formatted="false">Kutokuwa na hasara</string>
+    <string name="ui_lossless_audio_preference" formatted="false">Maoni ya Audio ya bure</string>
+    <string name="ui_lyrics" formatted="false">Lyrics ya wimbo</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">Lyrics kwa ajili ya wimbo huu</string>
+    <string name="ui_lyrics_providers" formatted="false">Watoaji wa Lyrics</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">Tafsiri zilizotafsiriwa kwa ufanisi!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">Mwalimu Amplifier Boost</string>
+    <string name="ui_member_since" formatted="false">Tarehe ya kuzaliwa</string>
+    <string name="ui_memoji_style" formatted="false">Mtindo wa Memoji &amp; Style</string>
+    <string name="ui_minutes_listened" formatted="false">Dakika zilizoachwa</string>
+    <string name="ui_mirror_vol" formatted="false">Picha ya pamoja Vol.</string>
+    <string name="ui_model" formatted="false">MODEL</string>
+    <string name="ui_model_68c2cc7f" formatted="false">Mfano wa Model Model Model</string>
+    <string name="ui_moods_activities" formatted="false">Hisia na Shughuli</string>
+    <string name="ui_moods_moments" formatted="false">Mama na Mama wa Taifa</string>
+    <string name="ui_music_by_genre" formatted="false">Muziki wa Genre</string>
+    <string name="ui_music_language_preference" formatted="false">Lugha ya muziki ya upendeleo</string>
+    <string name="ui_music_services" formatted="false">Huduma za Muziki</string>
+    <string name="ui_name" formatted="false">Jina la jina</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">Rafiki wa karibu</string>
+    <string name="ui_network_proxy" formatted="false">Mtandao wa Proxy</string>
+    <string name="ui_new" formatted="false">mpya mpya mpya mpya</string>
+    <string name="ui_new_playlist" formatted="false">Orodha mpya ya wachezaji</string>
+    <string name="ui_new_releases" formatted="false">Uhuru mpya</string>
+    <string name="ui_news_from_dev" formatted="false">Habari kutoka kwa dev</string>
+    <string name="ui_next_up" formatted="false">Baada ya hapo</string>
+    <string name="ui_no_albums_found" formatted="false">Hakuna albamu zilizopata</string>
+    <string name="ui_no_artist_information_available" formatted="false">Hakuna taarifa ya msanii</string>
+    <string name="ui_no_artists_found" formatted="false">Hakuna msanii aliyepatikana</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">Hakuna msanii katika maktaba yako</string>
+    <string name="ui_no_playlists_found" formatted="false">Hakuna orodha ya kucheza inapatikana</string>
+    <string name="ui_no_results_on_spotify" formatted="false">Hakuna matokeo juu yaSpotify</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">Hakuna albamu zilizohifadhiwa kwenye maktaba yako</string>
+    <string name="ui_no_songs_found" formatted="false">Hakuna nyimbo zilizopokelewa</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">Hakuna wimbo uliowahi kutolewa katika</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">Hakuna nyimbo zilizopokelewa katika sehemu hii</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">Hakuna orodha ya wachezaji waliosajiliwa. Kupata moja katika maktaba!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">Hakuna cha kusikiliza mpaka sasa</string>
+    <string name="ui_now_playing" formatted="false">Sasa kucheza</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">Sasa kucheza</string>
+    <string name="ui_on_heavy_repeat" formatted="false">kwa hisani ya RaiaMwema</string>
+    <string name="ui_options" formatted="false">Mapendekezo ya</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">Kwa kutumia SP DC COOKIE</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">Nguvu ya Orbit &amp; Speed</string>
+    <string name="ui_pair_join_a_device" formatted="false">Furaha na furaha ya ndoa</string>
+    <string name="ui_password_optional" formatted="false">Neno la siri (Optional)</string>
+    <string name="ui_passwords_dont_match" formatted="false">Password hazifanani</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">Bonyeza hapa kuona sp dc ...</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">Tumia API yako hapa</string>
+    <string name="ui_play_in_itune" formatted="false">Kucheza katikaiTune</string>
+    <string name="ui_play_next" formatted="false">Kucheza mchezo ujao</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">Kucheza kwenye buds na msemaji wa simu / AUX kwa wakati mmoja</string>
+    <string name="ui_playlist_name" formatted="false">Jina la mchezo</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">Jina la mchezo</string>
+    <string name="ui_playlist_spotify" formatted="false">Wachezaji wa [...]Spotify</string>
+    <string name="ui_playlists" formatted="false">Wachezaji</string>
+    <string name="ui_plays" formatted="false">Kucheza michezo</string>
+    <string name="ui_pm" formatted="false">PM PM wa PM</string>
+    <string name="ui_port" formatted="false">Port Port Port Port</string>
+    <string name="ui_pre_added_extensions" formatted="false">Maandalizi ya awali</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">Prefer bit-kamilifu FLAC / ALAC hadi 24bit / 192 kHz wakati inapatikana</string>
+    <string name="ui_preparing_audio_preview" formatted="false">Maandalizi ya Audio preview ...</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">Kuzuia kifaa kuonyesha kutoka kugeuka mbali wakati Daima On Display ni kazi.</string>
+    <string name="ui_preview" formatted="false">Kabla ya</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">Preview Preview Preview Preview</string>
+    <string name="ui_preview_always_on_display" formatted="false">Preview daima juu ya kuonyesha</string>
+    <string name="ui_profile" formatted="false">Ahadi ya</string>
+    <string name="ui_profiles_in_backup" formatted="false">Mafanikio ya nyuma</string>
+    <string name="ui_prompt_type" formatted="false">Mradi wa TYPE</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">Huduma ya kwanza (FALLBACK ORDER)</string>
+    <string name="ui_queue" formatted="false">Kuwa makini</string>
+    <string name="ui_queue_is_empty" formatted="false">Kuwa huru</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">Kucheza michezo kwa ajili ya kucheza ijayo</string>
+    <string name="ui_radio" formatted="false">Redio ya redio</string>
+    <string name="ui_read_more" formatted="false">Soma zaidi</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">Silinda ya muda halisi na mstari wa kupiga na sauti ya moja kwa moja</string>
+    <string name="ui_recent_searches" formatted="false">Utafutaji wa hivi karibuni</string>
+    <string name="ui_recently_added" formatted="false">Aliongeza hivi karibuni</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">Recurring ratiba ya usingizi · Auto pauses kucheza</string>
+    <string name="ui_remote_music_library" formatted="false">Maktaba ya muziki ya mbali</string>
+    <string name="ui_remove" formatted="false">Kuondoa</string>
+    <string name="ui_rename" formatted="false">Rejina</string>
+    <string name="ui_rename_account" formatted="false">Akaunti ya upya</string>
+    <string name="ui_replay" formatted="false">Kwa hivyo</string>
+    <string name="ui_replay_c0f85d66" formatted="false">Michezo ya Replay</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">Kupunguza kiasi cha kupoteza uzito</string>
+    <string name="ui_reset" formatted="false">Kuundwa upya</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">Reset Mtoa Order &amp; Default</string>
+    <string name="ui_reset_to_default_url" formatted="false">Badilisha URL ya default</string>
+    <string name="ui_restore_default_sources" formatted="false">Rejesha vyanzo vya default</string>
+    <string name="ui_restore_itune_backup" formatted="false">Kurudishwa upyaiTuneBackup Backup ya Backup</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">Kurudishwa kwaJioSaavnAidha, naYouTube Musickatika mfumo wa default.JioSaavnkuanza naYouTube Musickuanza.</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">Rejesha LRC Lib, KuGou, na SimpMusic kama watoa huduma bora na kuwezesha vyanzo vyote vya 11.</string>
+    <string name="ui_resume" formatted="false">Kurudishwa</string>
+    <string name="ui_rhythm_by_hour" formatted="false">Saa ya ukombozi</string>
+    <string name="ui_room_permissions" formatted="false">Maelezo ya ROOM</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">Trafiki ya mtandao wa mtandao kupitia HTTP au SOCKS wakala</string>
+    <string name="ui_save_proxy" formatted="false">Matumizi ya Proxy</string>
+    <string name="ui_save_schedule" formatted="false">Mpango wa Hifadhi</string>
+    <string name="ui_save_to_gallery" formatted="false">Hifadhi ya Gallery</string>
+    <string name="ui_save_token" formatted="false">Hifadhi ya Token</string>
+    <string name="ui_saved_to_your_library" formatted="false">Asante kwa ajili ya maktaba yako!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">Kutumia Android Keystore. Faili za Backup hutumia PBKDF2-HMAC-SHA256 (310,000 raundi) na AES-256-GCM.</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">Kuokoa kwa ajili ya downloads /itune/Maombi ya nyuma</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">Waambie wimbo, msanii, albamu, au lyrics</string>
+    <string name="ui_search" formatted="false">Utafutaji wa Kutafuta</string>
+    <string name="ui_search_identify" formatted="false">Kutafuta na kutambua</string>
+    <string name="ui_search_announcements" formatted="false">Matangazo ya utafutaji ...</string>
+    <string name="ui_search_country" formatted="false">Nchi ya kutafuta ...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">Kutafuta nyimbo, wasanii, albamu, na orodha ya nyimbo</string>
+    <string name="ui_search_languages" formatted="false">Lugha za kutafuta ...</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">Kutafuta au aina ya ID ya mfano</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">Tafuta nyimbo, wasanii, albamu, au orodha ya nyimbo</string>
+    <string name="ui_searching_lyrics" formatted="false">Kutafuta lyrics ya ...</string>
+    <string name="ui_searching_spotify" formatted="false">Kutafuta Kutafuta KutafutaSpotify... ... ... ...</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">Waziri wa Mambo ya Ndani</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">Chagua avatar ya wasifu ili kubinafsisha yakoiTuneUzoefu katika skrini zote.</string>
+    <string name="ui_select_language" formatted="false">Chagua lugha</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">Chagua template ya haraka kwa tafsiri ya lyrics.</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">Chagua injini ya kutumia kwa tafsiri ya lyrics-kwa-line.</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">Chagua lugha ya lengo kwa tafsiri ya lyrics.</string>
+    <string name="ui_server_host_ip" formatted="false">Msaidizi wa Server / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">URL ya URL / Manifesto</string>
+    <string name="ui_settings_appearance" formatted="false">Mipangilio ya Kuonekana</string>
+    <string name="ui_share_lyrics" formatted="false">Kushiriki Lyrics</string>
+    <string name="ui_share_my_replay" formatted="false">Kushiriki Replay yangu</string>
+    <string name="ui_share_replay" formatted="false">Maelezo ya mchezo Replay</string>
+    <string name="ui_share_this_story" formatted="false">Shiriki hadithi hii</string>
+    <string name="ui_share_your_time_travel" formatted="false">Shiriki muda wako wa kusafiri</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">Onyesha Lyrics Iliyounganishwa Juu ya Canvas</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">Kuingia kwenye muziki.youtubeNenda kwenye browser ya desktop. Open Developer Tools → Maombi → Cookies, kisha nakala ya saini-katika kikao maadili. Tumia kanuni hizi kama nywila yako.</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">Ingia kwenye akaunti yakoLast.fmAkaunti ya akaunti</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">Ingia kwenye akaunti zote</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">Matokeo ya Dual</string>
+    <string name="ui_skip_sign_in" formatted="false">Bonyeza kuingia</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">Slide mbele kwa lyrics haraka · nyuma kwa polepole · Sauti isiyoathiriwa</string>
+    <string name="ui_snap_0" formatted="false">ya ya 0</string>
+    <string name="ui_soundstage_width" formatted="false">Sauti ya sauti</string>
+    <string name="ui_sources" formatted="false">Vyanzo vya</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">Sauti ya Spatial &amp; Essentials</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotifyya canvas</string>
+    <string name="ui_spotify_account" formatted="false">SpotifyAkaunti ya akaunti</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">SpotifyCanvas, Muziki wa Apple, Tidal &amp; Jumuiya ya filamu</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">SpotifyKwa sasa inaunganishwa. Sanaa ya Sanaa (Canvas) naSpotifyMaelezo ya mchezo synchronization.</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">SpotifyKutafuta kushindwa. Jaribu tena.</string>
+    <string name="ui_station" formatted="false">Kituo cha Station Station Station</string>
+    <string name="ui_stereo_echo_delay" formatted="false">Echo ya Stereo na Delay</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">Maduka kiungo hiki na autoadds nyimbo yoyote mpya kwenye programu ya kufungua</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">Futa maktaba yako isiyo na hasara moja kwa moja kutoka kwa hisa za mtandao wa kibinafsi au Nextcloud.</string>
+    <string name="ui_streaming_sources" formatted="false">Vyanzo vya maji</string>
+    <string name="ui_style" formatted="false">Kuwa</string>
+    <string name="ui_suggestions" formatted="false">Mapendekezo</string>
+    <string name="ui_switch" formatted="false">Kubadilisha Kubadilisha</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">Badilisha avatar yako</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">Bofya upande wa kulia au upande wa kushoto wa kulia</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">Bonyeza mara moja kuamsha Daima kwenye Display sasa</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">Bonyeza kuchagua matangazo ya nchi na mji wa FM</string>
+    <string name="ui_target_language" formatted="false">Lugha ya Ishara</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">Lugha ya Target</string>
+    <string name="ui_test" formatted="false">Jaribio la majaribio</string>
+    <string name="ui_test_proxy_connection" formatted="false">Mawasiliano ya Proxy</string>
+    <string name="ui_testing_proxy" formatted="false">Dawa ya Proxy...</string>
+    <string name="ui_that_s_your_story" formatted="false">Hii ni\'Hadithi yako</string>
+    <string name="ui_this_account" formatted="false">Akaunti hii</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">Orodha hii ni tupu. Ongeza nyimbo kwa mchezaji au tafuta!</string>
+    <string name="ui_time_travel" formatted="false">Muda wa kusafiri</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">Muda wa kusafiri</string>
+    <string name="ui_time_travel_wrap" formatted="false">Muda wa kusafiri</string>
+    <string name="ui_time_synced_lyrics" formatted="false">Lyrics ya Muda</string>
+    <string name="ui_top_picks" formatted="false">Juu ya Picks</string>
+    <string name="ui_top_result" formatted="false">Matokeo ya Juu</string>
+    <string name="ui_top_song" formatted="false">Wimbo wa Juu</string>
+    <string name="ui_top_songs" formatted="false">Nyimbo za Juu</string>
+    <string name="ui_top_streamed" formatted="false">Viwango vya juu</string>
+    <string name="ui_total_listening_time" formatted="false">Muda wa kusikiliza</string>
+    <string name="ui_total_time" formatted="false">Jumla ya muda</string>
+    <string name="ui_translate_actual_lines" formatted="false">Tafsiri ya maneno halisi</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">Tafsiri lyrics juu ya mahitaji ya wimbo wowote kutoka orodha ya mchezaji (... &gt; Lyrics &gt; Tafsiri). Wakati ambapo wakati\'Tafsiri ya maneno halisi\'Ni mbali, tafsiri zinaonekana kama vichwa vya habari chini ya maandishi ya awali.</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">Tafsiri zifuatazo nyimbo lyrics kwa Kiingereza. Kuhifadhi mtiririko wa mashairi.</string>
+    <string name="ui_translating_lyrics" formatted="false">Tafsiri ya lyrics ...</string>
+    <string name="ui_translation_mode" formatted="false">Tafsiri ya mtindo</string>
+    <string name="ui_translation_prompt" formatted="false">Tafsiri ya haraka</string>
+    <string name="ui_trending_artists" formatted="false">Kuwaendeleza Wasanii</string>
+    <string name="ui_turn_off_timer" formatted="false">Kuacha wakati</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">Sasisha jina lililoonyeshwa kwenye kadi yako ya wasifu wa Apple katika Mipangilio.</string>
+    <string name="ui_username_optional" formatted="false">Jina la mtumiaji (Optional)</string>
+    <string name="ui_view" formatted="false">Mtazamo wa Mtazamo</string>
+    <string name="ui_view_on_shazam" formatted="false">Maoni kwenye Shazam</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">Vinyl Turntable Link</string>
+    <string name="ui_whats_new" formatted="false">Nini maana ya mpya</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">Wakati muziki ni kucheza, Daima On Display zamu juu kama hakuna kugusa hutokea kwenye screen kwa muda waliochaguliwa. Tumia tu wakati uko ndani ya app.</string>
+    <string name="ui_who_is_listening" formatted="false">Nani wa kusikiliza?</string>
+    <string name="ui_widget" formatted="false">Widget ya</string>
+    <string name="ui_you" formatted="false">Wewe ni wewe</string>
+    <string name="ui_your_1_artist" formatted="false">Msanii wa #1</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">Kipengele chako cha API kinahifadhiwa salama kwenye kifaa na kamwe haijashirikiwa.</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">Alama yako ya kikao cha Discord imehifadhiwa kwenye kifaa hiki na hutumiwa tu kwa Uwepo wa Rich.</string>
+    <string name="ui_your_favourite_song" formatted="false">wimbo wako favorite</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">Maktaba yako, orodha za kucheza na mipangilio itakuwa encrypted na nywila ya angalau 8 wahusika.</string>
+    <string name="ui_your_listening_experience" formatted="false">Uzoefu wako</string>
+    <string name="ui_your_listening_pattern" formatted="false">Mtindo wako wa kusikiliza</string>
+    <string name="ui_your_listening_persona" formatted="false">Sikiliza sauti yako</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">Muziki wako Replay na Takwimu</string>
+    <string name="ui_your_musical_anchor" formatted="false">Muziki wa ANC</string>
+    <string name="ui_your_name" formatted="false">Majina yako</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">Password yako itatumwa kwaLast.fmtu kwa ajili ya kuandaa mkutano.iTuneHii haiwezi kuokoa.</string>
+    <string name="ui_your_playlists" formatted="false">Wachezaji wako</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">Wachezaji wako</string>
+    <string name="ui_your_sonic_peak" formatted="false">Sonic ya juu</string>
+    <string name="ui_your_spotify_playlists" formatted="false">yakoSpotifyWachezaji</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">yakoSpotifyOrodha ya kucheza (Public &amp; Private)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSICya gogo</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube MusicMkutano wa cookies</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">· Kuwa</string>
+    <string name="ui_text_a118c40635" formatted="false">Kwa mfano,</string>
+    <string name="ui_album_artwork" formatted="false">Album ya Sanaa</string>
+    <string name="ui_itune_waves" formatted="false">iTuneWaves ya</string>
+    <string name="ui_previous" formatted="false">Kabla ya</string>
+    <string name="ui_next" formatted="false">Baadaye</string>
+    <string name="ui_audio_output" formatted="false">Uwasilishaji wa sauti</string>
+    <string name="ui_low_volume" formatted="false">Kiwango cha chini</string>
+    <string name="ui_high_volume" formatted="false">Kiwango cha juu</string>
+    <string name="ui_filter" formatted="false">Filter Filter Filter Filter Filter Filter Filter</string>
+    <string name="ui_refresh" formatted="false">Ukarabati wa upya</string>
+    <string name="ui_options_6bf5da9c" formatted="false">Chaguzi za kuchagua</string>
+    <string name="ui_user_profile_avatar" formatted="false">Mtumiaji Avatar</string>
+    <string name="ui_news" formatted="false">Habari Mpya</string>
+    <string name="ui_no_song_playing" formatted="false">Hakuna wimbo wa kucheza</string>
+    <string name="ui_next_track" formatted="false">Ufuatiliaji wa Baadaye</string>
+    <string name="ui_see_all_songs" formatted="false">Tazama Nyimbo zote</string>
+    <string name="ui_favorite_radio" formatted="false">Redio ya favorite</string>
+    <string name="ui_live_65c821a5" formatted="false">Maisha ya kuishi</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTuneBrand ya Waves</string>
+    <string name="ui_refresh_network" formatted="false">Mtandao wa upya</string>
+    <string name="ui_edit_display_name" formatted="false">Badilisha jina</string>
+    <string name="ui_remove_from_queue" formatted="false">Kuondolewa kwa foleni</string>
+    <string name="ui_search_new_releases" formatted="false">Kutafuta vyanzo vipya</string>
+    <string name="ui_refresh_new_releases" formatted="false">Kurudisha uhuru mpya</string>
+    <string name="ui_refresh_downloads" formatted="false">Kurudisha downloads</string>
+    <string name="ui_clear_cache" formatted="false">Ni wazi kuwa</string>
+    <string name="ui_sort" formatted="false">Aina ya</string>
+    <string name="ui_see_all_new_releases" formatted="false">Tazama Nyimbo Mpya Zote</string>
+    <string name="ui_identify" formatted="false">Utambuzi wa</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">Orodha ya kucheza</string>
+    <string name="ui_create_playlist" formatted="false">Kujenga orodha ya kucheza</string>
+    <string name="ui_liked" formatted="false">Kocha</string>
+    <string name="ui_paste" formatted="false">ya zamani</string>
+    <string name="ui_checked" formatted="false">Ukaguzi wa</string>
+    <string name="ui_google_account_playlist" formatted="false">Akaunti ya Google Playlist</string>
+    <string name="ui_spotify_playlist" formatted="false">SpotifyOrodha ya Playlist</string>
+    <string name="ui_local_playlist" formatted="false">Orodha ya Playlist</string>
+    <string name="ui_back_to_audio_engine" formatted="false">Nyuma ya Audio Engine</string>
+    <string name="ui_bluetooth_settings" formatted="false">BluetoothMipangilio ya Mipangilio</string>
+    <string name="ui_scan_output_devices" formatted="false">Vifaa vya Scan Output</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">Sauti ya Dual</string>
+    <string name="ui_selected" formatted="false">Waliochaguliwa</string>
+    <string name="ui_copy" formatted="false">Nakala ya nakala</string>
+    <string name="ui_copy_link" formatted="false">Nakala ya kiungo</string>
+    <string name="ui_upgrade_quality" formatted="false">Uboreshaji wa Ubora</string>
+    <string name="ui_fm_radio" formatted="false">Redio ya FM</string>
+    <string name="ui_next_station" formatted="false">Kituo cha baadaye</string>
+    <string name="ui_minimize" formatted="false">Kupunguza uzito</string>
+    <string name="ui_favorite" formatted="false">Kocha favorite</string>
+    <string name="ui_more_options" formatted="false">Chaguzi zaidi</string>
+    <string name="ui_previous_station" formatted="false">Kituo cha zamani</string>
+    <string name="ui_sleep_timer" formatted="false">Wakati wa kulala</string>
+    <string name="ui_audio_output_devices" formatted="false">Vifaa vya Audio Output</string>
+    <string name="ui_station_list" formatted="false">Orodha ya vituo</string>
+    <string name="ui_volume" formatted="false">Kiwango cha</string>
+    <string name="ui_open_lyrics" formatted="false">Fungua lyrics</string>
+    <string name="ui_mute_volume" formatted="false">Ukubwa wa Volume</string>
+    <string name="ui_max_volume" formatted="false">Ukubwa wa Max</string>
+    <string name="ui_endless_queue" formatted="false">Mahitaji yasiyo ya lazima</string>
+    <string name="ui_repeat" formatted="false">Mara kwa mara</string>
+    <string name="ui_refresh_stations" formatted="false">Vituo vya upya</string>
+    <string name="ui_favorite_station" formatted="false">Kituo cha favorite</string>
+    <string name="ui_close_ireconization" formatted="false">Karibu iReconies</string>
+    <string name="ui_cancel_voice_search" formatted="false">Kufuta utafutaji wa sauti</string>
+    <string name="ui_microphone" formatted="false">Simu ya Microphone</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">Chaguzi zaidi</string>
+    <string name="ui_voice_search" formatted="false">Sauti ya kutafuta</string>
+    <string name="ui_saved" formatted="false">Kuokoa kuokoa kuokoa</string>
+    <string name="ui_fill_search_query" formatted="false">Kutafuta ufumbuzi</string>
+    <string name="ui_remove_from_history" formatted="false">Kuondolewa kwa historia</string>
+    <string name="ui_itune_icon" formatted="false">iTuneicon icon ya icon</string>
+    <string name="ui_artwork_preview" formatted="false">Kazi ya Video Preview</string>
+    <string name="ui_decrease" formatted="false">Kupungua kwa</string>
+    <string name="ui_increase" formatted="false">Ongezeko la</string>
+    <string name="ui_open_link" formatted="false">Fungua Link</string>
+    <string name="ui_reset_geometry" formatted="false">Kuunganisha Geometry</string>
+    <string name="ui_reorder_provider" formatted="false">Mtoa huduma</string>
+    <string name="ui_save_name" formatted="false">Jina la kuokoa</string>
+    <string name="ui_editable_name" formatted="false">Majina ya Editable</string>
+    <string name="ui_google" formatted="false">Google Google Google Google</string>
+    <string name="ui_remove_account" formatted="false">Kufuta Akaunti</string>
+    <string name="ui_reorder_source_priority" formatted="false">Msingi wa Msingi</string>
+    <string name="ui_refresh_playlists" formatted="false">Orodha ya kucheza upya</string>
+    <string name="ui_replay_poster" formatted="false">Kujiandikisha kwa Poster</string>
+    <string name="ui_settings" formatted="false">Mipangilio ya Mipangilio</string>
+    <string name="ui_artist_radio" formatted="false">Msanii wa redio</string>
+    <string name="ui_play_all" formatted="false">Kucheza michezo yote</string>
+    <string name="ui_delete_playlist" formatted="false">Download mchezo Orodha ya kucheza</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">Fomu ya maombi</string>
+    <string name="ui_artist_info" formatted="false">Mwandishi wa Info</string>
+    <string name="ui_enabled" formatted="false">Imewezeshwa</string>
+    <string name="ui_search_icon" formatted="false">Utafutaji wa Icon</string>
+    <string name="ui_region">Mkoa wa:%1$s</string>
+    <string name="ui_connected_devices">Matokeo ya uchaguzi (%1$s)</string>
+    <string name="ui_up_next">ya juu (%1$s)</string>
+    <string name="ui_text_da5c3629fd">%1$s&gt;&gt;</string>
+    <string name="ui_active_7c6a4064">%1$s• • • • •%2$sKazi ya Active Active Active</string>
+    <string name="ui_no_new_available_right_now">Hakuna jipya%1$sInapatikana kwa sasa</string>
+    <string name="ui_tracks">%1$sBarabara ya ·%2$s</string>
+    <string name="ui_songs">%1$snyimbo ·%2$s• • • • •%3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s• • • • •%2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c">• • • • •%1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$s)(s) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) \'Inapaswa kuunganishwa na:</string>
+    <string name="ui_text_a3edb2b714">• • • • •%1$s- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -%2$s</string>
+    <string name="ui_d_eeda119e">%1$sD ya D</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+ + + + + +%1$swa wa wa wa</string>
+    <string name="ui_connected">%1$sKuunganisha</string>
+    <string name="ui_open_web_player">Mchezaji wa mtandao (%1$s)</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">Nchi ya:%1$s(kwa kuwa)%2$s)</string>
+    <string name="ui_city_state">Jiji/Mji au Eneo:%1$s</string>
+    <string name="ui_codec_bitrate">Codec / Bitrate:%1$s</string>
+    <string name="ui_language">Lugha ya:%1$s</string>
+    <string name="ui_tags">Kwa mfano:%1$s</string>
+    <string name="ui_stream">Uwasilishaji:%1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">API muhimu si iliyoundwa kwa ajili ya%1$sTafadhali kuweka katika Mipangilio &gt; Lyrics.</string>
+    <string name="ui_s_clip">%1$sya clip</string>
+    <string name="ui_loading_more_fm_stations_loaded">zaidi ya vituo vya FM (%1$s(Sauti ya ...</string>
+    <string name="ui_found">%1$sWaliopatikana</string>
+    <string name="ui_version">Tafsiri ya Version%1$s(kwa kuwa)%2$s)</string>
+    <string name="ui_of_active">%1$sKutoka kwa%2$sKazi ya Active Active</string>
+    <string name="ui_text_adebc50ade"># # #%1$s</string>
+    <string name="ui_api_key">%1$sAPI muhimu</string>
+    <string name="ui_channel">Channel:%1$s</string>
+    <string name="ui_sync_issue">Matatizo ya Sync:%1$s</string>
+    <string name="ui_enter">Kuingia kwa kuingia%1$s</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">"Una uhakika unataka kuondoka?"%1$sData zote, orodha za kucheza, favorites, historia, na mipangilio katika akaunti hii itafutwa kabisa.</string>
+    <string name="ui_peak">Kikoa:%1$s</string>
+    <string name="ui_welcome">Kwa heri,%1$s</string>
+    <string name="ui_songs_played">%1$sNyimbo zilizochezwa</string>
+    <string name="ui_around">Kuwa karibu%1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">Wakati dunia inakuwa busy, wewe tune katika zaidi juu ya%1$sya ya around%2$s...</string>
+    <string name="ui_itune_time_travel_575a110d">iTuneMuda wa kusafiri%1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s· Kuwa%2$s</string>
+    <string name="ui_your_biggest_day_was">Siku yako kuu ilikuwa%1$s...</string>
+    <string name="ui_listening_recap">%1$sKusikiliza kwa makini</string>
+    <string name="ui_busiest_day">Siku ya furaha:%1$s</string>
+    <string name="ui_peak_hour_00">Muda wa saa:%1$sSaa ya saa</string>
+    <string name="ui_loading">Loading ya%1$s... ... ... ...</string>
+    <string name="ui_about">Kuhusu kuhusu%1$s</string>
+    <string name="ui_songs_9b614dc8">%1$sNyimbo za nyimbo</string>
+    <string name="ui_current_offset_ms">Usajili wa sasa:%1$sms ms ms ms</string>
+    <string name="ui_connected_session">Mkutano wa kuunganisha:%1$s</string>
+    <string name="ui_k">%1$sya k</string>
+    <string name="ui_top_result_c5e5adab">Matokeo ya juu ·%1$s</string>
+    <string name="toast_song_not_found_in_itune">Wimbo haukupatikana katikaiTune</string>
+    <string name="toast_playback_failed_try_again">Kushindwa kucheza, jaribu tena</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">Auto Sleep Timer kazi · Kucheza nyuma</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">Next Story → VIDEO: Wimbo huu haujatolewa</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">Kiwango cha chini: Haiwezi kuboresha ubora</string>
+    <string name="toast_upgrading_quality">Kuboresha ubora</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">Hakuna vyanzo visivyo na hasara vinavyowezeshwa katika vyanzo</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">Hakuna kiwango cha juu cha ubora kilichopatikana katika vyanzo vilivyowezeshwa</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">Shuffle imefungwa kwa Shuffle ya Kudumu katika Mipangilio</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">Uwezo wa simu za mkononi unahitajika kutambua muziki</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">Onyesha juu ya ruhusa nyingine ya programu inahitajika kwa ajili ya kutambua popup</string>
+    <string name="toast_playback_failed">Wachezaji walishindwa</string>
+    <string name="toast_complete_google_sign_in_first">Ingia ya Google kwanza</string>
+    <string name="toast_waiting_for_youtube_music_session">Kusubiri kwa ajili yaYouTube MusicMkutano wa ...</string>
+    <string name="toast_couldn_t_load_tracks">Haikuwezekana\'TÜVASAŞ</string>
+    <string name="toast_copied_to_clipboard">Bonyeza kwenye clipboard</string>
+    <string name="toast_profile_avatar_updated">Picha ya avatar updated</string>
+    <string name="toast_no_tracks_found">Hakuna njia ya mkato</string>
+    <string name="toast_google_account_connected">Akaunti ya Google imeunganishwa</string>
+    <string name="toast_link_copied">Link iliyopakuliwa</string>
+    <string name="toast_could_not_open_browser">Haiwezi kufungua browser</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">Kuingia bandari kati ya 1024 na 65535</string>
+    <string name="toast_cached_music_cleared">Muziki uliopigwa marufuku</string>
+    <string name="toast_no_tracks_available_to_add">Hakuna njia ya kuongeza</string>
+    <string name="toast_enter_a_playlist_name">Ingiza jina la orodha ya kucheza</string>
+    <string name="toast_system_sound_panel_opened">Mfumo wa sauti wa mfumo wa sauti umefunguliwa</string>
+    <string name="toast_download_started_check_notification">Pakua kuanza · Angalia taarifa</string>
+    <string name="toast_playback_will_stop_after_current_track">Playback itakuwa kuacha baada ya kufuatilia</string>
+    <string name="toast_sleep_timer_turned_off">Saa ya kupumzika iliondolewa</string>
+    <string name="toast_stream_url_copied">URL ya URL iliyopakuliwa</string>
+    <string name="toast_couldn_t_create_lyrics_card">Haikuwezekana\'Jinsi ya kutengeneza lyrics</string>
+    <string name="toast_restored_online_lyrics">Kurudishwa kwa lyrics online</string>
+    <string name="toast_lyrics_saved">Lyrics zilizohifadhiwa</string>
+    <string name="toast_translation_cleared">Tafsiri iliyotafsiriwa</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">Tafadhali kuweka API yako muhimu katika mipangilio Lyrics ya kwanza</string>
+    <string name="toast_no_lyrics_found_for_this_song">Hakuna lyrics zilizopatikana kwa wimbo huu</string>
+    <string name="toast_could_not_create_audio_clip">Haiwezi kuunda video ya sauti</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">Snippet kuokolewa kwa muziki /iTunewa wa wa wa wa</string>
+    <string name="toast_playing_next">Kucheza mchezo ujao</string>
+    <string name="toast_added_to_queue">Ongeza kwenye foleni</string>
+    <string name="toast_download_started_check_notifications">Download kuanza · Angalia taarifa</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">Haikuwezekana\'Kupata wimbo huu katikaYouTube Music</string>
+    <string name="toast_couldn_t_start_mix">Haikuwezekana\'Mwanzo wa kuchanganya</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">Haikuwezekana\'Kutafuta njia ya juuYouTube Music</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">Haikuweza kuweka password salama. Backup ya moja kwa moja haijabadilika.</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">Ruhusa ya kuhifadhi inahitajika ili kuokoa backups katika downloads</string>
+    <string name="toast_choose_an_itune_backup_file">Chagua moja.ituneBackup ya faili</string>
+    <string name="toast_audio_artwork_cache_cleared">Audio &amp; Artificial cache imeondolewa</string>
+    <string name="toast_could_not_open_github">Haiwezi kufungua GitHub</string>
+    <string name="toast_profile_name_updated">Jina la mtumiaji updated</string>
+    <string name="toast_search_history_cleared">Historia ya utafutaji imefunguliwa</string>
+    <string name="toast_listening_history_cleared">Historia ya kusikiliza imefafanuliwa</string>
+    <string name="toast_cached_songs_cleared">Nyimbo zilizotungwa</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">Mipangilio ya mfumo wa Open kutoa Display juu ya programu nyingine</string>
+    <string name="toast_dynamic_island_geometry_reset">Teknolojia ya geometry ya Dynamic Island</string>
+    <string name="toast_geometry_reset">Geometry ya upya</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">Watoaji wa lyrics kurudi kwa default</string>
+    <string name="toast_api_key_saved">API muhimu zilizohifadhiwa</string>
+    <string name="toast_base_url_updated">Msingi wa URL updated</string>
+    <string name="toast_translation_prompt_updated">Tafsiri ya haraka updated</string>
+    <string name="toast_equalizer_reset_to_flat">Usawazishaji upya wa Flat</string>
+    <string name="toast_dj_console_reset">DJ Contribuer</string>
+    <string name="toast_name_saved">Jina la kuokoa</string>
+    <string name="toast_syncing_youtube_music_library">KuunganishaYouTube MusicMaktaba ya ...</string>
+    <string name="toast_signed_out_local_likes_preserved">Kujiandikisha (kujiandikisha)</string>
+    <string name="toast_signed_out_of_all_google_accounts">Ingia kwenye akaunti zote za Google</string>
+    <string name="toast_discord_disconnected">Kuvunjika kwa uhusiano</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">Kuingia kwa akaunti halaliYouTube MusicKidakuzi (SAPISID na kuki ya kikao)</string>
+    <string name="toast_youtube_music_account_connected">YouTube MusicAkaunti iliyounganishwa</string>
+    <string name="toast_account_renamed">Akaunti iliyobadilishwa</string>
+    <string name="toast_account_deleted">Akaunti imefutwa</string>
+    <string name="toast_cannot_delete_your_only_account">Haiwezi kufuta akaunti yako</string>
+    <string name="toast_sources_restored_to_defaults">Vyanzo vilivyorejeshwa kwa default</string>
+    <string name="toast_spotify_disconnected">SpotifyKuunganishwa</string>
+    <string name="toast_spotify_sp_dc_token_saved">SpotifyFaili ya SSL iliyohifadhiwa</string>
+    <string name="toast_spotify_connected">Spotify connectya ya !</string>
+    <string name="toast_complete_spotify_sign_in_first">Kamili kamiliSpotifyIshara ya kwanza</string>
+    <string name="toast_saved_to_gallery">Kuokoa Dunia kwa Ajili ya Nyumba!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">Ruhusa yaiTuneKuweka updates ili kuendelea</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">Pakua update ya APK haipatikani</string>
+    <string name="toast_added_to_queue_next">Aliongeza kuwa baada ya</string>
+    <string name="toast_link_copied_to_clipboard">Link kunakiliwa kwa clipboard</string>
+    <string name="toast_song_link_copied_to_clipboard">Wimbo ulionakiliwa kwa clipboard</string>
+    <string name="toast_left_ishare_session">Mkutano wa IShare</string>
+    <string name="toast_ishare_lan_host_started">Jeshi la Zima Moto laanza!</string>
+    <string name="toast_scanning_lan_for_sessions">Spika wa Bunge kwa ajili ya mikutano...</string>
+    <string name="toast_cache_cleared">Cache ya wazi</string>
+    <string name="toast_signed_out_successfully">Kujiandikisha kwa mafanikio</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">Password lazima mechi na kuwa na angalau 8 wahusika</string>
+    <string name="toast_no_backup_file_found_in_storage">Hakuna faili ya chelezo iliyopatikana katika kuhifadhi</string>
+    <string name="toast_library_settings_restored">Maktaba na mipangilio ya kurejeshwa!</string>
+    <string name="toast_enter_your_backup_password">Kuingia password yako</string>
+    <string name="toast_syncing_spotify_library">KuunganishaSpotifyMaktaba ya ...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify Connectya ya !</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">Tafadhali kuingia halali SP DC kuki</string>
+    <string name="toast_playing">Kucheza michezo%%1$s... ... ... ...</string>
+    <string name="toast_upgraded_to_lossless_kbps">Uboreshaji wa kupoteza /%%1$sya kbps</string>
+    <string name="toast_playing_next_0f0c851c">Kucheza michezo%%1$sBaadaye</string>
+    <string name="toast_added_to_queue_88e96c25">Aliongeza%%1$sJuu ya Lines</string>
+    <string name="toast_playing_cb1fb3de">Kucheza michezo%%1$s... ... ... ...</string>
+    <string name="toast_playing_next_e0082d95">Kucheza mchezo ujao:%%1$s</string>
+    <string name="toast_couldn_t_load">Haikuwezekana\'T-shirt ya%%1$s</string>
+    <string name="toast_opening">Ufunguzi wa kufungua%%1$s... ... ... ...</string>
+    <string name="toast_couldn_t_open">Haikuwezekana\'Kuwa wazi%%1$s</string>
+    <string name="toast_couldn_t_play">Haikuwezekana\'Kucheza mchezo%%1$s</string>
+    <string name="toast_library_pin">Picha za Maktaba:%%1$s</string>
+    <string name="toast_copied">Kuwa:%%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">Muda wa kulala uliowekwa kwa ajili ya%%1$sDakika ya</string>
+    <string name="toast_lyrics_applied">Fomu ya maombi (%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">Aliongeza%%1$sBarabara ya Line</string>
+    <string name="toast_switched_feed_to">Kulisha chakula kwa ajili ya%%1$s</string>
+    <string name="toast_provider_updated_to">Msaada kwa ajili ya update%%1$s</string>
+    <string name="toast_target_language_set_to">Lugha ya maudhui yaliyopangwa%%1$s</string>
+    <string name="toast_translation_mode_set_to">Njia ya kutafsiri imewekwa%%1$s</string>
+    <string name="toast_added_source">Vyanzo vingine:%%1$s</string>
+    <string name="toast_installed_extension_s">Kuundwa kwa%%1$sUendelezaji (s)</string>
+    <string name="toast_imported_songs">Kuingizwa\'%%1$s\'(kwa kuwa)%%2$snyimbo zake)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">Haikuwezekana\'ya kupata\'%%1$s\'Juu yaYouTube Music</string>
+    <string name="toast_added_songs_to">Aliongeza%%1$snyimbo kwa ajili ya%%2$s</string>
+    <string name="toast_joining">Kujiunga na%%1$s... ... ... ...</string>
+    <string name="toast_added_to">Aliongeza kuwa%%1$s</string>
+    <string name="toast_itune_v_for_android_tv">iTunev v v v%%1$sKwa ajili ya Android TV</string>
+    <string name="toast_backup_failed">Backup kushindwa:%%1$s</string>
+    <string name="toast_restore_failed">Rejesho la kushindwa:%%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">Kisiwa cha Dynamic &amp; StandBy</string>
+    <string name="settings_ishare" formatted="false">ya ya</string>
+    <string name="settings_dynamic_island" formatted="false">Kisiwa cha Dynamic</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">Udhibiti wa maji ya bomba njeiTune</string>
+    <string name="settings_always_on_display" formatted="false">Daima juu ya kuonyesha</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">Injini ya Sauti na Athari za Sauti</string>
+    <string name="settings_dolby_atmos" formatted="false">Dolby Atmo</string>
+    <string name="settings_text_8948f8179a" formatted="false">Sauti ya 8D</string>
+    <string name="settings_spatial_audio" formatted="false">Sauti ya sauti</string>
+    <string name="settings_equalizer_eq" formatted="false">usawa (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">Filtering ya Filtering</string>
+    <string name="settings_dj_studio_panel" formatted="false">Mradi wa DJ Studio</string>
+    <string name="settings_audio_normalization" formatted="false">Sauti ya kawaida</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB Bit-Perfect ya DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">Sauti ya sauti ya sauti</string>
+    <string name="settings_signal_pipeline" formatted="false">Bomba la mafuta</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">Picha zote na Wizara ya Mambo ya Ndani ya Nchi. .................................................................... Matumizi ya fedha za kigeni</string>
+    <string name="settings_audio_playback" formatted="false">Muziki na Playback</string>
+    <string name="settings_sources" formatted="false">Vyanzo vya</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">Usimamizi waYouTube MusicKwa hivyo,JioSaavnna kuongeza uzalishaji,WebDAVKwa hivyo,SMBKwanza, na kucheza kwa msingi</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">Kuruka gari wakati makosa hutokea</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">Nenda kwenye wimbo unaofuata ikiwa uchezaji utashindwa</string>
+    <string name="settings_download_quality" formatted="false">Download ubora wa juu</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">Ubora wa default unaotumiwa na vitendo vya kupakua wimbo</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">Chagua ubora wa sauti ya default kwa downloads kwenye programu.</string>
+    <string name="settings_lossless_audio" formatted="false">Sauti ya kupoteza</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">Kuboresha ubora wa nyimbo za Cached</string>
+    <string name="settings_streaming_quality" formatted="false">Ufuatiliaji wa Ubora</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">Chagua ubora wako wa sauti unaopenda.</string>
+    <string name="settings_pcm_output_format" formatted="false">Mfumo wa Uendeshaji wa PCM</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">Rebuilds kucheza katika nafasi ya sasa</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">Chagua muundo wa PCM ulioombwa kutoka kwa Android\'Uzalishaji wa sauti. USB DAC inaweza kuibadilisha kwa muundo unaounga mkono.</string>
+    <string name="settings_crossfade" formatted="false">Msalaba wa Msalaba</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">Kuvuka fade-out ya kufuatilia mwisho na mwanzo wa ijayo.</string>
+    <string name="settings_automix" formatted="false">AutoMix</string>
+    <string name="settings_afterglow" formatted="false">Baada ya</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">Tumia athari sawa ya usawa wa chini-Pass wakati wa sekunde za mwisho za kila wimbo. Baada ya kupumzika AutoMix na Crossfade wakati kuwezeshwa.</string>
+    <string name="settings_permanent_shuffle" formatted="false">ya kudumu ya Shuffle</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">Kuweka shuffle kudumu imefungwa katika mchezaji</string>
+    <string name="settings_pause_at_volume_0" formatted="false">Uwasilishaji wa Volume 0</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">Kupumzika kwa moja kwa moja wakati kiasi kinafikia sifuri</string>
+    <string name="settings_volume_bar" formatted="false">Kiwango cha Bar</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">Picha zote na Wizara ya Mambo ya Ndani ya Nchi. .................................................................... Bonyeza wakati bonyeza buttons kiasi</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">Chagua ambayo makali ya screen bar ya ndani ya programu inaonekana.</string>
+    <string name="settings_content" formatted="false">Maudhui ya Maudhui</string>
+    <string name="settings_default_content_language" formatted="false">Lugha ya maudhui ya default</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">Lugha kwa ajili ya Moods, Browse &amp; Search</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">Chagua lugha ya orodha iliyopendekezwa inayotumiwa katika Browse, Moods &amp; Genres, Playlists, na Toleo Jipya.</string>
+    <string name="settings_default_content_country" formatted="false">Nchi ya maudhui ya default</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">Mkoa wa Charts, Playlists &amp; Releases Mpya</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">Chagua duka la kikanda linalotumiwa kwa albamu za Newly Aliongeza, Moods za kikanda, na Playlists Matukio.</string>
+    <string name="settings_hide_explicit_content" formatted="false">Hifadhi maudhui ya bure</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">Filter nyimbo wazi katika Moods, Browse &amp; Search</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">Kucheza na Liquid Glass</string>
+    <string name="settings_splash_screen" formatted="false">Screen ya Splash</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">Programu ya uzinduzi wa uhuishaji wa brand na kichwa cha maji</string>
+    <string name="settings_animated_cover_art" formatted="false">Sanaa ya Kusisimua</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">SpotifyCanvas, Muziki wa Apple, Tidal &amp; Jumuiya ya filamu</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">SpotifyVifaa vya Canvas Setup</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">Udhibiti wa gari-Hide Canvas</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">Kupunguza udhibiti baada ya 5s wakati Canvas inacheza (tap Canvas toggle)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">Onyesha Lyrics Iliyounganishwa Juu ya Canvas</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">Kuonyesha animated synced lyrics juu ya jina la wimbo wakati udhibiti Canvas kujificha</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">Kabla yaSpotifyAina ya Canvas</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">Jaribu kuwa kujaribuSpotifyMuziki wa Apple, Tidal &amp; Jamii</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">Kucheza Animated Cover juu ya Cellular</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">Kuruhusu kupakua video za Canvas juu ya data ya simu</string>
+    <string name="settings_player_type" formatted="false">Aina ya mchezaji</string>
+    <string name="settings_player_style" formatted="false">Mchezaji style</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">Mchezaji wa Dynamic Coloring</string>
+    <string name="settings_full_screen_cover_art" formatted="false">Full screen ya sanaa</string>
+    <string name="settings_corner_length" formatted="false">Kiwango cha juu</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">Adjust kona radius ya albamu ya mraba mchoro</string>
+    <string name="settings_hide_quality_tag" formatted="false">Ubora wa juu</string>
+    <string name="settings_hide_volume_bar" formatted="false">Maelezo ya mchezo Bar</string>
+    <string name="settings_home_top_card_style" formatted="false">nyumbani Top Card Style</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">Kioo cha Kioo nav &amp; Mchezaji wa Mini</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">Glass bar na mini mchezaji, na lens maji-bubble juu ya kushikilia</string>
+    <string name="settings_time_synced_lyrics" formatted="false">Lyrics ya Muda</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">Kufuata maneno na mstari lyrics katika muda halisi</string>
+    <string name="settings_app_font" formatted="false">App ya Fonti</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">Mabadiliko ya programu ya app; udhibiti wa mchezaji huhifadhi aina yake iliyoundwa</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">Chagua aina ya interface kwa interface ya programu.</string>
+    <string name="settings_lyrics_providers" formatted="false">Watoaji wa Lyrics</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 vyanzo · Preitit &amp; toggle fallback amri</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">Kioo cha Glass Chrome</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">Wafanyabiashara wa translucent na kadi za dock</string>
+    <string name="settings_tactile_haptics" formatted="false">Aina ya Haptics</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">Maoni ya Pulse katika udhibiti wa mchezaji</string>
+    <string name="settings_downloads_storage" formatted="false">downloads na kuhifadhi</string>
+    <string name="settings_cellular_streaming" formatted="false">Mtandao wa Streaming</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">Bandwidth ya sauti kwenye data ya simu</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">Kudhibiti uaminifu wa sauti wakati wa kusambaza mbali na Wi-Fi.</string>
+    <string name="settings_download_over_wi_fi" formatted="false">Upakuaji wa Wi-Fi</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">Kusubiri kwa Wi-Fi kabla ya kupakua moja kwa moja</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">Download mchezo Baada ya kucheza</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">Hifadhi wimbo kwa kuhifadhi nje ya mtandao baada ya kumaliza kucheza</string>
+    <string name="settings_cache_quality" formatted="false">Ubora wa Cache</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">Kupunguza ubora wa kuhifadhi</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">Chagua ubora wa nyimbo zilizohifadhiwa baada ya kucheza. Ni wimbo unaoimbwa kuanzia sasa.</string>
+    <string name="settings_song_storage_limit" formatted="false">Kiwango cha kuhifadhi wimbo</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">Hifadhi ya disk ya juu iliyotengwa kwa cache ya sauti ya nje ya mtandao kabla ya nyimbo za zamani zisizopigwa zinatolewa.</string>
+    <string name="settings_clear_cached_songs" formatted="false">Nyimbo zilizotungwa</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">${MusicCacheManager.cachedTracks.size} nyimbo • ${MusicCacheManager.formatStorage —MusicCacheManager.totalStorageBytes.longValue}</string>
+    <string name="settings_automatic_downloads" formatted="false">downloads moja kwa moja</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">Hifadhi ya hivi karibuni kupendwa na aliongeza nyimbo nje ya mtandao</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">App ya Buffer Cache</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">Kuondoa muda wa cover sanaa na buffers mtandao</string>
+    <string name="settings_library_listening" formatted="false">Maktaba na kusikiliza</string>
+    <string name="settings_sync_library" formatted="false">Maktaba ya Sync</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">Weka wasanii, orodha ya nyimbo na albamu updated</string>
+    <string name="settings_listening_history" formatted="false">Kusikiliza historia</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">Kujenga mchanganyiko wa kibinafsi na hivi karibuni kucheza</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">Endelea kupenda bidhaa hii</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">Napenda kuimba nyimbo za ndaniiTuneBaada ya kusainiwa</string>
+    <string name="settings_notifications_general" formatted="false">Taarifa na kwa ujumla</string>
+    <string name="settings_offline_mode" formatted="false">Njia ya nje</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">Unahitaji nakala iliyopakuliwa ili kuanza kucheza</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">Kuacha muziki katika kazi wazi</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">Kuacha kucheza wakatiiTuneKuondolewa kwa hivi karibuni</string>
+    <string name="settings_auto_sleep_timer" formatted="false">Muda wa gari</string>
+    <string name="settings_network_proxy" formatted="false">Mtandao wa Proxy</string>
+    <string name="settings_profile_name" formatted="false">Jina la Wasifu</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">Customize mipangilio yako profile kuonyesha jina</string>
+    <string name="settings_news_from_dev" formatted="false">Habari kutoka kwa dev</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">Matangazo, releases &amp; mabadiliko</string>
+    <string name="settings_general_about" formatted="false">Kwa ujumla &amp; Kuhusu</string>
+    <string name="settings_home_screen_widget" formatted="false">Kamera ya Widget</string>
+    <string name="settings_widget_customization" formatted="false">Usajili wa Widget Customization</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">Chagua preview ukubwa, sanaa, udhibiti na mtindo wa widget</string>
+    <string name="settings_backup_restore" formatted="false">Backup &amp; Rejesha</string>
+    <string name="settings_automatic_daily_backup" formatted="false">Backup ya kila siku</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">Backups ya kila siku · downloads /iTuneKurudisha nyuma</string>
+    <string name="settings_back_up_itune" formatted="false">Nyuma juuiTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">Hifadhi akaunti, mipangilio yote, athari za sauti, data ya maktaba na stats zilizofichwa</string>
+    <string name="settings_restore_from_backup" formatted="false">Kurudishwa kwa Backup</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">Rejesha mipangilio, athari za sauti, akaunti au data ya maktaba kutoka.itune</string>
+    <string name="settings_privacy" formatted="false">Faragha ya faragha</string>
+    <string name="settings_pause_search_history" formatted="false">Historia ya utafutaji</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">Usihifadhi maswali mapya ya utafutaji kwenye historia</string>
+    <string name="settings_clear_search_history" formatted="false">Historia ya Utafutaji</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">Kuondoa maswali ya hivi karibuni ya utafutaji</string>
+    <string name="settings_pause_listening_history" formatted="false">Kusikiliza hadithi</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">Usirekodi nyimbo zilizochezwa au update mapendekezo</string>
+    <string name="settings_clear_listening_history" formatted="false">Historia ya kusikiliza</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">Kuondoa historia ya uchezaji na kurejesha profile ya ladha</string>
+    <string name="settings_disable_screenshot" formatted="false">Picha ya skrini</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">Kuzuia viwambo na kurekodi screen katika programu</string>
+    <string name="settings_best_available" formatted="false">Bora zaidi inapatikana</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">Tumia ubora wa juu wa chanzo</string>
+    <string name="settings_maximum" formatted="false">Upeo wa juu</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">Chagua kiwango cha juu cha bounce</string>
+    <string name="settings_high" formatted="false">Juu ya High High High</string>
+    <string name="settings_target_about_160_kbps" formatted="false">Ukubwa wa kbps 160</string>
+    <string name="settings_standard" formatted="false">Standard Standard Standard Standard Standard Standard</string>
+    <string name="settings_target_about_128_kbps" formatted="false">Ukubwa wa 128 kbps</string>
+    <string name="settings_data_saver" formatted="false">Data ya kuokoa</string>
+    <string name="settings_target_about_64_kbps" formatted="false">Uwezo wa 64 kbps</string>
+    <string name="settings_extreme" formatted="false">Kiwango cha juu</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">Upeo wa uaminifu (256 + kbps)</string>
+    <string name="settings_high_b1a5954a" formatted="false">Juu ya High High High</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">Sauti ya juu (~ 160 kbps)</string>
+    <string name="settings_medium" formatted="false">Wastani wa kati</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">Ubora wa sauti ya kawaida (~ 128 kbps)</string>
+    <string name="settings_low" formatted="false">Kiwango cha chini</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">Sauti ya kuokoa data (~ 48-64 kbps)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">16-bit ya PCM</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">Standard integer PCM pato; kwa upana sambamba na USB Audio Class DACs</string>
+    <string name="settings_text_6697202e38" formatted="false">32-bit ya PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">Float PCM pato wakati mkono na Android na kushikamana njia ya sauti</string>
+    <string name="settings_off" formatted="false">Mbali ya</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">Download mchezo Nyuma ya nyuma</string>
+    <string name="settings_text_6597740315" formatted="false">2 Sehemu ya 2</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">Uwasilishaji wa Interserver</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 Muundo wa</string>
+    <string name="settings_short_seamless_fade" formatted="false">Fuvu la nywele fupi</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 Sehemu ya 6</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">Mabadiliko ya mtindo wa DJ</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8 Ugawaji wa</string>
+    <string name="settings_smooth_extended_blend" formatted="false">Baridi ya baridi</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 Makundi ya</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">Mchanganyiko wa mchanganyiko</string>
+    <string name="settings_off_e3de5ab0" formatted="false">Mbali ya</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">Weka athari za kawaida za uchezaji na mabadiliko</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 Muundo wa</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">Tumia dakika za mwisho za 5 katika kila wimbo</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 kwa ajili ya</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">Tumia dakika za mwisho za kila wimbo</string>
+    <string name="settings_text_eb4354110e" formatted="false">15 wa madhehebu</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">Tumia dakika 15 za mwisho za kila wimbo</string>
+    <string name="settings_right" formatted="false">sahihi sahihi sahihi</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">Onyesha bar ya kiasi kwenye makali ya kulia (default)</string>
+    <string name="settings_left" formatted="false">Kuondoka</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">Onyesha bar ya kiasi kwenye makali ya kulia</string>
+    <string name="settings_high_efficiency" formatted="false">Ufanisi wa juu</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">Tumia data ndogo ya seli</string>
+    <string name="settings_high_quality" formatted="false">Ubora wa juu</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 kbps uwiano wa kucheza</string>
+    <string name="settings_lossless" formatted="false">Kutokuwa na hasara</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">Uunganisho wa mtandao wa 5G / LTE</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">Mbali ya</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">Kuwezesha upatikanaji wa Wi-Fi tu</string>
+    <string name="settings_text_03a001f575" formatted="false">500 MB MB 500 MB</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">Kikoa cha kiwango cha juu (-70 nyimbo)</string>
+    <string name="settings_text_33015e637f" formatted="false">1 GB ya 1 GB</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">Nyimbo za kawaida (~ 150 nyimbo)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 GB ya 2 GB</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">Wimbo wa Kuabudu (300 songs)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5 GB ya 5 GB</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">Mkusanyiko mkubwa wa nje ya mtandao (-800 nyimbo)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10 GB ya 10 GB</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">Orodha ya nyimbo (1,600)</string>
+    <string name="settings_unlimited" formatted="false">Unlimited Unlimited Unlimited Unlimited</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">Sijawahi kusikia nyimbo za injili</string>
+    <string name="settings_pipeline_output">%1$skuwa%2$s</string>
+    <string name="settings_volume_bar_side">Kuonyesha juu ya%1$sBonyeza wakati bonyeza buttons kiasi</string>
+    <string name="settings_corner_radius_value">%1$dwa wa wa</string>
+    <string name="settings_active_lyrics_providers">%1$dKazi ya Active Active</string>
+    <string name="settings_cached_song_count_size">%1$dnyimbo ·%2$s</string>
+    <string name="library_playlist_count_one">%1$dOrodha ya Playlist</string>
+    <string name="library_playlist_count_many">%1$dWachezaji</string>
+    <string name="library_album_count_one">%1$dAliongeza Album</string>
+    <string name="library_album_count_many">%1$dAliongeza Albamu</string>
+    <string name="remove_from_favorites">Kuondoa kutoka kwa favorites</string>
+    <string name="play_top_album">Kucheza juu ya albamu</string>
+    <string name="open_in_spotify">Kufungua katikaSpotify</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Tumia interface ya Azerbaijani</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Tumia interface ya Bengali</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Tumia interface ya Kibulgaria</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Tumia interface ya Catalonia</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">Tumia interface ya Czech</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Tumia interface ya Denmark</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Tumia interface ya Finnish</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Tumia interface ya Kigiriki</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Tumia interface ya Kiebrania</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Tumia interface ya Hungarian</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Tumia interface ya Indonesia</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Tumia interface ya Malaysia</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Tumia interface ya Norway</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Tumia interface ya Kiajemi</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Tumia interface ya Poland</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Tumia interface ya Kiromania</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Tumia interface ya Slovakia</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Tumia interface ya Thai</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Tumia interface ya Kituruki</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Tumia interface ya Ukraine</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Tumia interface ya Vietnam</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Kiolesura cha Kiswahili</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Kutumia interface ya Filipino</string>
+</resources>
