@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.library
 
+
+import androidx.compose.ui.res.stringResource
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -327,7 +329,7 @@ fun PlaylistSourceCornerBadge(
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_google_logo),
-                    contentDescription = "Google Account Playlist",
+                    contentDescription = stringResource(R.string.ui_google_account_playlist),
                     modifier = Modifier.size(badgeSize * 0.64f),
                 )
             }
@@ -342,7 +344,7 @@ fun PlaylistSourceCornerBadge(
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_spotify),
-                    contentDescription = "Spotify Playlist",
+                    contentDescription = stringResource(R.string.ui_spotify_playlist),
                     modifier = Modifier.size(badgeSize * 0.86f),
                 )
             }
@@ -358,7 +360,7 @@ fun PlaylistSourceCornerBadge(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.PhoneAndroid,
-                    contentDescription = "Local Playlist",
+                    contentDescription = stringResource(R.string.ui_local_playlist),
                     tint = Color.White,
                     modifier = Modifier.size(badgeSize * 0.58f),
                 )
@@ -398,7 +400,7 @@ private suspend fun resolveAndAddToPlaylist(
         payload.lazyLoader.invoke()
     }
     if (songs.isEmpty()) {
-        Toast.makeText(context, "No tracks available to add", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.toast_no_tracks_available_to_add), Toast.LENGTH_SHORT).show()
         return false
     }
     return try {
@@ -588,13 +590,13 @@ fun IosAddToPlaylistMenuView(
             ) {
                 Icon(
                     imageVector = SfIcons.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.back),
                     tint = accent,
                     modifier = Modifier.size(16.dp),
                 )
                 Spacer(Modifier.width(3.dp))
                 Text(
-                    text = "Back",
+                    text = stringResource(R.string.back),
                     color = accent,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
@@ -602,7 +604,7 @@ fun IosAddToPlaylistMenuView(
             }
             Spacer(Modifier.width(6.dp))
             Text(
-                text = "Add to Playlist",
+                text = stringResource(R.string.ui_add_to_playlist),
                 color = colors.label,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -709,7 +711,7 @@ fun IosAddToPlaylistMenuView(
 
         // Create New Playlist option inside the exact same popover
         IosMenuRow(
-            label = "New Playlist...",
+            label = stringResource(R.string.ui_new_playlist),
             icon = SfIcons.AddToPlaylist,
             iconTint = LibraryCrimsonAccent,
             onClick = { if (!busy) onCreateNewClick() },
@@ -775,7 +777,7 @@ fun IosCreatePlaylistMenuView(
         if (busy) return
         val clean = nameInput.trim()
         if (clean.isBlank()) {
-            Toast.makeText(context, "Enter a playlist name", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_enter_a_playlist_name), Toast.LENGTH_SHORT).show()
             return
         }
         if (renameTarget != null) {
@@ -788,7 +790,7 @@ fun IosCreatePlaylistMenuView(
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Throwable) {
-                    Toast.makeText(context, e.message ?: "Could not rename playlist on YouTube Music", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, e.message ?: context.getString(R.string.could_not_rename_playlist), Toast.LENGTH_LONG).show()
                 } finally {
                     busy = false
                 }
@@ -810,7 +812,7 @@ fun IosCreatePlaylistMenuView(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Throwable) {
-                Toast.makeText(context, e.message ?: "Could not create playlist", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, e.message ?: context.getString(R.string.could_not_create_playlist), Toast.LENGTH_SHORT).show()
             } finally {
                 busy = false
             }
@@ -893,7 +895,7 @@ fun IosCreatePlaylistMenuView(
                 Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
                     if (nameInput.isEmpty()) {
                         Text(
-                            text = "Playlist Name",
+                            text = stringResource(R.string.ui_playlist_name),
                             color = colors.secondaryLabel,
                             fontSize = 15.sp,
                         )
@@ -922,7 +924,7 @@ fun IosCreatePlaylistMenuView(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Close,
-                            contentDescription = "Clear",
+                            contentDescription = stringResource(R.string.ui_clear),
                             tint = colors.secondaryLabel,
                             modifier = Modifier.size(14.dp),
                         )
@@ -1154,7 +1156,7 @@ fun AppleSheetAddToPlaylistContent(
 
         if (userPlaylists.isNotEmpty()) {
             Text(
-                text = "YOUR PLAYLISTS",
+                text = stringResource(R.string.ui_your_playlists),
                 color = Color.White.copy(alpha = 0.50f),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
@@ -1238,7 +1240,7 @@ fun AppleSheetAddToPlaylistContent(
 
         MorePopupVectorOptionRow(
             icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
-            title = "Create New Playlist",
+            title = stringResource(R.string.create_new_playlist),
             iconTint = LibraryCrimsonAccent,
             onClick = { if (!busy) onCreateNewClick() },
         )
@@ -1283,7 +1285,7 @@ fun AppleSheetCreatePlaylistContent(
         if (busy) return
         val clean = nameInput.trim()
         if (clean.isBlank()) {
-            Toast.makeText(context, "Enter a playlist name", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_enter_a_playlist_name), Toast.LENGTH_SHORT).show()
             return
         }
         busy = true
@@ -1301,7 +1303,7 @@ fun AppleSheetCreatePlaylistContent(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Throwable) {
-                Toast.makeText(context, e.message ?: "Could not create playlist", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, e.message ?: context.getString(R.string.could_not_create_playlist), Toast.LENGTH_SHORT).show()
             } finally {
                 busy = false
             }
@@ -1326,7 +1328,7 @@ fun AppleSheetCreatePlaylistContent(
             Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
                 if (nameInput.isEmpty()) {
                     Text(
-                        text = "Playlist Name",
+                        text = stringResource(R.string.ui_playlist_name),
                         color = Color.White.copy(alpha = 0.45f),
                         fontSize = 16.sp,
                     )
@@ -1355,7 +1357,7 @@ fun AppleSheetCreatePlaylistContent(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Close,
-                        contentDescription = "Clear",
+                        contentDescription = stringResource(R.string.ui_clear),
                         tint = Color.White.copy(alpha = 0.72f),
                         modifier = Modifier.size(16.dp),
                     )
@@ -1432,7 +1434,7 @@ fun AppleSheetCreatePlaylistContent(
                 )
             } else {
                 Text(
-                    text = "Create & Add",
+                    text = stringResource(R.string.ui_create_add),
                     color = Color.Black,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
