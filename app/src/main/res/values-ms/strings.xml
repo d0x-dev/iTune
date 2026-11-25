@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">Batal</string>
+    <string name="save">Simpan</string>
+    <string name="close">Tutup</string>
+    <string name="done">Selesai</string>
+    <string name="back">Kembali</string>
+    <string name="play">Mainkan</string>
+    <string name="shuffle">Kocok</string>
+    <string name="retry">Cuba lagi</string>
+    <string name="try_again">Cuba Lagi</string>
+    <string name="more">Lagi</string>
+    <string name="less">Kurang</string>
+    <string name="share">Kongsi</string>
+    <string name="show_all">Tunjukkan semua</string>
+    <string name="top_songs">Lagu Top</string>
+    <string name="suggested">Cadangkan</string>
+    <string name="subscribers">%1$sberlangganan</string>
+    <string name="monthly_listeners">%1$sPendengar bulanan</string>
+    <string name="signed_by">Signed by%1$s</string>
+    <string name="about_artist">Tentang artis</string>
+    <string name="about_album">album</string>
+    <string name="recent_album">Album Terbaru</string>
+    <string name="recent_ep">Bebebecent EP</string>
+    <string name="recent_single">Single Terbaru Memo</string>
+    <string name="subscribe">Langgan</string>
+    <string name="unsubscribe">Nyahlanggan</string>
+    <string name="add_to_library">Tambah ke pustaka</string>
+    <string name="remove_from_library">Adonan Buang dari pustaka</string>
+    <string name="add_to_playlist">Takwid ke senarai main</string>
+    <string name="remove_from_playlist">Hapus dari daftar main ini</string>
+    <string name="play_next">Play berikutnya</string>
+    <string name="add_to_queue">Tambah ke antrian</string>
+    <string name="start_radio">Mulai radio</string>
+    <string name="open">Open</string>
+    <string name="open_album">Album Open</string>
+    <string name="open_artist">Artis Terbuka</string>
+    <string name="open_playlist">Muatkan senarai main</string>
+    <string name="song_info">Info Lagu</string>
+    <string name="song_info_album">Album</string>
+    <string name="song_info_release_date">Tanggal rilis</string>
+    <string name="song_info_views">Mainkan / pandangan</string>
+    <string name="song_info_likes">Orang Suka</string>
+    <string name="song_info_comments">Komentar</string>
+    <string name="song_info_unavailable">Tidak tersedia</string>
+    <string name="song_info_error">Beberapa informasi tidak dapat dimuat.</string>
+    <string name="song_info_retry">Cuba lagi</string>
+    <string name="like">Suka</string>
+    <string name="dislike">Dislike</string>
+    <string name="download">Muat turun</string>
+    <string name="download_all">Muaturun semua</string>
+    <string name="downloaded">Muaturun</string>
+    <string name="downloading">Memuat turun</string>
+    <string name="download_notification_title">Memuat turun</string>
+    <string name="delete_download">Gagal memuat turun</string>
+    <string name="delete_download_confirmation">Remove Hapus ”%1$sDari alat ini? Sapu lagi untuk konfirmasi.</string>
+    <string name="delete">Padam</string>
+    <string name="queued">Dibaris Gilir</string>
+    <string name="saved_to_downloads">Disimpan ke Muat Turun</string>
+    <string name="search_this_list">Cari daftar ini</string>
+    <string name="clear_search">Pencarian yang bersih</string>
+    <string name="close_search">Pencarian dekat</string>
+    <string name="nothing_matches">Tidak ada yang cocok dengan ”%1$sBAHWA ”</string>
+    <string name="sort_songs">Urutkan lagu</string>
+    <string name="artist">artis</string>
+    <string name="album">album</string>
+    <string name="playlist">Senarai main gundul</string>
+    <string name="folder">XFolder</string>
+    <string name="songs">Lagu-lagu</string>
+    <string name="song_count">%1$dLagu</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$dtrek anime</item>
+        <item quantity="other">%1$dJejak</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$dmenit</item>
+        <item quantity="other">%1$d5 menit</item>
+    </plurals>
+    <string name="one_hour">1 jam</string>
+    <string name="hours_minutes_short">%1$dFiji h%2$d♪ m</string>
+    <string name="minutes_short">%1$d♪ ♪ ♪ min min min min ♪</string>
+    <string name="pin">Pin</string>
+    <string name="unpin">♪ Unpin ♪</string>
+    <string name="tile_identify_music">Musik</string>
+    <string name="tile_identify_music_desc">Perkenalkan lagu-lagu bermain di sekitar Anda denganiTune</string>
+    <string name="widget_itune_description">KendaliiTuneMain balik dari layar rumah Anda</string>
+    <string name="app_language">Bahasa aplikasi</string>
+    <string name="app_language_subtitle">Bahasa bangsan untuk menu, butang &amp; pesan</string>
+    <string name="app_language_description">Pilih bahasa yang digunakan untukiTuneAntar muka.</string>
+    <string name="system_default_language">Default Sistem</string>
+    <string name="follow_device_language">Ikut bahasa perangkat</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">Use the English interface</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface">इ हिन्द हिन्द हिन्द हिन्द हिन्द हिन्द उपयोग उपयोग क क क</string>
+    <string name="hindi_interface_language">Bahasa antarmuka Hindi</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">Use the Spanish interface</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">Use antarmuka Prancis</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">Name</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">Guna antarmuka Rusia</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">Name</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">Use the Chinese interface</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">Name</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">Use the Portugal interface</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">Use the Italian interface</string>
+    <string name="japanese_language">日本語</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">한국어 인터페이스</string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Svenskt gränssnitt</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">الووووة الروية</string>
+    <string name="japanese_interface">Guna antarmuka Jepang</string>
+    <string name="favorite_artist">Artis favorit</string>
+    <string name="remove_favorite_artist">Dibuang dari artis favorit</string>
+    <string name="add_to_favorite_artists">Tambah ke artis favorit</string>
+    <string name="removed_from_artists">Dihapus dari Artis</string>
+    <string name="added_to_artists">Ditambahkan ke Artis</string>
+    <string name="play_top_songs">Lagu Top</string>
+    <string name="play_album">Album Main</string>
+    <string name="play_playlist">Playlist</string>
+    <string name="create_new_playlist">Cipta Senarai Main Baru</string>
+    <string name="create_playlist">Cipta Senarai Main</string>
+    <string name="radio">Radio</string>
+    <string name="search">Cari</string>
+    <string name="share_playlist_link">KOSTA</string>
+    <string name="copy_share_link">Kongsi Link</string>
+    <string name="rename_playlist">Senarai Main Langganan</string>
+    <string name="delete_playlist">Hapus Senarai Main</string>
+    <string name="share_link_copied">Link Kongsi disalin</string>
+    <string name="playlist_removed">Daftar Siar Terhapus</string>
+    <string name="playlist_no_longer_available">Daftar putar ini sudah tidak tersedia lagi.</string>
+    <string name="empty_playlist">Senarai Siar Kosong</string>
+    <string name="filter_playlists">Pembiayaan...</string>
+    <string name="filter_albums">Album Filter...</string>
+    <string name="favorite">Favorit</string>
+    <string name="tap_to_start_listening">Jap Tap untuk mulai mendengarkan</string>
+    <string name="time_zero" formatted="false">0:00</string>
+    <string name="previous">Sebelumnya</string>
+    <string name="play_or_pause">Berhenti sejenak</string>
+    <string name="next">Next</string>
+    <string name="repeat">Ulang</string>
+    <string name="open_title_options">Open%1$sopsi boleh pilih</string>
+    <string name="reset_page_title">KAN%1$s</string>
+    <string name="remove_device">Mengeluarkan%1$s</string>
+    <string name="profile_name">%1$sprofile profile</string>
+    <string name="download_option">Muaturun%1$s</string>
+    <string name="open_entry_options">Open%1$sopsi boleh pilih</string>
+    <string name="avatar_number">Avatar%1$s</string>
+    <string name="options_for_track">Options for%1$s</string>
+    <string name="preparing">Menyediakan...</string>
+    <string name="share_image">Kongsi gambar</string>
+    <string name="speed_pitch_locked">Percepatan &amp; lapangan terkunci bersama</string>
+    <string name="independent_bpm_tempo_key_pitch">Lapangan kunci BPM Independen Independen &amp;</string>
+    <string name="spatial_reflections_delay">Refleksi Spasial (%1$dms)</string>
+    <string name="on">On</string>
+    <string name="off">Perancis</string>
+    <string name="dynamic_island_active">Pulau Dinamis Dinamis aktif</string>
+    <string name="dynamic_island_description">{Y: i} Menunjukkan lancar di luariTune♪ Selama pemutaran ♪</string>
+    <string name="preparing_download">Menyiapkan unduhan...</string>
+    <string name="listening_for_music">Mendengarkan musik...</string>
+    <string name="hold_phone_near_sound_source">Telepon genggam dekat sumber suara</string>
+    <string name="unable_to_recognize_audio">Tidak dapat mengenali audio</string>
+    <string name="song_identified">Lagu Diidentifikasi</string>
+    <string name="play_in_itune">Bermain diiTune</string>
+    <string name="view_details">Rincian Tampilan</string>
+    <string name="no_match_found">Kecocokan tidak ditemukan</string>
+    <string name="recognition_retry_message">Tak bisa mengidentifikasi lagunya. Tapisa untuk mencoba lagi.</string>
+    <string name="microphone_permission_needed">Izin Mikrofon yang diperlukan</string>
+    <string name="microphone_permission_help">Jadi untuk memungkinkan akses mikrofoniTuneKau bisa mengidentifikasi musik.</string>
+    <string name="recognition_failed">Pengakuan palsu gagal</string>
+    <string name="tap_install_to_continue">Pasang Tap Tap untuk melanjutkan</string>
+    <string name="detail_artist">Artis</string>
+    <string name="detail_album">Album</string>
+    <string name="set_default_ringtone_target">font%1$s- Kau harus pergi.</string>
+    <string name="added_ringtone_target">Ditambahkan ke%1$sPilih dalam pengaturan suara.</string>
+    <string name="last_fm_connected_as">Last.fmTerhubung sebagai%1$s</string>
+    <string name="discord_connected_as">\"Discord\" terhubung sebagai%1$s</string>
+    <string name="tv_encrypted_backup_saved">Sandar Tertangani yang Dienkripsi Disimpan (%1$dKB)!</string>
+    <string name="sign_in_verification_failed">Pengesahan sign-in gagal</string>
+    <string name="could_not_rename_playlist">Tidak dapat menamakan semula daftar main padaYouTube Music</string>
+    <string name="could_not_create_playlist">Tak dapat membuat folder : </string>
+    <string name="daily_encrypted_backup_enabled">Backup terenkripsi harian diaktifkan</string>
+    <string name="cookie_login_failed">Log masuk cookie gagal</string>
+    <string name="could_not_open_last_fm">Tak bisa dibukaLast.fm</string>
+    <string name="last_fm_sign_in_failed">Last.fmTanda tangan di gagal</string>
+    <string name="discord_sign_in_failed">Tanda disk gagal</string>
+    <string name="could_not_open_android_installer">Tak dapat membuka pemasang Android</string>
+    <string name="added_title_to_queue">Ditambahkan ”%1$s” untuk mengantri</string>
+    <string name="automatic_backup_disabled">Backup otomatis dinonaktifkan</string>
+    <string name="download_failed">Gagal untuk memuat turun</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">Instal</string>
+    <string name="ui_text_9ef6a80f91" formatted="false">#1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">%+.1f</string>
+    <string name="ui_accounts" formatted="false">Akaun</string>
+    <string name="ui_text_4d4026c0de" formatted="false">unit-format</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5,0s</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">- Tidak.</string>
+    <string name="ui_text_7be28ad40e" formatted="false">-5,0s</string>
+    <string name="ui_text_a6dee6102d" formatted="false">11 PM</string>
+    <string name="ui_text_1a19c52178" formatted="false">♪ 12 AM ♪</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">♪ 12 PM ♪</string>
+    <string name="ui_text_4e37ece023" formatted="false">**15ms berlawanan-tear tertunda campuran rendah-pass</string>
+    <string name="ui_text_76b322ac42" formatted="false">Kecepatan Cepat 2X</string>
+    <string name="ui_text_505c74ed85" formatted="false">Lantunan Ping-Pong 3D</string>
+    <string name="ui_text_db9b8df506" formatted="false">6 AM</string>
+    <string name="ui_text_2812537f20" formatted="false">♪ 6 PM ♪</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">480</string>
+    <string name="ui_text_05a79f06cf" formatted="false">KANTOR:</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">Bergambar penuh dengan lagu-lagu top, artis, album dan kebiasaan.</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">Versi baru sudah siap</string>
+    <string name="ui_account" formatted="false">Akun</string>
+    <string name="ui_account_options" formatted="false">Pilihan Akun Tak Bernama</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">KISAH KISAH</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">Akustik Kepala-Bayang Crossfeed</string>
+    <string name="ui_activate" formatted="false">Diaktifkan</string>
+    <string name="ui_active" formatted="false">Active</string>
+    <string name="ui_active_days" formatted="false">HARI - HARI yang AKTIF</string>
+    <string name="ui_active_profile" formatted="false">Profil Active</string>
+    <string name="ui_activity_by_day" formatted="false">Aktivitas Sehari - Hari</string>
+    <string name="ui_add_account" formatted="false">Akaun</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">Tambah server adson HTTP suai (bahasa /manifest.json, /search, /stream) atau modul QuickJS terisolasi kotak pasir.</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">Secara Otomatis Menambah Lagu Masa Depan</string>
+    <string name="ui_add_streaming_source" formatted="false">Sumber Streaming</string>
+    <string name="ui_add_to_playlist" formatted="false">Senarai Main</string>
+    <string name="ui_added_playlists" formatted="false">Daftar Main Tertambah</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">Laras sudut tepi seni album persegi.</string>
+    <string name="ui_advanced_cookie_login" formatted="false">Log Masuk Cookie Berkelanjutan</string>
+    <string name="ui_advanced_login" formatted="false">LOGIN INGGRIS</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">Login Berkelanjutan</string>
+    <string name="ui_ai_engine" formatted="false">AI AI ENGINE</string>
+    <string name="ui_ai_provider" formatted="false">Pembekal AI</string>
+    <string name="ui_albums" formatted="false">Album</string>
+    <string name="ui_all_news" formatted="false">Blog</string>
+    <string name="ui_allow_downloads" formatted="false">Muaturun Izinkan Muaturun</string>
+    <string name="ui_allow_microphone" formatted="false">Memungkinkan Mikrofon</string>
+    <string name="ui_allow_microphone_access" formatted="false">Izinkan akses mikrofon</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">Alternate refleksi L &lt;-&gt; R</string>
+    <string name="ui_always_on_display" formatted="false">Selalu Mengisih</string>
+    <string name="ui_am" formatted="false">AM</string>
+    <string name="ui_api_base_url" formatted="false">URL Dasar API</string>
+    <string name="ui_artist" formatted="false">Artis</string>
+    <string name="ui_artist_name" formatted="false">Nama Artis</string>
+    <string name="ui_artists" formatted="false">Seniman</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">Seniman, Lagu, Album, Playlist...</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">Seniman, Lagu, Lirik &amp; Lagi</string>
+    <string name="ui_at_least_8_characters" formatted="false">Setidaknya 8 karakter</string>
+    <string name="ui_auto_sleep_timer" formatted="false">Pemasa Tidur Sendiri</string>
+    <string name="ui_auto_activation_timeout" formatted="false">AUTARA AUTO-AKTIVASI</string>
+    <string name="ui_avatar" formatted="false">Avatar</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">♪ ♪ Back Up ♪iTuneNagoza (AES-256)</string>
+    <string name="ui_backup_password" formatted="false">Kata sandi Backup MacOS</string>
+    <string name="ui_bluetooth_device_access" formatted="false">BluetoothAkses Peranti Peranti Sony</string>
+    <string name="ui_browse" formatted="false">Lungsur</string>
+    <string name="ui_browse_by_country" formatted="false">Layari oleh Negara</string>
+    <string name="ui_browse_extensions" formatted="false">Sambungan Layar Episoda</string>
+    <string name="ui_browse_live_online_radio" formatted="false">Layari Radio Live Online</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">Tidak dapat memadam hanya account</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">Penyedia Kanvas (Ordo Pencarian)</string>
+    <string name="ui_captcha_guidance" formatted="false">Bimbingan CAPTCHA</string>
+    <string name="ui_cast_wireless_devices" formatted="false">PERANTI KETAMA &amp; PERANTIAN</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">Pilih sumber streaming audio playback, tiers tak hilang, dan prioritas jatuh kembali</string>
+    <string name="ui_choose_avatar" formatted="false">avatar</string>
+    <string name="ui_choose_charts_region" formatted="false">Wilayah Charts Pilih</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">Pilih bagaimanaiTuneDia muncul di layar rumah Anda. Tak ada yang bisa mengubah ukuran widget dari peluncurmu.</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">Pilih profil Anda untuk melanjutkan</string>
+    <string name="ui_choose_youtube_channel" formatted="false">PilihYouTubeSaluran</string>
+    <string name="ui_clear" formatted="false">WANITA</string>
+    <string name="ui_clear_use_default" formatted="false">Jelas &amp; Gunakan Standar</string>
+    <string name="ui_clear_all" formatted="false">Keledar Semua</string>
+    <string name="ui_confirm" formatted="false">Konfirmasi</string>
+    <string name="ui_confirm_password" formatted="false">Konfirmasi sandi</string>
+    <string name="ui_connect_discord" formatted="false">Konsambung Konsambung</string>
+    <string name="ui_connect_last_fm" formatted="false">SambungkanLast.fm</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">Jangan kau hubungkanSpotifyakun untuk memungkinkan Canvas memutar balik grafik video gerak dan sinkronisasi AndaSpotifyPerpustakaan.</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">SambungkanYouTube MusicKentang goreng dengan kue</string>
+    <string name="ui_connect" formatted="false">› Bersambung</string>
+    <string name="ui_connecting_spotify" formatted="false">GnectSpotifyAku...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">GnectYouTube MusicAku...</string>
+    <string name="ui_continue" formatted="false">Teruskan</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">Melanjutkan dalam peramban sebaliknya</string>
+    <string name="ui_continue_with_google" formatted="false">Teruskan dengan Google</string>
+    <string name="ui_continue_with_spotify" formatted="false">Teruskan denganSpotify</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">Kredensial kue cuki disimpan dalamiTunePenyimpanan akun terenkripsi dan diperiksa denganYouTube MusicSebelum mereka diselamatkan.</string>
+    <string name="ui_copy_song_name" formatted="false">Name</string>
+    <string name="ui_copy_text" formatted="false">Salin teks</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">Hakcipta © 2026iTuneProyek. Software ini disediakan tanpa garansi. Anda dapat mengedarkan dan mengubahnya di bawah istilah GNU GPL yang ditunjukkan di bawah ini.</string>
+    <string name="ui_corner_length" formatted="false">Panjang Sudut Amukan</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">Tidak dapat membuat gambar replay</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">Tak dapat\'Mainkan musik sekarang. Tarik ke bawah untuk mencoba lagi.</string>
+    <string name="ui_create" formatted="false">Cipta</string>
+    <string name="ui_create_add" formatted="false">Cipta &amp; Tambah</string>
+    <string name="ui_current_account" formatted="false">Akun Sumber Sumber Alfa</string>
+    <string name="ui_custom_instructions" formatted="false">MASUK CUSTOM</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">CUSTOM REPORSITORY INDEKS ATAU URL</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">Suaikan pemain Layar Rumah Anda</string>
+    <string name="ui_customize_your_itune_card" formatted="false">Kau punya kebiasaaniTuneKartu</string>
+    <string name="ui_d" formatted="false">♪ D ♪</string>
+    <string name="ui_delete_account" formatted="false">Dihapus</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">Dihapus?</string>
+    <string name="ui_developer_announcements" formatted="false">Pengumuman Pembangun</string>
+    <string name="ui_disconnect" formatted="false">Putuskan</string>
+    <string name="ui_disconnect_discord" formatted="false">Taksi Terputus</string>
+    <string name="ui_discord_rich_presence" formatted="false">Presensi Kaya yang Tak Terlupakan</string>
+    <string name="ui_dismiss" formatted="false">[Salah]</string>
+    <string name="ui_display_full_screen" formatted="false">ISSPLAY &amp; FULL SCREEN</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">Tampilkan lirik tersinkronisasi animasi di atas judul lagu sementara Kanvas kontrol tersembunyi</string>
+    <string name="ui_display_name" formatted="false">Nama Paparan</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">Tapisan Klub Bipolar DJ</string>
+    <string name="ui_downloaded_cached" formatted="false">Muat Turun &amp; Cache</string>
+    <string name="ui_dp" formatted="false">♪ dp ♪</string>
+    <string name="ui_dynamic_island" formatted="false">Kepulauan Falkland</string>
+    <string name="ui_e" formatted="false">E</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">208 e0.1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">diterjemahkan ke dalam puisi english dengan sajak</string>
+    <string name="ui_enable_auto_sleep" formatted="false">♪ ♪ Memungkinkan Tidur Sendiri ♪</string>
+    <string name="ui_enable_proxy" formatted="false">Proksi Memungkinkan Haus</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">MembenarkanSpotifyDaftar main Takar Kanvas &amp;</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">Enkripsikan sandi (min 8 char)</string>
+    <string name="ui_end_of_current_track" formatted="false">Akhir dari trek sekarang</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">Masukkan nama baru untuk akun ini.</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">Masukkan URL manifes addon HTTP, indeks modul QuickJS, atau titik akhir kejadian Tidal.</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">Masukkan kata sandi yang digunakan ketika Anda.ituneBantuan dibuat.</string>
+    <string name="ui_enter_your_name" formatted="false">Namamu</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">Salahkan nama AndaiTune</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">Setiap irama, lagu tengah malam, dan melodi Anda hidup dengan — berkumpul dalam satu perjalanan.</string>
+    <string name="ui_everything" formatted="false">Semuanya</string>
+    <string name="ui_explore_categories" formatted="false">Kategori Eksplore</string>
+    <string name="ui_exporting_audio" formatted="false">Memeksport Audio...</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">Mengekstrak sidik jari audio pendek</string>
+    <string name="ui_favorite_stations" formatted="false">Stasiun Favorit</string>
+    <string name="ui_favorites" formatted="false">FAVORITES</string>
+    <string name="ui_featured_hit" formatted="false">Fitur Hit</string>
+    <string name="ui_featured_playlists" formatted="false">Daftar Main Fitur Keupayaan</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">Mengambil kualitas audio...</string>
+    <string name="ui_fetching_live_catalog" formatted="false">Mengutip katalog langsung...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">Mencari aliran yang lebih baik</string>
+    <string name="ui_full_view" formatted="false">Full View</string>
+    <string name="ui_g" formatted="false">Perancis</string>
+    <string name="ui_genre" formatted="false">JENRE</string>
+    <string name="ui_genres_styles" formatted="false">Gaya Genres &amp;</string>
+    <string name="ui_github_repository" formatted="false">Repositori GitHub</string>
+    <string name="ui_github_repository_open_source" formatted="false">Repositori GitHub PDF</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 atau nanti</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 atau nanti · Hak Cipta © 2026iTuneProject</string>
+    <string name="ui_grant" formatted="false">Grant</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">Grant untuk menunjukkan nama earbuds &amp; baterai langsung %</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">Perangkat Keras PerkakasanTooldnessEnhancer (hingga +18 dB)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">Hides Android bar status Android dan bar navigasi untuk hitam OLED murni tak terbatas.</string>
+    <string name="ui_history" formatted="false">Sejarah</string>
+    <string name="ui_host" formatted="false">HOS</string>
+    <string name="ui_host_a_session" formatted="false">KEHILANG SESSI</string>
+    <string name="ui_host_controls_playback" formatted="false">Host palsu</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">Bagaimana mendapatkan kuemu</string>
+    <string name="ui_hq" formatted="false">UQ</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">Diidentifikasi dengan Shazam</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">Perkenalkan musik yang bermain di sekitar Anda</string>
+    <string name="ui_immersion" formatted="false">IMMERSI</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">Mode Immersive (Skrin Penuh)</string>
+    <string name="ui_import" formatted="false">Import</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">Oto-sync</string>
+    <string name="ui_import_spotify_playlist" formatted="false">ImportSpotifySenarai Main</string>
+    <string name="ui_in_use" formatted="false">Tak Guna</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">Panduan In-app ketika penyedia audio menantang cek anti-bot</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">Pasang ekstensi komunitas Mornye sebelum ditambahkan atau pindai sebuah indeks repositori suai.</string>
+    <string name="ui_installed" formatted="false">Terpasang</string>
+    <string name="ui_interactive_dot_curve" formatted="false">Lengkung Titik Interaktif</string>
+    <string name="ui_irecognition" formatted="false">IRegnition</string>
+    <string name="ui_ireconization" formatted="false">iReconization</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">IReconization mendengarkan selama beberapa detik untuk membuat sidik jari musik. Audio tidak disimpan.</string>
+    <string name="ui_ishare" formatted="false">♪ Share ♪</string>
+    <string name="ui_itune_license" formatted="false">iTuneLisensi</string>
+    <string name="ui_itune_music" formatted="false">iTuneMusik</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTuneLirik pertanyaan yang tepat di bawah ini. Jika penyedia aktif tertinggi tidak memiliki lirik sinkron,iTuneTak lama lagi, jatuh kembali ke yang berikutnya.</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTuneSumber pertanyaan dalam urutan yang ditunjukkan. Luncurkan sambungan terpasang dan penyedia untuk menyesuaikan prioritas main balik.</string>
+    <string name="ui_itune_time_travel" formatted="false">iTunePerjalanan Waktu</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">Air Terjun Jet Flanger Swoosh</string>
+    <string name="ui_join" formatted="false">Join</string>
+    <string name="ui_keep_screen_on" formatted="false">Terus Layari</string>
+    <string name="ui_l" formatted="false">Perancis</string>
+    <string name="ui_lan_port" formatted="false">LAN Port</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">preferensi bahasa (opsional, misalnya Hindi, Punjabi...)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fmKekejaman</string>
+    <string name="ui_layout" formatted="false">LAYOUT</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">Jangan biarkan kosong untuk menggunakan titik akhir baku bagi penyedia ini.</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">Modulasi fase jet tersapu LFO</string>
+    <string name="ui_library" formatted="false">Pustaka</string>
+    <string name="ui_license" formatted="false">Lisensi</string>
+    <string name="ui_liked_songs" formatted="false">Lagu yang Disukai</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">Likes ditambahkan ketika ditandatangani di disimpan baik lokal dan padaYouTube MusicJadi mereka tetap di Perpustakaanmu bahkan setelah keluar.</string>
+    <string name="ui_listening_patterns" formatted="false">LISTENING PATTERNS</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">Mendengarkan audio bersama...</string>
+    <string name="ui_live" formatted="false">HIDUP</string>
+    <string name="ui_live_radio_stations" formatted="false">Stasiun Radio Langsung</string>
+    <string name="ui_loading_announcements" formatted="false">Memuatkan pengumuman...</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">Memuat artis, daftar putar &amp; sejarah</string>
+    <string name="ui_lossless" formatted="false">Tak Hilang</string>
+    <string name="ui_lossless_audio_preference" formatted="false">Keutamaan Audio Tak Hilang</string>
+    <string name="ui_lyrics" formatted="false">Lirik</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">Lirik lirik tidak tersedia untuk lagu ini</string>
+    <string name="ui_lyrics_providers" formatted="false">Penyedia Lirik Fixer</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">Lirik yang diterjemahkan berhasil!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">\"Penguat Amplifier\"</string>
+    <string name="ui_member_since" formatted="false">MEMBER SINCE</string>
+    <string name="ui_memoji_style" formatted="false">Gaya Memoji &amp;</string>
+    <string name="ui_minutes_listened" formatted="false">MINUTES DENGAR</string>
+    <string name="ui_mirror_vol" formatted="false">Cermin Cermin Vol</string>
+    <string name="ui_model" formatted="false">EMODEL</string>
+    <string name="ui_model_68c2cc7f" formatted="false">Model</string>
+    <string name="ui_moods_activities" formatted="false">Kegiatan Moods &amp;</string>
+    <string name="ui_moods_moments" formatted="false">MOODS &amp; MOMEN</string>
+    <string name="ui_music_by_genre" formatted="false">Musik karya Genre</string>
+    <string name="ui_music_language_preference" formatted="false">preferensi bahasa musik font</string>
+    <string name="ui_music_services" formatted="false">MUSIK MUSIK</string>
+    <string name="ui_name" formatted="false">Nama</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">NEARBY WI-FI HOSS</string>
+    <string name="ui_network_proxy" formatted="false">Proksi Jaringan Hagen</string>
+    <string name="ui_new" formatted="false">New</string>
+    <string name="ui_new_playlist" formatted="false">Senarai Main Baru</string>
+    <string name="ui_new_releases" formatted="false">Release Baru yang Lenyap</string>
+    <string name="ui_news_from_dev" formatted="false">Berita dari dev</string>
+    <string name="ui_next_up" formatted="false">Selanjutnya</string>
+    <string name="ui_no_albums_found" formatted="false">Album-album yang tidak ditemukan</string>
+    <string name="ui_no_artist_information_available" formatted="false">Tak tersedia informasi artis</string>
+    <string name="ui_no_artists_found" formatted="false">Para seniman tidak ditemukan</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">belum ada seniman di perpustakaanmu</string>
+    <string name="ui_no_playlists_found" formatted="false">Tak ada daftar main</string>
+    <string name="ui_no_results_on_spotify" formatted="false">Tidak ada hasil padaSpotify</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">Tidak ada album tersimpan di perpustakaan Anda</string>
+    <string name="ui_no_songs_found" formatted="false">Tak ada lagu yang ditemukan</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">Tak ada lagu yang ditemukan dalam rilis ini</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">Tak ada lagu yang ditemukan di bagian ini</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">Tak ada daftar putar pengguna yang ditemukan. Buat satu di Perpustakaan!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">Tidak cukup mendengarkan belum</string>
+    <string name="ui_now_playing" formatted="false">Sekarang bermain</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">Sekarang bermain</string>
+    <string name="ui_on_heavy_repeat" formatted="false">ON HAVY REPEAT</string>
+    <string name="ui_options" formatted="false">PILIHAN</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">ORANG ATAU ELTER SP DC COOKIE</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">Kecepatan Intensitas Orbit &amp;</string>
+    <string name="ui_pair_join_a_device" formatted="false">A PERANTI</string>
+    <string name="ui_password_optional" formatted="false">Kata Sandi (Opsional)</string>
+    <string name="ui_passwords_dont_match" formatted="false">Kata Sandi Kata Sandi Kata Sandi Tidak Cocok</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">Tampal token sp dc disini...</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">Tampal kunci API anda di sini</string>
+    <string name="ui_play_in_itune" formatted="false">Bermain diiTune</string>
+    <string name="ui_play_next" formatted="false">PlayNext</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">Bermain di tunas &amp; speaker telepon/AUX pada waktu yang sama</string>
+    <string name="ui_playlist_name" formatted="false">Nama Senarai Siar</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">Nama senarai siar</string>
+    <string name="ui_playlist_spotify" formatted="false">• Daftar MainSpotify</string>
+    <string name="ui_playlists" formatted="false">Senarai Siar</string>
+    <string name="ui_plays" formatted="false">Main</string>
+    <string name="ui_pm" formatted="false">Perancis</string>
+    <string name="ui_port" formatted="false">Port</string>
+    <string name="ui_pre_added_extensions" formatted="false">KELUARGAAN PRE-ADDED</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">Melebihi FLAC/ALAC bit-perfect hingga 24-bit / 192 kHz bila tersedia</string>
+    <string name="ui_preparing_audio_preview" formatted="false">Menyediakan pratinjau audio...</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">Melarang tampilan perangkat dari mematikan sementara Always On Display aktif.</string>
+    <string name="ui_preview" formatted="false">WANITA</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">Pratonton</string>
+    <string name="ui_preview_always_on_display" formatted="false">Prapaparan yang Selalu Ditampilkan</string>
+    <string name="ui_profile" formatted="false">PROFIL</string>
+    <string name="ui_profiles_in_backup" formatted="false">PROFIL PROFIL DI KEMBALI</string>
+    <string name="ui_prompt_type" formatted="false">JENIS PROMPT</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">PROVIDER PRORITAS (FALLBACK ORDER)</string>
+    <string name="ui_queue" formatted="false">Baris Gilir</string>
+    <string name="ui_queue_is_empty" formatted="false">Baris Gilir kosong</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">Trek dibaris gilir untuk dimainkan berikutnya</string>
+    <string name="ui_radio" formatted="false">Radio</string>
+    <string name="ui_read_more" formatted="false">Baca Lebih Banyak</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">Suku kata waktu-nyata dan tatal baris dengan audio langsung</string>
+    <string name="ui_recent_searches" formatted="false">Pencarian Baru - Baru Ini</string>
+    <string name="ui_recently_added" formatted="false">Baru Ditambahkan</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">Jadwal tidur yang berulang · jeda otomatis playback</string>
+    <string name="ui_remote_music_library" formatted="false">Pustaka Musik Jauh Memo</string>
+    <string name="ui_remove" formatted="false">Mengeluarkan</string>
+    <string name="ui_rename" formatted="false">Tukarnama</string>
+    <string name="ui_rename_account" formatted="false">Nama pengguna:</string>
+    <string name="ui_replay" formatted="false">PENYIAR</string>
+    <string name="ui_replay_c0f85d66" formatted="false">Replay</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">Memerlukan Keluaran Tak Hilang yang Dapat Disempurnakan</string>
+    <string name="ui_reset" formatted="false">KAN</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">Set ulang Susunan Penyedia &amp; Default</string>
+    <string name="ui_reset_to_default_url" formatted="false">Ulangtetap ke URL Default</string>
+    <string name="ui_restore_default_sources" formatted="false">Sumber Default Pulihkan Ukuran</string>
+    <string name="ui_restore_itune_backup" formatted="false">PulihkaniTuneSandar</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">PulihkanJioSaavnDanYouTube MusicDalam urutan standar.JioSaavnMula dari danYouTube MusicMulai dari awal.</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">Wachida Pulihkan LRC Lib, KuGou, dan SimpMusic sebagai penyedia unggulan dan re-enables semua 11 sumber.</string>
+    <string name="ui_resume" formatted="false">Sambung kembali</string>
+    <string name="ui_rhythm_by_hour" formatted="false">Irama menurut Jam</string>
+    <string name="ui_room_permissions" formatted="false">RUANG ORANG ORANG ORANG</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">Lalu lintas jaringan route app melalui HTTP atau SOCKS</string>
+    <string name="ui_save_proxy" formatted="false">Proksi Simpan Keywords</string>
+    <string name="ui_save_schedule" formatted="false">Schedule</string>
+    <string name="ui_save_to_gallery" formatted="false">Simpan ke Galeri</string>
+    <string name="ui_save_token" formatted="false">Simpan Token</string>
+    <string name="ui_saved_to_your_library" formatted="false">Ke perpustakaanmu!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">Disimpan menggunakan Android Keystore. Berkas-berkas backup yang menggunakan PBKDF2-HMAC-SHA256 (310.000 putaran) dan AES-256-GCM.</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">Simpan ke Muat Turun/itune/backback /ups</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">♪ Katakanlah sebuah lagu, artis, album, atau lirik ♪</string>
+    <string name="ui_search" formatted="false">Cari</string>
+    <string name="ui_search_identify" formatted="false">Cari Ke &amp; Kepastian</string>
+    <string name="ui_search_announcements" formatted="false">Pengumuman pencarian...</string>
+    <string name="ui_search_country" formatted="false">Cari negara...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">Cari lagu, artis, album, dan daftar main</string>
+    <string name="ui_search_languages" formatted="false">Bahasa  bahasa:</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">Cari atau type id model</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">Cari lagu, artis, album, atau daftar main</string>
+    <string name="ui_searching_lyrics" formatted="false">Mencari lirik...</string>
+    <string name="ui_searching_spotify" formatted="false">PencarianSpotifyAku...</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">KEDUA MIRROR SINK</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">Pilih avatar profil untuk mempersonalisasi AndaiTunePengalaman di semua layar.</string>
+    <string name="ui_select_language" formatted="false">Bahasa Pilih</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">Pilih templat promp baku untuk terjemahan lirik.</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">Pilih mesin yang digunakan untuk terjemahan lirik line-by-line.</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">Pilih bahasa target untuk terjemahan lirik.</string>
+    <string name="ui_server_host_ip" formatted="false">Host / IP Server Baru</string>
+    <string name="ui_server_url_manifest" formatted="false">URL Server / Manifes</string>
+    <string name="ui_settings_appearance" formatted="false">Penampilan Pengaturan Rupa</string>
+    <string name="ui_share_lyrics" formatted="false">Lirik Kongsi</string>
+    <string name="ui_share_my_replay" formatted="false">Kongsi Replay saya</string>
+    <string name="ui_share_replay" formatted="false">Replay Kongsi</string>
+    <string name="ui_share_this_story" formatted="false">Kongsi cerita ini</string>
+    <string name="ui_share_your_time_travel" formatted="false">Kongsi Perjalanan Waktu Anda</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">Tampilkan Lirik Berselaras di Atas Kanvas</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">Masuk ke musik.youtube.com dalam peramban desktop. Peralatan Pengembang Terbuka → Aplikasi → Kuki, kemudian salin nilai sesi signed-in. Perlakukan nilai-nilai ini seperti kata sandi Anda.</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">Signin dengan AndaLast.fmakun</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">Daftar Keluar Semua Akun</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">Keluaran Dwi yang Menyenangkan</string>
+    <string name="ui_skip_sign_in" formatted="false">Skip Skip Masuk</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">Peluncuran layar ke depan untuk lirik lebih cepat · mundur untuk lebih lambat · Audio tanpa terpengaruh</string>
+    <string name="ui_snap_0" formatted="false">Snap 0</string>
+    <string name="ui_soundstage_width" formatted="false">Lebar Panggung Suara</string>
+    <string name="ui_sources" formatted="false">Sumber</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">Essentials</string>
+    <string name="ui_spotify_canvas" formatted="false">SpotifyKanvas &amp;</string>
+    <string name="ui_spotify_account" formatted="false">SpotifyAkun</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">SpotifyKekanvas, Apple Music, Tidal &amp; Community motion covers</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">SpotifySaat ini dia terhubung. Karya seni gerak font (Kanvas) danSpotifyPensegerakan playlist chorus diaktifkan.</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">SpotifyPencarian gagal. Coba lagi.</string>
+    <string name="ui_station" formatted="false">Station</string>
+    <string name="ui_stereo_echo_delay" formatted="false">Tundaan Echo Stereo &amp;</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">Tak ada lagu baru di aplikasi terbuka</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">Simpan perpustakaan Anda yang tak hilang secara sempurna langsung dari saham jaringan pribadi atau Nextcloud.</string>
+    <string name="ui_streaming_sources" formatted="false">MENJERIT SUMBER</string>
+    <string name="ui_style" formatted="false">STYLE</string>
+    <string name="ui_suggestions" formatted="false">Cadangan</string>
+    <string name="ui_switch" formatted="false">Tukar</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">avatar Tap untuk menyesuaikan</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">• Tahan untuk jeda</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">Sapu untuk segera aktifkan Always On Display sekarang</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">Sapu untuk memilih siaran FM Country &amp; City</string>
+    <string name="ui_target_language" formatted="false">BAHASA TARGET</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">Bahasa Target</string>
+    <string name="ui_test" formatted="false">Uji</string>
+    <string name="ui_test_proxy_connection" formatted="false">Sambungan Proxy Uji penyakit</string>
+    <string name="ui_testing_proxy" formatted="false">Proksi Pengujian Kebidanan...</string>
+    <string name="ui_that_s_your_story" formatted="false">Yang\'Kisahmu</string>
+    <string name="ui_this_account" formatted="false">akun ini</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">Daftar lagu ini kosong. Tambah lagu dari pemain atau pencarian!</string>
+    <string name="ui_time_travel" formatted="false">♪ TIME TIME TRAVEL ♪</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">Perjalanan Waktu</string>
+    <string name="ui_time_travel_wrap" formatted="false">WRAP TIME WAVEL</string>
+    <string name="ui_time_synced_lyrics" formatted="false">Lirik Terkirim Waktu</string>
+    <string name="ui_top_picks" formatted="false">Pengambilan Top Taken</string>
+    <string name="ui_top_result" formatted="false">Hasil Top 0</string>
+    <string name="ui_top_song" formatted="false">Lagu Top</string>
+    <string name="ui_top_songs" formatted="false">Lagu Top Top</string>
+    <string name="ui_top_streamed" formatted="false">TOP BERTERIAK</string>
+    <string name="ui_total_listening_time" formatted="false">Waktu Mendengarkan Total</string>
+    <string name="ui_total_time" formatted="false">Waktu Total</string>
+    <string name="ui_translate_actual_lines" formatted="false">Terjemahkan baris aktual</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">Terjemahkan lirik on-demand untuk lagu apapun dari menu pemain (... &gt; Lirik &gt; Terjemah). ♪ Ketika ♪\'Terjemahkan baris aktual\'Ia mati, terjemahan muncul sebagai subjudul di bawah teks aslinya.</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">Terjemahkan baris lirik lagu berikut ke bahasa Inggris. Simpan aliran puitis.</string>
+    <string name="ui_translating_lyrics" formatted="false">Lirik Translating...</string>
+    <string name="ui_translation_mode" formatted="false">Terjemahan Terjemahan Terjemahan Baru</string>
+    <string name="ui_translation_prompt" formatted="false">Terjemahan Terjemahan Terjemahan Baru</string>
+    <string name="ui_trending_artists" formatted="false">Seniman Trending</string>
+    <string name="ui_turn_off_timer" formatted="false">Juru Waktu Dimatikan</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">Update nama yang ditampilkan pada kartu profil ID Apple Anda di Setting.</string>
+    <string name="ui_username_optional" formatted="false">Nama Pengguna (Opsional)</string>
+    <string name="ui_view" formatted="false">Pandangan</string>
+    <string name="ui_view_on_shazam" formatted="false">View on Shazam</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">Mindy Vinyl Turntable Link</string>
+    <string name="ui_whats_new" formatted="false">BAGAIMANA BARU</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">Ketika musik diputar, Always On Display menyala jika tidak ada sentuhan yang terjadi di layar untuk waktu yang dipilih. Hanya mengaktifkan ketika di dalam aplikasi.</string>
+    <string name="ui_who_is_listening" formatted="false">Siapa yang mendengarkan?</string>
+    <string name="ui_widget" formatted="false">Widget</string>
+    <string name="ui_you" formatted="false">Kau</string>
+    <string name="ui_your_1_artist" formatted="false">Artis #1 Anda</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">Kunci API Anda disimpan secara aman pada perangkat dan tidak pernah dibagikan.</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">Token sesi Discord Anda disimpan terenkripsi pada perangkat ini dan hanya digunakan untuk Rich Presence.</string>
+    <string name="ui_your_favourite_song" formatted="false">Lagu Favorit Anda</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">Perpustakaan, daftar putar, dan pengaturan Anda akan dienkripsi dengan sandi paling tidak 8 karakter.</string>
+    <string name="ui_your_listening_experience" formatted="false">BAHASA PENJELASAN ANDA</string>
+    <string name="ui_your_listening_pattern" formatted="false">Pola mendengarkanmu</string>
+    <string name="ui_your_listening_persona" formatted="false">ANDA MENDENGARKAN PERSENA</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">Statistik Replay &amp;</string>
+    <string name="ui_your_musical_anchor" formatted="false">ANDA MUSIK BAHASA</string>
+    <string name="ui_your_name" formatted="false">Nama Anda</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">Kata sandi Anda dikirim keLast.fmHanya untuk membuat sesi.iTuneJangan menyimpannya.</string>
+    <string name="ui_your_playlists" formatted="false">DENGAN DAFTAR ANDA</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">Daftar Main Anda</string>
+    <string name="ui_your_sonic_peak" formatted="false">[ Gambar di hlm.</string>
+    <string name="ui_your_spotify_playlists" formatted="false">KauSpotifySenarai Siar</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">KauSpotifyDaftar Putar (Public &amp; Private)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSIC&amp; GOOGLE</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube MusicKek</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">·</string>
+    <string name="ui_text_a118c40635" formatted="false">━━━ ━━━━━</string>
+    <string name="ui_album_artwork" formatted="false">Karya seni Album</string>
+    <string name="ui_itune_waves" formatted="false">iTuneGelombang</string>
+    <string name="ui_previous" formatted="false">Sebelumnya</string>
+    <string name="ui_next" formatted="false">Next</string>
+    <string name="ui_audio_output" formatted="false">Keluaran Audio</string>
+    <string name="ui_low_volume" formatted="false">Volume Rendah</string>
+    <string name="ui_high_volume" formatted="false">Volume Tinggi</string>
+    <string name="ui_filter" formatted="false">Penapis</string>
+    <string name="ui_refresh" formatted="false">Segarkan</string>
+    <string name="ui_options_6bf5da9c" formatted="false">Opsyen</string>
+    <string name="ui_user_profile_avatar" formatted="false">Avatar Profil Pengguna Sistem</string>
+    <string name="ui_news" formatted="false">Berita</string>
+    <string name="ui_no_song_playing" formatted="false">Tidak ada lagu yang dimainkan</string>
+    <string name="ui_next_track" formatted="false">Bandar nama</string>
+    <string name="ui_see_all_songs" formatted="false">Lihat semua lagu</string>
+    <string name="ui_favorite_radio" formatted="false">Radio Favorit</string>
+    <string name="ui_live_65c821a5" formatted="false">Hidup</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTuneGelombang Jeram</string>
+    <string name="ui_refresh_network" formatted="false">Monofresh Network</string>
+    <string name="ui_edit_display_name" formatted="false">Disket Nama Paparan</string>
+    <string name="ui_remove_from_queue" formatted="false">Mengeluarkan dari antrian</string>
+    <string name="ui_search_new_releases" formatted="false">Cari Keluaran Baru</string>
+    <string name="ui_refresh_new_releases" formatted="false">Refresh New Releases</string>
+    <string name="ui_refresh_downloads" formatted="false">Muat Turun Segarkan</string>
+    <string name="ui_clear_cache" formatted="false">Cache Clear Cache</string>
+    <string name="ui_sort" formatted="false">Urutkan</string>
+    <string name="ui_see_all_new_releases" formatted="false">Lihat Semua Rilis Baru</string>
+    <string name="ui_identify" formatted="false">Kenali Kenali</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">Muat senarai main</string>
+    <string name="ui_create_playlist" formatted="false">Cipta Senarai Main</string>
+    <string name="ui_liked" formatted="false">Disukai</string>
+    <string name="ui_paste" formatted="false">Macedonia</string>
+    <string name="ui_checked" formatted="false">Dicek</string>
+    <string name="ui_google_account_playlist" formatted="false">Senarai Main Akun Google Tanpa Nama</string>
+    <string name="ui_spotify_playlist" formatted="false">SpotifySenarai Main</string>
+    <string name="ui_local_playlist" formatted="false">Senarai Main Lokal</string>
+    <string name="ui_back_to_audio_engine" formatted="false">Kembali ke Mesin Audio</string>
+    <string name="ui_bluetooth_settings" formatted="false">BluetoothPengaturan</string>
+    <string name="ui_scan_output_devices" formatted="false">Perangkat Keluaran Pindai</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">Audio Ganda Ganda Sama yang Luar Biasa</string>
+    <string name="ui_selected" formatted="false">Dipilih</string>
+    <string name="ui_copy" formatted="false">Salin</string>
+    <string name="ui_copy_link" formatted="false">pautan Salin</string>
+    <string name="ui_upgrade_quality" formatted="false">Kualitas Penataran Magon</string>
+    <string name="ui_fm_radio" formatted="false">Radio</string>
+    <string name="ui_next_station" formatted="false">Stasiun Taksi</string>
+    <string name="ui_minimize" formatted="false">Minimalkan</string>
+    <string name="ui_favorite" formatted="false">Favorit</string>
+    <string name="ui_more_options" formatted="false">Lebih Banyak Pilihan</string>
+    <string name="ui_previous_station" formatted="false">Stasiun Sebelumnya</string>
+    <string name="ui_sleep_timer" formatted="false">Pemasa Tidur</string>
+    <string name="ui_audio_output_devices" formatted="false">Perangkat Keluaran Audio</string>
+    <string name="ui_station_list" formatted="false">Daftar Stasiun Fukuoka</string>
+    <string name="ui_volume" formatted="false">Volume</string>
+    <string name="ui_open_lyrics" formatted="false">Lirik terbuka</string>
+    <string name="ui_mute_volume" formatted="false">Volume Mute</string>
+    <string name="ui_max_volume" formatted="false">Volume Maksimal</string>
+    <string name="ui_endless_queue" formatted="false">Baris Gilir Tanpa Akhir</string>
+    <string name="ui_repeat" formatted="false">Ulang</string>
+    <string name="ui_refresh_stations" formatted="false">Stasiun segarkan</string>
+    <string name="ui_favorite_station" formatted="false">Stasiun Favorit</string>
+    <string name="ui_close_ireconization" formatted="false">Tutup iRekonisasi</string>
+    <string name="ui_cancel_voice_search" formatted="false">Membatalkan Pencarian Suara</string>
+    <string name="ui_microphone" formatted="false">Mikrofon</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">Lebih banyak pilihan orang lain</string>
+    <string name="ui_voice_search" formatted="false">Pencarian Suara</string>
+    <string name="ui_saved" formatted="false">Diselamatkan</string>
+    <string name="ui_fill_search_query" formatted="false">Kueri pencarian Isian Isian Isi</string>
+    <string name="ui_remove_from_history" formatted="false">Hapus dari sejarah</string>
+    <string name="ui_itune_icon" formatted="false">iTuneikon</string>
+    <string name="ui_artwork_preview" formatted="false">Prapaparan Seni Rupa</string>
+    <string name="ui_decrease" formatted="false">Kurangi</string>
+    <string name="ui_increase" formatted="false">Tingkatkan</string>
+    <string name="ui_open_link" formatted="false">Open Link</string>
+    <string name="ui_reset_geometry" formatted="false">Geometri reset</string>
+    <string name="ui_reorder_provider" formatted="false">Penyedia Pemesan Ulang Tool</string>
+    <string name="ui_save_name" formatted="false">Nama Simpan</string>
+    <string name="ui_editable_name" formatted="false">Nama Dapat Diedit</string>
+    <string name="ui_google" formatted="false">Google</string>
+    <string name="ui_remove_account" formatted="false">Mengeluarkan akun</string>
+    <string name="ui_reorder_source_priority" formatted="false">Keutamaan sumber urutan ulang UIN</string>
+    <string name="ui_refresh_playlists" formatted="false">Muatkan daftar putar</string>
+    <string name="ui_replay_poster" formatted="false">Poster Replay</string>
+    <string name="ui_settings" formatted="false">Pengaturan</string>
+    <string name="ui_artist_radio" formatted="false">Radio Artis</string>
+    <string name="ui_play_all" formatted="false">Semua</string>
+    <string name="ui_delete_playlist" formatted="false">Hapus Senarai Main</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">Antrian tanpa akhir</string>
+    <string name="ui_artist_info" formatted="false">Info Artis</string>
+    <string name="ui_enabled" formatted="false">Diaktifkan</string>
+    <string name="ui_search_icon" formatted="false">Ikon Pencarian</string>
+    <string name="ui_region">Region:%1$s</string>
+    <string name="ui_connected_devices">PERANTI YANG DIKONDEKSI (%1$s)</string>
+    <string name="ui_up_next">UP NEKS (%1$s)</string>
+    <string name="ui_text_da5c3629fd">%1$s›</string>
+    <string name="ui_active_7c6a4064">%1$s•%2$saktif</string>
+    <string name="ui_no_new_available_right_now">Tidak ada yang baru%1$ssekarang</string>
+    <string name="ui_tracks">%1$stracks •%2$s</string>
+    <string name="ui_songs">%1$sLagu • lagu •%2$s•%3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s•%2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c">•%1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$strek could\'Kecocokan:</string>
+    <string name="ui_text_a3edb2b714">•%1$s- Tidak.%2$s</string>
+    <string name="ui_d_eeda119e">%1$s♪ D ♪</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+ +  + +  + +%1$sdB</string>
+    <string name="ui_connected">%1$sTak terhubung</string>
+    <string name="ui_open_web_player">Pemain Web Terbuka Pemain (Inggris)%1$s)</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">Negara:%1$s( ( (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (%2$s)</string>
+    <string name="ui_city_state">Kota / Negara Bagian:%1$s</string>
+    <string name="ui_codec_bitrate">Kodeks / Kadar Bit:%1$s</string>
+    <string name="ui_language">Bahasa:%1$s</string>
+    <string name="ui_tags">Tags:%1$s</string>
+    <string name="ui_stream">Stream:%1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">Kunci API tidak dikonfigurasi untuk%1$sSilakan set dalam Setting &gt; Lirik.</string>
+    <string name="ui_s_clip">%1$sKlip</string>
+    <string name="ui_loading_more_fm_stations_loaded">Memuat lebih banyak stasiun FM (%1$sEBook dimuat)...</string>
+    <string name="ui_found">%1$sDitemukan</string>
+    <string name="ui_version">Versi%1$s( ( (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (%2$s)</string>
+    <string name="ui_of_active">%1$s* Dari *%2$sActive</string>
+    <string name="ui_text_adebc50ade">♪ ♪%1$s</string>
+    <string name="ui_api_key">%1$sKunci API</string>
+    <string name="ui_channel">Saluran:%1$s</string>
+    <string name="ui_sync_issue">Isu Segerak:%1$s</string>
+    <string name="ui_enter">Enter%1$s</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">Anda yakin ingin menghapus ”%1$sSemua data, daftar putar, favorit, sejarah, dan pengaturan dalam akun ini akan dihapus secara permanen.</string>
+    <string name="ui_peak">Puncak:%1$s</string>
+    <string name="ui_welcome">Selamat datang,%1$s</string>
+    <string name="ui_songs_played">%1$sLagu lagu dimainkan</string>
+    <string name="ui_around">Di sekitar%1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">Ketika dunia menjadi sibuk, Anda lagu di sebagian besar%1$sDi sekitar%2$s.</string>
+    <string name="ui_itune_time_travel_575a110d">iTune♪ Perjalanan Waktu ♪%1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s·%2$s</string>
+    <string name="ui_your_biggest_day_was">Hari terbesarmu adalah%1$s.</string>
+    <string name="ui_listening_recap">%1$sMedengarkan recap</string>
+    <string name="ui_busiest_day">Hari terkecil:%1$s</string>
+    <string name="ui_peak_hour_00">Jam puncak gelombang:%1$s:00</string>
+    <string name="ui_loading">Memuatkan%1$sAku...</string>
+    <string name="ui_about">Perihal%1$s</string>
+    <string name="ui_songs_9b614dc8">%1$sLagu</string>
+    <string name="ui_current_offset_ms">Ofset Alfa saat ini:%1$sms</string>
+    <string name="ui_connected_session">Sesi Tersambung:%1$s</string>
+    <string name="ui_k">%1$skh</string>
+    <string name="ui_top_result_c5e5adab">TOP RESULT •%1$s</string>
+    <string name="toast_song_not_found_in_itune">Lagu tidak ditemukan dalamiTune</string>
+    <string name="toast_playback_failed_try_again">Playback gagal, coba lagi</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">Pemasa Tidur Otomatis Aktif · Main Balik Diistirahatkan</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">Mode Offline: lagu ini tidak dimuat turun</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">Mode luring: tidak dapat mengupgrade kualitas</string>
+    <string name="toast_upgrading_quality">Kualitas Meningkatkan</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">Tak ada sumber streaming tak hilang yang diaktifkan di Sumber</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">Tidak ada aliran kualitas yang lebih tinggi ditemukan melintasi sumber yang diaktifkan</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">shuffle Dikunci oleh Shuffle Permanen dalam Pengaturan</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">Izin Mikrofon diperlukan untuk mengenali musik</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">Dipaparkan oleh izin aplikasi lain diperlukan untuk popup pengakuan</string>
+    <string name="toast_playback_failed">Playback gagal</string>
+    <string name="toast_complete_google_sign_in_first">Catatan lengkap Google pertama</string>
+    <string name="toast_waiting_for_youtube_music_session">Sedang menungguYouTube MusicSesi untuk...</string>
+    <string name="toast_couldn_t_load_tracks">Tak dapat\'trek t beban</string>
+    <string name="toast_copied_to_clipboard">Copied to clipboard</string>
+    <string name="toast_profile_avatar_updated">Profil avatar diperbarui</string>
+    <string name="toast_no_tracks_found">Tak ada jejak yang ditemukan</string>
+    <string name="toast_google_account_connected">Tak ada akun Google yang terhubung</string>
+    <string name="toast_link_copied">disalin</string>
+    <string name="toast_could_not_open_browser">Tak dapat membuka peramban</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">Kegubernuran antara 1024 dan 65535</string>
+    <string name="toast_cached_music_cleared">Musik Cache Cache dibersihkan</string>
+    <string name="toast_no_tracks_available_to_add">Tak ada trek tersedia untuk ditambahkan</string>
+    <string name="toast_enter_a_playlist_name">Masukkan nama senarai main</string>
+    <string name="toast_system_sound_panel_opened">Sistem sound panel dibuka</string>
+    <string name="toast_download_started_check_notification">Pemakluman Check</string>
+    <string name="toast_playback_will_stop_after_current_track">Playback akan berhenti setelah trek sekarang</string>
+    <string name="toast_sleep_timer_turned_off">Pewaktu tidur tidur dimatikan</string>
+    <string name="toast_stream_url_copied">URL Strim disalin</string>
+    <string name="toast_couldn_t_create_lyrics_card">Tak dapat\'\"T ciptakan kartu lirik\"</string>
+    <string name="toast_restored_online_lyrics">Lirik online yang dipulihkan</string>
+    <string name="toast_lyrics_saved">Lirik disimpan</string>
+    <string name="toast_translation_cleared">Terjemahan terjemahan dibersihkan</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">Sila tetapkan Kunci API Anda di Seting &gt; Lirik pertama</string>
+    <string name="toast_no_lyrics_found_for_this_song">Lirik lirik tidak ditemukan untuk lagu ini</string>
+    <string name="toast_could_not_create_audio_clip">Tak dapat membuat klip audio</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">Snippet disimpan ke Musik/iTune/Snippets</string>
+    <string name="toast_playing_next">Playing berikutnya</string>
+    <string name="toast_added_to_queue">** Ditambah ke antrian</string>
+    <string name="toast_download_started_check_notifications">Unduhan video dimulai · Pemeriksaan pemberitahuan</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">Tak dapat\'Cari lagu ini diYouTube Music</string>
+    <string name="toast_couldn_t_start_mix">Tak dapat\'Campuran awalan t campuran</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">Tak dapat\'Cari jejak padaYouTube Music</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">Tak dapat mengenkripsi password dengan aman. Backup otomatis tidak diubah.</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">Ijin penyimpanan barang diperlukan untuk menyimpan backup dalam Unduhan</string>
+    <string name="toast_choose_an_itune_backup_file">Pilihlah.ituneBerkas backup Name</string>
+    <string name="toast_audio_artwork_cache_cleared">Perpustakaan cache audio &amp; karya seni dibersihkan</string>
+    <string name="toast_could_not_open_github">Tak dapat membuka GitHub</string>
+    <string name="toast_profile_name_updated">Nama profil diperbarui</string>
+    <string name="toast_search_history_cleared">Sejarah penggeledahan telah dibersihkan</string>
+    <string name="toast_listening_history_cleared">Sejarah mendengarkan telah dibersihkan</string>
+    <string name="toast_cached_songs_cleared">Lagu-lagu cache dibersihkan</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">Buka pengaturan sistem untuk memberikan Tampilan melalui aplikasi lain</string>
+    <string name="toast_dynamic_island_geometry_reset">Reset geometri Kepulauan Dinamik</string>
+    <string name="toast_geometry_reset">Reset geometri gonometri</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">Provider  Lylachi reset ke baku</string>
+    <string name="toast_api_key_saved">Kunci API disimpan</string>
+    <string name="toast_base_url_updated">URL basis update</string>
+    <string name="toast_translation_prompt_updated">Permintaan terjemahan Terjemahan Baru Diperbarui</string>
+    <string name="toast_equalizer_reset_to_flat">Equalizer reset ke Flat</string>
+    <string name="toast_dj_console_reset">Reset Konsol DJ version</string>
+    <string name="toast_name_saved">Nama itu disimpan</string>
+    <string name="toast_syncing_youtube_music_library">SyncYouTube MusicPerpustakaan perpustakaan perpustakaan...</string>
+    <string name="toast_signed_out_local_likes_preserved">Ditandatangani (seperti lokal dipelihara)</string>
+    <string name="toast_signed_out_of_all_google_accounts">Daftar keluar dari semua akun Google</string>
+    <string name="toast_discord_disconnected">Diskon terputus</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">signed-in yang sahYouTube MusicKuki kue (SAPISID dan kue sesi)</string>
+    <string name="toast_youtube_music_account_connected">YouTube MusicAkun terkoneksi</string>
+    <string name="toast_account_renamed">Nama pengguna:</string>
+    <string name="toast_account_deleted">Akun nihil dihapus</string>
+    <string name="toast_cannot_delete_your_only_account">Tidak dapat memadam satu-satunya akun Anda</string>
+    <string name="toast_sources_restored_to_defaults">Sumber dipulihkan ke default</string>
+    <string name="toast_spotify_disconnected">Spotifyterputus</string>
+    <string name="toast_spotify_sp_dc_token_saved">SpotifyToken sp dc disimpan</string>
+    <string name="toast_spotify_connected">Spotify connect- Apa?</string>
+    <string name="toast_complete_spotify_sign_in_first">CompleteSpotifysign-in pertama</string>
+    <string name="toast_saved_to_gallery">Diselamatkan di Galeri!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">MemungkinkaniTuneuntuk memasang pemutakhiran untuk dilanjutkan</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">APK update termuat-muat-muat-muat turun APK tidak tersedia</string>
+    <string name="toast_added_to_queue_next">Tambahkan di antrian berikutnya</string>
+    <string name="toast_link_copied_to_clipboard">disalin ke papan keratan</string>
+    <string name="toast_song_link_copied_to_clipboard">Teks telah disalin ke papan keratan</string>
+    <string name="toast_left_ishare_session">Sesi IShare Kiri</string>
+    <string name="toast_ishare_lan_host_started">Start!</string>
+    <string name="toast_scanning_lan_for_sessions">Mengimbas LAN untuk sesi...</string>
+    <string name="toast_cache_cleared">Cache Cache Cache Dikosongkan</string>
+    <string name="toast_signed_out_successfully">Signed keluar berhasil</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">Kata sandi harus cocok dan memiliki setidaknya 8 karakter</string>
+    <string name="toast_no_backup_file_found_in_storage">Tidak ada berkas cadangan ditemukan dalam penyimpanan</string>
+    <string name="toast_library_settings_restored">Perpustakaan &amp; Pengaturan Dipulihkan!</string>
+    <string name="toast_enter_your_backup_password">Nifine Masukkan kata sandi backup anda</string>
+    <string name="toast_syncing_spotify_library">SyncSpotifyPerpustakaan perpustakaan perpustakaan...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify Connect- Apa?</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie"> Silakan masukkan kuki SP DC yang sah</string>
+    <string name="toast_playing">Bermain%%1$sAku...</string>
+    <string name="toast_upgraded_to_lossless_kbps">Diupgrade menjadi Tak Hilang •%%1$skbps</string>
+    <string name="toast_playing_next_0f0c851c">Bermain%%1$sSelanjutnya</string>
+    <string name="toast_added_to_queue_88e96c25">Ditambahkan%%1$sline line</string>
+    <string name="toast_playing_cb1fb3de">Bermain%%1$sAku...</string>
+    <string name="toast_playing_next_e0082d95">Bermain di peringkat berikut:%%1$s</string>
+    <string name="toast_couldn_t_load">Tak dapat\'beban t load%%1$s</string>
+    <string name="toast_opening">Membuka%%1$sAku...</string>
+    <string name="toast_couldn_t_open">Tak dapat\'♪ t open ♪%%1$s</string>
+    <string name="toast_couldn_t_play">Tak dapat\'Mainkan%%1$s</string>
+    <string name="toast_library_pin">Pin Pustaka:%%1$s</string>
+    <string name="toast_copied">Copied:%%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">Pewaktu tidur siang siap untuk%%1$s♪ ♪ ♪ min min min min ♪</string>
+    <string name="toast_lyrics_applied">Lirik folks terapan (diterapkan)%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">Ditambahkan%%1$sCari trek ke antrian</string>
+    <string name="toast_switched_feed_to">Suapan yang ditukar ke%%1$s</string>
+    <string name="toast_provider_updated_to">Pembekal update ke%%1$s</string>
+    <string name="toast_target_language_set_to">Bahasa sasaran disetkan ke%%1$s</string>
+    <string name="toast_translation_mode_set_to">Mod terjemahan terjemahan yang ditetapkan ke%%1$s</string>
+    <string name="toast_added_source">Sumber tambahan:%%1$s</string>
+    <string name="toast_installed_extension_s">Terpasang%%1$sekstensi Wix</string>
+    <string name="toast_imported_songs">Terimport\'%%1$s\'( ( (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (  (%%2$slagu-lagu)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">Tak dapat\'Cari\'%%1$s\'PadaYouTube Music</string>
+    <string name="toast_added_songs_to">Ditambahkan%%1$sLagu untuk%%2$s</string>
+    <string name="toast_joining">Joining%%1$sAku...</string>
+    <string name="toast_added_to">Ditambahkan ke%%1$s</string>
+    <string name="toast_itune_v_for_android_tv">iTunev%%1$sAndroid TV</string>
+    <string name="toast_backup_failed">Gagal melakukan backup:%%1$s</string>
+    <string name="toast_restore_failed">Pemulihan fax gagal:%%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">iShare, Dynamic Island &amp; StandBy</string>
+    <string name="settings_ishare" formatted="false">♪ Share ♪</string>
+    <string name="settings_dynamic_island" formatted="false">Kepulauan Falkland</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">Pengontrol bubble air terapung di luariTune</string>
+    <string name="settings_always_on_display" formatted="false">Selalu Mengisih</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">Efek Suara Audio Mesin Audio Audio &amp;</string>
+    <string name="settings_dolby_atmos" formatted="false">Dolby Atmos</string>
+    <string name="settings_text_8948f8179a" formatted="false">Audio 8D</string>
+    <string name="settings_spatial_audio" formatted="false">Audio Spatial</string>
+    <string name="settings_equalizer_eq" formatted="false">Penyama (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">Penapisan Low-Pass</string>
+    <string name="settings_dj_studio_panel" formatted="false">Panel Studio DJ</string>
+    <string name="settings_audio_normalization" formatted="false">Penormalan Audio</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">DAC Kincir USB</string>
+    <string name="settings_pure_audio_bypass" formatted="false">[ Gambar di hlm.</string>
+    <string name="settings_signal_pipeline" formatted="false">Sebaris Paip Isyarat</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">-&gt; Name</string>
+    <string name="settings_audio_playback" formatted="false">Main Balik Audio Audio &amp;</string>
+    <string name="settings_sources" formatted="false">Sumber</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">ManageYouTube Music,JioSaavn, sambungan terpasang,WebDAV,SMB, dan prioritas bermain</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">Skip Auto Skip Bila Kesalahan Terjadi</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">Pindah ke antrian berikutnya jika pemutaran gagal</string>
+    <string name="settings_download_quality" formatted="false">Kualitas Unduhan Mutu</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">Kualitas baku sejauh mungkin yang digunakan oleh aksi pengunduhan lagu</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">KOSIK Pilih kualitas audio baku untuk mengunduh di seluruh aplikasi.</string>
+    <string name="settings_lossless_audio" formatted="false">Audio Tak Hilang</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">Kualitas Kinerja Kinerja Lagu Cache</string>
+    <string name="settings_streaming_quality" formatted="false">Kualitas Aliran Login</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">Pilih kualitas audio streaming yang Anda sukai.</string>
+    <string name="settings_pcm_output_format" formatted="false">Format Output PCM</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">Mengeluarkan kembali pemutaran pada posisi saat ini</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">Pilih format PCM yang diminta dari Android\'Keluaran audio. Sebuah USB DAC mungkin mengubahnya ke format yang didukungnya.</string>
+    <string name="settings_crossfade" formatted="false">* Crossfade *</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">Dia akan menghilangkan jejak akhir dengan permulaan selanjutnya.</string>
+    <string name="settings_automix" formatted="false">OtoMix</string>
+    <string name="settings_afterglow" formatted="false">♪ Afterglow ♪</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">Terapkan efek Low-Pass Equalizer yang sama selama detik-detik akhir yang dipilih dari setiap lagu. Wajan afterglow menghentikan AutoMix dan Crossfade saat diaktifkan.</string>
+    <string name="settings_permanent_shuffle" formatted="false">Pengumpulan Permanen yang Abadi</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">Keep shuffle permanen terkunci di dalam pemain</string>
+    <string name="settings_pause_at_volume_0" formatted="false">Kaku di Volume 0</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">Secara otomatis, jeda memutar secara otomatis ketika volume mencapai nol</string>
+    <string name="settings_volume_bar" formatted="false">Batang Volume</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">Kemunculan dalam ${state.volumeBarSide.lowercase()} Mudik ketika Anda menekan tombol volume</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">Pilih tepi layar mana yang muncul di batang volume in-app.</string>
+    <string name="settings_content" formatted="false">Konten</string>
+    <string name="settings_default_content_language" formatted="false">Bahasa Kandungan Baku</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">Bahasa Kampung untuk Suasana, Layar &amp; Cari</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">Pilih bahasa katalog yang disukai yang digunakan di seluruh Layar, Moods &amp; Genres, Playlist, dan New Release.</string>
+    <string name="settings_default_content_country" formatted="false">Negeri Konten Default</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">Region untuk Charts, Daftar Main &amp; Rilis Baru</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">Memilih stofront regional yang digunakan untuk album Newly Added, regional Moods, dan Featured Playlist.</string>
+    <string name="settings_hide_explicit_content" formatted="false">Ieyasu Hide Content eksplisit</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">Filter lagu eksplisit di seluruh Moods, Ramban &amp; Cari</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">Sekarang bermain Kaca Cair &amp;</string>
+    <string name="settings_splash_screen" formatted="false">Layar Percikan Percikan</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">Peluncuran App animasi merek &amp; judul cairan terungkap</string>
+    <string name="settings_animated_cover_art" formatted="false">Seni Cover Animasi</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">SpotifyKekanvas, Apple Music, Tidal &amp; Community motion covers</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">SpotifyPersediaan Kanvas &amp;</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">Kendali Kanvas Auto-Sorok</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">Meminimumkan kontrol setelah 5s ketika Canvas memainkan (tap Canvas untuk togol)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">Tampilkan Lirik Berselaras di Atas Kanvas</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">Tampilkan animasi lirik disinkronkan di atas nama lagu ketika Canvas mengontrol sembunyi</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">DiprioritaskanSpotifyPerancis</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">CubaSpotifyKekanvas sebelum Apple Music, Komunitas Tidal &amp;</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">Main Animasi Cover Over Selular</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">Jangan biarkan video Kanvas berputar melalui data seluler</string>
+    <string name="settings_player_type" formatted="false">Jenis Pemain Adam</string>
+    <string name="settings_player_style" formatted="false">Nama Pemain</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">Pewarnaan Dinamika Pemain</string>
+    <string name="settings_full_screen_cover_art" formatted="false">Lukisan sampul layar penuh</string>
+    <string name="settings_corner_length" formatted="false">Panjang Sudut Amukan</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">Jejari sudut dari karya seni album persegi</string>
+    <string name="settings_hide_quality_tag" formatted="false">Tag Kualitas Sorok</string>
+    <string name="settings_hide_volume_bar" formatted="false">Yehashi Hide Volume Bar</string>
+    <string name="settings_home_top_card_style" formatted="false">Gaya Kartu Top Rumahan</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">Pemain Mini Airquid Glass Nav &amp;</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">Bola kaca dan pemain mini, dengan lensa bubble air ditahan</string>
+    <string name="settings_time_synced_lyrics" formatted="false">Lirik Terkirim Waktu</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">Ikuti kata dan baris lirik dalam waktu nyata</string>
+    <string name="settings_app_font" formatted="false">Fonta App App</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">tyography; pemain mengendalikan typeface mereka yang dirancang</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">Pilih typeface untuk antarmuka aplikasi.</string>
+    <string name="settings_lyrics_providers" formatted="false">Penyedia Lirik Fixer</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">Sumber-sumber core 11 Prioritize &amp; togol urutan fallback</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">Krom Gelas Cecair</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">Pemecah translusen &amp; kartu dok translusen yang tidak aktif</string>
+    <string name="settings_tactile_haptics" formatted="false">Haptika Taksile</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">Umpan balik pulsa halus melintasi kendali pemain</string>
+    <string name="settings_downloads_storage" formatted="false">Muaturun &amp; Penyimpanan</string>
+    <string name="settings_cellular_streaming" formatted="false">Aliran Seluler</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">Lebar jalur lebar audio pada data mobile</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">Kendalikan kesetiaan audio saat mengalir dari Wi-Fi.</string>
+    <string name="settings_download_over_wi_fi" formatted="false">Muat Turun melalui Wi-Fi</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">Tunggu Wi-Fi sebelum muaturun otomatis</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">Cache Lagu Setelah Main Balik</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">Simpan lagu ke tempat penyimpanan luring setelah selesai dimainkan</string>
+    <string name="settings_cache_quality" formatted="false">Kualitas Cache Mujarab</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">Kualitas berkualitas rendah menyimpan penyimpanan</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">Dia memilih kualitas lagu yang disimpan setelah pemutaran selesai. Aplikasi untuk lagu dicache mulai sekarang.</string>
+    <string name="settings_song_storage_limit" formatted="false">Limi Penyimpanan Lagu</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">Setoran cakram maksimum 2011 2011 2011 yang dialokasikan untuk cache audio luring sebelum lagu-lagu lama yang tidak dimainkan dikeluarkan.</string>
+    <string name="settings_clear_cached_songs" formatted="false">Lagu Cache yang Jelas Cache Cache</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">#MusicCacheManager.cachedTracks.size} lagu • ${MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)}</string>
+    <string name="settings_automatic_downloads" formatted="false">Muat Turun Automatik</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">Simpan trek yang baru disukai &amp; ditambahkan secara luring</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">Cache Penimbal App Clear</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">Usingkan using sementara fuver seni &amp; jaringan penyangga</string>
+    <string name="settings_library_listening" formatted="false">Perpustakaan &amp; Mendengar</string>
+    <string name="settings_sync_library" formatted="false">Pustaka Synch</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">Artis, daftar putar &amp; album tetap update</string>
+    <string name="settings_listening_history" formatted="false">Sejarah Mendengarkan</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">Berbentuk Campuran Berpersonalisasi &amp; Baru-baru Ini Dimainkan</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">Keep Like pada Perangkat Ini</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">{\\cHffffff}Teruskan lagu-lagu yang disukainya.iTuneKetika ditandatangani</string>
+    <string name="settings_notifications_general" formatted="false">Pemberitahuan Notifikasi &amp; Umum</string>
+    <string name="settings_offline_mode" formatted="false">Mode Offline</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">Memerlukan salinan yang diunduh untuk memulai main balik</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">Musik Berhenti pada Tugas Clear</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">Woila berhenti bermain ketikaiTuneLuang digeser jauh dari terbaru</string>
+    <string name="settings_auto_sleep_timer" formatted="false">Pemasa Tidur Sendiri</string>
+    <string name="settings_network_proxy" formatted="false">Proksi Jaringan Hagen</string>
+    <string name="settings_profile_name" formatted="false">Nama Profil</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">Personalisasi nama paparan profil Tetapan Anda</string>
+    <string name="settings_news_from_dev" formatted="false">Berita dari dev</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">Pengumuman, rilis &amp; log perubahan</string>
+    <string name="settings_general_about" formatted="false">Umum</string>
+    <string name="settings_home_screen_widget" formatted="false">Widget Layar Rumah</string>
+    <string name="settings_widget_customization" formatted="false">Pesuaian Widget</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">Pilih sebuah preview ukuran, karya seni, kontrol dan gaya widget</string>
+    <string name="settings_backup_restore" formatted="false">Pulihan Backup &amp;</string>
+    <string name="settings_automatic_daily_backup" formatted="false">Backup Daily Automatik</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">Penyimpan harian yang terenkripsi • Unduhan/iTune/Batuk</string>
+    <string name="settings_back_up_itune" formatted="false">♪ ♪ Back Up ♪iTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">Simpan akun, semua pengaturan, efek audio, data pustaka dan statistik terenkripsi</string>
+    <string name="settings_restore_from_backup" formatted="false">Pulihkan dari Backup</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">Pengaturan pemulihan, efek audio, akun atau data pustaka dari .itune</string>
+    <string name="settings_privacy" formatted="false">Kerahsiaan</string>
+    <string name="settings_pause_search_history" formatted="false">Sejarah Pencarian Beku</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">Jangan simpan pertanyaan pencarian baru ke sejarah</string>
+    <string name="settings_clear_search_history" formatted="false">Sejarah Pencarian Kosong</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">Hapus pertanyaan terkini dari Pencarian</string>
+    <string name="settings_pause_listening_history" formatted="false">Jeda Jeda Dengarkan Sejarah</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">Jangan rekam lagu yang dimainkan atau kemaskini rekomendasi</string>
+    <string name="settings_clear_listening_history" formatted="false">Sejarah Pendengaran Clearing</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">formoid Hapus riwayat main balik dan tetapkan ulang profil rasa</string>
+    <string name="settings_disable_screenshot" formatted="false">Cekupan Skrin</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">Cekupan dan perekaman layar di seluruh aplikasi</string>
+    <string name="settings_best_available" formatted="false">BAYANGKAN BESAR</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">** Gunakan kualitas sumber tertinggi yang tersedia</string>
+    <string name="settings_maximum" formatted="false">Maksimum</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">Pilih aliran bitrate tertinggi</string>
+    <string name="settings_high" formatted="false">SMA</string>
+    <string name="settings_target_about_160_kbps" formatted="false">Target target sekitar 160 kbps</string>
+    <string name="settings_standard" formatted="false">Standar</string>
+    <string name="settings_target_about_128_kbps" formatted="false">Target target sekitar 128 kbps</string>
+    <string name="settings_data_saver" formatted="false">Name</string>
+    <string name="settings_target_about_64_kbps" formatted="false">Target target sekitar 64 kbps</string>
+    <string name="settings_extreme" formatted="false">Ekstreme</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">Fidelitas maksimum 256256+ kbps)</string>
+    <string name="settings_high_b1a5954a" formatted="false">SMA</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">Audio berkualitas tinggi (~160 kbps)</string>
+    <string name="settings_medium" formatted="false">Sederhana</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">Kualitas audio standar (~128 kbps)</string>
+    <string name="settings_low" formatted="false">low</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">Audio penghemat data (~48-64 kbps)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">PCM 16-bit</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">Output PCM standar integer PCM standard; kompatibel secara luas dengan DAC Kelas Audio USB</string>
+    <string name="settings_text_6697202e38" formatted="false">PCM apung 32-bit</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">Keluaran PCM Float bila didukung oleh Android dan jalur audio yang tersambung</string>
+    <string name="settings_off" formatted="false">Perancis</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">Main trek secara bersih back-to-back</string>
+    <string name="settings_text_6597740315" formatted="false">2 detik</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">Pergeseran transisi halus tumpang tindih</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 detik</string>
+    <string name="settings_short_seamless_fade" formatted="false">Pudar pendek tak bercela</string>
+    <string name="settings_text_56628a6fa5" formatted="false">* 6 detik *</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">Peralihan gaya DJ seimbang</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">1 detik</string>
+    <string name="settings_smooth_extended_blend" formatted="false">Kelicinan campuran diperpanjang</string>
+    <string name="settings_text_e0529daa1e" formatted="false">2 detik</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">Campuran campuran kontinu maksimum</string>
+    <string name="settings_off_e3de5ab0" formatted="false">Perancis</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">Keepkan efek pemutaran normal dan transisi</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 detik</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">Terapkan Low-Pass selama setiap lagu terakhir 5 detik</string>
+    <string name="settings_text_65ca1d0712" formatted="false">1 0 detik</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">Terapkan Low-Pass selama setiap lagu terakhir 10 detik</string>
+    <string name="settings_text_eb4354110e" formatted="false">1 5 detik</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">Terapkan Low-Pass selama setiap lagu final 15 detik</string>
+    <string name="settings_right" formatted="false">Kanan</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">Tampilkan bilah volume di tepi kanan (baku)</string>
+    <string name="settings_left" formatted="false">Kiri</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">Tampilkan volume bar di tepi kiri</string>
+    <string name="settings_high_efficiency" formatted="false">Efisiensi Tinggi</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">Penggunaan data seluler minimal</string>
+    <string name="settings_high_quality" formatted="false">Kualitas Tinggi Yahmon</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 kbps berimbang mobile playback</string>
+    <string name="settings_lossless" formatted="false">Tak Hilang</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">Kerugian penuh di atas jaringan 5G/LTE</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">Perancis</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">Memungkinkan streaming di Wi-Fi saja</string>
+    <string name="settings_text_03a001f575" formatted="false">500 MB</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">(~70 lagu)</string>
+    <string name="settings_text_33015e637f" formatted="false">1 GB</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">(~150 lagu)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 GB</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">Disarankan default (~300 lagu)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5 GB</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">Koleksi offline besar (~800 lagu)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">LUB 10 GB</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">Perpustakaan yang sangat besar (~ 1.600 lagu)</string>
+    <string name="settings_unlimited" formatted="false">Tanpa Batas</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">Jangan mengusir lagu-lagu dicache</string>
+    <string name="settings_pipeline_output">%1$s→%2$s</string>
+    <string name="settings_volume_bar_side">Di acara pertunjukan%1$sMudik ketika Anda menekan tombol volume</string>
+    <string name="settings_corner_radius_value">%1$d♪ dp ♪</string>
+    <string name="settings_active_lyrics_providers">%1$dActive</string>
+    <string name="settings_cached_song_count_size">%1$dLagu • lagu •%2$s</string>
+    <string name="library_playlist_count_one">%1$dSenarai Main</string>
+    <string name="library_playlist_count_many">%1$dSenarai Siar</string>
+    <string name="library_album_count_one">%1$dAlbum Tertambah</string>
+    <string name="library_album_count_many">%1$dAlbum Tambahan</string>
+    <string name="remove_from_favorites">Hapus dari Kegemaran</string>
+    <string name="play_top_album">Album Top Play</string>
+    <string name="open_in_spotify">Open inSpotify</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Name</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Name</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Bulgaria</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Use the Catalan interface</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">VIC menggunakan antarmuka Ceko</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Name</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Name</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Menggunakan antarmuka Yunani</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Menggunakan antarmuka Ibrani</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Name</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Use antarmuka Indonesia</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Antara muka Bahasa Melayu</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Norwegian</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Menggunakan antarmuka Persia</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Wiski menggunakan antarmuka Polandia</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Use the Romanian interface</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Name</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Guna antarmuka Thailand</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Turki</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Name</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Name</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Menggunakan antarmuka Swahili</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Menggunakan antarmuka Filipina</string>
+</resources>
