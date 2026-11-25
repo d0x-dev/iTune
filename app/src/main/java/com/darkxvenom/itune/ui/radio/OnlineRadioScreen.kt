@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.radio
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -183,7 +185,7 @@ fun OnlineRadioScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "Radio",
+                            text = stringResource(R.string.ui_radio),
                             color = AppleTextPrimary,
                             fontSize = 34.sp,
                             fontWeight = FontWeight.Bold,
@@ -205,7 +207,7 @@ fun OnlineRadioScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Rounded.Refresh,
-                                    contentDescription = "Refresh Stations",
+                                    contentDescription = stringResource(R.string.ui_refresh_stations),
                                     tint = Color.White,
                                     modifier = Modifier.size(18.dp),
                                 )
@@ -426,7 +428,7 @@ fun OnlineRadioScreen(
                                     .padding(horizontal = 16.dp, vertical = 8.dp),
                             ) {
                                 Text(
-                                    text = "Retry",
+                                    text = stringResource(R.string.retry),
                                     color = Color.White,
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.SemiBold,
@@ -505,7 +507,7 @@ fun OnlineRadioScreen(
                                 )
                                 Spacer(Modifier.width(8.dp))
                                 Text(
-                                    text = "Loading more FM stations (${visibleStations.size} loaded)...",
+                                    text = stringResource(R.string.ui_loading_more_fm_stations_loaded, visibleStations.size),
                                     color = AppleTextSecondary,
                                     fontSize = 12.5.sp,
                                 )
@@ -641,7 +643,7 @@ private fun SettingsStyleSearchField(
             IconButton(onClick = { onQueryChange("") }, modifier = Modifier.size(28.dp)) {
                 Icon(
                     imageVector = Icons.Rounded.Close,
-                    contentDescription = "Clear",
+                    contentDescription = stringResource(R.string.ui_clear),
                     tint = AppleTextSecondary,
                     modifier = Modifier.size(16.dp),
                 )
@@ -827,7 +829,7 @@ private fun RadioStationGroupedRow(
         IconButton(onClick = onFavoriteClick, modifier = Modifier.size(34.dp)) {
             Icon(
                 imageVector = if (isFavorite) Icons.Rounded.Star else Icons.Rounded.StarBorder,
-                contentDescription = "Favorite Station",
+                contentDescription = stringResource(R.string.ui_favorite_station),
                 tint = if (isFavorite) AppleMusicRed else Color.White.copy(alpha = 0.45f),
                 modifier = Modifier.size(19.dp),
             )
@@ -936,7 +938,7 @@ private fun RadioSearchablePickerDialog(
                         )
                         Spacer(Modifier.height(12.dp))
                         Text(
-                            text = "Fetching live catalog...",
+                            text = stringResource(R.string.ui_fetching_live_catalog),
                             color = AppleTextSecondary,
                             fontSize = 13.sp,
                         )
@@ -978,7 +980,7 @@ private fun RadioSearchablePickerDialog(
                                 if (selected) {
                                     Icon(
                                         imageVector = Icons.Rounded.Check,
-                                        contentDescription = "Selected",
+                                        contentDescription = stringResource(R.string.ui_selected),
                                         tint = AppleMusicRed,
                                         modifier = Modifier.size(19.dp),
                                     )
@@ -999,7 +1001,7 @@ private fun RadioSearchablePickerDialog(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel),
                         color = Color(0xFF8E8E93),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
