@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">Kanselahin</string>
+    <string name="save">I-save</string>
+    <string name="close">Isara</string>
+    <string name="done">Tapos na</string>
+    <string name="back">Bumalik</string>
+    <string name="play">I-play</string>
+    <string name="shuffle">I-shuffle</string>
+    <string name="retry">Subukan muli</string>
+    <string name="try_again">Subukang Muli</string>
+    <string name="more">Higit pa</string>
+    <string name="less">Mas kaunti</string>
+    <string name="share">Ibahagi</string>
+    <string name="show_all">Ipakita lahat</string>
+    <string name="top_songs">Mga awit sa itaas</string>
+    <string name="suggested">Iminumungkahi</string>
+    <string name="subscribers">%1$smga subscriber</string>
+    <string name="monthly_listeners">%1$sbuwanang mga tagapakinig</string>
+    <string name="signed_by">Nilagdaan ng%1$s</string>
+    <string name="about_artist">Tungkol sa pintor</string>
+    <string name="about_album">Tungkol sa album</string>
+    <string name="recent_album">Kamakailang Album</string>
+    <string name="recent_ep">Kamakailang EP</string>
+    <string name="recent_single">Wala Pang Asawa Kamakailan</string>
+    <string name="subscribe">Mag-subscribe</string>
+    <string name="unsubscribe">Mag-unsubscribe</string>
+    <string name="add_to_library">Idagdag sa library</string>
+    <string name="remove_from_library">Alisin sa aklatan</string>
+    <string name="add_to_playlist">Idagdag ang playlist</string>
+    <string name="remove_from_playlist">Alisin sa playlist</string>
+    <string name="play_next">Susunod na maglaro</string>
+    <string name="add_to_queue">Idagdag ang Haywey</string>
+    <string name="start_radio">Magsimula sa radyo</string>
+    <string name="open">Buksan</string>
+    <string name="open_album">Open album</string>
+    <string name="open_artist">Open artist</string>
+    <string name="open_playlist">Buksan ang playlist</string>
+    <string name="song_info">Awiting Info</string>
+    <string name="song_info_album">Album</string>
+    <string name="song_info_release_date">Talaan ng mga Nilalaman</string>
+    <string name="song_info_views">Mga Laro / mga palagay</string>
+    <string name="song_info_likes">Mga Tulad</string>
+    <string name="song_info_comments">Mga Komento</string>
+    <string name="song_info_unavailable">Walang makuha</string>
+    <string name="song_info_error">Hindi maikarga ang ilang impormasyon.</string>
+    <string name="song_info_retry">Retry</string>
+    <string name="like">Katulad ng</string>
+    <string name="dislike">Kakaiba</string>
+    <string name="download">I-download</string>
+    <string name="download_all">ibaba ang lahat</string>
+    <string name="downloaded">Nabibigatan</string>
+    <string name="downloading">Pag - download</string>
+    <string name="download_notification_title">Pag - download</string>
+    <string name="delete_download">I - download</string>
+    <string name="delete_download_confirmation">Alisin ang “%1$sSa kagamitang ito? Takpan muli upang patunayan.</string>
+    <string name="delete">Tanggalin</string>
+    <string name="queued">Tinanong</string>
+    <string name="saved_to_downloads">Iniligtas Upang Magbaba</string>
+    <string name="search_this_list">Hanapin ang talaang ito</string>
+    <string name="clear_search">Malinaw na paghahanap</string>
+    <string name="close_search">Malapitang paghahanap</string>
+    <string name="nothing_matches">Wala ritong makapapantay sa “%1$s”</string>
+    <string name="sort_songs">Uring mga awit</string>
+    <string name="artist">pintor</string>
+    <string name="album">album</string>
+    <string name="playlist">playlist</string>
+    <string name="folder">Mas Folder</string>
+    <string name="songs">Mga Awit</string>
+    <string name="song_count">%1$dawit</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$dlandas</item>
+        <item quantity="other">%1$dMga riles</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$dminuto</item>
+        <item quantity="other">%1$dminuto</item>
+    </plurals>
+    <string name="one_hour">1 oras</string>
+    <string name="hours_minutes_short">%1$dh.%2$dm</string>
+    <string name="minutes_short">%1$dMain</string>
+    <string name="pin">Pin</string>
+    <string name="unpin">Walang laman</string>
+    <string name="tile_identify_music">Kilalanin ang Musika</string>
+    <string name="tile_identify_music_desc">Kilalanin ang mga awit na tumutugtog sa paligid moiTune</string>
+    <string name="widget_itune_description">PagkontroliTunetapos sa screen ng bahay mo</string>
+    <string name="app_language">Wika ng app</string>
+    <string name="app_language_subtitle">Wika para sa menus, butones &amp; mensahe</string>
+    <string name="app_language_description">Piliin ang wikang ginagamit saiTuneinterface.</string>
+    <string name="system_default_language">Pagkawasak ng Sistema</string>
+    <string name="follow_device_language">Sundin ang device language</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">Gamitin ang Ingles na interface</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface">इंटरफ़ेस के लिए का</string>
+    <string name="hindi_interface_language">Hindi interface na wika</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">Gamitin ang interface ng Kastila</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">Gamitin ang interface ng Pransiya</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">Gamitin ang Linyang Olandes</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">Gamitin ang interface ng Russia</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">Gamitin ang Urdu interface</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">Gamitin ang Chinese interface</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">Gamitin ang interface ng Alemanya</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">Gamitin ang Linyang Portuges</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">Gamitin ang interface ng Italya</string>
+    <string name="japanese_language">日本語</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">한국어 인터페이스</string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Svenskt gränsnit</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">الواجهة العربية</string>
+    <string name="japanese_interface">Gamitin ang Linyang Hapones</string>
+    <string name="favorite_artist">Paboritong pintor</string>
+    <string name="remove_favorite_artist">Alisin sa paboritong mga pintor</string>
+    <string name="add_to_favorite_artists">Idagdag sa paboritong mga pintor</string>
+    <string name="removed_from_artists">Inalis sa mga Artista</string>
+    <string name="added_to_artists">Karagdagan sa mga Pintor</string>
+    <string name="play_top_songs">Maglaro ng mga Top song</string>
+    <string name="play_album">Maglaro ng Album</string>
+    <string name="play_playlist">Maglaro</string>
+    <string name="create_new_playlist">Gumawa ng Bagong Playlist</string>
+    <string name="create_playlist">Gumawa ng Playlist</string>
+    <string name="radio">Radyo</string>
+    <string name="search">Maghanap</string>
+    <string name="share_playlist_link">Makipag - ugnayan sa Playlist</string>
+    <string name="copy_share_link">Magkaugnay ang Kopya</string>
+    <string name="rename_playlist">Rename Playlist</string>
+    <string name="delete_playlist">Delete Playlist</string>
+    <string name="share_link_copied">Ibahagi ang link na kinopya</string>
+    <string name="playlist_removed">Inalis ang Playlist</string>
+    <string name="playlist_no_longer_available">Wala na ang playlist na ito.</string>
+    <string name="empty_playlist">Walang - Kupas na Playlist</string>
+    <string name="filter_playlists">Filter playlists...</string>
+    <string name="filter_albums">Filter albums...</string>
+    <string name="favorite">Paborito</string>
+    <string name="tap_to_start_listening">Mag - umpisang makinig</string>
+    <string name="time_zero" formatted="false">0:00</string>
+    <string name="previous">Bago nito</string>
+    <string name="play_or_pause">Maglaro o huminto</string>
+    <string name="next">Susunod</string>
+    <string name="repeat">Ulitin</string>
+    <string name="open_title_options">Buksan%1$sopsyon</string>
+    <string name="reset_page_title">Mulingset%1$s</string>
+    <string name="remove_device">Alisin%1$s</string>
+    <string name="profile_name">%1$sLarawan</string>
+    <string name="download_option">Ibaba%1$s</string>
+    <string name="open_entry_options">Buksan%1$sopsyon</string>
+    <string name="avatar_number">Avatar%1$s</string>
+    <string name="options_for_track">Mga Mapagpipilian%1$s</string>
+    <string name="preparing">Paghahanda...</string>
+    <string name="share_image">Bahaging larawan</string>
+    <string name="speed_pitch_locked">Speed &amp; pitch na naka-lock na magkasama</string>
+    <string name="independent_bpm_tempo_key_pitch">Independiyenteng BPM tempo &amp; key pitch</string>
+    <string name="spatial_reflections_delay">Mga Pagninilay - nilay (mga pagbubulay - bulay ng papa%1$dms)</string>
+    <string name="on">Patuloy</string>
+    <string name="off">Off</string>
+    <string name="dynamic_island_active">Aktibong Pulo ng Dynamic</string>
+    <string name="dynamic_island_description">Ang mga palabas sa labas ay maayosiTunekapag naglalaro</string>
+    <string name="preparing_download">Paghahanda ng download...</string>
+    <string name="listening_for_music">Pakikinig sa musika...</string>
+    <string name="hold_phone_near_sound_source">Hawakan ang telepono na malapit sa pinagmumulan ng tunog</string>
+    <string name="unable_to_recognize_audio">Hindi makilala ang audio</string>
+    <string name="song_identified">Nakilala ang Awit</string>
+    <string name="play_in_itune">MaglaroiTune</string>
+    <string name="view_details">Tingnan ang mga Detalye</string>
+    <string name="no_match_found">Walang nasumpungang posporo</string>
+    <string name="recognition_retry_message">Hindi makilala ang awit. Takpan upang subukan muli.</string>
+    <string name="microphone_permission_needed">Kailangan ang pahintulot ng Microphone</string>
+    <string name="microphone_permission_help">Tsap upang makapasok ang mikropono nang gayoniTuneang musika.</string>
+    <string name="recognition_failed">Nabigo ang pagkilala</string>
+    <string name="tap_install_to_continue">Nakaluklok ang Tap upang magpatuloy</string>
+    <string name="detail_artist">Pintor</string>
+    <string name="detail_album">Album</string>
+    <string name="set_default_ringtone_target">Itakda bilang default%1$s!</string>
+    <string name="added_ringtone_target">Idagdag%1$s. Piliin ito sa Sound settings.</string>
+    <string name="last_fm_connected_as">Last.fmkonektado bilang%1$s</string>
+    <string name="discord_connected_as">Nag - uugnay - ugnay bilang%1$s</string>
+    <string name="tv_encrypted_backup_saved">Naligtas ang Nauusong Paa?%1$dKB)!</string>
+    <string name="sign_in_verification_failed">Bigo ang Sign-in verification</string>
+    <string name="could_not_rename_playlist">Hindi mapalitan ng pangalan ang playlistYouTube Music</string>
+    <string name="could_not_create_playlist">Hindi makalikha ng playlist</string>
+    <string name="daily_encrypted_backup_enabled">Ang araw - araw na naka - encrypted backup ay nakatulong sa akin</string>
+    <string name="cookie_login_failed">Bigo ang login ng Cookie</string>
+    <string name="could_not_open_last_fm">Hindi Maaaring buksanLast.fm</string>
+    <string name="last_fm_sign_in_failed">Last.fmbigo ang paglagda</string>
+    <string name="discord_sign_in_failed">Bigo ang discord sign</string>
+    <string name="could_not_open_android_installer">Hindi mabuksan ang Androids installer</string>
+    <string name="added_title_to_queue">Idagdag ang “%1$sPaghingi ng Tulong</string>
+    <string name="automatic_backup_disabled">Awtomatikong Backup na may kapansanan</string>
+    <string name="download_failed">Bigo ang pag-download</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">Iluklok</string>
+    <string name="ui_text_9ef6a80f91" formatted="false">#1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">%+.1f</string>
+    <string name="ui_accounts" formatted="false">+ Ulat</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0.0s</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5.0s</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">-</string>
+    <string name="ui_text_7be28ad40e" formatted="false">-5.0s</string>
+    <string name="ui_text_a6dee6102d" formatted="false">11 PM</string>
+    <string name="ui_text_1a19c52178" formatted="false">12 AM</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">12 PM</string>
+    <string name="ui_text_4e37ece023" formatted="false">15ms ver-ear na naantalang low-pas blender</string>
+    <string name="ui_text_76b322ac42" formatted="false">2X Mabilis na Bilis</string>
+    <string name="ui_text_505c74ed85" formatted="false">3D Ping-Pong Bogence</string>
+    <string name="ui_text_db9b8df506" formatted="false">6 AM</string>
+    <string name="ui_text_2812537f20" formatted="false">6 PM</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080</string>
+    <string name="ui_text_05a79f06cf" formatted="false">:</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">Isang buong larawan na may mga nangungunang kanta, artista, album at ugali.</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">Handa na ang isang bagong bersiyon</string>
+    <string name="ui_account" formatted="false">Ulat</string>
+    <string name="ui_account_options" formatted="false">Option ng Ulat</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">KUWENTO</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">Autoustic Head-Shadow Crossfeed</string>
+    <string name="ui_activate" formatted="false">Aktibo</string>
+    <string name="ui_active" formatted="false">Aktibo</string>
+    <string name="ui_active_days" formatted="false">AKTIBANG ARAW</string>
+    <string name="ui_active_profile" formatted="false">Aktibong Profile</string>
+    <string name="ui_activity_by_day" formatted="false">Gawain sa Araw</string>
+    <string name="ui_add_account" formatted="false">Karagdagang Ulat</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">Idagdag ang kaugalian HTTP addon servers (pagbigkas /manifest.json, /search, /stream) o sandbox-isolated QuickJS modules.</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">May Awtomatikong Idagdag ang mga Awit sa Hinaharap</string>
+    <string name="ui_add_streaming_source" formatted="false">Idagdag ang Nakapagpapasiglang Pinagmumulan</string>
+    <string name="ui_add_to_playlist" formatted="false">Idagdag ang Playlist</string>
+    <string name="ui_added_playlists" formatted="false">Karagdagang mga Playlist</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">Ibagay ang sulok na gilid ng parisukat na album na gawang sining.</string>
+    <string name="ui_advanced_cookie_login" formatted="false">Pinasulong na Login ng Cookie</string>
+    <string name="ui_advanced_login" formatted="false">MAHAHALAGANG LOGIN</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">Sumulong na Login</string>
+    <string name="ui_ai_engine" formatted="false">ENGINE NG AI</string>
+    <string name="ui_ai_provider" formatted="false">Tagapaglaan Ako</string>
+    <string name="ui_albums" formatted="false">Mga Album</string>
+    <string name="ui_all_news" formatted="false">Lahat ng Balita</string>
+    <string name="ui_allow_downloads" formatted="false">Hayaang Mahulog</string>
+    <string name="ui_allow_microphone" formatted="false">Payagan ang Microphone</string>
+    <string name="ui_allow_microphone_access" formatted="false">Hayaang makapasok ang mikropono</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">Alternates reflectes L &lt;-&gt; R</string>
+    <string name="ui_always_on_display" formatted="false">Laging Nakadispley</string>
+    <string name="ui_am" formatted="false">AM</string>
+    <string name="ui_api_base_url" formatted="false">API Base URL</string>
+    <string name="ui_artist" formatted="false">Pintor</string>
+    <string name="ui_artist_name" formatted="false">Pangalan ng pintor</string>
+    <string name="ui_artists" formatted="false">Mga Pintor</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">Mga Artista, Awit, Album, Playlists...</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">Mga Artista, Awit, Lyrics &amp; More</string>
+    <string name="ui_at_least_8_characters" formatted="false">Hindi bababa sa 8 karakter</string>
+    <string name="ui_auto_sleep_timer" formatted="false">Tagatulog ng Auto</string>
+    <string name="ui_auto_activation_timeout" formatted="false">PANAHONG AUTO-ACTIVATION WALANG</string>
+    <string name="ui_avatar" formatted="false">Avatar</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">BumalikiTune(AES-256)</string>
+    <string name="ui_backup_password" formatted="false">kontrasenyas sa likod</string>
+    <string name="ui_bluetooth_device_access" formatted="false">BluetoothPag - ahon sa Devace</string>
+    <string name="ui_browse" formatted="false">Browse</string>
+    <string name="ui_browse_by_country" formatted="false">Browse ng Bansa</string>
+    <string name="ui_browse_extensions" formatted="false">Mga Paglitaw sa Browse</string>
+    <string name="ui_browse_live_online_radio" formatted="false">Browse Live Online Radio</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">Hindi maaaring alisin ang ulat lamang</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">Mga Tagapaglaan ng Asosasyon (Fellow Order)</string>
+    <string name="ui_captcha_guidance" formatted="false">Patnubay ng CAPTCHA</string>
+    <string name="ui_cast_wireless_devices" formatted="false">MGA WAST AT WAREless DEVICE</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">Pumili ng mga audio playback source, walang - saysay na mga andana, at mga fallback first</string>
+    <string name="ui_choose_avatar" formatted="false">Pumili ng Avatar</string>
+    <string name="ui_choose_charts_region" formatted="false">Piliin ang Rehiyon ng Charts</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">Piliin kung paanoiTuneay makikita sa inyong Home Screen. Ibalik ang widget mula sa iyong launcher.</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">Piliin ang iyong profile upang magpatuloy</string>
+    <string name="ui_choose_youtube_channel" formatted="false">PumiliYouTubeChannel</string>
+    <string name="ui_clear" formatted="false">Maliwanag</string>
+    <string name="ui_clear_use_default" formatted="false">Maliwanag at Gumamit ng Default</string>
+    <string name="ui_clear_all" formatted="false">Maliwanag na Lahat</string>
+    <string name="ui_confirm" formatted="false">Kumpil</string>
+    <string name="ui_confirm_password" formatted="false">Tiyaking password</string>
+    <string name="ui_connect_discord" formatted="false">Pag - uugnay - ugnay</string>
+    <string name="ui_connect_last_fm" formatted="false">Makipag - ugnayanLast.fm</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">Ikonekta ang inyongSpotifyna nagpapangyari kay Canvas na makasilo sa mga gawang - sining ng video at maisama ang iyong mga eksenaSpotifyaklatan.</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">Makipag - ugnayanYouTube Musicna may kasamang mga biskuwit</string>
+    <string name="ui_connect" formatted="false">Pag - uugnay ›</string>
+    <string name="ui_connecting_spotify" formatted="false">Pag - uugnaySpotify...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">Pag - uugnayYouTube Music...</string>
+    <string name="ui_continue" formatted="false">Magpatuloy</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">Ituloy sa browser sa halip</string>
+    <string name="ui_continue_with_google" formatted="false">Magpatuloy sa Google</string>
+    <string name="ui_continue_with_spotify" formatted="false">Magpatuloy saSpotify</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">Ang mga kredensiyal sa pagluluto ay iniimbakiTuneIni - encrypted ng mga ’ ang imbakan ng account at tiningnan itoYouTube Musicbago sila iligtas.</string>
+    <string name="ui_copy_song_name" formatted="false">Kopya ng Pangalan ng Awit</string>
+    <string name="ui_copy_text" formatted="false">Kopya ng teksto</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">Karapatan sa Pagkopya © 2026iTuneProject. Ang software na ito ay inilalaan nang walang warranty. Maaaring baguhin mo at baguhin ito sa ilalim ng termino ng GNU GPL na makikita sa ibaba.</string>
+    <string name="ui_corner_length" formatted="false">Haba ng Corner</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">Hindi maaaring magbigay ng replay na larawan</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">Hindi Kaya\'t magdala ng musika ngayon. Magsikap na muli.</string>
+    <string name="ui_create" formatted="false">Gumawa</string>
+    <string name="ui_create_add" formatted="false">Lumikha at Magdagdag</string>
+    <string name="ui_current_account" formatted="false">Kasalukuyang Ulat</string>
+    <string name="ui_custom_instructions" formatted="false">MGA INSTRUKSIYON NG CUSTOM</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">ANG CUSTOM REPOSITORY INDEX O URL</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">Gawing Obserbahan ang Iyong Home Screen player</string>
+    <string name="ui_customize_your_itune_card" formatted="false">Gawing pangkaraniwan ang iyongiTunekard</string>
+    <string name="ui_d" formatted="false">D</string>
+    <string name="ui_delete_account" formatted="false">Ibagsak na Ulat</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">Ibagsak na Ulat?</string>
+    <string name="ui_developer_announcements" formatted="false">Mga Patalastas ng Kalinangan</string>
+    <string name="ui_disconnect" formatted="false">Di - Pag - uugnay</string>
+    <string name="ui_disconnect_discord" formatted="false">Di - Magdugtong</string>
+    <string name="ui_discord_rich_presence" formatted="false">Ihiwalay ang Mayamang Pagkanaririto</string>
+    <string name="ui_dismiss" formatted="false">Mga Mali</string>
+    <string name="ui_display_full_screen" formatted="false">DISPLAY AT TAMANG PUNO</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">Ipakita ang masiglang liriko sa itaas ng pamagat ng awit samantalang ang mga kontrol ng Canvas ay nakatago</string>
+    <string name="ui_display_name" formatted="false">Ipakita ang Pangalan</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">DJ Bipolar Club Filipina</string>
+    <string name="ui_downloaded_cached" formatted="false">Nadiskarga &amp; Binuangan</string>
+    <string name="ui_dp" formatted="false">dp</string>
+    <string name="ui_dynamic_island" formatted="false">Pulo ng Dinamiko</string>
+    <string name="ui_e" formatted="false">E</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">e.g. 127.0.0.1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">e.g. isalin sa tulang hinglish na may mga tugma</string>
+    <string name="ui_enable_auto_sleep" formatted="false">Madaling Matulog na Auto</string>
+    <string name="ui_enable_proxy" formatted="false">Madaling Tanggalin</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">Pag - eensamoSpotifyCanvas &amp; playlists</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">Incryption password (min 8 chars)</string>
+    <string name="ui_end_of_current_track" formatted="false">Wakas ng kasalukuyang mga track</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">Ipasok ang isang bagong pangalan para sa account na ito.</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">Ipasok ang isang HTTP addon display URL, isang SpeckJS module index, o isang endpoint ng biddal.</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">Ipasok ang password na ginagamit kapag ang iyong .ituneNalikha ang backup.</string>
+    <string name="ui_enter_your_name" formatted="false">Ipasok ang iyong pangalan</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">Ipasok ang iyong pangalan sa personal na paraaniTune</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">Bawat ritmo, panggabing awit, at himig na tinitirhan mo — ay natitipon sa isang paglalakbay.</string>
+    <string name="ui_everything" formatted="false">Lahat</string>
+    <string name="ui_explore_categories" formatted="false">Mga Kategorya sa Paggagalugad</string>
+    <string name="ui_exporting_audio" formatted="false">Pag - aangkat ng Audio...</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">Pagkuha ng maikling audio fingerprint</string>
+    <string name="ui_favorite_stations" formatted="false">Paboritong mga Istasyon</string>
+    <string name="ui_favorites" formatted="false">MGA PERO</string>
+    <string name="ui_featured_hit" formatted="false">Hinago</string>
+    <string name="ui_featured_playlists" formatted="false">Mga Playlist na May Katangian</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">Itago ang mga katangiang audio...</string>
+    <string name="ui_fetching_live_catalog" formatted="false">Kinukuha ang buháy na katalogo...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">Pagkasumpong ng mas mabuting sapa</string>
+    <string name="ui_full_view" formatted="false">Buong Pangmalas</string>
+    <string name="ui_g" formatted="false">G</string>
+    <string name="ui_genre" formatted="false">GENRE</string>
+    <string name="ui_genres_styles" formatted="false">Mga Genres &amp; Style</string>
+    <string name="ui_github_repository" formatted="false">Repositoryo ng GitHub</string>
+    <string name="ui_github_repository_open_source" formatted="false">GitHub Resource · Open source</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 o mamaya</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 o mamaya ·Copyright © 2026iTuneProyekto</string>
+    <string name="ui_grant" formatted="false">Grant</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">Grant upang ipakita ang pangalan ng earbuds &amp; live na batirya %</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">Hardware LoudnessEnhancer (hanggang +18 dB)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">Hides Android status bar at community bar para sa distinct na purong itim.</string>
+    <string name="ui_history" formatted="false">Kasaysayan</string>
+    <string name="ui_host" formatted="false">MAKINIG</string>
+    <string name="ui_host_a_session" formatted="false">MAGTANGGAP NG PASIYA</string>
+    <string name="ui_host_controls_playback" formatted="false">Ang mga kontrol sa pag - aari ay nakapaglalaro</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">Kung paano ka maluluto</string>
+    <string name="ui_hq" formatted="false">HQ</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">Ipinakilala sa Shazam</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">Kilalanin ang musikang tumutugtog sa paligid mo</string>
+    <string name="ui_immersion" formatted="false">IMERSION</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">Immersive Mode (Lutuing Screen)</string>
+    <string name="ui_import" formatted="false">Pag - aangkat</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">Import public &amp; pribadong playlists • Auto-sync</string>
+    <string name="ui_import_spotify_playlist" formatted="false">Pag - aangkatSpotifyManlalaro</string>
+    <string name="ui_in_use" formatted="false">Ginagamit</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">In-appo ang patnubay kapag hinahamon ng mga audio provider ang mga anti-bot check</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">Iluklok ang pre-added Mornye community extensions o suriin ang isang custom reposition index.</string>
+    <string name="ui_installed" formatted="false">Nakaluklok</string>
+    <string name="ui_interactive_dot_curve" formatted="false">Interactive Dot Curve</string>
+    <string name="ui_irecognition" formatted="false">Pagkakilala</string>
+    <string name="ui_ireconization" formatted="false">Pagkukompromiso</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">Nakikinig ang ireconization sa loob ng ilang segundo upang lumikha ng bakas ng musika. Hindi ligtas ang Audio.</string>
+    <string name="ui_ishare" formatted="false">iShare</string>
+    <string name="ui_itune_license" formatted="false">iTuneLisensiya</string>
+    <string name="ui_itune_music" formatted="false">iTuneMusika</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTuneMga liriko ng queries sa eksaktong nauuna sa ibaba. Kung ang pinakamataas na aktibong tagapaglaan ay walang sabay - sabay na liriko,iTuneWalang - pasubaling bumabalik sa susunod.</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTuneAng mga queries sources ayon sa pagkakasunud-sunod na ipinakita. Nagkabit ang Drag ng mga extension at provider para maiayos ang playback prioridad.</string>
+    <string name="ui_itune_time_travel" formatted="false">iTunePaglalakbay sa Panahon</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">Swoosh na Pang - aalahas</string>
+    <string name="ui_join" formatted="false">Sumali</string>
+    <string name="ui_keep_screen_on" formatted="false">Manatiling Screen</string>
+    <string name="ui_l" formatted="false">L</string>
+    <string name="ui_lan_port" formatted="false">Daungan ng LAN</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">Ang kagustuhan ng wika (opsiyonal, e.g. Hindi, Punjabi...)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fmPag - i - scrobling</string>
+    <string name="ui_layout" formatted="false">WALANG LANGIS</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">Iwanang walang laman upang gamitin ang default endpoint para sa provider na ito.</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">Pinalis ng LFO ang phase modeulation ng jet</string>
+    <string name="ui_library" formatted="false">Aklatan</string>
+    <string name="ui_license" formatted="false">Lisensiya</string>
+    <string name="ui_liked_songs" formatted="false">Mga Mahilig na Awit</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">Ang mga idinagdag habang nakapirma sa loob ay ligtas kapuwa sa lokal at sa patuloyYouTube Music, kaya\'t nanatili sila sa inyong Aklatan kahit na pagkatapos pumirma.</string>
+    <string name="ui_listening_patterns" formatted="false">MGA PATTERNONG MAKINIG</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">Pakikinig sa kabahaging audio...</string>
+    <string name="ui_live" formatted="false">NABUBUHAY</string>
+    <string name="ui_live_radio_stations" formatted="false">Mabuhay na mga Istasyon ng Radyo</string>
+    <string name="ui_loading_announcements" formatted="false">Mga patalastas...</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">Nakakargang mga pintor, playlists &amp; history</string>
+    <string name="ui_lossless" formatted="false">Walang Nawala</string>
+    <string name="ui_lossless_audio_preference" formatted="false">Walang Katulad na Audio Prepektura</string>
+    <string name="ui_lyrics" formatted="false">Mga Lyric</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">Hindi magagamit ang Lyrics para sa awit na ito</string>
+    <string name="ui_lyrics_providers" formatted="false">Mga Tagapaglaan ng Lyrics</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">Matagumpay na naisalin ang Lyrics!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">Dalubhasang Boost ng Amplifier</string>
+    <string name="ui_member_since" formatted="false">MOBYEMBRE MULA</string>
+    <string name="ui_memoji_style" formatted="false">Memoji &amp; Style</string>
+    <string name="ui_minutes_listened" formatted="false">ANG MGA MINUTE AY NAGTATAGI</string>
+    <string name="ui_mirror_vol" formatted="false">Ang Mirror Vol</string>
+    <string name="ui_model" formatted="false">MODEL</string>
+    <string name="ui_model_68c2cc7f" formatted="false">Huwaran</string>
+    <string name="ui_moods_activities" formatted="false">Moods &amp; Activities</string>
+    <string name="ui_moods_moments" formatted="false">MOODS AT MOMENT</string>
+    <string name="ui_music_by_genre" formatted="false">Musika ni Genre</string>
+    <string name="ui_music_language_preference" formatted="false">Pagpili ng wikang Musika</string>
+    <string name="ui_music_services" formatted="false">MGA SERVICE NG MUSIKA</string>
+    <string name="ui_name" formatted="false">Pangalan</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">MGA WI-FI HOST SA MUNUNGAN</string>
+    <string name="ui_network_proxy" formatted="false">Mga EXPO ng Network</string>
+    <string name="ui_new" formatted="false">Bago</string>
+    <string name="ui_new_playlist" formatted="false">Bagong Playlist</string>
+    <string name="ui_new_releases" formatted="false">Bagong mga Paglaya</string>
+    <string name="ui_news_from_dev" formatted="false">Balita mula sa dev</string>
+    <string name="ui_next_up" formatted="false">Susunod</string>
+    <string name="ui_no_albums_found" formatted="false">Walang nasumpungang album</string>
+    <string name="ui_no_artist_information_available" formatted="false">Walang makukuhang impormasyon mula sa mga dalubsining</string>
+    <string name="ui_no_artists_found" formatted="false">Walang nakitang mga pintor</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">Wala pang mga pintor sa inyong aklatan</string>
+    <string name="ui_no_playlists_found" formatted="false">Walang nasumpungang mga playlist</string>
+    <string name="ui_no_results_on_spotify" formatted="false">Walang resultaSpotify</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">Walang natipid na album sa inyong aklatan</string>
+    <string name="ui_no_songs_found" formatted="false">Walang nakitang mga awit</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">Walang mga awit na masusumpungan sa paglalabas na ito</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">Walang mga awit na matatagpuan sa seksiyong ito</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">Walang natagpuang mga playlist na gumagamit. Gumawa ng isa sa Aklatan!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">Hindi pa sapat ang pakikinig</string>
+    <string name="ui_now_playing" formatted="false">Paglalaro Ngayon</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">Naglalaro ngayon</string>
+    <string name="ui_on_heavy_repeat" formatted="false">SA HEAVY REPEAT</string>
+    <string name="ui_options" formatted="false">MGA OPSYON</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">O PROPESOR SP DC COKIE</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">Orbit Intensity &amp; Bilis</string>
+    <string name="ui_pair_join_a_device" formatted="false">ISANG PERO AT KAYSA</string>
+    <string name="ui_password_optional" formatted="false">Password (Opsiyonal)</string>
+    <string name="ui_passwords_dont_match" formatted="false">Ang mga salita sa passes ay hindi katugma</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">Paste sp dc token dito...</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">Ilagay ang iyong key ng API dito</string>
+    <string name="ui_play_in_itune" formatted="false">MaglaroiTune</string>
+    <string name="ui_play_next" formatted="false">Susunod na Maglaro</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">Maglaro sa mga buds &amp; phone speaker/AUX nang sabay-sabay</string>
+    <string name="ui_playlist_name" formatted="false">Pangalan ng Playlist</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">Pangalan ng manlalaro</string>
+    <string name="ui_playlist_spotify" formatted="false">Playlist •Spotify</string>
+    <string name="ui_playlists" formatted="false">Mga Manlalaro</string>
+    <string name="ui_plays" formatted="false">Mga Laro</string>
+    <string name="ui_pm" formatted="false">PM</string>
+    <string name="ui_port" formatted="false">Daungan</string>
+    <string name="ui_pre_added_extensions" formatted="false">MGA PRE-ADDED EXTENSION</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">Prefer bit-perfect FLAC/ALAC hanggang 24-bit / 192 kHz kapag makukuha</string>
+    <string name="ui_preparing_audio_preview" formatted="false">Paghahanda ng audio preview...</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">Aktibo ang mga aparatong pangharang sa pag-iwas habang Laging Palabas.</string>
+    <string name="ui_preview" formatted="false">PAGHAHAHALAGA</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">Patiunang Pag - isipan</string>
+    <string name="ui_preview_always_on_display" formatted="false">Laging Magmasid sa Palabas</string>
+    <string name="ui_profile" formatted="false">MAIKLING IMPORMASYON</string>
+    <string name="ui_profiles_in_backup" formatted="false">MAIKLING TALAMBUHAY</string>
+    <string name="ui_prompt_type" formatted="false">PROMPT TYPE</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">MAHAHALAGANG PRIORITY (FALBACK ORDER)</string>
+    <string name="ui_queue" formatted="false">Tanong</string>
+    <string name="ui_queue_is_empty" formatted="false">Walang laman ang Queue</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">Mga bakas ng riles upang maglaro sa susunod</string>
+    <string name="ui_radio" formatted="false">Radyo</string>
+    <string name="ui_read_more" formatted="false">Magbasa Nang Higit Pa</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">Real-time pantig at line rolling na may live audio</string>
+    <string name="ui_recent_searches" formatted="false">Mga Paghahanap Kamakailan</string>
+    <string name="ui_recently_added" formatted="false">Idinagdag Kamakailan</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">Muling pagkuha ng iskedyul ng pagtulog · ang kotse ay humihinto sa paglalaro</string>
+    <string name="ui_remote_music_library" formatted="false">Liblib na Aklatan sa Musika</string>
+    <string name="ui_remove" formatted="false">Alisin</string>
+    <string name="ui_rename" formatted="false">Muling Pangalan</string>
+    <string name="ui_rename_account" formatted="false">Ulat ng Rename</string>
+    <string name="ui_replay" formatted="false">REPLAY</string>
+    <string name="ui_replay_c0f85d66" formatted="false">Muling Paglalaro</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">Hinihiling ang Bit-Sakdal na Walang Nawalang Kapintasan</string>
+    <string name="ui_reset" formatted="false">Mulingset</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">Ibalik ang Seder &amp; Defults</string>
+    <string name="ui_reset_to_default_url" formatted="false">Muling Ilagay sa Default URL</string>
+    <string name="ui_restore_default_sources" formatted="false">Ibalik ang mga Pinagkukunan</string>
+    <string name="ui_restore_itune_backup" formatted="false">PagbabalikiTunePagbabalik</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">PagbabalikJioSaavnatYouTube Musicsa default order.JioSaavnmagsimula atYouTube Musicmagsimula.</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">Muling ibinalik ang LRC Lib, KuGou, at SimpMusic bilang mga nangungunang mas pinipiling provider at re-enables lahat ng 11 sources.</string>
+    <string name="ui_resume" formatted="false">Muling Pag - isipan</string>
+    <string name="ui_rhythm_by_hour" formatted="false">Ang Rhythm Pagsapit ng Oras</string>
+    <string name="ui_room_permissions" formatted="false">MGA ROOM PERMISSION</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">Ruta app network traffic sa pamamagitan ng HTTP o SOCKS proxy</string>
+    <string name="ui_save_proxy" formatted="false">Magtipid</string>
+    <string name="ui_save_schedule" formatted="false">Iskedyul ang Kaligtasan</string>
+    <string name="ui_save_to_gallery" formatted="false">Iligtas sa Gallery</string>
+    <string name="ui_save_token" formatted="false">Iligtas ang Token</string>
+    <string name="ui_saved_to_your_library" formatted="false">Iniligtas sa iyong aklatan!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">Iniligtas gamit ang Android Keystore. Ang mga backup file ay gumagamit ng PBKDF2-HMAC-SHA256 (310,000 rounds) at AES-256-GCM.</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">Nagtitipid sa Pagpapababa ng mga Paa/itune/ Mga pagsipa</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">Magsabi ng isang awit, artista, album, o liriko</string>
+    <string name="ui_search" formatted="false">Paghahanap</string>
+    <string name="ui_search_identify" formatted="false">Paghahanap at Pagtukoy</string>
+    <string name="ui_search_announcements" formatted="false">Mga patalastas sa paghahanap...</string>
+    <string name="ui_search_country" formatted="false">Paghahanap ng bansa...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">Maghanap ng mga kanta, artist, album, at playlist</string>
+    <string name="ui_search_languages" formatted="false">Maghanap ng mga wika...</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">Hanapin o uriin ang isang modelong id</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">Maghanap ng mga awit, artist, album, o playlist</string>
+    <string name="ui_searching_lyrics" formatted="false">Paghahanap ng mga liriko...</string>
+    <string name="ui_searching_spotify" formatted="false">PaghahanapSpotify...</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">SEKONDARY MIRROR SINK</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">Pumili ng isang profile avatar upang gawing personal ang iyongiTunesa lahat ng iskrin.</string>
+    <string name="ui_select_language" formatted="false">Pumili ng Wika</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">Pumili ng default leader template para sa salin ng liriko.</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">Piliin ang makina upang magamit para sa line-by-line lyrics translation.</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">Piliin ang puntiryang wika para sa salin ng liriko.</string>
+    <string name="ui_server_host_ip" formatted="false">Punong - Abala / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">Tagapagsilbi URL / Mapakita</string>
+    <string name="ui_settings_appearance" formatted="false">Mga Larawan</string>
+    <string name="ui_share_lyrics" formatted="false">Ibahagi ang mga Lyric</string>
+    <string name="ui_share_my_replay" formatted="false">Ibahagi ang aking Replay</string>
+    <string name="ui_share_replay" formatted="false">Mag - replay</string>
+    <string name="ui_share_this_story" formatted="false">Ibahagi ang kuwentong ito</string>
+    <string name="ui_share_your_time_travel" formatted="false">Ibahagi ang Iyong Paglalakbay sa Panahon</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">Ipakita ang Sinced Lyrics sa ibabaw ng Canvas</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">Tandaan ang musika.youtube.com sa isang desktop browser. Open Devender Tools → Suplay → Cookies, pagkatapos ay kopyahin ang mga pirmadong-in session values. Itrato ang mga pamantayang ito na gaya ng iyong password.</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">Makipagsenyas sa iyoLast.fmsalaysay</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">Tandaan ang Lahat ng Ulat</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">Kasabay na Pag - aalis ng Suwesya</string>
+    <string name="ui_skip_sign_in" formatted="false">Tanda sa Pag - iiski</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">Ituon ang pansin sa mas mabilis na mga liriko · paatras para sa mas mabagal na · Audio hindi apektado</string>
+    <string name="ui_snap_0" formatted="false">Hinango 0</string>
+    <string name="ui_soundstage_width" formatted="false">Ang Width ng Tunog</string>
+    <string name="ui_sources" formatted="false">Pinagmumulan</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">Mahalaga ang Audio &amp; Essential</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotify&amp; Canvas</string>
+    <string name="ui_spotify_account" formatted="false">SpotifyUlat</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">SpotifyCanvas, Apple Music, Twinkie &amp; Community motion covers</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">Spotifyay kasalukuyang konektado. Gawang - sining ng Motion (Canvas) atSpotifyNagagawa ang pagsasama - sama ng mga manlalaro.</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">Spotifybigo ang paghahanap. Subukan muli.</string>
+    <string name="ui_station" formatted="false">Istasyon</string>
+    <string name="ui_stereo_echo_delay" formatted="false">Stereo Echo &amp; Drift</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">I-imbak ang link na ito at auto-adds anumang bagong kanta sa app open</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">Stream ang iyong bit-perfectifless library direkta mula sa personal network shares o Next foil.</string>
+    <string name="ui_streaming_sources" formatted="false">PAGSULONG SA MGA SURCE</string>
+    <string name="ui_style" formatted="false">STYLE</string>
+    <string name="ui_suggestions" formatted="false">Mga Mungkahi</string>
+    <string name="ui_switch" formatted="false">Stwitch</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">Mag - alaga ng avatar para gawing pormal</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">Tap kaliwa o kanan upang manginain • Huwag huminto</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">Mag - aral agad na Mag - aral na Laging Nasa Pagtatanghal Ngayon</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">Top to select Country &amp; City FM broadcasts</string>
+    <string name="ui_target_language" formatted="false">KARAHASAN SA ARGET</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">Target na Wika</string>
+    <string name="ui_test" formatted="false">Pagsubok</string>
+    <string name="ui_test_proxy_connection" formatted="false">Pagsubok sa koneksyon</string>
+    <string name="ui_testing_proxy" formatted="false">Mga Pagsubok...</string>
+    <string name="ui_that_s_your_story" formatted="false">Iyan\'Ang Iyong Kuwento</string>
+    <string name="ui_this_account" formatted="false">Ang salaysay na ito</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">Walang laman ang manlalarong ito. Idagdag ang mga kanta mula sa manlalaro o paghahanap!</string>
+    <string name="ui_time_travel" formatted="false">MABUTI ANG PANAHON</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">Paglalakbay sa Panahon</string>
+    <string name="ui_time_travel_wrap" formatted="false">MAHAHALAGANG TRAVELO</string>
+    <string name="ui_time_synced_lyrics" formatted="false">Oras-Sinced Lyrics</string>
+    <string name="ui_top_picks" formatted="false">Mga Pagpili sa Itaas</string>
+    <string name="ui_top_result" formatted="false">Ibabaw na Resulta</string>
+    <string name="ui_top_song" formatted="false">Awit sa Itaas</string>
+    <string name="ui_top_songs" formatted="false">Mga Awit sa Itaas</string>
+    <string name="ui_top_streamed" formatted="false">NASIRA ANG TAP</string>
+    <string name="ui_total_listening_time" formatted="false">Kabuuang Panahon ng Pakikinig</string>
+    <string name="ui_total_time" formatted="false">Kabuuang Panahon</string>
+    <string name="ui_translate_actual_lines" formatted="false">Isinalin ang aktuwal na mga linya</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">Isinalin ang lirikong on-demand para sa anumang kanta mula sa menu ng manlalaro (... &gt; Lyrics &gt; Translate). Kailan\'Isinalin ang aktuwal na mga linya\'ay lumilitaw na nasa ibaba ng orihinal na teksto.</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">Isalin sa Ingles ang sumusunod na liriko ng awit. Ingatan ang patulang daloy.</string>
+    <string name="ui_translating_lyrics" formatted="false">Mga lirikong salin...</string>
+    <string name="ui_translation_mode" formatted="false">Mode ng Pagsasalin</string>
+    <string name="ui_translation_prompt" formatted="false">Mabilis na Pagsasalin</string>
+    <string name="ui_trending_artists" formatted="false">Mga Manloloko</string>
+    <string name="ui_turn_off_timer" formatted="false">Patayin ang Oras</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">Basahin ang pangalang ipinakita sa inyong Apple ID profile card sa Settings.</string>
+    <string name="ui_username_optional" formatted="false">Pangalan (Optional)</string>
+    <string name="ui_view" formatted="false">Pangmalas</string>
+    <string name="ui_view_on_shazam" formatted="false">Ang Pangmalas sa Shazam</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">Ang Vinyl ay Nagbagong Kaugnayan</string>
+    <string name="ui_whats_new" formatted="false">KUNG ANO ANG BAGO</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">Kapag ang musika ay tumutugtog, ang Always On display ay nagreresulta kung walang hawakan na nangyayari sa screen para sa napiling oras. Pinakikilos lamang ito habang nasa loob ng app.</string>
+    <string name="ui_who_is_listening" formatted="false">Sino ang Nakikinig?</string>
+    <string name="ui_widget" formatted="false">Widget</string>
+    <string name="ui_you" formatted="false">Ikaw</string>
+    <string name="ui_your_1_artist" formatted="false">Ang Iyong #1 Artista</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">Ang iyong API key ay mahigpit na iniimbak sa aparato at hindi kailanman ibinabahagi.</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">Ang inyong Discord advenue na paunawa ay iniimbak sa aparatong ito at ginagamit lamang para sa Mayamang Pagkanaririto.</string>
+    <string name="ui_your_favourite_song" formatted="false">Ang Iyong Nakalilitong Awit</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">Ang iyong aklatan, mga playlist at setting ay i-crypt sa pamamagitan ng password ng hindi bababa sa 8 character.</string>
+    <string name="ui_your_listening_experience" formatted="false">ANG IYONG MAHABANG EKPERSIYE</string>
+    <string name="ui_your_listening_pattern" formatted="false">Ang iyong huwaran sa pakikinig</string>
+    <string name="ui_your_listening_persona" formatted="false">ANG IYONG MAKINIG NA PERA</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">Ang Iyong Musika ay Naglalarong Muli &amp; Estadistika</string>
+    <string name="ui_your_musical_anchor" formatted="false">ANG IYONG PANGANGALAGANG PANGANGARAL</string>
+    <string name="ui_your_name" formatted="false">Pangalan Mo</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">Ang inyong kontrasenyas ay ipinadadala saLast.fmupang gumawa lamang ng isang sesyon.iTuneay hindi nagliligtas nito.</string>
+    <string name="ui_your_playlists" formatted="false">ANG IYONG MGA PLAYLIST</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">Ang Iyong mga Manlalaro</string>
+    <string name="ui_your_sonic_peak" formatted="false">Ang Iyong Anak na Pinakamataas</string>
+    <string name="ui_your_spotify_playlists" formatted="false">Ang iyong sariliSpotifyMga Manlalaro</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">Ang iyong sariliSpotifyMga Playlist (Publisher &amp; Private)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSIC&amp; GOOGLE</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube MusicMga pagluluto sa sesyon</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">·</string>
+    <string name="ui_text_a118c40635" formatted="false">━━━ ━━━━━</string>
+    <string name="ui_album_artwork" formatted="false">Mga gawang - sining na Album</string>
+    <string name="ui_itune_waves" formatted="false">iTuneAlon</string>
+    <string name="ui_previous" formatted="false">Bago nito</string>
+    <string name="ui_next" formatted="false">Susunod</string>
+    <string name="ui_audio_output" formatted="false">I labas ng Audio</string>
+    <string name="ui_low_volume" formatted="false">Mababang Tomo</string>
+    <string name="ui_high_volume" formatted="false">Mataas na Tomo</string>
+    <string name="ui_filter" formatted="false">Pansala</string>
+    <string name="ui_refresh" formatted="false">Nakapagpapasigla</string>
+    <string name="ui_options_6bf5da9c" formatted="false">Mga Mapagpipilian</string>
+    <string name="ui_user_profile_avatar" formatted="false">User Profile Avatar</string>
+    <string name="ui_news" formatted="false">Balita</string>
+    <string name="ui_no_song_playing" formatted="false">Walang tumutugtog na awit</string>
+    <string name="ui_next_track" formatted="false">Susunod na Landas</string>
+    <string name="ui_see_all_songs" formatted="false">Tingnan ang lahat ng awit</string>
+    <string name="ui_favorite_radio" formatted="false">Paboritong Radyo</string>
+    <string name="ui_live_65c821a5" formatted="false">Mabuhay</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTuneLabanang mga Alon</string>
+    <string name="ui_refresh_network" formatted="false">Nakapagpapasiglang Network</string>
+    <string name="ui_edit_display_name" formatted="false">Pangalan ng Edit show</string>
+    <string name="ui_remove_from_queue" formatted="false">Alisin sa queue</string>
+    <string name="ui_search_new_releases" formatted="false">Maghanap ng Bagong mga Paglaya</string>
+    <string name="ui_refresh_new_releases" formatted="false">Pinanariwang Bagong mga Paglaya</string>
+    <string name="ui_refresh_downloads" formatted="false">Nakarerelaks na mga Pahinga</string>
+    <string name="ui_clear_cache" formatted="false">Malinaw na Sakit</string>
+    <string name="ui_sort" formatted="false">Uri</string>
+    <string name="ui_see_all_new_releases" formatted="false">Tingnan ang Lahat ng Bagong Inilabas</string>
+    <string name="ui_identify" formatted="false">Alamin</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">Isport playlist</string>
+    <string name="ui_create_playlist" formatted="false">Gumawa ng Playlist</string>
+    <string name="ui_liked" formatted="false">Tulad</string>
+    <string name="ui_paste" formatted="false">Nakaraan</string>
+    <string name="ui_checked" formatted="false">Sinuri</string>
+    <string name="ui_google_account_playlist" formatted="false">Playlist ng Ulat ng Google</string>
+    <string name="ui_spotify_playlist" formatted="false">SpotifyManlalaro</string>
+    <string name="ui_local_playlist" formatted="false">Local Playlist</string>
+    <string name="ui_back_to_audio_engine" formatted="false">Pagbabalik sa Audio Engine</string>
+    <string name="ui_bluetooth_settings" formatted="false">BluetoothMga Pagtatakda</string>
+    <string name="ui_scan_output_devices" formatted="false">Ilabas ng Scan ang mga Kagamitan</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">Kasabay ng Pag - aayos ng Audio</string>
+    <string name="ui_selected" formatted="false">Pinili</string>
+    <string name="ui_copy" formatted="false">Kopya</string>
+    <string name="ui_copy_link" formatted="false">link ng kopya</string>
+    <string name="ui_upgrade_quality" formatted="false">Katangi - tanging Katangian</string>
+    <string name="ui_fm_radio" formatted="false">FM Radio</string>
+    <string name="ui_next_station" formatted="false">Susunod na Istasyon</string>
+    <string name="ui_minimize" formatted="false">Bawasan</string>
+    <string name="ui_favorite" formatted="false">Paborito</string>
+    <string name="ui_more_options" formatted="false">Higit Pang Mapagpipilian</string>
+    <string name="ui_previous_station" formatted="false">Dating Istasyon</string>
+    <string name="ui_sleep_timer" formatted="false">Pinakamatulog</string>
+    <string name="ui_audio_output_devices" formatted="false">Ilabas ng Isang Audio ang mga Pakinabang</string>
+    <string name="ui_station_list" formatted="false">Listahan ng Istasyon</string>
+    <string name="ui_volume" formatted="false">Tomo</string>
+    <string name="ui_open_lyrics" formatted="false">Buksan ang liriko</string>
+    <string name="ui_mute_volume" formatted="false">Mute Tomo</string>
+    <string name="ui_max_volume" formatted="false">Max Tomo</string>
+    <string name="ui_endless_queue" formatted="false">Walang Katapusang Paghahanap</string>
+    <string name="ui_repeat" formatted="false">Ulitin</string>
+    <string name="ui_refresh_stations" formatted="false">Nakarerelaks na mga Istasyon</string>
+    <string name="ui_favorite_station" formatted="false">Paboritong Istasyon</string>
+    <string name="ui_close_ireconization" formatted="false">Malapitang Pagbabago</string>
+    <string name="ui_cancel_voice_search" formatted="false">Paghahanap ng Tinig ng Cancel</string>
+    <string name="ui_microphone" formatted="false">Microphone</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">Higit pang mapagpipilian</string>
+    <string name="ui_voice_search" formatted="false">Paghahanap ng tinig</string>
+    <string name="ui_saved" formatted="false">Iniligtas</string>
+    <string name="ui_fill_search_query" formatted="false">Punuin ang paghahanap</string>
+    <string name="ui_remove_from_history" formatted="false">Alisin sa kasaysayan</string>
+    <string name="ui_itune_icon" formatted="false">iTuneLarawan</string>
+    <string name="ui_artwork_preview" formatted="false">Panonood ng mga Sining</string>
+    <string name="ui_decrease" formatted="false">Pagbagsak</string>
+    <string name="ui_increase" formatted="false">Pagsulong</string>
+    <string name="ui_open_link" formatted="false">Bukás na Kaugnayan</string>
+    <string name="ui_reset_geometry" formatted="false">Muling Pag - aayos ng Geometry</string>
+    <string name="ui_reorder_provider" formatted="false">Reorder provider</string>
+    <string name="ui_save_name" formatted="false">Iligtas ang pangalan</string>
+    <string name="ui_editable_name" formatted="false">Kapani - paniwalang Pangalan</string>
+    <string name="ui_google" formatted="false">Google</string>
+    <string name="ui_remove_account" formatted="false">Alisin ang account</string>
+    <string name="ui_reorder_source_priority" formatted="false">Iayos ang pinagmulang priyoridad</string>
+    <string name="ui_refresh_playlists" formatted="false">Refred playlists</string>
+    <string name="ui_replay_poster" formatted="false">Muling Paglalaro Bilang Poster</string>
+    <string name="ui_settings" formatted="false">Mga Pagtatakda</string>
+    <string name="ui_artist_radio" formatted="false">Radyo ng mga Masining</string>
+    <string name="ui_play_all" formatted="false">Gawin ang Lahat</string>
+    <string name="ui_delete_playlist" formatted="false">Delete Playlist</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">Walang Katapusang Katanungan</string>
+    <string name="ui_artist_info" formatted="false">Pintor na Info</string>
+    <string name="ui_enabled" formatted="false">Malugod</string>
+    <string name="ui_search_icon" formatted="false">Hanapin ang Icon</string>
+    <string name="ui_region">Rehiyon:%1$s</string>
+    <string name="ui_connected_devices">MGA DISYENTE NG KOMEKSIYON (mga DISYENTE)%1$s)</string>
+    <string name="ui_up_next">UP NEXT (%1$s)</string>
+    <string name="ui_text_da5c3629fd">%1$s›</string>
+    <string name="ui_active_7c6a4064">%1$s•%2$saktibo</string>
+    <string name="ui_no_new_available_right_now">Hindi na bago%1$smagagamit ngayon</string>
+    <string name="ui_tracks">%1$s• Mga bakas%2$s</string>
+    <string name="ui_songs">%1$s• awit%2$s•%3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s•%2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c">•%1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$strack(mga) cann\'t:</string>
+    <string name="ui_text_a3edb2b714">•%1$s-%2$s</string>
+    <string name="ui_d_eeda119e">%1$sD</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+%1$sdB</string>
+    <string name="ui_connected">%1$skonektado</string>
+    <string name="ui_open_web_player">Open Web Player (Unang Laro),%1$s)</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">Bansa:%1$s(%2$s)</string>
+    <string name="ui_city_state">Lungsod / Estado:%1$s</string>
+    <string name="ui_codec_bitrate">Kodigo / Bitrate:%1$s</string>
+    <string name="ui_language">Wika:%1$s</string>
+    <string name="ui_tags">Mga Tag:%1$s</string>
+    <string name="ui_stream">Stream:%1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">API Key hindi nakaayos para sa%1$s. Ilagay ito sa settings &gt; Lyrics.</string>
+    <string name="ui_s_clip">%1$sclip</string>
+    <string name="ui_loading_more_fm_stations_loaded">Pagbuhat ng Higit na mga FM station (mga istasyon ng tren)%1$skarga)...</string>
+    <string name="ui_found">%1$snatagpuan</string>
+    <string name="ui_version">Bersiyon%1$s(%2$s)</string>
+    <string name="ui_of_active">%1$sng%2$sAktibo</string>
+    <string name="ui_text_adebc50ade">#%1$s</string>
+    <string name="ui_api_key">%1$sSusi ng API</string>
+    <string name="ui_channel">Channel:%1$s</string>
+    <string name="ui_sync_issue">Sync na isyu:%1$s</string>
+    <string name="ui_enter">Pumasok%1$s</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">Natitiyak mo ba na nais mong alisin ang “%1$sAng lahat ng impormasyon, playlist, paborito, kasaysayan, at mga tagpo sa ulat na ito ay permanenteng aalisin.</string>
+    <string name="ui_peak">Peak:%1$s</string>
+    <string name="ui_welcome">Maligayang pagdating,%1$s</string>
+    <string name="ui_songs_played">%1$stugtugin</string>
+    <string name="ui_around">sa paligid%1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">Kapag ang daigdig ay nagiging abala, mas madalas kang magtuon ng pansin%1$spalibot%2$s.</string>
+    <string name="ui_itune_time_travel_575a110d">iTunePaglalakbay sa Panahon •%1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s·%2$s</string>
+    <string name="ui_your_biggest_day_was">Ang pinakamalaki mong araw ay%1$s.</string>
+    <string name="ui_listening_recap">%1$spakikinig muli</string>
+    <string name="ui_busiest_day">Buong araw:%1$s</string>
+    <string name="ui_peak_hour_00">Pinakamataas na oras:%1$s:00</string>
+    <string name="ui_loading">Pagbuhat%1$s...</string>
+    <string name="ui_about">Tungkol dito%1$s</string>
+    <string name="ui_songs_9b614dc8">%1$smga awit</string>
+    <string name="ui_current_offset_ms">Kasalukuyang Pagkakamali:%1$sms</string>
+    <string name="ui_connected_session">Nakakonektang Sesyon:%1$s</string>
+    <string name="ui_k">%1$sk</string>
+    <string name="ui_top_result_c5e5adab">TAP RESULTA •%1$s</string>
+    <string name="toast_song_not_found_in_itune">Hindi nahanap ang AwitiTune</string>
+    <string name="toast_playback_failed_try_again">Bigo ang paglalaro, sumubok muli</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">Auto Sleep Timer aktibo · Playback huminto</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">Offline mode: ang awit na ito ay hindi nai-download</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">Offline mode: hindi ma-upgrade ang kalidad</string>
+    <string name="toast_upgrading_quality">Nakatataas na Katangian</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">Walang walang - kalugihang umaagos na mga pinagmumulan ang nagpangyari sa Pinagmumulan</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">Walang mas mataas na uri ng sapa na masusumpungan sa ibayo ang nakatulong sa mga pinagmumulan</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">Ang Shuffle ay naka-lock ng Permanent Shuffle sa Settings</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">Kailangan ang pahintulot ng Microphone upang makilala ang musika</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">Ang pagtatanghal sa iba pang apps permit ay kinakailangan para sa pagkilala ng popup</string>
+    <string name="toast_playback_failed">Bigo ang paglalaro</string>
+    <string name="toast_complete_google_sign_in_first">Kumpletong Google sign-in una</string>
+    <string name="toast_waiting_for_youtube_music_session">NaghihintayYouTube Musicsesyon...</string>
+    <string name="toast_couldn_t_load_tracks">Hindi Kaya\'tkarga tracks</string>
+    <string name="toast_copied_to_clipboard">Isinakay sa clipboard</string>
+    <string name="toast_profile_avatar_updated">Binago ang Profile avatar</string>
+    <string name="toast_no_tracks_found">Walang natagpuang mga bakas</string>
+    <string name="toast_google_account_connected">Nakakonekta ang ulat ng Google</string>
+    <string name="toast_link_copied">Link kinopya</string>
+    <string name="toast_could_not_open_browser">Hindi mabuksan ang browser</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">Ipasok ang isang daungan sa pagitan ng 1024 at 65535</string>
+    <string name="toast_cached_music_cleared">Nilinaw ang musikang kinalupkupan</string>
+    <string name="toast_no_tracks_available_to_add">Walang mga riles na maaaring idagdag</string>
+    <string name="toast_enter_a_playlist_name">Ipasok ang pangalan ng playlist</string>
+    <string name="toast_system_sound_panel_opened">Binuksan ang sound panel ng sistema</string>
+    <string name="toast_download_started_check_notification">Nagsimula ang download · Check notification</string>
+    <string name="toast_playback_will_stop_after_current_track">Titigil ang paglalaro pagkatapos ng kasalukuyang mga track</string>
+    <string name="toast_sleep_timer_turned_off">Pinatay ang timer sa pagtulog</string>
+    <string name="toast_stream_url_copied">Kinopya ang Stream URL</string>
+    <string name="toast_couldn_t_create_lyrics_card">Hindi Kaya\'t lumikha ng kard na liriko</string>
+    <string name="toast_restored_online_lyrics">Ibinalik ang mga liriko sa Internet</string>
+    <string name="toast_lyrics_saved">Naligtas ang mga Lyric</string>
+    <string name="toast_translation_cleared">Inalis ang pagsasalin</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">Pakisuyong ilagay ang Iyong Susi sa Pagtatakda &gt; Unang Lyrics</string>
+    <string name="toast_no_lyrics_found_for_this_song">Walang lirikong nasumpungan para sa awit na ito</string>
+    <string name="toast_could_not_create_audio_clip">Hindi makalikha ng audio clip</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">Naligtas ang Snippet sa Musika/iTune/ Mga Larawan</string>
+    <string name="toast_playing_next">Susunod na Paglalaro</string>
+    <string name="toast_added_to_queue">Idagdag sa Katanungan</string>
+    <string name="toast_download_started_check_notifications">Nagsimula ang download · Check notifications</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">Hindi Kaya\'t ang awit na itoYouTube Music</string>
+    <string name="toast_couldn_t_start_mix">Hindi Kaya\'t magsimula ng paghahalo</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">Hindi Kaya\'t humanap ng mga bakas saYouTube Music</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">Hindi ma-crypt nang mabuti ang password. Hindi binago ang awtomatikong backup.</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">Kailangan ang pahintulot para makatipid ng backup sa downloads</string>
+    <string name="toast_choose_an_itune_backup_file">Pumili ng .itunebackup file</string>
+    <string name="toast_audio_artwork_cache_cleared">Nilinis ang isang imbakan ng mga gawang - sining</string>
+    <string name="toast_could_not_open_github">Hindi mabuksan ang GitHub</string>
+    <string name="toast_profile_name_updated">Binago ang pangalan ng Profile</string>
+    <string name="toast_search_history_cleared">Nilinaw ang kasaysayan ng paghahanap</string>
+    <string name="toast_listening_history_cleared">Nilinaw ang kasaysayan ng pakikinig</string>
+    <string name="toast_cached_songs_cleared">Tinanggal ang mga awit na gawa sa kalesa</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">Open system settings upang magbigay ng Display sa iba pang apps</string>
+    <string name="toast_dynamic_island_geometry_reset">Hugis ng Dynamic Island</string>
+    <string name="toast_geometry_reset">Pag - aayos ng Geometry</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">Ang mga lyrics provider ay bumabalik sa mga default</string>
+    <string name="toast_api_key_saved">Naligtas ang API Key</string>
+    <string name="toast_base_url_updated">Binago ang Base URL</string>
+    <string name="toast_translation_prompt_updated">Agad na binago ang pagsasalin</string>
+    <string name="toast_equalizer_reset_to_flat">Pag - aayos ng Kapantayan sa Tagâ</string>
+    <string name="toast_dj_console_reset">DJ Console refix</string>
+    <string name="toast_name_saved">Naligtas ang pangalan</string>
+    <string name="toast_syncing_youtube_music_library">PagbibintangYouTube Musicaklatan...</string>
+    <string name="toast_signed_out_local_likes_preserved">Isinaplaka (lokal na katulad na naingatan)</string>
+    <string name="toast_signed_out_of_all_google_accounts">Nilagdaan mula sa lahat ng mga account sa Google</string>
+    <string name="toast_discord_disconnected">Di - pagkakasundo</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">Ipasok ang tanggap na lagda-inYouTube Musiccookie (SAPID at isang session cookie)</string>
+    <string name="toast_youtube_music_account_connected">YouTube Musickaugnay ng ulat</string>
+    <string name="toast_account_renamed">Ang Ulat ay muling pinanganlang</string>
+    <string name="toast_account_deleted">Inalis ang Ulat</string>
+    <string name="toast_cannot_delete_your_only_account">Hindi mo maaaring i - delete ang iyong tanging account</string>
+    <string name="toast_sources_restored_to_defaults">Ang mga pinagmumulan ay ibinalik sa mga default</string>
+    <string name="toast_spotify_disconnected">SpotifyPAGKASIRA</string>
+    <string name="toast_spotify_sp_dc_token_saved">SpotifyNaligtas ang sp dc token</string>
+    <string name="toast_spotify_connected">Spotify connected!</string>
+    <string name="toast_complete_spotify_sign_in_first">GanapSpotifysign-in muna</string>
+    <string name="toast_saved_to_gallery">Iniligtas sa Gallery!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">PayaganiTuneupang mag-install ng mga update upang magpatuloy</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">Walang makuhang downloaded update APK</string>
+    <string name="toast_added_to_queue_next">Ilakip sa kasunod na tanong</string>
+    <string name="toast_link_copied_to_clipboard">Link na kinopya sa clipboard</string>
+    <string name="toast_song_link_copied_to_clipboard">Ang kawing ng awit na kinopya sa clipboard</string>
+    <string name="toast_left_ishare_session">Kaliwang IShare Session</string>
+    <string name="toast_ishare_lan_host_started">Nagsimula ang IShare LAN Host!</string>
+    <string name="toast_scanning_lan_for_sessions">Scanning LAN para sa mga sesyon...</string>
+    <string name="toast_cache_cleared">Naalis ang Sakit</string>
+    <string name="toast_signed_out_successfully">matagumpay na nakasenyas</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">Ang mga salita ay dapat na katugma at may di - kukulangin sa 8 karakter</string>
+    <string name="toast_no_backup_file_found_in_storage">Walang mahanap na talaksang backup sa bodega</string>
+    <string name="toast_library_settings_restored">Library &amp; Settings Ibinalik!</string>
+    <string name="toast_enter_your_backup_password">Ipasok ang iyong backup password</string>
+    <string name="toast_syncing_spotify_library">PagbibintangSpotifyaklatan...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify Connected!</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">Pakisuyong pumasok sa isang tanggap na SP DC cookie</string>
+    <string name="toast_playing">Paglalaro%%1$s...</string>
+    <string name="toast_upgraded_to_lossless_kbps">Nasusugpo sa Kawalan ng Trabaho •%%1$smga kbp</string>
+    <string name="toast_playing_next_0f0c851c">Paglalaro%%1$ssusunod</string>
+    <string name="toast_added_to_queue_88e96c25">Idagdag%%1$ssa tanong</string>
+    <string name="toast_playing_cb1fb3de">Paglalaro%%1$s...</string>
+    <string name="toast_playing_next_e0082d95">Susunod na paglalaro:%%1$s</string>
+    <string name="toast_couldn_t_load">Hindi Kaya\'tkarga%%1$s</string>
+    <string name="toast_opening">Pagbubukas%%1$s...</string>
+    <string name="toast_couldn_t_open">Hindi Kaya\'t bukas%%1$s</string>
+    <string name="toast_couldn_t_play">Hindi Kaya\'tplay%%1$s</string>
+    <string name="toast_library_pin">Library Pin:%%1$s</string>
+    <string name="toast_copied">Ipis:%%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">Kailangan ng timer sa pagtulog%%1$sMain</string>
+    <string name="toast_lyrics_applied">Ikinapit ang Lyrics (%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">Idagdag%%1$sMga landas Tungo sa tanong</string>
+    <string name="toast_switched_feed_to">Hinaluyong na pagkain%%1$s</string>
+    <string name="toast_provider_updated_to">Bagong panahon ang Tagapaglaan%%1$s</string>
+    <string name="toast_target_language_set_to">Pinupuntiryang wika%%1$s</string>
+    <string name="toast_translation_mode_set_to">Ang paraan ng pagsasalin ay nagsimula%%1$s</string>
+    <string name="toast_added_source">Karagdagang lathalain:%%1$s</string>
+    <string name="toast_installed_extension_s">Nakaluklok%%1$sekstensiyon(mga)</string>
+    <string name="toast_imported_songs">Ipinatapon\'%%1$s\'(%%2$smga awit)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">Hindi Kaya\'tklas\'%%1$s\'patuloyYouTube Music</string>
+    <string name="toast_added_songs_to">Idagdag%%1$skanta sa%%2$s</string>
+    <string name="toast_joining">Sumali%%1$s...</string>
+    <string name="toast_added_to">Idagdag%%1$s</string>
+    <string name="toast_itune_v_for_android_tv">iTunev%%1$spara sa Android TV</string>
+    <string name="toast_backup_failed">Bigo ang backup:%%1$s</string>
+    <string name="toast_restore_failed">Bigo ang pagbabalik:%%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">IShare, Dynamic Island &amp; Stand by</string>
+    <string name="settings_ishare" formatted="false">iShare</string>
+    <string name="settings_dynamic_island" formatted="false">Pulo ng Dinamiko</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">Lumulutang na water-bloud controller sa labasiTune</string>
+    <string name="settings_always_on_display" formatted="false">Laging Nakadispley</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">Audio Engine &amp; Sound Effects</string>
+    <string name="settings_dolby_atmos" formatted="false">Dolby Atmos</string>
+    <string name="settings_text_8948f8179a" formatted="false">8D Audio</string>
+    <string name="settings_spatial_audio" formatted="false">Boludial Audio</string>
+    <string name="settings_equalizer_eq" formatted="false">Pagkakapantay - pantay (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">Pagpapadulas sa Mababang Pasa</string>
+    <string name="settings_dj_studio_panel" formatted="false">DJ Studio Panel</string>
+    <string name="settings_audio_normalization" formatted="false">Pagiging Normal ng Audio</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB Bit-Sable DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">Dalisay na Audio sa Pamamagitan ng Daan</string>
+    <string name="settings_signal_pipeline" formatted="false">Tandag Pipeline</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">${audioEngine.pill Badge.text} -&gt; $active Outputname</string>
+    <string name="settings_audio_playback" formatted="false">Audio &amp; Playback</string>
+    <string name="settings_sources" formatted="false">Pinagmumulan</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">PamamahalaYouTube Music,JioSaavn, naka-install na ekstensiyon,WebDAV,SMB, at bigyan ng priyoridad ang paglalaro</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">Pag - iiski ng Auto Kapag May Pagkakamali</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">Lumipat sa susunod na queued na awit kung ang playback ay nabigo</string>
+    <string name="settings_download_quality" formatted="false">Pagbaba ng Kalidad</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">Default kalidad na ginagamit ng kanta download aksyon</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">Piliin ang default audio na kalidad para sa downloads sa ibayo ng app.</string>
+    <string name="settings_lossless_audio" formatted="false">Wala Nang Audio</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">Kabihasnan ng mga Awit na Katas</string>
+    <string name="settings_streaming_quality" formatted="false">Nakapagpapasiglang Katangian</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">Pumili ng isang uri ng audio.</string>
+    <string name="settings_pcm_output_format" formatted="false">PCM Output Format</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">Mga gusaling muling itinatayo sa kasalukuyang posisyon</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">Piliin ang PCM format na hiniling sa Android\'s audio output. Maaaring ikumberte ito ng USB DAC sa isang format na sinusuportahan nito.</string>
+    <string name="settings_crossfade" formatted="false">Crossfade</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">Baligtarin ang dish-out ng dulong track sa simula ng susunod.</string>
+    <string name="settings_automix" formatted="false">AutoMix</string>
+    <string name="settings_afterglow" formatted="false">Pagkatapos magningas</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">Pahiran ng parehong Low-Pass equalizer effect sa mga napiling huling segundo ng bawat kanta. Matapos huminto ang cleant ay huminto sina AutoMix at Crossfade habang nagagawa ito.</string>
+    <string name="settings_permanent_shuffle" formatted="false">Permanenteng Suffle</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">Panatilihing permanenteng nakakandado ang shuffle</string>
+    <string name="settings_pause_at_volume_0" formatted="false">Pause sa Tomo 0</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">Awtomatikong huminto sa paglalaro kapag umabot na sa sero ang lakas</string>
+    <string name="settings_volume_bar" formatted="false">Tomo Bar</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">Ipinakikita sa $iperstate.volumeBarside.lowercase()} gilid kapag pinindot mo ang mga buton ng tomo</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">Piliin kung aling gilid ng screen ang makikita sa in-app volume bar.</string>
+    <string name="settings_content" formatted="false">Nasisiyahan</string>
+    <string name="settings_default_content_language" formatted="false">Itakwil ang Kasiya - siyang Wika</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">Wika Para sa mga Mood, Browse at Paghahanap</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">Piliin ang mas gustong wikang katalogo na ginagamit sa ibayo ng Browse, Moods &amp; Genres, Playlists, at New Releases.</string>
+    <string name="settings_default_content_country" formatted="false">Nag - alis ng Kasiyahang Bansa</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">Rehiyon para sa mga Chart, Playlists &amp; New Release</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">Piliin ang panrehiyong front na ginagamit para sa mga album na Newly add, regional Moods, at Featured Playlists.</string>
+    <string name="settings_hide_explicit_content" formatted="false">Itago ang Angkop na Kasiyahan</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">Magpalabas ng detalyadong mga awit sa kabila ng Moods, Browse &amp; Search</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">Ngayon ang Pagpapatugtog &amp; Liquid Glass</string>
+    <string name="settings_splash_screen" formatted="false">Sclash Screen</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">Isinisiwalat ng pamagat na app launch brand animation &amp; fluid</string>
+    <string name="settings_animated_cover_art" formatted="false">Pinasimpleng Sining sa Pabalat</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">SpotifyCanvas, Apple Music, Twinkie &amp; Community motion covers</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">Spotify&amp; Canvas Setup</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">Kontrolado ng Auto-Hide Canvas</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">Bawasan ang mga kontrol pagkatapos ng 5s habang gumaganap ang Canvas (tap Canvas hanggang toggle)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">Ipakita ang Sinced Lyrics sa ibabaw ng Canvas</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">Ipakita ang masiglang liriko sa itaas ng pangalan ng awit kapag kinokontrol ng Canvas ang pagtatago</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">UnahinSpotifyMga canva</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">SubukanSpotifyMga canva bago ang Musikang Apple, Daluyong &amp; Community</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">Maglaro ng Masasayang Takpan ng Selula</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">Ipahintulot ang mga video ng pagsilo sa mga canva sa mobile data</string>
+    <string name="settings_player_type" formatted="false">Uri ng Manlalaro</string>
+    <string name="settings_player_style" formatted="false">Istilo ng Paglalaro</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">Dinamikong Kulay ng Manlalaro</string>
+    <string name="settings_full_screen_cover_art" formatted="false">Buong sining sa screen</string>
+    <string name="settings_corner_length" formatted="false">Haba ng Corner</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">Pag - aayos sa kanto ng kuwadradong album</string>
+    <string name="settings_hide_quality_tag" formatted="false">Itago ang Mabuting Tag</string>
+    <string name="settings_hide_volume_bar" formatted="false">Itago ang Tomo Bar</string>
+    <string name="settings_home_top_card_style" formatted="false">Istilo ng Kard sa Bahay</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">Liquid Glass Nav &amp; Mini Manlalaro</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">Salaming bar at maliit na player, na may hawak na water-flux lens</string>
+    <string name="settings_time_synced_lyrics" formatted="false">Oras-Sinced Lyrics</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">Sundin ang liriko ng salita at linya sa tunay na panahon</string>
+    <string name="settings_app_font" formatted="false">App Font</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">Palitan ang app typography; pinananatili ng mga kontrol ng manlalaro ang kanilang dinisenyong typeface</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">Pumili ng typeface para sa app interface.</string>
+    <string name="settings_lyrics_providers" formatted="false">Mga Tagapaglaan ng Lyrics</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 mga pinagkukunan • Prioritize &amp; toggle fallback order</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">Ang Liquid Glass Chrome</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">Refractive lightlight headers &amp; fank cards</string>
+    <string name="settings_tactile_haptics" formatted="false">Mga Haptik na Tactile</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">Sutter pulse feedback sa kabila ng mga kontrol ng manlalaro</string>
+    <string name="settings_downloads_storage" formatted="false">Mga Imbakan at Tibo</string>
+    <string name="settings_cellular_streaming" formatted="false">Pag - iimbak ng Selula</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">Audio bandwidth sa mobile data</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">Control audio katapatan kapag dumadaloy palayo sa Wi-Fi.</string>
+    <string name="settings_download_over_wi_fi" formatted="false">Nag-download sa ibabaw ng Wi-Fi</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">Maghintay ng Wi-Fi bago awtomatikong download</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">Mga Awit ng Kama Pagkatapos Maglaro</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">Iligtas ang isang awit sa imbakan ng offline pagkatapos nitong maglaro</string>
+    <string name="settings_cache_quality" formatted="false">Katangian ng Kape</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">Nakatitipid sa pag - iimbak ang mas mababang uri</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">Piliin ang kalidad ng mga awit na natitipid pagkatapos ng playback completes. Mga awit na nakalagay mula ngayon.</string>
+    <string name="settings_song_storage_limit" formatted="false">Hangganan ng Awit</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">Maximum disk na imbakan na inilaan para sa offline audio cache bago alisin ang mas lumang mga awit na hindi pa nilalaro.</string>
+    <string name="settings_clear_cached_songs" formatted="false">Malinaw na mga Awit ng Kapílang</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">${MusicCachuanger.cachedTracks.size}awits • ${MusicCachemanger.formatStrarageSize(MusicCachumanger.Storage Bytes.longValue)}</string>
+    <string name="settings_automatic_downloads" formatted="false">Awtomatikong mga Pagpapababa</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">Iligtas ang bagong naiibigan &amp; idinagdag na mga tracks offline</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">Malinaw na Sakit ng App Buffer</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">Tanggalin ang pansamantalang takip ng art &amp; network livers</string>
+    <string name="settings_library_listening" formatted="false">Library &amp; Pakikinig</string>
+    <string name="settings_sync_library" formatted="false">Aklatan ng Sync</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">Panatilihing nasa tamang kalagayan ang mga artist, playlist &amp; album</string>
+    <string name="settings_listening_history" formatted="false">Pakikinig sa Kasaysayan</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">Hugis Personalisadong mga Halu - halong Bagay at Kamakailang Pilipina</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">Patuloy na Tularan ang Kalinisan na Ito</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">Panatilihing nasa loob ang nagugustuhang mga awitiTunekapag nilagdaan</string>
+    <string name="settings_notifications_general" formatted="false">Mga Notipikasyon at Pangkalahatan</string>
+    <string name="settings_offline_mode" formatted="false">Masamang Mode</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">Hinihiling ang isang download na kopya upang magsimulang maglaro</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">Ihintong Malinaw ang Musika</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">Itigil ang playback kapagiTuneay napapawi sa mga nakaraang taon</string>
+    <string name="settings_auto_sleep_timer" formatted="false">Tagatulog ng Auto</string>
+    <string name="settings_network_proxy" formatted="false">Mga EXPO ng Network</string>
+    <string name="settings_profile_name" formatted="false">Pangalan ng Profile</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">Gawing kaugalian ang inyong mga setting na nagtatampok ng pangalan</string>
+    <string name="settings_news_from_dev" formatted="false">Balita mula sa dev</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">Mga Patalastas, Labas at Pagbabago</string>
+    <string name="settings_general_about" formatted="false">Panlahat &amp; Tungkol sa</string>
+    <string name="settings_home_screen_widget" formatted="false">" Home Screen " Widget</string>
+    <string name="settings_widget_customization" formatted="false">Kaugalian ng Widget</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">Pumili ng isang maliit na preview, gawang - sining, kontrol at istilong widget</string>
+    <string name="settings_backup_restore" formatted="false">Pagbabalik at Pagbabalik</string>
+    <string name="settings_automatic_daily_backup" formatted="false">Awtomatikong Pagbabalik sa Araw - araw</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">Naka-crypted araw-araw backups • Downloads/iTune/ Mga Pagtatalik</string>
+    <string name="settings_back_up_itune" formatted="false">BumalikiTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">Mag - ipon ng mga account, lahat ng setting, audio effect, impormasyon sa aklatan at mga statts na ini - encrypt</string>
+    <string name="settings_restore_from_backup" formatted="false">Pagbabalik Mula sa Likod</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">Ibalik ang mga setting, audio effects, account o library data mula sa .itune</string>
+    <string name="settings_privacy" formatted="false">Pribadong Buhay</string>
+    <string name="settings_pause_search_history" formatted="false">Buong Kasaysayan ng Paghahanap</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">Huwag itago sa kasaysayan ang bagong mga katanungan sa paghahanap</string>
+    <string name="settings_clear_search_history" formatted="false">Maliwanag na Kasaysayan ng Paghahanap</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">Alisin sa Paghahanap ang mga tanong kamakailan</string>
+    <string name="settings_pause_listening_history" formatted="false">Gampanan ang Kasaysayan ng Pakikinig</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">Huwag magrekord ng mga awit o mga rekomendasyon sa update</string>
+    <string name="settings_clear_listening_history" formatted="false">Maliwanag na Kasaysayan ng Pakikinig</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">Tanggalin ang kasaysayan ng playback at baguhin ang anyo ng lasa</string>
+    <string name="settings_disable_screenshot" formatted="false">Hindi Maaalis na Sigaw</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">Block screenshots at screen recording sa ibayo ng app</string>
+    <string name="settings_best_available" formatted="false">Pinakamabuting Makukuha</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">Gamitin ang pinakamataas na uri ng mapagkukunan</string>
+    <string name="settings_maximum" formatted="false">Maximum</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">Piliin ang pinakamataas na sapa ng bitrate</string>
+    <string name="settings_high" formatted="false">Mataas</string>
+    <string name="settings_target_about_160_kbps" formatted="false">Target ng mga 160 kbp</string>
+    <string name="settings_standard" formatted="false">Pamantayan</string>
+    <string name="settings_target_about_128_kbps" formatted="false">Target ng mga 128 kbp</string>
+    <string name="settings_data_saver" formatted="false">Nagliligtas ng mga Data</string>
+    <string name="settings_target_about_64_kbps" formatted="false">Target ng mga 64 na kbp</string>
+    <string name="settings_extreme" formatted="false">Labis - labis</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">Katapat na Maximum (256+ kbps)</string>
+    <string name="settings_high_b1a5954a" formatted="false">Mataas</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">Mataas na kalidad audio (~160 kbp)</string>
+    <string name="settings_medium" formatted="false">Medium</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">Pamantayang audio quality (~128 kbp)</string>
+    <string name="settings_low" formatted="false">Mababa</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">Data Tagapag-ligtas audio (~48-64 kbps)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">16-bit PCM</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">Pamantayang integer PCM output; malawak na tumutugma sa USB Audio Class DACs</string>
+    <string name="settings_text_6697202e38" formatted="false">32-bit lumulutang PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">Float PCM output kapag suportado ng Android at ng konektadong audio path</string>
+    <string name="settings_off" formatted="false">Off</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">Maglaro ng mga track sa malinis na back-to-back</string>
+    <string name="settings_text_6597740315" formatted="false">2 sec</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">Magkasalungat na Pagbabago</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 sec</string>
+    <string name="settings_short_seamless_fade" formatted="false">Maikling Walang - Kapintasan</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 sec</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">Timbang na DJ-style transition</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8 sec</string>
+    <string name="settings_smooth_extended_blend" formatted="false">Pinahabang Koleksiyon</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 sec</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">Maximum patuloy na paghahalo ng halo</string>
+    <string name="settings_off_e3de5ab0" formatted="false">Off</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">Panatilihin ang normal na mga epekto ng playback at mga pagbabago</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 sec</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">Pahiran ng Low-Pass sa bawat serbisiyo ng kanta sa huling 5 segundo</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 sec</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">Pahiran ng Low-Pass sa bawat musiko ng kanta sa huling 10 segundo</string>
+    <string name="settings_text_eb4354110e" formatted="false">15 sec</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">Pahiran ng Low-Pass sa bawat musiko sa huling 15 segundo</string>
+    <string name="settings_right" formatted="false">Tama</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">Ipakita ang volume bar sa kanang gilid (default)</string>
+    <string name="settings_left" formatted="false">Kaliwa</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">Ipakita ang volume bar sa kaliwang gilid</string>
+    <string name="settings_high_efficiency" formatted="false">Mataas na Kakayahan</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">Gumamit ng kaunting cellular data</string>
+    <string name="settings_high_quality" formatted="false">Mataas na Katangian</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">Balance ng AAC 256 kbps ang mobile playback</string>
+    <string name="settings_lossless" formatted="false">Walang Nawala</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">Walang kalaban - laban sa 5G/LTE network</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">Off</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">Hayaang umagos sa Wi-Fi lamang</string>
+    <string name="settings_text_03a001f575" formatted="false">500 MB</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">Compact cache (mga awiting ~70)</string>
+    <string name="settings_text_33015e637f" formatted="false">1 GB</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">Katamtamang cache (mga awiting ~150)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 GB</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">Inirerekomenda ang default (mga awiting ~300)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5 GB</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">Malalaking koleksiyon ng mga awit (imperyal na awit)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10 GB</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">Napakalaking aklatan (imperyo,600 awit)</string>
+    <string name="settings_unlimited" formatted="false">Hindi Nakataya</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">Hindi kailanman pinalayas ang mga awiting may takip</string>
+    <string name="settings_pipeline_output">%1$s→%2$s</string>
+    <string name="settings_volume_bar_side">Ipinakikita sa%1$sgilid kapag pinindot mo ang mga buton ng tomo</string>
+    <string name="settings_corner_radius_value">%1$ddp</string>
+    <string name="settings_active_lyrics_providers">%1$dAktibo</string>
+    <string name="settings_cached_song_count_size">%1$d• awit%2$s</string>
+    <string name="library_playlist_count_one">%1$dManlalaro</string>
+    <string name="library_playlist_count_many">%1$dMga Manlalaro</string>
+    <string name="library_album_count_one">%1$dKaragdagang Album</string>
+    <string name="library_album_count_many">%1$dKaragdagang mga Album</string>
+    <string name="remove_from_favorites">Alisin sa mga Paborito</string>
+    <string name="play_top_album">Maglaro ng Itaas na Album</string>
+    <string name="open_in_spotify">BukásSpotify</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Gamitin ang interface ng Azerbaijani</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Gamitin ang Ugnayang Bengali</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Gamitin ang interface ng Bulgaria</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Gamitin ang Karugtong ng Catalan</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">Gamitin ang Linyang Czech</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Gamitin ang Linyang Danes</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Gamitin ang interface ng Finland</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Gamitin ang Griegong interface</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Gamitin ang Hebreong interface</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Gamitin ang interface ng Hungary</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Gamitin ang interface ng Indonesia</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Gamitin ang interface ng Malay</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Gamitin ang Ugnayan ng Norway</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Gamitin ang Linya ng Persia</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Gamitin ang Linyang Polako</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Gamitin ang interface ng Romania</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Gamitin ang interface ng Slovak</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Gamitin ang Thai interface</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Gamitin ang Linyang Turko</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Gamitin ang interface ng Ukraine</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Gamitin ang interface ng Vietnamese</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Gamitin ang interface ng Swahili</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Interface sa Filipino</string>
+</resources>
