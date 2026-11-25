@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.components
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -85,7 +88,7 @@ fun RadioStationsSection(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "Live Radio Stations",
+                text = stringResource(R.string.ui_live_radio_stations),
                 color = AppleTextPrimary,
                 fontSize = 21.sp,
                 fontWeight = FontWeight.Bold,
@@ -144,14 +147,14 @@ fun RadioStationsSection(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Browse Live Online Radio",
+                            text = stringResource(R.string.ui_browse_live_online_radio),
                             color = AppleTextPrimary,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Tap to select Country & City FM broadcasts",
+                            text = stringResource(R.string.ui_tap_to_select_country_city_fm_broadcasts),
                             color = AppleTextSecondary,
                             fontSize = 12.5.sp,
                         )
@@ -238,7 +241,7 @@ private fun OnlineHomeRadioStationCard(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Star,
-                        contentDescription = "Favorite Radio",
+                        contentDescription = stringResource(R.string.ui_favorite_radio),
                         tint = Color.White,
                         modifier = Modifier.size(12.dp),
                     )
@@ -256,13 +259,13 @@ private fun OnlineHomeRadioStationCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.GraphicEq,
-                    contentDescription = "Live",
+                    contentDescription = stringResource(R.string.ui_live_65c821a5),
                     tint = AppleMusicRed,
                     modifier = Modifier.size(12.dp),
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "LIVE",
+                    text = stringResource(R.string.ui_live),
                     color = Color.White,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
