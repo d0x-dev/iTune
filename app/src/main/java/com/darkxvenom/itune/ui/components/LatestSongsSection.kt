@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.components
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -96,7 +99,7 @@ fun LatestSongsSection(
             Spacer(modifier = Modifier.width(4.dp))
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = "See all songs",
+                contentDescription = stringResource(R.string.ui_see_all_songs),
                 tint = AppleTextSecondary,
                 modifier = Modifier.size(20.dp)
             )
@@ -226,7 +229,7 @@ private fun LiveSongRowItem(
         ) {
             Icon(
                 imageVector = Icons.Default.MoreHoriz,
-                contentDescription = "Options for ${track.title}",
+                contentDescription = stringResource(R.string.options_for_track, track.title),
                 tint = AppleTextSecondary,
                 modifier = Modifier.size(20.dp)
             )
@@ -326,7 +329,7 @@ fun SongRowItem(
         ) {
             Icon(
                 imageVector = Icons.Default.MoreHoriz,
-                contentDescription = "Options for ${track.title}",
+                contentDescription = stringResource(R.string.options_for_track, track.title),
                 tint = AppleTextSecondary,
                 modifier = Modifier.size(20.dp)
             )
@@ -345,7 +348,7 @@ fun ExplicitBadge(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "E",
+            text = stringResource(R.string.ui_e),
             color = AppleExplicitBadge,
             fontSize = 9.sp,
             fontWeight = FontWeight.Bold,
