@@ -437,7 +437,6 @@ object UnisonLyricsProvider : LyricsProvider {
         }
     }
 }
-// Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 object BetterLyricsProvider : LyricsProvider {
     override val id = "betterlyrics"
@@ -593,6 +592,254 @@ object MegalobizLyricsProvider : LyricsProvider {
     }
 }
 
+object GeniusLyricsProvider : LyricsProvider {
+    override val id = "genius"
+    override val name = "Genius"
+    private const val BASE_URL = "https://genius.com"
+
+    override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
+        runCatching {
+            val cleanTitle = title.trim()
+            val cleanArtist = artist.trim()
+            if (cleanTitle.isBlank() || cleanArtist.isBlank()) throw IllegalArgumentException("Title and artist required")
+
+            val query = URLEncoder.encode("$cleanArtist $cleanTitle", StandardCharsets.UTF_8.name())
+            val searchUrl = "$BASE_URL/search?q=$query"
+            val req = Request.Builder()
+                .url(searchUrl)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                .header("Accept", "text/html")
+                .build()
+
+            val searchHtml = lyricsClient.newCall(req).execute().use { resp ->
+                if (!resp.isSuccessful) throw IllegalStateException("Genius search failed: ${resp.code}")
+                resp.body?.string().orEmpty()
+            }
+
+            val songUrlMatch = Regex("""href=["'](/[^"']*?-[^"']*?-lyrics)["']""").find(searchHtml)
+                ?: throw IllegalStateException("No song found on Genius")
+            val songUrl = "$BASE_URL${songUrlMatch.groupValues[1]}"
+
+            val lyricsReq = Request.Builder()
+                .url(songUrl)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                .header("Accept", "text/html")
+                .build()
+
+            val pageHtml = lyricsClient.newCall(lyricsReq).execute().use { resp ->
+                if (!resp.isSuccessful) throw IllegalStateException("Genius page failed: ${resp.code}")
+                resp.body?.string().orEmpty()
+            }
+
+            val lyricsMatch = Regex("""<div[^>]*class=["'][^"']*Lyrics__Container[^"']*["'][^>]*>(.*?)</div>""", RegexOption.DOT_MATCHES_ALL)
+                .find(pageHtml)
+            val rawLyrics = lyricsMatch?.groupValues?.get(1) ?: extractLyricsFromJsonLd(pageHtml).orEmpty()
+
+            val clean = rawLyrics
+                .replace(Regex("""<br\s*/?>"""), "\n")
+                .replace(Regex("""</p>|</div>|</br>"""), "\n")
+                .replace(Regex("""<[^>]+>"""), "")
+                .replace("&amp;", "&")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">")
+                .replace("&quot;", "\"")
+                .replace("&#39;", "'")
+                .trim()
+
+            if (clean.isBlank()) throw IllegalStateException("No lyrics content on Genius")
+            clean
+        }
+    }
+
+    private fun extractLyricsFromJsonLd(html: String): String? {
+        val jsonLdMatch = Regex("""<script type=["']application/ld\+json["']>(.*?)</script>""", RegexOption.DOT_MATCHES_ALL).find(html)
+        val jsonText = jsonLdMatch?.groupValues?.get(1) ?: return null
+        return try {
+            val obj = JSONObject(jsonText)
+            obj.optString("text", "").takeIf { it.isNotBlank() }
+        } catch (_: Exception) {
+            null
+        }
+    }
+}
+
+object AZLyricsProvider : LyricsProvider {
+    override val id = "azlyrics"
+    override val name = "AZLyrics"
+    private const val BASE_URL = "https://www.azlyrics.com"
+
+    override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
+        runCatching {
+            val cleanTitle = title.trim()
+            val cleanArtist = artist.trim()
+            if (cleanTitle.isBlank() || cleanArtist.isBlank()) throw IllegalArgumentException("Title and artist required")
+
+            val artistSlug = cleanArtist.lowercase().replace(Regex("[^a-z0-9]"), "")
+            val titleSlug = cleanTitle.lowercase().replace(Regex("[^a-z0-9]"), "")
+            val url = "$BASE_URL/lyrics/$artistSlug/$titleSlug.html"
+
+            val req = Request.Builder()
+                .url(url)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                .header("Accept", "text/html")
+                .build()
+
+            val html = lyricsClient.newCall(req).execute().use { resp ->
+                if (!resp.isSuccessful) throw IllegalStateException("AZLyrics failed: ${resp.code}")
+                resp.body?.string().orEmpty()
+            }
+
+            val startMarker = "<!-- Usage of azlyrics.com content by any third-party lyrics provider is prohibited by our licensing agreement. Sorry about that. -->"
+            val endMarker = "<!-- MxM banner -->"
+
+            val startIdx = html.indexOf(startMarker)
+            val endIdx = html.indexOf(endMarker, startIdx)
+
+            if (startIdx < 0 || endIdx < 0 || endIdx <= startIdx) {
+                throw IllegalStateException("No lyrics found on AZLyrics")
+            }
+
+            val rawLyrics = html.substring(startIdx + startMarker.length, endIdx)
+            val clean = rawLyrics
+                .replace(Regex("""<br\s*/?>"""), "\n")
+                .replace(Regex("""<[^>]+>"""), "")
+                .replace("&amp;", "&")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">")
+                .replace("&quot;", "\"")
+                .replace("&#39;", "'")
+                .trim()
+
+            if (clean.isBlank()) throw IllegalStateException("No lyrics content on AZLyrics")
+            clean
+        }
+    }
+}
+
+object MusixmatchProvider : LyricsProvider {
+    override val id = "musixmatch"
+    override val name = "Musixmatch"
+    private const val BASE_URL = "https://www.musixmatch.com"
+
+    override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
+        runCatching {
+            val cleanTitle = title.trim()
+            val cleanArtist = artist.trim()
+            if (cleanTitle.isBlank() || cleanArtist.isBlank()) throw IllegalArgumentException("Title and artist required")
+
+            val query = URLEncoder.encode("$cleanArtist $cleanTitle", StandardCharsets.UTF_8.name())
+            val searchUrl = "$BASE_URL/search/$query"
+            val req = Request.Builder()
+                .url(searchUrl)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                .header("Accept", "text/html")
+                .build()
+
+            val searchHtml = lyricsClient.newCall(req).execute().use { resp ->
+                if (!resp.isSuccessful) throw IllegalStateException("Musixmatch search failed: ${resp.code}")
+                resp.body?.string().orEmpty()
+            }
+
+            val songUrlMatch = Regex("""href=["'](/lyrics/[^"']+/[^"']+)["']""").find(searchHtml)
+                ?: throw IllegalStateException("No song found on Musixmatch")
+            val songUrl = "$BASE_URL${songUrlMatch.groupValues[1]}"
+
+            val lyricsReq = Request.Builder()
+                .url(songUrl)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                .header("Accept", "text/html")
+                .build()
+
+            val pageHtml = lyricsClient.newCall(lyricsReq).execute().use { resp ->
+                if (!resp.isSuccessful) throw IllegalStateException("Musixmatch page failed: ${resp.code}")
+                resp.body?.string().orEmpty()
+            }
+
+            val lyricsMatch = Regex("""<p class=["']?mxm-lyrics__content["']?[^>]*>(.*?)</p>""", RegexOption.DOT_MATCHES_ALL)
+                .find(pageHtml)
+            val rawLyrics = lyricsMatch?.groupValues?.get(1) ?: extractLyricsFromMeta(pageHtml).orEmpty()
+
+            val clean = rawLyrics
+                .replace(Regex("""<br\s*/?>"""), "\n")
+                .replace(Regex("""<[^>]+>"""), "")
+                .replace("&amp;", "&")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">")
+                .replace("&quot;", "\"")
+                .replace("&#39;", "'")
+                .trim()
+
+            if (clean.isBlank()) throw IllegalStateException("No lyrics content on Musixmatch")
+            clean
+        }
+    }
+
+    private fun extractLyricsFromMeta(html: String): String? {
+        val metaMatch = Regex("""<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']+)["']""").find(html)
+        val desc = metaMatch?.groupValues?.get(1) ?: return null
+        return desc.takeIf { it.contains("Lyrics", ignoreCase = true) }
+    }
+}
+
+object LetssingitProvider : LyricsProvider {
+    override val id = "letssingit"
+    override val name = "Letssingit"
+    private const val BASE_URL = "https://www.letssingit.com"
+
+    override suspend fun getLyrics(id: String, title: String, artist: String, durationSec: Int): Result<String> = withContext(Dispatchers.IO) {
+        runCatching {
+            val cleanTitle = title.trim()
+            val cleanArtist = artist.trim()
+            if (cleanTitle.isBlank() || cleanArtist.isBlank()) throw IllegalArgumentException("Title and artist required")
+
+            val query = URLEncoder.encode("$cleanArtist $cleanTitle", StandardCharsets.UTF_8.name())
+            val searchUrl = "$BASE_URL/search?artist_search=$cleanArtist&song_search=$cleanTitle"
+            val req = Request.Builder()
+                .url(searchUrl)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                .header("Accept", "text/html")
+                .build()
+
+            val searchHtml = lyricsClient.newCall(req).execute().use { resp ->
+                if (!resp.isSuccessful) throw IllegalStateException("Letssingit search failed: ${resp.code}")
+                resp.body?.string().orEmpty()
+            }
+
+            val songUrlMatch = Regex("""href=["'](/song/[^"']+/[^"']+)\.html["']""").find(searchHtml)
+                ?: throw IllegalStateException("No song found on Letssingit")
+            val songUrl = "$BASE_URL${songUrlMatch.groupValues[1]}.html"
+
+            val lyricsReq = Request.Builder()
+                .url(songUrl)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                .header("Accept", "text/html")
+                .build()
+
+            val pageHtml = lyricsClient.newCall(lyricsReq).execute().use { resp ->
+                if (!resp.isSuccessful) throw IllegalStateException("Letssingit page failed: ${resp.code}")
+                resp.body?.string().orEmpty()
+            }
+
+            val lyricsMatch = Regex("""<div class=["']?lyrics-text["']?[^>]*>(.*?)</div>""", RegexOption.DOT_MATCHES_ALL)
+                .find(pageHtml)
+            val rawLyrics = lyricsMatch?.groupValues?.get(1) ?: throw IllegalStateException("No lyrics found on Letssingit")
+
+            val clean = rawLyrics
+                .replace(Regex("""<br\s*/?>"""), "\n")
+                .replace(Regex("""<[^>]+>"""), "")
+                .replace("&amp;", "&")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">")
+                .replace("&quot;", "\"")
+                .replace("&#39;", "'")
+                .trim()
+
+            if (clean.isBlank()) throw IllegalStateException("No lyrics content on Letssingit")
+            clean
+        }
+    }
+}
+
 object LyricsHelper {
     private const val TAG = "LyricsHelper"
     private val memoryCache = ConcurrentHashMap<String, LoadedLyrics>()
@@ -609,6 +856,10 @@ object LyricsHelper {
         "youly" to YouLyLyricsProvider,
         "megalobiz" to MegalobizLyricsProvider,
         "youtube_music" to YouTubeLyricsProvider,
+        "genius" to GeniusLyricsProvider,
+        "azlyrics" to AZLyricsProvider,
+        "musixmatch" to MusixmatchProvider,
+        "letssingit" to LetssingitProvider,
     )
 
     val PROVIDER_METADATA: List<LyricsProviderInfo> = listOf(
@@ -623,6 +874,10 @@ object LyricsHelper {
         LyricsProviderInfo("youly", "YouLy", "Multi-mirror TTML & LRC lyrics service", com.darkxvenom.itune.R.drawable.lyrics_provider_youly),
         LyricsProviderInfo("megalobiz", "Megalobiz", "Crowdsourced synchronized LRC archive", com.darkxvenom.itune.R.drawable.lyrics_provider_megalobiz),
         LyricsProviderInfo("youtube_music", "YouTube Music", "Official YouTube Music lyrics metadata", com.darkxvenom.itune.R.drawable.lyrics_provider_youtube_music),
+        LyricsProviderInfo("genius", "Genius", "Crowdsourced lyrics from Genius.com", com.darkxvenom.itune.R.drawable.lyrics_provider_genius),
+        LyricsProviderInfo("azlyrics", "AZLyrics", "Large archive of song lyrics", com.darkxvenom.itune.R.drawable.lyrics_provider_azlyrics),
+        LyricsProviderInfo("musixmatch", "Musixmatch", "Licensed lyrics from Musixmatch", com.darkxvenom.itune.R.drawable.lyrics_provider_musixmatch),
+        LyricsProviderInfo("letssingit", "Letssingit", "Community-synced lyrics archive", com.darkxvenom.itune.R.drawable.lyrics_provider_letssingit),
     )
 
     fun getActiveProviders(): List<LyricsProvider> {
