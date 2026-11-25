@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.home
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -259,7 +261,7 @@ private fun SpotifyHeroCard(
                             lineHeight = 26.sp, maxLines = 2, overflow = TextOverflow.Ellipsis,
                         )
                     }
-                    Text("Playlist • Spotify", color = Color(0xCCFFFFFF), fontSize = 13.sp)
+                    Text(stringResource(R.string.ui_playlist_spotify), color = Color(0xCCFFFFFF), fontSize = 13.sp)
                 }
             }
 
@@ -292,7 +294,7 @@ private fun SpotifyHeroCard(
                     ) {
                         Icon(painterResource(R.drawable.ic_preview_wave), null, tint = Color.White, modifier = Modifier.size(20.dp))
                         Spacer(Modifier.width(8.dp))
-                        Text("Preview", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.ui_preview_f1fbb2b4), color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
                     }
                     Spacer(Modifier.weight(1f))
                     Box {
@@ -395,31 +397,31 @@ private fun GlassMenu(
                 )
                 .padding(vertical = 6.dp),
         ) {
-            GlassItem(Icons.Rounded.PlayArrow, "Play") { onDismiss(); onPlay() }
+            GlassItem(Icons.Rounded.PlayArrow, stringResource(R.string.play)) { onDismiss(); onPlay() }
             GlassDivider()
-            GlassItem(Icons.Rounded.QueueMusic, "Open Playlist") { onDismiss(); onOpen() }
+            GlassItem(Icons.Rounded.QueueMusic, stringResource(R.string.open_playlist)) { onDismiss(); onOpen() }
             GlassDivider()
-            GlassItem(Icons.Rounded.Share, "Share") {
+            GlassItem(Icons.Rounded.Share, stringResource(R.string.share)) {
                 onDismiss()
                 link?.let {
                     val send = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
                         putExtra(Intent.EXTRA_TEXT, "$title \u2022 $it")
                     }
-                    context.startActivity(Intent.createChooser(send, "Share playlist").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                    context.startActivity(Intent.createChooser(send, context.getString(R.string.share_playlist_link)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 }
             }
             GlassDivider()
-            GlassItem(Icons.Rounded.ContentCopy, "Copy Link") {
+            GlassItem(Icons.Rounded.ContentCopy, stringResource(R.string.ui_copy_link)) {
                 onDismiss()
                 link?.let {
                     (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
                         .setPrimaryClip(ClipData.newPlainText("Playlist link", it))
-                    Toast.makeText(context, "Link copied", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_link_copied), Toast.LENGTH_SHORT).show()
                 }
             }
             GlassDivider()
-            GlassItem(Icons.Rounded.OpenInNew, "Open in Spotify") {
+            GlassItem(Icons.Rounded.OpenInNew, stringResource(R.string.open_in_spotify)) {
                 onDismiss()
                 link?.let {
                     runCatching {
