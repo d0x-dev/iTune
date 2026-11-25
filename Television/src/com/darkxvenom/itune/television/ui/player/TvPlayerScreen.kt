@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.television.ui.player
 
+
+import androidx.compose.ui.res.stringResource
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -397,13 +399,13 @@ private fun NowPlayingWithLyricsPane(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_itune_waves),
-                contentDescription = "iTune",
+                contentDescription = stringResource(R.string.app_name),
                 colorFilter = ColorFilter.tint(Color.White),
                 modifier = Modifier.size(22.dp),
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "iTune",
+                text = stringResource(R.string.app_name),
                 color = Color.White,
                 fontSize = 18.sp,
                 fontFamily = SFProDisplay,
@@ -443,7 +445,7 @@ private fun NowPlayingWithLyricsPane(
                 val shuffleActive = MusicPlayerState.shuffleEnabled
                 TvDrawableButton(
                     drawableRes = if (shuffleActive) R.drawable.shuffle_on else R.drawable.shuffle,
-                    contentDescription = "Shuffle",
+                    contentDescription = stringResource(R.string.shuffle),
                     onClick = { MusicPlayerState.toggleShuffle() },
                     active = shuffleActive,
                     size = 32.dp,
@@ -460,7 +462,7 @@ private fun NowPlayingWithLyricsPane(
                 }
                 TvDrawableButton(
                     drawableRes = repeatRes,
-                    contentDescription = "Repeat",
+                    contentDescription = stringResource(R.string.ui_repeat),
                     onClick = { MusicPlayerState.toggleRepeat() },
                     active = repeatMode != Player.REPEAT_MODE_OFF,
                     size = 32.dp,
@@ -471,7 +473,7 @@ private fun NowPlayingWithLyricsPane(
                 val endlessActive = MusicPlayerState.endlessQueueEnabled
                 TvDrawableButton(
                     drawableRes = R.drawable.ic_infinite_queue,
-                    contentDescription = "Endless queue",
+                    contentDescription = stringResource(R.string.ui_endless_queue_b15dc536),
                     onClick = { MusicPlayerState.toggleEndlessQueue() },
                     active = endlessActive,
                     size = 32.dp,
@@ -518,7 +520,7 @@ private fun NowPlayingWithLyricsPane(
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.play),
-                                contentDescription = "Play",
+                                contentDescription = stringResource(R.string.play),
                                 colorFilter = ColorFilter.tint(Color.White),
                                 modifier = Modifier.size(46.dp),
                             )
@@ -583,7 +585,7 @@ private fun NowPlayingWithLyricsPane(
                         val fav = track?.let { MusicPlayerState.isFavorite(it.id) } == true
                         TvDrawableButton(
                             drawableRes = if (fav) R.drawable.ic_star_filled else R.drawable.ic_star_outline,
-                            contentDescription = "Favorite",
+                            contentDescription = stringResource(R.string.ui_favorite),
                             onClick = { track?.let { MusicPlayerState.toggleFavorite(it) } },
                             active = fav,
                             size = 32.dp,
@@ -597,7 +599,7 @@ private fun NowPlayingWithLyricsPane(
 
                         TvDrawableButton(
                             drawableRes = R.drawable.more_horiz,
-                            contentDescription = "More",
+                            contentDescription = stringResource(R.string.more),
                             onClick = onOpenPopup,
                             size = 32.dp,
                             iconSize = 16.dp,
@@ -724,7 +726,7 @@ private fun NowPlayingWithLyricsPane(
                     ) {
                         TvDrawableButton(
                             drawableRes = R.drawable.ic_menu_artist,
-                            contentDescription = "Artist Info",
+                            contentDescription = stringResource(R.string.ui_artist_info),
                             onClick = onOpenArtist,
                             size = 34.dp,
                             iconSize = 17.dp,
@@ -733,7 +735,7 @@ private fun NowPlayingWithLyricsPane(
 
                         TvDrawableButton(
                             drawableRes = R.drawable.lyrics,
-                            contentDescription = "Lyrics",
+                            contentDescription = stringResource(R.string.ui_lyrics),
                             onClick = onToggleLyrics,
                             active = isLyrics,
                             size = 34.dp,
@@ -744,7 +746,7 @@ private fun NowPlayingWithLyricsPane(
 
                         TvDrawableButton(
                             drawableRes = R.drawable.queue_music,
-                            contentDescription = "Queue",
+                            contentDescription = stringResource(R.string.ui_queue),
                             onClick = onShowQueue,
                             active = false,
                             size = 34.dp,
@@ -822,13 +824,13 @@ private fun QueuePane(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_itune_waves),
-                contentDescription = "iTune",
+                contentDescription = stringResource(R.string.app_name),
                 colorFilter = ColorFilter.tint(Color.White),
                 modifier = Modifier.size(22.dp),
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "iTune",
+                text = stringResource(R.string.app_name),
                 color = Color.White,
                 fontSize = 18.sp,
                 fontFamily = SFProDisplay,
@@ -846,7 +848,7 @@ private fun QueuePane(
             val shuffleActive = MusicPlayerState.shuffleEnabled
             TvDrawableButton(
                 drawableRes = if (shuffleActive) R.drawable.shuffle_on else R.drawable.shuffle,
-                contentDescription = "Shuffle",
+                contentDescription = stringResource(R.string.shuffle),
                 onClick = { MusicPlayerState.toggleShuffle() },
                 active = shuffleActive,
                 size = 34.dp,
@@ -863,7 +865,7 @@ private fun QueuePane(
             }
             TvDrawableButton(
                 drawableRes = repeatRes,
-                contentDescription = "Repeat",
+                contentDescription = stringResource(R.string.ui_repeat),
                 onClick = { MusicPlayerState.toggleRepeat() },
                 active = repeatMode != Player.REPEAT_MODE_OFF,
                 size = 34.dp,
@@ -874,7 +876,7 @@ private fun QueuePane(
             val endlessActive = MusicPlayerState.endlessQueueEnabled
             TvDrawableButton(
                 drawableRes = R.drawable.ic_infinite_queue,
-                contentDescription = "Endless queue",
+                contentDescription = stringResource(R.string.ui_endless_queue_b15dc536),
                 onClick = { MusicPlayerState.toggleEndlessQueue() },
                 active = endlessActive,
                 size = 34.dp,
@@ -884,7 +886,7 @@ private fun QueuePane(
 
             TvDrawableButton(
                 drawableRes = R.drawable.lyrics,
-                contentDescription = "Lyrics",
+                contentDescription = stringResource(R.string.ui_lyrics),
                 onClick = onShowLyrics,
                 active = false,
                 size = 34.dp,
@@ -897,7 +899,7 @@ private fun QueuePane(
         if (displayQueue.isEmpty()) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(
-                    text = "Queue is empty",
+                    text = stringResource(R.string.ui_queue_is_empty),
                     color = Color.White.copy(alpha = 0.50f),
                     fontSize = 16.sp,
                     fontFamily = SFProDisplay,
@@ -995,7 +997,7 @@ private fun QueuePane(
                                     ) {
                                         Image(
                                             painter = painterResource(id = R.drawable.play),
-                                            contentDescription = "Play",
+                                            contentDescription = stringResource(R.string.play),
                                             colorFilter = ColorFilter.tint(Color.White),
                                             modifier = Modifier.size(48.dp),
                                         )
@@ -1095,7 +1097,7 @@ private fun QueuePane(
 
                                 TvDrawableButton(
                                     drawableRes = R.drawable.more_horiz,
-                                    contentDescription = "More",
+                                    contentDescription = stringResource(R.string.more),
                                     onClick = onOpenPopup,
                                     size = 36.dp,
                                     iconSize = 18.dp,
@@ -1377,7 +1379,7 @@ private fun TvOptionsPopup(
                             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
                             val clip = ClipData.newPlainText("iTune Link", "https://music.youtube.com/watch?v=${track.id}")
                             clipboard?.setPrimaryClip(clip)
-                            Toast.makeText(context, "Song link copied to clipboard", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_song_link_copied_to_clipboard), Toast.LENGTH_SHORT).show()
                             onDismiss()
                         },
                     )
@@ -1426,7 +1428,7 @@ private fun TvOptionsPopup(
                     Spacer(Modifier.height(8.dp))
 
                     Text(
-                        text = "Current Offset: ${MusicPlayerState.lyricsOffsetMs} ms",
+                        text = stringResource(R.string.ui_current_offset_ms, MusicPlayerState.lyricsOffsetMs),
                         color = Color.White.copy(alpha = 0.85f),
                         fontSize = 16.sp,
                         fontFamily = SFProDisplay,
@@ -1486,7 +1488,7 @@ private fun TvOptionsPopup(
                     val session = ishareSession
                     if (session != null) {
                         Text(
-                            text = "Connected Session: ${session.code}",
+                            text = stringResource(R.string.ui_connected_session, session.code),
                             color = Color(0xFF30D158),
                             fontSize = 15.sp,
                             fontFamily = SFProDisplay,
@@ -1509,7 +1511,7 @@ private fun TvOptionsPopup(
                             focusRequester = firstFocus,
                             onClick = {
                                 IShareSyncManager.leaveSession()
-                                Toast.makeText(context, "Left iShare Session", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_left_ishare_session), Toast.LENGTH_SHORT).show()
                             },
                         )
                     } else {
@@ -1521,7 +1523,7 @@ private fun TvOptionsPopup(
                             onClick = {
                                 IShareSyncManager.start(context)
                                 IShareSyncManager.startLanHost()
-                                Toast.makeText(context, "iShare LAN Host Started!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_ishare_lan_host_started), Toast.LENGTH_SHORT).show()
                             },
                         )
 
@@ -1533,7 +1535,7 @@ private fun TvOptionsPopup(
                             onClick = {
                                 IShareSyncManager.start(context)
                                 IShareSyncManager.scanLanHosts()
-                                Toast.makeText(context, "Scanning LAN for sessions…", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_scanning_lan_for_sessions), Toast.LENGTH_SHORT).show()
                             },
                         )
 
@@ -1546,7 +1548,7 @@ private fun TvOptionsPopup(
                                 onClick = {
                                     IShareSyncManager.start(context)
                                     IShareSyncManager.joinLanSession(host.address)
-                                    Toast.makeText(context, "Joining ${host.hostName}…", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.toast_joining, host.hostName), Toast.LENGTH_SHORT).show()
                                 },
                             )
                         }
@@ -1559,7 +1561,7 @@ private fun TvOptionsPopup(
 
                     if (playlists.isEmpty()) {
                         Text(
-                            text = "No user playlists found. Create one in Library!",
+                            text = stringResource(R.string.ui_no_user_playlists_found_create_one_in_library),
                             color = Color.White.copy(alpha = 0.50f),
                             fontSize = 14.sp,
                             fontFamily = SFProDisplay,
@@ -1588,7 +1590,7 @@ private fun TvOptionsPopup(
                                             artistId = track.artistId,
                                         )
                                         LibraryStore.addSongsToUserPlaylist(context, p.id, listOf(metadata))
-                                        Toast.makeText(context, "Added to ${p.name}", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, context.getString(R.string.toast_added_to, p.name), Toast.LENGTH_SHORT).show()
                                         onDismiss()
                                     },
                                 )
@@ -1615,7 +1617,7 @@ private fun PopupBackRow(
     ) {
         Icon(
             imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-            contentDescription = "Back",
+            contentDescription = stringResource(R.string.back),
             tint = Color.White,
             modifier = Modifier.size(20.dp),
         )
@@ -1714,7 +1716,7 @@ private fun PopupProviderRow(
         if (isEnabled) {
             Icon(
                 imageVector = Icons.Rounded.Check,
-                contentDescription = "Enabled",
+                contentDescription = stringResource(R.string.ui_enabled),
                 tint = if (focused) Color.Black else Color(0xFF30D158),
                 modifier = Modifier.size(18.dp),
             )
@@ -1990,7 +1992,7 @@ private fun TvProgressBar(modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.Medium,
             )
             Text(
-                text = "-" + formatTime((duration - position).coerceAtLeast(0L)),
+                text = stringResource(R.string.ui_text_3bc15c8aae) + formatTime((duration - position).coerceAtLeast(0L)),
                 color = Color.White.copy(alpha = 0.75f),
                 fontSize = 12.5.sp,
                 fontFamily = SFProDisplay,
