@@ -850,7 +850,7 @@ fun LibraryTopBarActionButtons(
     IconButton(onClick = controller::toggleSearch) {
         Icon(
             imageVector = ITubeIcons.Search,
-            contentDescription = "Search",
+            contentDescription = stringResource(R.string.ui_search),
             tint = if (controller.searchOpen) LibraryCrimsonAccent else Color.White,
             modifier = Modifier.size(21.dp),
         )
@@ -862,7 +862,7 @@ fun LibraryTopBarActionButtons(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.Sort,
-                contentDescription = "Sort",
+                contentDescription = stringResource(R.string.ui_sort),
                 tint = Color.White,
                 modifier = Modifier.size(21.dp),
             )
@@ -1034,7 +1034,7 @@ fun LibraryFilterBar(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Close,
-                    contentDescription = "Clear",
+                    contentDescription = stringResource(R.string.ui_clear),
                     tint = Color.White.copy(alpha = 0.72f),
                     modifier = Modifier.size(17.dp),
                 )
@@ -1435,7 +1435,7 @@ fun LibraryScreenOverlayPopups(
                             {
                                 controller.clearMenus()
                                 copyPlaylistShareLink(controller.context, pl.name, url)
-                                controller.showToast("Share link copied")
+                                controller.showToast(controller.context.getString(R.string.share_link_copied))
                             }
                         },
                         onRename = onOpenRename,
@@ -1492,7 +1492,7 @@ fun LibraryScreenOverlayPopups(
                     Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
                         if (req.destination == LibraryDestination.PLAYLISTS) {
                             IosMenuRow(
-                                label = "Create Playlist",
+                                label = stringResource(R.string.create_playlist),
                                 description = "Create empty or add songs",
                                 icon = SfIcons.AddToPlaylist,
                                 iconTint = LibraryCrimsonAccent,
@@ -1520,7 +1520,7 @@ fun LibraryScreenOverlayPopups(
                                 )
                                 IosMenuQuickAction(
                                     icon = SfIcons.Radio,
-                                    label = "Radio",
+                                    label = stringResource(R.string.radio),
                                     tint = LibraryCrimsonAccent,
                                     onClick = {
                                         controller.clearMenus()
@@ -1550,7 +1550,7 @@ fun LibraryScreenOverlayPopups(
                             IosMenuSeparator()
                         }
                         IosMenuRow(
-                            label = "Search",
+                            label = stringResource(R.string.search),
                             icon = ITubeIcons.Search,
                             onClick = {
                                 controller.clearMenus()
@@ -1576,7 +1576,7 @@ fun LibraryScreenOverlayPopups(
                             IosMenuSeparator()
                             pl.shareUrl?.let { url ->
                                 IosMenuRow(
-                                    label = "Share Playlist Link",
+                                    label = stringResource(R.string.share_playlist_link),
                                     description = if (pl.isSpotifyAccount) "Spotify link" else "YouTube Music link",
                                     icon = SfIcons.Share,
                                     onClick = {
@@ -1585,22 +1585,22 @@ fun LibraryScreenOverlayPopups(
                                     },
                                 )
                                 IosMenuRow(
-                                    label = "Copy Share Link",
+                                    label = stringResource(R.string.copy_share_link),
                                     icon = Icons.Rounded.ContentCopy,
                                     onClick = {
                                         controller.clearMenus()
                                         copyPlaylistShareLink(controller.context, pl.name, url)
-                                        controller.showToast("Share link copied")
+                                        controller.showToast(controller.context.getString(R.string.share_link_copied))
                                     },
                                 )
                             }
                             IosMenuRow(
-                                label = "Rename Playlist",
+                                label = stringResource(R.string.rename_playlist),
                                 icon = Icons.Rounded.Edit,
                                 onClick = onOpenRename,
                             )
                             IosMenuRow(
-                                label = "Delete Playlist",
+                                label = stringResource(R.string.delete_playlist),
                                 icon = SfIcons.Trash,
                                 iconTint = LibraryCrimsonAccent,
                                 onClick = {
@@ -1714,7 +1714,7 @@ private fun LibraryCollectionActionsMenu(
             ActionRow(
                 icon = SfIcons.Trash,
                 label = if (entry.type == BrowseType.ARTIST) {
-                    "Remove from Favorite Artists"
+                    stringResource(R.string.remove_favorite_artist)
                 } else {
                     stringResource(R.string.remove_from_library)
                 },
@@ -1755,7 +1755,7 @@ private fun LibraryUserPlaylistActionsMenu(
                     )
                     IosMenuQuickAction(
                         icon = SfIcons.Radio,
-                        label = "Radio",
+                        label = stringResource(R.string.radio),
                         tint = LibraryCrimsonAccent,
                         onClick = onStartRadio,
                     )
@@ -1783,7 +1783,7 @@ private fun LibraryUserPlaylistActionsMenu(
             if (onShareLink != null) {
                 ActionRow(
                     icon = SfIcons.Share,
-                    label = "Share Playlist Link",
+                    label = stringResource(R.string.share_playlist_link),
                     description = if (playlist.isSpotifyAccount) "Spotify link" else "YouTube Music link",
                     onClick = onShareLink,
                 )
@@ -1791,18 +1791,18 @@ private fun LibraryUserPlaylistActionsMenu(
             if (onCopyLink != null) {
                 ActionRow(
                     icon = Icons.Rounded.ContentCopy,
-                    label = "Copy Share Link",
+                    label = stringResource(R.string.copy_share_link),
                     onClick = onCopyLink,
                 )
             }
             ActionRow(
                 icon = Icons.Rounded.Edit,
-                label = "Rename Playlist",
+                label = stringResource(R.string.rename_playlist),
                 onClick = onRename,
             )
             ActionRow(
                 icon = SfIcons.Trash,
-                label = "Delete Playlist",
+                label = stringResource(R.string.delete_playlist),
                 tint = LibraryCrimsonAccent,
                 onClick = onDelete,
             )
