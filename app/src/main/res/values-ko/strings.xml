@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">취소</string>
+    <string name="save">저장</string>
+    <string name="close">닫기</string>
+    <string name="done">완료</string>
+    <string name="back">뒤로</string>
+    <string name="play">재생</string>
+    <string name="shuffle">셔플</string>
+    <string name="retry">다시 시도</string>
+    <string name="try_again">다시 시도</string>
+    <string name="more">더 보기</string>
+    <string name="less">간략히 보기</string>
+    <string name="share">공유</string>
+    <string name="show_all">모두 보기</string>
+    <string name="top_songs">인기 곡</string>
+    <string name="suggested">추천</string>
+    <string name="subscribers">구독자 %1$s명</string>
+    <string name="monthly_listeners">월간 청취자 %1$s명</string>
+    <string name="signed_by">%1$s 서명</string>
+    <string name="about_artist">아티스트 정보</string>
+    <string name="about_album">앨범 정보</string>
+    <string name="recent_album">최근 앨범</string>
+    <string name="recent_ep">최근 EP</string>
+    <string name="recent_single">최근 싱글</string>
+    <string name="subscribe">구독</string>
+    <string name="unsubscribe">구독 취소</string>
+    <string name="add_to_library">보관함에 추가</string>
+    <string name="remove_from_library">보관함에서 삭제</string>
+    <string name="add_to_playlist">재생목록에 추가</string>
+    <string name="remove_from_playlist">이 재생목록에서 삭제</string>
+    <string name="play_next">다음에 재생</string>
+    <string name="add_to_queue">대기열에 추가</string>
+    <string name="start_radio">라디오 시작</string>
+    <string name="open">열기</string>
+    <string name="open_album">앨범 열기</string>
+    <string name="open_artist">아티스트 열기</string>
+    <string name="open_playlist">재생목록 열기</string>
+    <string name="song_info">곡 정보</string>
+    <string name="song_info_album">앨범</string>
+    <string name="song_info_release_date">발매일</string>
+    <string name="song_info_views">재생 / 조회수</string>
+    <string name="song_info_likes">좋아요</string>
+    <string name="song_info_comments">댓글</string>
+    <string name="song_info_unavailable">정보 없음</string>
+    <string name="song_info_error">일부 정보를 불러오지 못했습니다.</string>
+    <string name="song_info_retry">이름 *</string>
+    <string name="like">좋아요</string>
+    <string name="dislike">싫어요</string>
+    <string name="download">다운로드</string>
+    <string name="download_all">모두 다운로드</string>
+    <string name="downloaded">다운로드 완료</string>
+    <string name="downloading">다운로드 중</string>
+    <string name="download_notification_title">다운로드 중</string>
+    <string name="delete_download">다운로드 삭제</string>
+    <string name="delete_download_confirmation">이 기기에서 “%1$s”을(를) 삭제할까요? 확인하려면 다시 탭하세요.</string>
+    <string name="delete">삭제</string>
+    <string name="queued">대기열에 추가됨</string>
+    <string name="saved_to_downloads">다운로드에 저장됨</string>
+    <string name="search_this_list">이 목록 검색</string>
+    <string name="clear_search">검색 지우기</string>
+    <string name="close_search">검색 닫기</string>
+    <string name="nothing_matches">“%1$s”에 해당하는 항목이 없습니다</string>
+    <string name="sort_songs">곡 정렬</string>
+    <string name="artist">아티스트</string>
+    <string name="album">앨범</string>
+    <string name="playlist">재생목록</string>
+    <string name="folder">폴더</string>
+    <string name="songs">곡</string>
+    <string name="song_count">%1$d이름 *</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$d제품정보</item>
+        <item quantity="other">%1$d제품정보</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$d1시간</item>
+        <item quantity="other">%1$d1시간</item>
+    </plurals>
+    <string name="one_hour">1시간</string>
+    <string name="hours_minutes_short">%1$d₢ 킹%2$dm/분</string>
+    <string name="minutes_short">%1$d소요시간</string>
+    <string name="pin">고정</string>
+    <string name="unpin">고정 해제</string>
+    <string name="tile_identify_music">음악을 식별</string>
+    <string name="tile_identify_music_desc">당신과 함께 노래를 알아iTune</string>
+    <string name="widget_itune_description">제품정보iTune홈 화면에서 재생</string>
+    <string name="app_language">앱 언어</string>
+    <string name="app_language_subtitle">메뉴, 버튼 및 메시지 언어</string>
+    <string name="app_language_description">iTune 인터페이스에 사용할 언어를 선택하세요.</string>
+    <string name="system_default_language">시스템 기본값</string>
+    <string name="follow_device_language">기기 언어 사용</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">영어 인터페이스 사용</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface" />
+    <string name="hindi_interface_language">Hindi 인터페이스 언어</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">스페인어 인터페이스 사용</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">프랑스 공용영역을 사용하십시오</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">네덜란드 인터페이스 사용</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">러시아 공용영역을 사용하십시오</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">Urdu 공용영역을 사용하십시오</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">중국 공용영역을 사용하십시오</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">독일 공용영역을 사용하십시오</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">포르투갈어 인터페이스 사용</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">이탈리아어 인터페이스</string>
+    <string name="japanese_language">日本語</string>
+    <string name="japanese_interface">일본어 인터페이스 사용</string>
+    <string name="favorite_artist">좋아하는 아티스트</string>
+    <string name="remove_favorite_artist">즐겨찾는 아티스트에서 삭제</string>
+    <string name="add_to_favorite_artists">즐겨찾는 아티스트에 추가</string>
+    <string name="removed_from_artists">아티스트 목록에서 삭제됨</string>
+    <string name="added_to_artists">아티스트 목록에 추가됨</string>
+    <string name="play_top_songs">인기 곡 재생</string>
+    <string name="play_album">앨범 재생</string>
+    <string name="play_playlist">재생목록 재생</string>
+    <string name="create_new_playlist">새 재생목록 만들기</string>
+    <string name="create_playlist">재생목록 만들기</string>
+    <string name="radio">라디오</string>
+    <string name="search">검색</string>
+    <string name="share_playlist_link">재생목록 링크 공유</string>
+    <string name="copy_share_link">공유 링크 복사</string>
+    <string name="rename_playlist">재생목록 이름 변경</string>
+    <string name="delete_playlist">재생목록 삭제</string>
+    <string name="share_link_copied">공유 링크 copied</string>
+    <string name="playlist_removed">Playlist 제거</string>
+    <string name="playlist_no_longer_available">이 재생 목록은 더 이상 사용할 수 없습니다.</string>
+    <string name="empty_playlist">빈 재생 목록</string>
+    <string name="filter_playlists">필터 재생 목록 ...</string>
+    <string name="filter_albums">필터 앨범 ...</string>
+    <string name="favorite">이름 *</string>
+    <string name="tap_to_start_listening">듣기 시작</string>
+    <string name="time_zero" formatted="false">1:1문의</string>
+    <string name="previous">이름 *</string>
+    <string name="play_or_pause">놀이 또는 일시 중지</string>
+    <string name="next">이름 *</string>
+    <string name="repeat">기타 제품</string>
+    <string name="open_title_options">기타%1$s옵션 정보</string>
+    <string name="reset_page_title">지원하다%1$s</string>
+    <string name="remove_device">기타 제품%1$s</string>
+    <string name="profile_name">%1$s제품정보</string>
+    <string name="download_option">다운로드%1$s</string>
+    <string name="open_entry_options">기타%1$s옵션 정보</string>
+    <string name="avatar_number">아바타%1$s</string>
+    <string name="options_for_track">옵션 정보%1$s</string>
+    <string name="preparing">지원하다</string>
+    <string name="share_image">공유 이미지</string>
+    <string name="speed_pitch_locked">속도 &amp; 피치는 함께 잠겼습니다</string>
+    <string name="independent_bpm_tempo_key_pitch">독립적 인 BPM tempo 및 키 피치</string>
+    <string name="spatial_reflections_delay">공간 반사 (Spatial 반사)%1$d사이트맵</string>
+    <string name="on">에 의해</string>
+    <string name="off">이름 *</string>
+    <string name="dynamic_island_active">동적인 섬 활동</string>
+    <string name="dynamic_island_description">밖에서 부드럽게 표시iTune재생 중</string>
+    <string name="preparing_download">다운로드 준비 ...</string>
+    <string name="listening_for_music">음악 듣기 ...</string>
+    <string name="hold_phone_near_sound_source">사운드 소스 근처 전화</string>
+    <string name="unable_to_recognize_audio">오디오 인식 가능</string>
+    <string name="song_identified">송 Identified</string>
+    <string name="play_in_itune">다운로드iTune</string>
+    <string name="view_details">더 보기</string>
+    <string name="no_match_found">찾을 수 없음</string>
+    <string name="recognition_retry_message">노래를 식별 할 수 없습니다. 다시 시도하십시오.</string>
+    <string name="microphone_permission_needed">필요한 마이크 권한</string>
+    <string name="microphone_permission_help">마이크 액세스를 허용하기 위해 탭iTune음악을 식별 할 수 있습니다.</string>
+    <string name="recognition_failed">인식 실패</string>
+    <string name="tap_install_to_continue">계속하기</string>
+    <string name="detail_artist">이름 *</string>
+    <string name="detail_album">한국어</string>
+    <string name="set_default_ringtone_target">기본 설정%1$s·</string>
+    <string name="added_ringtone_target">더 보기%1$s. 사운드 설정에서 선택합니다.</string>
+    <string name="last_fm_connected_as">Last.fm연결하기%1$s</string>
+    <string name="discord_connected_as">Discord 연결%1$s</string>
+    <string name="tv_encrypted_backup_saved">암호화된 백업 Saved (%1$d한국어</string>
+    <string name="sign_in_verification_failed">로그인 실패</string>
+    <string name="could_not_rename_playlist">재생 목록을 이름을 변경할 수 없습니다.YouTube Music</string>
+    <string name="could_not_create_playlist">재생 목록을 만들 수 없습니다</string>
+    <string name="daily_encrypted_backup_enabled">매일 암호화된 백업 활성화</string>
+    <string name="cookie_login_failed">쿠키 로그인 실패</string>
+    <string name="could_not_open_last_fm">열 수 없습니다Last.fm</string>
+    <string name="last_fm_sign_in_failed">Last.fm로그인 실패</string>
+    <string name="discord_sign_in_failed">실패의 Discord 표시</string>
+    <string name="could_not_open_android_installer">Android의 설치 프로그램을 열 수 없습니다.</string>
+    <string name="added_title_to_queue">추가 “%1$s” 큐에</string>
+    <string name="automatic_backup_disabled">자동 백업 비활성화</string>
+    <string name="download_failed">다운로드 실패</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">설치하기</string>
+    <string name="ui_text_9ef6a80f91" formatted="false">10대</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">%+.1f의</string>
+    <string name="ui_accounts" formatted="false">+ 계정</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0.0s의</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5.0s의</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">- - -</string>
+    <string name="ui_text_7be28ad40e" formatted="false">-5.0s의</string>
+    <string name="ui_text_a6dee6102d" formatted="false">오후 11시</string>
+    <string name="ui_text_1a19c52178" formatted="false">오전 12시</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">오후 12시</string>
+    <string name="ui_text_4e37ece023" formatted="false">15ms 반대 지연 낮은 패스 블렌드</string>
+    <string name="ui_text_76b322ac42" formatted="false">2X 빠른 속도</string>
+    <string name="ui_text_505c74ed85" formatted="false">3D 탁구</string>
+    <string name="ui_text_db9b8df506" formatted="false">오전 6시</string>
+    <string name="ui_text_2812537f20" formatted="false">오후 6시</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080년</string>
+    <string name="ui_text_05a79f06cf" formatted="false">::</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">최고의 곡, 아티스트, 앨범 및 습관을 가진 전체 그림.</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">새로운 버전이 준비되어 있습니다.</string>
+    <string name="ui_account" formatted="false">계좌정보</string>
+    <string name="ui_account_options" formatted="false">계정 옵션</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">계정</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">청각적인 머리 shadow Crossfeed</string>
+    <string name="ui_activate" formatted="false">지원하다</string>
+    <string name="ui_active" formatted="false">지원하다</string>
+    <string name="ui_active_days" formatted="false">행동 일</string>
+    <string name="ui_active_profile" formatted="false">Active 프로파일</string>
+    <string name="ui_activity_by_day" formatted="false">활동 일</string>
+    <string name="ui_add_account" formatted="false">계정 만들기</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">사용자 지정 HTTP addon 서버 추가 (speaking /manifest.json, /search, /stream) 또는 sandbox-isolated QuickJS 모듈.</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">Future Songs를 자동으로 추가</string>
+    <string name="ui_add_streaming_source" formatted="false">관련 링크</string>
+    <string name="ui_add_to_playlist" formatted="false">Playlist에 추가</string>
+    <string name="ui_added_playlists" formatted="false">Playlists 추가</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">정연한 앨범 삽화의 구석 가장자리를 조정하십시오.</string>
+    <string name="ui_advanced_cookie_login" formatted="false">고급 쿠키 로그인</string>
+    <string name="ui_advanced_login" formatted="false">광고 LOGIN</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">고급 로그인</string>
+    <string name="ui_ai_engine" formatted="false">AI 엔진</string>
+    <string name="ui_ai_provider" formatted="false">AI 공급자</string>
+    <string name="ui_albums" formatted="false">언어 선택</string>
+    <string name="ui_all_news" formatted="false">모든 뉴스</string>
+    <string name="ui_allow_downloads" formatted="false">다운로드</string>
+    <string name="ui_allow_microphone" formatted="false">마이크로폰</string>
+    <string name="ui_allow_microphone_access" formatted="false">마이크 액세스를 허용</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">상승 반사 L &lt;-&gt; R</string>
+    <string name="ui_always_on_display" formatted="false">항상 전시</string>
+    <string name="ui_am" formatted="false">₢ 킹</string>
+    <string name="ui_api_base_url" formatted="false">API 기본 URL</string>
+    <string name="ui_artist" formatted="false">이름 *</string>
+    <string name="ui_artist_name" formatted="false">아티스트 이름</string>
+    <string name="ui_artists" formatted="false">아티스트</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">예술가, 노래, 앨범, 재생 목록 ...</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">아티스트, 노래, 작사 및 기타</string>
+    <string name="ui_at_least_8_characters" formatted="false">적어도 8개의 특성</string>
+    <string name="ui_auto_sleep_timer" formatted="false">자동 수면 타이머</string>
+    <string name="ui_auto_activation_timeout" formatted="false">자동 이용 시간</string>
+    <string name="ui_avatar" formatted="false">아바타</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">맨 위로iTune(AES-256)</string>
+    <string name="ui_backup_password" formatted="false">백업 암호</string>
+    <string name="ui_bluetooth_device_access" formatted="false">Bluetooth장치 접근</string>
+    <string name="ui_browse" formatted="false">계정 만들기</string>
+    <string name="ui_browse_by_country" formatted="false">국가 별 검색</string>
+    <string name="ui_browse_extensions" formatted="false">Browse 확장</string>
+    <string name="ui_browse_live_online_radio" formatted="false">온라인 라디오 검색</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">계정 삭제</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">캔버스 공급자 (Lookup Order)</string>
+    <string name="ui_captcha_guidance" formatted="false">트럭 Guidance</string>
+    <string name="ui_cast_wireless_devices" formatted="false">CAST &amp; 무선 장치</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">오디오 재생 스트리밍 소스, Lossless tiers 및 fallback 우선 순위를 선택하십시오.</string>
+    <string name="ui_choose_avatar" formatted="false">Avatar 선택</string>
+    <string name="ui_choose_charts_region" formatted="false">차트 선택</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">자주 묻는 질문iTune홈 화면에 나타납니다. 당신의 발사기에서 위젯을 크기를.</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">자주 묻는 질문</string>
+    <string name="ui_choose_youtube_channel" formatted="false">제품 정보YouTube채널 :</string>
+    <string name="ui_clear" formatted="false">뚱 베어</string>
+    <string name="ui_clear_use_default" formatted="false">명확한 &amp; 사용 과태</string>
+    <string name="ui_clear_all" formatted="false">모든 것</string>
+    <string name="ui_confirm" formatted="false">제품정보</string>
+    <string name="ui_confirm_password" formatted="false">비밀번호</string>
+    <string name="ui_connect_discord" formatted="false">연결 Discord</string>
+    <string name="ui_connect_last_fm" formatted="false">연결하기Last.fm</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">연결하기Spotify캔버스 루프 모션 비디오 아트 워크를 활성화하고 동기화 할 수있는 계정Spotify도서관.</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">연결하기YouTube Music세션 쿠키</string>
+    <string name="ui_connect" formatted="false">연결 ›</string>
+    <string name="ui_connecting_spotify" formatted="false">연결하기Spotify·</string>
+    <string name="ui_connecting_youtube_music" formatted="false">연결하기YouTube Music·</string>
+    <string name="ui_continue" formatted="false">계속하기</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">대신 브라우저에서 계속</string>
+    <string name="ui_continue_with_google" formatted="false">계속 Google</string>
+    <string name="ui_continue_with_spotify" formatted="false">계속하기Spotify</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">쿠키 자격은 저장됩니다.iTune’s Encrypt 계정 저장 및 검사YouTube Music그들은 저장하기 전에.</string>
+    <string name="ui_copy_song_name" formatted="false">복사 송명</string>
+    <string name="ui_copy_text" formatted="false">본문 바로가기</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">저작권 © 2026iTune프로젝트 이 소프트웨어는 보장 없이 제공됩니다. 아래에 표시된 GNU GPL 용어 아래에 적색하고 수정할 수 있습니다.</string>
+    <string name="ui_corner_length" formatted="false">코너 길이</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">재생 이미지를 렌더링 할 수 없습니다</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">뚱 베어\'t 로드 음악 지금. 다시 시도 할 수 있습니다.</string>
+    <string name="ui_create" formatted="false">이름 *</string>
+    <string name="ui_create_add" formatted="false">생성 및 추가</string>
+    <string name="ui_current_account" formatted="false">현재 계정</string>
+    <string name="ui_custom_instructions" formatted="false">CUSTOM 소개</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">CUSTOM 저장소 인덱스 또는 URL</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">홈 화면 플레이어 사용자 지정</string>
+    <string name="ui_customize_your_itune_card" formatted="false">사용자 정의iTune이름 *</string>
+    <string name="ui_d" formatted="false">사이트맵</string>
+    <string name="ui_delete_account" formatted="false">계정 삭제</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">계정 삭제?</string>
+    <string name="ui_developer_announcements" formatted="false">개발자 발표</string>
+    <string name="ui_disconnect" formatted="false">연결하기</string>
+    <string name="ui_disconnect_discord" formatted="false">연결 Discord</string>
+    <string name="ui_discord_rich_presence" formatted="false">Discord 부자</string>
+    <string name="ui_dismiss" formatted="false">뚱 베어</string>
+    <string name="ui_display_full_screen" formatted="false">DISPLAY 및 전체 SCREEN</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">캔버스 컨트롤이 숨어있는 동안 노래 제목 위의 애니메이션 동기화 된 lyrics를 표시합니다.</string>
+    <string name="ui_display_name" formatted="false">표시 이름</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">DJ 양극 클럽 필터</string>
+    <string name="ui_downloaded_cached" formatted="false">다운로드 및 예약</string>
+    <string name="ui_dp" formatted="false">뚱 베어</string>
+    <string name="ui_dynamic_island" formatted="false">동적인 섬</string>
+    <string name="ui_e" formatted="false">₢ 킹</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">예. 127.0.0.1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">e.g. rhymes와 poetic hinglish로 번역</string>
+    <string name="ui_enable_auto_sleep" formatted="false">Enable 자동 잠</string>
+    <string name="ui_enable_proxy" formatted="false">프록시</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">지원하다Spotify캔버스 및 재생 목록</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">암호화 암호 (최소 8 숯)</string>
+    <string name="ui_end_of_current_track" formatted="false">현재 궤도의 끝</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">이 계정의 새로운 이름을 입력하십시오.</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">HTTP addon은 URL, QuickJS 모듈 인덱스 또는 Tidal 인스턴스 엔드포인트를 입력합니다.</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">비밀번호 입력itune백업이 생성되었습니다.</string>
+    <string name="ui_enter_your_name" formatted="false">이름 *</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">자주 묻는 질문iTune</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">모든 리듬, 늦은 밤, 그리고 멜로디 당신은 함께 살 — 한 여행에 수집.</string>
+    <string name="ui_everything" formatted="false">모든 것</string>
+    <string name="ui_explore_categories" formatted="false">카테고리</string>
+    <string name="ui_exporting_audio" formatted="false">수출 오디오 ...</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">짧은 오디오 지문 추출</string>
+    <string name="ui_favorite_stations" formatted="false">오시는 길</string>
+    <string name="ui_favorites" formatted="false">회사 소개</string>
+    <string name="ui_featured_hit" formatted="false">추천 히트</string>
+    <string name="ui_featured_playlists" formatted="false">관련 상품</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">Fetching 오디오 특성 ...</string>
+    <string name="ui_fetching_live_catalog" formatted="false">Fetching 라이브 카탈로그 ...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">더 나은 스트림 찾기</string>
+    <string name="ui_full_view" formatted="false">전체보기</string>
+    <string name="ui_g" formatted="false">사이트맵</string>
+    <string name="ui_genre" formatted="false">연구원</string>
+    <string name="ui_genres_styles" formatted="false">Genres &amp; 스타일</string>
+    <string name="ui_github_repository" formatted="false">GitHub 저장소</string>
+    <string name="ui_github_repository_open_source" formatted="false">GitHub 저장소 · 오픈 소스</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 이상</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 이상 · 저작권 © 2026iTune회사연혁</string>
+    <string name="ui_grant" formatted="false">지원하다</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">Earbuds 이름 및 라이브 배터리를 보여주기위한 보조금 %</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">하드웨어 LoudnessEnhancer (최대 +18 dB)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">Android 상태 표시 줄과 네비게이션 표시 줄을 이음새가 없는 순수한 OLED black.</string>
+    <string name="ui_history" formatted="false">- 연혁</string>
+    <string name="ui_host" formatted="false">계정 만들기</string>
+    <string name="ui_host_a_session" formatted="false">오시는 길</string>
+    <string name="ui_host_controls_playback" formatted="false">호스트 컨트롤 재생</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">당신의 쿠키를 얻는 방법</string>
+    <string name="ui_hq" formatted="false">본부</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">Shazam로 식별</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">당신 주위에 음악을 알고</string>
+    <string name="ui_immersion" formatted="false">지원하다</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">Immersive 형태 (풀 스크린)</string>
+    <string name="ui_import" formatted="false">제품정보</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">공공 및 민간 재생 목록 • Auto-sync</string>
+    <string name="ui_import_spotify_playlist" formatted="false">제품정보Spotify공지사항</string>
+    <string name="ui_in_use" formatted="false">제품정보</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">오디오 공급자가 Anti-bot 체크를 할 때 인앱 안내</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">Pre-added Mornye 커뮤니티 확장을 설치하거나 사용자 정의 저장소 인덱스를 스캔합니다.</string>
+    <string name="ui_installed" formatted="false">설치하기</string>
+    <string name="ui_interactive_dot_curve" formatted="false">상호 작용하는 점 곡선</string>
+    <string name="ui_irecognition" formatted="false">i인증</string>
+    <string name="ui_ireconization" formatted="false">iReconization의 장점</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">iReconization는 음악 지문을 만드는 몇 초 동안 듣습니다. 오디오는 저장되지 않습니다.</string>
+    <string name="ui_ishare" formatted="false">아이 공유</string>
+    <string name="ui_itune_license" formatted="false">iTune이름 *</string>
+    <string name="ui_itune_music" formatted="false">iTune·</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTune아래 정확한 선행에 쿼리 lyrics. 가장 높은 활성 공급자가 동기화되지 않은 경우,iTune원활한 다음으로 돌아갑니다.</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTune표시된 순서에 있는 쿼리 소스. 드래그 설치 확장 및 공급자는 재생 우선 순위를 조정합니다.</string>
+    <string name="ui_itune_time_travel" formatted="false">iTune시간 여행</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">제트 플랜지 Swoosh</string>
+    <string name="ui_join" formatted="false">이름 *</string>
+    <string name="ui_keep_screen_on" formatted="false">화면 유지</string>
+    <string name="ui_l" formatted="false">사이트맵</string>
+    <string name="ui_lan_port" formatted="false">LAN 포트</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">언어 선호도 (선택 사항, e.g. Hindi, Punjabi ...)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fm인기 카테고리</string>
+    <string name="ui_layout" formatted="false">이용안내</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">이 공급자를 위한 default endpoint를 이용하기 위하여 빈을 두십시오.</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">LFO swept 제트기 단계 조음</string>
+    <string name="ui_library" formatted="false">관련 기사</string>
+    <string name="ui_license" formatted="false">이름 *</string>
+    <string name="ui_liked_songs" formatted="false">공지사항</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">로그인이 로컬로 저장되고 있는 동안 추가됨YouTube Music, 그래서 그들은 밖으로 서명 한 후도 도서관에 남아.</string>
+    <string name="ui_listening_patterns" formatted="false">LISTENING 건전지</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">공유 오디오 듣기 ...</string>
+    <string name="ui_live" formatted="false">ღ♥ღ</string>
+    <string name="ui_live_radio_stations" formatted="false">라이브 라디오 방송국</string>
+    <string name="ui_loading_announcements" formatted="false">로딩...</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">로드 아티스트, 재생 목록 및 역사</string>
+    <string name="ui_lossless" formatted="false">뚱 베어</string>
+    <string name="ui_lossless_audio_preference" formatted="false">Lossless 오디오 설정</string>
+    <string name="ui_lyrics" formatted="false">제품정보</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">이 노래에 사용할 수 없습니다</string>
+    <string name="ui_lyrics_providers" formatted="false">Lyrics 공급자</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">성공적으로 번역 된 작사!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">마스터 앰프 Boost</string>
+    <string name="ui_member_since" formatted="false">회원 혜택</string>
+    <string name="ui_memoji_style" formatted="false">이모티콘 &amp; 스타일</string>
+    <string name="ui_minutes_listened" formatted="false">MINUTES 목록</string>
+    <string name="ui_mirror_vol" formatted="false">미러 Vol</string>
+    <string name="ui_model" formatted="false">모델명</string>
+    <string name="ui_model_68c2cc7f" formatted="false">주요 특징</string>
+    <string name="ui_moods_activities" formatted="false">Moods &amp; 활동</string>
+    <string name="ui_moods_moments" formatted="false">MOODS 및 MOMENTS</string>
+    <string name="ui_music_by_genre" formatted="false">Genre의 음악</string>
+    <string name="ui_music_language_preference" formatted="false">언어 선택</string>
+    <string name="ui_music_services" formatted="false">MUSIC 서비스</string>
+    <string name="ui_name" formatted="false">이름 *</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">NEARBY WI-FI 호스</string>
+    <string name="ui_network_proxy" formatted="false">네트워크 프록시</string>
+    <string name="ui_new" formatted="false">(주)</string>
+    <string name="ui_new_playlist" formatted="false">새로운 재생 목록</string>
+    <string name="ui_new_releases" formatted="false">새로운 출시</string>
+    <string name="ui_news_from_dev" formatted="false">dev의 뉴스</string>
+    <string name="ui_next_up" formatted="false">이름 *</string>
+    <string name="ui_no_albums_found" formatted="false">앨범이 없습니다.</string>
+    <string name="ui_no_artist_information_available" formatted="false">아티스트 정보</string>
+    <string name="ui_no_artists_found" formatted="false">찾을 수 없음</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">당신의 도서관에 있는 예술가 없음</string>
+    <string name="ui_no_playlists_found" formatted="false">찾을 수 없음</string>
+    <string name="ui_no_results_on_spotify" formatted="false">결과 없음Spotify</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">도서관에 저장된 앨범 없음</string>
+    <string name="ui_no_songs_found" formatted="false">찾을 수 없음</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">이 릴리스에서 발견 된 노래 없음</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">이 섹션에서 발견 된 노래 없음</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">사용자 재생 목록이 없습니다. 도서관에서 하나 만들기!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">아직 듣지 않는</string>
+    <string name="ui_now_playing" formatted="false">지금 재생</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">지금 재생</string>
+    <string name="ui_on_heavy_repeat" formatted="false">맨 위로</string>
+    <string name="ui_options" formatted="false">관련 상품</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">또는 SP DC 쿡</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">Orbit 강렬 &amp; 속도</string>
+    <string name="ui_pair_join_a_device" formatted="false">PAIR &amp; 참가</string>
+    <string name="ui_password_optional" formatted="false">암호 (선택)</string>
+    <string name="ui_passwords_dont_match" formatted="false">비밀번호는 일치하지 않습니다.</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">Paste sp dc 토큰 ...</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">API 키를 붙여</string>
+    <string name="ui_play_in_itune" formatted="false">다운로드iTune</string>
+    <string name="ui_play_next" formatted="false">다음 것</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">동시에 이어폰 및 전화 스피커 / AUX에서 재생</string>
+    <string name="ui_playlist_name" formatted="false">Playlist 이름</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">Playlist 이름</string>
+    <string name="ui_playlist_spotify" formatted="false">재생 목록 •Spotify</string>
+    <string name="ui_playlists" formatted="false">공지사항</string>
+    <string name="ui_plays" formatted="false">다운로드</string>
+    <string name="ui_pm" formatted="false">(주)</string>
+    <string name="ui_port" formatted="false">항구 항구</string>
+    <string name="ui_pre_added_extensions" formatted="false">사전 승인 EXTENSIONS</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">프리퍼 비트 퍼펙트 FLAC / ALAC 최대 24 비트 / 192 kHz</string>
+    <string name="ui_preparing_audio_preview" formatted="false">오디오 미리보기를 준비 ...</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">항상 디스플레이가 활성화되어있는 동안 도는 장치 디스플레이를 방지합니다.</string>
+    <string name="ui_preview" formatted="false">상품정보</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">다운로드</string>
+    <string name="ui_preview_always_on_display" formatted="false">전시에 항상 미리보기</string>
+    <string name="ui_profile" formatted="false">제품정보</string>
+    <string name="ui_profiles_in_backup" formatted="false">백업에서 PROFILES</string>
+    <string name="ui_prompt_type" formatted="false">PROMPT 유형</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">PROVIDER PRIORITY (FALLBACK 주문)</string>
+    <string name="ui_queue" formatted="false">이름 *</string>
+    <string name="ui_queue_is_empty" formatted="false">큐는 빈</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">Queued tracks 에 놀이 다음에</string>
+    <string name="ui_radio" formatted="false">라디오</string>
+    <string name="ui_read_more" formatted="false">더 보기</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">실시간 음질 및 라인 스크롤 라이브 오디오</string>
+    <string name="ui_recent_searches" formatted="false">최근 검색</string>
+    <string name="ui_recently_added" formatted="false">최근 추가</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">수면 일정 재발견 · 자동 일시 정지 재생</string>
+    <string name="ui_remote_music_library" formatted="false">원격 음악 도서관</string>
+    <string name="ui_remove" formatted="false">기타 제품</string>
+    <string name="ui_rename" formatted="false">이름 *</string>
+    <string name="ui_rename_account" formatted="false">계정 이름</string>
+    <string name="ui_replay" formatted="false">공지사항</string>
+    <string name="ui_replay_c0f85d66" formatted="false">지원하다</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">Bit-Perfect Lossless 산출을 요구하십시오</string>
+    <string name="ui_reset" formatted="false">지원하다</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">재설정 공급자 주문 및 기본값</string>
+    <string name="ui_reset_to_default_url" formatted="false">기본 URL로 재설정</string>
+    <string name="ui_restore_default_sources" formatted="false">기본 소스 복원</string>
+    <string name="ui_restore_itune_backup" formatted="false">관련 상품iTune지원하다</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">관련 기사JioSaavn그리고YouTube Music기본 순서에서.JioSaavn시작하기YouTube Music시작하기</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">LRC Lib, KuGou 및 SimpMusic을 최고 선호하는 공급자로 복원하고 모든 11 소스를 재사용합니다.</string>
+    <string name="ui_resume" formatted="false">제품 설명</string>
+    <string name="ui_rhythm_by_hour" formatted="false">시간별 Rhythm</string>
+    <string name="ui_room_permissions" formatted="false">객실요금</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">HTTP 또는 SOCKS 프록시를 통해 경로 앱 네트워크 트래픽</string>
+    <string name="ui_save_proxy" formatted="false">Proxy를 저장</string>
+    <string name="ui_save_schedule" formatted="false">자주 묻는 질문</string>
+    <string name="ui_save_to_gallery" formatted="false">본문 바로가기</string>
+    <string name="ui_save_token" formatted="false">토큰 저장</string>
+    <string name="ui_saved_to_your_library" formatted="false">도서관에 저장!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">Android Keystore를 사용하여 저장됩니다. 백업 파일 사용 PBKDF2-HMAC-SHA256 (310,000 라운드) 및 AES-256-GCM.</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">다운로드 저장/itune/백업</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">노래, 아티스트, 앨범, 또는 lyrics</string>
+    <string name="ui_search" formatted="false">제품정보</string>
+    <string name="ui_search_identify" formatted="false">검색 및 식별</string>
+    <string name="ui_search_announcements" formatted="false">공지사항</string>
+    <string name="ui_search_country" formatted="false">검색 국가...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">곡, 아티스트, 앨범, 재생목록 검색</string>
+    <string name="ui_search_languages" formatted="false">검색 언어...</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">검색 또는 모델 ID를 입력</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">곡, 아티스트, 앨범, 재생목록 검색</string>
+    <string name="ui_searching_lyrics" formatted="false">검색 lyrics ...</string>
+    <string name="ui_searching_spotify" formatted="false">관련 기사Spotify·</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">증권 시세 표시기</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">프로필 선택 avatar 개인화iTune모든 화면의 경험.</string>
+    <string name="ui_select_language" formatted="false">언어 선택</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">lyrics 번역에 대한 기본 프롬프트 템플릿을 선택합니다.</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">line-by-line lyrics 번역을 사용하려면 엔진을 선택하십시오.</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">lyrics 번역을 위한 대상 언어를 선택하십시오.</string>
+    <string name="ui_server_host_ip" formatted="false">서버 호스트 / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">서버 URL / Manifest</string>
+    <string name="ui_settings_appearance" formatted="false">설정 외관</string>
+    <string name="ui_share_lyrics" formatted="false">공유 Lyrics</string>
+    <string name="ui_share_my_replay" formatted="false">내 재생</string>
+    <string name="ui_share_replay" formatted="false">공유 Replay</string>
+    <string name="ui_share_this_story" formatted="false">이 이야기</string>
+    <string name="ui_share_your_time_travel" formatted="false">여행 일정</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">캔버스 위에 동기화 된 작물보기</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">음악에 로그인.youtube데스크탑 브라우저에서 .com. Developer Tools → Application → Cookies를 열고, 서명된 세션 값을 복사합니다. 암호와 같은 이러한 값을 치료합니다.</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">자주 묻는 질문Last.fm계좌정보</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">모든 계정</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">동시 이중 산출</string>
+    <string name="ui_skip_sign_in" formatted="false">비밀번호</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">빠른 lyrics를 위해 앞으로 미끄러지기 · 더 느리게를 위해 뒤에 · 오디오 unaffected</string>
+    <string name="ui_snap_0" formatted="false">스냅 0</string>
+    <string name="ui_soundstage_width" formatted="false">Soundstage 폭</string>
+    <string name="ui_sources" formatted="false">이름 *</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">Spatial 오디오 및 Essentials</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotify&amp; 캔버스</string>
+    <string name="ui_spotify_account" formatted="false">Spotify계좌정보</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">Spotify캔버스, 애플 음악, Tidal &amp; 커뮤니티 모션 커버</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">Spotify현재 접속중입니다. 모션 아트웍(Canvas) 및Spotifyplaylist 동기화가 가능합니다.</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">Spotify검색 실패. 다시 시도하십시오.</string>
+    <string name="ui_station" formatted="false">역대역</string>
+    <string name="ui_stereo_echo_delay" formatted="false">스테레오 에코 &amp; 지연</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">이 링크를 저장하고 앱에 새로운 노래를 추가</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">개인 네트워크 공유 또는 Nextcloud에서 bit-perfect Lossless 라이브러리를 직접 스트리밍하십시오.</string>
+    <string name="ui_streaming_sources" formatted="false">여행 일정</string>
+    <string name="ui_style" formatted="false">사이트맵</string>
+    <string name="ui_suggestions" formatted="false">이름 *</string>
+    <string name="ui_switch" formatted="false">기타 제품</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">사용자 정의 탭 avatar</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">탭 왼쪽 또는 오른쪽 검색 • 일시 중지</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">지금 디스플레이에서 즉시 활성화 탭</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">국가 및 도시 FM 방송을 선택 탭</string>
+    <string name="ui_target_language" formatted="false">회사소개</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">대상 언어</string>
+    <string name="ui_test" formatted="false">제품정보</string>
+    <string name="ui_test_proxy_connection" formatted="false">Proxy 연결 테스트</string>
+    <string name="ui_testing_proxy" formatted="false">테스트 프록시 ...</string>
+    <string name="ui_that_s_your_story" formatted="false">이름 *\'s 너의 이야기</string>
+    <string name="ui_this_account" formatted="false">이 계정</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">이 재생 목록은 비어 있습니다. 플레이어 또는 검색에서 노래를 추가!</string>
+    <string name="ui_time_travel" formatted="false">시간 여행</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">시간 여행</string>
+    <string name="ui_time_travel_wrap" formatted="false">시간 여행 WRAP</string>
+    <string name="ui_time_synced_lyrics" formatted="false">시간 동기화 된 작물</string>
+    <string name="ui_top_picks" formatted="false">맨 위로</string>
+    <string name="ui_top_result" formatted="false">맨 위로</string>
+    <string name="ui_top_song" formatted="false">공지사항</string>
+    <string name="ui_top_songs" formatted="false">상단 노래</string>
+    <string name="ui_top_streamed" formatted="false">상단 STREAMED</string>
+    <string name="ui_total_listening_time" formatted="false">총 듣기 시간</string>
+    <string name="ui_total_time" formatted="false">총 시간</string>
+    <string name="ui_translate_actual_lines" formatted="false">자주 묻는 질문</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">lyrics on-demand for any song from the player menu (... &gt; 작사 &gt; 번역). 시간 :\'자주 묻는 질문\'번역은 원본 텍스트 아래에 자막으로 나타납니다.</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">다음 곡을 영어로 번역합니다. Preserve poetic 교류.</string>
+    <string name="ui_translating_lyrics" formatted="false">연락처</string>
+    <string name="ui_translation_mode" formatted="false">번역 모드</string>
+    <string name="ui_translation_prompt" formatted="false">번역 Prompt</string>
+    <string name="ui_trending_artists" formatted="false">동향 예술가</string>
+    <string name="ui_turn_off_timer" formatted="false">타이머를 끄</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">설정에서 Apple ID 프로필 카드에 표시된 이름을 업데이트하십시오.</string>
+    <string name="ui_username_optional" formatted="false">사용자 이름 (선택 사항)</string>
+    <string name="ui_view" formatted="false">- 연혁</string>
+    <string name="ui_view_on_shazam" formatted="false">Shazam의 전망</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">비닐 턴테이블 링크</string>
+    <string name="ui_whats_new" formatted="false">새로운 소식</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">음악이 연주될 때, 항상 전시는 선택된 시간을 위한 스크린에 아무 접촉이 생기지 않는 경우에. 앱 내에서만 활성화합니다.</string>
+    <string name="ui_who_is_listening" formatted="false">누가 듣는가?</string>
+    <string name="ui_widget" formatted="false">다운로드</string>
+    <string name="ui_you" formatted="false">이름 *</string>
+    <string name="ui_your_1_artist" formatted="false">당신의 #1 예술가</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">API 키는 장치에 안전하게 저장되며 결코 공유되지 않습니다.</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">Discord 세션 토큰은 이 장치에서 암호화되며 Rich Presence에만 사용됩니다.</string>
+    <string name="ui_your_favourite_song" formatted="false">당신의 Favourite 노래</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">라이브러리, 재생 목록 및 설정은 적어도 8 문자의 암호로 암호화됩니다.</string>
+    <string name="ui_your_listening_experience" formatted="false">당신의 경험</string>
+    <string name="ui_your_listening_pattern" formatted="false">청취 패턴</string>
+    <string name="ui_your_listening_persona" formatted="false">당신의 경험</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">당신의 음악 재생 및 통계</string>
+    <string name="ui_your_musical_anchor" formatted="false">당신의 기계</string>
+    <string name="ui_your_name" formatted="false">당신의 이름</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">비밀번호가 전송됩니다.Last.fm세션을 만들 수 있습니다.iTune저장하지 않습니다.</string>
+    <string name="ui_your_playlists" formatted="false">당신의 PLAYLISTS</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">당신의 재생 목록</string>
+    <string name="ui_your_sonic_peak" formatted="false">당신의 소닉 피크</string>
+    <string name="ui_your_spotify_playlists" formatted="false">내 계정Spotify공지사항</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">내 계정SpotifyPlaylists (공공 &amp; 개인)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSIC&amp; 기타</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube Music세션 쿠키</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">·</string>
+    <string name="ui_text_a118c40635" formatted="false">자주 묻는 질문</string>
+    <string name="ui_album_artwork" formatted="false">앨범 작품</string>
+    <string name="ui_itune_waves" formatted="false">iTune웨이브</string>
+    <string name="ui_previous" formatted="false">이름 *</string>
+    <string name="ui_next" formatted="false">이름 *</string>
+    <string name="ui_audio_output" formatted="false">오디오 출력</string>
+    <string name="ui_low_volume" formatted="false">낮은 볼륨</string>
+    <string name="ui_high_volume" formatted="false">높은 볼륨</string>
+    <string name="ui_filter" formatted="false">제품정보</string>
+    <string name="ui_refresh" formatted="false">지원하다</string>
+    <string name="ui_options_6bf5da9c" formatted="false">제품 설명</string>
+    <string name="ui_user_profile_avatar" formatted="false">사용자 프로필 Avatar</string>
+    <string name="ui_news" formatted="false">(주)</string>
+    <string name="ui_no_song_playing" formatted="false">노래 없음</string>
+    <string name="ui_next_track" formatted="false">다음 트랙</string>
+    <string name="ui_see_all_songs" formatted="false">모든 곡 보기</string>
+    <string name="ui_favorite_radio" formatted="false">좋아하는 라디오</string>
+    <string name="ui_live_65c821a5" formatted="false">지원하다</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTune상표 파</string>
+    <string name="ui_refresh_network" formatted="false">네트워크</string>
+    <string name="ui_edit_display_name" formatted="false">편집 표시 이름</string>
+    <string name="ui_remove_from_queue" formatted="false">queue에서 제거</string>
+    <string name="ui_search_new_releases" formatted="false">새로운 출시</string>
+    <string name="ui_refresh_new_releases" formatted="false">새로 고침</string>
+    <string name="ui_refresh_downloads" formatted="false">다운로드</string>
+    <string name="ui_clear_cache" formatted="false">명확한 캐시</string>
+    <string name="ui_sort" formatted="false">제품정보</string>
+    <string name="ui_see_all_new_releases" formatted="false">새 소식</string>
+    <string name="ui_identify" formatted="false">이름 *</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">연락처</string>
+    <string name="ui_create_playlist" formatted="false">Playlist 만들기</string>
+    <string name="ui_liked" formatted="false">이름 *</string>
+    <string name="ui_paste" formatted="false">뚱 베어</string>
+    <string name="ui_checked" formatted="false">뚱 베어</string>
+    <string name="ui_google_account_playlist" formatted="false">Google 계정 재생 목록</string>
+    <string name="ui_spotify_playlist" formatted="false">Spotify공지사항</string>
+    <string name="ui_local_playlist" formatted="false">지역 Playlist</string>
+    <string name="ui_back_to_audio_engine" formatted="false">Audio Engine으로 돌아가기</string>
+    <string name="ui_bluetooth_settings" formatted="false">Bluetooth계정 설정</string>
+    <string name="ui_scan_output_devices" formatted="false">검사 산출 장치</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">동시 듀얼 오디오</string>
+    <string name="ui_selected" formatted="false">제품정보</string>
+    <string name="ui_copy" formatted="false">관련 기사</string>
+    <string name="ui_copy_link" formatted="false">관련 링크</string>
+    <string name="ui_upgrade_quality" formatted="false">향상 품질</string>
+    <string name="ui_fm_radio" formatted="false">FM 라디오</string>
+    <string name="ui_next_station" formatted="false">다음 역</string>
+    <string name="ui_minimize" formatted="false">옵션 정보</string>
+    <string name="ui_favorite" formatted="false">이름 *</string>
+    <string name="ui_more_options" formatted="false">더 많은 옵션</string>
+    <string name="ui_previous_station" formatted="false">이전 역</string>
+    <string name="ui_sleep_timer" formatted="false">잠 타이머</string>
+    <string name="ui_audio_output_devices" formatted="false">Audio 출력 장치</string>
+    <string name="ui_station_list" formatted="false">역 목록</string>
+    <string name="ui_volume" formatted="false">제품정보</string>
+    <string name="ui_open_lyrics" formatted="false">연락처</string>
+    <string name="ui_mute_volume" formatted="false">분량</string>
+    <string name="ui_max_volume" formatted="false">최대 볼륨</string>
+    <string name="ui_endless_queue" formatted="false">끝없는 큐</string>
+    <string name="ui_repeat" formatted="false">기타 제품</string>
+    <string name="ui_refresh_stations" formatted="false">새로 고침 역</string>
+    <string name="ui_favorite_station" formatted="false">오시는 길</string>
+    <string name="ui_close_ireconization" formatted="false">닫기 iReconization</string>
+    <string name="ui_cancel_voice_search" formatted="false">음성 검색</string>
+    <string name="ui_microphone" formatted="false">마이크</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">더 많은 옵션</string>
+    <string name="ui_voice_search" formatted="false">음성 검색</string>
+    <string name="ui_saved" formatted="false">지원하다</string>
+    <string name="ui_fill_search_query" formatted="false">자주 묻는 질문</string>
+    <string name="ui_remove_from_history" formatted="false">역사에서 제거</string>
+    <string name="ui_itune_icon" formatted="false">iTune이름 *</string>
+    <string name="ui_artwork_preview" formatted="false">Artwork 미리보기</string>
+    <string name="ui_decrease" formatted="false">팟캐스트</string>
+    <string name="ui_increase" formatted="false">더 보기</string>
+    <string name="ui_open_link" formatted="false">링크 열기</string>
+    <string name="ui_reset_geometry" formatted="false">Geometry를 재설정</string>
+    <string name="ui_reorder_provider" formatted="false">주문 공급자</string>
+    <string name="ui_save_name" formatted="false">이름 저장</string>
+    <string name="ui_editable_name" formatted="false">편집 가능한 이름</string>
+    <string name="ui_google" formatted="false">구글 +</string>
+    <string name="ui_remove_account" formatted="false">계정 제거</string>
+    <string name="ui_reorder_source_priority" formatted="false">Reorder 소스 우선 순위</string>
+    <string name="ui_refresh_playlists" formatted="false">재생 목록</string>
+    <string name="ui_replay_poster" formatted="false">Replay 포스터</string>
+    <string name="ui_settings" formatted="false">계정 설정</string>
+    <string name="ui_artist_radio" formatted="false">아티스트 라디오</string>
+    <string name="ui_play_all" formatted="false">모두 재생</string>
+    <string name="ui_delete_playlist" formatted="false">재생 목록</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">끝없는 큐</string>
+    <string name="ui_artist_info" formatted="false">아티스트 정보</string>
+    <string name="ui_enabled" formatted="false">이름 *</string>
+    <string name="ui_search_icon" formatted="false">검색 아이콘</string>
+    <string name="ui_region">지역:%1$s</string>
+    <string name="ui_connected_devices">연결 장치 (Connected DEVICES)%1$s·</string>
+    <string name="ui_up_next">업데이트%1$s·</string>
+    <string name="ui_text_da5c3629fd">%1$s› 한국어</string>
+    <string name="ui_active_7c6a4064">%1$s • %2$s 활성</string>
+    <string name="ui_no_new_available_right_now">새 소식%1$s현재 위치</string>
+    <string name="ui_tracks">%1$s개 트랙 • %2$s</string>
+    <string name="ui_songs">%1$s곡 • %2$s • %3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s • %2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c">·%1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$s트랙(s) 수\'t는 일치합니다:</string>
+    <string name="ui_text_a3edb2b714">• %1$s - %2$s</string>
+    <string name="ui_d_eeda119e">%1$s사이트맵</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+ 더보기%1$sdB의</string>
+    <string name="ui_connected">%1$s지원하다</string>
+    <string name="ui_open_web_player">웹 플레이어 열기 (Open Web Player)%1$s·</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">국가: %1$s (%2$s)</string>
+    <string name="ui_city_state">도시/국가:%1$s</string>
+    <string name="ui_codec_bitrate">코덱 / 비트레이트:%1$s</string>
+    <string name="ui_language">언어:%1$s</string>
+    <string name="ui_tags">태그 :%1$s</string>
+    <string name="ui_stream">스트림:%1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">API 키가 설정되지 않음%1$s. 설정 &gt; 작사에서 설정하십시오.</string>
+    <string name="ui_s_clip">%1$ss 클립</string>
+    <string name="ui_loading_more_fm_stations_loaded">더 많은 FM 역 적재 (%1$s로드)...</string>
+    <string name="ui_found">%1$s으로</string>
+    <string name="ui_version">버전 %1$s (%2$s)</string>
+    <string name="ui_of_active">활성 %1$s/%2$s</string>
+    <string name="ui_text_adebc50ade">₢ 킹%1$s</string>
+    <string name="ui_api_key">%1$sAPI 키</string>
+    <string name="ui_channel">채널:%1$s</string>
+    <string name="ui_sync_issue">Sync 문제점:%1$s</string>
+    <string name="ui_enter">이름 *%1$s</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">삭제하시겠습니까?%1$s”? 이 계정의 모든 데이터, 재생 목록, 즐겨 찾기, 역사 및 설정은 영구적으로 삭제됩니다.</string>
+    <string name="ui_peak">피크:%1$s</string>
+    <string name="ui_welcome">환영,%1$s</string>
+    <string name="ui_songs_played">%1$s노래 재생</string>
+    <string name="ui_around">기타%1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">세상이 바쁠 때 %1$s경 %2$s에 가장 많이 음악을 듣습니다.</string>
+    <string name="ui_itune_time_travel_575a110d">iTune시간 여행 •%1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s · %2$s</string>
+    <string name="ui_your_biggest_day_was">가장 큰 날은%1$s·</string>
+    <string name="ui_listening_recap">%1$srecap을 듣고</string>
+    <string name="ui_busiest_day">가장 좋은 날:%1$s</string>
+    <string name="ui_peak_hour_00">최고봉 시간:%1$s영업시간</string>
+    <string name="ui_loading">제품정보%1$s·</string>
+    <string name="ui_about">제품정보%1$s</string>
+    <string name="ui_songs_9b614dc8">%1$s한국어</string>
+    <string name="ui_current_offset_ms">현재 분파:%1$s사이트맵</string>
+    <string name="ui_connected_session">연결 세션:%1$s</string>
+    <string name="ui_k">%1$s₢ 킹</string>
+    <string name="ui_top_result_c5e5adab">TOP 이력서 •%1$s</string>
+    <string name="toast_song_not_found_in_itune">노래에서 찾을 수 없습니다iTune</string>
+    <string name="toast_playback_failed_try_again">재생 실패, 다시 시도</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">자동 수면 타이머 활성 · 재생 일시 중지</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">오프라인 모드: 이 노래는 다운로드되지 않습니다</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">따로 잇기 형태: 질을 격상시킬 수 없습니다</string>
+    <string name="toast_upgrading_quality">Upgrading 질</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">Sources에서 사용할 수 없는 스트리밍 소스 없음</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">사용 가능한 소스에서 더 높은 품질 스트림 발견</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">Shuffle은 설정에서 영원한 Shuffle에 의해 잠겨집니다</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">마이크 권한은 음악을 식별해야합니다.</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">다른 앱 사용 권한에 대한 표시는 인식 팝업에 필요합니다.</string>
+    <string name="toast_playback_failed">재생 실패</string>
+    <string name="toast_complete_google_sign_in_first">첫 번째 Google 로그인 완료</string>
+    <string name="toast_waiting_for_youtube_music_session">대기 중YouTube Music세션...</string>
+    <string name="toast_couldn_t_load_tracks">뚱 베어\'t 부하 트랙</string>
+    <string name="toast_copied_to_clipboard">클립보드에 복사</string>
+    <string name="toast_profile_avatar_updated">프로필 avatar 업데이트</string>
+    <string name="toast_no_tracks_found">찾을 수 없음</string>
+    <string name="toast_google_account_connected">Google 계정 연결</string>
+    <string name="toast_link_copied">링크 복사</string>
+    <string name="toast_could_not_open_browser">브라우저를 열 수 없습니다.</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">1024와 65535 사이 항구를 입력하십시오</string>
+    <string name="toast_cached_music_cleared">정통 음악</string>
+    <string name="toast_no_tracks_available_to_add">추가 할 수있는 트랙 없음</string>
+    <string name="toast_enter_a_playlist_name">재생 목록 이름 입력</string>
+    <string name="toast_system_sound_panel_opened">시스템 사운드 패널 오픈</string>
+    <string name="toast_download_started_check_notification">다운로드 시작 · 확인 알림</string>
+    <string name="toast_playback_will_stop_after_current_track">Playback는 현재 궤도 후에 정지할 것입니다</string>
+    <string name="toast_sleep_timer_turned_off">수면 타이머가 꺼져</string>
+    <string name="toast_stream_url_copied">URL 복사</string>
+    <string name="toast_couldn_t_create_lyrics_card">뚱 베어\'t lyrics 카드 만들기</string>
+    <string name="toast_restored_online_lyrics">온라인 lyrics 복원</string>
+    <string name="toast_lyrics_saved">Lyrics 저장</string>
+    <string name="toast_translation_cleared">번역 정리</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">설정에서 API 키 설정 &gt; 작사 첫째</string>
+    <string name="toast_no_lyrics_found_for_this_song">이 곡을 찾아서</string>
+    <string name="toast_could_not_create_audio_clip">오디오 클립을 만들 수 없습니다</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">Snippet 음악 /에 저장iTune/소켓</string>
+    <string name="toast_playing_next">다음을 재생</string>
+    <string name="toast_added_to_queue">queue에 추가</string>
+    <string name="toast_download_started_check_notifications">다운로드 시작 · 알림 확인</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">뚱 베어\'t 이 노래를 찾아YouTube Music</string>
+    <string name="toast_couldn_t_start_mix">뚱 베어\'t 시작 혼합</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">뚱 베어\'t에서 트랙 찾기YouTube Music</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">암호를 안전하게 암호화 할 수 없습니다. 자동 백업이 변경되지 않았습니다.</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">스토리지 권한은 다운로드에서 백업을 저장해야 합니다.</string>
+    <string name="toast_choose_an_itune_backup_file">한국어itune백업 파일</string>
+    <string name="toast_audio_artwork_cache_cleared">오디오 및 작품 캐시 정리</string>
+    <string name="toast_could_not_open_github">GitHub를 열 수 없습니다.</string>
+    <string name="toast_profile_name_updated">프로필 이름 업데이트</string>
+    <string name="toast_search_history_cleared">검색 역사 cleared</string>
+    <string name="toast_listening_history_cleared">순정된 역사</string>
+    <string name="toast_cached_songs_cleared">정해진 곡</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">다른 앱에서 Display를 부여하는 시스템 설정</string>
+    <string name="toast_dynamic_island_geometry_reset">동적인 섬 기하학 리셋</string>
+    <string name="toast_geometry_reset">Geometry 리셋</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">Lyrics 공급자는 과태로 재시동합니다</string>
+    <string name="toast_api_key_saved">API 키 저장</string>
+    <string name="toast_base_url_updated">기본 URL 업데이트</string>
+    <string name="toast_translation_prompt_updated">번역 신속한 업데이트</string>
+    <string name="toast_equalizer_reset_to_flat">Flat에 Equalizer 재설정</string>
+    <string name="toast_dj_console_reset">DJ 콘솔 리셋</string>
+    <string name="toast_name_saved">이름 저장</string>
+    <string name="toast_syncing_youtube_music_library">지원하다YouTube Music도서관 ...</string>
+    <string name="toast_signed_out_local_likes_preserved">서명 (지구는 보존 된 것과 같습니다)</string>
+    <string name="toast_signed_out_of_all_google_accounts">모든 Google 계정에서 로그인</string>
+    <string name="toast_discord_disconnected">Discord 연결</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">자주 묻는 질문YouTube Music쿠키 (SAPISID 및 세션 쿠키)</string>
+    <string name="toast_youtube_music_account_connected">YouTube Music계정 연결</string>
+    <string name="toast_account_renamed">계정 이름</string>
+    <string name="toast_account_deleted">계정 삭제</string>
+    <string name="toast_cannot_delete_your_only_account">계정 삭제</string>
+    <string name="toast_sources_restored_to_defaults">기본적으로 복원 된 소스</string>
+    <string name="toast_spotify_disconnected">Spotify연결하기</string>
+    <string name="toast_spotify_sp_dc_token_saved">Spotifysp dc 토큰 저장</string>
+    <string name="toast_spotify_connected">Spotify connect₢ 킹</string>
+    <string name="toast_complete_spotify_sign_in_first">지원하다Spotify처음 로그인</string>
+    <string name="toast_saved_to_gallery">갤러리에 저장!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">지원하다iTune계속 업데이트 설치</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">다운로드 된 업데이트 APK는 사용할 수 없습니다</string>
+    <string name="toast_added_to_queue_next">다음에 추가</string>
+    <string name="toast_link_copied_to_clipboard">클립보드에 복사 링크</string>
+    <string name="toast_song_link_copied_to_clipboard">Song link copied 에 클립보드</string>
+    <string name="toast_left_ishare_session">왼쪽 iShare 세션</string>
+    <string name="toast_ishare_lan_host_started">iShare LAN 호스트가 시작되었습니다!</string>
+    <string name="toast_scanning_lan_for_sessions">세션을위한 스캔 LAN ...</string>
+    <string name="toast_cache_cleared">캐시 Cleared</string>
+    <string name="toast_signed_out_successfully">가입하기</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">비밀번호는 적어도 8자 이상이어야 합니다.</string>
+    <string name="toast_no_backup_file_found_in_storage">저장에 있는 백업 파일 없음</string>
+    <string name="toast_library_settings_restored">도서관 및 설정 복원!</string>
+    <string name="toast_enter_your_backup_password">백업 비밀번호</string>
+    <string name="toast_syncing_spotify_library">지원하다Spotify도서관 ...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify Connect₢ 킹</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">유효한 SP DC 쿠키를 입력하십시오.</string>
+    <string name="toast_playing">재생 중: %%1$s…</string>
+    <string name="toast_upgraded_to_lossless_kbps">무손실 음질로 업그레이드됨 • %%1$s kbps</string>
+    <string name="toast_playing_next_0f0c851c">다음 곡 재생: %%1$s</string>
+    <string name="toast_added_to_queue_88e96c25">%%1$s을(를) 대기열에 추가함</string>
+    <string name="toast_playing_cb1fb3de">재생 중: %%1$s…</string>
+    <string name="toast_playing_next_e0082d95">다음 곡: %%1$s</string>
+    <string name="toast_couldn_t_load">%%1$s을(를) 불러올 수 없음</string>
+    <string name="toast_opening">%%1$s 여는 중…</string>
+    <string name="toast_couldn_t_open">%%1$s을(를) 열 수 없음</string>
+    <string name="toast_couldn_t_play">%%1$s을(를) 재생할 수 없음</string>
+    <string name="toast_library_pin">보관함 PIN: %%1$s</string>
+    <string name="toast_copied">복사됨: %%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">%%1$s분 후 절전 타이머 설정</string>
+    <string name="toast_lyrics_applied">가사 적용됨 (%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">%%1$s개 트랙을 대기열에 추가함</string>
+    <string name="toast_switched_feed_to">피드를 %%1$s(으)로 변경함</string>
+    <string name="toast_provider_updated_to">제공자를 %%1$s(으)로 업데이트함</string>
+    <string name="toast_target_language_set_to">대상 언어를 %%1$s(으)로 설정함</string>
+    <string name="toast_translation_mode_set_to">번역 모드를 %%1$s(으)로 설정함</string>
+    <string name="toast_added_source">소스 추가됨: %%1$s</string>
+    <string name="toast_installed_extension_s">%%1$s 확장 프로그램 설치됨</string>
+    <string name="toast_imported_songs">\'%%1$s\' 가져옴 (%%2$s곡)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">YouTube Music에서 \'%%1$s\'을(를) 찾을 수 없음</string>
+    <string name="toast_added_songs_to">%%1$s곡을 %%2$s에 추가함</string>
+    <string name="toast_joining">%%1$s에 연결 중…</string>
+    <string name="toast_added_to">%%1$s에 추가함</string>
+    <string name="toast_itune_v_for_android_tv">iTune v%%1$s for Android TV</string>
+    <string name="toast_backup_failed">백업 실패: %%1$s</string>
+    <string name="toast_restore_failed">복원 실패: %%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">iShare, 동적인 섬 &amp; StandBy</string>
+    <string name="settings_ishare" formatted="false">아이 공유</string>
+    <string name="settings_dynamic_island" formatted="false">동적인 섬</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">외부 뜨 물 거품 관제사iTune</string>
+    <string name="settings_always_on_display" formatted="false">항상 전시</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">오디오 엔진 &amp; 음향 효과</string>
+    <string name="settings_dolby_atmos" formatted="false">Dolby 아모스</string>
+    <string name="settings_text_8948f8179a" formatted="false">8D 오디오</string>
+    <string name="settings_spatial_audio" formatted="false">Spatial 오디오</string>
+    <string name="settings_equalizer_eq" formatted="false">본부 (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">낮은 패스 필터링</string>
+    <string name="settings_dj_studio_panel" formatted="false">DJ 스튜디오 패널</string>
+    <string name="settings_audio_normalization" formatted="false">오디오 정상화</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB 비트 감염 DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">순수한 오디오 우회</string>
+    <string name="settings_signal_pipeline" formatted="false">신호 파이프라인</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">${audioEngine.pillBadge.text} -&gt; $activeOutputName의 경우</string>
+    <string name="settings_audio_playback" formatted="false">오디오 및 재생</string>
+    <string name="settings_sources" formatted="false">이름 *</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">계정 관리YouTube Music·JioSaavn, installable 연장,WebDAV·SMB, 재생 우선</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">자동 Skip 언제 오류 Occurs</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">재생이 실패하면 다음 퀴즈 노래로 이동합니다.</string>
+    <string name="settings_download_quality" formatted="false">다운로드 Quality</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">song download action에 의해 사용되는 기본 품질</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">앱의 다운로드에 대한 기본 오디오 품질을 선택합니다.</string>
+    <string name="settings_lossless_audio" formatted="false">Lossless 오디오</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">정당한 노래의 향상 질</string>
+    <string name="settings_streaming_quality" formatted="false">공급 업체</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">선호하는 스트리밍 오디오 품질을 선택하십시오.</string>
+    <string name="settings_pcm_output_format" formatted="false">PCM 산출 체재</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">현재 위치에 재생을 재건</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">Android에서 요구하는 PCM 형식을 선택하십시오.\'s 오디오 출력. USB DAC는 지원되는 형식으로 변환 할 수 있습니다.</string>
+    <string name="settings_crossfade" formatted="false">채용정보</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">다음의 시작으로 종료 트랙의 퇴근을 극복합니다.</string>
+    <string name="settings_automix" formatted="false">오토믹스</string>
+    <string name="settings_afterglow" formatted="false">이름 *</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">각 곡의 선택된 최종 초 동안 동일한 낮은 패스 Equalizer 효과 적용. Afterglow pauses AutoMix 과 Crossfade 동안 활성화.</string>
+    <string name="settings_permanent_shuffle" formatted="false">영원한 Shuffle</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">계속 shuffle 영구적으로 잠겨 플레이어에서</string>
+    <string name="settings_pause_at_volume_0" formatted="false">볼륨에 일시 0</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">볼륨이 0에 도달 할 때 자동으로 일시 정지 재생</string>
+    <string name="settings_volume_bar" formatted="false">볼륨 바</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">${state.volumeBarSide.lowercase()}에 표시됩니다. 볼륨 버튼을 누르면 가장자리</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">화면의 가장자리가 앱 볼륨 바가 나타납니다.</string>
+    <string name="settings_content" formatted="false">이름 *</string>
+    <string name="settings_default_content_language" formatted="false">기본 내용 언어</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">Moods, Browse 및 검색 언어</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">검색 결과를 찾을 수 없음 한국어 사전에 온라인 구직</string>
+    <string name="settings_default_content_country" formatted="false">기본 내용 국가</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">차트, 재생 목록 및 새로운 릴리스의 지역</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">새 앨범, 지역 무드 및 추천 재생목록에 사용되는 지역 상점을 선택하십시오.</string>
+    <string name="settings_hide_explicit_content" formatted="false">Explicit 콘텐츠</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">Moods, Browse &amp; Search를 통한 필터 명시된 곡</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">지금 재생 &amp; 액체 유리</string>
+    <string name="settings_splash_screen" formatted="false">스플래시 스크린</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">앱 출시 브랜드 애니메이션 &amp; 유체 타이틀 공개</string>
+    <string name="settings_animated_cover_art" formatted="false">애니메이션 커버 아트</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">Spotify캔버스, 애플 음악, Tidal &amp; 커뮤니티 모션 커버</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">Spotify&amp; 캔버스 설치</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">Auto-Hide 화포 통제</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">캔버스가 재생하는 동안 5 년대 후 제어 최소화 (toggle 캔버스)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">캔버스 위에 동기화 된 작물보기</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">Canvas Controls가 숨길 때 노래 이름 위의 애니메이션 synced lyrics 표시</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">감사합니다.Spotify인기 카테고리</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">지원하다SpotifyApple Music, Tidal &amp; Community의 이전 캔버스</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">Cellular에 애니메이션 커버</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">모바일 데이터에 루프링 캔버스 동영상 허용</string>
+    <string name="settings_player_type" formatted="false">선수 유형</string>
+    <string name="settings_player_style" formatted="false">선수 작풍</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">선수 동적인 착색</string>
+    <string name="settings_full_screen_cover_art" formatted="false">스크린 덮개 예술</string>
+    <string name="settings_corner_length" formatted="false">코너 길이</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">정연한 앨범 삽화의 코너 반경을 조정하십시오</string>
+    <string name="settings_hide_quality_tag" formatted="false">품질 관리</string>
+    <string name="settings_hide_volume_bar" formatted="false">숨기기 볼륨 바</string>
+    <string name="settings_home_top_card_style" formatted="false">홈 카드 스타일</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">액체 유리 Nav &amp; 소형 선수</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">유리 바 및 미니 플레이어, 수조 렌즈가 장착 된</string>
+    <string name="settings_time_synced_lyrics" formatted="false">시간 동기화 된 작물</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">실시간 단어 및 라인 lyrics</string>
+    <string name="settings_app_font" formatted="false">앱 글꼴</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">앱 타이그래피 변경; 플레이어 컨트롤은 설계한 typeface를 유지합니다.</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">앱 인터페이스를 위한 typeface를 선택합니다.</string>
+    <string name="settings_lyrics_providers" formatted="false">Lyrics 공급자</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 소스 • Prioritize &amp; toggle fallback 순서</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">액체 유리 크롬</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">민감하는 반투명 우두머리 &amp; 선창 카드</string>
+    <string name="settings_tactile_haptics" formatted="false">Tactile 침술</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">Player Control을 통한 Subtle Pulse 피드백</string>
+    <string name="settings_downloads_storage" formatted="false">다운로드 및 저장</string>
+    <string name="settings_cellular_streaming" formatted="false">Cellular 스트리밍</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">모바일 데이터의 오디오 대역폭</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">Wi-Fi에서 스트리밍할 때 오디오를 제어하세요.</string>
+    <string name="settings_download_over_wi_fi" formatted="false">Wi-Fi에 대한 다운로드</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">자동 다운로드 전에 Wi-Fi 대기</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">Cache 노래 후 재생</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">재생 후 오프라인 저장소에 노래를 저장</string>
+    <string name="settings_cache_quality" formatted="false">Cache 품질</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">낮은 품질 저장 저장</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">재생 완료 후 저장된 노래의 품질을 선택하십시오. 지금에서 캐시 된 노래에 적용됩니다.</string>
+    <string name="settings_song_storage_limit" formatted="false">Song 저장 한계</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">이전 재생되지 않은 곡 전에 오프라인 오디오 캐시에 대한 최대 디스크 저장 할당.</string>
+    <string name="settings_clear_cached_songs" formatted="false">자주 묻는 질문</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">${MusicCacheManager.cachedTracks.size} 노래 • ${MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)}</string>
+    <string name="settings_automatic_downloads" formatted="false">자동 다운로드</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">새로운 liked 및 추가 트랙을 오프라인으로 저장</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">Clear App 버퍼 캐시</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">임시 덮개 예술 &amp; 네트워크 완충기를 제거하십시오</string>
+    <string name="settings_library_listening" formatted="false">도서관 및 듣기</string>
+    <string name="settings_sync_library" formatted="false">Sync 도서관</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">아티스트 유지, 재생 목록 및 앨범 업데이트</string>
+    <string name="settings_listening_history" formatted="false">듣기 역사</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">모양 개인화 혼합 &amp; 최근에 종료</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">이 장치에서 좋아요 유지</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">노래를 계속iTune서명할 때</string>
+    <string name="settings_notifications_general" formatted="false">알림 및 일반</string>
+    <string name="settings_offline_mode" formatted="false">Offline 형태</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">재생을 시작하려면 다운로드 된 복사본 필요</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">작업 클리어에서 음악을 중지</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">재생을 중지iTune은 최근에서 은폐</string>
+    <string name="settings_auto_sleep_timer" formatted="false">자동 수면 타이머</string>
+    <string name="settings_network_proxy" formatted="false">네트워크 프록시</string>
+    <string name="settings_profile_name" formatted="false">프로필 이름</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">설정 프로파일 표시 이름 지정</string>
+    <string name="settings_news_from_dev" formatted="false">dev의 뉴스</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">공지, 발표 및 변경</string>
+    <string name="settings_general_about" formatted="false">일반 및 정보</string>
+    <string name="settings_home_screen_widget" formatted="false">홈 화면 위젯</string>
+    <string name="settings_widget_customization" formatted="false">Widget 사용자 정의</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">크기 미리보기, 작품, 컨트롤 및 위젯 스타일 선택</string>
+    <string name="settings_backup_restore" formatted="false">백업 및 복원</string>
+    <string name="settings_automatic_daily_backup" formatted="false">자동 일일 백업</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">일일 백업 암호화 • 다운로드 /iTune/백업</string>
+    <string name="settings_back_up_itune" formatted="false">맨 위로iTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">계정 저장, 모든 설정, 오디오 효과, 라이브러리 데이터 및 통계 암호화</string>
+    <string name="settings_restore_from_backup" formatted="false">백업에서 복원</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">설정, 오디오 효과, 계정 또는 라이브러리 데이터를 복원합니다.itune</string>
+    <string name="settings_privacy" formatted="false">제품 정보</string>
+    <string name="settings_pause_search_history" formatted="false">Pause 검색 역사</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">역사에 새로운 검색 쿼리를 저장하지 마십시오</string>
+    <string name="settings_clear_search_history" formatted="false">명확한 검색 History</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">검색에서 최근 쿼리 제거</string>
+    <string name="settings_pause_listening_history" formatted="false">Pause 듣기 역사</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">곡이나 업데이트 권고를 기록하지 마십시오.</string>
+    <string name="settings_clear_listening_history" formatted="false">Clear Listening 역사</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">재생 역사 제거 및 맛 프로파일 재설정</string>
+    <string name="settings_disable_screenshot" formatted="false">스크린 샷</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">앱의 스크린 샷 및 스크린 레코딩</string>
+    <string name="settings_best_available" formatted="false">가장 좋은</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">가장 높은 사용 가능한 소스 품질</string>
+    <string name="settings_maximum" formatted="false">지원하다</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">가장 높은 비트레이트 스트림 선택</string>
+    <string name="settings_high" formatted="false">주요 특징</string>
+    <string name="settings_target_about_160_kbps" formatted="false">약 160kbps의 대상</string>
+    <string name="settings_standard" formatted="false">제품 정보</string>
+    <string name="settings_target_about_128_kbps" formatted="false">대상 약 128kbps</string>
+    <string name="settings_data_saver" formatted="false">데이터 보호기</string>
+    <string name="settings_target_about_64_kbps" formatted="false">대상 약 64kbps</string>
+    <string name="settings_extreme" formatted="false">뚱 베어</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">최대 불순 (256+kbps)</string>
+    <string name="settings_high_b1a5954a" formatted="false">주요 특징</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">고품질 오디오 (~160kbps)</string>
+    <string name="settings_medium" formatted="false">주요 특징</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">표준 오디오 품질 (~128 kbps)</string>
+    <string name="settings_low" formatted="false">이름 *</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">데이터 로저 오디오 (~48-64 kbps)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">16비트 PCM</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">표준 정수 PCM 출력; USB 오디오 클래스 DAC와 널리 호환</string>
+    <string name="settings_text_6697202e38" formatted="false">32 비트 플로트 PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">Android 및 연결된 오디오 경로로 지원할 때 Float PCM 출력</string>
+    <string name="settings_off" formatted="false">이름 *</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">재생 트랙을 깨끗하게 백업</string>
+    <string name="settings_text_6597740315" formatted="false">2 초</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">하위 전환 overlap</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 초</string>
+    <string name="settings_short_seamless_fade" formatted="false">짧은 이음새가 없는 퇴색</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 초</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">밸런스 DJ 스타일 전환</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8 초</string>
+    <string name="settings_smooth_extended_blend" formatted="false">매끄러운 장시간 혼합</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 초</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">최대 연속 혼합 혼합</string>
+    <string name="settings_off_e3de5ab0" formatted="false">이름 *</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">일반 재생 효과 및 전환 유지</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 초</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">각 곡의 마지막 5 초 동안 낮은 패스 적용</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 초</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">각 곡의 최종 10 초 동안 낮은 패스를 적용</string>
+    <string name="settings_text_eb4354110e" formatted="false">15 초</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">각 곡의 최종 15 초 동안 낮은 패스를 적용</string>
+    <string name="settings_right" formatted="false">지원하다</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">오른쪽 가장자리 (기본)에 볼륨 바를 표시</string>
+    <string name="settings_left" formatted="false">왼쪽</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">왼쪽 가장자리에 볼륨 바 표시</string>
+    <string name="settings_high_efficiency" formatted="false">높은 효율</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">최소 셀룰러 데이터 사용</string>
+    <string name="settings_high_quality" formatted="false">높은 품질</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 kbps 균형 모바일 재생</string>
+    <string name="settings_lossless" formatted="false">뚱 베어</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">5G/LTE 네트워크를 통한 완전 손실</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">이름 *</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">Wi-Fi 전용 스트리밍 가능</string>
+    <string name="settings_text_03a001f575" formatted="false">500 메가바이트</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">컴팩트 캐시 (~70 곡)</string>
+    <string name="settings_text_33015e637f" formatted="false">1개 GB</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">모더레이트 캐시 (~150 곡)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2개 GB</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">권장 기본 (~300 곡)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5개 GB</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">대형 오프라인 컬렉션 (~800 곡)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10개 GB</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">매우 큰 도서관 (1,600 곡)</string>
+    <string name="settings_unlimited" formatted="false">제한 없음</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">절대 evict 캐시 된 노래</string>
+    <string name="settings_pipeline_output">%1$s·%2$s</string>
+    <string name="settings_volume_bar_side">더 보기%1$s볼륨 버튼을 누르면 가장자리</string>
+    <string name="settings_corner_radius_value">%1$d뚱 베어</string>
+    <string name="settings_active_lyrics_providers">%1$d지원하다</string>
+    <string name="settings_cached_song_count_size">%1$d노래 •%2$s</string>
+    <string name="library_playlist_count_one">%1$d공지사항</string>
+    <string name="library_playlist_count_many">%1$d공지사항</string>
+    <string name="library_album_count_one">%1$d관련 앨범</string>
+    <string name="library_album_count_many">%1$d관련 앨범</string>
+    <string name="remove_from_favorites">자주 묻는 질문</string>
+    <string name="play_top_album">상단 앨범</string>
+    <string name="open_in_spotify">이용안내Spotify</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">한국어 인터페이스</string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">스웨덴어 인터페이스</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">아랍어 인터페이스</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Use the Azerbaijani interface</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Use the Bengali interface</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Use the Bulgarian interface</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Use the Catalan interface</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">Use the Czech interface</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Use the Danish interface</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Use the Finnish interface</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Use the Greek interface</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Use the Hebrew interface</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Use the Hungarian interface</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Use the Indonesian interface</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Use the Malay interface</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Use the Norwegian interface</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Use the Persian interface</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Use the Polish interface</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Use the Romanian interface</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Use the Slovak interface</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Use the Thai interface</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Use the Turkish interface</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Use the Ukrainian interface</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Use the Vietnamese interface</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Use the Swahili interface</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Use the Filipino interface</string>
+</resources>
