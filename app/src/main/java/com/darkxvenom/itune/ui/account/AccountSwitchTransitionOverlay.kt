@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.account
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -309,7 +311,7 @@ fun AccountSwitchTransitionOverlay(
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_itune_waves),
-                        contentDescription = "iTune Waves",
+                        contentDescription = stringResource(R.string.ui_itune_waves),
                         modifier = Modifier.fillMaxSize(),
                         colorFilter = ColorFilter.tint(Color.White),
                     )
