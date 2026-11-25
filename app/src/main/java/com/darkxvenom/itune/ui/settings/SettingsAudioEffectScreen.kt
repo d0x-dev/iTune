@@ -11,6 +11,7 @@
 
 package com.darkxvenom.itune.ui.settings
 
+import androidx.compose.ui.res.stringResource
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -308,16 +309,16 @@ fun SettingsAudioEffectScreen(
                                     haptics.play(Haptic.Tap)
                                     if (activePage == EnginePopupPage.EQUALIZER) {
                                         AudioEngineManager.resetEqualizer()
-                                        Toast.makeText(context, "Equalizer reset to Flat", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, context.getString(R.string.toast_equalizer_reset_to_flat), Toast.LENGTH_SHORT).show()
                                     } else {
                                         AudioEngineManager.applyDjPreset(DjPreset.DEFAULT)
-                                        Toast.makeText(context, "DJ Console reset", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, context.getString(R.string.toast_dj_console_reset), Toast.LENGTH_SHORT).show()
                                     }
                                 },
                             ) {
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_di_reset),
-                                    contentDescription = "Reset $pageTitle",
+                                    contentDescription = stringResource(R.string.reset_page_title, pageTitle),
                                     colorFilter = ColorFilter.tint(Color.White),
                                     modifier = Modifier.size(20.dp),
                                 )
