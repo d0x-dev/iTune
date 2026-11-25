@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.player
 
+
+import androidx.compose.ui.res.stringResource
 import android.Manifest
 import android.os.Build
 import android.view.HapticFeedbackConstants
@@ -154,7 +156,7 @@ fun AppleAudioOutputPopup(
         headerActions = {
             HeaderCircleBlackXmlButton(
                 iconRes = R.drawable.ic_output_bluetooth,
-                contentDescription = "Bluetooth Settings",
+                contentDescription = stringResource(R.string.ui_bluetooth_settings),
                 onClick = {
                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                     AudioOutputManager.openSystemMediaOutputOrBluetooth(context, preferBluetoothSettings = true)
@@ -175,7 +177,7 @@ fun AppleAudioOutputPopup(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Refresh,
-                    contentDescription = "Scan Output Devices",
+                    contentDescription = stringResource(R.string.ui_scan_output_devices),
                     tint = Color.White.copy(alpha = 0.92f),
                     modifier = Modifier.size(18.dp),
                 )
@@ -208,13 +210,13 @@ fun AppleAudioOutputPopup(
                         Spacer(Modifier.width(10.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Bluetooth Device Access",
+                                text = stringResource(R.string.ui_bluetooth_device_access),
                                 color = Color.White,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.SemiBold,
                             )
                             Text(
-                                text = "Grant to show earbuds name & live battery %",
+                                text = stringResource(R.string.ui_grant_to_show_earbuds_name_live_battery),
                                 color = Color.White.copy(alpha = 0.62f),
                                 fontSize = 11.5.sp,
                             )
@@ -232,7 +234,7 @@ fun AppleAudioOutputPopup(
                                 .padding(horizontal = 12.dp, vertical = 6.dp),
                         ) {
                             Text(
-                                text = "Grant",
+                                text = stringResource(R.string.ui_grant),
                                 color = Color.White,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -333,7 +335,7 @@ fun AppleAudioOutputPopup(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "CAST & WIRELESS DEVICES",
+                            text = stringResource(R.string.ui_cast_wireless_devices),
                             color = AppleTextSecondary,
                             fontSize = 10.5.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -601,7 +603,7 @@ private fun OutputDeviceBlackButton(
                 )
                 if (!badgeText.isNullOrBlank()) {
                     Text(
-                        text = " • $badgeText",
+                        text = stringResource(R.string.ui_text_620b6e059c, badgeText),
                         color = Color.White.copy(alpha = 0.72f),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Medium,
@@ -623,13 +625,13 @@ private fun OutputDeviceBlackButton(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Check,
-                    contentDescription = "Active",
+                    contentDescription = stringResource(R.string.ui_active),
                     tint = OutputActiveGreen,
                     modifier = Modifier.size(13.dp),
                 )
                 Spacer(Modifier.width(3.dp))
                 Text(
-                    text = "Active",
+                    text = stringResource(R.string.ui_active),
                     color = OutputActiveGreen,
                     fontSize = 10.5.sp,
                     fontWeight = FontWeight.Bold,
@@ -645,7 +647,7 @@ private fun OutputDeviceBlackButton(
                     .padding(horizontal = 8.dp, vertical = 3.dp),
             ) {
                 Text(
-                    text = "In Use",
+                    text = stringResource(R.string.ui_in_use),
                     color = Color.White.copy(alpha = 0.72f),
                     fontSize = 10.5.sp,
                     fontWeight = FontWeight.Medium,
@@ -693,7 +695,7 @@ private fun SimultaneousDualAudioBlackCard(
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_output_dual_audio),
-                    contentDescription = "Simultaneous Dual Audio",
+                    contentDescription = stringResource(R.string.ui_simultaneous_dual_audio),
                     colorFilter = ColorFilter.tint(Color.White),
                     modifier = Modifier.size(19.dp),
                 )
@@ -701,13 +703,13 @@ private fun SimultaneousDualAudioBlackCard(
             Spacer(Modifier.width(10.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Simultaneous Dual Output",
+                    text = stringResource(R.string.ui_simultaneous_dual_output),
                     color = Color.White,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                 )
                 Text(
-                    text = "Play on buds & phone speaker/AUX at the same time",
+                    text = stringResource(R.string.ui_play_on_buds_phone_speaker_aux_at_the_same_time),
                     color = Color.White.copy(alpha = 0.58f),
                     fontSize = 11.5.sp,
                     maxLines = 1,
@@ -735,7 +737,7 @@ private fun SimultaneousDualAudioBlackCard(
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "SECONDARY MIRROR SINK",
+                    text = stringResource(R.string.ui_secondary_mirror_sink),
                     color = AppleTextSecondary,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -778,7 +780,7 @@ private fun SimultaneousDualAudioBlackCard(
                         if (isSecSelected) {
                             Icon(
                                 imageVector = Icons.Rounded.Check,
-                                contentDescription = "Selected",
+                                contentDescription = stringResource(R.string.ui_selected),
                                 tint = OutputActiveGreen,
                                 modifier = Modifier.size(15.dp),
                             )
@@ -792,7 +794,7 @@ private fun SimultaneousDualAudioBlackCard(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = "Mirror Vol",
+                        text = stringResource(R.string.ui_mirror_vol),
                         color = Color.White.copy(alpha = 0.75f),
                         fontSize = 11.5.sp,
                         fontWeight = FontWeight.Medium,
