@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.television.ui.radio
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -143,7 +146,7 @@ fun TvRadioScreen(
                 item(key = "radio_favs_header") {
                     Spacer(Modifier.height(24.dp))
                     Text(
-                        text = "Favorite Stations",
+                        text = stringResource(R.string.ui_favorite_stations),
                         color = Color.White,
                         fontSize = 22.sp,
                         fontFamily = SFProDisplay,
@@ -181,7 +184,7 @@ fun TvRadioScreen(
                 item(key = "radio_country_header") {
                     Spacer(Modifier.height(24.dp))
                     Text(
-                        text = "Browse by Country",
+                        text = stringResource(R.string.ui_browse_by_country),
                         color = Color.White,
                         fontSize = 22.sp,
                         fontFamily = SFProDisplay,
@@ -344,7 +347,7 @@ private fun TvRadioHeroBanner(
                                 .padding(horizontal = 8.dp, vertical = 3.dp),
                         ) {
                             Text(
-                                text = "LIVE",
+                                text = stringResource(R.string.ui_live),
                                 color = Color.White,
                                 fontSize = 11.sp,
                                 fontFamily = SFProDisplay,
@@ -527,7 +530,7 @@ private fun TvRadioStationCard(
                             .padding(horizontal = 6.dp, vertical = 2.dp),
                     ) {
                         Text(
-                            text = "${station.bitrateKbps}k",
+                            text = stringResource(R.string.ui_k, station.bitrateKbps),
                             color = Color.White.copy(alpha = 0.85f),
                             fontSize = 10.sp,
                             fontFamily = SFProDisplay,
@@ -561,7 +564,7 @@ private fun TvRadioStationCard(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.PlayArrow,
-                            contentDescription = "Play",
+                            contentDescription = stringResource(R.string.play),
                             tint = Color.White,
                             modifier = Modifier.size(32.dp),
                         )
