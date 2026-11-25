@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.components
 
+import android.content.Context
+import android.net.Uri
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -22,7 +24,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,16 +41,28 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.darkxvenom.itune.R
 import com.darkxvenom.itune.data.repository.AvatarManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.net.URL
 
 /**
  * Renders the user profile avatar with Apple iOS styling:
  * Automatically synchronizes with AvatarManager's persistent selection and falls back to
  * the signature Apple Memoji canvas if network is unavailable.
+ *
+ * Avatars are downloaded once from GitHub and cached locally in the app's cache directory.
+ * Subsequent loads use the local file and never hit the network again.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -56,8 +74,45 @@ fun AppleMemojiAvatar(
     onClick: (() -> Unit)? = null
 ) {
     val currentId = avatarId ?: AvatarManager.currentAvatarId.value
-    val avatarUrl = remember(currentId) { AvatarManager.getAvatarUrl(currentId) }
     val context = LocalContext.current
+
+    // Track whether we should use the local cached file or the remote GitHub URL
+    var useLocalCache by remember { mutableStateOf(false) }
+    var cachedFilePath by remember { mutableStateOf<String?>(null) }
+
+    val localCacheFile = File(context.cacheDir, "avatar_$currentId.png")
+    val githubUrl = AvatarManager.getAvatarUrl(currentId)
+
+    // If a local cached copy exists, prefer it immediately and never hit the network
+    if (localCacheFile.exists()) {
+        useLocalCache = true
+        cachedFilePath = localCacheFile.absolutePath
+    }
+
+    // Download once from GitHub on first load, save to local cache, then switch to local
+    LaunchedEffect(currentId) {
+        if (!localCacheFile.exists()) {
+            try {
+                val bytes = withContext(Dispatchers.Default) {
+                    downloadBytes(githubUrl)
+                }
+                withContext(Dispatchers.Main) {
+                    localCacheFile.outputStream().use { out -> out.write(bytes) }
+                    useLocalCache = true
+                    cachedFilePath = localCacheFile.absolutePath
+                }
+            } catch (e: Exception) {
+                // Keep useLocalCache = false so the GitHub URL is retried on next recomposition;
+                // the Memoji fallback will show while the error state is active.
+            }
+        }
+    }
+
+    val finalModel = if (useLocalCache && cachedFilePath != null) {
+        Uri.parse("file://$cachedFilePath")
+    } else {
+        Uri.parse(githubUrl)
+    }
 
     Box(
         modifier = modifier
@@ -92,10 +147,10 @@ fun AppleMemojiAvatar(
     ) {
         SubcomposeAsyncImage(
             model = ImageRequest.Builder(context)
-                .data(avatarUrl)
+                .data(finalModel)
                 .crossfade(true)
                 .build(),
-            contentDescription = "User Profile Avatar",
+            contentDescription = stringResource(R.string.ui_user_profile_avatar),
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
             loading = {
@@ -107,6 +162,20 @@ fun AppleMemojiAvatar(
         )
     }
 }
+
+/**
+ * Downloads the raw bytes from a given HTTPS URL on a background dispatcher.
+ */
+private suspend fun downloadBytes(urlString: String): ByteArray {
+    val connection = URL(urlString).openConnection().apply {
+        connectTimeout = 15000
+        readTimeout = 15000
+    }
+    return connection.getInputStream().use { input ->
+        input.buffered().readBytes()
+    }
+}
+
 // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 @Composable
