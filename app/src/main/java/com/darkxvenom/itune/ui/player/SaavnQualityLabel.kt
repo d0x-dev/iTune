@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.player
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -71,7 +73,7 @@ fun SaavnQualityLabel(status: SaavnStatus) {
         androidx.compose.foundation.layout.Spacer(Modifier.width(6.dp))
         val style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
         if (upgrading) {
-            Text("Finding a better stream", style = style, color = Color.White.copy(alpha = 0.7f), maxLines = 1)
+            Text(stringResource(R.string.ui_finding_a_better_stream), style = style, color = Color.White.copy(alpha = 0.7f), maxLines = 1)
         } else {
             ShimmerLabel("High Quality AAC", style)
         }
