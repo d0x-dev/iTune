@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.search
 
+
+import androidx.compose.ui.res.stringResource
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -261,7 +263,7 @@ internal fun SearchUnifiedRow(
             ) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
-                    contentDescription = "More options",
+                    contentDescription = stringResource(R.string.ui_more_options_86c0a35e),
                     tint = Color(0xFF8E8E93),
                     modifier = Modifier.size(20.dp)
                 )
@@ -428,7 +430,7 @@ internal fun AppleSearchMorePopup(
                     if (popupStep == PopupPlaylistStep.MENU) {
                         HeaderCircleActionButton(
                             iconRes = R.drawable.ic_menu_share,
-                            contentDescription = "Share",
+                            contentDescription = stringResource(R.string.share),
                             onClick = {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                 val intent = Intent(Intent.ACTION_SEND).apply {
@@ -441,12 +443,12 @@ internal fun AppleSearchMorePopup(
                         )
                         HeaderCircleActionButton(
                             iconRes = R.drawable.ic_menu_copy_link,
-                            contentDescription = "Copy link",
+                            contentDescription = stringResource(R.string.ui_copy_link),
                             onClick = {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                 val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
                                 cm?.setPrimaryClip(ClipData.newPlainText("Link", safeShareUrl))
-                                Toast.makeText(context, "Link copied", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_link_copied), Toast.LENGTH_SHORT).show()
                                 closeSmoothly()
                             }
                         )
@@ -480,7 +482,7 @@ internal fun AppleSearchMorePopup(
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                contentDescription = "Back",
+                                contentDescription = stringResource(R.string.back),
                                 tint = Color.White,
                                 modifier = Modifier.size(18.dp),
                             )
@@ -499,7 +501,7 @@ internal fun AppleSearchMorePopup(
                             ) {
                                 Icon(
                                     imageVector = Icons.Rounded.Add,
-                                    contentDescription = "New Playlist",
+                                    contentDescription = stringResource(R.string.ui_new_playlist),
                                     tint = Color.White,
                                     modifier = Modifier.size(19.dp),
                                 )
@@ -543,29 +545,29 @@ internal fun AppleSearchMorePopup(
                                         val isFav = MusicPlayerState.isFavorite(target.track.id)
                                         MorePopupVectorOptionRow(
                                             icon = Icons.Rounded.PlayArrow,
-                                            title = "Play Next",
+                                            title = stringResource(R.string.play_next),
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 MusicPlayerState.playNext(target.track)
-                                                Toast.makeText(context, "Playing next", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, context.getString(R.string.toast_playing_next), Toast.LENGTH_SHORT).show()
                                                 closeSmoothly()
                                             }
                                         )
                                         PopupMenuDivider()
                                         MorePopupVectorOptionRow(
                                             icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
-                                            title = "Add to Queue",
+                                            title = stringResource(R.string.add_to_queue),
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 MusicPlayerState.addToQueue(listOf(target.track))
-                                                Toast.makeText(context, "Added to queue", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, context.getString(R.string.toast_added_to_queue), Toast.LENGTH_SHORT).show()
                                                 closeSmoothly()
                                             }
                                         )
                                         PopupMenuDivider()
                                         MorePopupVectorOptionRow(
                                             icon = Icons.AutoMirrored.Rounded.QueueMusic,
-                                            title = "Add to Playlist",
+                                            title = stringResource(R.string.add_to_playlist),
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 popupStep = PopupPlaylistStep.ADD_TO_PLAYLIST
@@ -574,7 +576,7 @@ internal fun AppleSearchMorePopup(
                                         PopupMenuDivider()
                                         MorePopupVectorOptionRow(
                                             icon = Icons.Rounded.Download,
-                                            title = if (startingDownload) "Preparing Download…" else "Download",
+                                            title = if (startingDownload) stringResource(R.string.preparing_download) else stringResource(R.string.download),
                                             onClick = {
                                                 if (startingDownload) return@MorePopupVectorOptionRow
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
@@ -589,11 +591,11 @@ internal fun AppleSearchMorePopup(
                                                         AudioDownloader.download(context, target.track, selected)
                                                     }
                                                     if (result.isSuccess) {
-                                                        Toast.makeText(context, "Download started · Check notifications", Toast.LENGTH_SHORT).show()
+                                                        Toast.makeText(context, context.getString(R.string.toast_download_started_check_notifications), Toast.LENGTH_SHORT).show()
                                                         closeSmoothly()
                                                     } else {
                                                         startingDownload = false
-                                                        Toast.makeText(context, result.exceptionOrNull()?.message ?: "Download failed", Toast.LENGTH_LONG).show()
+                                                        Toast.makeText(context, result.exceptionOrNull()?.message ?: context.getString(R.string.download_failed), Toast.LENGTH_LONG).show()
                                                     }
                                                 }
                                             }
@@ -601,7 +603,7 @@ internal fun AppleSearchMorePopup(
                                         PopupMenuDivider()
                                         MorePopupVectorOptionRow(
                                             icon = if (isFav) Icons.Rounded.Star else Icons.Rounded.StarBorder,
-                                            title = if (isFav) "Remove from Favorites" else "Favorite",
+                                            title = stringResource(if (isFav) R.string.remove_from_favorites else R.string.favorite),
                                             iconTint = if (isFav) Color(0xFFFA2D48) else Color.White.copy(alpha = 0.92f),
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
@@ -614,7 +616,7 @@ internal fun AppleSearchMorePopup(
                                     is SearchMoreTarget.Artist -> {
                                         MorePopupVectorOptionRow(
                                             icon = Icons.Rounded.PlayArrow,
-                                            title = "Play Top Songs",
+                                            title = stringResource(R.string.play_top_songs),
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 closeSmoothly()
@@ -629,7 +631,7 @@ internal fun AppleSearchMorePopup(
                                         PopupMenuDivider()
                                         MorePopupVectorOptionRow(
                                             icon = Icons.AutoMirrored.Rounded.QueueMusic,
-                                            title = "Open Artist",
+                                            title = stringResource(R.string.open_artist),
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 closeSmoothly()
@@ -649,7 +651,7 @@ internal fun AppleSearchMorePopup(
                                         val isSub = target.artist.id in subscribedArtists
                                         MorePopupVectorOptionRow(
                                             icon = if (isSub) Icons.Rounded.Star else Icons.Rounded.StarBorder,
-                                            title = if (isSub) "Remove from Favorite Artists" else "Add to Favorite Artists",
+                                            title = stringResource(if (isSub) R.string.remove_favorite_artist else R.string.add_to_favorite_artists),
                                             iconTint = if (isSub) Color(0xFFFA2D48) else Color.White.copy(alpha = 0.92f),
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
@@ -662,7 +664,7 @@ internal fun AppleSearchMorePopup(
                                                 )
                                                 Toast.makeText(
                                                     context,
-                                                    if (isSub) "Removed from Artists" else "Added to Artists",
+                                                    context.getString(if (isSub) R.string.removed_from_artists else R.string.added_to_artists),
                                                     Toast.LENGTH_SHORT,
                                                 ).show()
                                                 closeSmoothly()
@@ -673,7 +675,7 @@ internal fun AppleSearchMorePopup(
                                     is SearchMoreTarget.Collection -> {
                                         MorePopupVectorOptionRow(
                                             icon = Icons.Rounded.PlayArrow,
-                                            title = if (target.item.isAlbum) "Play Album" else "Play Playlist",
+                                            title = stringResource(if (target.item.isAlbum) R.string.play_album else R.string.play_playlist),
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 closeSmoothly()
@@ -688,7 +690,7 @@ internal fun AppleSearchMorePopup(
                                         PopupMenuDivider()
                                         MorePopupVectorOptionRow(
                                             icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
-                                            title = "Add to Queue",
+                                            title = stringResource(R.string.add_to_queue),
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 closeSmoothly()
@@ -705,7 +707,7 @@ internal fun AppleSearchMorePopup(
                                         val isSaved = target.item.id in savedReleases
                                         MorePopupVectorOptionRow(
                                             icon = if (isSaved) Icons.Rounded.Check else Icons.Rounded.Add,
-                                            title = if (isSaved) "Remove from Library" else "Add to Library",
+                                            title = stringResource(if (isSaved) R.string.remove_from_library else R.string.add_to_library),
                                             iconTint = if (isSaved) Color(0xFFFA2D48) else Color.White.copy(alpha = 0.92f),
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
@@ -721,7 +723,7 @@ internal fun AppleSearchMorePopup(
                                                 )
                                                 Toast.makeText(
                                                     context,
-                                                    if (isSaved) "Removed from Library" else "Added to Library",
+                                                    context.getString(if (isSaved) R.string.remove_from_library else R.string.add_to_library),
                                                     Toast.LENGTH_SHORT,
                                                 ).show()
                                                 closeSmoothly()
@@ -730,7 +732,7 @@ internal fun AppleSearchMorePopup(
                                         PopupMenuDivider()
                                         MorePopupVectorOptionRow(
                                             icon = Icons.AutoMirrored.Rounded.QueueMusic,
-                                            title = if (target.item.isAlbum) "Open Album" else "Open Playlist",
+                                            title = stringResource(if (target.item.isAlbum) R.string.open_album else R.string.open_playlist),
                                             onClick = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                                 closeSmoothly()
