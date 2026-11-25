@@ -11,7 +11,10 @@
 
 package com.darkxvenom.itune.recognition
 
+
+import com.darkxvenom.itune.R
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -22,12 +25,16 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import com.darkxvenom.itune.data.library.AppLocaleManager
 
 /**
  * Transparent invisible trampoline activity invoked by Quick Settings tile.
  * Verifies permissions and launches the floating recognition overlay over any app.
  */
 class MusicRecognitionTrampolineActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLocaleManager.wrap(newBase))
+    }
 
     private val requestAudioPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -35,7 +42,7 @@ class MusicRecognitionTrampolineActivity : ComponentActivity() {
         if (isGranted) {
             checkPermissionsAndLaunch()
         } else {
-            Toast.makeText(this, "Microphone permission is needed to identify music", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_microphone_permission_is_needed_to_identify_music), Toast.LENGTH_SHORT).show()
             finishWithoutAnimation()
         }
     }
@@ -47,7 +54,7 @@ class MusicRecognitionTrampolineActivity : ComponentActivity() {
         if (hasOverlay) {
             checkPermissionsAndLaunch()
         } else {
-            Toast.makeText(this, "Display over other apps permission is required for the recognition popup", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_display_over_other_apps_permission_is_required_for), Toast.LENGTH_SHORT).show()
             finishWithoutAnimation()
         }
     }
