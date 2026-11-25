@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">Ακύρωση</string>
+    <string name="save">Αποθήκευση</string>
+    <string name="close">Κλείσιμο</string>
+    <string name="done">Τέλος</string>
+    <string name="back">Πίσω</string>
+    <string name="play">Αναπαραγωγή</string>
+    <string name="shuffle">Τυχαία σειρά</string>
+    <string name="retry">Δοκιμάστε ξανά</string>
+    <string name="try_again">Προσπάθησε ξανά.</string>
+    <string name="more">Περισσότερα</string>
+    <string name="less">Λιγότερα</string>
+    <string name="share">Κοινοποίηση</string>
+    <string name="show_all">Εμφάνιση όλων</string>
+    <string name="top_songs">Κορυφαία τραγούδια</string>
+    <string name="suggested">Προτεινόμενο</string>
+    <string name="subscribers">%1$sσυνδρομητές</string>
+    <string name="monthly_listeners">%1$sμηνιαίοι ακροατές</string>
+    <string name="signed_by">Υπογραφή από%1$s</string>
+    <string name="about_artist">Σχετικά με τον καλλιτέχνη</string>
+    <string name="about_album">Σχετικά με το άλμπουμ</string>
+    <string name="recent_album">Πρόσφατα άλμπουμ</string>
+    <string name="recent_ep">Πρόσφατο ΕΚ</string>
+    <string name="recent_single">Πρόσφατο ενιαίο</string>
+    <string name="subscribe">Εγγραφή</string>
+    <string name="unsubscribe">Κατάργηση εγγραφής</string>
+    <string name="add_to_library">Προσθήκη στη βιβλιοθήκη</string>
+    <string name="remove_from_library">Αφαίρεση από τη βιβλιοθήκη</string>
+    <string name="add_to_playlist">Προσθήκη στη λίστα αναπαραγωγής</string>
+    <string name="remove_from_playlist">Αφαίρεση από αυτή τη λίστα</string>
+    <string name="play_next">Αναπαραγωγή επόμενη</string>
+    <string name="add_to_queue">Προσθήκη στην ουρά</string>
+    <string name="start_radio">Έναρξη radio</string>
+    <string name="open">Άνοιγμα</string>
+    <string name="open_album">Άνοιγμα άλμπουμ</string>
+    <string name="open_artist">Ανοικτός καλλιτέχνης</string>
+    <string name="open_playlist">Άνοιγμα λίστας αναπαραγωγής</string>
+    <string name="song_info">Πληροφορίες τραγουδιού</string>
+    <string name="song_info_album">Άλμπουμ</string>
+    <string name="song_info_release_date">Ημερομηνία δημοσίευσης</string>
+    <string name="song_info_views">Αναπαραγωγή / προβολές</string>
+    <string name="song_info_likes">Του αρέσει.</string>
+    <string name="song_info_comments">Σχόλια</string>
+    <string name="song_info_unavailable">Υποθ.</string>
+    <string name="song_info_error">Μερικές πληροφορίες δεν ήταν δυνατόν να φορτωθούν.</string>
+    <string name="song_info_retry">Επανάληψη</string>
+    <string name="like">Όπως...</string>
+    <string name="dislike">Αποσύνδεση</string>
+    <string name="download">Λήψη</string>
+    <string name="download_all">Λήψη όλων</string>
+    <string name="downloaded">Λήψη</string>
+    <string name="downloading">Λήψη</string>
+    <string name="download_notification_title">Λήψη</string>
+    <string name="delete_download">Διαγραφή λήψης</string>
+    <string name="delete_download_confirmation">Αφαίρεση «%1$s» από αυτή τη συσκευή; Χτυπήστε ξανά για επιβεβαίωση.</string>
+    <string name="delete">Διαγραφή</string>
+    <string name="queued">Σε αναμονή</string>
+    <string name="saved_to_downloads">Αποθήκευση σε λήψεις</string>
+    <string name="search_this_list">Αναζήτηση αυτής της λίστας</string>
+    <string name="clear_search">Καθαρισμός αναζήτησης</string>
+    <string name="close_search">Κλείσιμο αναζήτησης</string>
+    <string name="nothing_matches">Τίποτα εδώ δεν ταιριάζει με «%1$s»</string>
+    <string name="sort_songs">Ταξινόμηση τραγουδιών</string>
+    <string name="artist">καλλιτέχνης</string>
+    <string name="album">άλμπουμ</string>
+    <string name="playlist">λίστα αναπαραγωγής</string>
+    <string name="folder">Φάκελος</string>
+    <string name="songs">Τραγούδια</string>
+    <string name="song_count">%1$dτραγούδι</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$dτροχιά</item>
+        <item quantity="other">%1$dκομμάτια</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$dλεπτό</item>
+        <item quantity="other">%1$dλεπτά</item>
+    </plurals>
+    <string name="one_hour">1 ώρα</string>
+    <string name="hours_minutes_short">%1$dΗ%2$dΜ</string>
+    <string name="minutes_short">%1$dλεπτά</string>
+    <string name="pin">Καρφιτσώστε</string>
+    <string name="unpin">Αναίρεση</string>
+    <string name="tile_identify_music">Αναγνώριση μουσικής</string>
+    <string name="tile_identify_music_desc">Αναγνωρίστε τραγούδια που παίζουν γύρω σας μεiTune</string>
+    <string name="widget_itune_description">ΈλεγχοςiTuneαναπαραγωγή από την αρχική οθόνη</string>
+    <string name="app_language">Γλώσσα εφαρμογής</string>
+    <string name="app_language_subtitle">Γλώσσα για μενού, κουμπιά &amp; μηνύματα</string>
+    <string name="app_language_description">Επιλέξτε τη γλώσσα που χρησιμοποιείται για τοiTuneδιασύνδεση.</string>
+    <string name="system_default_language">Προκαθορισμένο σύστημα</string>
+    <string name="follow_device_language">Ακολουθήστε τη γλώσσα της συσκευής</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">Χρήση της αγγλικής διασύνδεσης</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface">इंटरफ़ेस के हिन्दी हिन्दी का उपयोग करें</string>
+    <string name="hindi_interface_language">Γλώσσα διασύνδεσης Hindi</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">Χρήση της ισπανικής διασύνδεσης</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">Χρήση της γαλλικής διασύνδεσης</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">Χρήση της ολλανδικής διασύνδεσης</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">Χρήση της Russianς διεπαφής</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">Χρήση της διεπαφής Urdu</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">Χρήση της κινεζικής διασύνδεσης</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">Χρήση της γερμανικής διασύνδεσης</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">Χρήση της πορτογαλικής διασύνδεσης</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">Χρήση της ιταλικής διασύνδεσης</string>
+    <string name="japanese_language">日本語</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">한국어 </string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Svenskt gränsnitt (στα Αγγλικά).</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">الا</string>
+    <string name="japanese_interface">Χρήση της ιαπωνικής διασύνδεσης</string>
+    <string name="favorite_artist">Αγαπημένος καλλιτέχνης</string>
+    <string name="remove_favorite_artist">Αφαίρεση από τους αγαπημένους καλλιτέχνες</string>
+    <string name="add_to_favorite_artists">Προσθήκη στους αγαπημένους καλλιτέχνες</string>
+    <string name="removed_from_artists">Αφαιρέθηκε από τους καλλιτέχνες</string>
+    <string name="added_to_artists">Προστέθηκε στους Καλλιτέχνες</string>
+    <string name="play_top_songs">Αναπαραγωγή κορυφαίων τραγουδιών</string>
+    <string name="play_album">Αναπαραγωγή άλμπουμ</string>
+    <string name="play_playlist">Αναπαραγωγή λίστας</string>
+    <string name="create_new_playlist">Δημιουργία νέας λίστας αναπαραγωγής</string>
+    <string name="create_playlist">Δημιουργία λίστας αναπαραγωγής</string>
+    <string name="radio">Radio</string>
+    <string name="search">Αναζήτηση</string>
+    <string name="share_playlist_link">Κοινοποίηση δεσμού λίστας αναπαραγωγής</string>
+    <string name="copy_share_link">Αντιγραφή δεσμού κοινής χρήσης</string>
+    <string name="rename_playlist">Μετονομασία λίστας αναπαραγωγής</string>
+    <string name="delete_playlist">Διαγραφή λίστας αναπαραγωγής</string>
+    <string name="share_link_copied">Αντιγραφή link κοινής χρήσης</string>
+    <string name="playlist_removed">Αφαίρεση λίστας αναπαραγωγής</string>
+    <string name="playlist_no_longer_available">Αυτή η λίστα αναπαραγωγής δεν είναι πλέον διαθέσιμη.</string>
+    <string name="empty_playlist">Κενή λίστα αναπαραγωγής</string>
+    <string name="filter_playlists">Φίλτρο λιστών αναπαραγωγής...</string>
+    <string name="filter_albums">Φιλτράρισμα άλμπουμ...</string>
+    <string name="favorite">Αγαπημένο</string>
+    <string name="tap_to_start_listening">Πατήστε για να αρχίσετε να ακούτε</string>
+    <string name="time_zero" formatted="false">0:00</string>
+    <string name="previous">Προηγούμενο</string>
+    <string name="play_or_pause">Αναπαραγωγή ή παύση</string>
+    <string name="next">Επόμενο</string>
+    <string name="repeat">Επανάληψη</string>
+    <string name="open_title_options">Άνοιγμα%1$sεπιλογές</string>
+    <string name="reset_page_title">Επαναφορά%1$s</string>
+    <string name="remove_device">Αφαίρεση%1$s</string>
+    <string name="profile_name">%1$sπροφίλ</string>
+    <string name="download_option">Λήψη%1$s</string>
+    <string name="open_entry_options">Άνοιγμα%1$sεπιλογές</string>
+    <string name="avatar_number">Άβαταρ.%1$s</string>
+    <string name="options_for_track">Επιλογές για%1$s</string>
+    <string name="preparing">Προετοιμασία...</string>
+    <string name="share_image">Κοινή χρήση εικόνας</string>
+    <string name="speed_pitch_locked">Ταχύτητα &amp; γήπεδο κλειδωμένο μαζί</string>
+    <string name="independent_bpm_tempo_key_pitch">Independent BPM tempo &amp; βασικός τόνος</string>
+    <string name="spatial_reflections_delay">Χωρικές αντανακλάσεις (%1$dms)</string>
+    <string name="on">Εμπρός</string>
+    <string name="off">Κλείσιμο</string>
+    <string name="dynamic_island_active">Δυναμικό νησί ενεργό</string>
+    <string name="dynamic_island_description">Εμφανίζει ομαλά έξωiTuneκατά την αναπαραγωγή</string>
+    <string name="preparing_download">Προετοιμασία λήψης...</string>
+    <string name="listening_for_music">Ακούγοντας μουσική...</string>
+    <string name="hold_phone_near_sound_source">Κρατήστε το τηλέφωνο κοντά σε πηγή ήχου</string>
+    <string name="unable_to_recognize_audio">Αδυναμία αναγνώρισης ήχου</string>
+    <string name="song_identified">Αναγνωρισμένο τραγούδι</string>
+    <string name="play_in_itune">ΑναπαραγωγήiTune</string>
+    <string name="view_details">Προβολή λεπτομερειών</string>
+    <string name="no_match_found">Δε βρέθηκε ταίριασμα</string>
+    <string name="recognition_retry_message">Αδυναμία αναγνώρισης του τραγουδιού. Πατήστε για να δοκιμάσετε ξανά.</string>
+    <string name="microphone_permission_needed">Απαιτείται άδεια μικροφώνου</string>
+    <string name="microphone_permission_help">Πατήστε για να επιτρέπεται η πρόσβαση στο μικρόφωνο έτσιiTuneΜπορεί να αναγνωρίσει τη μουσική.</string>
+    <string name="recognition_failed">Η αναγνώριση απέτυχε</string>
+    <string name="tap_install_to_continue">Πατήστε Εγκατάσταση για συνέχιση</string>
+    <string name="detail_artist">Καλλιτέχνης</string>
+    <string name="detail_album">Άλμπουμ</string>
+    <string name="set_default_ringtone_target">Ορισμός ως προκαθορισμένο%1$s- Όχι!</string>
+    <string name="added_ringtone_target">Προστέθηκε%1$s. Επιλέξτε το στις ρυθμίσεις ήχου.</string>
+    <string name="last_fm_connected_as">Last.fmσυνδέεται ως%1$s</string>
+    <string name="discord_connected_as">Η Έριδα συνδέεται ως%1$s</string>
+    <string name="tv_encrypted_backup_saved">Αποθηκευμένη κρυπτογράφηση αντιγράφων ασφαλείας (%1$dΚΒ!</string>
+    <string name="sign_in_verification_failed">Η επαλήθευση εισόδου απέτυχε</string>
+    <string name="could_not_rename_playlist">Αδυναμία μετονομασίας της λίστας αναπαραγωγήςYouTube Music</string>
+    <string name="could_not_create_playlist">Αδυναμία δημιουργίας λίστας αναπαραγωγής</string>
+    <string name="daily_encrypted_backup_enabled">Ημερήσιο κρυπτογραφημένο αντίγραφο ασφαλείας ενεργοποιημένο</string>
+    <string name="cookie_login_failed">Η σύνδεση με το Cookie απέτυχε</string>
+    <string name="could_not_open_last_fm">Δεν μπορούσε να ανοίξειLast.fm</string>
+    <string name="last_fm_sign_in_failed">Last.fmαποτυχία σύνδεσης</string>
+    <string name="discord_sign_in_failed">Αποτυχία εγγραφής discorm</string>
+    <string name="could_not_open_android_installer">Αδυναμία ανοίγματος του εγκαταστάτη Android</string>
+    <string name="added_title_to_queue">Προστέθηκε “%1$s» στην ουρά</string>
+    <string name="automatic_backup_disabled">Αυτόματο αντίγραφο ασφαλείας απενεργοποιημένο</string>
+    <string name="download_failed">Αποτυχία λήψης</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">Εγκατάσταση</string>
+    <string name="ui_text_9ef6a80f91" formatted="false">#1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">%+.1στ</string>
+    <string name="ui_accounts" formatted="false">+ Λογαριασμοί</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0.0s</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5.0s</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">- Ναι.</string>
+    <string name="ui_text_7be28ad40e" formatted="false">-5.0s</string>
+    <string name="ui_text_a6dee6102d" formatted="false">11 μμ</string>
+    <string name="ui_text_1a19c52178" formatted="false">12 π.μ.</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">12 μμ</string>
+    <string name="ui_text_4e37ece023" formatted="false">15ms αντίθετος-πρώτο καθυστερημένο μείγμα χαμηλής διέλευσης</string>
+    <string name="ui_text_76b322ac42" formatted="false">2X Γρήγορη ταχύτητα</string>
+    <string name="ui_text_505c74ed85" formatted="false">Αναπήδηση 3D Ping-Pong</string>
+    <string name="ui_text_db9b8df506" formatted="false">6 π.μ.</string>
+    <string name="ui_text_2812537f20" formatted="false">6 μμ</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080</string>
+    <string name="ui_text_05a79f06cf" formatted="false">:</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">Πλήρης εικόνα με κορυφαία τραγούδια, καλλιτέχνες, άλμπουμ και συνήθειες.</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">Μια νέα έκδοση είναι έτοιμη</string>
+    <string name="ui_account" formatted="false">Λογαριασμός</string>
+    <string name="ui_account_options" formatted="false">Επιλογές λογαριασμού</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">ΛΟΓΑΡΙΑΣΜΟΙ</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">Ακρωτηριώδης ανατροφοδότηση κεφαλής-σχας</string>
+    <string name="ui_activate" formatted="false">Ενεργοποίηση</string>
+    <string name="ui_active" formatted="false">Ενεργό</string>
+    <string name="ui_active_days" formatted="false">ΔΡΑΣΤΙΚΕΣ ΗΜΕΡΕΣ</string>
+    <string name="ui_active_profile" formatted="false">Ενεργό προφίλ</string>
+    <string name="ui_activity_by_day" formatted="false">Δραστηριότητα ανά ημέρα</string>
+    <string name="ui_add_account" formatted="false">Προσθήκη λογαριασμού</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">Προσθήκη προσαρμοσμένων HTTP addon servers (μιλώντας /manifest.json, /search, /stream) ή sandbox-απομονωμένες μονάδες QuickJS.</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">Προσθήκη μελλοντικών τραγουδιών αυτόματα</string>
+    <string name="ui_add_streaming_source" formatted="false">Προσθήκη πηγής ροής</string>
+    <string name="ui_add_to_playlist" formatted="false">Προσθήκη στη λίστα αναπαραγωγής</string>
+    <string name="ui_added_playlists" formatted="false">Προστιθέμενες λίστες αναπαραγωγής</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">Ρυθμίστε το γωνιακό άκρο του τετραγωνικού άλμπουμ τέχνης.</string>
+    <string name="ui_advanced_cookie_login" formatted="false">Προχωρημένη είσοδος Cookie</string>
+    <string name="ui_advanced_login" formatted="false">ΠΡΟΗΓΟΥΜΕΝΗ ΣΥΝΔΕΣΗ</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">Προχωρημένη σύνδεση</string>
+    <string name="ui_ai_engine" formatted="false">ΚΙΝΗΤΗΡΑΣ AI</string>
+    <string name="ui_ai_provider" formatted="false">Παροχέας AI</string>
+    <string name="ui_albums" formatted="false">Άλμπουμ</string>
+    <string name="ui_all_news" formatted="false">Όλα τα Νέα</string>
+    <string name="ui_allow_downloads" formatted="false">Επίτρεψε λήψεις</string>
+    <string name="ui_allow_microphone" formatted="false">Επίτρεψε Μικρόφωνο</string>
+    <string name="ui_allow_microphone_access" formatted="false">Επίτρεψε πρόσβαση στο μικρόφωνο</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">Εναλλακτικές αντανακλάσεις L &lt;-&gt; R</string>
+    <string name="ui_always_on_display" formatted="false">Πάντα στην οθόνη</string>
+    <string name="ui_am" formatted="false">ΑΜ</string>
+    <string name="ui_api_base_url" formatted="false">URL βάσης API</string>
+    <string name="ui_artist" formatted="false">Καλλιτέχνης</string>
+    <string name="ui_artist_name" formatted="false">Όνομα καλλιτέχνη</string>
+    <string name="ui_artists" formatted="false">Καλλιτέχνες</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">Καλλιτέχνες, τραγούδια, άλμπουμ, λίστες...</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">Καλλιτέχνες, Τραγούδια, Στίχοι &amp; Περισσότερα</string>
+    <string name="ui_at_least_8_characters" formatted="false">Τουλάχιστον 8 χαρακτήρες</string>
+    <string name="ui_auto_sleep_timer" formatted="false">Αυτόματος χρονομετρητής ύπνου</string>
+    <string name="ui_auto_activation_timeout" formatted="false">ΧΡΟΝΟΣ ΑΥΤΟΜΑΤΗΣ ΠΑΡΕΜΒΑΣΗΣ</string>
+    <string name="ui_avatar" formatted="false">Άβαταρ.</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">ΠίσωiTune(AES-256)</string>
+    <string name="ui_backup_password" formatted="false">Κωδικός αντιγράφου ασφαλείας</string>
+    <string name="ui_bluetooth_device_access" formatted="false">BluetoothΠρόσβαση συσκευής</string>
+    <string name="ui_browse" formatted="false">Περιήγηση</string>
+    <string name="ui_browse_by_country" formatted="false">Περιήγηση ανά χώρα</string>
+    <string name="ui_browse_extensions" formatted="false">Περιήγηση επεκτάσεων</string>
+    <string name="ui_browse_live_online_radio" formatted="false">Περιήγηση Live Online Radio</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">Αδυναμία διαγραφής μόνο λογαριασμού</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">Παρόχους Canvas (Παραγγελία αναζήτησης)</string>
+    <string name="ui_captcha_guidance" formatted="false">CAPTCHA Οδηγίες</string>
+    <string name="ui_cast_wireless_devices" formatted="false">ΚΑΘΕΣΤΩΤΕΣ &amp; ΑΚΙΝΗΤΑ</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">Επιλέξτε audio playback streaming πηγές, lossless series, και fallback προτεραιότητα</string>
+    <string name="ui_choose_avatar" formatted="false">Επιλογή Avatar</string>
+    <string name="ui_choose_charts_region" formatted="false">Επιλογή περιοχής γραφημάτων</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">Επιλογή τρόπουiTuneεμφανίζεται στην Αρχική οθόνη σας. Αλλαγή μεγέθους του γραφικού συστατικού από τον εκτοξευτή σας.</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">Επιλέξτε το προφίλ σας για να συνεχίσετε</string>
+    <string name="ui_choose_youtube_channel" formatted="false">ΕπιλογήYouTubeΚανάλι</string>
+    <string name="ui_clear" formatted="false">Καθαρισμός</string>
+    <string name="ui_clear_use_default" formatted="false">Καθαρισμός &amp; χρήσης προκαθορισμένου</string>
+    <string name="ui_clear_all" formatted="false">Καθαρισμός όλων</string>
+    <string name="ui_confirm" formatted="false">Επιβεβαίωση</string>
+    <string name="ui_confirm_password" formatted="false">Επιβεβαίωση κωδικού πρόσβασης</string>
+    <string name="ui_connect_discord" formatted="false">Συνδέστε την Έριδα</string>
+    <string name="ui_connect_last_fm" formatted="false">ΣύνδεσηLast.fm</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">Συνδέστε τοSpotifyλογαριασμός για να ενεργοποιήσετε το Canvas looping video artwork κίνησης και να συγχρονίσετε τοSpotifyβιβλιοθήκη.</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">ΣύνδεσηYouTube Musicμε cookies συνεδρίας</string>
+    <string name="ui_connect" formatted="false">Σύνδεση ›</string>
+    <string name="ui_connecting_spotify" formatted="false">ΣύνδεσηSpotify...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">ΣύνδεσηYouTube Music...</string>
+    <string name="ui_continue" formatted="false">Συνέχεια</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">Συνέχιση στο πρόγραμμα περιήγησης</string>
+    <string name="ui_continue_with_google" formatted="false">Συνέχεια με το Google</string>
+    <string name="ui_continue_with_spotify" formatted="false">Συνεχίστε μεSpotify</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">Τα διαπιστευτήρια των cookies αποθηκεύονται σεiTuneκρυπτογραφημένη αποθήκευση λογαριασμού και ελέγχεται μεYouTube Musicπριν σωθούν.</string>
+    <string name="ui_copy_song_name" formatted="false">Αντιγραφή ονόματος τραγουδιού</string>
+    <string name="ui_copy_text" formatted="false">Αντιγραφή κειμένου</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">Πνευματικά δικαιώματα © 2026iTuneΣχέδιο. Αυτό το λογισμικό παρέχεται χωρίς εγγύηση. Μπορείτε να το αναδιανείμετε και να το τροποποιήσετε σύμφωνα με τους παρακάτω όρους GNU GPL.</string>
+    <string name="ui_corner_length" formatted="false">Μήκος γωνίας</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">Αδύνατη η αναπαραγωγή της εικόνας</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">Θα μπορούσε\'Φορτώστε μουσική τώρα. Κατεβείτε για να δοκιμάσετε ξανά.</string>
+    <string name="ui_create" formatted="false">Δημιουργία</string>
+    <string name="ui_create_add" formatted="false">Δημιουργία &amp; προσθήκης</string>
+    <string name="ui_current_account" formatted="false">Τρέχων λογαριασμός</string>
+    <string name="ui_custom_instructions" formatted="false">ΟΔΗΓΙΕΣ ΓΙΑ ΤΟ ΤΕΛΩΝΕΙΟ</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">ΑΛΦΑΒΗΤΙΚΟ ΕΥΡΕΤΗΡΙΟ Ή URL</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">Προσαρμόστε την αρχική συσκευή αναπαραγωγής οθόνης</string>
+    <string name="ui_customize_your_itune_card" formatted="false">ΠροσαρμογήiTuneκάρτα</string>
+    <string name="ui_d" formatted="false">Δ</string>
+    <string name="ui_delete_account" formatted="false">Διαγραφή λογαριασμού</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">Διαγραφή λογαριασμού;</string>
+    <string name="ui_developer_announcements" formatted="false">Ανακοινώσεις προγραμματιστών</string>
+    <string name="ui_disconnect" formatted="false">Αποσύνδεση</string>
+    <string name="ui_disconnect_discord" formatted="false">Αποσύνδεση διχόνοιας</string>
+    <string name="ui_discord_rich_presence" formatted="false">Έριδα Πλούσια Παρουσία</string>
+    <string name="ui_dismiss" formatted="false">Ελεύθεροι</string>
+    <string name="ui_display_full_screen" formatted="false">ΚΑΤΑΣΤΡΟΦΗ &amp; ΠΛΗΡΟΦΟΡΙΕΣ</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">Εμφάνιση κινουμένων σχεδίων συγχρονισμένων στίχων πάνω από τον τίτλο του τραγουδιού ενώ οι έλεγχοι Canvas είναι κρυμμένοι</string>
+    <string name="ui_display_name" formatted="false">Όνομα εμφάνισης</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">Φίλτρο διπολικού κλαμπ DJ</string>
+    <string name="ui_downloaded_cached" formatted="false">Λήψη &amp; Cached</string>
+    <string name="ui_dp" formatted="false">δp</string>
+    <string name="ui_dynamic_island" formatted="false">Δυναμικό νησί</string>
+    <string name="ui_e" formatted="false">E</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">π.χ. 127.0.0.1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">π.χ. μετάφραση σε ποιητικό hinglish με ομοιοκαταληξία</string>
+    <string name="ui_enable_auto_sleep" formatted="false">Ενεργοποίηση αυτόματου ύπνου</string>
+    <string name="ui_enable_proxy" formatted="false">Ενεργοποίηση διαμεσολαβητή</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">ΕνεργοποίησηSpotifyΚάβα &amp; λίστες αναπαραγωγής</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">Κωδικός κρυπτογράφησης (min 8 chars)</string>
+    <string name="ui_end_of_current_track" formatted="false">Τέλος της τρέχουσας τροχιάς</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">Εισάγετε ένα νέο όνομα για αυτόν τον λογαριασμό.</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">Εισάγετε ένα δηλωτικό URL HTTP addon, ένα δείκτη ενότητας QuickJS, ή ένα τελικό σημείο Tidal περίπτωση.</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">Εισάγετε τον κωδικό πρόσβασης που χρησιμοποιείται όταν .ituneΤο εφεδρικό δημιουργήθηκε.</string>
+    <string name="ui_enter_your_name" formatted="false">Εισάγετε το όνομά σας</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">Εισάγετε το όνομά σας για να προσαρμόσετεiTune</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">Κάθε ρυθμός, ύμνος αργά το βράδυ, και μελωδία που έζησες με — συγκεντρώθηκαν σε ένα ταξίδι.</string>
+    <string name="ui_everything" formatted="false">Τα πάντα</string>
+    <string name="ui_explore_categories" formatted="false">Εξερευνήστε κατηγορίες</string>
+    <string name="ui_exporting_audio" formatted="false">Εξαγωγή ήχου...</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">Εξαγωγή σύντομου ηχητικού δακτυλικού αποτυπώματος</string>
+    <string name="ui_favorite_stations" formatted="false">Αγαπημένοι σταθμοί</string>
+    <string name="ui_favorites" formatted="false">ΦΑΒΟΡΙΤΙΕΣ</string>
+    <string name="ui_featured_hit" formatted="false">Προτεινόμενο χτύπημα</string>
+    <string name="ui_featured_playlists" formatted="false">Προτεινόμενες λίστες αναπαραγωγής</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">Ανάκτηση ιδιοτήτων ήχου...</string>
+    <string name="ui_fetching_live_catalog" formatted="false">Ανάκτηση ζωντανού καταλόγου...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">Βρείτε ένα καλύτερο ρεύμα</string>
+    <string name="ui_full_view" formatted="false">Πλήρης προβολή</string>
+    <string name="ui_g" formatted="false">Ζ</string>
+    <string name="ui_genre" formatted="false">ΓΕΝΕ</string>
+    <string name="ui_genres_styles" formatted="false">Είδος &amp; στυλ</string>
+    <string name="ui_github_repository" formatted="false">Αποθετήριο GitHub</string>
+    <string name="ui_github_repository_open_source" formatted="false">Αποθετήριο GitHub · Open source</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 ή αργότερα</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 ή αργότερα · Copyright © 2026iTuneΈργο</string>
+    <string name="ui_grant" formatted="false">Επιχορήγηση</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">Επιχορήγηση για εμφάνιση ονόματος ακουστικών &amp; ζωντανής μπαταρίας %</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">Δυνατότητα υλικού Enhancer (μέχρι +18 dB)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">Απόκρυψη μπαρ κατάστασης Android και γραμμή πλοήγησης για απρόσκοπτα καθαρό OLED μαύρο.</string>
+    <string name="ui_history" formatted="false">Ιστορικό</string>
+    <string name="ui_host" formatted="false">ΧΟΡΟΣ</string>
+    <string name="ui_host_a_session" formatted="false">ΕΠΙΣΚΟΠΗΣΗ</string>
+    <string name="ui_host_controls_playback" formatted="false">Έλεγχος υπολογιστή αναπαραγωγής</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">Πώς να πάρετε τα μπισκότα σας</string>
+    <string name="ui_hq" formatted="false">Αρχηγείο</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">Ταυτοποιήθηκε με το Shazam</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">Αναγνώριση μουσικής που παίζει γύρω σας</string>
+    <string name="ui_immersion" formatted="false">ΑΜΑΡΤΙΑ</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">Λειτουργία εμβάπτισης (πλήρης οθόνη)</string>
+    <string name="ui_import" formatted="false">Εισαγωγή</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">Εισαγωγή δημόσιων &amp; ιδιωτικών λιστών αναπαραγωγής • Auto-sync</string>
+    <string name="ui_import_spotify_playlist" formatted="false">ΕισαγωγήSpotifyΛίστα αναπαραγωγής</string>
+    <string name="ui_in_use" formatted="false">Σε χρήση</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">In-app καθοδήγηση όταν οι πάροχοι ήχου αμφισβητούν τους ελέγχους κατά των ρομπότ</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">Εγκαταστήστε προ-προσαρμοσμένες επεκτάσεις της κοινότητας Mornye ή σαρώστε ένα προσαρμοσμένο δείκτη αποθετηρίου.</string>
+    <string name="ui_installed" formatted="false">Εγκαταστάθηκε</string>
+    <string name="ui_interactive_dot_curve" formatted="false">Διαδραστική καμπύλη κουκκίδας</string>
+    <string name="ui_irecognition" formatted="false">iΑναγνώριση</string>
+    <string name="ui_ireconization" formatted="false">iReconization</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">Το iReconization ακούει για μερικά δευτερόλεπτα να δημιουργήσει ένα μουσικό αποτύπωμα. Ο ήχος δεν αποθηκεύεται.</string>
+    <string name="ui_ishare" formatted="false">Κοινή χρήση</string>
+    <string name="ui_itune_license" formatted="false">iTuneΆδεια</string>
+    <string name="ui_itune_music" formatted="false">iTuneΜουσική</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTuneΑμφισβητεί τους στίχους στην ακριβή προτεραιότητα παρακάτω. Εάν ο υψηλότερος ενεργός πάροχος δεν έχει συγχρονισμένους στίχους,iTuneΠέφτει απρόσκοπτα πίσω στο επόμενο.</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTuneερωτά τις πηγές με τη σειρά που φαίνεται. Σύρετε εγκατεστημένες επεκτάσεις και παρόχους για να ρυθμίσετε την προτεραιότητα αναπαραγωγής.</string>
+    <string name="ui_itune_time_travel" formatted="false">iTuneΤαξίδι στο χρόνο</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">Τζετ Φλάγκερ Σους</string>
+    <string name="ui_join" formatted="false">Συμμετοχή</string>
+    <string name="ui_keep_screen_on" formatted="false">Διατήρηση οθόνης σε λειτουργία</string>
+    <string name="ui_l" formatted="false">L</string>
+    <string name="ui_lan_port" formatted="false">Θύρα LAN</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">Προτίμηση γλώσσας (προαιρετικά, π.χ. Χίντι, Παντζάμπι...)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fmΣκρομπάρισμα</string>
+    <string name="ui_layout" formatted="false">ΛΑΓΟΥΤ</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">Αφήστε το κενό για να χρησιμοποιήσετε το προκαθορισμένο τελικό σημείο για αυτόν τον πάροχο.</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">LFO σάρωσε τη διαμόρφωση αεριωθούμενων φάσεων</string>
+    <string name="ui_library" formatted="false">Βιβλιοθήκη</string>
+    <string name="ui_license" formatted="false">Άδεια</string>
+    <string name="ui_liked_songs" formatted="false">Μου άρεσαν τα τραγούδια</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">Όπως προστίθεται ενώ η υπογραφή στο αποθηκεύονται τόσο σε τοπικό όσο και σεYouTube Music, έτσι ώστε να παραμείνουν στη Βιβλιοθήκη σας ακόμη και μετά την υπογραφή έξω.</string>
+    <string name="ui_listening_patterns" formatted="false">ΠΡΟΣΤΑΣΙΑ</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">Ακούγοντας τον κοινό ήχο...</string>
+    <string name="ui_live" formatted="false">ΖΩΝΤΑ</string>
+    <string name="ui_live_radio_stations" formatted="false">Ζωντανοί ραδιοφωνικοί σταθμοί</string>
+    <string name="ui_loading_announcements" formatted="false">Φόρτωση ανακοινώσεων...</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">Φόρτωση καλλιτεχνών, λιστών αναπαραγωγής &amp; ιστορικού</string>
+    <string name="ui_lossless" formatted="false">Απώλεια</string>
+    <string name="ui_lossless_audio_preference" formatted="false">Προτιμήσεις Απώλεια ήχου</string>
+    <string name="ui_lyrics" formatted="false">Στίχοι</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">Οι στίχοι δεν είναι διαθέσιμοι για αυτό το τραγούδι</string>
+    <string name="ui_lyrics_providers" formatted="false">Παροχείς στίχων</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">Οι στίχοι μεταφράστηκαν με επιτυχία!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">Κύρια ενίσχυση ενισχυτή</string>
+    <string name="ui_member_since" formatted="false">ΑΠΟ ΤΑ ΜΕΛΗ</string>
+    <string name="ui_memoji_style" formatted="false">&amp; Στυλ Memoji</string>
+    <string name="ui_minutes_listened" formatted="false">ΛΕΠΤΑ ΑΚΟΗΣ</string>
+    <string name="ui_mirror_vol" formatted="false">Καθρέπτης Vol</string>
+    <string name="ui_model" formatted="false">ΥΠΟΔΕΙΓΜΑ</string>
+    <string name="ui_model_68c2cc7f" formatted="false">Μοντέλο</string>
+    <string name="ui_moods_activities" formatted="false">Διατάξεις &amp; Δραστηριότητες</string>
+    <string name="ui_moods_moments" formatted="false">ΡΥΘΜΙΣΕΙΣ &amp; ΜΕΤΡΗΣΕΙΣ</string>
+    <string name="ui_music_by_genre" formatted="false">Μουσική του Genre</string>
+    <string name="ui_music_language_preference" formatted="false">Προτίμηση της μουσικής γλώσσας</string>
+    <string name="ui_music_services" formatted="false">ΜΟΥΣΙΚΕΣ ΥΠΗΡΕΣΙΕΣ</string>
+    <string name="ui_name" formatted="false">Όνομα</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">ΓΥΝΑΙΚΕΣ ΝΕΡΟΥ</string>
+    <string name="ui_network_proxy" formatted="false">Διαμεσολαβητής δικτύου</string>
+    <string name="ui_new" formatted="false">Νέο</string>
+    <string name="ui_new_playlist" formatted="false">Νέα λίστα αναπαραγωγής</string>
+    <string name="ui_new_releases" formatted="false">Νέες κυκλοφορίες</string>
+    <string name="ui_news_from_dev" formatted="false">Νέα από dev</string>
+    <string name="ui_next_up" formatted="false">Επόμενος</string>
+    <string name="ui_no_albums_found" formatted="false">Δε βρέθηκαν άλμπουμ</string>
+    <string name="ui_no_artist_information_available" formatted="false">Δεν υπάρχουν διαθέσιμες πληροφορίες καλλιτέχνη</string>
+    <string name="ui_no_artists_found" formatted="false">Δε βρέθηκαν καλλιτέχνες</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">Δεν υπάρχουν καλλιτέχνες στη βιβλιοθήκη σου ακόμα.</string>
+    <string name="ui_no_playlists_found" formatted="false">Δε βρέθηκαν λίστες αναπαραγωγής</string>
+    <string name="ui_no_results_on_spotify" formatted="false">Δεν υπάρχουν αποτελέσματαSpotify</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">Δεν αποθηκεύτηκαν άλμπουμ στη βιβλιοθήκη σας</string>
+    <string name="ui_no_songs_found" formatted="false">Δε βρέθηκαν τραγούδια</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">Δεν βρέθηκαν τραγούδια σε αυτή την έκδοση</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">Δεν βρέθηκαν τραγούδια σε αυτή την ενότητα</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">Δε βρέθηκαν λίστες αναπαραγωγής χρηστών. Δημιουργήστε ένα στη Βιβλιοθήκη!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">Δεν άκουσα αρκετά ακόμα.</string>
+    <string name="ui_now_playing" formatted="false">Τώρα Παίζω</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">Τώρα παίξε.</string>
+    <string name="ui_on_heavy_repeat" formatted="false">ΣΕ ΥΨΗΛΗ ΕΠΙΣΤΡΟΦΗ</string>
+    <string name="ui_options" formatted="false">ΕΠΙΛΟΓΕΣ</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">Ή ΕΝΤΕΡ SP DC COOKIE</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">Ένταση &amp; ταχύτητα Orbit</string>
+    <string name="ui_pair_join_a_device" formatted="false">ΚΑΘΗΜΕΡΙΝΗ &amp; ΣΥΝΕΧΙΣΗ</string>
+    <string name="ui_password_optional" formatted="false">Κωδικός πρόσβασης (προαιρετικό)</string>
+    <string name="ui_passwords_dont_match" formatted="false">Οι κωδικοί πρόσβασης δεν ταιριάζουν</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">Επικόλληση sp dc εδώ...</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">Επικόλληση του κλειδιού API σας εδώ</string>
+    <string name="ui_play_in_itune" formatted="false">ΑναπαραγωγήiTune</string>
+    <string name="ui_play_next" formatted="false">Αναπαραγωγή επόμενου</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">Παίξτε σε μπουμπούκια &amp; τηλεφωνικό ηχείο/AUX ταυτόχρονα</string>
+    <string name="ui_playlist_name" formatted="false">Όνομα λίστας αναπαραγωγής</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">Όνομα λίστας αναπαραγωγής</string>
+    <string name="ui_playlist_spotify" formatted="false">Λίστα αναπαραγωγής •Spotify</string>
+    <string name="ui_playlists" formatted="false">Λίστες αναπαραγωγής</string>
+    <string name="ui_plays" formatted="false">Αναπαραγωγή</string>
+    <string name="ui_pm" formatted="false">ΜΜ</string>
+    <string name="ui_port" formatted="false">Θύρα</string>
+    <string name="ui_pre_added_extensions" formatted="false">ΠΡΟΗΓΟΥΜΕΝΕΣ ΕΠΕΚΤΑΣΕΙΣ</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">Προτιμήστε το bit-τέλειο FLAC/ALAC μέχρι 24-bit / 192 kHz όταν είναι διαθέσιμο</string>
+    <string name="ui_preparing_audio_preview" formatted="false">Προετοιμασία προεπισκόπησης ήχου...</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">Αποτρέπει την εμφάνιση της συσκευής από το να κλείσει ενώ πάντα στην οθόνη είναι ενεργό.</string>
+    <string name="ui_preview" formatted="false">ΠΡΟΛΗΨΗ</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">Προεπισκόπηση</string>
+    <string name="ui_preview_always_on_display" formatted="false">Προεπισκόπηση πάντα στην οθόνη</string>
+    <string name="ui_profile" formatted="false">ΕΠΑΓΓΕΛΜΑ</string>
+    <string name="ui_profiles_in_backup" formatted="false">ΕΜΠΙΣΤΕΥΜΑΤΑ ΣΤΗ ΒΟΗΘΕΙΑ</string>
+    <string name="ui_prompt_type" formatted="false">ΤΥΠΟΣ ΠΡΟΤΥΠΟΥ</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">ΠΡΟΤΕΡΑΙΟΤΗΤΑ ΠΡΟΣΒΑΣΗΣ (ΤΡΟΧΗ ΦΑΛΜΠΑΚ)</string>
+    <string name="ui_queue" formatted="false">Σε αναμονή</string>
+    <string name="ui_queue_is_empty" formatted="false">Η αναμονή είναι κενή</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">Ακολουθούν κομμάτια σε αναμονή για αναπαραγωγή</string>
+    <string name="ui_radio" formatted="false">Radio</string>
+    <string name="ui_read_more" formatted="false">Διαβάστε περισσότερα</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">Σε πραγματικό χρόνο συλλαβή και κύλιση γραμμής με ζωντανό ήχο</string>
+    <string name="ui_recent_searches" formatted="false">Πρόσφατες αναζητήσεις</string>
+    <string name="ui_recently_added" formatted="false">Προστέθηκε πρόσφατα</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">Επαναλαμβανόμενο πρόγραμμα ύπνου · αυτόματη παύση αναπαραγωγής</string>
+    <string name="ui_remote_music_library" formatted="false">Απομακρυσμένη Μουσική Βιβλιοθήκη</string>
+    <string name="ui_remove" formatted="false">Αφαίρεση</string>
+    <string name="ui_rename" formatted="false">Μετονομασία</string>
+    <string name="ui_rename_account" formatted="false">Μετονομασία λογαριασμού</string>
+    <string name="ui_replay" formatted="false">REPΠΛΑΙΑ</string>
+    <string name="ui_replay_c0f85d66" formatted="false">Επανάληψη</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">Απαιτούνται Bit-Perfect Απώλεια εξόδου</string>
+    <string name="ui_reset" formatted="false">Επαναφορά</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">Επαναφορά εντολής του παρόχου &amp; προκαθορισμένα</string>
+    <string name="ui_reset_to_default_url" formatted="false">Επαναφορά στο προκαθορισμένο URL</string>
+    <string name="ui_restore_default_sources" formatted="false">Επαναφορά προκαθορισμένων πηγών</string>
+    <string name="ui_restore_itune_backup" formatted="false">ΕπαναφοράiTuneΔημιουργία αντιγράφων ασφαλείας</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">ΕπαναφοράJioSaavnκαιYouTube Musicμε την προκαθορισμένη σειρά.JioSaavnξεκινά καιYouTube MusicΞεκίνα.</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">Επαναφέρει LRC Lib, KuGou, και SimpMusic ως κορυφαίους προτιμώμενους παρόχους και επανενεργοποιεί όλες τις 11 πηγές.</string>
+    <string name="ui_resume" formatted="false">Συνέχιση</string>
+    <string name="ui_rhythm_by_hour" formatted="false">Ρυθμός ανά ώρα</string>
+    <string name="ui_room_permissions" formatted="false">ΕΚΔΟΣΗ ΔΩΜΑΤΙΟΥ</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">Κυκλοφορία δικτύου εφαρμογών διαδρομών μέσω του διαμεσολαβητή HTTP ή SOCKS</string>
+    <string name="ui_save_proxy" formatted="false">Αποθήκευση διαμεσολαβητή</string>
+    <string name="ui_save_schedule" formatted="false">Αποθήκευση προγράμματος</string>
+    <string name="ui_save_to_gallery" formatted="false">Αποθήκευση στη συλλογή</string>
+    <string name="ui_save_token" formatted="false">Αποθήκευση ενδεικτικού</string>
+    <string name="ui_saved_to_your_library" formatted="false">Σώθηκε στη βιβλιοθήκη σου!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">Σώθηκε χρησιμοποιώντας Android Keystore. Τα αρχεία αντιγράφων ασφαλείας χρησιμοποιούν PBKDF2-HMAC-SHA256 (310.000 γύροι) και AES-256-GCM.</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">Αποθήκευση σε λήψεις/itune/ενισχύσεις</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">Πες ένα τραγούδι, καλλιτέχνη, άλμπουμ ή στίχους</string>
+    <string name="ui_search" formatted="false">Αναζήτηση</string>
+    <string name="ui_search_identify" formatted="false">Αναζήτηση &amp; ταυτοποίησης</string>
+    <string name="ui_search_announcements" formatted="false">Ανακοινώσεις αναζήτησης...</string>
+    <string name="ui_search_country" formatted="false">Χώρα αναζήτησης...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">Αναζήτηση τραγουδιών, καλλιτεχνών, άλμπουμ και playlists</string>
+    <string name="ui_search_languages" formatted="false">Γλώσσες αναζήτησης...</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">Αναζήτηση ή πληκτρολογήστε ένα αναγνωριστικό μοντέλου</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">Αναζήτηση τραγουδιών, καλλιτεχνών, άλμπουμ ή λιστών αναπαραγωγής</string>
+    <string name="ui_searching_lyrics" formatted="false">Αναζήτηση στίχων...</string>
+    <string name="ui_searching_spotify" formatted="false">ΑναζήτησηSpotify...</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">ΔΕΥΤΕΡΟ ΜΕΤΡΟ</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">Επιλέξτε ένα avatar προφίλ για να εξατομικεύσετε τοiTuneεμπειρία σε όλες τις οθόνες.</string>
+    <string name="ui_select_language" formatted="false">Επιλογή γλώσσας</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">Επιλέξτε το προεπιλεγμένο πρότυπο για τη μετάφραση στίχων.</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">Επιλέξτε τη μηχανή που θα χρησιμοποιηθεί για τη μετάφραση στίχων ανά γραμμή.</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">Επιλέξτε τη γλώσσα-στόχο για τη μετάφραση στίχων.</string>
+    <string name="ui_server_host_ip" formatted="false">Υπολογιστής εξυπηρετητή / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">URL εξυπηρετητή / Μανιφέστο</string>
+    <string name="ui_settings_appearance" formatted="false">Settings εμφάνισης</string>
+    <string name="ui_share_lyrics" formatted="false">Μερίδιο στίχων</string>
+    <string name="ui_share_my_replay" formatted="false">Μοιραστείτε την επανάληψη μου</string>
+    <string name="ui_share_replay" formatted="false">Μετοχή επανάληψης</string>
+    <string name="ui_share_this_story" formatted="false">Μοιραστείτε αυτή την ιστορία</string>
+    <string name="ui_share_your_time_travel" formatted="false">Μοιραστείτε το Ταξίδι στο Χρόνο σας</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">Εμφάνιση συγχρονισμένων στίχων πάνω από το Canvas</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">Υπογράψτε στη μουσική.youtube.com σε έναν περιηγητή επιφάνειας εργασίας. Ανοικτά Εργαλεία Προγραμματιστή → Εφαρμογή → Cookies, στη συνέχεια, αντιγράψτε τις τιμές της συνεδρίας. Αντιμετωπίστε αυτές τις τιμές σαν τον κωδικό σας.</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">Υπογράψτε με σαςLast.fmλογαριασμός</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">Υπογραφή όλων των λογαριασμών</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">Ταυτόχρονη διπλή έξοδος</string>
+    <string name="ui_skip_sign_in" formatted="false">Παράλειψη σύνδεσης</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">Σλάιντ προς τα εμπρός για πιο γρήγορους στίχους · προς τα πίσω για πιο αργά · ήχος ανεπηρέαστος</string>
+    <string name="ui_snap_0" formatted="false">Στιγμιότυπο 0</string>
+    <string name="ui_soundstage_width" formatted="false">Πλάτος ηχητικών σταδίων</string>
+    <string name="ui_sources" formatted="false">Πηγές</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">Χωρικός ήχος &amp; Απαραίτητα</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotify&amp; Κάβα</string>
+    <string name="ui_spotify_account" formatted="false">SpotifyΛογαριασμός</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">SpotifyCanvas, Apple Music, Tidal &amp; Κοινοτικό εξώφυλλο κίνησης</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">Spotifyσυνδέεται αυτή τη στιγμή. Έργα τέχνης κίνησης (Canvas) καιSpotifyΟ συγχρονισμός λίστας αναπαραγωγής είναι ενεργοποιημένος.</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">SpotifyΗ αναζήτηση απέτυχε. Προσπάθησε ξανά.</string>
+    <string name="ui_station" formatted="false">Σταθμός</string>
+    <string name="ui_stereo_echo_delay" formatted="false">Στερεοφωνική Ηχώ &amp; Καθυστέρηση</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">Αποθηκεύει αυτόν τον σύνδεσμο και προσθέτει αυτόματα νέα τραγούδια σε εφαρμογή</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">Stream bit-τέλεια χωρίς απώλειες βιβλιοθήκη σας απευθείας από προσωπικές μετοχές δικτύου ή Nextcloud.</string>
+    <string name="ui_streaming_sources" formatted="false">ΠΗΓΕΣ ΔΙΑΔΡΟΜΗΣ</string>
+    <string name="ui_style" formatted="false">ΣΤΑΥΛΟΣ</string>
+    <string name="ui_suggestions" formatted="false">Προτάσεις</string>
+    <string name="ui_switch" formatted="false">Εναλλαγή</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">Πατήστε το avatar για να προσαρμόσετε</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">Πατήστε αριστερά ή δεξιά για να περιηγηθείτε • Κρατήστε για παύση</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">Πατήστε για άμεση ενεργοποίηση πάντα στην οθόνη τώρα</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">Πατήστε για να επιλέξετε τις εκπομπές Country &amp; City FM</string>
+    <string name="ui_target_language" formatted="false">ΓΛΩΣΣΑ ΣΤΟΧΟΥ</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">Γλώσσα στόχου</string>
+    <string name="ui_test" formatted="false">Δοκιμή</string>
+    <string name="ui_test_proxy_connection" formatted="false">Δοκιμή σύνδεσης διαμεσολαβητή</string>
+    <string name="ui_testing_proxy" formatted="false">Δοκιμές διαμεσολαβητή...</string>
+    <string name="ui_that_s_your_story" formatted="false">Αυτό...\'s Η Ιστορία σας</string>
+    <string name="ui_this_account" formatted="false">Αυτός ο λογαριασμός</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">Αυτή η λίστα είναι άδεια. Προσθήκη τραγουδιών από τον παίκτη ή αναζήτηση!</string>
+    <string name="ui_time_travel" formatted="false">ΤΑΞΙΔΙΟ ΤΟΥ ΧΡΟΝΟΥ</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">Ταξίδι στο χρόνο</string>
+    <string name="ui_time_travel_wrap" formatted="false">ΤΑΞΙΔΙΟ ΤΟΥ ΧΡΟΝΟΥ</string>
+    <string name="ui_time_synced_lyrics" formatted="false">Χρόνος-συγχρονισμένοι στίχοι</string>
+    <string name="ui_top_picks" formatted="false">Κορυφαίες επιλογές</string>
+    <string name="ui_top_result" formatted="false">Κορυφαίο αποτέλεσμα</string>
+    <string name="ui_top_song" formatted="false">Κορυφαίο τραγούδι</string>
+    <string name="ui_top_songs" formatted="false">Κορυφαία τραγούδια</string>
+    <string name="ui_top_streamed" formatted="false">ΤΕΛΟΣ</string>
+    <string name="ui_total_listening_time" formatted="false">Συνολικός Χρόνος Ακρόασης</string>
+    <string name="ui_total_time" formatted="false">Συνολικός χρόνος</string>
+    <string name="ui_translate_actual_lines" formatted="false">Μετάφραση πραγματικών γραμμών</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">Μετάφρασε στίχους on-demand για οποιοδήποτε τραγούδι από το μενού του παίκτη (... &gt; Στίχοι &gt; Μετάφρασε). Πότε\'Μετάφραση πραγματικών γραμμών\'είναι off, οι μεταφράσεις εμφανίζονται ως υπότιτλοι κάτω από το αρχικό κείμενο.</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">Μετάφρασε τις ακόλουθες στίχους τραγουδιών στα αγγλικά. Διατηρήστε την ποιητική ροή.</string>
+    <string name="ui_translating_lyrics" formatted="false">Μεταφράζοντας στίχους...</string>
+    <string name="ui_translation_mode" formatted="false">Λειτουργία μεταφράσεων</string>
+    <string name="ui_translation_prompt" formatted="false">Προτροπή μετάφρασης</string>
+    <string name="ui_trending_artists" formatted="false">Τάσεις Καλλιτεχνών</string>
+    <string name="ui_turn_off_timer" formatted="false">Κλείσιμο χρονοδιακόπτη</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">Ενημέρωση του ονόματος που εμφανίζεται στην κάρτα προφίλ Apple ID στις Settings.</string>
+    <string name="ui_username_optional" formatted="false">Όνομα χρήστη (προαιρετικό)</string>
+    <string name="ui_view" formatted="false">Προβολή</string>
+    <string name="ui_view_on_shazam" formatted="false">Προβολή του Shazam</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">Δεσμός vinyl Turntable</string>
+    <string name="ui_whats_new" formatted="false">ΤΙ ΕΙΝΑΙ ΝΕΑ</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">Όταν παίζει μουσική, ενεργοποιείται πάντα στην οθόνη αν δεν εμφανιστεί άγγιγμα στην οθόνη για τον επιλεγμένο χρόνο. Ενεργοποιείται μόνο μέσα στην εφαρμογή.</string>
+    <string name="ui_who_is_listening" formatted="false">Ποιος ακούει;</string>
+    <string name="ui_widget" formatted="false">Γραφικό συστατικό</string>
+    <string name="ui_you" formatted="false">Εσύ</string>
+    <string name="ui_your_1_artist" formatted="false">Ο # 1 καλλιτέχνης σου</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">Το πλήκτρο API αποθηκεύεται με ασφάλεια στη συσκευή και δεν μοιράζεται ποτέ.</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">Το σύμβολο συνεδρίας της Έριδας αποθηκεύεται κρυπτογραφημένο σε αυτή τη συσκευή και χρησιμοποιείται μόνο για την Ριτς Παρουσία.</string>
+    <string name="ui_your_favourite_song" formatted="false">Το Αγαπημένο Σου Τραγούδι</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">Η βιβλιοθήκη, οι λίστες αναπαραγωγής και οι ρυθμίσεις σας θα κρυπτογραφηθούν με κωδικό πρόσβασης τουλάχιστον 8 χαρακτήρων.</string>
+    <string name="ui_your_listening_experience" formatted="false">Η ΠΕΙΡΑ ΣΑΣ</string>
+    <string name="ui_your_listening_pattern" formatted="false">Το ακουστικό σου μοτίβο</string>
+    <string name="ui_your_listening_persona" formatted="false">ΤΟ ΑΚΟΜΑ ΣΑΣ</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">Η Μουσική σας Επανάληψη &amp; Στατιστικά</string>
+    <string name="ui_your_musical_anchor" formatted="false">Ο ΜΟΥΣΙΚΟΣ ΑΓΚΥΡΟΣ ΣΑΣ</string>
+    <string name="ui_your_name" formatted="false">Το όνομά σας</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">Ο κωδικός σας αποστέλλεται στοLast.fmΜόνο για να δημιουργήσει μια συνεδρία.iTuneδεν το αποθηκεύει.</string>
+    <string name="ui_your_playlists" formatted="false">ΟΙ ΠΑΙΞΕΙΣ ΣΑΣ</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">Οι λίστες αναπαραγωγής σας</string>
+    <string name="ui_your_sonic_peak" formatted="false">Το Sonic Peak σας</string>
+    <string name="ui_your_spotify_playlists" formatted="false">Το δικό σουSpotifyΛίστες αναπαραγωγής</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">Το δικό σουSpotifyΛίστες αναπαραγωγής (δημόσιες &amp; ιδιωτικές)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSIC&amp; GOOGLE</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube Musiccookies συνεδρίας</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">·</string>
+    <string name="ui_text_a118c40635" formatted="false">━━━ </string>
+    <string name="ui_album_artwork" formatted="false">Τέχνη άλμπουμ</string>
+    <string name="ui_itune_waves" formatted="false">iTuneΚύματα</string>
+    <string name="ui_previous" formatted="false">Προηγούμενο</string>
+    <string name="ui_next" formatted="false">Επόμενο</string>
+    <string name="ui_audio_output" formatted="false">Έξοδος ήχου</string>
+    <string name="ui_low_volume" formatted="false">Χαμηλή ένταση</string>
+    <string name="ui_high_volume" formatted="false">Υψηλή ένταση</string>
+    <string name="ui_filter" formatted="false">Φίλτρο</string>
+    <string name="ui_refresh" formatted="false">Ανανέωση</string>
+    <string name="ui_options_6bf5da9c" formatted="false">Επιλογές</string>
+    <string name="ui_user_profile_avatar" formatted="false">Προφίλ χρήστη Avatar</string>
+    <string name="ui_news" formatted="false">Νέα</string>
+    <string name="ui_no_song_playing" formatted="false">Δεν παίζει τραγούδι</string>
+    <string name="ui_next_track" formatted="false">Επόμενο κομμάτι</string>
+    <string name="ui_see_all_songs" formatted="false">Δείτε όλα τα τραγούδια</string>
+    <string name="ui_favorite_radio" formatted="false">Αγαπημένο Radio</string>
+    <string name="ui_live_65c821a5" formatted="false">Ζωντανά</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTuneΚύματα Μάρκας</string>
+    <string name="ui_refresh_network" formatted="false">Ανανέωση δικτύου</string>
+    <string name="ui_edit_display_name" formatted="false">Επεξεργασία ονόματος εμφάνισης</string>
+    <string name="ui_remove_from_queue" formatted="false">Αφαίρεση από την ουρά</string>
+    <string name="ui_search_new_releases" formatted="false">Αναζήτηση νέων κυκλοφοριών</string>
+    <string name="ui_refresh_new_releases" formatted="false">Ανανέωση νέων κυκλοφοριών</string>
+    <string name="ui_refresh_downloads" formatted="false">Ανανέωση λήψεων</string>
+    <string name="ui_clear_cache" formatted="false">Καθαρισμός λανθάνουσας μνήμης</string>
+    <string name="ui_sort" formatted="false">Ταξινόμηση</string>
+    <string name="ui_see_all_new_releases" formatted="false">Προβολή όλων των νέων κυκλοφοριών</string>
+    <string name="ui_identify" formatted="false">Ταυτοποίηση</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">Εισαγωγή λίστας αναπαραγωγής</string>
+    <string name="ui_create_playlist" formatted="false">Δημιουργία λίστας αναπαραγωγής</string>
+    <string name="ui_liked" formatted="false">Μου άρεσε.</string>
+    <string name="ui_paste" formatted="false">Επικόλληση</string>
+    <string name="ui_checked" formatted="false">Ελέγχθηκε</string>
+    <string name="ui_google_account_playlist" formatted="false">Λίστα αναπαραγωγής λογαριασμού Google</string>
+    <string name="ui_spotify_playlist" formatted="false">SpotifyΛίστα αναπαραγωγής</string>
+    <string name="ui_local_playlist" formatted="false">Τοπική λίστα αναπαραγωγής</string>
+    <string name="ui_back_to_audio_engine" formatted="false">Επιστροφή στη μηχανή ήχου</string>
+    <string name="ui_bluetooth_settings" formatted="false">BluetoothSettings</string>
+    <string name="ui_scan_output_devices" formatted="false">Σάρωση συσκευών εξόδου</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">Ταυτόχρονος διπλός ήχος</string>
+    <string name="ui_selected" formatted="false">Επιλεγμένα</string>
+    <string name="ui_copy" formatted="false">Αντιγραφή</string>
+    <string name="ui_copy_link" formatted="false">Αντιγραφή δεσμού</string>
+    <string name="ui_upgrade_quality" formatted="false">Ποιότητα αναβάθμισης</string>
+    <string name="ui_fm_radio" formatted="false">Radio FM</string>
+    <string name="ui_next_station" formatted="false">Επόμενος σταθμός</string>
+    <string name="ui_minimize" formatted="false">Ελαχιστοποίηση</string>
+    <string name="ui_favorite" formatted="false">Αγαπημένο</string>
+    <string name="ui_more_options" formatted="false">Περισσότερες επιλογές</string>
+    <string name="ui_previous_station" formatted="false">Προηγούμενος σταθμός</string>
+    <string name="ui_sleep_timer" formatted="false">Χρονόμετρο ύπνου</string>
+    <string name="ui_audio_output_devices" formatted="false">Συσκευές εξόδου ήχου</string>
+    <string name="ui_station_list" formatted="false">Λίστα βάσης</string>
+    <string name="ui_volume" formatted="false">Όγκος</string>
+    <string name="ui_open_lyrics" formatted="false">Άνοιγμα στίχων</string>
+    <string name="ui_mute_volume" formatted="false">Όγκος μετρητή</string>
+    <string name="ui_max_volume" formatted="false">Μέγιστος όγκος</string>
+    <string name="ui_endless_queue" formatted="false">Ατελείωτη αναμονή</string>
+    <string name="ui_repeat" formatted="false">Επανάληψη</string>
+    <string name="ui_refresh_stations" formatted="false">Ανανέωση σταθμών</string>
+    <string name="ui_favorite_station" formatted="false">Αγαπημένος σταθμός</string>
+    <string name="ui_close_ireconization" formatted="false">Κλείσιμο iReconization</string>
+    <string name="ui_cancel_voice_search" formatted="false">Ακύρωση αναζήτησης φωνής</string>
+    <string name="ui_microphone" formatted="false">Μικρόφωνο</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">Περισσότερες επιλογές</string>
+    <string name="ui_voice_search" formatted="false">Φωνητική αναζήτηση</string>
+    <string name="ui_saved" formatted="false">Αποθήκευση</string>
+    <string name="ui_fill_search_query" formatted="false">Συμπληρώστε το ερώτημα αναζήτησης</string>
+    <string name="ui_remove_from_history" formatted="false">Αφαίρεση από το ιστορικό</string>
+    <string name="ui_itune_icon" formatted="false">iTuneεικονίδιο</string>
+    <string name="ui_artwork_preview" formatted="false">Προεπισκόπηση έργων τέχνης</string>
+    <string name="ui_decrease" formatted="false">Μείωση</string>
+    <string name="ui_increase" formatted="false">Αύξηση</string>
+    <string name="ui_open_link" formatted="false">Άνοιγμα δεσμού</string>
+    <string name="ui_reset_geometry" formatted="false">Επαναφορά γεωμετρίας</string>
+    <string name="ui_reorder_provider" formatted="false">Παροχέας αναδιανομής</string>
+    <string name="ui_save_name" formatted="false">Αποθήκευση ονόματος</string>
+    <string name="ui_editable_name" formatted="false">Επεξεργασία ονόματος</string>
+    <string name="ui_google" formatted="false">Google</string>
+    <string name="ui_remove_account" formatted="false">Αφαίρεση λογαριασμού</string>
+    <string name="ui_reorder_source_priority" formatted="false">Προτεραιότητα αναδιάταξης πηγής</string>
+    <string name="ui_refresh_playlists" formatted="false">Ανανέωση λιστών αναπαραγωγής</string>
+    <string name="ui_replay_poster" formatted="false">Αναπαραγωγή αφίσας</string>
+    <string name="ui_settings" formatted="false">Settings</string>
+    <string name="ui_artist_radio" formatted="false">Ράδιο καλλιτέχνη</string>
+    <string name="ui_play_all" formatted="false">Αναπαραγωγή όλων</string>
+    <string name="ui_delete_playlist" formatted="false">Διαγραφή λίστας αναπαραγωγής</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">Ατελείωτη ουρά</string>
+    <string name="ui_artist_info" formatted="false">Πληροφορίες καλλιτέχνη</string>
+    <string name="ui_enabled" formatted="false">Ενεργοποίηση</string>
+    <string name="ui_search_icon" formatted="false">Εικονίδιο αναζήτησης</string>
+    <string name="ui_region">Περιοχή:%1$s</string>
+    <string name="ui_connected_devices">ΠΡΟΣΔΙΟΡΙΖΟΜΕΝΕΣ ΔΙΑΤΑΞΕΙΣ (%1$s)</string>
+    <string name="ui_up_next">UP ΕΠΟΜΕΝΟ (%1$s)</string>
+    <string name="ui_text_da5c3629fd">%1$s›</string>
+    <string name="ui_active_7c6a4064">%1$s•%2$sενεργό</string>
+    <string name="ui_no_new_available_right_now">Κανένα νέο%1$sδιαθέσιμο αυτή τη στιγμή</string>
+    <string name="ui_tracks">%1$sτροχιές •%2$s</string>
+    <string name="ui_songs">%1$sτραγούδια •%2$s•%3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s•%2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c">•%1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$sτροχιά(-ες) που θα μπορούσαν\'t ταιριάζουν:</string>
+    <string name="ui_text_a3edb2b714">•%1$s- Ναι.%2$s</string>
+    <string name="ui_d_eeda119e">%1$sΔ</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+%1$sdB</string>
+    <string name="ui_connected">%1$sσυνδεδεμένος</string>
+    <string name="ui_open_web_player">Άνοιγμα αναπαραγωγής ιστού (%1$s)</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">Χώρα:%1$s(%2$s)</string>
+    <string name="ui_city_state">Πόλη / Πολιτεία:%1$s</string>
+    <string name="ui_codec_bitrate">Κωδικός / Ρυθμός bit:%1$s</string>
+    <string name="ui_language">Γλώσσα:%1$s</string>
+    <string name="ui_tags">Ετικέτες:%1$s</string>
+    <string name="ui_stream">Ροή:%1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">Το πλήκτρο API δεν έχει ρυθμιστεί για%1$s. Παρακαλώ θέστε το σε Settings &gt; Στίχοι.</string>
+    <string name="ui_s_clip">%1$ss κλιπ</string>
+    <string name="ui_loading_more_fm_stations_loaded">Φόρτωση περισσότερων FM σταθμών (%1$sφορτωμένο)...</string>
+    <string name="ui_found">%1$sβρέθηκε</string>
+    <string name="ui_version">Έκδοση%1$s(%2$s)</string>
+    <string name="ui_of_active">%1$sτου%2$sΕνεργό</string>
+    <string name="ui_text_adebc50ade">#%1$s</string>
+    <string name="ui_api_key">%1$sΠλήκτρο API</string>
+    <string name="ui_channel">Κανάλι:%1$s</string>
+    <string name="ui_sync_issue">Συγχρονισμός:%1$s</string>
+    <string name="ui_enter">Είσοδος%1$s</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">Είστε σίγουροι ότι θέλετε να διαγράψετε “%1$s» Όλα τα δεδομένα, οι λίστες αναπαραγωγής, τα αγαπημένα, το ιστορικό και οι ρυθμίσεις σε αυτόν τον λογαριασμό θα διαγραφούν οριστικά.</string>
+    <string name="ui_peak">Κορυφή:%1$s</string>
+    <string name="ui_welcome">Καλώς ήρθατε.%1$s</string>
+    <string name="ui_songs_played">%1$sτραγούδια που παίζονται</string>
+    <string name="ui_around">γύρω%1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">Όταν ο κόσμος είναι απασχολημένος, συντονίζεσαι περισσότερο%1$sγύρω από%2$s.</string>
+    <string name="ui_itune_time_travel_575a110d">iTuneΤαξίδι στο χρόνο •%1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s·%2$s</string>
+    <string name="ui_your_biggest_day_was">Η μεγαλύτερη μέρα σου ήταν%1$s.</string>
+    <string name="ui_listening_recap">%1$sεπανάληψη ακρόασης</string>
+    <string name="ui_busiest_day">Η πιο πολυάσχολη μέρα:%1$s</string>
+    <string name="ui_peak_hour_00">Μέγιστη ώρα:%1$s0:00</string>
+    <string name="ui_loading">Φόρτωση%1$s...</string>
+    <string name="ui_about">Σχετικά%1$s</string>
+    <string name="ui_songs_9b614dc8">%1$sτραγούδια</string>
+    <string name="ui_current_offset_ms">Τρέχουσα μετατόπιση:%1$sms</string>
+    <string name="ui_connected_session">Συνδεμένη συνεδρία:%1$s</string>
+    <string name="ui_k">%1$sk</string>
+    <string name="ui_top_result_c5e5adab">TOP ΑΠΟΤΕΛΕΣΜΑ •%1$s</string>
+    <string name="toast_song_not_found_in_itune">Το τραγούδι δεν βρέθηκε στοiTune</string>
+    <string name="toast_playback_failed_try_again">Η αναπαραγωγή απέτυχε, προσπαθήστε ξανά</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">Αυτόματος χρονοδιακόπτης ύπνου ενεργός · παύση αναπαραγωγής</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">Λειτουργία offline: αυτό το τραγούδι δεν είναι κατεβασμένο</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">Λειτουργία offline: δεν μπορεί να αναβαθμίσει την ποιότητα</string>
+    <string name="toast_upgrading_quality">Ποιότητα αναβάθμισης</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">Δεν ενεργοποιήθηκαν πηγές ροής χωρίς απώλειες σε Πηγές</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">Δεν βρέθηκε υψηλότερη ροή ποιότητας σε ενεργοποιημένες πηγές</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">Το Shuffle είναι κλειδωμένο με μόνιμο Shuffle στις ρυθμίσεις</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">Απαιτείται άδεια μικροφώνου για την αναγνώριση της μουσικής</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">Εμφάνιση με την άδεια άλλων εφαρμογών απαιτείται για την αναδυόμενη αναγνώριση</string>
+    <string name="toast_playback_failed">Η αναπαραγωγή απέτυχε</string>
+    <string name="toast_complete_google_sign_in_first">Ολοκλήρωση σύνδεσης Google πρώτα</string>
+    <string name="toast_waiting_for_youtube_music_session">ΑναμονήYouTube Musicσυνεδρία...</string>
+    <string name="toast_couldn_t_load_tracks">Θα μπορούσε\'t διαδρομή φόρτωσης</string>
+    <string name="toast_copied_to_clipboard">Αντιγραφή στο πρόχειρο</string>
+    <string name="toast_profile_avatar_updated">Ενημέρωση avatar προφίλ</string>
+    <string name="toast_no_tracks_found">Δε βρέθηκαν ίχνη</string>
+    <string name="toast_google_account_connected">Σύνδεση λογαριασμού Google</string>
+    <string name="toast_link_copied">Αντιγραφή δεσμού</string>
+    <string name="toast_could_not_open_browser">Αδυναμία ανοίγματος του περιηγητή</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">Εισάγετε μια θύρα μεταξύ 1024 και 65535</string>
+    <string name="toast_cached_music_cleared">Καθαρή μουσική</string>
+    <string name="toast_no_tracks_available_to_add">Δεν υπάρχουν διαθέσιμα κομμάτια για προσθήκη</string>
+    <string name="toast_enter_a_playlist_name">Εισάγετε ένα όνομα λίστας αναπαραγωγής</string>
+    <string name="toast_system_sound_panel_opened">Άνοιγμα ηχητικού πίνακα συστήματος</string>
+    <string name="toast_download_started_check_notification">Έναρξη λήψης · Έλεγχος ειδοποίησης</string>
+    <string name="toast_playback_will_stop_after_current_track">Η αναπαραγωγή θα σταματήσει μετά το τρέχον κομμάτι</string>
+    <string name="toast_sleep_timer_turned_off">Κλειστός μετρητής ύπνου</string>
+    <string name="toast_stream_url_copied">Αντιγραφή URL ροής</string>
+    <string name="toast_couldn_t_create_lyrics_card">Θα μπορούσε\'t δημιουργία κάρτας στίχων</string>
+    <string name="toast_restored_online_lyrics">Αποκατάσταση σε απευθείας σύνδεση στίχων</string>
+    <string name="toast_lyrics_saved">Σώζονται στίχοι</string>
+    <string name="toast_translation_cleared">Εκκαθάριση μετάφρασης</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">Παρακαλώ ρυθμίστε το πλήκτρο API στις Settings &gt; Οι στίχοι πρώτα</string>
+    <string name="toast_no_lyrics_found_for_this_song">Δεν βρέθηκαν στίχοι για αυτό το τραγούδι</string>
+    <string name="toast_could_not_create_audio_clip">Αδυναμία δημιουργίας κλιπ ήχου</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">Snippet αποθηκεύεται στη μουσική /iTune/Ψαλίδια</string>
+    <string name="toast_playing_next">Παίζοντας το επόμενο</string>
+    <string name="toast_added_to_queue">Προστέθηκε στην ουρά</string>
+    <string name="toast_download_started_check_notifications">Έναρξη λήψης · Έλεγχος ειδοποιήσεων</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">Θα μπορούσε\'t βρείτε αυτό το τραγούδιYouTube Music</string>
+    <string name="toast_couldn_t_start_mix">Θα μπορούσε\'t έναρξη μείγματος</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">Θα μπορούσε\'t βρείτε κομμάτια σεYouTube Music</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">Αδυναμία ασφαλούς κρυπτογράφησης του κωδικού πρόσβασης. Το αυτόματο αντίγραφο ασφαλείας δεν άλλαξε.</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">Απαιτείται άδεια αποθήκευσης για την αποθήκευση αντιγράφων ασφαλείας σε λήψεις</string>
+    <string name="toast_choose_an_itune_backup_file">Διάλεξε ένα .ituneαρχείο αντιγράφων ασφαλείας</string>
+    <string name="toast_audio_artwork_cache_cleared">Καθαρίστηκε η κρύπτη ήχου &amp; έργων τέχνης</string>
+    <string name="toast_could_not_open_github">Αδυναμία ανοίγματος του GitHub</string>
+    <string name="toast_profile_name_updated">Ενημέρωση ονόματος προφίλ</string>
+    <string name="toast_search_history_cleared">Το ιστορικό αναζήτησης καθαρίστηκε</string>
+    <string name="toast_listening_history_cleared">Η ιστορία της ακρόασης εκκαθαρίστηκε</string>
+    <string name="toast_cached_songs_cleared">Τα τραγούδια καθαρίστηκαν.</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">Άνοιγμα ρυθμίσεων συστήματος για τη χορήγηση εμφάνισης σε άλλες εφαρμογές</string>
+    <string name="toast_dynamic_island_geometry_reset">Επαναφορά γεωμετρίας Δυναμικού Νησιού</string>
+    <string name="toast_geometry_reset">Επαναφορά γεωμετρίας</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">Οι πάροχοι στίχων επαναφέρουν στις προεπιλεγμένες</string>
+    <string name="toast_api_key_saved">Το κλειδί API αποθηκεύτηκε</string>
+    <string name="toast_base_url_updated">Ενημέρωση URL βάσης</string>
+    <string name="toast_translation_prompt_updated">Η μετάφραση ενημερώνεται άμεσα</string>
+    <string name="toast_equalizer_reset_to_flat">Επαναφορά ισοσταθμιστή σε επίπεδο</string>
+    <string name="toast_dj_console_reset">Επαναφορά κονσόλας DJ</string>
+    <string name="toast_name_saved">Το όνομα αποθηκεύτηκε</string>
+    <string name="toast_syncing_youtube_music_library">ΣυγχρονισμόςYouTube Musicβιβλιοθήκη...</string>
+    <string name="toast_signed_out_local_likes_preserved">Υπογραφή (τοπικές παρέες διατηρούνται)</string>
+    <string name="toast_signed_out_of_all_google_accounts">Υπογραφή από όλους τους λογαριασμούς Google</string>
+    <string name="toast_discord_disconnected">Αποσυνδέθηκε η Έριδα</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">Εισάγετε μια έγκυρη υπογραφήYouTube Musiccookie (SAPISID και cookie συνεδρίας)</string>
+    <string name="toast_youtube_music_account_connected">YouTube Musicσυνδεδεμένος λογαριασμός</string>
+    <string name="toast_account_renamed">Μετονομασία λογαριασμού</string>
+    <string name="toast_account_deleted">Διαγραφή λογαριασμού</string>
+    <string name="toast_cannot_delete_your_only_account">Αδυναμία διαγραφής του μοναδικού σας λογαριασμού</string>
+    <string name="toast_sources_restored_to_defaults">Πηγές που αποκαταστάθηκαν στις προκαθορισμένες</string>
+    <string name="toast_spotify_disconnected">Spotifyαποσυνδεδεμένη</string>
+    <string name="toast_spotify_sp_dc_token_saved">SpotifyΑποθηκευμένο σύμβολο sp dc</string>
+    <string name="toast_spotify_connected">Spotify connected!</string>
+    <string name="toast_complete_spotify_sign_in_first">ΠλήρηςSpotifyΕίσοδος πρώτη</string>
+    <string name="toast_saved_to_gallery">Σώθηκε στην Γκαλερί!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">ΕπίτρεψεiTuneγια εγκατάσταση ενημερώσεων για συνέχιση</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">Η APK δεν είναι διαθέσιμη</string>
+    <string name="toast_added_to_queue_next">Προστέθηκε στην επόμενη ουρά</string>
+    <string name="toast_link_copied_to_clipboard">Δεσμός αντιγραφόμενο στο πρόχειρο</string>
+    <string name="toast_song_link_copied_to_clipboard">Ο σύνδεσμος τραγουδιού αντιγράφηκε στο πρόχειρο</string>
+    <string name="toast_left_ishare_session">Αριστερή συνεδρία iShare</string>
+    <string name="toast_ishare_lan_host_started">IShare LAN Host Ξεκίνησε!</string>
+    <string name="toast_scanning_lan_for_sessions">Σάρωση LAN για συνεδρίες...</string>
+    <string name="toast_cache_cleared">Καθαρίστηκε η λανθάνουσα μνήμη</string>
+    <string name="toast_signed_out_successfully">Υπογραφή με επιτυχία</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">Οι κωδικοί πρόσβασης πρέπει να ταιριάζουν και να έχουν τουλάχιστον 8 χαρακτήρες</string>
+    <string name="toast_no_backup_file_found_in_storage">Δε βρέθηκε αρχείο αντιγράφων ασφαλείας στην αποθήκευση</string>
+    <string name="toast_library_settings_restored">Αποκατάσταση Βιβλιοθήκης &amp; Settings!</string>
+    <string name="toast_enter_your_backup_password">Εισάγετε τον κωδικό ασφαλείας σας</string>
+    <string name="toast_syncing_spotify_library">ΣυγχρονισμόςSpotifyβιβλιοθήκη...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify Connected!</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">Παρακαλώ εισάγετε ένα έγκυρο cookie SP DC</string>
+    <string name="toast_playing">Παίζοντας%%1$s...</string>
+    <string name="toast_upgraded_to_lossless_kbps">Αναβάθμιση σε Απώλεια •%%1$skbps</string>
+    <string name="toast_playing_next_0f0c851c">Παίζοντας%%1$sεπόμενη</string>
+    <string name="toast_added_to_queue_88e96c25">Προστέθηκε%%1$sστην ουρά</string>
+    <string name="toast_playing_cb1fb3de">Παίζοντας%%1$s...</string>
+    <string name="toast_playing_next_e0082d95">Παίζοντας το επόμενο:%%1$s</string>
+    <string name="toast_couldn_t_load">Θα μπορούσε\'t φορτίο%%1$s</string>
+    <string name="toast_opening">Άνοιγμα%%1$s...</string>
+    <string name="toast_couldn_t_open">Θα μπορούσε\'να ανοίξει%%1$s</string>
+    <string name="toast_couldn_t_play">Θα μπορούσε\'t παιχνίδι%%1$s</string>
+    <string name="toast_library_pin">Βιβλιοθήκη Pin:%%1$s</string>
+    <string name="toast_copied">Αντιγραφή:%%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">Σετ χρονοδιακόπτη ύπνου%%1$sλεπτά</string>
+    <string name="toast_lyrics_applied">Εφαρμοζόμενοι στίχοι (%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">Προστέθηκε%%1$sκομμάτια στην ουρά</string>
+    <string name="toast_switched_feed_to">Εναλλαγή τροφοδοσίας σε%%1$s</string>
+    <string name="toast_provider_updated_to">Ανακαινισμένος πάροχος%%1$s</string>
+    <string name="toast_target_language_set_to">Γλώσσα-στόχος%%1$s</string>
+    <string name="toast_translation_mode_set_to">Λειτουργία μετάφρασης σε%%1$s</string>
+    <string name="toast_added_source">Προστιθέμενη πηγή:%%1$s</string>
+    <string name="toast_installed_extension_s">Εγκαταστάθηκε%%1$sεπέκταση(-εις)</string>
+    <string name="toast_imported_songs">Εισαγωγή\'%%1$s\'(%%2$sτραγούδια)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">Θα μπορούσε\'t βρείτε\'%%1$s\'ΕμπρόςYouTube Music</string>
+    <string name="toast_added_songs_to">Προστέθηκε%%1$sτραγούδια προς%%2$s</string>
+    <string name="toast_joining">Συμμετοχή%%1$s...</string>
+    <string name="toast_added_to">Προστέθηκε%%1$s</string>
+    <string name="toast_itune_v_for_android_tv">iTuneV%%1$sγια Android TV</string>
+    <string name="toast_backup_failed">Αποτυχία αντιγράφου ασφαλείας:%%1$s</string>
+    <string name="toast_restore_failed">Αποτυχία επαναφοράς:%%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">iShare, Δυναμικό νησί &amp; StandBy</string>
+    <string name="settings_ishare" formatted="false">Κοινή χρήση</string>
+    <string name="settings_dynamic_island" formatted="false">Δυναμικό νησί</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">Ελεγκτής ροής νερού που επιπλέει έξωiTune</string>
+    <string name="settings_always_on_display" formatted="false">Πάντα στην οθόνη</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">Ηχητικά εφέ μηχανής ήχου</string>
+    <string name="settings_dolby_atmos" formatted="false">Ντόλμπι Άτμος</string>
+    <string name="settings_text_8948f8179a" formatted="false">8D Ήχος</string>
+    <string name="settings_spatial_audio" formatted="false">Χωρικός ήχος</string>
+    <string name="settings_equalizer_eq" formatted="false">Ισοσταθμιστής (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">Φίλτρο χαμηλής απόδοσης</string>
+    <string name="settings_dj_studio_panel" formatted="false">DJ Studio Panel</string>
+    <string name="settings_audio_normalization" formatted="false">Κανονικοποίηση ήχου</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">DAC Bit-τέλειο USB</string>
+    <string name="settings_pure_audio_bypass" formatted="false">Καθαρή παράκαμψη ήχου</string>
+    <string name="settings_signal_pipeline" formatted="false">Αγωγός σήματος</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">${audioEngine.pillBadge.text} -&gt; Ενεργός έξοδος$Name</string>
+    <string name="settings_audio_playback" formatted="false">Ήχος &amp; αναπαραγωγή</string>
+    <string name="settings_sources" formatted="false">Πηγές</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">ΔιαχείρισηYouTube Music,JioSaavn, εγκατεστημένες επεκτάσεις,WebDAV,SMB, και προτεραιότητα αναπαραγωγής</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">Αυτόματη παράλειψη όταν εμφανίζεται σφάλμα</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">Μετακίνηση στο επόμενο τραγούδι σε αναμονή αν αποτύχει η αναπαραγωγή</string>
+    <string name="settings_download_quality" formatted="false">Ποιότητα λήψης</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">Προκαθορισμένη ποιότητα που χρησιμοποιείται από ενέργειες λήψης τραγουδιών</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">Επιλέξτε την προεπιλεγμένη ποιότητα ήχου για downloads σε όλη την εφαρμογή.</string>
+    <string name="settings_lossless_audio" formatted="false">Απώλεια ήχου</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">Αναβάθμιση της ποιότητας των Cached Songs</string>
+    <string name="settings_streaming_quality" formatted="false">Ποιότητα ροής</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">Επιλέξτε την προτιμώμενη ποιότητα ήχου streaming.</string>
+    <string name="settings_pcm_output_format" formatted="false">Μορφή εξόδου PCM</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">Ανακατασκευάζει την αναπαραγωγή στην τρέχουσα θέση</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">Επιλέξτε τη μορφή PCM που ζητείται από το Android\'s έξοδος ήχου. Ένα USB DAC μπορεί να το μετατρέψει σε μια μορφή που υποστηρίζει.</string>
+    <string name="settings_crossfade" formatted="false">Διασταύρωση</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">Ξεπεράστε το ξεθωριασμένο κομμάτι με την αρχή του επόμενου.</string>
+    <string name="settings_automix" formatted="false">Αυτόματη μίξη</string>
+    <string name="settings_afterglow" formatted="false">Μετά την λάμψη</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">Εφαρμόστε το ίδιο εφέ Low-Pass Equalizer κατά τη διάρκεια των επιλεγμένων τελικών δευτερολέπτων κάθε τραγουδιού. Το Afterglow σταματά το AutoMix και το Crossfade ενώ είναι ενεργοποιημένο.</string>
+    <string name="settings_permanent_shuffle" formatted="false">Μόνιμη ανακάτεμα</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">Κρατήστε ανακάτεμα μόνιμα κλειδωμένο στον παίκτη</string>
+    <string name="settings_pause_at_volume_0" formatted="false">Παύση στον τόμο 0</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">Αυτόματη παύση αναπαραγωγής όταν ο όγκος φτάσει στο μηδέν</string>
+    <string name="settings_volume_bar" formatted="false">Γραμμή έντασης</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">Εμφανίστηκε στο ${ state. volumeBarSide.lowercase()} άκρη όταν πατάτε τα κουμπιά έντασης</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">Επιλέξτε σε ποια άκρη της οθόνης εμφανίζεται η γραμμή έντασης in-app.</string>
+    <string name="settings_content" formatted="false">Περιεχόμενο</string>
+    <string name="settings_default_content_language" formatted="false">Προκαθορισμένη γλώσσα περιεχομένου</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">Γλώσσα για Moods, Περιήγηση και αναζήτηση</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">Επιλέξτε την προτιμώμενη γλώσσα καταλόγου που χρησιμοποιείται σε Browse, Moods &amp; Genres, Playlists και νέες κυκλοφορίες.</string>
+    <string name="settings_default_content_country" formatted="false">Προκαθορισμένη χώρα περιεχομένου</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">Περιοχή για γραφήματα, λίστες αναπαραγωγής &amp; νέες κυκλοφορίες</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">Επιλέξτε την περιφερειακή βιτρίνα που χρησιμοποιείται για Newly Added άλμπουμ, περιφερειακά Moods, και Προτεινόμενες λίστες αναπαραγωγής.</string>
+    <string name="settings_hide_explicit_content" formatted="false">Απόκρυψη περιεχομένου Explicit</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">Φιλτράρισμα explicitητών τραγουδιών σε όλα τα Moods, Browse &amp; Search</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">Τώρα παίζει &amp; υγρό γυαλί</string>
+    <string name="settings_splash_screen" formatted="false">Splash οθόνη</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">App launch brand animation &amp; ρευστός τίτλος αποκαλύπτουν</string>
+    <string name="settings_animated_cover_art" formatted="false">Κινούμενη τέχνη κάλυψης</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">SpotifyCanvas, Apple Music, Tidal &amp; Κοινοτικό εξώφυλλο κίνησης</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">SpotifySet &amp; καβά</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">Αυτόματη απόκρυψη ελέγχων κανβάζας</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">Ελαχιστοποιήστε τα χειριστήρια μετά το 5s ενώ ο Canvas παίζει (κανάβες για εναλλαγή)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">Εμφάνιση συγχρονισμένων στίχων πάνω από το Canvas</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">Εμφάνιση κινουμένων σχεδίων συγχρονισμένων στίχων πάνω από το όνομα του τραγουδιού όταν το Canvas ελέγχει απόκρυψη</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">ΠροτεραιότηταSpotifyΚανβάς</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">Προσπάθησε.SpotifyCanvas πριν την Apple Music, Tidal &amp; Community</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">Παίξτε κινούμενη κάλυψη πάνω από το κελί</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">Επίτρεψε looping βίντεο Canvas μέσω κινητών δεδομένων</string>
+    <string name="settings_player_type" formatted="false">Τύπος παίκτη</string>
+    <string name="settings_player_style" formatted="false">Στυλ παίκτη</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">Δυναμικός χρωματισμός παικτών</string>
+    <string name="settings_full_screen_cover_art" formatted="false">Πλήρες εξώφυλλο οθόνης</string>
+    <string name="settings_corner_length" formatted="false">Μήκος γωνίας</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">Ρυθμίστε την ακτίνα γωνίας του τετραγωνικού άλμπουμ</string>
+    <string name="settings_hide_quality_tag" formatted="false">Απόκρυψη ετικέτας ποιότητας</string>
+    <string name="settings_hide_volume_bar" formatted="false">Απόκρυψη γραμμής έντασης</string>
+    <string name="settings_home_top_card_style" formatted="false">Home Top Card Στυλ</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">Υγρό γυαλί Nav &amp; Mini Player</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">Γυάλινη μπάρα και μίνι-παίκτης, με ένα φακό νερομπογιάς σε αναμονή</string>
+    <string name="settings_time_synced_lyrics" formatted="false">Χρόνος-συγχρονισμένοι στίχοι</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">Ακολουθήστε στίχους λέξεων και γραμμών σε πραγματικό χρόνο</string>
+    <string name="settings_app_font" formatted="false">Γραμματοσειρά εφαρμογών</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">Αλλαγή τυπογραφίας εφαρμογών; ελέγχου παίκτη διατηρούν το σχεδιασμένο typeface τους</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">Επιλέξτε ένα typeface για τη διασύνδεση εφαρμογής.</string>
+    <string name="settings_lyrics_providers" formatted="false">Παροχείς στίχων</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 πηγές • Προτεραιότητα &amp; εναλλαγή υποτροπιάζουσας εντολής</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">Υγρό γυαλί Chrome</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">Διαθλαστικές ημιδιαφανείς κεφαλές &amp; κάρτες αποβάθρας</string>
+    <string name="settings_tactile_haptics" formatted="false">Τακτική Απτική</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">Λεπτή ανατροφοδότηση σφυγμού σε όλους τους ελέγχους παικτών</string>
+    <string name="settings_downloads_storage" formatted="false">Λήψη &amp; αποθήκευσης</string>
+    <string name="settings_cellular_streaming" formatted="false">Κυτταρική ροή</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">Εύρος ζώνης ήχου στα κινητά δεδομένα</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">Έλεγχος της ηχητικής πιστότητας κατά τη ροή μακριά από το Wi-Fi.</string>
+    <string name="settings_download_over_wi_fi" formatted="false">Λήψη πάνω από Wi-Fi</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">Περιμένετε για Wi-Fi πριν από τις αυτόματες λήψεις</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">Τραγούδια λανθάνουσας μνήμης μετά την αναπαραγωγή</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">Αποθήκευση ενός τραγουδιού σε offline αποθήκευση μετά το τέλος του παιχνιδιού</string>
+    <string name="settings_cache_quality" formatted="false">Ποιότητα λανθάνουσας μνήμης</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">Χαμηλότερη ποιότητα αποθηκεύει την αποθήκευση</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">Επιλέξτε την ποιότητα των τραγουδιών που σώθηκαν μετά την ολοκλήρωση της αναπαραγωγής. Ισχύει για τα τραγούδια που είναι κρυμμένα από δω και πέρα.</string>
+    <string name="settings_song_storage_limit" formatted="false">Όριο αποθήκευσης τραγουδιού</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">Η μέγιστη αποθήκευση δίσκων που διατίθεται για offline cache ήχου πριν από παλαιότερα μη αναπαραγμένα τραγούδια εκδιώκονται.</string>
+    <string name="settings_clear_cached_songs" formatted="false">Καθαρά τραγούδια</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">${MusicCacheManager.cachedTracks.size} τραγούδια • ${MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)}</string>
+    <string name="settings_automatic_downloads" formatted="false">Αυτόματες λήψεις</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">Αποθήκευση νέων αρεστών &amp; προστιθέμενων κομματιών εκτός σύνδεσης</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">Καθαρισμός λανθάνουσας μνήμης εφαρμογής</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">Αφαίρεση προσωρινών απορρυπαντικών art &amp; δικτύου</string>
+    <string name="settings_library_listening" formatted="false">Βιβλιοθήκη &amp; Ακρόαση</string>
+    <string name="settings_sync_library" formatted="false">Συγχρονισμός βιβλιοθήκης</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">Κρατήστε ενημερωμένους καλλιτέχνες, λίστες αναπαραγωγής &amp; άλμπουμ</string>
+    <string name="settings_listening_history" formatted="false">Ακούγοντας Ιστορία</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">Σχήμα Εξατομικευμένα Mixes &amp; Πρόσφατα Παίχθηκε</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">Διατήρηση του Likes σε αυτή τη συσκευή</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">Κρατήστε τα αγαπημένα τραγούδια σεiTuneόταν έχουν υπογραφεί</string>
+    <string name="settings_notifications_general" formatted="false">&amp; Γενικές ειδοποιήσεις</string>
+    <string name="settings_offline_mode" formatted="false">Λειτουργία εκτός σύνδεσης</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">Απαίτηση λήψης αντιγράφου για την εκκίνηση αναπαραγωγής</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">Σταμάτημα μουσικής στην εργασία Καθαρή</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">Σταμάτημα αναπαραγωγής ότανiTuneΑπομακρύνεται από τα πρόσφατα.</string>
+    <string name="settings_auto_sleep_timer" formatted="false">Αυτόματος χρονομετρητής ύπνου</string>
+    <string name="settings_network_proxy" formatted="false">Διαμεσολαβητής δικτύου</string>
+    <string name="settings_profile_name" formatted="false">Όνομα προφίλ</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">Προσαρμογή του ονόματος εμφάνισης προφίλ ρυθμίσεων</string>
+    <string name="settings_news_from_dev" formatted="false">Νέα από dev</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">Ανακοινώσεις, εκδόσεις &amp; changelog</string>
+    <string name="settings_general_about" formatted="false">Γενικά &amp; σχετικά</string>
+    <string name="settings_home_screen_widget" formatted="false">Γραφικό συστατικό αρχικής οθόνης</string>
+    <string name="settings_widget_customization" formatted="false">Προσαρμογή γραφικών συστατικών</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">Επιλέξτε μια προεπισκόπηση μεγέθους, έργο τέχνης, ελέγχου και στυλ widget</string>
+    <string name="settings_backup_restore" formatted="false">Δημιουργία αντιγράφων ασφαλείας και επαναφορά</string>
+    <string name="settings_automatic_daily_backup" formatted="false">Αυτόματη καθημερινή αντιγράφων ασφαλείας</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">Κρυπτογραφημένα καθημερινά αντίγραφα ασφαλείας • Λήψεις/iTuneΑντιγράφων ασφαλείας</string>
+    <string name="settings_back_up_itune" formatted="false">ΠίσωiTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">Αποθήκευση λογαριασμών, όλες οι ρυθμίσεις, ηχητικά εφέ, δεδομένα βιβλιοθήκης και στατιστικά κρυπτογραφημένα</string>
+    <string name="settings_restore_from_backup" formatted="false">Επαναφορά από τη δημιουργία αντιγράφων ασφαλείας</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">Επαναφορά ρυθμίσεων, ηχητικά εφέ, λογαριασμούς ή στοιχεία βιβλιοθήκης από .itune</string>
+    <string name="settings_privacy" formatted="false">Ιδιωτικότητα</string>
+    <string name="settings_pause_search_history" formatted="false">Παύση ιστορικού αναζήτησης</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">Μη αποθήκευση νέων ερωτημάτων αναζήτησης στο ιστορικό</string>
+    <string name="settings_clear_search_history" formatted="false">Καθαρισμός ιστορικού αναζήτησης</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">Αφαίρεση πρόσφατων ερωτήσεων από την Αναζήτηση</string>
+    <string name="settings_pause_listening_history" formatted="false">Παύση της Ιστορίας Ακρόασης</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">Μη εγγραφή τραγουδιών ή συστάσεων ενημέρωσης</string>
+    <string name="settings_clear_listening_history" formatted="false">Καθαρή Ιστορία Ακρόασης</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">Αφαίρεση ιστορικού αναπαραγωγής και επαναφορά προφίλ γεύσης</string>
+    <string name="settings_disable_screenshot" formatted="false">Απενεργοποίηση Στιγμιότυπο οθόνης</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">Αποκλεισμός στιγμιότυπων οθόνης και καταγραφής οθόνης σε όλη την εφαρμογή</string>
+    <string name="settings_best_available" formatted="false">Καλύτερο διαθέσιμο</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">Χρησιμοποιήστε την υψηλότερη διαθέσιμη ποιότητα πηγής</string>
+    <string name="settings_maximum" formatted="false">Μέγιστο</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">Επιλέξτε το υψηλότερο ρεύμα bitrate</string>
+    <string name="settings_high" formatted="false">Υψηλό</string>
+    <string name="settings_target_about_160_kbps" formatted="false">Στόχος περίπου 160 kbps</string>
+    <string name="settings_standard" formatted="false">Πρότυπο</string>
+    <string name="settings_target_about_128_kbps" formatted="false">Στόχος περίπου 128 kbps</string>
+    <string name="settings_data_saver" formatted="false">Αποθήκευση δεδομένων</string>
+    <string name="settings_target_about_64_kbps" formatted="false">Στόχος περίπου 64 kbps</string>
+    <string name="settings_extreme" formatted="false">Ακραία</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">Μέγιστη πιστότητα (256+ kbps)</string>
+    <string name="settings_high_b1a5954a" formatted="false">Υψηλό</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">Υψηλής ποιότητας ήχου (~160 kbps)</string>
+    <string name="settings_medium" formatted="false">Μεσαίο</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">Τυποποιημένη ποιότητα ήχου (~128 kbps)</string>
+    <string name="settings_low" formatted="false">Χαμηλή</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">Ήχος προφύλαξης δεδομένων (~48-64 kbps)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">16-bit PCM</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">Τυποποιημένη ακεραιότερη έξοδος PCM· ευρέως συμβατή με DAC κλάσης ήχου USB</string>
+    <string name="settings_text_6697202e38" formatted="false">32-bit επίπλευσης PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">Float PCM εξόδου όταν υποστηρίζεται από Android και τη συνδεδεμένη διαδρομή ήχου</string>
+    <string name="settings_off" formatted="false">Κλείσιμο</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">Αναπαραγωγή κομματιών καθαρά back-to-back</string>
+    <string name="settings_text_6597740315" formatted="false">2 δευτ</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">Λεπτή επικάλυψη μετάβασης</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 δευτ</string>
+    <string name="settings_short_seamless_fade" formatted="false">Σύντομη απρόσκοπτη ξεθωρίαση</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 δευτ</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">Ισορροπημένη μετάβαση DJ-style</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8 δευτ</string>
+    <string name="settings_smooth_extended_blend" formatted="false">Ομαλή επέκταση μείγματος</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 δευτ</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">Μέγιστο συνεχές μείγμα</string>
+    <string name="settings_off_e3de5ab0" formatted="false">Κλείσιμο</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">Διατήρηση φυσιολογικών εφέ αναπαραγωγής και μεταβάσεις</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 δευτ</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">Εφαρμόστε το Low-Pass κατά τη διάρκεια των τελευταίων 5 δευτερολέπτων κάθε τραγουδιού</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 δευτ</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">Εφαρμογή Low-Pass κατά τη διάρκεια των τελευταίων 10 δευτερολέπτων κάθε τραγουδιού</string>
+    <string name="settings_text_eb4354110e" formatted="false">15 δευτ</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">Εφαρμογή Low-Pass κατά τη διάρκεια των τελευταίων 15 δευτερολέπτων κάθε τραγουδιού</string>
+    <string name="settings_right" formatted="false">Σωστά.</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">Εμφάνιση της γραμμής έντασης στο δεξί άκρο (προκαθορισμένο)</string>
+    <string name="settings_left" formatted="false">Αριστερά</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">Εμφάνιση της γραμμής έντασης στην αριστερή άκρη</string>
+    <string name="settings_high_efficiency" formatted="false">Υψηλή απόδοση</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">Χρήση ελάχιστων κυτταρικών δεδομένων</string>
+    <string name="settings_high_quality" formatted="false">Υψηλή ποιότητα</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 kbps ισορροπημένη κινητή αναπαραγωγή</string>
+    <string name="settings_lossless" formatted="false">Απώλεια</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">Πλήρης απώλεια πάνω από 5G/LTE δίκτυα</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">Κλείσιμο</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">Να επιτρέπεται η μετάδοση μόνο στο Wi-Fi</string>
+    <string name="settings_text_03a001f575" formatted="false">500 MB</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">Συμπαγής cache (~70 τραγούδια)</string>
+    <string name="settings_text_33015e637f" formatted="false">1 GB</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">Μέτρια λανθάνουσα μνήμη (~150 τραγούδια)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 GB</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">Προτεινόμενη προεπιλογή (~300 τραγούδια)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5 GB</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">Μεγάλη offline συλλογή (~800 τραγούδια)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10 GB</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">Πολύ μεγάλη βιβλιοθήκη (~1.600 τραγούδια)</string>
+    <string name="settings_unlimited" formatted="false">Απεριόριστα</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">Ποτέ μην εκδιώκετε κρυφά τραγούδια</string>
+    <string name="settings_pipeline_output">%1$s→%2$s</string>
+    <string name="settings_volume_bar_side">Εμφανίστηκε στο%1$sάκρη όταν πατάτε τα κουμπιά έντασης</string>
+    <string name="settings_corner_radius_value">%1$dδp</string>
+    <string name="settings_active_lyrics_providers">%1$dΕνεργό</string>
+    <string name="settings_cached_song_count_size">%1$dτραγούδια •%2$s</string>
+    <string name="library_playlist_count_one">%1$dΛίστα αναπαραγωγής</string>
+    <string name="library_playlist_count_many">%1$dΛίστες αναπαραγωγής</string>
+    <string name="library_album_count_one">%1$dΠροσθήκη άλμπουμ</string>
+    <string name="library_album_count_many">%1$dΠροσθήκη άλμπουμ</string>
+    <string name="remove_from_favorites">Αφαίρεση από τα αγαπημένα</string>
+    <string name="play_top_album">Αναπαραγωγή κορυφαίου άλμπουμ</string>
+    <string name="open_in_spotify">Άνοιγμα σεSpotify</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Χρήση της διασύνδεσης του Αζερμπαϊτζάν</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Χρήση της διεπαφής Bengali</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Χρήση της βουλγαρικής διασύνδεσης</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Χρήση της καταλανικής διασύνδεσης</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">Χρήση της τσεχικής διασύνδεσης</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Χρήση της δανικής διασύνδεσης</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Χρήση της φινλανδικής διασύνδεσης</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Ελληνικό περιβάλλον</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Χρήση της εβραϊκής διεπαφής</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Χρήση της ουγγρικής διεπαφής</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Χρήση της ινδονησιακής διεπαφής</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Χρήση της διασύνδεσης Malay</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Χρήση της νορβηγικής διεπαφής</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Χρήση της περσικής διεπαφής</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Χρήση της πολωνικής διασύνδεσης</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Χρήση της ρουμανικής διασύνδεσης</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Χρήση της σλοβακικής διασύνδεσης</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Χρήση της διασύνδεσης της Ταϊλάνδης</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Χρήση της τουρκικής διασύνδεσης</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Χρήση της Ουκρανικής διασύνδεσης</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Χρήση της βιετναμέζικης διασύνδεσης</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Χρήση της διεπαφής Σουαχίλι</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Χρήση της Φιλιππινέζικης διασύνδεσης</string>
+</resources>
