@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.television.ui.settings
 
+
+import androidx.compose.ui.res.stringResource
 import android.graphics.Bitmap
 import android.view.ViewGroup
 import android.webkit.CookieManager
@@ -567,11 +569,11 @@ fun TvSettingsScreen(
                         onClick = {
                             if (ishareSession != null) {
                                 IShareSyncManager.leaveSession()
-                                Toast.makeText(context, "Left iShare Session", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_left_ishare_session), Toast.LENGTH_SHORT).show()
                             } else {
                                 IShareSyncManager.start(context)
                                 IShareSyncManager.startLanHost()
-                                Toast.makeText(context, "iShare LAN Host Started!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_ishare_lan_host_started), Toast.LENGTH_SHORT).show()
                             }
                         },
                     )
@@ -634,7 +636,7 @@ fun TvSettingsScreen(
                                 Coil.imageLoader(context).memoryCache?.clear()
                             }
                             SettingsStore.setString(context, SettingsStore.KEY_CACHE_LABEL, "0 MB")
-                            Toast.makeText(context, "Cache Cleared", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_cache_cleared), Toast.LENGTH_SHORT).show()
                         },
                     )
                 }
@@ -646,7 +648,7 @@ fun TvSettingsScreen(
                             onFocused = { blurb = "Disconnects your Google / YouTube Music account from this TV." },
                             onClick = {
                                 GoogleAuthStore.signOut(context)
-                                Toast.makeText(context, "Signed out successfully", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_signed_out_successfully), Toast.LENGTH_SHORT).show()
                             },
                         )
                     }
@@ -658,7 +660,7 @@ fun TvSettingsScreen(
                         leadingIcon = Icons.Rounded.Info,
                         onFocused = { blurb = "iTune for Android TV — Engineered by DxV Studio & Dark. Licensed under GPL-3.0." },
                         onClick = {
-                            Toast.makeText(context, "iTune v${BuildConfig.VERSION_NAME} for Android TV", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_itune_v_for_android_tv, BuildConfig.VERSION_NAME), Toast.LENGTH_SHORT).show()
                         },
                     )
                 }
@@ -738,14 +740,14 @@ fun TvAppMark(size: Dp = 92.dp, modifier: Modifier = Modifier) {
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_itune_waves),
-                contentDescription = "iTune Waves",
+                contentDescription = stringResource(R.string.ui_itune_waves),
                 colorFilter = ColorFilter.tint(Color.White),
                 modifier = Modifier.size(size * 0.52f),
             )
         }
         Spacer(modifier = Modifier.height(14.dp))
         Text(
-            text = "iTune",
+            text = stringResource(R.string.app_name),
             color = Color.White,
             fontFamily = SFProDisplay,
             fontSize = 20.sp,
@@ -888,14 +890,14 @@ private fun TvLyricsProvidersModal(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Lyrics Providers",
+                    text = stringResource(R.string.ui_lyrics_providers),
                     color = Color.White,
                     fontSize = 20.sp,
                     fontFamily = SFProDisplay,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text = "Close",
+                    text = stringResource(R.string.close),
                     color = Color(0xFF007AFF),
                     fontSize = 15.sp,
                     fontFamily = SFProDisplay,
@@ -951,7 +953,7 @@ private fun TvLyricsProvidersModal(
                         if (isEnabled) {
                             Icon(
                                 imageVector = Icons.Rounded.Check,
-                                contentDescription = "Active",
+                                contentDescription = stringResource(R.string.ui_active),
                                 tint = if (focused) Color.Black else Color(0xFF30D158),
                                 modifier = Modifier.size(18.dp),
                             )
@@ -997,7 +999,7 @@ private fun TvPasswordBackupModal(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Back Up iTune (AES-256)",
+                text = stringResource(R.string.ui_back_up_itune_aes_256),
                 color = Color.White,
                 fontSize = 20.sp,
                 fontFamily = SFProDisplay,
@@ -1005,7 +1007,7 @@ private fun TvPasswordBackupModal(
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                text = "Your library, playlists and settings will be encrypted with a password of at least 8 characters.",
+                text = stringResource(R.string.ui_your_library_playlists_and_settings_will_be_encrypted),
                 color = Color.White.copy(alpha = 0.60f),
                 fontSize = 12.5.sp,
                 fontFamily = SFProDisplay,
@@ -1031,7 +1033,7 @@ private fun TvPasswordBackupModal(
                     .padding(horizontal = 14.dp, vertical = 12.dp),
                 decorationBox = { inner ->
                     if (password.isEmpty()) {
-                        Text("Encryption password (min 8 chars)", color = Color.White.copy(alpha = 0.38f), fontSize = 14.sp)
+                        Text(stringResource(R.string.ui_encryption_password_min_8_chars), color = Color.White.copy(alpha = 0.38f), fontSize = 14.sp)
                     }
                     inner()
                 },
@@ -1056,7 +1058,7 @@ private fun TvPasswordBackupModal(
                     .padding(horizontal = 14.dp, vertical = 12.dp),
                 decorationBox = { inner ->
                     if (confirmPassword.isEmpty()) {
-                        Text("Confirm password", color = Color.White.copy(alpha = 0.38f), fontSize = 14.sp)
+                        Text(stringResource(R.string.ui_confirm_password), color = Color.White.copy(alpha = 0.38f), fontSize = 14.sp)
                     }
                     inner()
                 },
@@ -1089,13 +1091,13 @@ private fun TvPasswordBackupModal(
                                     val ext = File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "itune_tv_backup.itune")
                                     ext.writeBytes(bytes)
                                 }
-                                Toast.makeText(context, "Encrypted Backup Saved (${bytes.size / 1024} KB)!", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, context.getString(R.string.tv_encrypted_backup_saved, bytes.size / 1024), Toast.LENGTH_LONG).show()
                                 onDismiss()
                             } catch (e: Exception) {
-                                Toast.makeText(context, "Backup failed: ${e.message}", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, context.getString(R.string.toast_backup_failed, e.message), Toast.LENGTH_LONG).show()
                             }
                         } else {
-                            Toast.makeText(context, "Passwords must match and have at least 8 characters", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_passwords_must_match_and_have_at_least_8_character), Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier.weight(1f),
@@ -1138,7 +1140,7 @@ private fun TvPasswordRestoreModal(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Restore iTune Backup",
+                text = stringResource(R.string.ui_restore_itune_backup),
                 color = Color.White,
                 fontSize = 20.sp,
                 fontFamily = SFProDisplay,
@@ -1146,7 +1148,7 @@ private fun TvPasswordRestoreModal(
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                text = "Enter the password used when your .itune backup was created.",
+                text = stringResource(R.string.ui_enter_the_password_used_when_your_itune_backup_was_cre),
                 color = Color.White.copy(alpha = 0.60f),
                 fontSize = 12.5.sp,
                 fontFamily = SFProDisplay,
@@ -1171,7 +1173,7 @@ private fun TvPasswordRestoreModal(
                     .padding(horizontal = 14.dp, vertical = 12.dp),
                 decorationBox = { inner ->
                     if (password.isEmpty()) {
-                        Text("Backup password", color = Color.White.copy(alpha = 0.38f), fontSize = 14.sp)
+                        Text(stringResource(R.string.ui_backup_password), color = Color.White.copy(alpha = 0.38f), fontSize = 14.sp)
                     }
                     inner()
                 },
@@ -1200,19 +1202,19 @@ private fun TvPasswordRestoreModal(
                                     ?: File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "itune_tv_backup.itune").takeIf { it.exists() }
 
                                 if (target == null || !target.exists()) {
-                                    Toast.makeText(context, "No backup file found in storage", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(context, context.getString(R.string.toast_no_backup_file_found_in_storage), Toast.LENGTH_LONG).show()
                                 } else {
                                     val bytes = target.readBytes()
                                     val scanned = BackupRestoreManager.scanEncryptedBackup(bytes, password.toCharArray())
                                     BackupRestoreManager.restore(context, scanned, setOf("all"))
-                                    Toast.makeText(context, "Library & Settings Restored!", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(context, context.getString(R.string.toast_library_settings_restored), Toast.LENGTH_LONG).show()
                                     onDismiss()
                                 }
                             } catch (e: Exception) {
-                                Toast.makeText(context, "Restore failed: ${e.message}", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, context.getString(R.string.toast_restore_failed, e.message), Toast.LENGTH_LONG).show()
                             }
                         } else {
-                            Toast.makeText(context, "Enter your backup password", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_enter_your_backup_password), Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier.weight(1f),
@@ -1308,7 +1310,7 @@ private fun TvSpotifyAccountModal(
                     )
                     Spacer(Modifier.width(10.dp))
                     Text(
-                        text = "Spotify Account",
+                        text = stringResource(R.string.ui_spotify_account),
                         color = Color.White,
                         fontSize = 20.sp,
                         fontFamily = SFProDisplay,
@@ -1316,7 +1318,7 @@ private fun TvSpotifyAccountModal(
                     )
                 }
                 Text(
-                    text = "Close",
+                    text = stringResource(R.string.close),
                     color = Color(0xFF007AFF),
                     fontSize = 15.sp,
                     fontFamily = SFProDisplay,
@@ -1327,7 +1329,7 @@ private fun TvSpotifyAccountModal(
 
             if (isConnected) {
                 Text(
-                    text = "Spotify is currently connected. Motion artwork (Canvas) and Spotify playlist synchronization are enabled.",
+                    text = stringResource(R.string.ui_spotify_is_currently_connected_motion_artwork_canvas_a),
                     color = Color.White.copy(alpha = 0.70f),
                     fontSize = 13.5.sp,
                     fontFamily = SFProDisplay,
@@ -1341,7 +1343,7 @@ private fun TvSpotifyAccountModal(
                     isPrimary = true,
                     onClick = {
                         SpotifyLibrarySyncManager.launchSync(context, force = true)
-                        Toast.makeText(context, "Syncing Spotify library...", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_syncing_spotify_library), Toast.LENGTH_SHORT).show()
                         onDismiss()
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -1354,14 +1356,14 @@ private fun TvSpotifyAccountModal(
                     isPrimary = false,
                     onClick = {
                         SettingsStore.setSpotifySpdcToken(context, "")
-                        Toast.makeText(context, "Spotify disconnected", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_spotify_disconnected), Toast.LENGTH_SHORT).show()
                         onDismiss()
                     },
                     modifier = Modifier.fillMaxWidth(),
                 )
             } else {
                 Text(
-                    text = "Connect your Spotify account to enable Canvas looping motion video artwork and sync your Spotify library.",
+                    text = stringResource(R.string.ui_connect_your_spotify_account_to_enable_canvas_looping),
                     color = Color.White.copy(alpha = 0.70f),
                     fontSize = 13.5.sp,
                     fontFamily = SFProDisplay,
@@ -1380,7 +1382,7 @@ private fun TvSpotifyAccountModal(
                 Spacer(Modifier.height(16.dp))
 
                 Text(
-                    text = "OR ENTER SP_DC COOKIE",
+                    text = stringResource(R.string.ui_or_enter_sp_dc_cookie),
                     color = Color.White.copy(alpha = 0.40f),
                     fontSize = 11.sp,
                     fontFamily = SFProDisplay,
@@ -1408,7 +1410,7 @@ private fun TvSpotifyAccountModal(
                     decorationBox = { innerTextField ->
                         if (rawSpDcInput.isEmpty()) {
                             Text(
-                                text = "Paste sp_dc token here…",
+                                text = stringResource(R.string.ui_paste_sp_dc_token_here),
                                 color = Color.White.copy(alpha = 0.35f),
                                 fontSize = 13.5.sp,
                                 fontFamily = SFProDisplay,
@@ -1427,10 +1429,10 @@ private fun TvSpotifyAccountModal(
                         val clean = rawSpDcInput.trim().substringAfter("sp_dc=").substringBefore(";").trim()
                         if (clean.isNotBlank()) {
                             SettingsStore.setSpotifySpdcToken(context, clean)
-                            Toast.makeText(context, "Spotify Connected!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_spotify_connected_f5a7d96a), Toast.LENGTH_SHORT).show()
                             onDismiss()
                         } else {
-                            Toast.makeText(context, "Please enter a valid SP_DC cookie", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_please_enter_a_valid_sp_dc_cookie), Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -1458,7 +1460,7 @@ private fun TvSpotifyLoginScreen(
         if (spDc.isNotBlank()) {
             isFinished = true
             SettingsStore.setSpotifySpdcToken(context, spDc)
-            Toast.makeText(context, "Spotify Connected!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_spotify_connected_f5a7d96a), Toast.LENGTH_SHORT).show()
             onSignedIn()
         }
     }
@@ -1526,7 +1528,7 @@ private fun TvSpotifyLoginScreen(
                 .clickable(onClick = onClose)
                 .padding(12.dp),
         ) {
-            Icon(Icons.Rounded.Close, contentDescription = "Close", tint = Color.White)
+            Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.close), tint = Color.White)
         }
     }
 }
