@@ -1,0 +1,1170 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="save">Speichern</string>
+    <string name="close">Schließen</string>
+    <string name="done">Fertig</string>
+    <string name="back">Zurück</string>
+    <string name="play">Spielen</string>
+    <string name="shuffle">Mischen</string>
+    <string name="retry">Versuchen Sie es noch einmal</string>
+    <string name="try_again">Versuchen Sie es erneut</string>
+    <string name="more">Mehr</string>
+    <string name="less">Weniger</string>
+    <string name="share">Teilen</string>
+    <string name="show_all">Alle anzeigen</string>
+    <string name="top_songs">Top-Songs</string>
+    <string name="suggested">Vorgeschlagen</string>
+    <string name="subscribers">%1$s-Abonnenten</string>
+    <string name="monthly_listeners">%1$s monatliche Hörer</string>
+    <string name="signed_by">Signiert von %1$s</string>
+    <string name="about_artist">Über den Künstler</string>
+    <string name="about_album">Über das Album</string>
+    <string name="recent_album">Aktuelles Album</string>
+    <string name="recent_ep">Aktuelle EP</string>
+    <string name="recent_single">Aktuelle Single</string>
+    <string name="subscribe">Abonnieren</string>
+    <string name="unsubscribe">Abmelden</string>
+    <string name="add_to_library">Zur Bibliothek hinzufügen</string>
+    <string name="remove_from_library">Aus der Bibliothek entfernen</string>
+    <string name="add_to_playlist">Zur Playlist hinzufügen</string>
+    <string name="remove_from_playlist">Aus dieser Playlist entfernen</string>
+    <string name="play_next">Als nächstes spielen</string>
+    <string name="add_to_queue">Zur Warteschlange hinzufügen</string>
+    <string name="start_radio">Radio starten</string>
+    <string name="open">Offen</string>
+    <string name="open_album">Album öffnen</string>
+    <string name="open_artist">Offener Künstler</string>
+    <string name="open_playlist">Playlist öffnen</string>
+    <string name="song_info">Song-Info</string>
+    <string name="song_info_album">Album</string>
+    <string name="song_info_release_date">Erscheinungsdatum</string>
+    <string name="song_info_views">Spiele / Ansichten</string>
+    <string name="song_info_likes">Gefällt mir</string>
+    <string name="song_info_comments">Kommentare</string>
+    <string name="song_info_unavailable">Nicht verfügbar</string>
+    <string name="song_info_error">Einige Informationen konnten nicht geladen werden.</string>
+    <string name="song_info_retry">Versuchen Sie es noch einmal</string>
+    <string name="like">Wie</string>
+    <string name="dislike">Abneigung</string>
+    <string name="download">Herunterladen</string>
+    <string name="download_all">Alles herunterladen</string>
+    <string name="downloaded">Heruntergeladen</string>
+    <string name="downloading">Herunterladen</string>
+    <string name="download_notification_title">Herunterladen</string>
+    <string name="delete_download">Download löschen</string>
+    <string name="delete_download_confirmation">„%1$s“ von diesem Gerät entfernen? Tippen Sie zur Bestätigung erneut.</string>
+    <string name="delete">Löschen</string>
+    <string name="queued">In der Warteschlange</string>
+    <string name="saved_to_downloads">Unter „Downloads“ gespeichert</string>
+    <string name="search_this_list">Durchsuchen Sie diese Liste</string>
+    <string name="clear_search">Suche löschen</string>
+    <string name="close_search">Suche schließen</string>
+    <string name="nothing_matches">Hier stimmt nichts mit „%1$s“ überein.</string>
+    <string name="sort_songs">Lieder sortieren</string>
+    <string name="artist">Künstler</string>
+    <string name="album">Album</string>
+    <string name="playlist">Wiedergabeliste</string>
+    <string name="folder">Ordner</string>
+    <string name="songs">Lieder</string>
+    <string name="song_count">%1$d Lied</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$d-Spur</item>
+        <item quantity="other">%1$d-Tracks</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$d Minute</item>
+        <item quantity="other">%1$d Minuten</item>
+    </plurals>
+    <string name="one_hour">1 Stunde</string>
+    <string name="hours_minutes_short">%1$dh %2$dm</string>
+    <string name="minutes_short">%1$d min</string>
+    <string name="pin">Pin</string>
+    <string name="unpin">Lösen</string>
+    <string name="tile_identify_music">Musik identifizieren</string>
+    <string name="tile_identify_music_desc">Identifizieren Sie Songs, die um Sie herum abgespielt werden, mit iTune</string>
+    <string name="widget_itune_description">Steuern Sie die iTune-Wiedergabe von Ihrem Startbildschirm aus</string>
+    <string name="app_language">App-Sprache</string>
+    <string name="app_language_subtitle">Sprache für Menüs, Schaltflächen und Meldungen</string>
+    <string name="app_language_description">Wählen Sie die Sprache aus, die für die iTune-Schnittstelle verwendet wird.</string>
+    <string name="system_default_language">Systemstandard</string>
+    <string name="follow_device_language">Befolgen Sie die Gerätesprache</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">Verwenden Sie die englische Benutzeroberfläche</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface">इंटरफ़ेस के लिए हिन्दी का उपयोग करें</string>
+    <string name="hindi_interface_language">Hindi-Schnittstellensprache</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">Verwenden Sie die spanische Benutzeroberfläche</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">Verwenden Sie die französische Benutzeroberfläche</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">Verwenden Sie die niederländische Benutzeroberfläche</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">Nutzen Sie die russische Schnittstelle</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">Verwenden Sie die Urdu-Schnittstelle</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">Verwenden Sie die chinesische Benutzeroberfläche</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">Nutzen Sie die deutsche Oberfläche</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">Verwenden Sie die portugiesische Benutzeroberfläche</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">Verwenden Sie die italienische Benutzeroberfläche</string>
+    <string name="japanese_language">日本語</string>
+    <string name="japanese_interface">Verwenden Sie die japanische Benutzeroberfläche</string>
+    <string name="favorite_artist">Lieblingskünstler</string>
+    <string name="remove_favorite_artist">Aus den Lieblingskünstlern entfernen</string>
+    <string name="add_to_favorite_artists">Zu den Lieblingskünstlern hinzufügen</string>
+    <string name="removed_from_artists">Aus Künstler entfernt</string>
+    <string name="added_to_artists">Zu den Künstlern hinzugefügt</string>
+    <string name="play_top_songs">Spielen Sie Top-Songs</string>
+    <string name="play_album">Album abspielen</string>
+    <string name="play_playlist">Playlist abspielen</string>
+    <string name="create_new_playlist">Neue Playlist erstellen</string>
+    <string name="create_playlist">Playlist erstellen</string>
+    <string name="radio">Radio</string>
+    <string name="search">Suchen</string>
+    <string name="share_playlist_link">Playlist-Link teilen</string>
+    <string name="copy_share_link">Teilen-Link kopieren</string>
+    <string name="rename_playlist">Playlist umbenennen</string>
+    <string name="delete_playlist">Playlist löschen</string>
+    <string name="share_link_copied">Teilen-Link kopiert</string>
+    <string name="playlist_removed">Playlist entfernt</string>
+    <string name="playlist_no_longer_available">Diese Playlist ist nicht mehr verfügbar.</string>
+    <string name="empty_playlist">Leere Playlist</string>
+    <string name="filter_playlists">Playlists filtern...</string>
+    <string name="filter_albums">Alben filtern...</string>
+    <string name="favorite">Favorit</string>
+    <string name="tap_to_start_listening">Tippen Sie, um mit dem Zuhören zu beginnen</string>
+    <string name="time_zero" formatted="false">0:00</string>
+    <string name="previous">Zurück</string>
+    <string name="play_or_pause">Spielen oder pausieren</string>
+    <string name="next">Als nächstes</string>
+    <string name="repeat">Wiederholen</string>
+    <string name="open_title_options">Öffnen Sie die %1$s-Optionen</string>
+    <string name="reset_page_title">%1$s zurücksetzen</string>
+    <string name="remove_device">Entfernen Sie %1$s</string>
+    <string name="profile_name">%1$s-Profil</string>
+    <string name="download_option">Laden Sie %1$s herunter</string>
+    <string name="open_entry_options">Öffnen Sie die %1$s-Optionen</string>
+    <string name="avatar_number">Avatar %1$s</string>
+    <string name="options_for_track">Optionen für %1$s</string>
+    <string name="preparing">Vorbereiten…</string>
+    <string name="share_image">Bild teilen</string>
+    <string name="speed_pitch_locked">Geschwindigkeit und Tonhöhe sind miteinander verbunden</string>
+    <string name="independent_bpm_tempo_key_pitch">Unabhängiges BPM-Tempo und Tonhöhe</string>
+    <string name="spatial_reflections_delay">Räumliche Reflexionen (%1$d ms)</string>
+    <string name="on">Auf</string>
+    <string name="off">Aus</string>
+    <string name="dynamic_island_active">Dynamische Insel aktiv</string>
+    <string name="dynamic_island_description">Wird während der Wiedergabe außerhalb von iTune flüssig angezeigt</string>
+    <string name="preparing_download">Download wird vorbereitet…</string>
+    <string name="listening_for_music">Musik hören…</string>
+    <string name="hold_phone_near_sound_source">Halten Sie das Telefon in die Nähe der Tonquelle</string>
+    <string name="unable_to_recognize_audio">Audio kann nicht erkannt werden</string>
+    <string name="song_identified">Lied identifiziert</string>
+    <string name="play_in_itune">Spielen Sie in iTune</string>
+    <string name="view_details">Details anzeigen</string>
+    <string name="no_match_found">Keine Übereinstimmung gefunden</string>
+    <string name="recognition_retry_message">Das Lied konnte nicht identifiziert werden. Tippen Sie, um es noch einmal zu versuchen.</string>
+    <string name="microphone_permission_needed">Mikrofonberechtigung erforderlich</string>
+    <string name="microphone_permission_help">Tippen Sie hier, um den Zugriff auf das Mikrofon zu erlauben, damit iTune Musik identifizieren kann.</string>
+    <string name="recognition_failed">Die Erkennung ist fehlgeschlagen</string>
+    <string name="tap_install_to_continue">Tippen Sie auf „Installieren“, um fortzufahren</string>
+    <string name="detail_artist">Künstler</string>
+    <string name="detail_album">Album</string>
+    <string name="set_default_ringtone_target">Als Standard %1$s festlegen!</string>
+    <string name="added_ringtone_target">Zu %1$s hinzugefügt. Wählen Sie es in den Toneinstellungen aus.</string>
+    <string name="last_fm_connected_as">Last.fm verbunden als %1$s</string>
+    <string name="discord_connected_as">Discord verbunden als %1$s</string>
+    <string name="tv_encrypted_backup_saved">Verschlüsseltes Backup gespeichert (%1$d KB)!</string>
+    <string name="sign_in_verification_failed">Die Anmeldebestätigung ist fehlgeschlagen</string>
+    <string name="could_not_rename_playlist">Die Wiedergabeliste auf YouTube Music konnte nicht umbenannt werden</string>
+    <string name="could_not_create_playlist">Playlist konnte nicht erstellt werden</string>
+    <string name="daily_encrypted_backup_enabled">Tägliches verschlüsseltes Backup aktiviert</string>
+    <string name="cookie_login_failed">Cookie-Anmeldung fehlgeschlagen</string>
+    <string name="could_not_open_last_fm">Last.fm konnte nicht geöffnet werden</string>
+    <string name="last_fm_sign_in_failed">Last.fm-Anmeldung fehlgeschlagen</string>
+    <string name="discord_sign_in_failed">Discord-Anmeldung fehlgeschlagen</string>
+    <string name="could_not_open_android_installer">Das Installationsprogramm von Android konnte nicht geöffnet werden</string>
+    <string name="added_title_to_queue">„%1$s“ zur Warteschlange hinzugefügt</string>
+    <string name="automatic_backup_disabled">Automatische Sicherung deaktiviert</string>
+    <string name="download_failed">Der Download ist fehlgeschlagen</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">Installieren</string>
+    <string name="ui_text_9ef6a80f91" formatted="false">#1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">%+.1f</string>
+    <string name="ui_accounts" formatted="false">+ Konten</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0,0s</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5,0s</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">-</string>
+    <string name="ui_text_7be28ad40e" formatted="false">-5,0 s</string>
+    <string name="ui_text_a6dee6102d" formatted="false">23 Uhr</string>
+    <string name="ui_text_1a19c52178" formatted="false">12 Uhr</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">12 Uhr</string>
+    <string name="ui_text_4e37ece023" formatted="false">15 ms gegenüber dem Ohr verzögerte Tiefpassmischung</string>
+    <string name="ui_text_76b322ac42" formatted="false">2X schnelle Geschwindigkeit</string>
+    <string name="ui_text_505c74ed85" formatted="false">3D-Ping-Pong-Sprung</string>
+    <string name="ui_text_db9b8df506" formatted="false">6 Uhr morgens</string>
+    <string name="ui_text_2812537f20" formatted="false">18 Uhr</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080</string>
+    <string name="ui_text_05a79f06cf" formatted="false">:</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">Ein vollständiges Bild mit Top-Songs, Künstlern, Alben und Gewohnheiten.</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">Eine neue Version ist fertig</string>
+    <string name="ui_account" formatted="false">Konto</string>
+    <string name="ui_account_options" formatted="false">Kontooptionen</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">KONTEN</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">Akustischer Head-Shadow-Crossfeed</string>
+    <string name="ui_activate" formatted="false">Aktivieren</string>
+    <string name="ui_active" formatted="false">Aktiv</string>
+    <string name="ui_active_days" formatted="false">Aktive Tage</string>
+    <string name="ui_active_profile" formatted="false">Aktives Profil</string>
+    <string name="ui_activity_by_day" formatted="false">Aktivität pro Tag</string>
+    <string name="ui_add_account" formatted="false">Konto hinzufügen</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">Fügen Sie benutzerdefinierte HTTP-Add-on-Server (sprechend /manifest.json, /search, /stream) oder Sandbox-isolierte QuickJS-Module hinzu.</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">Zukünftige Songs automatisch hinzufügen</string>
+    <string name="ui_add_streaming_source" formatted="false">Streaming-Quelle hinzufügen</string>
+    <string name="ui_add_to_playlist" formatted="false">Zur Playlist hinzufügen</string>
+    <string name="ui_added_playlists" formatted="false">Playlists hinzugefügt</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">Passen Sie die Eckkante eines quadratischen Albumcovers an.</string>
+    <string name="ui_advanced_cookie_login" formatted="false">Erweiterte Cookie-Anmeldung</string>
+    <string name="ui_advanced_login" formatted="false">ERWEITERTE ANMELDUNG</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">Erweiterte Anmeldung</string>
+    <string name="ui_ai_engine" formatted="false">KI-MOTOR</string>
+    <string name="ui_ai_provider" formatted="false">KI-Anbieter</string>
+    <string name="ui_albums" formatted="false">Alben</string>
+    <string name="ui_all_news" formatted="false">Alle Neuigkeiten</string>
+    <string name="ui_allow_downloads" formatted="false">Downloads zulassen</string>
+    <string name="ui_allow_microphone" formatted="false">Mikrofon zulassen</string>
+    <string name="ui_allow_microphone_access" formatted="false">Erlauben Sie den Zugriff auf das Mikrofon</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">Wechselt die Reflexionen L &lt;-&gt; R</string>
+    <string name="ui_always_on_display" formatted="false">Immer zu sehen</string>
+    <string name="ui_am" formatted="false">BIN</string>
+    <string name="ui_api_base_url" formatted="false">API Basis-URL</string>
+    <string name="ui_artist" formatted="false">Künstler</string>
+    <string name="ui_artist_name" formatted="false">Künstlername</string>
+    <string name="ui_artists" formatted="false">Künstler</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">Künstler, Songs, Alben, Playlists…</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">Künstler, Lieder, Texte und mehr</string>
+    <string name="ui_at_least_8_characters" formatted="false">Mindestens 8 Zeichen</string>
+    <string name="ui_auto_sleep_timer" formatted="false">Automatischer Sleep-Timer</string>
+    <string name="ui_auto_activation_timeout" formatted="false">AUTO-AKTIVIERUNG TIMEOUT</string>
+    <string name="ui_avatar" formatted="false">Avatar</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">Sichern iTune (AES-256)</string>
+    <string name="ui_backup_password" formatted="false">Backup-Passwort</string>
+    <string name="ui_bluetooth_device_access" formatted="false">Bluetooth Gerätezugriff</string>
+    <string name="ui_browse" formatted="false">Durchsuchen</string>
+    <string name="ui_browse_by_country" formatted="false">Nach Land durchsuchen</string>
+    <string name="ui_browse_extensions" formatted="false">Durchsuchen Sie Erweiterungen</string>
+    <string name="ui_browse_live_online_radio" formatted="false">Durchsuchen Sie Live-Onlineradio</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">Nur das Konto kann nicht gelöscht werden</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">Canvas-Anbieter (Suchreihenfolge)</string>
+    <string name="ui_captcha_guidance" formatted="false">CAPTCHA-Anleitung</string>
+    <string name="ui_cast_wireless_devices" formatted="false">CAST- UND DRAHTLOSGERÄTE</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">Wählen Sie Streaming-Quellen für die Audiowiedergabe, verlustfreie Stufen und Fallback-Priorität</string>
+    <string name="ui_choose_avatar" formatted="false">Wählen Sie Avatar</string>
+    <string name="ui_choose_charts_region" formatted="false">Wählen Sie Diagrammregion</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">Wählen Sie, wie iTune auf Ihrem Startbildschirm angezeigt wird. Ändern Sie die Größe des Widgets über Ihren Launcher.</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">Wählen Sie Ihr Profil, um fortzufahren</string>
+    <string name="ui_choose_youtube_channel" formatted="false">Wählen Sie den Kanal YouTube</string>
+    <string name="ui_clear" formatted="false">Klar</string>
+    <string name="ui_clear_use_default" formatted="false">Löschen und Standard verwenden</string>
+    <string name="ui_clear_all" formatted="false">Alles löschen</string>
+    <string name="ui_confirm" formatted="false">Bestätigen</string>
+    <string name="ui_confirm_password" formatted="false">Passwort bestätigen</string>
+    <string name="ui_connect_discord" formatted="false">Verbinden Sie Discord</string>
+    <string name="ui_connect_last_fm" formatted="false">Verbinden Sie Last.fm</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">Verbinden Sie Ihr Spotify-Konto, um Canvas-Looping-Motion-Videografiken zu aktivieren und Ihre Spotify-Bibliothek zu synchronisieren.</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">Verbinden Sie YouTube Music mit Sitzungscookies</string>
+    <string name="ui_connect" formatted="false">Verbinden ›</string>
+    <string name="ui_connecting_spotify" formatted="false">Spotify verbinden...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">YouTube Music verbinden...</string>
+    <string name="ui_continue" formatted="false">Weiter</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">Fahren Sie stattdessen im Browser fort</string>
+    <string name="ui_continue_with_google" formatted="false">Fahren Sie mit Google fort</string>
+    <string name="ui_continue_with_spotify" formatted="false">Fahren Sie mit Spotify fort</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">Cookie-Anmeldeinformationen werden im verschlüsselten Kontospeicher von iTune gespeichert und vor dem Speichern mit YouTube Music überprüft.</string>
+    <string name="ui_copy_song_name" formatted="false">Songnamen kopieren</string>
+    <string name="ui_copy_text" formatted="false">Text kopieren</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">Copyright © 2026 iTune Projekt. Diese Software wird ohne Gewährleistung bereitgestellt. Sie dürfen es unter den unten aufgeführten GNU GPL-Bedingungen weiterverbreiten und ändern.</string>
+    <string name="ui_corner_length" formatted="false">Ecklänge</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">Wiedergabebild konnte nicht gerendert werden</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">Die Musik konnte momentan nicht geladen werden. Ziehen Sie nach unten, um es erneut zu versuchen.</string>
+    <string name="ui_create" formatted="false">Erstellen</string>
+    <string name="ui_create_add" formatted="false">Erstellen und hinzufügen</string>
+    <string name="ui_current_account" formatted="false">Girokonto</string>
+    <string name="ui_custom_instructions" formatted="false">INDIVIDUELLE ANWEISUNGEN</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">BENUTZERDEFINIERTER REPOSITORY-INDEX ODER URL</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">Passen Sie Ihren Startbildschirm-Player an</string>
+    <string name="ui_customize_your_itune_card" formatted="false">Passen Sie Ihre iTune-Karte individuell an</string>
+    <string name="ui_d" formatted="false">D</string>
+    <string name="ui_delete_account" formatted="false">Konto löschen</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">Konto löschen?</string>
+    <string name="ui_developer_announcements" formatted="false">Entwicklerankündigungen</string>
+    <string name="ui_disconnect" formatted="false">Trennen</string>
+    <string name="ui_disconnect_discord" formatted="false">Trennen Sie Discord</string>
+    <string name="ui_discord_rich_presence" formatted="false">Discord Rich Presence</string>
+    <string name="ui_dismiss" formatted="false">Entlassen</string>
+    <string name="ui_display_full_screen" formatted="false">ANZEIGE &amp; VOLLBILDSCHIRM</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">Zeigen Sie animierte synchronisierte Liedtexte über dem Songtitel an, während die Canvas-Steuerelemente ausgeblendet sind</string>
+    <string name="ui_display_name" formatted="false">Anzeigename</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">Bipolarer DJ-Clubfilter</string>
+    <string name="ui_downloaded_cached" formatted="false">Heruntergeladen und zwischengespeichert</string>
+    <string name="ui_dp" formatted="false">dp</string>
+    <string name="ui_dynamic_island" formatted="false">Dynamische Insel</string>
+    <string name="ui_e" formatted="false">E</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">z.B. 127.0.0.1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">z.B. mit Reimen ins poetische Hinglisch übersetzen</string>
+    <string name="ui_enable_auto_sleep" formatted="false">Aktivieren Sie den automatischen Ruhezustand</string>
+    <string name="ui_enable_proxy" formatted="false">Proxy aktivieren</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">Aktivieren von Spotify Canvas und Wiedergabelisten</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">Verschlüsselungspasswort (mindestens 8 Zeichen)</string>
+    <string name="ui_end_of_current_track" formatted="false">Ende des aktuellen Titels</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">Geben Sie einen neuen Namen für dieses Konto ein.</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">Geben Sie eine HTTP-Add-on-Manifest-URL, einen QuickJS-Modulindex oder einen Tidal-Instanzendpunkt ein.</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">Geben Sie das Passwort ein, das bei der Erstellung Ihres .itune-Backups verwendet wurde.</string>
+    <string name="ui_enter_your_name" formatted="false">Geben Sie Ihren Namen ein</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">Geben Sie Ihren Namen ein, um iTune zu personalisieren</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">Jeder Rhythmus, jede Nachthymne und jede Melodie, mit der Sie gelebt haben – versammelt auf einer Reise.</string>
+    <string name="ui_everything" formatted="false">Alles</string>
+    <string name="ui_explore_categories" formatted="false">Entdecken Sie Kategorien</string>
+    <string name="ui_exporting_audio" formatted="false">Audio exportieren…</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">Extrahieren eines kurzen Audio-Fingerabdrucks</string>
+    <string name="ui_favorite_stations" formatted="false">Lieblingssender</string>
+    <string name="ui_favorites" formatted="false">FAVORITEN</string>
+    <string name="ui_featured_hit" formatted="false">Empfohlener Hit</string>
+    <string name="ui_featured_playlists" formatted="false">Empfohlene Playlists</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">Audioqualität abrufen…</string>
+    <string name="ui_fetching_live_catalog" formatted="false">Live-Katalog wird abgerufen...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">Einen besseren Stream finden</string>
+    <string name="ui_full_view" formatted="false">Vollständige Ansicht</string>
+    <string name="ui_g" formatted="false">G</string>
+    <string name="ui_genre" formatted="false">GENRE</string>
+    <string name="ui_genres_styles" formatted="false">Genres und Stile</string>
+    <string name="ui_github_repository" formatted="false">GitHub-Repository</string>
+    <string name="ui_github_repository_open_source" formatted="false">GitHub-Repository · Open Source</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 oder höher</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 oder höher · Copyright © 2026 iTune Project</string>
+    <string name="ui_grant" formatted="false">Grant</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">Gewähren Sie die Anzeige des Namens der Ohrhörer und des aktiven Akkus in %</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">Hardware LoudnessEnhancer (bis zu +18 dB)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">Versteckt die Android-Statusleiste und die Navigationsleiste für nahtloses, reines OLED-Schwarz.</string>
+    <string name="ui_history" formatted="false">Geschichte</string>
+    <string name="ui_host" formatted="false">GASTGEBER</string>
+    <string name="ui_host_a_session" formatted="false">VERanstalten Sie eine Sitzung</string>
+    <string name="ui_host_controls_playback" formatted="false">Der Host steuert die Wiedergabe</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">So erhalten Sie Ihre Kekse</string>
+    <string name="ui_hq" formatted="false">Hauptquartier</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">Identifiziert mit Shazam</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">Identifizieren Sie die Musik, die um Sie herum spielt</string>
+    <string name="ui_immersion" formatted="false">EINTAUCHEN</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">Immersiver Modus (Vollbild)</string>
+    <string name="ui_import" formatted="false">Importieren</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">Öffentliche und private Wiedergabelisten importieren • Automatische Synchronisierung</string>
+    <string name="ui_import_spotify_playlist" formatted="false">Spotify-Wiedergabeliste importieren</string>
+    <string name="ui_in_use" formatted="false">Im Einsatz</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">In-App-Anleitung, wenn Audioanbieter Anti-Bot-Prüfungen anfechten</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">Installieren Sie vorab hinzugefügte Mornye-Community-Erweiterungen oder scannen Sie einen benutzerdefinierten Repository-Index.</string>
+    <string name="ui_installed" formatted="false">Installiert</string>
+    <string name="ui_interactive_dot_curve" formatted="false">Interaktive Punktkurve</string>
+    <string name="ui_irecognition" formatted="false">iRecognition</string>
+    <string name="ui_ireconization" formatted="false">iReconization</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">iReconization lauscht einige Sekunden lang, um einen Musik-Fingerabdruck zu erstellen. Audio wird nicht gespeichert.</string>
+    <string name="ui_ishare" formatted="false">iShare</string>
+    <string name="ui_itune_license" formatted="false">iTune-Lizenz</string>
+    <string name="ui_itune_music" formatted="false">iTune Musik</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTune fragt Liedtexte in der unten angegebenen genauen Reihenfolge ab. Wenn der höchste aktive Anbieter keine synchronisierten Liedtexte hat, greift iTune nahtlos auf den nächsten zurück.</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTune fragt Quellen in der angezeigten Reihenfolge ab. Ziehen Sie installierte Erweiterungen und Anbieter, um die Wiedergabepriorität anzupassen.</string>
+    <string name="ui_itune_time_travel" formatted="false">iTune Zeitreise</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">Jet Flanger Swoosh</string>
+    <string name="ui_join" formatted="false">Machen Sie mit</string>
+    <string name="ui_keep_screen_on" formatted="false">Lassen Sie den Bildschirm eingeschaltet</string>
+    <string name="ui_l" formatted="false">L</string>
+    <string name="ui_lan_port" formatted="false">LAN-Port</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">Sprachpräferenz (optional, z. B. Hindi, Punjabi…)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fm Scrobbeln</string>
+    <string name="ui_layout" formatted="false">LAYOUT</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">Lassen Sie das Feld leer, um den Standardendpunkt für diesen Anbieter zu verwenden.</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">LFO-Sweep-Jet-Phasenmodulation</string>
+    <string name="ui_library" formatted="false">Bibliothek</string>
+    <string name="ui_license" formatted="false">Lizenz</string>
+    <string name="ui_liked_songs" formatted="false">Gefallene Lieder</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">Während der Anmeldung hinzugefügte „Gefällt mir“-Angaben werden sowohl lokal als auch auf YouTube Music gespeichert, sodass sie auch nach der Abmeldung in Ihrer Bibliothek verbleiben.</string>
+    <string name="ui_listening_patterns" formatted="false">Hörmuster</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">Das geteilte Audio anhören…</string>
+    <string name="ui_live" formatted="false">LEBEN</string>
+    <string name="ui_live_radio_stations" formatted="false">Live-Radiosender</string>
+    <string name="ui_loading_announcements" formatted="false">Ankündigungen werden geladen…</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">Künstler, Playlists und Verlauf werden geladen</string>
+    <string name="ui_lossless" formatted="false">Verlustfrei</string>
+    <string name="ui_lossless_audio_preference" formatted="false">Verlustfreie Audiopräferenz</string>
+    <string name="ui_lyrics" formatted="false">Songtexte</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">Für dieses Lied ist kein Liedtext verfügbar</string>
+    <string name="ui_lyrics_providers" formatted="false">Liedtextanbieter</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">Liedtext erfolgreich übersetzt!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">Master-Verstärker-Boost</string>
+    <string name="ui_member_since" formatted="false">MITGLIED SEIT</string>
+    <string name="ui_memoji_style" formatted="false">Memoji &amp; Stil</string>
+    <string name="ui_minutes_listened" formatted="false">MINUTEN ZUGEHÖRT</string>
+    <string name="ui_mirror_vol" formatted="false">Spiegel Vol</string>
+    <string name="ui_model" formatted="false">MODELL</string>
+    <string name="ui_model_68c2cc7f" formatted="false">Modell</string>
+    <string name="ui_moods_activities" formatted="false">Stimmungen und Aktivitäten</string>
+    <string name="ui_moods_moments" formatted="false">STIMMUNGEN &amp; MOMENTE</string>
+    <string name="ui_music_by_genre" formatted="false">Musik nach Genre</string>
+    <string name="ui_music_language_preference" formatted="false">Bevorzugte Musiksprache</string>
+    <string name="ui_music_services" formatted="false">MUSIKDIENSTLEISTUNGEN</string>
+    <string name="ui_name" formatted="false">Name</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">WI-FI-GASTGEBER IN DER NÄHE</string>
+    <string name="ui_network_proxy" formatted="false">Netzwerk-Proxy</string>
+    <string name="ui_new" formatted="false">Neu</string>
+    <string name="ui_new_playlist" formatted="false">Neue Playlist</string>
+    <string name="ui_new_releases" formatted="false">Neuerscheinungen</string>
+    <string name="ui_news_from_dev" formatted="false">Neuigkeiten von Entwickler</string>
+    <string name="ui_next_up" formatted="false">Als nächstes</string>
+    <string name="ui_no_albums_found" formatted="false">Keine Alben gefunden</string>
+    <string name="ui_no_artist_information_available" formatted="false">Keine Künstlerinformationen verfügbar</string>
+    <string name="ui_no_artists_found" formatted="false">Keine Künstler gefunden</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">Noch keine Künstler in Ihrer Bibliothek</string>
+    <string name="ui_no_playlists_found" formatted="false">Keine Playlists gefunden</string>
+    <string name="ui_no_results_on_spotify" formatted="false">Keine Ergebnisse für Spotify</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">Keine gespeicherten Alben in Ihrer Bibliothek</string>
+    <string name="ui_no_songs_found" formatted="false">Keine Lieder gefunden</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">In dieser Veröffentlichung wurden keine Songs gefunden</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">In diesem Abschnitt wurden keine Lieder gefunden</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">Keine Benutzer-Playlists gefunden. Erstellen Sie eines in der Bibliothek!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">Noch nicht genug zugehört</string>
+    <string name="ui_now_playing" formatted="false">Jetzt gespielt</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">Jetzt spielen</string>
+    <string name="ui_on_heavy_repeat" formatted="false">BEI STARKER WIEDERHOLUNG</string>
+    <string name="ui_options" formatted="false">OPTIONEN</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">ODER GEBEN SIE SP_DC COOKIE EIN</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">Intensität und Geschwindigkeit der Umlaufbahn</string>
+    <string name="ui_pair_join_a_device" formatted="false">KOPPELN UND VERBINDEN SIE EIN GERÄT</string>
+    <string name="ui_password_optional" formatted="false">Passwort (optional)</string>
+    <string name="ui_passwords_dont_match" formatted="false">Passwörter stimmen nicht überein</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">Sp_dc-Token hier einfügen…</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">Fügen Sie hier Ihren API-Schlüssel ein</string>
+    <string name="ui_play_in_itune" formatted="false">Spielen Sie in iTune</string>
+    <string name="ui_play_next" formatted="false">Als nächstes spielen</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">Spielen Sie gleichzeitig über Kopfhörer und Telefonlautsprecher/AUX</string>
+    <string name="ui_playlist_name" formatted="false">Name der Wiedergabeliste</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">Name der Wiedergabeliste</string>
+    <string name="ui_playlist_spotify" formatted="false">Wiedergabeliste • Spotify</string>
+    <string name="ui_playlists" formatted="false">Wiedergabelisten</string>
+    <string name="ui_plays" formatted="false">Spielt</string>
+    <string name="ui_pm" formatted="false">PN</string>
+    <string name="ui_port" formatted="false">Hafen</string>
+    <string name="ui_pre_added_extensions" formatted="false">VORHER HINZUGEFÜGTE ERWEITERUNGEN</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">Bevorzugen Sie das bitperfekte FLAC/ALAC mit bis zu 24 Bit/192 kHz, sofern verfügbar</string>
+    <string name="ui_preparing_audio_preview" formatted="false">Audiovorschau wird vorbereitet…</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">Verhindert, dass sich die Geräteanzeige ausschaltet, während Always On Display aktiv ist.</string>
+    <string name="ui_preview" formatted="false">VORSCHAU</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">Vorschau</string>
+    <string name="ui_preview_always_on_display" formatted="false">Vorschau immer angezeigt</string>
+    <string name="ui_profile" formatted="false">PROFIL</string>
+    <string name="ui_profiles_in_backup" formatted="false">PROFILE IM BACKUP</string>
+    <string name="ui_prompt_type" formatted="false">PROMPT-TYP</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">ANBIETERPRIORITÄT (FALLBACK ORDER)</string>
+    <string name="ui_queue" formatted="false">Warteschlange</string>
+    <string name="ui_queue_is_empty" formatted="false">Die Warteschlange ist leer</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">Als Nächstes abzuspielende Titel in der Warteschlange</string>
+    <string name="ui_radio" formatted="false">Radio</string>
+    <string name="ui_read_more" formatted="false">Lesen Sie mehr</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">Silben- und Zeilenscrollen in Echtzeit mit Live-Audio</string>
+    <string name="ui_recent_searches" formatted="false">Aktuelle Suchanfragen</string>
+    <string name="ui_recently_added" formatted="false">Kürzlich hinzugefügt</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">Wiederkehrender Schlafplan · Automatische Pause der Wiedergabe</string>
+    <string name="ui_remote_music_library" formatted="false">Remote-Musikbibliothek</string>
+    <string name="ui_remove" formatted="false">Entfernen</string>
+    <string name="ui_rename" formatted="false">Umbenennen</string>
+    <string name="ui_rename_account" formatted="false">Konto umbenennen</string>
+    <string name="ui_replay" formatted="false">WIEDERHOLUNG</string>
+    <string name="ui_replay_c0f85d66" formatted="false">Wiederholung</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">Erfordern eine bitperfekte, verlustfreie Ausgabe</string>
+    <string name="ui_reset" formatted="false">Zurücksetzen</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">Anbieterreihenfolge und Standardeinstellungen zurücksetzen</string>
+    <string name="ui_reset_to_default_url" formatted="false">Auf Standard-URL zurücksetzen</string>
+    <string name="ui_restore_default_sources" formatted="false">Standardquellen wiederherstellen</string>
+    <string name="ui_restore_itune_backup" formatted="false">Stellen Sie die iTune-Sicherung wieder her</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">Stellt JioSaavn und YouTube Music in der Standardreihenfolge wieder her. JioSaavn beginnt mit und YouTube Music beginnt mit.</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">Stellt LRC Lib, KuGou und SimpMusic als bevorzugte Anbieter wieder her und aktiviert alle 11 Quellen erneut.</string>
+    <string name="ui_resume" formatted="false">Wieder aufnehmen</string>
+    <string name="ui_rhythm_by_hour" formatted="false">Rhythmus nach Stunde</string>
+    <string name="ui_room_permissions" formatted="false">ZIMMERERLAUBNISSE</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">Leiten Sie den App-Netzwerkverkehr über HTTP oder SOCKS-Proxy weiter</string>
+    <string name="ui_save_proxy" formatted="false">Proxy speichern</string>
+    <string name="ui_save_schedule" formatted="false">Zeitplan speichern</string>
+    <string name="ui_save_to_gallery" formatted="false">In der Galerie speichern</string>
+    <string name="ui_save_token" formatted="false">Token speichern</string>
+    <string name="ui_saved_to_your_library" formatted="false">In Ihrer Bibliothek gespeichert!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">Gespeichert mit Android Keystore. Sicherungsdateien verwenden PBKDF2-HMAC-SHA256 (310.000 Schuss) und AES-256-GCM.</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">Speichert unter „Downloads/itune/backups“.</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">Sagen Sie ein Lied, einen Interpreten, ein Album oder einen Liedtext</string>
+    <string name="ui_search" formatted="false">Suchen</string>
+    <string name="ui_search_identify" formatted="false">Suchen und identifizieren</string>
+    <string name="ui_search_announcements" formatted="false">Suchankündigungen…</string>
+    <string name="ui_search_country" formatted="false">Land suchen...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">Suchen Sie nach Liedern, Künstlern, Alben und Wiedergabelisten</string>
+    <string name="ui_search_languages" formatted="false">Sprachen suchen...</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">Suchen oder geben Sie eine Modell-ID ein</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">Suchen Sie nach Liedern, Künstlern, Alben oder Wiedergabelisten</string>
+    <string name="ui_searching_lyrics" formatted="false">Songtexte werden gesucht…</string>
+    <string name="ui_searching_spotify" formatted="false">Suche nach Spotify…</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">SEKUNDÄRSPIEGELWANNE</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">Wählen Sie einen Profil-Avatar aus, um Ihr iTune-Erlebnis auf allen Bildschirmen zu personalisieren.</string>
+    <string name="ui_select_language" formatted="false">Wählen Sie Sprache aus</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">Wählen Sie die Standard-Eingabeaufforderungsvorlage für die Liedtextübersetzung aus.</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">Wählen Sie die Engine aus, die für die zeilenweise Übersetzung von Liedtexten verwendet werden soll.</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">Wählen Sie die Zielsprache für die Liedtextübersetzung aus.</string>
+    <string name="ui_server_host_ip" formatted="false">Serverhost / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">Server-URL/Manifest</string>
+    <string name="ui_settings_appearance" formatted="false">Einstellungen Darstellung</string>
+    <string name="ui_share_lyrics" formatted="false">Songtexte teilen</string>
+    <string name="ui_share_my_replay" formatted="false">Teile meine Wiederholung</string>
+    <string name="ui_share_replay" formatted="false">Wiederholung teilen</string>
+    <string name="ui_share_this_story" formatted="false">Teilen Sie diese Geschichte</string>
+    <string name="ui_share_your_time_travel" formatted="false">Teilen Sie Ihre Zeitreise</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">Synchronisierte Liedtexte auf Leinwand anzeigen</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">Melden Sie sich in einem Desktop-Browser bei music.youtube.com an. Öffnen Sie Entwicklertools → Anwendung → Cookies und kopieren Sie dann die Werte der angemeldeten Sitzung. Behandeln Sie diese Werte wie Ihr Passwort.</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">Melden Sie sich mit Ihrem Last.fm-Konto an</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">Melden Sie alle Konten ab</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">Gleichzeitiger Dual-Ausgang</string>
+    <string name="ui_skip_sign_in" formatted="false">Anmeldung überspringen</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">Schieben Sie den Text nach vorne, um den Liedtext schneller zu machen. Nach hinten, um ihn langsamer zu machen. Der Ton bleibt davon unberührt</string>
+    <string name="ui_snap_0" formatted="false">Snap 0</string>
+    <string name="ui_soundstage_width" formatted="false">Klangbühnenbreite</string>
+    <string name="ui_sources" formatted="false">Quellen</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">Räumliches Audio und Grundlagen</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotify &amp; Leinwand</string>
+    <string name="ui_spotify_account" formatted="false">Spotify-Konto</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">Spotify Canvas-, Apple Music-, Tidal- und Community-Motion-Cover</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">Spotify ist derzeit verbunden. Motion Artwork (Canvas) und Spotify-Playlist-Synchronisierung sind aktiviert.</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">Spotify-Suche fehlgeschlagen. Versuchen Sie es erneut.</string>
+    <string name="ui_station" formatted="false">Bahnhof</string>
+    <string name="ui_stereo_echo_delay" formatted="false">Stereo-Echo und Verzögerung</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">Speichert diesen Link und fügt beim Öffnen der App automatisch alle neuen Songs hinzu</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">Streamen Sie Ihre bitgenaue, verlustfreie Bibliothek direkt von persönlichen Netzwerkfreigaben oder Nextcloud.</string>
+    <string name="ui_streaming_sources" formatted="false">STREAMING-QUELLEN</string>
+    <string name="ui_style" formatted="false">STIL</string>
+    <string name="ui_suggestions" formatted="false">Vorschläge</string>
+    <string name="ui_switch" formatted="false">Wechseln</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">Tippen Sie zum Anpassen auf den Avatar</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">Tippen Sie zum Durchsuchen nach links oder rechts. • Zum Anhalten gedrückt halten</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">Tippen Sie hier, um Always On Display jetzt sofort zu aktivieren</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">Tippen Sie hier, um UKW-Sendungen aus Land und Stadt auszuwählen</string>
+    <string name="ui_target_language" formatted="false">ZIELSPRACHE</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">Zielsprache</string>
+    <string name="ui_test" formatted="false">Testen</string>
+    <string name="ui_test_proxy_connection" formatted="false">Testen Sie die Proxy-Verbindung</string>
+    <string name="ui_testing_proxy" formatted="false">Proxy testen…</string>
+    <string name="ui_that_s_your_story" formatted="false">Das ist Ihre Geschichte</string>
+    <string name="ui_this_account" formatted="false">Dieses Konto</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">Diese Playlist ist leer. Fügen Sie Songs vom Player hinzu oder suchen Sie!</string>
+    <string name="ui_time_travel" formatted="false">ZEITREISE</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">Zeitreise</string>
+    <string name="ui_time_travel_wrap" formatted="false">ZEITREISE-WICKEL</string>
+    <string name="ui_time_synced_lyrics" formatted="false">Zeitsynchronisierte Liedtexte</string>
+    <string name="ui_top_picks" formatted="false">Top-Picks</string>
+    <string name="ui_top_result" formatted="false">Top-Ergebnis</string>
+    <string name="ui_top_song" formatted="false">Top-Song</string>
+    <string name="ui_top_songs" formatted="false">Top-Songs</string>
+    <string name="ui_top_streamed" formatted="false">TOP GESTREAMT</string>
+    <string name="ui_total_listening_time" formatted="false">Gesamthörzeit</string>
+    <string name="ui_total_time" formatted="false">Gesamtzeit</string>
+    <string name="ui_translate_actual_lines" formatted="false">Übersetzen Sie tatsächliche Zeilen</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">Übersetzen Sie Liedtexte bei Bedarf für jedes Lied aus dem Player-Menü (... &gt; Liedtexte &gt; Übersetzen). Wenn „Aktuelle Zeilen übersetzen“ deaktiviert ist, werden Übersetzungen als Untertitel unter dem Originaltext angezeigt.</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">Übersetzen Sie die folgenden Liedtextzeilen ins Englische. Den poetischen Fluss bewahren.</string>
+    <string name="ui_translating_lyrics" formatted="false">Songtexte übersetzen...</string>
+    <string name="ui_translation_mode" formatted="false">Übersetzungsmodus</string>
+    <string name="ui_translation_prompt" formatted="false">Übersetzungsaufforderung</string>
+    <string name="ui_trending_artists" formatted="false">Angesagte Künstler</string>
+    <string name="ui_turn_off_timer" formatted="false">Schalten Sie den Timer aus</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">Aktualisieren Sie den Namen, der auf Ihrer Apple-ID-Profilkarte in den Einstellungen angezeigt wird.</string>
+    <string name="ui_username_optional" formatted="false">Benutzername (optional)</string>
+    <string name="ui_view" formatted="false">Ansicht</string>
+    <string name="ui_view_on_shazam" formatted="false">Ansicht auf Shazam</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">Vinyl-Plattenspieler-Verbindung</string>
+    <string name="ui_whats_new" formatted="false">WAS IST NEU?</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">Während der Musikwiedergabe schaltet sich Always On Display ein, wenn für die gewählte Zeit keine Berührung auf dem Bildschirm erfolgt. Wird nur aktiviert, wenn Sie sich in der App befinden.</string>
+    <string name="ui_who_is_listening" formatted="false">Wer hört zu?</string>
+    <string name="ui_widget" formatted="false">Widget</string>
+    <string name="ui_you" formatted="false">Du</string>
+    <string name="ui_your_1_artist" formatted="false">Ihr Künstler Nr. 1</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">Ihr API-Schlüssel wird sicher auf dem Gerät gespeichert und niemals weitergegeben.</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">Ihr Discord-Sitzungstoken wird verschlüsselt auf diesem Gerät gespeichert und nur für Rich Presence verwendet.</string>
+    <string name="ui_your_favourite_song" formatted="false">Dein Lieblingslied</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">Ihre Bibliothek, Wiedergabelisten und Einstellungen werden mit einem Passwort aus mindestens 8 Zeichen verschlüsselt.</string>
+    <string name="ui_your_listening_experience" formatted="false">IHR HÖRERLEBNIS</string>
+    <string name="ui_your_listening_pattern" formatted="false">Ihr Hörmuster</string>
+    <string name="ui_your_listening_persona" formatted="false">IHRE ZUHÖRPERSON</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">Ihre Musikwiedergabe und Statistiken</string>
+    <string name="ui_your_musical_anchor" formatted="false">IHR MUSIKALISCHER ANKER</string>
+    <string name="ui_your_name" formatted="false">Dein Name</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">Ihr Passwort wird nur zum Erstellen einer Sitzung an Last.fm gesendet. iTune speichert es nicht.</string>
+    <string name="ui_your_playlists" formatted="false">DEINE PLAYLISTEN</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">Ihre Playlists</string>
+    <string name="ui_your_sonic_peak" formatted="false">Dein Sonic Peak</string>
+    <string name="ui_your_spotify_playlists" formatted="false">Ihre Spotify-Playlists</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">Ihre Spotify-Playlists (öffentlich und privat)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSIC &amp; GOOGLE</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube Music-Sitzungscookies</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">·</string>
+    <string name="ui_text_a118c40635" formatted="false">━━━ ━━━━━</string>
+    <string name="ui_album_artwork" formatted="false">Albumcover</string>
+    <string name="ui_itune_waves" formatted="false">iTune Wellen</string>
+    <string name="ui_previous" formatted="false">Zurück</string>
+    <string name="ui_next" formatted="false">Als nächstes</string>
+    <string name="ui_audio_output" formatted="false">Audioausgabe</string>
+    <string name="ui_low_volume" formatted="false">Geringe Lautstärke</string>
+    <string name="ui_high_volume" formatted="false">Hohe Lautstärke</string>
+    <string name="ui_filter" formatted="false">Filtern</string>
+    <string name="ui_refresh" formatted="false">Aktualisieren</string>
+    <string name="ui_options_6bf5da9c" formatted="false">Optionen</string>
+    <string name="ui_user_profile_avatar" formatted="false">Benutzerprofil-Avatar</string>
+    <string name="ui_news" formatted="false">Nachrichten</string>
+    <string name="ui_no_song_playing" formatted="false">Es wird kein Lied abgespielt</string>
+    <string name="ui_next_track" formatted="false">Nächster Titel</string>
+    <string name="ui_see_all_songs" formatted="false">Alle Lieder ansehen</string>
+    <string name="ui_favorite_radio" formatted="false">Lieblingsradio</string>
+    <string name="ui_live_65c821a5" formatted="false">Lebe</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTune Markenwellen</string>
+    <string name="ui_refresh_network" formatted="false">Netzwerk aktualisieren</string>
+    <string name="ui_edit_display_name" formatted="false">Anzeigenamen bearbeiten</string>
+    <string name="ui_remove_from_queue" formatted="false">Aus der Warteschlange entfernen</string>
+    <string name="ui_search_new_releases" formatted="false">Suchen Sie nach Neuerscheinungen</string>
+    <string name="ui_refresh_new_releases" formatted="false">Aktualisieren Sie Neuerscheinungen</string>
+    <string name="ui_refresh_downloads" formatted="false">Downloads aktualisieren</string>
+    <string name="ui_clear_cache" formatted="false">Cache leeren</string>
+    <string name="ui_sort" formatted="false">Sortieren</string>
+    <string name="ui_see_all_new_releases" formatted="false">Alle Neuerscheinungen anzeigen</string>
+    <string name="ui_identify" formatted="false">Identifizieren</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">Playlist importieren</string>
+    <string name="ui_create_playlist" formatted="false">Playlist erstellen</string>
+    <string name="ui_liked" formatted="false">Gefallen</string>
+    <string name="ui_paste" formatted="false">Einfügen</string>
+    <string name="ui_checked" formatted="false">Geprüft</string>
+    <string name="ui_google_account_playlist" formatted="false">Google-Konto-Playlist</string>
+    <string name="ui_spotify_playlist" formatted="false">Spotify Wiedergabeliste</string>
+    <string name="ui_local_playlist" formatted="false">Lokale Playlist</string>
+    <string name="ui_back_to_audio_engine" formatted="false">Zurück zur Audio Engine</string>
+    <string name="ui_bluetooth_settings" formatted="false">Bluetooth-Einstellungen</string>
+    <string name="ui_scan_output_devices" formatted="false">Ausgabegeräte scannen</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">Gleichzeitiges Dual-Audio</string>
+    <string name="ui_selected" formatted="false">Ausgewählt</string>
+    <string name="ui_copy" formatted="false">Kopieren</string>
+    <string name="ui_copy_link" formatted="false">Link kopieren</string>
+    <string name="ui_upgrade_quality" formatted="false">Qualität verbessern</string>
+    <string name="ui_fm_radio" formatted="false">UKW-Radio</string>
+    <string name="ui_next_station" formatted="false">Nächste Station</string>
+    <string name="ui_minimize" formatted="false">Minimieren</string>
+    <string name="ui_favorite" formatted="false">Favorit</string>
+    <string name="ui_more_options" formatted="false">Weitere Optionen</string>
+    <string name="ui_previous_station" formatted="false">Vorheriger Sender</string>
+    <string name="ui_sleep_timer" formatted="false">Sleep-Timer</string>
+    <string name="ui_audio_output_devices" formatted="false">Audioausgabegeräte</string>
+    <string name="ui_station_list" formatted="false">Senderliste</string>
+    <string name="ui_volume" formatted="false">Lautstärke</string>
+    <string name="ui_open_lyrics" formatted="false">Liedtext öffnen</string>
+    <string name="ui_mute_volume" formatted="false">Lautstärke stumm schalten</string>
+    <string name="ui_max_volume" formatted="false">Maximale Lautstärke</string>
+    <string name="ui_endless_queue" formatted="false">Endlose Warteschlange</string>
+    <string name="ui_repeat" formatted="false">Wiederholen</string>
+    <string name="ui_refresh_stations" formatted="false">Stationen aktualisieren</string>
+    <string name="ui_favorite_station" formatted="false">Lieblingssender</string>
+    <string name="ui_close_ireconization" formatted="false">Schließen Sie iReconization</string>
+    <string name="ui_cancel_voice_search" formatted="false">Sprachsuche abbrechen</string>
+    <string name="ui_microphone" formatted="false">Mikrofon</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">Weitere Optionen</string>
+    <string name="ui_voice_search" formatted="false">Sprachsuche</string>
+    <string name="ui_saved" formatted="false">Gespeichert</string>
+    <string name="ui_fill_search_query" formatted="false">Suchanfrage ausfüllen</string>
+    <string name="ui_remove_from_history" formatted="false">Aus dem Verlauf entfernen</string>
+    <string name="ui_itune_icon" formatted="false">iTune-Symbol</string>
+    <string name="ui_artwork_preview" formatted="false">Vorschau des Kunstwerks</string>
+    <string name="ui_decrease" formatted="false">Abnahme</string>
+    <string name="ui_increase" formatted="false">Erhöhen</string>
+    <string name="ui_open_link" formatted="false">Link öffnen</string>
+    <string name="ui_reset_geometry" formatted="false">Geometrie zurücksetzen</string>
+    <string name="ui_reorder_provider" formatted="false">Anbieter neu bestellen</string>
+    <string name="ui_save_name" formatted="false">Namen speichern</string>
+    <string name="ui_editable_name" formatted="false">Bearbeitbarer Name</string>
+    <string name="ui_google" formatted="false">Google</string>
+    <string name="ui_remove_account" formatted="false">Konto entfernen</string>
+    <string name="ui_reorder_source_priority" formatted="false">Quellpriorität neu ordnen</string>
+    <string name="ui_refresh_playlists" formatted="false">Wiedergabelisten aktualisieren</string>
+    <string name="ui_replay_poster" formatted="false">Replay-Poster</string>
+    <string name="ui_settings" formatted="false">Einstellungen</string>
+    <string name="ui_artist_radio" formatted="false">Künstlerradio</string>
+    <string name="ui_play_all" formatted="false">Alle abspielen</string>
+    <string name="ui_delete_playlist" formatted="false">Playlist löschen</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">Endlose Warteschlange</string>
+    <string name="ui_artist_info" formatted="false">Künstlerinfo</string>
+    <string name="ui_enabled" formatted="false">Aktiviert</string>
+    <string name="ui_search_icon" formatted="false">Suchsymbol</string>
+    <string name="ui_region">Region: %1$s</string>
+    <string name="ui_connected_devices">VERBUNDENE GERÄTE (%1$s)</string>
+    <string name="ui_up_next">UP NEXT (%1$s)</string>
+    <string name="ui_text_da5c3629fd">%1$s ›</string>
+    <string name="ui_active_7c6a4064">%1$s • %2$s aktiv</string>
+    <string name="ui_no_new_available_right_now">Derzeit ist kein neues %1$s verfügbar</string>
+    <string name="ui_tracks">%1$s verfolgt • %2$s</string>
+    <string name="ui_songs">%1$s Lieder • %2$s • %3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s • %2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s
+ </string>
+    <string name="ui_text_620b6e059c">• %1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$s Track(s) konnten nicht zugeordnet werden:</string>
+    <string name="ui_text_a3edb2b714">• %1$s - %2$s</string>
+    <string name="ui_d_eeda119e">%1$sD</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+%1$s dB</string>
+    <string name="ui_connected">%1$s verbunden</string>
+    <string name="ui_open_web_player">Web Player öffnen (%1$s)</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">Land: %1$s (%2$s)</string>
+    <string name="ui_city_state">Stadt/Bundesland: %1$s</string>
+    <string name="ui_codec_bitrate">Codec/Bitrate: %1$s</string>
+    <string name="ui_language">Sprache: %1$s</string>
+    <string name="ui_tags">Stichworte: %1$s</string>
+    <string name="ui_stream">Stream: %1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">API Schlüssel nicht für %1$s konfiguriert. Bitte legen Sie es unter „Einstellungen“ &gt; „Liedtext“ fest.</string>
+    <string name="ui_s_clip">%1$ss-Clip</string>
+    <string name="ui_loading_more_fm_stations_loaded">Weitere UKW-Sender werden geladen (%1$s geladen)...</string>
+    <string name="ui_found">%1$s gefunden</string>
+    <string name="ui_version">Version %1$s (%2$s)</string>
+    <string name="ui_of_active">%1$s von %2$s Aktiv</string>
+    <string name="ui_text_adebc50ade">#%1$s</string>
+    <string name="ui_api_key">%1$s API Schlüssel</string>
+    <string name="ui_channel">Kanal: %1$s</string>
+    <string name="ui_sync_issue">Synchronisierungsproblem: %1$s</string>
+    <string name="ui_enter">Geben Sie %1$s ein</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">Sind Sie sicher, dass Sie „%1$s“ löschen möchten? Alle Daten, Playlists, Favoriten, Verlauf und Einstellungen in diesem Konto werden dauerhaft gelöscht.</string>
+    <string name="ui_peak">Spitze: %1$s</string>
+    <string name="ui_welcome">Willkommen, %1$s</string>
+    <string name="ui_songs_played">%1$s Songs abgespielt</string>
+    <string name="ui_around">etwa %1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">Wenn es auf der Welt hektisch zugeht, schaltet man am häufigsten %1$ss um %2$s ein.</string>
+    <string name="ui_itune_time_travel_575a110d">iTune Zeitreise • %1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s · %2$s</string>
+    <string name="ui_your_biggest_day_was">Ihr größter Tag war %1$s.</string>
+    <string name="ui_listening_recap">%1$s Hörrückblick</string>
+    <string name="ui_busiest_day">Arbeitsreichster Tag: %1$s</string>
+    <string name="ui_peak_hour_00">Hauptverkehrszeit: %1$s:00</string>
+    <string name="ui_loading">%1$s wird geladen…</string>
+    <string name="ui_about">Über %1$s</string>
+    <string name="ui_songs_9b614dc8">%1$s-Songs</string>
+    <string name="ui_current_offset_ms">Aktueller Offset: %1$s ms</string>
+    <string name="ui_connected_session">Verbundene Sitzung: %1$s</string>
+    <string name="ui_k">%1$sk</string>
+    <string name="ui_top_result_c5e5adab">TOP-ERGEBNIS • %1$s</string>
+    <string name="toast_song_not_found_in_itune">Lied nicht in iTune gefunden</string>
+    <string name="toast_playback_failed_try_again">Die Wiedergabe ist fehlgeschlagen. Versuchen Sie es erneut</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">Automatischer Sleep-Timer aktiv · Wiedergabe angehalten</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">Offline-Modus: Dieses Lied wird nicht heruntergeladen</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">Offline-Modus: Qualität kann nicht aktualisiert werden</string>
+    <string name="toast_upgrading_quality">Qualität verbessern</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">In „Quellen“ sind keine verlustfreien Streaming-Quellen aktiviert</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">In den aktivierten Quellen wurde kein Stream mit höherer Qualität gefunden</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">Die Zufallswiedergabe ist in den Einstellungen durch „Permanente Zufallswiedergabe“ gesperrt</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">Zur Identifizierung von Musik ist eine Mikrofonberechtigung erforderlich</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">Für das Erkennungs-Popup ist eine Berechtigung zur Anzeige über anderen Apps erforderlich</string>
+    <string name="toast_playback_failed">Die Wiedergabe ist fehlgeschlagen</string>
+    <string name="toast_complete_google_sign_in_first">Schließen Sie zunächst die Google-Anmeldung ab</string>
+    <string name="toast_waiting_for_youtube_music_session">Warten auf YouTube Music-Sitzung...</string>
+    <string name="toast_couldn_t_load_tracks">Die Titel konnten nicht geladen werden</string>
+    <string name="toast_copied_to_clipboard">In die Zwischenablage kopiert</string>
+    <string name="toast_profile_avatar_updated">Profil-Avatar aktualisiert</string>
+    <string name="toast_no_tracks_found">Keine Titel gefunden</string>
+    <string name="toast_google_account_connected">Google-Konto verbunden</string>
+    <string name="toast_link_copied">Link kopiert</string>
+    <string name="toast_could_not_open_browser">Der Browser konnte nicht geöffnet werden</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">Geben Sie einen Port zwischen 1024 und 65535 ein</string>
+    <string name="toast_cached_music_cleared">Zwischengespeicherte Musik gelöscht</string>
+    <string name="toast_no_tracks_available_to_add">Es sind keine Titel zum Hinzufügen verfügbar</string>
+    <string name="toast_enter_a_playlist_name">Geben Sie einen Playlist-Namen ein</string>
+    <string name="toast_system_sound_panel_opened">System-Sound-Panel geöffnet</string>
+    <string name="toast_download_started_check_notification">Download gestartet · Benachrichtigung prüfen</string>
+    <string name="toast_playback_will_stop_after_current_track">Die Wiedergabe stoppt nach dem aktuellen Titel</string>
+    <string name="toast_sleep_timer_turned_off">Sleep-Timer ausgeschaltet</string>
+    <string name="toast_stream_url_copied">Stream-URL kopiert</string>
+    <string name="toast_couldn_t_create_lyrics_card">Die Liedtextkarte konnte nicht erstellt werden</string>
+    <string name="toast_restored_online_lyrics">Online-Liedtexte wiederhergestellt</string>
+    <string name="toast_lyrics_saved">Liedtext gespeichert</string>
+    <string name="toast_translation_cleared">Übersetzung gelöscht</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">Bitte legen Sie zuerst Ihren API-Schlüssel unter Einstellungen &gt; Liedtext fest</string>
+    <string name="toast_no_lyrics_found_for_this_song">Für dieses Lied wurde kein Liedtext gefunden</string>
+    <string name="toast_could_not_create_audio_clip">Audioclip konnte nicht erstellt werden</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">Snippet wurde unter Music/iTune/Snippets gespeichert</string>
+    <string name="toast_playing_next">Als nächstes wird gespielt</string>
+    <string name="toast_added_to_queue">Zur Warteschlange hinzugefügt</string>
+    <string name="toast_download_started_check_notifications">Download gestartet · Benachrichtigungen prüfen</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">Dieses Lied konnte auf YouTube Music nicht gefunden werden</string>
+    <string name="toast_couldn_t_start_mix">Der Mix konnte nicht gestartet werden</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">Auf YouTube Music konnten keine Titel gefunden werden</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">Das Passwort konnte nicht sicher verschlüsselt werden. Die automatische Sicherung wurde nicht geändert.</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">Zum Speichern von Backups in Downloads ist eine Speicherberechtigung erforderlich</string>
+    <string name="toast_choose_an_itune_backup_file">Wählen Sie eine .itune-Sicherungsdatei</string>
+    <string name="toast_audio_artwork_cache_cleared">Audio- und Grafik-Cache geleert</string>
+    <string name="toast_could_not_open_github">GitHub konnte nicht geöffnet werden</string>
+    <string name="toast_profile_name_updated">Profilname aktualisiert</string>
+    <string name="toast_search_history_cleared">Suchverlauf gelöscht</string>
+    <string name="toast_listening_history_cleared">Der Hörverlauf wurde gelöscht</string>
+    <string name="toast_cached_songs_cleared">Zwischengespeicherte Songs gelöscht</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">Öffnen Sie die Systemeinstellungen, um die Anzeige über anderen Apps zu ermöglichen</string>
+    <string name="toast_dynamic_island_geometry_reset">Zurücksetzen der dynamischen Inselgeometrie</string>
+    <string name="toast_geometry_reset">Geometrie zurückgesetzt</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">Songtextanbieter wurden auf die Standardeinstellungen zurückgesetzt</string>
+    <string name="toast_api_key_saved">API Schlüssel gespeichert</string>
+    <string name="toast_base_url_updated">Basis-URL aktualisiert</string>
+    <string name="toast_translation_prompt_updated">Übersetzungsaufforderung aktualisiert</string>
+    <string name="toast_equalizer_reset_to_flat">Equalizer auf „Flat“ zurückgesetzt</string>
+    <string name="toast_dj_console_reset">DJ-Konsole zurückgesetzt</string>
+    <string name="toast_name_saved">Name gespeichert</string>
+    <string name="toast_syncing_youtube_music_library">YouTube Music-Bibliothek wird synchronisiert...</string>
+    <string name="toast_signed_out_local_likes_preserved">Abgemeldet (lokale Likes bleiben erhalten)</string>
+    <string name="toast_signed_out_of_all_google_accounts">Von allen Google-Konten abgemeldet</string>
+    <string name="toast_discord_disconnected">Discord nicht verbunden</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">Geben Sie ein gültiges Anmelde-YouTube Music-Cookie ein (SAPISID und ein Sitzungscookie).</string>
+    <string name="toast_youtube_music_account_connected">YouTube Music-Konto verbunden</string>
+    <string name="toast_account_renamed">Konto umbenannt</string>
+    <string name="toast_account_deleted">Konto gelöscht</string>
+    <string name="toast_cannot_delete_your_only_account">Ihr einziges Konto kann nicht gelöscht werden</string>
+    <string name="toast_sources_restored_to_defaults">Quellen auf Standardwerte zurückgesetzt</string>
+    <string name="toast_spotify_disconnected">Spotify nicht verbunden</string>
+    <string name="toast_spotify_sp_dc_token_saved">Spotify sp_dc-Token gespeichert</string>
+    <string name="toast_spotify_connected">Spotify verbunden!</string>
+    <string name="toast_complete_spotify_sign_in_first">Schließen Sie zunächst die Spotify-Anmeldung ab</string>
+    <string name="toast_saved_to_gallery">In der Galerie gespeichert!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">Erlauben Sie iTune, Updates zu installieren, um fortzufahren</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">Die heruntergeladene Update-APK ist nicht verfügbar</string>
+    <string name="toast_added_to_queue_next">Als nächstes zur Warteschlange hinzugefügt</string>
+    <string name="toast_link_copied_to_clipboard">Link in die Zwischenablage kopiert</string>
+    <string name="toast_song_link_copied_to_clipboard">Song-Link in die Zwischenablage kopiert</string>
+    <string name="toast_left_ishare_session">iShare-Sitzung verlassen</string>
+    <string name="toast_ishare_lan_host_started">iShare LAN Host gestartet!</string>
+    <string name="toast_scanning_lan_for_sessions">LAN wird nach Sitzungen durchsucht…</string>
+    <string name="toast_cache_cleared">Cache geleert</string>
+    <string name="toast_signed_out_successfully">Erfolgreich abgemeldet</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">Passwörter müssen übereinstimmen und mindestens 8 Zeichen lang sein</string>
+    <string name="toast_no_backup_file_found_in_storage">Keine Sicherungsdatei im Speicher gefunden</string>
+    <string name="toast_library_settings_restored">Bibliothek und Einstellungen wiederhergestellt!</string>
+    <string name="toast_enter_your_backup_password">Geben Sie Ihr Backup-Passwort ein</string>
+    <string name="toast_syncing_spotify_library">Spotify-Bibliothek wird synchronisiert...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify Verbunden!</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">Bitte geben Sie ein gültiges SP_DC-Cookie ein</string>
+    <string name="toast_playing">%%1$s wird abgespielt…</string>
+    <string name="toast_upgraded_to_lossless_kbps">Auf verlustfrei aktualisiert • %%1$s kbps</string>
+    <string name="toast_playing_next_0f0c851c">Als nächstes wird %%1$s gespielt</string>
+    <string name="toast_added_to_queue_88e96c25">%%1$s zur Warteschlange hinzugefügt</string>
+    <string name="toast_playing_cb1fb3de">%%1$s wird abgespielt...</string>
+    <string name="toast_playing_next_e0082d95">Als nächstes wird gespielt: %%1$s</string>
+    <string name="toast_couldn_t_load">%%1$s konnten nicht geladen werden</string>
+    <string name="toast_opening">%%1$s wird geöffnet…</string>
+    <string name="toast_couldn_t_open">%%1$s konnte nicht geöffnet werden</string>
+    <string name="toast_couldn_t_play">%%1$s konnten nicht abgespielt werden</string>
+    <string name="toast_library_pin">Bibliotheks-Pin: %%1$s</string>
+    <string name="toast_copied">Kopiert: %%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">Sleep-Timer auf %%1$s Min. eingestellt</string>
+    <string name="toast_lyrics_applied">Liedtext angewendet (%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">%%1$s Titel zur Warteschlange hinzugefügt</string>
+    <string name="toast_switched_feed_to">Feed auf %%1$s umgestellt</string>
+    <string name="toast_provider_updated_to">Anbieter auf %%1$s aktualisiert</string>
+    <string name="toast_target_language_set_to">Zielsprache auf %%1$s eingestellt</string>
+    <string name="toast_translation_mode_set_to">Übersetzungsmodus auf %%1$s eingestellt</string>
+    <string name="toast_added_source">Hinzugefügte Quelle: %%1$s</string>
+    <string name="toast_installed_extension_s">Installierte %%1$s-Erweiterung(en)</string>
+    <string name="toast_imported_songs">Importierte „%%1$s“ (%%2$s Songs)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">„%%1$s“ konnte auf YouTube Music nicht gefunden werden</string>
+    <string name="toast_added_songs_to">%%1$s-Songs zu %%2$s hinzugefügt</string>
+    <string name="toast_joining">Beitritt zu %%1$s…</string>
+    <string name="toast_added_to">Zu %%1$s hinzugefügt</string>
+    <string name="toast_itune_v_for_android_tv">iTune v%%1$s für Android TV</string>
+    <string name="toast_backup_failed">Sicherung fehlgeschlagen: %%1$s</string>
+    <string name="toast_restore_failed">Wiederherstellung fehlgeschlagen: %%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">iShare, Dynamic Island und StandBy</string>
+    <string name="settings_ishare" formatted="false">iShare</string>
+    <string name="settings_dynamic_island" formatted="false">Dynamische Insel</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">Schwimmender Wasserblasenregler außerhalb von iTune</string>
+    <string name="settings_always_on_display" formatted="false">Immer zu sehen</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">Audio-Engine und Soundeffekte</string>
+    <string name="settings_dolby_atmos" formatted="false">Dolby Atmos</string>
+    <string name="settings_text_8948f8179a" formatted="false">8D-Audio</string>
+    <string name="settings_spatial_audio" formatted="false">Räumliches Audio</string>
+    <string name="settings_equalizer_eq" formatted="false">Equalizer (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">Tiefpassfilterung</string>
+    <string name="settings_dj_studio_panel" formatted="false">DJ-Studio-Panel</string>
+    <string name="settings_audio_normalization" formatted="false">Audionormalisierung</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB Bit-Perfect DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">Reiner Audio-Bypass</string>
+    <string name="settings_signal_pipeline" formatted="false">Signalpipeline</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">${audioEngine.pillBadge.text} -&gt; $activeOutputName</string>
+    <string name="settings_audio_playback" formatted="false">Audio und Wiedergabe</string>
+    <string name="settings_sources" formatted="false">Quellen</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">Verwalten Sie YouTube Music, JioSaavn, installierbare Erweiterungen, WebDAV, SMB und Wiedergabepriorität</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">Automatisches Überspringen, wenn ein Fehler auftritt</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">Wechseln Sie zum nächsten Titel in der Warteschlange, wenn die Wiedergabe fehlschlägt</string>
+    <string name="settings_download_quality" formatted="false">Download-Qualität</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">Standardqualität, die von Song-Download-Aktionen verwendet wird</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">Wählen Sie die Standard-Audioqualität für Downloads in der gesamten App.</string>
+    <string name="settings_lossless_audio" formatted="false">Verlustfreies Audio</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">Verbessern Sie die Qualität zwischengespeicherter Songs</string>
+    <string name="settings_streaming_quality" formatted="false">Streaming-Qualität</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">Wählen Sie Ihre bevorzugte Streaming-Audioqualität.</string>
+    <string name="settings_pcm_output_format" formatted="false">PCM Ausgabeformat</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">Stellt die Wiedergabe an der aktuellen Position wieder her</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">Wählen Sie das gewünschte PCM-Format aus der Audioausgabe von Android. Ein USB-DAC konvertiert es möglicherweise in ein von ihm unterstütztes Format.</string>
+    <string name="settings_crossfade" formatted="false">Überblendung</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">Überlappen Sie den Fade-Out des letzten Tracks mit dem Beginn des nächsten.</string>
+    <string name="settings_automix" formatted="false">AutoMix</string>
+    <string name="settings_afterglow" formatted="false">Nachglühen</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">Wenden Sie während der ausgewählten letzten Sekunden jedes Songs den gleichen Tiefpass-Equalizer-Effekt an. Afterglow pausiert AutoMix und Crossfade, solange es aktiviert ist.</string>
+    <string name="settings_permanent_shuffle" formatted="false">Permanentes Mischen</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">Lassen Sie die Zufallswiedergabe im Player dauerhaft aktiviert</string>
+    <string name="settings_pause_at_volume_0" formatted="false">Pause bei Lautstärke 0</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">Stoppen Sie die Wiedergabe automatisch, wenn die Lautstärke Null erreicht</string>
+    <string name="settings_volume_bar" formatted="false">Lautstärkeleiste</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">Wird am Rand des ${state.volumeBarSide.lowercase()} angezeigt, wenn Sie die Lautstärketasten drücken</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">Wählen Sie aus, an welchem Rand des Bildschirms die In-App-Lautstärkeleiste angezeigt werden soll.</string>
+    <string name="settings_content" formatted="false">Inhalt</string>
+    <string name="settings_default_content_language" formatted="false">Standardinhaltssprache</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">Sprache für Stimmungen, Durchsuchen und Suchen</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">Wählen Sie die bevorzugte Katalogsprache aus, die für Durchsuchen, Stimmungen und Genres, Wiedergabelisten und Neuerscheinungen verwendet wird.</string>
+    <string name="settings_default_content_country" formatted="false">Standardinhaltsland</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">Region für Charts, Playlists und Neuerscheinungen</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">Wählen Sie die regionale Storefront aus, die für neu hinzugefügte Alben, regionale Stimmungen und empfohlene Playlists verwendet wird.</string>
+    <string name="settings_hide_explicit_content" formatted="false">Explizite Inhalte ausblenden</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">Filtern Sie explizite Songs über Stimmungen, Durchsuchen und Suchen</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">Jetzt spielen &amp; flüssiges Glas</string>
+    <string name="settings_splash_screen" formatted="false">Begrüßungsbildschirm</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">Markenanimation zur App-Einführung und flüssige Titelveröffentlichung</string>
+    <string name="settings_animated_cover_art" formatted="false">Animiertes Cover-Art</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">Spotify Canvas-, Apple Music-, Tidal- und Community-Motion-Cover</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">Spotify &amp; Canvas-Setup</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">Canvas-Steuerelemente automatisch ausblenden</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">Minimieren Sie die Steuerelemente nach 5 Sekunden, während Canvas abgespielt wird (tippen Sie zum Umschalten auf „Canvas“).</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">Synchronisierte Liedtexte auf Leinwand anzeigen</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">Zeigen Sie animierte synchronisierte Liedtexte über dem Songnamen an, wenn die Canvas-Steuerelemente ausgeblendet sind</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">Priorisieren Sie Spotify Canvas</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">Probieren Sie Spotify Canvas vor Apple Music, Tidal &amp; Community aus</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">Spielen Sie animiertes Cover über Mobilfunk</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">Erlauben Sie die Schleife von Canvas-Videos über mobile Daten</string>
+    <string name="settings_player_type" formatted="false">Spielertyp</string>
+    <string name="settings_player_style" formatted="false">Spielerstil</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">Spielerdynamische Färbung</string>
+    <string name="settings_full_screen_cover_art" formatted="false">Vollbild-Cover-Art</string>
+    <string name="settings_corner_length" formatted="false">Ecklänge</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">Passen Sie den Eckenradius des quadratischen Albumcovers an</string>
+    <string name="settings_hide_quality_tag" formatted="false">Qualitäts-Tag ausblenden</string>
+    <string name="settings_hide_volume_bar" formatted="false">Lautstärkeleiste ausblenden</string>
+    <string name="settings_home_top_card_style" formatted="false">Home-Top-Kartenstil</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">Flüssigglas-Navigationsgerät und Mini-Player</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">Glasbar und Mini-Player, mit einer Wasserblasenlinse in der Warteschleife</string>
+    <string name="settings_time_synced_lyrics" formatted="false">Zeitsynchronisierte Liedtexte</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">Verfolgen Sie Wort- und Zeilentexte in Echtzeit</string>
+    <string name="settings_app_font" formatted="false">App-Schriftart</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">App-Typografie ändern; Die Player-Steuerelemente behalten ihre gestaltete Schriftart</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">Wählen Sie eine Schriftart für die App-Oberfläche.</string>
+    <string name="settings_lyrics_providers" formatted="false">Liedtextanbieter</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 Quellen • Prioritäten setzen und Fallback-Reihenfolge umschalten</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">Flüssigglas Chrom</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">Brechende, durchscheinende Header und Dockkarten</string>
+    <string name="settings_tactile_haptics" formatted="false">Taktile Haptik</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">Subtiles Puls-Feedback über die Spielersteuerung</string>
+    <string name="settings_downloads_storage" formatted="false">Downloads und Speicherung</string>
+    <string name="settings_cellular_streaming" formatted="false">Mobilfunk-Streaming</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">Audiobandbreite für mobile Daten</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">Steuern Sie die Audiotreue beim Streaming von Wi-Fi.</string>
+    <string name="settings_download_over_wi_fi" formatted="false">Über Wi-Fi herunterladen</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">Warten Sie vor dem automatischen Herunterladen auf Wi-Fi</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">Songs nach der Wiedergabe zwischenspeichern</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">Speichern Sie einen Song im Offline-Speicher, nachdem er abgespielt wurde</string>
+    <string name="settings_cache_quality" formatted="false">Cache-Qualität</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">Eine geringere Qualität spart Lagerraum</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">Wählen Sie die Qualität der nach Abschluss der Wiedergabe gespeicherten Songs. Gilt für ab sofort zwischengespeicherte Songs.</string>
+    <string name="settings_song_storage_limit" formatted="false">Song-Speicherlimit</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">Maximaler Festplattenspeicher, der dem Offline-Audio-Cache zugewiesen wird, bevor ältere, nicht abgespielte Songs entfernt werden.</string>
+    <string name="settings_clear_cached_songs" formatted="false">Zwischengespeicherte Songs löschen</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">${MusicCacheManager.cachedTracks.size} Lieder • ${MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)}</string>
+    <string name="settings_automatic_downloads" formatted="false">Automatische Downloads</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">Speichern Sie neu markierte und hinzugefügte Titel offline</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">App-Puffer-Cache löschen</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">Entfernen Sie temporäre Cover-Art- und Netzwerkpuffer</string>
+    <string name="settings_library_listening" formatted="false">Bibliothek &amp; Zuhören</string>
+    <string name="settings_sync_library" formatted="false">Bibliothek synchronisieren</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">Halten Sie Künstler, Playlists und Alben auf dem neuesten Stand</string>
+    <string name="settings_listening_history" formatted="false">Hörgeschichte</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">Gestalten Sie personalisierte Mixe und kürzlich gespielte Stücke</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">Behalten Sie „Gefällt mir“-Angaben auf diesem Gerät</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">Wenn Sie abgemeldet sind, behalten Sie Ihre Lieblingstitel in iTune</string>
+    <string name="settings_notifications_general" formatted="false">Benachrichtigungen und Allgemeines</string>
+    <string name="settings_offline_mode" formatted="false">Offline-Modus</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">Zum Starten der Wiedergabe ist eine heruntergeladene Kopie erforderlich</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">Stoppen Sie die Musik, wenn die Aufgabe gelöscht ist</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">Stoppen Sie die Wiedergabe, wenn iTune von den zuletzt verwendeten Dateien weggewischt wird</string>
+    <string name="settings_auto_sleep_timer" formatted="false">Automatischer Sleep-Timer</string>
+    <string name="settings_network_proxy" formatted="false">Netzwerk-Proxy</string>
+    <string name="settings_profile_name" formatted="false">Profilname</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">Passen Sie den Anzeigenamen Ihres Einstellungsprofils an</string>
+    <string name="settings_news_from_dev" formatted="false">Neuigkeiten von Entwickler</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">Ankündigungen, Veröffentlichungen und Änderungsprotokoll</string>
+    <string name="settings_general_about" formatted="false">Allgemeines und Info</string>
+    <string name="settings_home_screen_widget" formatted="false">Startbildschirm-Widget</string>
+    <string name="settings_widget_customization" formatted="false">Widget-Anpassung</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">Wählen Sie eine Größenvorschau, ein Bild, Steuerelemente und einen Widget-Stil</string>
+    <string name="settings_backup_restore" formatted="false">Sichern und Wiederherstellen</string>
+    <string name="settings_automatic_daily_backup" formatted="false">Automatische tägliche Sicherung</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">Verschlüsselte tägliche Backups • Downloads/iTune/Backups</string>
+    <string name="settings_back_up_itune" formatted="false">Sichern Sie iTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">Speichern Sie Konten, alle Einstellungen, Audioeffekte, Bibliotheksdaten und Statistiken verschlüsselt</string>
+    <string name="settings_restore_from_backup" formatted="false">Aus Backup wiederherstellen</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">Stellen Sie Einstellungen, Audioeffekte, Konten oder Bibliotheksdaten von .itune wieder her</string>
+    <string name="settings_privacy" formatted="false">Privatsphäre</string>
+    <string name="settings_pause_search_history" formatted="false">Suchverlauf anhalten</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">Speichern Sie neue Suchanfragen nicht im Verlauf</string>
+    <string name="settings_clear_search_history" formatted="false">Suchverlauf löschen</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">Entfernen Sie aktuelle Suchanfragen aus der Suche</string>
+    <string name="settings_pause_listening_history" formatted="false">Hörverlauf anhalten</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">Nehmen Sie keine gespielten Songs auf und aktualisieren Sie keine Empfehlungen</string>
+    <string name="settings_clear_listening_history" formatted="false">Löschen Sie den Hörverlauf</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">Wiedergabeverlauf entfernen und Geschmacksprofil zurücksetzen</string>
+    <string name="settings_disable_screenshot" formatted="false">Screenshot deaktivieren</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">Blockieren Sie Screenshots und Bildschirmaufzeichnungen in der gesamten App</string>
+    <string name="settings_best_available" formatted="false">Am besten verfügbar</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">Verwenden Sie die höchste verfügbare Quellqualität</string>
+    <string name="settings_maximum" formatted="false">Maximal</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">Wählen Sie den Stream mit der höchsten Bitrate</string>
+    <string name="settings_high" formatted="false">Hoch</string>
+    <string name="settings_target_about_160_kbps" formatted="false">Ziel ist etwa 160 kbps</string>
+    <string name="settings_standard" formatted="false">Standard</string>
+    <string name="settings_target_about_128_kbps" formatted="false">Ziel ist etwa 128 kbit/s</string>
+    <string name="settings_data_saver" formatted="false">Datensparer</string>
+    <string name="settings_target_about_64_kbps" formatted="false">Ziel ist etwa 64 kbps</string>
+    <string name="settings_extreme" formatted="false">Extrem</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">Maximale Wiedergabetreue (256+ kbps)</string>
+    <string name="settings_high_b1a5954a" formatted="false">Hoch</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">Hohe Audioqualität (~160 kbps)</string>
+    <string name="settings_medium" formatted="false">Mittel</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">Standard-Audioqualität (~128 kbps)</string>
+    <string name="settings_low" formatted="false">Niedrig</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">Datenspar-Audio (~48-64 kbps)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">16-Bit PCM</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">Standard-Integer-PCM-Ausgabe; weitgehend kompatibel mit DACs der USB-Audioklasse</string>
+    <string name="settings_text_6697202e38" formatted="false">32-Bit-Float PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">Float PCM-Ausgabe, wenn Android und der angeschlossene Audiopfad unterstützt werden</string>
+    <string name="settings_off" formatted="false">Aus</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">Spielen Sie Titel sauber hintereinander ab</string>
+    <string name="settings_text_6597740315" formatted="false">2 Sek</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">Subtile Übergänge</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 Sek</string>
+    <string name="settings_short_seamless_fade" formatted="false">Kurze, nahtlose Überblendung</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 Sek</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">Ausgewogener Übergang im DJ-Stil</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8 Sek</string>
+    <string name="settings_smooth_extended_blend" formatted="false">Glatte, verlängerte Mischung</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 Sek</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">Maximal kontinuierliche Mischung</string>
+    <string name="settings_off_e3de5ab0" formatted="false">Aus</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">Behalten Sie die normalen Wiedergabeeffekte und Übergänge bei</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 Sek</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">Wenden Sie während der letzten 5 Sekunden jedes Songs einen Tiefpass an</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 Sek</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">Wenden Sie während der letzten 10 Sekunden jedes Songs einen Tiefpass an</string>
+    <string name="settings_text_eb4354110e" formatted="false">15 Sek</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">Wenden Sie während der letzten 15 Sekunden jedes Songs einen Tiefpass an</string>
+    <string name="settings_right" formatted="false">Richtig</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">Zeigt die Lautstärkeleiste am rechten Rand an (Standard)</string>
+    <string name="settings_left" formatted="false">Links</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">Zeigt die Lautstärkeleiste am linken Rand an</string>
+    <string name="settings_high_efficiency" formatted="false">Hohe Effizienz</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">Verwenden Sie nur minimale Mobilfunkdaten</string>
+    <string name="settings_high_quality" formatted="false">Hohe Qualität</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 kbps ausgewogene mobile Wiedergabe</string>
+    <string name="settings_lossless" formatted="false">Verlustfrei</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">Völlig verlustfrei über 5G/LTE-Netzwerke</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">Aus</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">Streaming nur auf Wi-Fi zulassen</string>
+    <string name="settings_text_03a001f575" formatted="false">500 MB</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">Kompakter Cache (~70 Songs)</string>
+    <string name="settings_text_33015e637f" formatted="false">1 GB</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">Moderater Cache (~150 Songs)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 GB</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">Empfohlener Standard (~300 Songs)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5 GB</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">Große Offline-Sammlung (~800 Songs)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10 GB</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">Sehr große Bibliothek (~1.600 Songs)</string>
+    <string name="settings_unlimited" formatted="false">Unbegrenzt</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">Entfernen Sie niemals zwischengespeicherte Songs</string>
+    <string name="settings_pipeline_output">%1$s → %2$s</string>
+    <string name="settings_volume_bar_side">Wird am Rand des %1$s angezeigt, wenn Sie die Lautstärketasten drücken</string>
+    <string name="settings_corner_radius_value">%1$d dp</string>
+    <string name="settings_active_lyrics_providers">%1$d Aktiv</string>
+    <string name="settings_cached_song_count_size">%1$d Lieder • %2$s</string>
+    <string name="library_playlist_count_one">%1$d Wiedergabeliste</string>
+    <string name="library_playlist_count_many">%1$d Wiedergabelisten</string>
+    <string name="library_album_count_one">%1$d Album hinzugefügt</string>
+    <string name="library_album_count_many">%1$d Alben hinzugefügt</string>
+    <string name="remove_from_favorites">Aus Favoriten entfernen</string>
+    <string name="play_top_album">Top-Album abspielen</string>
+    <string name="open_in_spotify">In Spotify öffnen</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">한국어 인터페이스</string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Svenskt gränssnitt</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">الواجهة العربية</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Use the Azerbaijani interface</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Use the Bengali interface</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Use the Bulgarian interface</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Use the Catalan interface</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">Use the Czech interface</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Use the Danish interface</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Use the Finnish interface</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Use the Greek interface</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Use the Hebrew interface</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Use the Hungarian interface</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Use the Indonesian interface</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Use the Malay interface</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Use the Norwegian interface</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Use the Persian interface</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Use the Polish interface</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Use the Romanian interface</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Use the Slovak interface</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Use the Thai interface</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Use the Turkish interface</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Use the Ukrainian interface</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Use the Vietnamese interface</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Use the Swahili interface</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Use the Filipino interface</string>
+</resources>
