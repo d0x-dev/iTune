@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.search
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -425,7 +428,7 @@ internal fun TopResultHeroCard(
                     is TopResultItem.Artist -> {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                            contentDescription = "Open artist",
+                            contentDescription = stringResource(R.string.open_artist),
                             tint = Color.White.copy(alpha = 0.90f),
                             modifier = Modifier.size(24.dp)
                         )
@@ -447,7 +450,7 @@ internal fun TopResultHeroCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.MoreVert,
-                                contentDescription = "More options",
+                                contentDescription = stringResource(R.string.ui_more_options_86c0a35e),
                                 tint = Color.White.copy(alpha = 0.90f),
                                 modifier = Modifier.size(20.dp)
                             )
@@ -522,7 +525,7 @@ private fun TopResultSubtitleRow(
         if (item !is TopResultItem.Artist && isSaved) {
             Icon(
                 imageVector = Icons.Rounded.CheckCircle,
-                contentDescription = "Saved",
+                contentDescription = stringResource(R.string.ui_saved),
                 tint = Color.White.copy(alpha = 0.85f),
                 modifier = Modifier.size(14.dp)
             )
@@ -636,14 +639,14 @@ internal fun SearchHistoryHeaderRow(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Recent Searches",
+            text = stringResource(R.string.ui_recent_searches),
             fontSize = 15.5.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color.White.copy(alpha = 0.90f)
         )
         if (hasHistory) {
             Text(
-                text = "Clear",
+                text = stringResource(R.string.ui_clear),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = AppleMusicRed,
@@ -725,7 +728,7 @@ internal fun SearchQuerySuggestionRow(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.NorthWest,
-                    contentDescription = "Fill search query",
+                    contentDescription = stringResource(R.string.ui_fill_search_query),
                     tint = Color(0xFF8E8E93),
                     modifier = Modifier.size(18.dp)
                 )
@@ -738,7 +741,7 @@ internal fun SearchQuerySuggestionRow(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Close,
-                        contentDescription = "Remove from history",
+                        contentDescription = stringResource(R.string.ui_remove_from_history),
                         tint = Color(0xFF8E8E93),
                         modifier = Modifier.size(18.dp)
                     )
