@@ -846,61 +846,218 @@ object MusicBackend {
                 com.darkxvenom.itune.audio.StreamTraceStore.put(videoId, com.darkxvenom.itune.audio.StreamTrace("SMB", "Remote audio file", listOf("Streaming the selected file directly from its SMB share")))
                 return@withContext videoId
             }
-            // Configured sources are checked in the user's Sources-screen order. The original
-            // YouTube extractor remains the guaranteed fallback for misses and offline addons.
-            for (sourceId in com.darkxvenom.itune.data.sources.PlaybackSources.order.value) {
-                if (sourceId == "youtube") {
-                    if (com.darkxvenom.itune.data.sources.PlaybackSources.youtubeEnabled.value) break
-                    continue
-                }
-                val blocked = appContext?.let(::isCellularConnection) == true &&
-                    SettingsStore.state.value.cellularStreaming.equals("Off", ignoreCase = true)
-                if (blocked || title.isNullOrBlank() || artist.isNullOrBlank()) continue
-                when {
-                    sourceId == "jiosaavn" && SettingsStore.state.value.jioSaavnProvider -> {
-                        if (forceRefresh) {
-                            // A retry means the previous stream failed: don't return it again.
-                            com.darkxvenom.itune.data.saavn.SaavnQuality.set(videoId, com.darkxvenom.itune.data.saavn.SaavnStatus.FALLBACK)
-                        } else {
-                            com.darkxvenom.itune.data.saavn.JioSaavnProvider.resolve(videoId, title, artist, excludedUrls)
-                                ?.let { return@withContext it }
-                        }
-                    }
-                    sourceId.startsWith("addon-") || sourceId.startsWith("extension-") -> {
-                        val settings = SettingsStore.state.value
-                        val onCellular = appContext?.let(::isCellularConnection) == true
-                        val cellularMode = settings.cellularStreaming
-                        val lossless = if (onCellular) cellularMode.equals("Lossless", true) else settings.losslessAudio
-                        val quality = if (onCellular) {
-                            when (cellularMode) {
-                                "High Efficiency" -> "LOW"
-                                "High Quality" -> "HIGH"
-                                else -> settings.audioQuality
-                            }
-                        } else settings.audioQuality
-                        val qualityTier = when {
-                            lossless -> "LOSSLESS"
-                            quality.equals("Low", true) || quality.equals("Data Saver", true) -> "LOW"
-                            else -> "HIGH"
-                        }
-                        com.darkxvenom.itune.data.sources.PlaybackSources.resolveAddon(videoId, title, artist, sourceId, qualityTier)
-                            ?.url?.takeIf { it !in excludedUrls }
-                            ?.let { return@withContext it }
-                    }
+            // 1. Direct custom-source tracks (src:<configId>::<trackId>)
+            val parsedKey = com.darkxvenom.itune.data.sources.SourceRegistry.parseTrackKey(videoId)
+            if (parsedKey != null) {
+                val (configId, trackId) = parsedKey
+                val target = com.darkxvenom.itune.data.sources.TrackMatcher.Target(
+                    title = title.orEmpty(),
+                    artist = artist.orEmpty()
+                )
+                val stream = com.darkxvenom.itune.data.sources.SourceResolver.resolve(configId, trackId, target)
+                if (stream != null) {
+                    val srcName = stream.sourceConfigId?.let { com.darkxvenom.itune.data.sources.SourceRegistry.config(it)?.displayName }
+                        ?: com.darkxvenom.itune.data.sources.SourceRegistry.config(configId)?.displayName
+                        ?: "Source"
+                    val q = stream.format.summary
+                    com.darkxvenom.itune.audio.StreamTraceStore.put(
+                        videoId,
+                        com.darkxvenom.itune.audio.StreamTrace(
+                            source = srcName,
+                            quality = q,
+                            steps = listOf("Resolved directly from $srcName", "Stream format: $q")
+                        )
+                    )
+                    return@withContext stream.url
                 }
             }
-            if (!com.darkxvenom.itune.data.sources.PlaybackSources.youtubeEnabled.value) {
-                com.darkxvenom.itune.audio.StreamTraceStore.addStep(videoId, "YouTube Music is disabled in Sources")
-                return@withContext null
-            }
-            com.darkxvenom.itune.audio.StreamTraceStore.addStep(videoId, "Asked YouTube Music (stream extractor) for watch?v=$videoId")
-            val info = getOrLoadStreamInfo(videoId, forceRefresh = forceRefresh)
 
-            val audioStreams = info.audioStreams
-            if (audioStreams.isNullOrEmpty()) {
-                Log.w(TAG, "No audio streams found for $videoId")
+            // 2. Evaluate all enabled sources strictly in priority order (JioSaavn, Tidal, Hi-Res, YouTube, Addons, Extensions)
+            val blocked = appContext?.let(::isCellularConnection) == true &&
+                SettingsStore.state.value.cellularStreaming.equals("Off", ignoreCase = true)
+            if (blocked) {
+                Log.i(TAG, "Cellular streaming blocked by user setting for $videoId")
+                com.darkxvenom.itune.audio.StreamTraceStore.addStep(videoId, "Cellular streaming blocked by user setting")
                 return@withContext null
             }
+
+            val targetTitle = title?.takeIf { it.isNotBlank() }
+                ?: (if (MusicPlayerState.currentTrack?.id == videoId) MusicPlayerState.currentTrack?.title else null).orEmpty()
+            val targetArtist = artist?.takeIf { it.isNotBlank() }
+                ?: (if (MusicPlayerState.currentTrack?.id == videoId) MusicPlayerState.currentTrack?.artists else null).orEmpty()
+            val target = com.darkxvenom.itune.data.sources.TrackMatcher.Target(
+                title = targetTitle,
+                artist = targetArtist,
+                durationSec = if (MusicPlayerState.currentTrack?.id == videoId) MusicPlayerState.currentTrack?.durationSec?.toInt()?.takeIf { it > 0 } else null,
+                album = if (MusicPlayerState.currentTrack?.id == videoId) MusicPlayerState.currentTrack?.album else null
+            )
+
+            val activeSources = com.darkxvenom.itune.data.sources.SourceRegistry.activeForPlayback()
+            val evalSteps = mutableListOf<String>()
+            evalSteps.add("Evaluating ${activeSources.size} enabled source(s) in priority order")
+
+            for ((index, source) in activeSources.withIndex()) {
+                val rank = index + 1
+                if (source.kind == com.darkxvenom.itune.data.sources.SourceKind.YOUTUBE) {
+                    val ytConfig = com.darkxvenom.itune.data.sources.SourceRegistry.configs.value.firstOrNull {
+                        it.kind == com.darkxvenom.itune.data.sources.SourceKind.YOUTUBE
+                    }
+                    val ytEnabled = (ytConfig?.enabled != false) && com.darkxvenom.itune.data.sources.PlaybackSources.youtubeEnabled.value
+                    if (!ytEnabled) {
+                        evalSteps.add("#$rank Priority: YouTube Music is disabled in Sources")
+                        continue
+                    }
+
+                    evalSteps.add("#$rank Priority: Querying YouTube Music extractor...")
+                    com.darkxvenom.itune.audio.StreamTraceStore.put(
+                        videoId,
+                        com.darkxvenom.itune.audio.StreamTrace("YouTube Music", "Extracting...", evalSteps.toList())
+                    )
+
+                    val info = try {
+                        getOrLoadStreamInfo(videoId, forceRefresh = forceRefresh)
+                    } catch (e: Exception) {
+                        Log.w(TAG, "YouTube extractor failed for $videoId: ${e.message}")
+                        evalSteps.add("YouTube Music extractor failed: ${e.message}")
+                        null
+                    }
+
+                    val audioStreams = info?.audioStreams
+                    if (!audioStreams.isNullOrEmpty()) {
+                        val progressiveCandidates = audioStreams.filter {
+                            it.deliveryMethod == DeliveryMethod.PROGRESSIVE_HTTP &&
+                                it.audioTrackType != AudioTrackType.DUBBED &&
+                                !it.content.isNullOrBlank() &&
+                                it.content !in excludedUrls
+                        }
+                        val candidates = progressiveCandidates.ifEmpty {
+                            audioStreams.filter { !it.content.isNullOrBlank() && it.content !in excludedUrls }
+                        }.ifEmpty {
+                            audioStreams.filter { !it.content.isNullOrBlank() }
+                        }
+
+                        if (candidates.isNotEmpty()) {
+                            val settings = SettingsStore.state.value
+                            val onCellular = appContext?.let(::isCellularConnection) == true
+                            val cellularMode = settings.cellularStreaming
+                            val isLossless = forceLossless ?: if (onCellular) {
+                                cellularMode.equals("Lossless", ignoreCase = true)
+                            } else settings.losslessAudio
+                            val userQuality = targetQuality ?: if (onCellular) {
+                                when (cellularMode) {
+                                    "High Efficiency" -> "Low"
+                                    "High Quality" -> "High"
+                                    else -> settings.audioQuality
+                                }
+                            } else settings.audioQuality
+
+                            val chosen = pickAudioStream(candidates, isLossless, userQuality) ?: candidates.firstOrNull()
+                            if (chosen?.content != null && chosen.content.isNotBlank()) {
+                                val kb = chosen.averageBitrate
+                                val fmt = chosen.format?.name ?: "audio"
+                                evalSteps.add("Matched on YouTube Music (#$rank priority): $fmt @ ${if (kb > 0) "$kb kbps" else "128 kbps"}")
+                                com.darkxvenom.itune.audio.StreamTraceStore.put(
+                                    videoId,
+                                    com.darkxvenom.itune.audio.StreamTrace(
+                                        source = "YouTube Music",
+                                        quality = if (kb > 0) "$kb kbps • $fmt" else "128 kbps • $fmt",
+                                        steps = evalSteps.toList(),
+                                    ),
+                                )
+                                return@withContext chosen.content
+                            }
+                        }
+                    }
+                    evalSteps.add("No usable audio streams found on YouTube Music (#$rank priority)")
+                } else {
+                    // Non-YouTube source: JioSaavn, Tidal, Hi-Res, Addon, Extension
+                    if (target.title.isNotBlank()) {
+                        evalSteps.add("#$rank Priority: Querying ${source.displayName}...")
+                        com.darkxvenom.itune.audio.StreamTraceStore.put(
+                            videoId,
+                            com.darkxvenom.itune.audio.StreamTrace(source.displayName, "Searching...", evalSteps.toList())
+                        )
+
+                        val request = com.darkxvenom.itune.data.sources.SourceResolver.requestForNow()
+                        val queriesToTry = mutableListOf<String>()
+                        val cleanTitle = com.darkxvenom.itune.data.sources.TrackMatcher.searchableTitle(target.title, target.artist)
+                        val primaryArtist = com.darkxvenom.itune.data.sources.TrackMatcher.primaryArtist(target.artist)
+                        if (cleanTitle.isNotBlank() && primaryArtist.isNotBlank()) {
+                            queriesToTry.add("$cleanTitle $primaryArtist".trim())
+                        }
+                        if (cleanTitle.isNotBlank()) {
+                            queriesToTry.add(cleanTitle)
+                        }
+                        if (target.title.isNotBlank() && target.artist.isNotBlank()) {
+                            queriesToTry.add("${target.title} ${target.artist}".trim())
+                        }
+                        if (target.title.isNotBlank()) {
+                            queriesToTry.add(target.title)
+                        }
+                        val distinctQueries = queriesToTry.distinct()
+
+                        var stream: com.darkxvenom.itune.data.sources.SourceStream? = null
+                        for (q in distinctQueries) {
+                            try {
+                                val candidates = source.search(
+                                    q,
+                                    limit = 20,
+                                    waitForAll = true,
+                                    request = request
+                                )
+                                val matches = if (!candidates.isNullOrEmpty()) {
+                                    com.darkxvenom.itune.data.sources.TrackMatcher.ranked(candidates, target)
+                                } else emptyList()
+                                if (matches.isNotEmpty()) {
+                                    stream = source.stream(matches.first().id, request)
+                                    if (stream != null && stream.url.isNotBlank() && stream.url !in excludedUrls) {
+                                        break
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                Log.w(TAG, "Source ${source.displayName} (#$rank) query '$q' failed: ${e.message}")
+                            }
+                        }
+
+                        if (stream != null && stream.url.isNotBlank() && stream.url !in excludedUrls) {
+                            val srcName = stream.sourceConfigId?.let { com.darkxvenom.itune.data.sources.SourceRegistry.config(it)?.displayName }
+                                ?: source.displayName
+                            val kbps = stream.format.kbps ?: if (stream.format.isLossless == true) 1411 else 320
+                            val codec = stream.format.codec?.uppercase(java.util.Locale.ROOT) ?: (if (stream.format.isLossless == true) "FLAC" else "AAC")
+                            val q = "$kbps kbps • $codec"
+                            evalSteps.add("Matched valid stream on $srcName (#$rank priority): $q")
+                            com.darkxvenom.itune.audio.StreamTraceStore.put(
+                                videoId,
+                                com.darkxvenom.itune.audio.StreamTrace(
+                                    source = srcName,
+                                    quality = q,
+                                    steps = evalSteps.toList(),
+                                )
+                            )
+                            if (source.kind == com.darkxvenom.itune.data.sources.SourceKind.JIOSAAVN) {
+                                com.darkxvenom.itune.data.saavn.SaavnQuality.set(videoId, com.darkxvenom.itune.data.saavn.SaavnStatus.HIGH_QUALITY)
+                            }
+                            // STOP EXTRACTING immediately on first valid stream!
+                            return@withContext stream.url
+                        } else {
+                            evalSteps.add("No matching stream found on ${source.displayName} (#$rank priority)")
+                        }
+                    }
+                }
+            }
+
+            // Fallback: If YouTube was enabled but not explicitly listed in activeSources:
+            val ytConfig = com.darkxvenom.itune.data.sources.SourceRegistry.configs.value.firstOrNull {
+                it.kind == com.darkxvenom.itune.data.sources.SourceKind.YOUTUBE
+            }
+            val ytEnabled = (ytConfig?.enabled != false) && com.darkxvenom.itune.data.sources.PlaybackSources.youtubeEnabled.value
+            if (ytEnabled && activeSources.none { it.kind == com.darkxvenom.itune.data.sources.SourceKind.YOUTUBE }) {
+                evalSteps.add("Fallback: Extracting from default YouTube Music pipeline...")
+                val info = try {
+                    getOrLoadStreamInfo(videoId, forceRefresh = forceRefresh)
+                } catch (e: Exception) { null }
+                val audioStreams = info?.audioStreams
+                if (!audioStreams.isNullOrEmpty()) {
 
             val progressiveCandidates = audioStreams.filter {
                 it.deliveryMethod == DeliveryMethod.PROGRESSIVE_HTTP &&
@@ -915,50 +1072,34 @@ object MusicBackend {
                 audioStreams.filter { !it.content.isNullOrBlank() }
             }
 
-            if (candidates.isEmpty()) {
-                Log.w(TAG, "No usable audio stream candidates found for $videoId")
-                return@withContext null
-            }
-
-            val settings = SettingsStore.state.value
-            val onCellular = appContext?.let(::isCellularConnection) == true
-            val cellularMode = settings.cellularStreaming
-            if (onCellular && cellularMode.equals("Off", ignoreCase = true)) {
-                Log.i(TAG, "Cellular streaming blocked by user setting for $videoId")
-                return@withContext null
-            }
-            val isLossless = forceLossless ?: if (onCellular) {
-                cellularMode.equals("Lossless", ignoreCase = true)
-            } else settings.losslessAudio
-            val userQuality = targetQuality ?: if (onCellular) {
-                when (cellularMode) {
-                    "High Efficiency" -> "Low"
-                    "High Quality" -> "High"
-                    else -> settings.audioQuality
+                    val chosen = pickAudioStream(candidates, forceLossless ?: false, targetQuality ?: "High") ?: candidates.firstOrNull()
+                    if (chosen?.content != null && chosen.content.isNotBlank()) {
+                        val kb = chosen.averageBitrate
+                        val fmt = chosen.format?.name ?: "audio"
+                        evalSteps.add("Fallback matched on YouTube Music: $fmt @ ${if (kb > 0) "$kb kbps" else "128 kbps"}")
+                        com.darkxvenom.itune.audio.StreamTraceStore.put(
+                            videoId,
+                            com.darkxvenom.itune.audio.StreamTrace(
+                                source = "YouTube Music",
+                                quality = if (kb > 0) "$kb kbps • $fmt" else "128 kbps • $fmt",
+                                steps = evalSteps.toList(),
+                            )
+                        )
+                        return@withContext chosen.content
+                    }
                 }
-            } else settings.audioQuality
-
-            val chosen = pickAudioStream(candidates, isLossless, userQuality) ?: candidates.firstOrNull()
-            val effectiveQuality = if (isLossless) "Lossless (Max)" else userQuality
-            chosen?.let { c ->
-                val kb = c.averageBitrate
-                val fmt = c.format?.name ?: "audio"
-                val prev = com.darkxvenom.itune.audio.StreamTraceStore.traces.value[videoId]?.steps.orEmpty()
-                com.darkxvenom.itune.audio.StreamTraceStore.put(
-                    videoId,
-                    com.darkxvenom.itune.audio.StreamTrace(
-                        source = "YouTube Music",
-                        quality = if (kb > 0) "$kb kbps • $fmt" else fmt,
-                        steps = prev + listOf(
-                            "Found ${candidates.size} audio stream(s)",
-                            "Mode: ${if (isLossless) "Lossless (Max) — highest bitrate" else "target quality $userQuality"}${if (onCellular) " (cellular)" else ""}",
-                            "Picked $fmt @ ${if (kb > 0) "$kb kbps" else "unknown bitrate"}",
-                        ),
-                    ),
-                )
             }
-            Log.d(TAG, "Selected stream for $videoId (lossless=$isLossless, quality=$effectiveQuality): format=${chosen?.format}, bitrate=${chosen?.averageBitrate} kbps")
-            return@withContext chosen?.content
+
+            evalSteps.add("Finished evaluation: No playable stream found across all enabled sources")
+            com.darkxvenom.itune.audio.StreamTraceStore.put(
+                videoId,
+                com.darkxvenom.itune.audio.StreamTrace(
+                    source = "None",
+                    quality = "Failed",
+                    steps = evalSteps.toList(),
+                )
+            )
+            return@withContext null
         } catch (e: Exception) {
             Log.e(TAG, "Failed to resolve stream for $videoId: ${e.message}", e)
             return@withContext null

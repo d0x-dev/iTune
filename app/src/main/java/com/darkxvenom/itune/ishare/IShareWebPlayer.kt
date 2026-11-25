@@ -625,7 +625,7 @@ internal fun buildIShareWebPlayerHtml(
         html += '<div class="q-item">' + img +
           '<div class="q-info" onclick="playQ(' + i + ',\'' + esc(q.id) + '\')">' +
           '<div class="q-title">' + esc(q.title) + '</div>' +
-          '<div class="q-artist">' + esc(q.artist || 'iShare') + (ctrl ? ' • Tap to play' : '') + '</div></div>' +
+          '<div class="q-artist">' + esc(q.artist || 'Unknown Artist') + (ctrl ? ' • Tap to play' : '') + '</div></div>' +
           '<div class="q-actions">' + acts + '</div></div>';
       }
       list.innerHTML = html;

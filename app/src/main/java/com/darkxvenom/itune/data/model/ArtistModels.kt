@@ -46,6 +46,7 @@ data class Song(
     val localPath: String? = null,
     val localDateAddedSeconds: Long? = null,
     val localDateModifiedSeconds: Long? = null,
+    val localFileSizeBytes: Long? = null,
     val trackNumber: Int? = null,
     val sourceQuality: String? = null,
     val sourceHiRes: Boolean = false,
@@ -284,6 +285,7 @@ fun Song.toMusicTrack(): MusicTrack = MusicTrack(
     liked = false,
     isVideo = isVideo,
     isExplicit = isExplicit == true,
+    localPlaybackUri = localUri ?: localPath?.let { java.io.File(it).toURI().toString() },
 )
 
 fun MusicTrack.toArtistSong(): Song {
@@ -309,6 +311,7 @@ fun MusicTrack.toArtistSong(): Song {
         albumName = album,
         isVideo = isVideo,
         isExplicit = isExplicit,
+        localUri = localPlaybackUri,
     )
 }
 

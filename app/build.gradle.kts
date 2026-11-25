@@ -6,6 +6,7 @@ plugins {
 
 android {
     namespace = "com.darkxvenom.itune"
+    ndkVersion = "27.0.12077973"
     compileSdk {
         version = release(37) {
             minorApiLevel = 1
@@ -20,6 +21,12 @@ android {
         versionName = "1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        externalNativeBuild {
+            cmake {
+                cppFlags += listOf("-std=c++17")
+            }
+        }
     }
 
     buildTypes {
@@ -49,6 +56,13 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
+        }
     }
 }
 

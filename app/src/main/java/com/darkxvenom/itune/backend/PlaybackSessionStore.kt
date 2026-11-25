@@ -153,6 +153,7 @@ internal object PlaybackSessionStore {
         put("durationSec", track.durationSec)
         put("liked", track.liked)
         put("isVideo", track.isVideo)
+        put("localPlaybackUri", track.localPlaybackUri)
     }
 
     private fun trackFromJson(obj: JSONObject): MusicTrack? {
@@ -168,7 +169,8 @@ internal object PlaybackSessionStore {
             thumbnailUrl = obj.optString("thumbnailUrl", "").ifBlank { null },
             durationSec = obj.optLong("durationSec", 0L).coerceAtLeast(0L),
             liked = obj.optBoolean("liked", false),
-            isVideo = obj.optBoolean("isVideo", false)
+            isVideo = obj.optBoolean("isVideo", false),
+            localPlaybackUri = obj.optString("localPlaybackUri", "").ifBlank { null },
         )
     }
 }

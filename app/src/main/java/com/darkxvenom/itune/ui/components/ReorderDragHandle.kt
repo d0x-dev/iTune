@@ -11,12 +11,13 @@
 
 package com.darkxvenom.itune.ui.components
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.DragHandle
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -25,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
-/** A compact handle that reorders its item after a vertical drag. */
+/** A compact 3-line handle matching iOS Apple Music that reorders its item after a vertical drag. */
 @Composable
 fun ReorderDragHandle(
     index: Int,
@@ -39,10 +40,7 @@ fun ReorderDragHandle(
     onDragFinished: () -> Unit = {},
 ) {
     val density = LocalDensity.current
-    Icon(
-        imageVector = Icons.Rounded.DragHandle,
-        contentDescription = contentDescription,
-        tint = tint,
+    Canvas(
         modifier = modifier.pointerInput(index, itemCount, itemStep) {
             var dragDistance = 0f
             detectDragGestures(
@@ -67,5 +65,21 @@ fun ReorderDragHandle(
                 },
             )
         },
-    )
+    ) {
+        val barWidth = size.width * 0.72f
+        val barHeight = 1.6.dp.toPx().coerceAtLeast(1f)
+        val startX = (size.width - barWidth) / 2f
+        val spacing = 4.2.dp.toPx()
+        val centerY = size.height / 2f
+        val cornerRadius = CornerRadius(barHeight / 2f, barHeight / 2f)
+        for (i in -1..1) {
+            val y = centerY + i * spacing - barHeight / 2f
+            drawRoundRect(
+                color = tint,
+                topLeft = Offset(startX, y),
+                size = Size(barWidth, barHeight),
+                cornerRadius = cornerRadius,
+            )
+        }
+    }
 }

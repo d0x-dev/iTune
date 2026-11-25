@@ -56,3 +56,10 @@
 -keepclassmembers class com.darkxvenom.itune.data.canvas.SpotifyToken$TokenBridge {
     @android.webkit.JavascriptInterface <methods>;
 }
+
+# C++ resolves this image preprocessing entry point by its JNI symbol name.
+-keep class com.darkxvenom.itune.ui.player.DynamicArtworkProcessor { *; }
+
+# Keep all player composables and synthetic lambdas from being incorrectly merged or stripped by R8.
+-keep class com.darkxvenom.itune.ui.player.** { *; }
+-keepclassmembers class com.darkxvenom.itune.ui.player.** { *; }

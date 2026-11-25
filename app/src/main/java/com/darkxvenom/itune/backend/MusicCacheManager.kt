@@ -84,9 +84,23 @@ data class CachedMusicTrack(
     )
 }
 
+internal fun shouldCacheAfterFullPlayback(
+    activeTrackId: String?,
+    eligibleTrackId: String?,
+    cachingEnabled: Boolean,
+    alreadyCached: Boolean,
+    positionMs: Long,
+    durationMs: Long,
+): Boolean {
+    if (!cachingEnabled || alreadyCached || activeTrackId.isNullOrBlank() || activeTrackId != eligibleTrackId) return false
+    if (durationMs <= 0L) return true
+    val endToleranceMs = maxOf(1_500L, durationMs / 50L)
+    return positionMs >= (durationMs - endToleranceMs).coerceAtLeast(0L)
+}
+
 /**
  * Dedicated offline audio caching engine for iTune.
- * - Live-caches audio while streaming so songs play 100% offline with zero buffering.
+ * - Stores complete tracks for offline playback after natural playback completion or an explicit download.
  * - Stores complete metadata (title, artists, artistId, album, albumId, high-res thumbnail, duration).
  * - Manages storage limits (LRU eviction) and user storage settings.
  * - Saves high-quality album art locally so cached songs render album covers even in airplane mode.
@@ -250,6 +264,12 @@ object MusicCacheManager {
     }
 
     /**
+     * Retrieves the cached track metadata if present in cache index.
+     */
+    fun getCachedTrack(trackId: String): CachedMusicTrack? =
+        cachedTracks.firstOrNull { it.id == trackId }
+
+    /**
      * Checks if the given track is already cached offline and returns its file.
      */
     fun getCachedAudioFile(trackId: String): File? {
@@ -267,31 +287,34 @@ object MusicCacheManager {
      */
     fun isTrackCached(trackId: String): Boolean = getCachedAudioFile(trackId) != null
 
-    /** "yt" / "saavn" for a cached track, or null when it isn't cached. */
+    /** Exact source tag (e.g. "Tidal Hi-Fi", "Hi-Res Lossless", "JioSaavn", "YouTube Music") for a cached track, or null when it isn't cached. */
     fun cachedSource(trackId: String): String? =
-        if (!isTrackCached(trackId)) null else cachedTracks.firstOrNull { it.id == trackId }?.source ?: "yt"
+        if (!isTrackCached(trackId)) null else cachedTracks.firstOrNull { it.id == trackId }?.source ?: "YouTube Music"
 
-    private val saavnJobs = ConcurrentHashMap<String, Job>()
+    private val streamCacheJobs = ConcurrentHashMap<String, Job>()
 
     /**
-     * Downloads a JioSaavn stream into the cache. When [replaceExisting] is set it swaps out a cached
-     * YouTube copy of the same track (written to a temp file first, so the old copy stays valid until the
-     * new one is complete). Otherwise it only caches if the track isn't cached yet and caching is on.
-     * [onDone] is called with true when the cache now holds the JioSaavn copy.
+     * Downloads an arbitrary audio stream (Tidal Hi-Fi, Hi-Res direct, JioSaavn, Addons, etc.) into the cache.
+     * When [replaceExisting] is set it swaps out an existing cached copy of the same track (written to a temp file
+     * first, so the old copy stays valid until the new one is complete). Otherwise it only caches if the track
+     * isn't cached yet and caching is on.
+     * [onDone] is called with true when the cache now holds the stream copy.
      */
-    fun cacheSaavnStream(
+    fun cacheStream(
         track: MusicTrack,
         url: String,
-        replaceExisting: Boolean,
+        source: String = "Lossless",
+        replaceExisting: Boolean = false,
         onDone: ((Boolean) -> Unit)? = null,
     ) {
         val existing = cachedTracks.firstOrNull { it.id == track.id }
-        if (existing?.source == "saavn" && getCachedAudioFile(track.id) != null) { onDone?.invoke(true); return }
+        if (existing?.source == source && getCachedAudioFile(track.id) != null) { onDone?.invoke(true); return }
         if (existing == null && !cachingEnabled.value) { onDone?.invoke(false); return }
         if (existing != null && !replaceExisting) { onDone?.invoke(false); return }
-        if (saavnJobs.containsKey(track.id)) return
-        saavnJobs[track.id] = scope.launch {
-            val tmp = File(cacheDir, "${track.id}.saavn.tmp")
+        if (streamCacheJobs.containsKey(track.id)) return
+        streamCacheJobs[track.id] = scope.launch {
+            val safeSourceTag = source.filter { it.isLetterOrDigit() }.ifBlank { "src" }
+            val tmp = File(cacheDir, "${track.id}.$safeSourceTag.tmp")
             val finalFile = File(cacheDir, "${track.id}.m4a")
             var ok = false
             try {
@@ -318,7 +341,7 @@ object MusicCacheManager {
                             fileSizeBytes = finalFile.length(),
                             cachedAtMs = System.currentTimeMillis(),
                             lastPlayedMs = existing?.lastPlayedMs ?: System.currentTimeMillis(),
-                            liked = track.liked, source = "saavn",
+                            liked = track.liked, source = source,
                         )
                         withContext(Dispatchers.Main) {
                             val idx = cachedTracks.indexOfFirst { it.id == track.id }
@@ -327,18 +350,28 @@ object MusicCacheManager {
                         }
                         enforceCacheLimit()
                         ok = true
-                        Log.d(TAG, "Cached JioSaavn copy of '${track.title}' (${formatStorageSize(finalFile.length())})")
+                        Log.d(TAG, "Cached $source copy of '${track.title}' (${formatStorageSize(finalFile.length())})")
                     }
                 }
             } catch (e: Exception) {
-                Log.w(TAG, "JioSaavn cache failed for ${track.id}: ${e.message}")
+                Log.w(TAG, "$source cache failed for ${track.id}: ${e.message}")
             } finally {
-                saavnJobs.remove(track.id)
+                streamCacheJobs.remove(track.id)
                 if (tmp.exists()) tmp.delete()
             }
             withContext(Dispatchers.Main) { onDone?.invoke(ok) }
         }
     }
+
+    /**
+     * Downloads a JioSaavn stream into the cache. Kept for backward compatibility.
+     */
+    fun cacheSaavnStream(
+        track: MusicTrack,
+        url: String,
+        replaceExisting: Boolean,
+        onDone: ((Boolean) -> Unit)? = null,
+    ) = cacheStream(track, url, source = "JioSaavn", replaceExisting = replaceExisting, onDone = onDone)
 
     /**
      * Marks track as recently played for LRU (Least Recently Used) cache ranking.
@@ -354,7 +387,7 @@ object MusicCacheManager {
     }
 
     /**
-     * Starts live background caching while a song is playing or on user demand.
+     * Downloads a complete stream after an explicit request or completed playback.
      */
     fun cacheTrackOnDemand(track: MusicTrack, onComplete: ((Boolean) -> Unit)? = null, force: Boolean = false) {
         if (isTrackCached(track.id)) {
@@ -362,12 +395,14 @@ object MusicCacheManager {
             return
         }
         scope.launch {
-            val url = MusicBackend.resolveAudioStreamUrl(track.id)
+            val url = MusicBackend.resolveAudioStreamUrl(track.id, title = track.title, artist = track.artists)
             if (url.isNullOrBlank()) {
                 withContext(Dispatchers.Main) { onComplete?.invoke(false) }
                 return@launch
             }
-            startLiveCaching(track, url, force = force)
+            val trace = com.darkxvenom.itune.audio.StreamTraceStore.traces.value[track.id]
+            val resolvedSource = trace?.source ?: "YouTube Music"
+            startLiveCaching(track, url, source = resolvedSource, force = force)
             var success = false
             for (i in 0 until 50) {
                 delay(400)
@@ -381,17 +416,18 @@ object MusicCacheManager {
     }
 
     /**
-     * Starts live background caching while a song is playing.
+     * Downloads the complete requested stream into the offline cache.
      * Uses 2MB ranged parallel chunks to bypass YouTube's CDN bandwidth throttling.
      * Downloads high-quality thumbnail alongside the audio file for 100% offline coverage.
      */
-    fun startLiveCaching(track: MusicTrack, playbackStreamUrl: String, force: Boolean = false) {
+    fun startLiveCaching(track: MusicTrack, playbackStreamUrl: String, source: String = "YouTube Music", force: Boolean = false) {
         if (!cachingEnabled.value && !force) return
         if (isTrackCached(track.id)) return
         if (activeDownloads.containsKey(track.id)) return
-        // Playing a JioSaavn stream: cache THAT stream, so the cached copy is the lossless one.
-        if (com.darkxvenom.itune.data.saavn.JioSaavnProvider.isSaavnUrl(playbackStreamUrl)) {
-            cacheSaavnStream(track, playbackStreamUrl, replaceExisting = false)
+        val isYt = source == "yt" || source == "YouTube" || source == "YouTube Music" || playbackStreamUrl.contains("googlevideo.com")
+        // Playing a non-YouTube stream (Tidal, Hi-Res direct, JioSaavn, Addons, etc.): cache THAT exact stream!
+        if (!isYt) {
+            cacheStream(track, playbackStreamUrl, source = source, replaceExisting = false)
             return
         }
 
@@ -614,7 +650,8 @@ object MusicCacheManager {
                             fileSizeBytes = finalFile.length(),
                             cachedAtMs = System.currentTimeMillis(),
                             lastPlayedMs = System.currentTimeMillis(),
-                            liked = track.liked
+                            liked = track.liked,
+                            source = source,
                         )
 
                         withContext(Dispatchers.Main) {

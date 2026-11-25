@@ -20,6 +20,54 @@ import java.io.File
 class MusicCacheManagerTest {
 
     @Test
+    fun completedPlaybackCachesOnlyWhenTrackPlayedFromBeginningToEnd() {
+        assertEquals(
+            true,
+            shouldCacheAfterFullPlayback(
+                activeTrackId = "finished",
+                eligibleTrackId = "finished",
+                cachingEnabled = true,
+                alreadyCached = false,
+                positionMs = 239_900L,
+                durationMs = 240_000L,
+            ),
+        )
+        assertEquals(
+            false,
+            shouldCacheAfterFullPlayback(
+                activeTrackId = "skipped",
+                eligibleTrackId = "skipped",
+                cachingEnabled = true,
+                alreadyCached = false,
+                positionMs = 90_000L,
+                durationMs = 240_000L,
+            ),
+        )
+        assertEquals(
+            false,
+            shouldCacheAfterFullPlayback(
+                activeTrackId = "resumed",
+                eligibleTrackId = null,
+                cachingEnabled = true,
+                alreadyCached = false,
+                positionMs = 239_900L,
+                durationMs = 240_000L,
+            ),
+        )
+        assertEquals(
+            false,
+            shouldCacheAfterFullPlayback(
+                activeTrackId = "finished",
+                eligibleTrackId = "finished",
+                cachingEnabled = false,
+                alreadyCached = false,
+                positionMs = 240_000L,
+                durationMs = 240_000L,
+            ),
+        )
+    }
+
+    @Test
     fun targetBitrateKbps_mapsQualityToBitrate() {
         assertEquals(64, MusicCacheManager.targetBitrateKbps(MusicCacheManager.QUALITY_LOW))
         assertEquals(128, MusicCacheManager.targetBitrateKbps(MusicCacheManager.QUALITY_MEDIUM))

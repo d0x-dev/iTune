@@ -73,6 +73,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         AvatarManager.init(this)
         SettingsStore.ensureInit(this)
+        com.darkxvenom.itune.data.sources.SourceRegistry.init(this)
+        com.darkxvenom.itune.playback.audio.LosslessOutput.init(this)
         SpotifyToken.init(this)
         SpotifyLibrary.auth = SpotifyLibrary.Auth {
             SpotifyToken.accessToken()?.let { SpotifyLibrary.Tokens(it, SpotifyToken.clientToken()) }

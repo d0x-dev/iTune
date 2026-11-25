@@ -78,6 +78,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -85,6 +87,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -143,6 +146,9 @@ import com.darkxvenom.itune.data.updates.AppUpdateManager
 import com.darkxvenom.itune.data.updates.GithubReleaseInfo
 import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.data.library.SettingsUiState
+import kotlin.math.roundToInt
+import com.darkxvenom.itune.backend.MusicPlayerState
+import com.darkxvenom.itune.backend.highQualityThumbnail
 import com.darkxvenom.itune.ishare.IShareConnectionMode
 import com.darkxvenom.itune.ishare.IShareSession
 import com.darkxvenom.itune.ishare.IShareSyncManager
@@ -358,6 +364,7 @@ fun AppleSettingsScreen(
     var showLicenseDialog by remember { mutableStateOf(false) }
     var showAutoSleepTimerDialog by remember { mutableStateOf(false) }
     var showProxySettingsDialog by remember { mutableStateOf(false) }
+    var showCornerLengthDialog by remember { mutableStateOf(false) }
     var showAodSettings by rememberSaveable { mutableStateOf(false) }
     var showWidgetSettings by rememberSaveable { mutableStateOf(false) }
     var showSpotifyIntegration by rememberSaveable { mutableStateOf(false) }
@@ -551,6 +558,7 @@ fun AppleSettingsScreen(
             onOpenAodSettings = { showAodSettings = true },
             onOpenWidgetSettings = { showWidgetSettings = true },
             onOpenSpotifyIntegration = { showSpotifyIntegration = true },
+            onOpenCornerLength = { showCornerLengthDialog = true },
         )
     }
 
@@ -1108,6 +1116,18 @@ fun AppleSettingsScreen(
 
     if (showProxySettingsDialog) {
         ProxySettingsDialog(onDismiss = { showProxySettingsDialog = false })
+    }
+
+    if (showCornerLengthDialog) {
+        CoverCornerRadiusDialog(
+            initialRadius = state.coverCornerRadius,
+            haptics = haptics,
+            onSave = { updatedRadius ->
+                SettingsStore.setInt(context, SettingsStore.KEY_COVER_CORNER_RADIUS, updatedRadius)
+                showCornerLengthDialog = false
+            },
+            onDismiss = { showCornerLengthDialog = false },
+        )
     }
 
     if (showBackupDialog) {
@@ -2310,6 +2330,220 @@ private fun SettingsAboutDialog(
     }
 }
 
+@Composable
+private fun CoverCornerRadiusDialog(
+    initialRadius: Int,
+    haptics: Haptics,
+    onSave: (Int) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var radiusValue by remember { mutableFloatStateOf(initialRadius.toFloat().coerceIn(0f, 40f)) }
+    val currentTrack = MusicPlayerState.currentTrack
+    val currentArtUrl = currentTrack?.thumbnailUrl?.highQualityThumbnail() ?: currentTrack?.thumbnailUrl
+
+    SettingsModalFrame(onDismiss = onDismiss) {
+        Spacer(Modifier.height(20.dp))
+        Text(
+            text = "Corner Length",
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 18.5.sp,
+            fontWeight = FontWeight.SemiBold,
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = "Adjust the corner edge of square album artwork.",
+            color = AppleTextSecondary,
+            fontSize = 12.5.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 24.dp),
+        )
+        Spacer(Modifier.height(18.dp))
+
+        // Live Square Artwork Preview Container
+        val currentDp = radiusValue.roundToInt().dp
+        val previewShape = RoundedCornerShape(currentDp)
+        Box(
+            modifier = Modifier
+                .size(150.dp)
+                .shadow(
+                    elevation = 14.dp,
+                    shape = previewShape,
+                    ambientColor = Color.Black,
+                    spotColor = Color.Black,
+                )
+                .clip(previewShape)
+                .background(
+                    Brush.linearGradient(
+                        colors = listOf(Color(0xFF26262A), Color(0xFF141416))
+                    )
+                )
+                .border(
+                    width = 1.dp,
+                    color = Color.White.copy(alpha = 0.22f),
+                    shape = previewShape,
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (!currentArtUrl.isNullOrBlank()) {
+                AsyncImage(
+                    model = currentArtUrl,
+                    contentDescription = "Artwork Preview",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_lib_albums),
+                        contentDescription = null,
+                        tint = Color.White.copy(alpha = 0.70f),
+                        modifier = Modifier.size(54.dp),
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        text = "iTune Music",
+                        color = Color.White.copy(alpha = 0.55f),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        // Value Indicator: e.g. "8 dp"
+        Row(
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = "${radiusValue.roundToInt()}",
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(Modifier.width(4.dp))
+            Text(
+                text = "dp",
+                color = AppleTextSecondary,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(bottom = 3.dp),
+            )
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        // Seek Bar Slider
+        Slider(
+            value = radiusValue,
+            onValueChange = { next ->
+                val rounded = next.roundToInt().toFloat()
+                if (rounded != radiusValue) {
+                    radiusValue = rounded
+                    haptics.play(Haptic.Tap)
+                }
+            },
+            valueRange = 0f..40f,
+            steps = 39,
+            colors = SliderDefaults.colors(
+                thumbColor = Color.White,
+                activeTrackColor = AppleMusicRed,
+                inactiveTrackColor = Color.White.copy(alpha = 0.18f),
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
+        )
+
+        // Preset Chips
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            listOf(
+                0 to "0 (Sharp)",
+                8 to "8 (Default)",
+                18 to "18 (Medium)",
+                28 to "28 (Round)",
+            ).forEach { (preset, label) ->
+                val isSelected = radiusValue.roundToInt() == preset
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(if (isSelected) AppleMusicRed.copy(alpha = 0.25f) else Color.White.copy(alpha = 0.06f))
+                        .border(
+                            0.75.dp,
+                            if (isSelected) AppleMusicRed else Color.White.copy(alpha = 0.12f),
+                            RoundedCornerShape(8.dp),
+                        )
+                        .clickable {
+                            haptics.play(Haptic.Select)
+                            radiusValue = preset.toFloat()
+                        }
+                        .padding(vertical = 5.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = label,
+                        color = if (isSelected) AppleMusicRed else AppleTextSecondary,
+                        fontSize = 10.sp,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                        maxLines = 1,
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(14.dp))
+        HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
+
+        // Done button
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .clickable {
+                    haptics.play(Haptic.Select)
+                    onSave(radiusValue.roundToInt())
+                },
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = "Done",
+                color = AppleMusicRed,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+
+        HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
+
+        // Cancel button
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .clickable { onDismiss() },
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = "Cancel",
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.70f),
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Normal,
+            )
+        }
+    }
+}
+
 
 @Composable
 private fun SettingsLicenseDialog(onDismiss: () -> Unit) {
@@ -2726,6 +2960,7 @@ private fun buildSettingsSections(
     onOpenAodSettings: () -> Unit,
     onOpenWidgetSettings: () -> Unit,
     onOpenSpotifyIntegration: () -> Unit,
+    onOpenCornerLength: () -> Unit,
 ): List<SettingsSection> {
     val effectsDisabled = audioEngine.bypassAllEffects || (audioEngine.bitPerfectEnabled && bitPerfectActive)
     return listOf(
@@ -3172,7 +3407,7 @@ private fun buildSettingsSections(
     SettingsSection(
         id = "visuals_glass",
         title = "Now Playing & Liquid Glass",
-        entries = listOf(
+        entries = listOfNotNull(
             SettingsEntry.Toggle(
                 id = "splash_screen",
                 title = "Splash Screen",
@@ -3257,6 +3492,20 @@ private fun buildSettingsSections(
                 selectedOption = state.playerType,
                 onSelect = { onSelectString(SettingsStore.KEY_PLAYER_TYPE, it) },
             ),
+            SettingsEntry.SegmentedToggle(
+                id = "player_style",
+                title = "Player Style",
+                subtitle = if (state.playerStyle == SettingsStore.PLAYER_STYLE_SECONDARY) {
+                    "Secondary • Album-led player with a dedicated queue layout"
+                } else {
+                    "Primary • Current player layout"
+                },
+                iconRes = R.drawable.ic_settings_liquid_glass,
+                keywords = listOf("player", "style", "primary", "secondary", "layout", "queue", "album", "controls"),
+                options = listOf(SettingsStore.PLAYER_STYLE_PRIMARY, SettingsStore.PLAYER_STYLE_SECONDARY),
+                selectedOption = state.playerStyle,
+                onSelect = { onSelectString(SettingsStore.KEY_PLAYER_STYLE, it) },
+            ),
             SettingsEntry.Toggle(
                 id = "player_dynamic_coloring",
                 title = "Player Dynamic Coloring",
@@ -3282,6 +3531,43 @@ private fun buildSettingsSections(
                 keywords = listOf("cover", "art", "artwork", "full", "screen", "square", "album"),
                 checked = state.fullScreenCoverArt,
                 onToggle = { onToggleBool(SettingsStore.KEY_FULL_SCREEN_COVER_ART, it) },
+            ),
+            if (!state.fullScreenCoverArt) {
+                SettingsEntry.Action(
+                    id = "cover_corner_radius",
+                    title = "Corner Length",
+                    subtitle = "Adjust corner radius of square album artwork",
+                    iconRes = R.drawable.ic_lib_albums,
+                    keywords = listOf("corner", "length", "radius", "square", "edge", "cover", "art"),
+                    trailingValue = "${state.coverCornerRadius} dp",
+                    onAction = onOpenCornerLength,
+                )
+            } else null,
+            SettingsEntry.Toggle(
+                id = "hide_quality_tag",
+                title = "Hide Quality Tag",
+                subtitle = if (state.hideQualityTag) {
+                    "Quality pill badge is hidden from both players"
+                } else {
+                    "Show audio quality and stream badge below progress bar"
+                },
+                iconRes = R.drawable.ic_lossless,
+                keywords = listOf("hide", "quality", "tag", "pill", "lossless", "audio", "badge", "player"),
+                checked = state.hideQualityTag,
+                onToggle = { onToggleBool(SettingsStore.KEY_HIDE_QUALITY_TAG, it) },
+            ),
+            SettingsEntry.Toggle(
+                id = "hide_volume_bar",
+                title = "Hide Volume Bar",
+                subtitle = if (state.hideVolumeBar) {
+                    "Volume slider is hidden from the player"
+                } else {
+                    "Show volume slider below playback controls"
+                },
+                iconRes = R.drawable.ic_settings_liquid_glass,
+                keywords = listOf("volume", "bar", "slider", "seek", "hide", "player", "controls"),
+                checked = state.hideVolumeBar,
+                onToggle = { onToggleBool(SettingsStore.KEY_HIDE_VOLUME_BAR, it) },
             ),
             SettingsEntry.SegmentedToggle(
                 id = "top_card_type",
@@ -3321,9 +3607,9 @@ private fun buildSettingsSections(
             SettingsEntry.Picker(
                 id = "app_font",
                 title = "App Font",
-                subtitle = "Change app typography; the player keeps its current SF Pro style",
+                subtitle = "Change app typography; player controls retain their designed typeface",
                 iconRes = R.drawable.ic_settings_liquid_glass,
-                keywords = listOf("font", "typeface", "typography", "linotte", "poppins", "sf pro"),
+                keywords = listOf("font", "typeface", "typography", "doto", "dotrice", "linotte", "poppins", "sf pro"),
                 currentValue = AppFont.fromKey(state.appFont).label,
                 description = "Choose a typeface for the app interface.",
                 options = AppFont.entries.map { font ->
@@ -3395,8 +3681,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "cache_songs_playing",
-                title = "Cache Songs While Playing",
-                subtitle = "Automatically save songs to offline storage as you listen",
+                title = "Cache Songs After Playback",
+                subtitle = "Save a song to offline storage after it finishes playing",
                 iconRes = R.drawable.ic_settings_offline,
                 keywords = listOf("cache", "song", "offline", "playing", "streaming", "itube"),
                 checked = MusicCacheManager.cachingEnabled.value,
@@ -3409,7 +3695,7 @@ private fun buildSettingsSections(
                 iconRes = R.drawable.ic_settings_storage,
                 keywords = listOf("cache", "quality", "compress", "low", "high", "space", "storage", "bitrate"),
                 currentValue = MusicCacheManager.cacheQuality.value,
-                description = "Choose the quality of songs saved to offline storage. Applies to songs cached from now on.",
+                description = "Choose the quality of songs saved after playback completes. Applies to songs cached from now on.",
                 options = listOf(
                     SettingsOptionChoice(MusicCacheManager.QUALITY_LOW, "Compressed to 64 kbps AAC • smallest files (~2 MB per song)"),
                     SettingsOptionChoice(MusicCacheManager.QUALITY_MEDIUM, "Compressed to 128 kbps AAC • balanced (~4 MB per song)"),

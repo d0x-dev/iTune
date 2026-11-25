@@ -176,6 +176,9 @@ import com.darkxvenom.itune.backend.WordTiming
 import com.darkxvenom.itune.backend.highQualityThumbnail
 import com.darkxvenom.itune.data.library.SettingsStore
 import com.darkxvenom.itune.ishare.IShareSyncManager
+import com.darkxvenom.itune.backend.MusicCacheManager
+import com.darkxvenom.itune.data.account.MultiAccountManager
+import com.darkxvenom.itune.ui.components.AppleMemojiAvatar
 import com.darkxvenom.itune.ui.artist.canvas.CanvasArtworkPlayer
 import com.darkxvenom.itune.ui.artist.canvas.CanvasContentMode
 import com.darkxvenom.itune.ui.artist.components.ExplicitBadge
@@ -488,6 +491,8 @@ fun ITuneMusicPlayer(
     val settingsState by SettingsStore.state.collectAsStateWithLifecycle()
     val translationsBySong by LyricsTranslationHelper.currentSongTranslations.collectAsStateWithLifecycle()
     val isStaticPlayer = settingsState.playerType == "Static"
+    val isSecondaryStyle = settingsState.playerStyle == SettingsStore.PLAYER_STYLE_SECONDARY
+    val isSecondaryExpanded = isSecondaryStyle && sp >= 0.5f
 
     LaunchedEffect(track.id, settingsState.lyricsTranslateLanguage) {
         withContext(Dispatchers.IO) {
@@ -506,6 +511,7 @@ fun ITuneMusicPlayer(
 
     var rootBoxCoords by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var playerTitleVisualTopPx by remember { mutableFloatStateOf(0f) }
+    var seekbarVisualTopPx by remember { mutableFloatStateOf(0f) }
     var playerControlsVisualTopPx by remember { mutableFloatStateOf(0f) }
     var playerNextVisualLeftPx by remember { mutableFloatStateOf(0f) }
     var playerNextVisualTopPx by remember { mutableFloatStateOf(0f) }
@@ -738,6 +744,7 @@ fun ITuneMusicPlayer(
         with(density) { 142.dp.toPx() } * canvasMinimizeProgress
     }
     val compactTitleNudgePx = with(density) { 24.dp.toPx() } * canvasMinimizeProgress
+    val secondaryCanvasSeekbarOffset = if (isSecondaryExpanded) 22.dp * canvasMinimizeProgress else 0.dp
 
     BoxWithConstraints(
         modifier = modifier
@@ -786,6 +793,27 @@ fun ITuneMusicPlayer(
                 )
             }
         } else {
+            // Keep the desktop lyrics ambient colors visible while artwork is loading
+            // or unavailable, then layer the blurred cover over them when it resolves.
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val ambientRadius = maxOf(size.width, size.height)
+                drawRect(Color(0xFF29262E))
+                drawRect(
+                    brush = Brush.radialGradient(
+                        colors = listOf(Color(0xFF48435D), Color(0xFF29262E)),
+                        center = Offset(size.width * 0.80f, size.height * 0.20f),
+                        radius = ambientRadius * 0.95f,
+                    ),
+                )
+                drawRect(
+                    brush = Brush.radialGradient(
+                        colors = listOf(Color(0xFF7D494F), Color.Transparent),
+                        center = Offset(size.width * 0.20f, size.height * 0.80f),
+                        radius = ambientRadius * 0.70f,
+                    ),
+                )
+            }
+
             Crossfade(
                 targetState = currentArtUrl,
                 animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
@@ -809,12 +837,6 @@ fun ITuneMusicPlayer(
                                 scaleY = blurScale
                                 alpha = 0.95f
                             }
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Black)
                     )
                 }
             }
@@ -1026,7 +1048,7 @@ fun ITuneMusicPlayer(
         // - Full Bleed Cover Art (when Full Screen Cover Art is ON and image is loaded)
         // - 58dp Top Left Header Thumbnail (when Lyrics or Queue opens)
         // - 38dp Bottom Left Mini Player Thumbnail (when swiping down to dismiss player)
-        val defaultPlayerTitleTopDp = maxHeight - 365.dp - navBottomDp
+        val defaultPlayerTitleTopDp = maxHeight - (if (isSecondaryExpanded) (if (settingsState.hideVolumeBar) 330.dp else 375.dp) else (if (settingsState.hideVolumeBar) 320.dp else 365.dp)) - navBottomDp
         val dynamicMeasuredTitleTopDp = if (playerTitleVisualTopPx > 0f) with(density) { playerTitleVisualTopPx.toDp() } else defaultPlayerTitleTopDp
         val topPillLimit = statusBarTopDp + 18.dp
         val maxAvailableSquareHeight = (dynamicMeasuredTitleTopDp - topPillLimit - 14.dp).coerceAtLeast(200.dp)
@@ -1034,7 +1056,7 @@ fun ITuneMusicPlayer(
         // Center square artwork in the generous vertical space above the title and lyrics
         val squareArtTop = (topPillLimit + 4.dp) + (((dynamicMeasuredTitleTopDp - 12.dp - topPillLimit) - squareArtSize).coerceAtLeast(0.dp) * 0.45f)
         val squareArtStart = (maxWidth - squareArtSize) / 2
-        val squareArtRadius = 8.dp
+        val squareArtRadius = settingsState.coverCornerRadius.dp.coerceAtLeast(0.dp)
 
         val progressClamped = panelProgress.coerceIn(0f, 1f)
 
@@ -1190,8 +1212,37 @@ fun ITuneMusicPlayer(
         // ── 5b. Continuous Morphing Title & Artist ──
         // Seamlessly morphs between Mini Player position/size and Full Player resting position/size,
         // and glides into the top header when Queue or Lyrics opens.
-        val startTitleTopDp = dynamicMeasuredTitleTopDp
+        val startTitleTopDp = if (isSecondaryExpanded) {
+            val avatarBottomDp = squareArtTop + squareArtSize
+            val actualSeekbarTopDp = if (seekbarVisualTopPx > 0f) {
+                with(density) { seekbarVisualTopPx.toDp() }
+            } else {
+                dynamicMeasuredTitleTopDp + 90.dp
+            }
+            val titleBlockHeightDp = 76.dp
+            val availableGap = (actualSeekbarTopDp - avatarBottomDp).coerceAtLeast(titleBlockHeightDp)
+            val equalGap = ((availableGap - titleBlockHeightDp) / 2f).coerceAtLeast(0.dp)
+            avatarBottomDp + equalGap
+        } else {
+            dynamicMeasuredTitleTopDp
+        }
         val startTitleTopPx = with(density) { startTitleTopDp.toPx() }
+
+        val displayArtists: String = remember(track.id, track.artists) {
+            val raw = track.artists.trim()
+            if (raw.equals("iShare", ignoreCase = true) || raw.isBlank()) {
+                val cached = MusicCacheManager.getCachedTrack(track.id)?.artists
+                if (!cached.isNullOrBlank() && !cached.equals("iShare", ignoreCase = true)) {
+                    cached
+                } else if (raw.equals("iShare", ignoreCase = true)) {
+                    ""
+                } else {
+                    raw
+                }
+            } else {
+                raw
+            }
+        }
 
         val fullTitleStartPx = lerpFloat(with(density) { 24.dp.toPx() }, with(density) { 96.dp.toPx() }, panelProgress)
         // Center Title + Artist vertically against the 58dp header avatar (centerY = statusBarTopDp + 63dp)
@@ -1227,7 +1278,14 @@ fun ITuneMusicPlayer(
                     translationY = (canvasSlideDownPx + compactTitleNudgePx) * (1f - panelProgress) * sp
                 }
                 .width(curTitleWidthDp)
-                .height(if (sp < 0.5f) 38.dp else if (panelProgress < 0.80f) 96.dp else 48.dp)
+                .height(
+                    when {
+                        sp < 0.5f -> 38.dp
+                        panelProgress >= 0.80f -> 48.dp
+                        isSecondaryExpanded -> 84.dp
+                        else -> 96.dp
+                    }
+                )
                 .then(
                     if (panelProgress > 0.80f) {
                         Modifier.clickable(
@@ -1246,6 +1304,33 @@ fun ITuneMusicPlayer(
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.Top
             ) {
+                if (isSecondaryExpanded && panelProgress < 0.80f) {
+                    val activeAccount by MultiAccountManager.activeAccount.collectAsStateWithLifecycle()
+                    val userDisplayName = settingsState.displayName.ifBlank { activeAccount?.displayName ?: "Dark" }
+                    Row(
+                        modifier = Modifier
+                            .padding(bottom = 6.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.14f))
+                            .border(0.6.dp, Color.White.copy(alpha = 0.12f), CircleShape)
+                            .padding(horizontal = 7.dp, vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                    ) {
+                        AppleMemojiAvatar(
+                            size = 15.dp,
+                            avatarId = activeAccount?.avatarId,
+                        )
+                        Text(
+                            text = userDisplayName,
+                            fontFamily = SFProDisplay,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White.copy(alpha = 0.90f),
+                            maxLines = 1,
+                        )
+                    }
+                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
@@ -1275,7 +1360,7 @@ fun ITuneMusicPlayer(
                 }
                 Spacer(Modifier.height(lerpDp(lerpDp(1.dp, 2.dp, sp), 1.5.dp, panelProgress)))
                 Text(
-                    text = track.artists,
+                    text = displayArtists,
                     style = TextStyle(
                         fontFamily = SFProDisplay,
                         fontWeight = if (panelProgress > 0.5f) FontWeight.W500 else FontWeight.SemiBold,
@@ -1286,7 +1371,7 @@ fun ITuneMusicPlayer(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.clickable {
-                        val name = track.artists.substringBefore(",").trim().ifBlank { track.artists }
+                        val name = displayArtists.substringBefore(",").trim().ifBlank { displayArtists }
                         MusicPlayerState.pendingArtistNav = PendingArtistNav(
                             browseId = track.artistId,
                             name = name,
@@ -1297,14 +1382,14 @@ fun ITuneMusicPlayer(
                     }.basicMarquee()
                 )
 
-                // Send lyrics line comfortably below the artist, directly centered between artist and seekbar
-                Spacer(Modifier.height(lerpDp(1.dp, 10.dp, sp)))
-
                 AnimatedVisibility(
-                    visible = sp >= 0.5f && panelProgress < 0.80f && canvasMinimizeProgress < 0.85f,
+                    visible = !isSecondaryExpanded && sp >= 0.5f && panelProgress < 0.80f && canvasMinimizeProgress < 0.85f,
                     enter = fadeIn(tween(180)) + slideInVertically(tween(220)) { it / 3 },
                     exit = fadeOut(tween(120)) + slideOutVertically(tween(160)) { -it / 3 }
                 ) {
+                    Column {
+                        // Send lyrics line comfortably below the artist, directly centered between artist and seekbar
+                        Spacer(Modifier.height(lerpDp(1.dp, 10.dp, sp)))
                     val lyricLines = MusicPlayerState.lyrics
                     val lyricsPosition = (position + MusicPlayerState.lyricsOffsetMs).coerceAtLeast(0L)
                     val activeLyricIndex = remember(lyricLines, lyricsPosition) {
@@ -1416,6 +1501,7 @@ fun ITuneMusicPlayer(
                 }
             }
         }
+        }
 
         // ── 5c. Continuous Morphing Play/Pause & Next Buttons ──
         // Smoothly glides and scales between top-right mini player position and center full player playback row
@@ -1518,7 +1604,8 @@ fun ITuneMusicPlayer(
         // Initially positioned beside the 3-dot button at the end of the Title & Artist row in player mode (matching Apple Music),
         // glides smoothly upward into the top header next to the 3-dot button when Queue or Lyrics opens.
         // Kept at the exact same size (36dp, 20dp icon) at both resting player and top header positions.
-        val startStarTopPx = startTitleTopPx + with(density) { 3.dp.toPx() }
+        val titleActionsTopOffsetPx = with(density) { if (isSecondaryExpanded) 22.dp.toPx() else 3.dp.toPx() }
+        val startStarTopPx = startTitleTopPx + titleActionsTopOffsetPx
         // Keep Star vertically centered with 58dp avatar (centerY = statusBarTopDp + 63dp -> top = 63 - 18 = 45dp)
         val targetStarTopPx = with(density) { (statusBarTopDp + 45.dp).toPx() }
         val startStarLeftPx = with(density) { (maxWidth - 104.dp).toPx() }
@@ -1561,7 +1648,7 @@ fun ITuneMusicPlayer(
         // Initially positioned at the far right end of the Title & Artist row in player mode (matching Apple Music),
         // glides smoothly upward into the top-right header corner when Queue or Lyrics opens.
         // Kept at the exact same size (36dp, 22dp icon) at both resting player and top header positions.
-        val startMoreTopPx = startTitleTopPx + with(density) { 3.dp.toPx() }
+        val startMoreTopPx = startTitleTopPx + titleActionsTopOffsetPx
         // Keep 3-dot vertically centered with 58dp avatar (centerY = statusBarTopDp + 63dp -> top = 63 - 18 = 45dp)
         val targetMoreTopPx = with(density) { (statusBarTopDp + 45.dp).toPx() }
         val startMoreLeftPx = with(density) { (maxWidth - 60.dp).toPx() }
@@ -1705,7 +1792,19 @@ fun ITuneMusicPlayer(
                     MusicPlayerState.seekTo(targetPos)
                     isSeeking = false
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = secondaryCanvasSeekbarOffset)
+                    .onGloballyPositioned { coords ->
+                        val root = rootBoxCoords
+                        if (canvasMinimizeProgress < 0.01f && root != null && root.isAttached && coords.isAttached) {
+                            val pos = root.localPositionOf(coords, Offset.Zero)
+                            val visualTop = pos.y
+                            if (visualTop > 0f) {
+                                seekbarVisualTopPx = visualTop
+                            }
+                        }
+                    }
             )
 
             Spacer(Modifier.height(6.dp))
@@ -1714,7 +1813,8 @@ fun ITuneMusicPlayer(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 2.dp),
+                    .padding(horizontal = 2.dp)
+                    .offset(y = secondaryCanvasSeekbarOffset),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -1725,81 +1825,85 @@ fun ITuneMusicPlayer(
                 )
 
                 // Center Dynamic Audio Engine & Quality Badge Pill (iMusic 128k / Dolby Atmos / 8D Audio / Bit-Perfect)
-                val pillBadge = audioEngineState.pillBadge
-                val saavnStatuses by com.darkxvenom.itune.data.saavn.SaavnQuality.statuses.collectAsStateWithLifecycle()
-                val streamTraces by com.darkxvenom.itune.audio.StreamTraceStore.traces.collectAsStateWithLifecycle()
-                val saavnStatus = if (settingsState.jioSaavnProvider) {
-                    saavnStatuses[track.id]?.takeIf { it != com.darkxvenom.itune.data.saavn.SaavnStatus.FALLBACK }
-                } else null
-                val sourceQuality = streamTraces[track.id]?.takeIf {
-                    it.source.startsWith("Extension", true) || it.source.startsWith("Addon", true)
-                }?.quality?.takeIf { it.isNotBlank() }
-                Box(
-                    modifier = Modifier
-                            .graphicsLayer { alpha = canvasChromeAlpha }
-                            .onGloballyPositioned { coords ->
-                                val root = rootBoxCoords
-                                if (root != null && root.isAttached && coords.isAttached) {
-                                    val c = root.localPositionOf(
-                                        coords,
-                                        Offset(coords.size.width / 2f, coords.size.height / 2f),
-                                    )
-                                    enginePillAnchorXPx = c.x
-                                    enginePillAnchorYPx = c.y
+                if (!settingsState.hideQualityTag) {
+                    val pillBadge = audioEngineState.pillBadge
+                    val saavnStatuses by com.darkxvenom.itune.data.saavn.SaavnQuality.statuses.collectAsStateWithLifecycle()
+                    val streamTraces by com.darkxvenom.itune.audio.StreamTraceStore.traces.collectAsStateWithLifecycle()
+                    val saavnStatus = if (settingsState.jioSaavnProvider) {
+                        saavnStatuses[track.id]?.takeIf { it != com.darkxvenom.itune.data.saavn.SaavnStatus.FALLBACK }
+                    } else null
+                    val sourceQuality = streamTraces[track.id]?.takeIf {
+                        it.source.startsWith("Extension", true) || it.source.startsWith("Addon", true)
+                    }?.quality?.takeIf { it.isNotBlank() }
+                    Box(
+                        modifier = Modifier
+                                .graphicsLayer { alpha = canvasChromeAlpha }
+                                .onGloballyPositioned { coords ->
+                                    val root = rootBoxCoords
+                                    if (root != null && root.isAttached && coords.isAttached) {
+                                        val c = root.localPositionOf(
+                                            coords,
+                                            Offset(coords.size.width / 2f, coords.size.height / 2f),
+                                        )
+                                        enginePillAnchorXPx = c.x
+                                        enginePillAnchorYPx = c.y
+                                    }
                                 }
-                            }
-                            .clip(RoundedCornerShape(14.dp))
-                            .background(Color.White.copy(alpha = if (isAudioEnginePopupOpen || !pillBadge.isBrandedITune) 0.18f else 0.12f))
-                            .clickable(enabled = canvasMinimizeProgress < 0.5f) {
-                                lastLyricsInteractionTime = System.currentTimeMillis()
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                isMoreMenuOpen = false
-                                isISharePopupOpen = false
-                                isAudioOutputPopupOpen = false
-                                isAudioEnginePopupOpen = !isAudioEnginePopupOpen
-                            }
-                            .padding(horizontal = 12.dp, vertical = 5.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AnimatedContent(
-                        targetState = Triple(pillBadge, saavnStatus, sourceQuality),
-                        transitionSpec = { fadeIn(tween(180)) togetherWith fadeOut(tween(140)) },
-                        label = "audioEnginePillContent",
-                    ) { (badge, saavn, extensionQuality) ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(Color.White.copy(alpha = if (isAudioEnginePopupOpen || !pillBadge.isBrandedITune) 0.18f else 0.12f))
+                                .clickable(enabled = canvasMinimizeProgress < 0.5f) {
+                                    lastLyricsInteractionTime = System.currentTimeMillis()
+                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                    isMoreMenuOpen = false
+                                    isISharePopupOpen = false
+                                    isAudioOutputPopupOpen = false
+                                    isAudioEnginePopupOpen = !isAudioEnginePopupOpen
+                                }
+                                .padding(horizontal = 12.dp, vertical = 5.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        if (!(badge.isBrandedITune && saavn != null)) Image(
-                                painter = painterResource(badge.iconRes),
-                                contentDescription = badge.text,
-                                colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
-                                contentScale = ContentScale.Fit,
-                                modifier = Modifier.size(14.dp)
-                            )
-                            if (extensionQuality != null) {
-                                Text(extensionQuality, color = Color.White,
-                                    style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay, fontWeight = FontWeight.SemiBold),
-                                    maxLines = 1)
-                            } else if (badge.isBrandedITune && saavn != null) {
-                                SaavnQualityLabel(saavn)
-                            } else if (badge.isBrandedITune) {
-                                Text(
-                                    text = buildAnnotatedString {
-                                        withStyle(SpanStyle(color = Color(0xFFFF1744))) { append("i") }
-                                        withStyle(SpanStyle(color = Color.White)) { append("Music • 128k") }
-                                    },
-                                    style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay, fontWeight = FontWeight.Medium)
+                        AnimatedContent(
+                            targetState = Triple(pillBadge, saavnStatus, sourceQuality),
+                            transitionSpec = { fadeIn(tween(180)) togetherWith fadeOut(tween(140)) },
+                            label = "audioEnginePillContent",
+                        ) { (badge, saavn, extensionQuality) ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                if (!(badge.isBrandedITune && saavn != null)) Image(
+                                    painter = painterResource(badge.iconRes),
+                                    contentDescription = badge.text,
+                                    colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
+                                    contentScale = ContentScale.Fit,
+                                    modifier = Modifier.size(14.dp)
                                 )
-                            } else {
-                                Text(
-                                    text = badge.text,
-                                    color = Color.White,
-                                    style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay, fontWeight = FontWeight.SemiBold)
-                                )
+                                if (extensionQuality != null) {
+                                    Text(extensionQuality, color = Color.White,
+                                        style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay, fontWeight = FontWeight.SemiBold),
+                                        maxLines = 1)
+                                } else if (badge.isBrandedITune && saavn != null) {
+                                    SaavnQualityLabel(saavn)
+                                } else if (badge.isBrandedITune) {
+                                    Text(
+                                        text = buildAnnotatedString {
+                                            withStyle(SpanStyle(color = Color(0xFFFF1744))) { append("i") }
+                                            withStyle(SpanStyle(color = Color.White)) { append("Music • 128k") }
+                                        },
+                                        style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay, fontWeight = FontWeight.Medium)
+                                    )
+                                } else {
+                                    Text(
+                                        text = badge.text,
+                                        color = Color.White,
+                                        style = MaterialTheme.typography.labelMedium.copy(fontFamily = SFProDisplay, fontWeight = FontWeight.SemiBold)
+                                    )
+                                }
                             }
                         }
                     }
+                } else {
+                    Spacer(Modifier.weight(1f))
                 }
 
                 Text(
@@ -1882,10 +1986,14 @@ fun ITuneMusicPlayer(
             ) {
                 Spacer(Modifier.height(14.dp))
 
-                // ── Volume Slider (iOS Capsule Style) ──
-                IosVolumeSlider(
-                    modifier = Modifier.padding(horizontal = 4.dp)
-                )
+                if (settingsState.hideVolumeBar) {
+                    Spacer(Modifier.height(28.dp))
+                } else {
+                    // ── Volume Slider (iOS Capsule Style) ──
+                    IosVolumeSlider(
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    )
+                }
 
                 Spacer(Modifier.height(14.dp))
 
@@ -2350,8 +2458,15 @@ private fun InPlayerQueueContent(
                         )
                     }
                     Spacer(Modifier.height(2.dp))
+                    val currentDisplayArtist = remember(currentTrack.id, currentTrack.artists) {
+                        val raw = currentTrack.artists.trim()
+                        if (raw.equals("iShare", ignoreCase = true) || raw.isBlank()) {
+                            val cached = MusicCacheManager.getCachedTrack(currentTrack.id)?.artists
+                            if (!cached.isNullOrBlank() && !cached.equals("iShare", ignoreCase = true)) cached else ""
+                        } else raw
+                    }
                     Text(
-                        text = currentTrack.artists,
+                        text = currentDisplayArtist,
                         style = TextStyle(
                             fontFamily = SFProDisplay,
                             fontWeight = FontWeight.W400,
@@ -2494,8 +2609,15 @@ private fun InPlayerQueueContent(
                             )
                         }
                         Spacer(Modifier.height(2.dp))
+                        val itemDisplayArtist = remember(item.id, item.artists) {
+                            val raw = item.artists.trim()
+                            if (raw.equals("iShare", ignoreCase = true) || raw.isBlank()) {
+                                val cached = MusicCacheManager.getCachedTrack(item.id)?.artists
+                                if (!cached.isNullOrBlank() && !cached.equals("iShare", ignoreCase = true)) cached else ""
+                            } else raw
+                        }
                         Text(
-                            text = item.artists,
+                            text = itemDisplayArtist,
                             style = TextStyle(
                                 fontFamily = SFProDisplay,
                                 fontWeight = FontWeight.W400,

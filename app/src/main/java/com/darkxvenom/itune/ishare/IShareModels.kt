@@ -12,6 +12,8 @@
 package com.darkxvenom.itune.ishare
 
 import androidx.compose.runtime.Immutable
+import com.darkxvenom.itune.backend.MusicCacheManager
+import com.darkxvenom.itune.backend.MusicPlayerState
 import com.darkxvenom.itune.backend.MusicTrack
 import org.json.JSONArray
 import org.json.JSONObject
@@ -59,13 +61,31 @@ data class IShareQueueItem(
     val thumbnailUrl: String? = null,
     val durationMs: Long = 0L,
 ) {
-    fun toMusicTrack(): MusicTrack = MusicTrack(
-        id = songId,
-        title = title.ifBlank { "Unknown Song" },
-        artists = artist.ifBlank { "iShare" },
-        thumbnailUrl = thumbnailUrl ?: songId.takeIf { it.isNotBlank() }?.let { "https://i.ytimg.com/vi/$it/mqdefault.jpg" },
-        durationSec = if (durationMs > 0L) durationMs / 1000L else 0L,
-    )
+    fun toMusicTrack(): MusicTrack {
+        val resolvedArtist: String = when {
+            artist.isNotBlank() && !artist.equals("iShare", ignoreCase = true) -> artist
+            else -> {
+                val current = MusicPlayerState.currentTrack?.takeIf { it.id == songId }?.artists
+                if (!current.isNullOrBlank() && !current.equals("iShare", ignoreCase = true)) {
+                    current
+                } else {
+                    val cached = MusicCacheManager.getCachedTrack(songId)?.artists
+                    if (!cached.isNullOrBlank() && !cached.equals("iShare", ignoreCase = true)) {
+                        cached
+                    } else {
+                        ""
+                    }
+                }
+            }
+        }
+        return MusicTrack(
+            id = songId,
+            title = title.ifBlank { "Unknown Song" },
+            artists = resolvedArtist,
+            thumbnailUrl = thumbnailUrl ?: songId.takeIf { it.isNotBlank() }?.let { "https://i.ytimg.com/vi/$it/mqdefault.jpg" },
+            durationSec = if (durationMs > 0L) durationMs / 1000L else 0L,
+        )
+    }
 
     fun toJson(): JSONObject =
         JSONObject()
@@ -133,22 +153,58 @@ data class ISharePlaybackState(
     val queue: List<IShareQueueItem> = emptyList(),
     val totalQueueSize: Int = 0,
 ) {
-    fun toMusicTrack(): MusicTrack = MusicTrack(
-        id = songId,
-        title = title.ifBlank { "Unknown Track" },
-        artists = artists.joinToString(", ").ifBlank { "iShare" },
-        thumbnailUrl = thumbnailUrl ?: songId.takeIf { it.isNotBlank() }?.let { "https://i.ytimg.com/vi/$it/mqdefault.jpg" },
-        durationSec = if (durationMs > 0L) durationMs / 1000L else 0L,
-    )
+    fun toMusicTrack(): MusicTrack {
+        val joined = artists.filterNot { it.equals("iShare", ignoreCase = true) }.joinToString(", ")
+        val resolvedArtist: String = when {
+            joined.isNotBlank() -> joined
+            else -> {
+                val current = MusicPlayerState.currentTrack?.takeIf { it.id == songId }?.artists
+                if (!current.isNullOrBlank() && !current.equals("iShare", ignoreCase = true)) {
+                    current
+                } else {
+                    val cached = MusicCacheManager.getCachedTrack(songId)?.artists
+                    if (!cached.isNullOrBlank() && !cached.equals("iShare", ignoreCase = true)) {
+                        cached
+                    } else {
+                        ""
+                    }
+                }
+            }
+        }
+        return MusicTrack(
+            id = songId,
+            title = title.ifBlank { "Unknown Track" },
+            artists = resolvedArtist,
+            thumbnailUrl = thumbnailUrl ?: songId.takeIf { it.isNotBlank() }?.let { "https://i.ytimg.com/vi/$it/mqdefault.jpg" },
+            durationSec = if (durationMs > 0L) durationMs / 1000L else 0L,
+        )
+    }
 
     fun toJson(forOnlineWorker: Boolean = false): JSONObject {
-        val cleanArtists = artists.filterNot { it.startsWith(META_PREFIX) || it.startsWith(QUEUE_PREFIX) }
+        val cleanArtists = artists.filterNot { it.startsWith(META_PREFIX) || it.startsWith(QUEUE_PREFIX) || it.equals("iShare", ignoreCase = true) }
         val artistsList = mutableListOf<String>()
 
         if (forOnlineWorker) {
             // Match AirBeats Cloudflare Worker limits (max 8 artist strings, <=120 chars each)
-            val primaryArtist = cleanArtists.firstOrNull()?.trim()?.take(35)?.ifBlank { null } ?: "iShare"
-            artistsList.add(primaryArtist)
+            val primaryArtist: String = when {
+                cleanArtists.isNotEmpty() -> cleanArtists.firstOrNull { !it.equals("iShare", ignoreCase = true) }?.trim()?.take(35) ?: ""
+                else -> {
+                    val current = MusicPlayerState.currentTrack?.takeIf { it.id == songId }?.artists
+                    if (!current.isNullOrBlank() && !current.equals("iShare", ignoreCase = true)) {
+                        current.take(35)
+                    } else {
+                        val cached = MusicCacheManager.getCachedTrack(songId)?.artists
+                        if (!cached.isNullOrBlank() && !cached.equals("iShare", ignoreCase = true)) {
+                            cached.take(35)
+                        } else {
+                            ""
+                        }
+                    }
+                }
+            }
+            if (primaryArtist.isNotBlank()) {
+                artistsList.add(primaryArtist)
+            }
 
             val metaString = buildString {
                 append(META_PREFIX)
@@ -313,8 +369,19 @@ data class ISharePlaybackState(
                                 }
                             }
                         }
-                        item.isNotBlank() -> cleanArtists.add(item)
+                        item.isNotBlank() && !item.equals("iShare", ignoreCase = true) -> cleanArtists.add(item)
                     }
+                }
+            }
+
+            if (cleanArtists.isEmpty()) {
+                val singleArtist = json.optString("artist").ifBlank { json.optString("artists") }
+                if (singleArtist.isNotBlank() && !singleArtist.equals("iShare", ignoreCase = true)) {
+                    cleanArtists.addAll(
+                        singleArtist.split(",")
+                            .map { it.trim() }
+                            .filter { it.isNotEmpty() && !it.startsWith(META_PREFIX) && !it.startsWith(QUEUE_PREFIX) && !it.equals("iShare", ignoreCase = true) }
+                    )
                 }
             }
 

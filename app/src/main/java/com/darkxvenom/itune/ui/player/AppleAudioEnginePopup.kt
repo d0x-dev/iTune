@@ -1625,6 +1625,7 @@ private fun SignalPipelinePage(
             "opus" in m -> "Opus"
             "vorbis" in m -> "Vorbis"
             "flac" in m -> "FLAC"
+            "alac" in m -> "ALAC"
             "mpeg" in m -> "MP3"
             else -> m.substringAfter('/').uppercase()
         }
@@ -1635,6 +1636,21 @@ private fun SignalPipelinePage(
     }
     val liveRate = fmt?.takeIf { it.sampleRate > 0 }?.let { "%.1f kHz".format(it.sampleRate / 1000f) }
     val liveCh = fmt?.takeIf { it.channelCount > 0 }?.let { if (it.channelCount == 2) "Stereo" else "${it.channelCount} ch" }
+    val bitDepth = when {
+        trace?.quality?.contains("24-bit", ignoreCase = true) == true -> "24-bit"
+        trace?.quality?.contains("16-bit", ignoreCase = true) == true -> "16-bit"
+        liveCodec == "FLAC" || liveCodec == "ALAC" -> "24-bit"
+        else -> null
+    }
+    val rateText = buildList {
+        liveRate?.let { add(it) }
+        liveCh?.let { add(it) }
+        bitDepth?.let { add(it) }
+    }.joinToString(" • ").ifBlank { sampleRate }
+
+    val resolvedSource = trace?.source
+        ?: track?.let { com.darkxvenom.itune.backend.MusicCacheManager.cachedSource(it.id)?.let { src -> "Local cache ($src)" } }
+        ?: "—"
     val qualityLine = trace?.quality?.takeIf { it.isNotBlank() } ?: liveKbps?.let { "$it • ${liveCodec.orEmpty()}" }.orEmpty()
 
     Column(
@@ -1649,17 +1665,45 @@ private fun SignalPipelinePage(
     ) {
         EngineSectionLabel("LIVE AUDIO SIGNAL CHAIN", null)
         EngineKeyValueRow("1. Track", track?.let { "${it.title} — ${it.artists}" } ?: "No active track (Engine Ready)")
-        EngineKeyValueRow("2. Stream Source", trace?.source ?: "—")
+        EngineKeyValueRow("2. Stream Source", resolvedSource)
         if (qualityLine.isNotBlank()) EngineKeyValueRow("3. Source Quality", qualityLine)
         EngineKeyValueRow("4. Decoder", decoderText)
-        EngineKeyValueRow("5. Sample Rate", liveRate?.let { r -> liveCh?.let { "$r • $it" } ?: r } ?: sampleRate)
+        EngineKeyValueRow("5. Sample Rate", rateText)
         EngineKeyValueRow("6. Active DSP", dspChain)
         EngineKeyValueRow("7. Output Sink", deviceName)
 
-        if (!trace?.steps.isNullOrEmpty()) {
-            Spacer(Modifier.height(4.dp))
-            EngineSectionLabel("HOW THIS STREAM WAS FOUND", null)
-            trace?.steps?.forEachIndexed { i, step ->
+        val steps = trace?.steps.orEmpty()
+        if (steps.isNotEmpty()) {
+            Spacer(Modifier.height(6.dp))
+            var expandedSteps by remember { mutableStateOf(false) }
+            val visibleSteps = if (expandedSteps || steps.size <= 3) steps else steps.take(3)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                EngineSectionLabel("HOW THIS STREAM WAS FOUND", null)
+                if (steps.size > 3) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color.White.copy(alpha = 0.10f))
+                            .clickable { expandedSteps = !expandedSteps }
+                            .padding(horizontal = 8.dp, vertical = 3.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if (expandedSteps) "Show Less" else "Show More (${steps.size})",
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                        )
+                    }
+                }
+            }
+
+            visibleSteps.forEachIndexed { i, step ->
                 Text(
                     text = "${i + 1}. $step",
                     color = Color.White.copy(alpha = 0.72f),
@@ -1667,6 +1711,35 @@ private fun SignalPipelinePage(
                     lineHeight = 15.sp,
                 )
             }
+        }
+
+        Spacer(Modifier.height(4.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color.White.copy(alpha = 0.08f))
+                .clickable {
+                    com.darkxvenom.itune.backend.MusicPlayerState.upgradeCurrentQuality()
+                }
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_lossless),
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                colorFilter = ColorFilter.tint(Color.White),
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = if (com.darkxvenom.itune.backend.MusicPlayerState.upgradingQuality) "Upgrading Quality..." else "Upgrade Stream Quality",
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = SFProDisplay,
+            )
         }
     }
 }

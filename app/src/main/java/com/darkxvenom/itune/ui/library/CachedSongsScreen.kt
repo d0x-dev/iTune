@@ -12,9 +12,12 @@
 package com.darkxvenom.itune.ui.library
 
 import android.widget.Toast
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,15 +39,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DeleteSweep
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Shuffle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,6 +78,7 @@ import com.darkxvenom.itune.data.model.ROW_ART_PX
 import com.darkxvenom.itune.data.model.Song
 import com.darkxvenom.itune.data.model.artworkAt
 import com.darkxvenom.itune.data.model.toMusicTrack
+import com.darkxvenom.itune.data.repository.DownloadedAudioRepository
 import com.darkxvenom.itune.ui.artist.components.CoverPlaceholder
 import com.darkxvenom.itune.ui.artist.components.SongRow
 import com.darkxvenom.itune.ui.artist.haptics.Haptic
@@ -79,8 +86,15 @@ import com.darkxvenom.itune.ui.artist.haptics.rememberHaptics
 import com.darkxvenom.itune.ui.artist.icons.ITubeIcons
 import com.darkxvenom.itune.ui.artist.icons.SfIcons
 import com.darkxvenom.itune.ui.settings.AppleConfirmDialog
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 internal val LibraryIndigoAccent = Color(0xFF007AFF)
+
+private enum class CachedSongsSection(val label: String) {
+    CACHE("Cache"),
+    DOWNLOADS("Downloads"),
+}
 
 private fun CachedMusicTrack.toSong(): Song {
     val durText = if (durationSec > 0L) {
@@ -128,16 +142,35 @@ fun CachedSongsScreen(
     val query = controller.searchQuery
 
     var showClearDialog by remember { mutableStateOf(false) }
+    var selectedSection by remember { mutableStateOf(CachedSongsSection.CACHE) }
+    var downloadedSongs by remember { mutableStateOf(emptyList<Song>()) }
+    var isLoadingDownloads by remember { mutableStateOf(false) }
+    var downloadRefresh by remember { mutableStateOf(0) }
+
+    LaunchedEffect(selectedSection, downloadRefresh) {
+        if (selectedSection == CachedSongsSection.DOWNLOADS) {
+            isLoadingDownloads = true
+            try {
+                downloadedSongs = withContext(Dispatchers.IO) {
+                    DownloadedAudioRepository.load(context)
+                }
+            } finally {
+                isLoadingDownloads = false
+            }
+        }
+    }
 
     val allSongs = remember(cachedTracks.toList()) {
         cachedTracks.map { it.toSong() }
     }
 
-    val visibleSongs = remember(allSongs, query) {
+    val sectionSongs = if (selectedSection == CachedSongsSection.CACHE) allSongs else downloadedSongs
+
+    val visibleSongs = remember(sectionSongs, query) {
         if (query.isBlank()) {
-            allSongs
+            sectionSongs
         } else {
-            allSongs.filter { song ->
+            sectionSongs.filter { song ->
                 song.title.contains(query, ignoreCase = true) ||
                     song.artist.contains(query, ignoreCase = true) ||
                     (song.albumName?.contains(query, ignoreCase = true) == true)
@@ -145,9 +178,19 @@ fun CachedSongsScreen(
         }
     }
 
-    val artworkUrls = remember(cachedTracks.toList()) {
-        cachedTracks.mapNotNull { it.resolvedArtworkUri()?.takeIf { u -> u.isNotBlank() } }.distinct().take(4)
+    val artworkUrls = if (selectedSection == CachedSongsSection.CACHE) {
+        remember(cachedTracks.toList()) {
+            cachedTracks.mapNotNull { it.resolvedArtworkUri()?.takeIf(String::isNotBlank) }.distinct().take(4)
+        }
+    } else {
+        emptyList()
     }
+    val sectionStorageSize = if (selectedSection == CachedSongsSection.CACHE) {
+        MusicCacheManager.formatStorageSize(totalBytes)
+    } else {
+        MusicCacheManager.formatStorageSize(downloadedSongs.sumOf { it.localFileSizeBytes ?: 0L })
+    }
+    val sectionTitle = if (selectedSection == CachedSongsSection.CACHE) "Downloaded & Cached" else "Downloads"
 
     val listState = controller.listStates.getOrPut(LibraryDestination.CACHED_SONGS) { LazyListState() }
     val isScrolled by remember {
@@ -163,13 +206,22 @@ fun CachedSongsScreen(
     LibraryFrostedScreenScaffold(
         controller = controller,
         artworkUrls = artworkUrls,
-        scrolledTitle = "Downloaded & Cached",
+        scrolledTitle = sectionTitle,
         isScrolled = isScrolled,
         hasMiniPlayer = hasMiniPlayer,
         fallbackAccent = LibraryIndigoAccent,
         onBack = onBack,
         topBarActions = {
-            if (cachedTracks.isNotEmpty()) {
+            if (selectedSection == CachedSongsSection.DOWNLOADS) {
+                IconButton(onClick = { downloadRefresh++ }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Refresh,
+                        contentDescription = "Refresh Downloads",
+                        tint = Color.White.copy(alpha = 0.88f),
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+            } else if (cachedTracks.isNotEmpty()) {
                 IconButton(onClick = { showClearDialog = true }) {
                     Icon(
                         imageVector = Icons.Rounded.DeleteSweep,
@@ -189,12 +241,24 @@ fun CachedSongsScreen(
             ),
             modifier = Modifier.fillMaxSize(),
         ) {
+            item(key = "cached_sections") {
+                CachedSongsSectionPicker(
+                    selected = selectedSection,
+                    onSelect = { selectedSection = it },
+                )
+            }
+
             item(key = "cached_hero") {
                 CachedSongsHeroSection(
                     artworkUrls = artworkUrls,
-                    songCount = cachedTracks.size,
-                    totalStorageSize = MusicCacheManager.formatStorageSize(totalBytes),
-                    limitText = if (maxLimitMB > 0) "Limit: ${maxLimitMB}MB" else "Unlimited",
+                    title = sectionTitle,
+                    songCount = sectionSongs.size,
+                    totalStorageSize = sectionStorageSize,
+                    limitText = if (selectedSection == CachedSongsSection.CACHE) {
+                        if (maxLimitMB > 0) "Limit: ${maxLimitMB}MB" else "Unlimited"
+                    } else {
+                        "Downloads/iTune"
+                    },
                     hasSongs = visibleSongs.isNotEmpty(),
                     onPlay = { controller.playSongs(visibleSongs, 0) },
                     onShuffle = { controller.playSongs(visibleSongs, 0, shuffle = true) },
@@ -209,20 +273,43 @@ fun CachedSongsScreen(
                     onClose = controller::toggleSearch,
                     autoFocus = controller.focusSearchNext,
                     onFocused = { controller.focusSearchNext = false },
-                    placeholder = "Filter cached songs, artists...",
+                    placeholder = if (selectedSection == CachedSongsSection.CACHE) {
+                        "Filter cached songs, artists..."
+                    } else {
+                        "Filter downloads, artists..."
+                    },
                 )
             }
 
-            if (cachedTracks.isEmpty()) {
+            if (selectedSection == CachedSongsSection.DOWNLOADS && isLoadingDownloads) {
+                item(key = "downloads_loading") {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 28.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator(
+                            color = LibraryIndigoAccent,
+                            modifier = Modifier.size(26.dp),
+                            strokeWidth = 2.5.dp,
+                        )
+                    }
+                }
+            } else if (sectionSongs.isEmpty()) {
                 item(key = "cached_empty") {
                     Spacer(Modifier.height(14.dp))
                     LibraryGlassEmptyCard(
-                        icon = SfIcons.Download,
-                        title = "No Cached Songs Yet",
-                        subtitle = "Songs you stream in iTune are automatically cached here with high-resolution artwork for 100% offline playback.",
+                        icon = if (selectedSection == CachedSongsSection.CACHE) SfIcons.Download else SfIcons.Download,
+                        title = if (selectedSection == CachedSongsSection.CACHE) "No Cached Songs Yet" else "No Downloads Yet",
+                        subtitle = if (selectedSection == CachedSongsSection.CACHE) {
+                            "Songs you stream in iTune are automatically cached here with high-resolution artwork for 100% offline playback."
+                        } else {
+                            "Audio downloaded in iTune appears here from Downloads/iTune and can be played offline."
+                        },
                         accent = LibraryIndigoAccent,
-                        actionLabel = "Explore Music",
-                        onAction = onExploreClick,
+                        actionLabel = if (selectedSection == CachedSongsSection.CACHE) "Explore Music" else null,
+                        onAction = if (selectedSection == CachedSongsSection.CACHE) onExploreClick else null,
                     )
                 }
             } else if (visibleSongs.isEmpty()) {
@@ -231,7 +318,11 @@ fun CachedSongsScreen(
                     LibraryGlassEmptyCard(
                         icon = ITubeIcons.Search,
                         title = "No Matches",
-                        subtitle = "No cached songs matched \"$query\".",
+                        subtitle = if (selectedSection == CachedSongsSection.CACHE) {
+                            "No cached songs matched \"$query\"."
+                        } else {
+                            "No downloads matched \"$query\"."
+                        },
                         accent = LibraryIndigoAccent,
                         actionLabel = "Clear Filter",
                         onAction = { controller.searchQuery = "" },
@@ -247,13 +338,15 @@ fun CachedSongsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
-                            text = if (query.isBlank()) "Cached Tracks" else "Matches (${visibleSongs.size})",
+                            text = if (query.isBlank()) {
+                                if (selectedSection == CachedSongsSection.CACHE) "Cached Tracks" else "Downloaded Tracks"
+                            } else "Matches (${visibleSongs.size})",
                             color = Color.White,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                         )
                         Text(
-                            text = "${visibleSongs.size} tracks • ${MusicCacheManager.formatStorageSize(totalBytes)}",
+                            text = "${visibleSongs.size} tracks • $sectionStorageSize",
                             color = Color.White.copy(alpha = 0.52f),
                             fontSize = 12.sp,
                         )
@@ -307,11 +400,71 @@ fun CachedSongsScreen(
         )
     }
 }
+@Composable
+private fun CachedSongsSectionPicker(
+    selected: CachedSongsSection,
+    onSelect: (CachedSongsSection) -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 8.dp)
+            .height(36.dp)
+            .clip(RoundedCornerShape(9.dp))
+            .background(Color(0xFF1C1C1E))
+            .padding(2.5.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            CachedSongsSection.entries.forEach { section ->
+                val isSelected = section == selected
+                val backgroundColor by animateColorAsState(
+                    targetValue = if (isSelected) Color(0xFF38383A) else Color.Transparent,
+                    animationSpec = tween(durationMillis = 160),
+                    label = "cachedSectionBackground",
+                )
+                val textColor by animateColorAsState(
+                    targetValue = if (isSelected) Color.White else Color.White.copy(alpha = 0.56f),
+                    animationSpec = tween(durationMillis = 160),
+                    label = "cachedSectionText",
+                )
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(7.dp))
+                        .background(backgroundColor)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ) { onSelect(section) },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = section.label,
+                        color = textColor,
+                        fontSize = 13.sp,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                        letterSpacing = (-0.2).sp,
+                        maxLines = 1,
+                        softWrap = false,
+                    )
+                }
+            }
+        }
+    }
+}
+
 // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
 @Composable
 private fun CachedSongsHeroSection(
     artworkUrls: List<String>,
+    title: String,
     songCount: Int,
     totalStorageSize: String,
     limitText: String,
@@ -411,7 +564,7 @@ private fun CachedSongsHeroSection(
         Spacer(Modifier.height(18.dp))
 
         Text(
-            text = "Downloaded & Cached",
+            text = title,
             color = Color.White,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,

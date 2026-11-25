@@ -59,8 +59,46 @@ object JioSaavnProvider {
 
     private class Cached(val url: String?, val at: Long, val trace: StreamTrace? = null)
     private val cache = ConcurrentHashMap<String, Cached>()
+    val streamUrlCache = ConcurrentHashMap<String, Pair<String, Int>>()
+    val hitCache = ConcurrentHashMap<String, Hit>()
 
-    private class Hit(val id: String, val title: String, val artists: List<String>, val encUrl: String, val has320: Boolean)
+    data class Hit(
+        val id: String,
+        val title: String,
+        val artists: List<String>,
+        val encUrl: String,
+        val has320: Boolean,
+        val duration: Int = 0,
+        val album: String = "",
+    )
+
+    fun searchHits(query: String): List<Hit> = search(query)
+    fun streamForHit(hit: Hit): Pair<String, Int>? = streamFor(hit, mutableListOf())
+
+    fun getHitById(id: String): Hit? {
+        val cleanId = id.removePrefix("JS:").substringAfterLast("::").trim()
+        if (cleanId.isBlank()) return null
+        hitCache[cleanId]?.let { return it }
+
+        val body = call(mapOf("__call" to "song.getDetails", "pids" to cleanId)) ?: return null
+        val root = runCatching { JSONObject(body) }.getOrNull() ?: return null
+        val song = root.optJSONArray("songs")?.optJSONObject(0)
+            ?: root.optJSONObject(cleanId)
+            ?: root.keys().asSequence().mapNotNull { root.optJSONObject(it) }.firstOrNull()
+            ?: return null
+        return parseSong(song)
+    }
+
+    fun unescapeHtml(text: String?): String {
+        if (text.isNullOrBlank()) return ""
+        return text.replace("&quot;", "\"")
+            .replace("&amp;", "&")
+            .replace("&#039;", "'")
+            .replace("&apos;", "'")
+            .replace("&lt;", "<")
+            .replace("&gt;", ">")
+            .trim()
+    }
 
     /** A playable JioSaavn URL for this track, or null (→ use YouTube). */
     suspend fun resolve(
@@ -198,11 +236,14 @@ object JioSaavnProvider {
     private fun call(params: Map<String, String>): String? {
         val url = API.toHttpUrl().newBuilder().apply {
             params.forEach { (k, v) -> addQueryParameter(k, v) }
-            addQueryParameter("_format", "json"); addQueryParameter("_marker", "0")
-            addQueryParameter("api_version", "4"); addQueryParameter("ctx", "android")
+            addQueryParameter("_format", "json")
+            addQueryParameter("_marker", "0")
+            addQueryParameter("api_version", "4")
+            addQueryParameter("ctx", "android")
+            addQueryParameter("cc", "in")
         }.build()
         val req = Request.Builder().url(url)
-            .header("Accept", "application/json")
+            .header("Accept", "application/json, text/plain, */*")
             .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36")
             .header("Accept-Language", "en-IN,en;q=0.9")
             .header("Cookie", "explicit_content=1")
@@ -211,43 +252,142 @@ object JioSaavnProvider {
     }
 
     private fun parseSong(o: JSONObject): Hit? {
-        val more = o.optJSONObject("more_info") ?: return null
-        val id = o.optString("id").ifBlank { return null }
-        // Every credited artist (primary, featured and other), not just the primary ones.
-        val artistMap = more.optJSONObject("artistMap")
-        val artists = listOf("primary_artists", "featured_artists", "artists").flatMap { key ->
-            artistMap?.optJSONArray(key)?.let { arr ->
-                (0 until arr.length()).mapNotNull { arr.optJSONObject(it)?.optString("name")?.takeIf { n -> n.isNotBlank() } }
-            }.orEmpty()
-        }.distinct()
-        return Hit(
+        val more = o.optJSONObject("more_info")
+        val rawId = o.optString("id").ifBlank { more?.optString("id").orEmpty() }
+        val id = rawId.removePrefix("JS:").substringAfterLast("::").trim().ifBlank { return null }
+
+        val rawTitle = o.optString("song").ifBlank {
+            o.optString("title").ifBlank {
+                o.optString("name").ifBlank {
+                    more?.optString("song").orEmpty().ifBlank {
+                        more?.optString("title").orEmpty()
+                    }
+                }
+            }
+        }
+        if (rawTitle.isBlank()) return null
+        val title = unescapeHtml(rawTitle)
+
+        // Parse credited artists comprehensively across all formats
+        val artists = mutableListOf<String>()
+        val artistMap = more?.optJSONObject("artistMap") ?: o.optJSONObject("artistMap")
+        if (artistMap != null) {
+            listOf("primary_artists", "featured_artists", "artists").forEach { key ->
+                artistMap.optJSONArray(key)?.let { arr ->
+                    for (i in 0 until arr.length()) {
+                        arr.optJSONObject(i)?.optString("name")?.takeIf { it.isNotBlank() }?.let {
+                            artists.add(unescapeHtml(it))
+                        }
+                    }
+                }
+            }
+            if (artists.isEmpty()) {
+                val keys = artistMap.keys()
+                while (keys.hasNext()) {
+                    val k = keys.next()
+                    if (k.isNotBlank() && k !in setOf("primary_artists", "featured_artists", "artists")) {
+                        artists.add(unescapeHtml(k))
+                    }
+                }
+            }
+        }
+        if (artists.isEmpty()) {
+            val primary = more?.optString("primary_artists")?.takeIf { it.isNotBlank() }
+                ?: o.optString("primary_artists")
+            if (primary.isNotBlank()) {
+                primary.split(",").forEach {
+                    val a = unescapeHtml(it.trim())
+                    if (a.isNotBlank()) artists.add(a)
+                }
+            }
+        }
+        if (artists.isEmpty()) {
+            val singers = more?.optString("singers")?.takeIf { it.isNotBlank() }
+                ?: o.optString("singers")
+            if (singers.isNotBlank()) {
+                singers.split(",").forEach {
+                    val a = unescapeHtml(it.trim())
+                    if (a.isNotBlank()) artists.add(a)
+                }
+            }
+        }
+        if (artists.isEmpty()) {
+            val music = more?.optString("music")?.takeIf { it.isNotBlank() }
+                ?: o.optString("music")
+            if (music.isNotBlank()) {
+                music.split(",").forEach {
+                    val a = unescapeHtml(it.trim())
+                    if (a.isNotBlank()) artists.add(a)
+                }
+            }
+        }
+        if (artists.isEmpty()) {
+            artists.add("Unknown Artist")
+        }
+
+        val encUrl = more?.optString("encrypted_media_url")?.takeIf { it.isNotBlank() }
+            ?: o.optString("encrypted_media_url")
+
+        val has320 = more?.optString("320kbps")?.equals("true", ignoreCase = true)
+            ?: o.optString("320kbps").equals("true", ignoreCase = true)
+            ?: more?.optBoolean("320kbps", false)
+            ?: o.optBoolean("320kbps", false)
+
+        val durationStr = more?.optString("duration")?.takeIf { it.isNotBlank() }
+            ?: o.optString("duration")
+        val duration = durationStr.toIntOrNull()
+            ?: more?.optInt("duration", 0)
+            ?: o.optInt("duration", 0)
+
+        val albumRaw = more?.optString("album")?.takeIf { it.isNotBlank() }
+            ?: o.optString("album")
+        val album = unescapeHtml(albumRaw)
+
+        val hit = Hit(
             id = id,
-            title = o.optString("title"),
-            artists = artists,
-            encUrl = more.optString("encrypted_media_url"),
-            has320 = more.optString("320kbps").equals("true", ignoreCase = true),
+            title = title,
+            artists = artists.distinct(),
+            encUrl = encUrl,
+            has320 = has320,
+            duration = duration,
+            album = album,
         )
+        hitCache[id] = hit
+
+        // Pre-decrypt media url into streamUrlCache immediately!
+        if (encUrl.isNotBlank()) {
+            decode(hit, mutableListOf())?.let { res ->
+                streamUrlCache[id] = res
+            }
+        }
+
+        return hit
     }
 
     private fun search(query: String): List<Hit> {
-        val body = call(mapOf("__call" to "search.getResults", "q" to query, "p" to "1", "n" to "10")) ?: return emptyList()
-        val arr: JSONArray = JSONObject(body).optJSONArray("results") ?: return emptyList()
+        val body = call(mapOf("__call" to "search.getResults", "q" to query, "p" to "1", "n" to "20")) ?: return emptyList()
+        val arr: JSONArray = runCatching { JSONObject(body).optJSONArray("results") }.getOrNull() ?: return emptyList()
         return (0 until arr.length()).mapNotNull { arr.optJSONObject(it)?.let(::parseSong) }
     }
 
     private fun streamFor(hit: Hit, steps: MutableList<String>): Pair<String, Int>? {
-        // Search rows normally carry the encrypted URL; fetch details only if they don't.
-        val enc = hit.encUrl.ifBlank {
-            val body = call(mapOf("__call" to "song.getDetails", "pids" to hit.id)) ?: return null
-            val root = JSONObject(body)
-            val song = root.optJSONArray("songs")?.optJSONObject(0)
-                ?: root.optJSONObject(hit.id)
-                ?: root.keys().asSequence().mapNotNull { root.optJSONObject(it) }.firstOrNull()
-                ?: return null
-            steps += "Fetched stream details (song.getDetails) for id ${hit.id}"
-            return decode(parseSong(song) ?: return null, steps)
+        streamUrlCache[hit.id]?.let {
+            steps += "Hit stream cache for id ${hit.id} → ${it.second} kbps"
+            return it
         }
-        return decode(Hit(hit.id, hit.title, hit.artists, enc, hit.has320), steps)
+        val enc = hit.encUrl.ifBlank {
+            val fetched = getHitById(hit.id)
+            fetched?.encUrl.orEmpty()
+        }
+        if (enc.isBlank()) {
+            steps += "No encrypted media URL for id ${hit.id}"
+            return null
+        }
+        val res = decode(Hit(hit.id, hit.title, hit.artists, enc, hit.has320, hit.duration, hit.album), steps)
+        if (res != null) {
+            streamUrlCache[hit.id] = res
+        }
+        return res
     }
 
     private fun decode(hit: Hit, steps: MutableList<String>): Pair<String, Int>? {
@@ -257,17 +397,15 @@ object JioSaavnProvider {
         }
         steps += "Decrypted the encrypted CDN link (DES) → saavncdn stream"
         val m = Regex("_(48|96|160|320)\\.(mp4|aac|mp3)(?=[?#]|$)", RegexOption.IGNORE_CASE).find(url)
-        if (m == null) {
-            steps += "Rendition not named in the URL; using it as given"
-            return url to 160
-        }
-        val offered = m.groupValues[1].toInt()
-        val best = if (hit.has320) url.replaceRange(m.range, "_320.${m.groupValues[2]}") else url
+        val ext = m?.groupValues?.get(2) ?: "mp4"
+        val offered = m?.groupValues?.get(1)?.toIntOrNull() ?: 160
+        val best = if (hit.has320) {
+            if (m != null) url.replaceRange(m.range, "_320.$ext") else url.replace("_96.mp4", "_320.mp4").replace("_160.mp4", "_320.mp4")
+        } else url
         val kbps = if (hit.has320) 320 else offered
         steps += if (hit.has320) "Catalogue lists a 320 kbps file → switched $offered → 320 kbps" else "Highest rendition offered: $offered kbps"
-        // 48/96kbps is worse than YouTube's stream: let the caller fall back instead.
-        if (kbps <= 96) {
-            steps += "$kbps kbps is below YouTube quality → rejected"
+        if (kbps <= 96 && !hit.has320) {
+            steps += "$kbps kbps is below standard audio quality → rejected"
             return null
         }
         return best to kbps

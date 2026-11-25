@@ -981,7 +981,10 @@ fun HomeScreen(
             exit = fadeOut(tween(170)) + slideOutHorizontally(tween(210)) { it / 9 },
         ) {
             BackHandler(enabled = showSources && !MusicPlayerState.expanded) { showSources = false }
-            SourcesScreen(onBack = { showSources = false })
+            SourcesScreen(
+                hasMiniPlayer = hasMiniPlayer,
+                onBack = { showSources = false },
+            )
         }
 
         // Apple iPhone SharePlay-styled Listen Together ("iShare") Screen Overlay

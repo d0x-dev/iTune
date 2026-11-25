@@ -53,8 +53,12 @@ data class SettingsUiState(
     val showSyncedLyricsOverCanvas: Boolean = true,
     val timeSyncedLyrics: Boolean = true,
     val playerType: String = "Dynamic",
+    val playerStyle: String = SettingsStore.PLAYER_STYLE_PRIMARY,
     val playerDynamicColoring: Boolean = true,
     val fullScreenCoverArt: Boolean = true,
+    val coverCornerRadius: Int = 8,
+    val hideQualityTag: Boolean = false,
+    val hideVolumeBar: Boolean = false,
     val topCardType: String = "Portrait",
     val liquidGlassNav: Boolean = false,
     val appFont: String = "system",
@@ -166,14 +170,20 @@ object SettingsStore {
     const val KEY_SHOW_SYNCED_LYRICS_OVER_CANVAS = "show_synced_lyrics_over_canvas"
     const val KEY_TIME_SYNCED_LYRICS = "time_synced_lyrics"
     const val KEY_PLAYER_TYPE = "player_type"
+    const val KEY_PLAYER_STYLE = "player_style"
     const val KEY_PLAYER_DYNAMIC_COLORING = "player_dynamic_coloring"
     const val KEY_FULL_SCREEN_COVER_ART = "full_screen_cover_art"
+    const val KEY_COVER_CORNER_RADIUS = "cover_corner_radius"
+    const val KEY_HIDE_QUALITY_TAG = "hide_quality_tag"
+    const val KEY_HIDE_VOLUME_BAR = "hide_volume_bar"
     const val KEY_TOP_CARD_TYPE = "top_card_type"
     const val KEY_LIQUID_GLASS_NAV = "liquid_glass_nav"
     const val KEY_APP_FONT = "app_font"
     const val TOP_CARD_TYPE_PORTRAIT = "Portrait"
     const val TOP_CARD_TYPE_LANDSCAPE = "Landscape"
     const val TOP_CARD_TYPE_APPLE = "Apple"
+    const val PLAYER_STYLE_PRIMARY = "Primary"
+    const val PLAYER_STYLE_SECONDARY = "Secondary"
     const val KEY_LIQUID_GLASS = "liquid_glass_chrome"
     const val KEY_SETTINGS_MINIMISED = "settings_minimised"
     const val KEY_TACTILE_HAPTICS = "tactile_haptics"
@@ -329,6 +339,8 @@ object SettingsStore {
             KEY_SHOW_SYNCED_LYRICS_OVER_CANVAS -> cur.copy(showSyncedLyricsOverCanvas = value)
             KEY_PLAYER_DYNAMIC_COLORING -> cur.copy(playerDynamicColoring = value)
             KEY_FULL_SCREEN_COVER_ART -> cur.copy(fullScreenCoverArt = value)
+            KEY_HIDE_QUALITY_TAG -> cur.copy(hideQualityTag = value)
+            KEY_HIDE_VOLUME_BAR -> cur.copy(hideVolumeBar = value)
             KEY_LIQUID_GLASS_NAV -> cur.copy(liquidGlassNav = value)
             KEY_TIME_SYNCED_LYRICS -> cur.copy(timeSyncedLyrics = value)
             KEY_LIQUID_GLASS -> cur.copy(liquidGlassChrome = value)
@@ -369,6 +381,7 @@ object SettingsStore {
         val cur = _state.value
         _state.value = when (key) {
             KEY_AOD_TIMEOUT -> cur.copy(aodTimeoutSeconds = value)
+            KEY_COVER_CORNER_RADIUS -> cur.copy(coverCornerRadius = value)
             else -> cur
         }
     }
@@ -381,6 +394,7 @@ object SettingsStore {
         val normalized = when (key) {
             KEY_CONTENT_LANGUAGE -> ContentLocaleCatalog.normalizeLanguageChoice(trimmed)
             KEY_CONTENT_COUNTRY -> ContentLocaleCatalog.normalizeCountryChoice(trimmed)
+            KEY_PLAYER_STYLE -> normalizePlayerStyle(trimmed)
             else -> trimmed
         }
         prefs?.edit()?.putString(key, normalized)?.apply()
@@ -390,6 +404,7 @@ object SettingsStore {
         _state.value = when (key) {
             KEY_DISPLAY_NAME -> cur.copy(displayName = normalized)
             KEY_PLAYER_TYPE -> cur.copy(playerType = if (normalized.equals("Static", ignoreCase = true)) "Static" else "Dynamic")
+            KEY_PLAYER_STYLE -> cur.copy(playerStyle = normalizePlayerStyle(normalized))
             KEY_TOP_CARD_TYPE -> cur.copy(
                 topCardType = when {
                     normalized.equals(TOP_CARD_TYPE_LANDSCAPE, ignoreCase = true) -> TOP_CARD_TYPE_LANDSCAPE
@@ -566,6 +581,13 @@ object SettingsStore {
         _state.value = _state.value.copy(playerType = valid)
     }
 
+    fun setPlayerStyle(context: Context, style: String) {
+        setString(context, KEY_PLAYER_STYLE, style)
+    }
+
+    private fun normalizePlayerStyle(value: String): String =
+        if (value.equals(PLAYER_STYLE_SECONDARY, ignoreCase = true)) PLAYER_STYLE_SECONDARY else PLAYER_STYLE_PRIMARY
+
     fun isPermanentShuffleEnabled(): Boolean = _state.value.permanentShuffle
 
     fun setAutoSleepConfig(
@@ -670,8 +692,12 @@ object SettingsStore {
             showSyncedLyricsOverCanvas = p.getBoolean(KEY_SHOW_SYNCED_LYRICS_OVER_CANVAS, defaults.showSyncedLyricsOverCanvas),
             timeSyncedLyrics = p.getBoolean(KEY_TIME_SYNCED_LYRICS, defaults.timeSyncedLyrics),
             playerType = p.getString(KEY_PLAYER_TYPE, defaults.playerType) ?: defaults.playerType,
+            playerStyle = normalizePlayerStyle(p.getString(KEY_PLAYER_STYLE, defaults.playerStyle) ?: defaults.playerStyle),
             playerDynamicColoring = p.getBoolean(KEY_PLAYER_DYNAMIC_COLORING, defaults.playerDynamicColoring),
             fullScreenCoverArt = p.getBoolean(KEY_FULL_SCREEN_COVER_ART, defaults.fullScreenCoverArt),
+            coverCornerRadius = p.getInt(KEY_COVER_CORNER_RADIUS, defaults.coverCornerRadius),
+            hideQualityTag = p.getBoolean(KEY_HIDE_QUALITY_TAG, defaults.hideQualityTag),
+            hideVolumeBar = p.getBoolean(KEY_HIDE_VOLUME_BAR, defaults.hideVolumeBar),
             liquidGlassNav = p.getBoolean(KEY_LIQUID_GLASS_NAV, defaults.liquidGlassNav),
             topCardType = p.getString(KEY_TOP_CARD_TYPE, defaults.topCardType) ?: defaults.topCardType,
             appFont = p.getString(KEY_APP_FONT, defaults.appFont) ?: defaults.appFont,

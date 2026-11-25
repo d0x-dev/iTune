@@ -19,6 +19,9 @@ import com.darkxvenom.itune.R
 enum class AppFont(val label: String, val key: String) {
     SYSTEM("System Default", "system"),
     SF_PRO("SF Pro Display", "sf_pro"),
+    DOTO("Doto", "doto"),
+    DOTO_ROUNDED("Doto Rounded", "doto_rounded"),
+    DOTRICE("Dotrice", "dotrice"),
     LINOTTE("Linotte", "linotte"),
     POPPINS("Poppins", "poppins"),
     SANS_SERIF("Sans Serif", "sans_serif"),
@@ -34,6 +37,24 @@ enum class AppFont(val label: String, val key: String) {
             Font(R.font.sf_pro_display_semibold, FontWeight.SemiBold),
             Font(R.font.sf_pro_display_bold, FontWeight.Bold),
             Font(R.font.sf_pro_display_heavy, FontWeight.Black),
+        )
+        DOTO -> FontFamily(
+            Font(R.font.doto_regular, FontWeight.Normal),
+            Font(R.font.doto_medium, FontWeight.Medium),
+            Font(R.font.doto_semibold, FontWeight.SemiBold),
+            Font(R.font.doto_bold, FontWeight.Bold),
+            Font(R.font.doto_black, FontWeight.Black),
+        )
+        DOTO_ROUNDED -> FontFamily(
+            Font(R.font.doto_rounded_regular, FontWeight.Normal),
+            Font(R.font.doto_rounded_medium, FontWeight.Medium),
+            Font(R.font.doto_rounded_semibold, FontWeight.SemiBold),
+            Font(R.font.doto_rounded_bold, FontWeight.Bold),
+            Font(R.font.doto_rounded_black, FontWeight.Black),
+        )
+        DOTRICE -> FontFamily(
+            Font(R.font.dotrice_regular, FontWeight.Normal),
+            Font(R.font.dotrice_bold, FontWeight.Bold),
         )
         LINOTTE -> FontFamily(Font(R.font.linotte))
         POPPINS -> FontFamily(
