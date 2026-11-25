@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.television.ui.browse
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -127,7 +130,7 @@ fun TvBrowseScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "New Releases",
+                            text = stringResource(R.string.ui_new_releases),
                             color = Color.White,
                             fontSize = 24.sp,
                             fontFamily = SFProDisplay,
@@ -172,7 +175,7 @@ fun TvBrowseScreen(
                 item(key = "browse_featured_header") {
                     Spacer(Modifier.height(28.dp))
                     Text(
-                        text = "Featured Playlists",
+                        text = stringResource(R.string.ui_featured_playlists),
                         color = Color.White,
                         fontSize = 24.sp,
                         fontFamily = SFProDisplay,
@@ -209,7 +212,7 @@ fun TvBrowseScreen(
                 item(key = "browse_moods_header") {
                     Spacer(Modifier.height(28.dp))
                     Text(
-                        text = "Moods & Activities",
+                        text = stringResource(R.string.ui_moods_activities),
                         color = Color.White,
                         fontSize = 24.sp,
                         fontFamily = SFProDisplay,
@@ -238,7 +241,7 @@ fun TvBrowseScreen(
                 item(key = "browse_genres_header") {
                     Spacer(Modifier.height(28.dp))
                     Text(
-                        text = "Music by Genre",
+                        text = stringResource(R.string.ui_music_by_genre),
                         color = Color.White,
                         fontSize = 24.sp,
                         fontFamily = SFProDisplay,
@@ -305,7 +308,7 @@ private fun TvBrowseReleaseCard(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.PlayArrow,
-                            contentDescription = "Open",
+                            contentDescription = stringResource(R.string.open),
                             tint = Color.White,
                             modifier = Modifier.size(32.dp),
                         )
@@ -388,7 +391,7 @@ private fun TvBrowsePlaylistCard(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.PlayArrow,
-                            contentDescription = "Open",
+                            contentDescription = stringResource(R.string.open),
                             tint = Color.White,
                             modifier = Modifier.size(32.dp),
                         )
