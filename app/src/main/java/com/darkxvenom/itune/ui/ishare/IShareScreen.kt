@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.ishare
 
+
+import androidx.compose.ui.res.stringResource
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -238,7 +240,7 @@ fun IShareScreen(
     fun copyToClipboard(label: String, value: String) {
         val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
         cm?.setPrimaryClip(ClipData.newPlainText(label, value))
-        Toast.makeText(context, "Copied: $value", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.toast_copied, value), Toast.LENGTH_SHORT).show()
     }
 
     fun sharePairingInvite(session: IShareSession, isLan: Boolean) {
@@ -330,7 +332,7 @@ fun IShareScreen(
                                                 Intent(Intent.ACTION_VIEW, Uri.parse("http://${currentRoom.code}")),
                                             )
                                         }.onFailure {
-                                            Toast.makeText(context, "Could not open browser", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.toast_could_not_open_browser), Toast.LENGTH_SHORT).show()
                                         }
                                     },
                                     onLeave = {
@@ -527,7 +529,7 @@ fun IShareScreen(
                         ) {
                             FrostedTopBarTitlePill(hazeState = hazeState) {
                                 Text(
-                                    text = "iShare",
+                                    text = stringResource(R.string.ui_ishare),
                                     color = Color.White,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
@@ -548,7 +550,7 @@ fun IShareScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Refresh,
-                                contentDescription = "Refresh Network",
+                                contentDescription = stringResource(R.string.ui_refresh_network),
                                 tint = if (activeSession != null) IShareSharePlayGreen else Color.White,
                                 modifier = Modifier.size(20.dp),
                             )
@@ -594,7 +596,7 @@ fun IShareScreen(
                     lanPortInput = p.toString()
                     showEditPortDialog = false
                 } else {
-                    Toast.makeText(context, "Enter a port between 1024 and 65535", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_enter_a_port_between_1024_and_65535), Toast.LENGTH_SHORT).show()
                 }
             },
             onDismiss = { showEditPortDialog = false },
@@ -701,7 +703,7 @@ private fun IShareHeroHeader(
                 Spacer(Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = "iShare",
+                        text = stringResource(R.string.ui_ishare),
                         color = Color.White,
                         fontSize = 31.sp,
                         fontWeight = FontWeight.Bold,
@@ -743,7 +745,7 @@ private fun IShareHeroHeader(
             Spacer(Modifier.width(6.dp))
             Icon(
                 imageVector = Icons.Rounded.Edit,
-                contentDescription = "Edit Display Name",
+                contentDescription = stringResource(R.string.ui_edit_display_name),
                 tint = Color.White.copy(alpha = 0.55f),
                 modifier = Modifier.size(13.dp),
             )
@@ -974,7 +976,7 @@ private fun SharedNowPlayingCard(
                             )
                             Spacer(Modifier.width(4.dp))
                             Text(
-                                text = "Host controls playback",
+                                text = stringResource(R.string.ui_host_controls_playback),
                                 color = Color.White.copy(alpha = 0.45f),
                                 fontSize = 11.5.sp,
                             )
@@ -1046,7 +1048,7 @@ private fun SharedNowPlayingCard(
                 ) {
                     Image(
                         painter = painterResource(R.drawable.skip_previous),
-                        contentDescription = "Previous",
+                        contentDescription = stringResource(R.string.ui_previous),
                         colorFilter = ColorFilter.tint(Color.White.copy(alpha = if (controlsAllowed) 0.96f else 0.35f)),
                         modifier = Modifier.size(40.dp),
                     )
@@ -1070,7 +1072,7 @@ private fun SharedNowPlayingCard(
                 ) {
                     Image(
                         painter = painterResource(R.drawable.skip_next),
-                        contentDescription = "Next",
+                        contentDescription = stringResource(R.string.ui_next),
                         colorFilter = ColorFilter.tint(Color.White.copy(alpha = if (controlsAllowed) 0.96f else 0.35f)),
                         modifier = Modifier.size(40.dp),
                     )
@@ -1116,7 +1118,7 @@ private fun ConnectedDevicesCard(
             )
             Spacer(Modifier.width(6.dp))
             Text(
-                text = "CONNECTED DEVICES (${shownList.size})",
+                text = stringResource(R.string.ui_connected_devices, shownList.size),
                 color = Color.White.copy(alpha = 0.56f),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -1175,7 +1177,7 @@ private fun ConnectedDevicesCard(
                             if (isYou) {
                                 Spacer(Modifier.width(6.dp))
                                 Text(
-                                    text = "You",
+                                    text = stringResource(R.string.ui_you),
                                     color = IShareSharePlayGreen,
                                     fontSize = 11.5.sp,
                                     fontWeight = FontWeight.SemiBold,
@@ -1196,7 +1198,7 @@ private fun ConnectedDevicesCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.PersonRemove,
-                                contentDescription = "Remove ${device.name}",
+                                contentDescription = stringResource(R.string.remove_device, device.name),
                                 tint = AppleMusicRed,
                                 modifier = Modifier.size(18.dp),
                             )
@@ -1243,7 +1245,7 @@ private fun RoomPermissionsGlassCard(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "ROOM PERMISSIONS",
+            text = stringResource(R.string.ui_room_permissions),
             color = Color.White.copy(alpha = 0.56f),
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
@@ -1291,7 +1293,7 @@ private fun SharedQueuePreviewCard(
     val shown = queue.take(8)
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "UP NEXT (${queue.size})",
+            text = stringResource(R.string.ui_up_next, queue.size),
             color = Color.White.copy(alpha = 0.56f),
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
@@ -1349,7 +1351,7 @@ private fun SharedQueuePreviewCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Close,
-                                contentDescription = "Remove from queue",
+                                contentDescription = stringResource(R.string.ui_remove_from_queue),
                                 tint = Color.White.copy(alpha = 0.48f),
                                 modifier = Modifier.size(16.dp),
                             )
@@ -1388,7 +1390,7 @@ private fun HostSessionCard(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "HOST A SESSION",
+            text = stringResource(R.string.ui_host_a_session),
             color = Color.White.copy(alpha = 0.56f),
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
@@ -1436,8 +1438,8 @@ private fun HostSessionCard(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text("LAN Port", color = Color.White, fontSize = 14.5.sp, fontWeight = FontWeight.Medium)
-                        Text("$portText  ›", color = IShareLanBlue, fontSize = 14.5.sp, fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.ui_lan_port), color = Color.White, fontSize = 14.5.sp, fontWeight = FontWeight.Medium)
+                        Text(stringResource(R.string.ui_text_da5c3629fd, portText), color = IShareLanBlue, fontSize = 14.5.sp, fontWeight = FontWeight.SemiBold)
                     }
                 }
 
@@ -1544,7 +1546,7 @@ private fun JoinSessionCard(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "PAIR & JOIN A DEVICE",
+            text = stringResource(R.string.ui_pair_join_a_device),
             color = Color.White.copy(alpha = 0.56f),
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
@@ -1656,13 +1658,13 @@ private fun JoinSessionCard(
                                             fontWeight = FontWeight.SemiBold,
                                         )
                                         Text(
-                                            text = "${host.address} • ${host.participants} active",
+                                            text = stringResource(R.string.ui_active_7c6a4064, host.address, host.participants),
                                             color = AppleTextSecondary,
                                             fontSize = 12.sp,
                                         )
                                     }
                                     Text(
-                                        text = "Connect ›",
+                                        text = stringResource(R.string.ui_connect),
                                         color = IShareLanBlue,
                                         fontSize = 13.5.sp,
                                         fontWeight = FontWeight.SemiBold,
@@ -1889,7 +1891,7 @@ private fun IShareTextInputDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Save",
+                text = stringResource(R.string.save),
                 color = if (text.isNotBlank()) AppleMusicRed else Color.White.copy(alpha = 0.35f),
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -1903,7 +1905,7 @@ private fun IShareTextInputDialog(
                 .clickable(onClick = onDismiss),
             contentAlignment = Alignment.Center,
         ) {
-            Text("Cancel", color = Color(0xFF8E8E93), fontSize = 17.sp)
+            Text(stringResource(R.string.cancel), color = Color(0xFF8E8E93), fontSize = 17.sp)
         }
     }
 }
@@ -1946,7 +1948,7 @@ private fun IShareConfirmDialog(
                 .clickable(onClick = onDismiss),
             contentAlignment = Alignment.Center,
         ) {
-            Text("Cancel", color = Color(0xFF8E8E93), fontSize = 17.sp)
+            Text(stringResource(R.string.cancel), color = Color(0xFF8E8E93), fontSize = 17.sp)
         }
     }
 }
