@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.spotify
 
+
+import androidx.compose.ui.res.stringResource
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -257,7 +259,7 @@ fun SpotifyIntegrationScreen(
                     val extra = if (unmatched.isNotEmpty()) " (${unmatched.size} unmatched)" else ""
                     val syncNote = if (enableAutoSync && !spotifyPlaylistId.isNullOrBlank()) " • Auto-sync on" else ""
                     importStatus = "Imported '$playlistName' • ${matched.size} songs$extra$syncNote"
-                    Toast.makeText(context, "Imported '$playlistName' (${matched.size} songs)", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, context.getString(R.string.toast_imported_songs, playlistName, matched.size), Toast.LENGTH_LONG).show()
                 }
             }.onFailure { err ->
                 importStatus = err.message ?: "Import failed"
@@ -347,13 +349,13 @@ fun SpotifyIntegrationScreen(
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(
                                             imageVector = Icons.Rounded.Download,
-                                            contentDescription = "Import",
+                                            contentDescription = stringResource(R.string.ui_import),
                                             tint = SpotifyGreen,
                                             modifier = Modifier.size(16.dp),
                                         )
                                         Spacer(Modifier.width(5.dp))
                                         Text(
-                                            text = "Import",
+                                            text = stringResource(R.string.ui_import),
                                             color = SpotifyGreen,
                                             fontSize = 13.sp,
                                             fontWeight = FontWeight.SemiBold,
@@ -429,9 +431,7 @@ fun SpotifyIntegrationScreen(
                                                 MusicPlayerState.play(matched, listOf(matched), expandPlayer = true)
                                             }
                                         } else {
-                                            Toast.makeText(
-                                                context,
-                                                "Couldn't find '${track.title}' on YouTube Music",
+                                            Toast.makeText(context, context.getString(R.string.toast_couldn_t_find_on_youtube_music, track.title),
                                                 Toast.LENGTH_SHORT,
                                             ).show()
                                         }
@@ -476,7 +476,7 @@ fun SpotifyIntegrationScreen(
                             } else {
                                 Icon(
                                     imageVector = Icons.Rounded.PlayArrow,
-                                    contentDescription = "Play",
+                                    contentDescription = stringResource(R.string.play),
                                     tint = Color.White.copy(alpha = 0.65f),
                                     modifier = Modifier.size(22.dp),
                                 )
@@ -509,21 +509,21 @@ fun SpotifyIntegrationScreen(
                             ) {
                                 Image(
                                     painter = painterResource(R.drawable.ic_spotify),
-                                    contentDescription = "Spotify",
+                                    contentDescription = stringResource(R.string.ui_spotify),
                                     modifier = Modifier.size(28.dp),
                                 )
                             }
                             Spacer(Modifier.width(12.dp))
                             Column {
                                 Text(
-                                    text = "Spotify & Canvas",
+                                    text = stringResource(R.string.ui_spotify_canvas),
                                     color = Color.White,
                                     fontSize = 30.sp,
                                     fontWeight = FontWeight.Bold,
                                     letterSpacing = (-0.5).sp,
                                 )
                                 Text(
-                                    text = "Spotify Canvas, Apple Music, Tidal & Community motion covers",
+                                    text = stringResource(R.string.ui_spotify_canvas_apple_music_tidal_community_motion_cove),
                                     color = AppleTextSecondary,
                                     fontSize = 13.sp,
                                 )
@@ -579,7 +579,7 @@ fun SpotifyIntegrationScreen(
                                             )
                                             Spacer(Modifier.width(4.dp))
                                             Text(
-                                                text = "Active",
+                                                text = stringResource(R.string.ui_active),
                                                 color = SpotifyGreen,
                                                 fontSize = 12.sp,
                                                 fontWeight = FontWeight.SemiBold,
@@ -619,13 +619,13 @@ fun SpotifyIntegrationScreen(
                                                 clearSpotifyWebSession()
                                                 SettingsStore.setSpotifySpdcToken(context, "")
                                                 tokenInput = ""
-                                                Toast.makeText(context, "Spotify disconnected", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, context.getString(R.string.toast_spotify_disconnected), Toast.LENGTH_SHORT).show()
                                             }
                                             .padding(horizontal = 16.dp, vertical = 12.dp),
                                         contentAlignment = Alignment.Center,
                                     ) {
                                         Text(
-                                            text = "Disconnect",
+                                            text = stringResource(R.string.ui_disconnect),
                                             color = AppleMusicRed,
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.SemiBold,
@@ -672,7 +672,7 @@ fun SpotifyIntegrationScreen(
                                 ) {
                                     if (tokenInput.isEmpty()) {
                                         Text(
-                                            text = "Paste sp_dc token here…",
+                                            text = stringResource(R.string.ui_paste_sp_dc_token_here),
                                             color = Color.White.copy(alpha = 0.35f),
                                             fontSize = 13.5.sp,
                                         )
@@ -693,13 +693,13 @@ fun SpotifyIntegrationScreen(
                                         .background(Color.White.copy(alpha = 0.14f))
                                         .clickable {
                                             SettingsStore.setSpotifySpdcToken(context, tokenInput)
-                                            Toast.makeText(context, "Spotify sp_dc token saved", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.toast_spotify_sp_dc_token_saved), Toast.LENGTH_SHORT).show()
                                         }
                                         .padding(vertical = 11.dp),
                                     contentAlignment = Alignment.Center,
                                 ) {
                                     Text(
-                                        text = "Save Token",
+                                        text = stringResource(R.string.ui_save_token),
                                         color = Color.White,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.SemiBold,
@@ -791,7 +791,7 @@ fun SpotifyIntegrationScreen(
                                 .padding(vertical = 12.dp),
                         ) {
                             Text(
-                                text = "Canvas Providers (Lookup Order)",
+                                text = stringResource(R.string.ui_canvas_providers_lookup_order),
                                 color = Color.White,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -872,7 +872,7 @@ fun SpotifyIntegrationScreen(
                             verticalArrangement = Arrangement.spacedBy(10.dp),
                         ) {
                             Text(
-                                text = "Import Spotify Playlist",
+                                text = stringResource(R.string.ui_import_spotify_playlist),
                                 color = Color.White,
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -896,7 +896,7 @@ fun SpotifyIntegrationScreen(
                             ) {
                                 if (importLink.isEmpty()) {
                                     Text(
-                                        text = "https://open.spotify.com/playlist/…",
+                                        text = stringResource(R.string.ui_https_open_spotify_com_playlist),
                                         color = Color.White.copy(alpha = 0.35f),
                                         fontSize = 13.5.sp,
                                     )
@@ -920,7 +920,7 @@ fun SpotifyIntegrationScreen(
                             ) {
                                 if (importLanguage.isEmpty()) {
                                     Text(
-                                        text = "Language preference (optional, e.g. Hindi, Punjabi…)",
+                                        text = stringResource(R.string.ui_language_preference_optional_e_g_hindi_punjabi),
                                         color = Color.White.copy(alpha = 0.35f),
                                         fontSize = 13.sp,
                                     )
@@ -962,13 +962,13 @@ fun SpotifyIntegrationScreen(
                                 )
                                 Column(modifier = Modifier.weight(1f).padding(end = 6.dp)) {
                                     Text(
-                                        text = "Add Future Songs Automatically",
+                                        text = stringResource(R.string.ui_add_future_songs_automatically),
                                         color = Color.White,
                                         fontSize = 13.5.sp,
                                         fontWeight = FontWeight.SemiBold,
                                     )
                                     Text(
-                                        text = "Stores this link and auto-adds any new songs on app open",
+                                        text = stringResource(R.string.ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op),
                                         color = AppleTextSecondary,
                                         fontSize = 11.5.sp,
                                     )
@@ -1054,7 +1054,7 @@ fun SpotifyIntegrationScreen(
                                     .padding(horizontal = 20.dp),
                             ) {
                                 Text(
-                                    text = "Your Spotify Playlists",
+                                    text = stringResource(R.string.ui_your_spotify_playlists),
                                     color = Color.White,
                                     fontSize = 19.sp,
                                     fontWeight = FontWeight.Bold,
@@ -1066,7 +1066,7 @@ fun SpotifyIntegrationScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Rounded.Refresh,
-                                        contentDescription = "Refresh playlists",
+                                        contentDescription = stringResource(R.string.ui_refresh_playlists),
                                         tint = Color.White.copy(alpha = 0.72f),
                                     )
                                 }
@@ -1191,7 +1191,7 @@ fun SpotifyIntegrationScreen(
                     tokenInput = token
                     showWebLogin = false
                     reloadNonce++
-                    Toast.makeText(context, "Spotify connected!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_spotify_connected), Toast.LENGTH_SHORT).show()
                 },
                 onClose = { showWebLogin = false },
                 modifier = Modifier.fillMaxSize(),
