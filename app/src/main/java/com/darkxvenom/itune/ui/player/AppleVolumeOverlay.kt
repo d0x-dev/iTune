@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.player
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -317,7 +319,7 @@ fun AppleVolumeOverlay(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_magic_wand),
-                        contentDescription = "Volume",
+                        contentDescription = stringResource(R.string.ui_volume),
                         tint = iconTint,
                         modifier = Modifier
                             .padding(bottom = 14.dp)
