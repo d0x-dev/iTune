@@ -402,7 +402,7 @@ private fun SongRowContent(
                     )
                 } else {
                     Text(
-                        text = "$trackNumber",
+                        text = stringResource(R.string.ui_text_c79f71243f, trackNumber),
                         style = MaterialTheme.typography.bodyLarge,
                         color = subtitleColor,
                         maxLines = 1,
