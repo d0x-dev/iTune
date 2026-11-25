@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.player
 
+
+import androidx.compose.ui.res.stringResource
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.CubicBezierEasing
@@ -421,7 +423,7 @@ internal fun AirBeatsLyricsV2Content(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Lyrics not available for this song",
+                    text = stringResource(R.string.ui_lyrics_not_available_for_this_song),
                     style = TextStyle(
                         fontFamily = SFProDisplay,
                         fontSize = 17.sp,
@@ -668,7 +670,7 @@ internal fun AirBeatsLyricsV2Content(
                     contentColor = Color.White
                 )
             ) {
-                Text(text = "Resume", style = TextStyle(fontFamily = SFProDisplay, fontWeight = FontWeight.SemiBold, fontSize = 14.sp), color = Color.White)
+                Text(text = stringResource(R.string.ui_resume), style = TextStyle(fontFamily = SFProDisplay, fontWeight = FontWeight.SemiBold, fontSize = 14.sp), color = Color.White)
             }
         }
 
@@ -695,7 +697,7 @@ internal fun AirBeatsLyricsV2Content(
                     ) {
                         Image(
                             painter = painterResource(R.drawable.close),
-                            contentDescription = "Cancel",
+                            contentDescription = stringResource(R.string.cancel),
                             colorFilter = ColorFilter.tint(Color.White),
                             modifier = Modifier.size(20.dp)
                         )
@@ -724,12 +726,12 @@ internal fun AirBeatsLyricsV2Content(
                     ) {
                         Image(
                             painter = painterResource(R.drawable.ic_nav_radio),
-                            contentDescription = "Share",
+                            contentDescription = stringResource(R.string.share),
                             colorFilter = ColorFilter.tint(Color.Black),
                             modifier = Modifier.size(18.dp)
                         )
                         Text(
-                            text = "Share",
+                            text = stringResource(R.string.share),
                             color = Color.Black,
                             style = TextStyle(fontFamily = SFProDisplay, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                         )
