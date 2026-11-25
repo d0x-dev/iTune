@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.timetravel
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -248,7 +251,7 @@ fun TimeTravelStoriesDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
-                        text = "iTune Time Travel".uppercase(),
+                        text = stringResource(R.string.ui_itune_time_travel).uppercase(),
                         color = Color.White.copy(alpha = 0.70f),
                         fontSize = 11.5.sp,
                         fontWeight = FontWeight.Bold,
@@ -260,7 +263,7 @@ fun TimeTravelStoriesDialog(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Close,
-                            contentDescription = "Close",
+                            contentDescription = stringResource(R.string.close),
                             tint = Color.White,
                             modifier = Modifier.size(20.dp),
                         )
@@ -299,7 +302,7 @@ fun TimeTravelStoriesDialog(
                     )
                     Spacer(Modifier.width(10.dp))
                     Text(
-                        text = "Share this story",
+                        text = stringResource(R.string.ui_share_this_story),
                         color = Color.White,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -396,7 +399,7 @@ private fun IntroHero(stats: TimeTravelStats, displayName: String) {
             fontWeight = FontWeight.Bold,
         )
         Text(
-            text = "${stats.period.label} listening recap",
+            text = stringResource(R.string.ui_listening_recap, stats.period.label),
             color = Color.White.copy(alpha = 0.65f),
             fontSize = 14.sp,
         )
@@ -416,7 +419,7 @@ private fun MinutesHero(stats: TimeTravelStats) {
             ),
         )
         Text(
-            text = "MINUTES LISTENED",
+            text = stringResource(R.string.ui_minutes_listened),
             color = Color.White.copy(alpha = 0.7f),
             fontSize = 13.sp,
             fontWeight = FontWeight.Bold,
@@ -544,14 +547,14 @@ private fun HabitsHero(stats: TimeTravelStats) {
         }
         if (stats.busiestDay != null) {
             Text(
-                text = "Busiest day: ${stats.busiestDay}",
+                text = stringResource(R.string.ui_busiest_day, stats.busiestDay.orEmpty()),
                 color = Color.White.copy(alpha = 0.75f),
                 fontSize = 14.5.sp,
                 fontWeight = FontWeight.Medium,
             )
         }
         Text(
-            text = "Peak hour: ${stats.peakListeningHour}:00",
+            text = stringResource(R.string.ui_peak_hour_00, stats.peakListeningHour),
             color = Color.White.copy(alpha = 0.75f),
             fontSize = 14.5.sp,
             fontWeight = FontWeight.Medium,
