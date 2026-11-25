@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">Anulează</string>
+    <string name="save">Salvează</string>
+    <string name="close">Închide</string>
+    <string name="done">Gata</string>
+    <string name="back">Înapoi</string>
+    <string name="play">Redă</string>
+    <string name="shuffle">Aleatoriu</string>
+    <string name="retry">Încearcă din nou</string>
+    <string name="try_again">Încearcă din nou.</string>
+    <string name="more">Mai mult</string>
+    <string name="less">Mai puțin</string>
+    <string name="share">Distribuie</string>
+    <string name="show_all">Afișează tot</string>
+    <string name="top_songs">Cântece de top</string>
+    <string name="suggested">Sugerat</string>
+    <string name="subscribers">%1$sabonați</string>
+    <string name="monthly_listeners">%1$sascultători lunari</string>
+    <string name="signed_by">Semnat de%1$s</string>
+    <string name="about_artist">Despre artist</string>
+    <string name="about_album">Despre album</string>
+    <string name="recent_album">Album recent</string>
+    <string name="recent_ep">PE recent</string>
+    <string name="recent_single">Unic recent</string>
+    <string name="subscribe">Abonează-te</string>
+    <string name="unsubscribe">Dezabonare</string>
+    <string name="add_to_library">Adaugă în bibliotecă</string>
+    <string name="remove_from_library">Elimină din bibliotecă</string>
+    <string name="add_to_playlist">Adaugă la lista de redare</string>
+    <string name="remove_from_playlist">Elimină din această listă de redare</string>
+    <string name="play_next">Joacă următorul</string>
+    <string name="add_to_queue">Adaugă la coadă</string>
+    <string name="start_radio">Pornește radioul</string>
+    <string name="open">Deschide</string>
+    <string name="open_album">Deschide albumul</string>
+    <string name="open_artist">Artist deschis</string>
+    <string name="open_playlist">Deschide lista de redare</string>
+    <string name="song_info">Informații song</string>
+    <string name="song_info_album">Album</string>
+    <string name="song_info_release_date">Data eliberării</string>
+    <string name="song_info_views">Joacă / vederi</string>
+    <string name="song_info_likes">Îi place.</string>
+    <string name="song_info_comments">Observații</string>
+    <string name="song_info_unavailable">Nu este disponibil</string>
+    <string name="song_info_error">Unele informații nu au putut fi încărcate.</string>
+    <string name="song_info_retry">Remetrie</string>
+    <string name="like">Ca</string>
+    <string name="dislike">Nu-mi place.</string>
+    <string name="download">Descarcă</string>
+    <string name="download_all">Descărcați toate</string>
+    <string name="downloaded">Descărcat</string>
+    <string name="downloading">Descărcare</string>
+    <string name="download_notification_title">Descărcare</string>
+    <string name="delete_download">Șterge descărcarea</string>
+    <string name="delete_download_confirmation">Elimină %1$sDe la acest dispozitiv? Atingeți din nou pentru a confirma.</string>
+    <string name="delete">Șterge</string>
+    <string name="queued">Queued</string>
+    <string name="saved_to_downloads">Salvat la descărcare</string>
+    <string name="search_this_list">Caută această listă</string>
+    <string name="clear_search">Șterge căutarea</string>
+    <string name="close_search">Închide căutarea</string>
+    <string name="nothing_matches">Nimic de aici nu se potriveşte.%1$s</string>
+    <string name="sort_songs">Sortează cântece</string>
+    <string name="artist">artist</string>
+    <string name="album">album</string>
+    <string name="playlist">Listă de redare</string>
+    <string name="folder">Dosar</string>
+    <string name="songs">Cântece</string>
+    <string name="song_count">%1$dCântec</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$dpista</item>
+        <item quantity="other">%1$dpiese</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$dminute</item>
+        <item quantity="other">%1$dminute</item>
+    </plurals>
+    <string name="one_hour">1 oră</string>
+    <string name="hours_minutes_short">%1$dh%2$dm</string>
+    <string name="minutes_short">%1$dmin</string>
+    <string name="pin">Pin</string>
+    <string name="unpin">Unpin</string>
+    <string name="tile_identify_music">Identifică muzica</string>
+    <string name="tile_identify_music_desc">Identifică cântecele care te înconjoarăiTune</string>
+    <string name="widget_itune_description">ControliTuneRedare de pe ecranul de acasă</string>
+    <string name="app_language">Limba aplicației</string>
+    <string name="app_language_subtitle">Limba pentru meniuri, butoane și mesaje</string>
+    <string name="app_language_description">Alegeți limba utilizată pentruiTuneInterfață.</string>
+    <string name="system_default_language">Implicit sistem</string>
+    <string name="follow_device_language">Urmați limbajul dispozitivului</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">Utilizați interfața engleză</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface" />
+    <string name="hindi_interface_language">Limbajul interfeței hindi</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">Utilizați interfața spaniolă</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">Utilizați interfața franceză</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">Utilizați interfața olandeză</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">Utilizați interfața rusă</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">Utilizați interfața Urdu</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">Utilizați interfața chineză</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">Utilizați interfața germană</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">Utilizați interfața portugheză</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">Utilizați interfața italiană</string>
+    <string name="japanese_language">日本語</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface" />
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Svenskt gränsnitt</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface" />
+    <string name="japanese_interface">Utilizați interfața japoneză</string>
+    <string name="favorite_artist">Artist favorit</string>
+    <string name="remove_favorite_artist">Elimină din artiștii preferați</string>
+    <string name="add_to_favorite_artists">Adaugă la artiștii preferați</string>
+    <string name="removed_from_artists">Eliminat din artisti</string>
+    <string name="added_to_artists">Adăugat artiștilor</string>
+    <string name="play_top_songs">Joacă cântece de top</string>
+    <string name="play_album">Joacă album</string>
+    <string name="play_playlist">Redă lista de redare</string>
+    <string name="create_new_playlist">Creează listă nouă de redare</string>
+    <string name="create_playlist">Creează listă de redare</string>
+    <string name="radio">Radio</string>
+    <string name="search">Caută</string>
+    <string name="share_playlist_link">Partajează link-ul listei de redare</string>
+    <string name="copy_share_link">Copiază legătura de partajare</string>
+    <string name="rename_playlist">Redenumește lista de redare</string>
+    <string name="delete_playlist">Șterge lista de redare</string>
+    <string name="share_link_copied">Partajează linkul copiat</string>
+    <string name="playlist_removed">Listă de redare eliminată</string>
+    <string name="playlist_no_longer_available">Această listă de redare nu mai este disponibilă.</string>
+    <string name="empty_playlist">Listă de redare goală</string>
+    <string name="filter_playlists">Filtrați liste de redare...</string>
+    <string name="filter_albums">Filtrare albume...</string>
+    <string name="favorite">Favorit</string>
+    <string name="tap_to_start_listening">Atingeți pentru a începe să ascultați</string>
+    <string name="time_zero" formatted="false">0:00.</string>
+    <string name="previous">Precedent</string>
+    <string name="play_or_pause">Redare sau pauză</string>
+    <string name="next">Înainte</string>
+    <string name="repeat">Repetă</string>
+    <string name="open_title_options">Deschide%1$sopțiuni</string>
+    <string name="reset_page_title">Reinițializează%1$s</string>
+    <string name="remove_device">Elimină%1$s</string>
+    <string name="profile_name">%1$sprofil</string>
+    <string name="download_option">Descărcare%1$s</string>
+    <string name="open_entry_options">Deschide%1$sopțiuni</string>
+    <string name="avatar_number">Avatar%1$s</string>
+    <string name="options_for_track">Opțiuni pentru%1$s</string>
+    <string name="preparing">Pregătesc...</string>
+    <string name="share_image">Partajează imaginea</string>
+    <string name="speed_pitch_locked">Viteza &amp; pas blocat împreună</string>
+    <string name="independent_bpm_tempo_key_pitch">Tempo independent BPM &amp; pas cheie</string>
+    <string name="spatial_reflections_delay">Reflecții spațiale (%1$dms)</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="dynamic_island_active">Insula dinamică activă</string>
+    <string name="dynamic_island_description">Arată lin afarăiTuneîn timpul redarei</string>
+    <string name="preparing_download">Pregătirea de descărcare...</string>
+    <string name="listening_for_music">Ascultand muzica...</string>
+    <string name="hold_phone_near_sound_source">Țineți telefonul lângă sursa de sunet</string>
+    <string name="unable_to_recognize_audio">Imposibil de recunoscut audio</string>
+    <string name="song_identified">Song Identificat</string>
+    <string name="play_in_itune">Joacă îniTune</string>
+    <string name="view_details">Vizualizare detalii</string>
+    <string name="no_match_found">Nu s-a găsit nicio potrivire.</string>
+    <string name="recognition_retry_message">Nu am putut identifica cântecul. Atingeţi uşor pentru a încerca din nou.</string>
+    <string name="microphone_permission_needed">Este nevoie de permisiunea Microfonului</string>
+    <string name="microphone_permission_help">Atingeți pentru a permite accesul la microfon astfeliTunepoate identifica muzica.</string>
+    <string name="recognition_failed">Recunoaşterea a eşuat.</string>
+    <string name="tap_install_to_continue">Atingeți Instalare pentru a continua</string>
+    <string name="detail_artist">Artist</string>
+    <string name="detail_album">Album</string>
+    <string name="set_default_ringtone_target">Stabilește ca implicit%1$s!</string>
+    <string name="added_ringtone_target">Adăugat%1$s. Alegeți-l în setările de sunet.</string>
+    <string name="last_fm_connected_as">Last.fmconectat ca%1$s</string>
+    <string name="discord_connected_as">Discordie conectată ca%1$s</string>
+    <string name="tv_encrypted_backup_saved">Salvare de rezervă criptată (%1$dKB)!</string>
+    <string name="sign_in_verification_failed">Verificarea conectării a eșuat</string>
+    <string name="could_not_rename_playlist">Nu am putut redenumi lista de redareYouTube Music</string>
+    <string name="could_not_create_playlist">Nu s- a putut crea lista de redare</string>
+    <string name="daily_encrypted_backup_enabled">Întăriri zilnice criptate activate</string>
+    <string name="cookie_login_failed">Autentificare Cookie eșuată</string>
+    <string name="could_not_open_last_fm">Nu am putut deschideLast.fm</string>
+    <string name="last_fm_sign_in_failed">Last.fmSemnul a eșuat</string>
+    <string name="discord_sign_in_failed">Semnul discordiei a eșuat</string>
+    <string name="could_not_open_android_installer">Nu s-a putut deschide site-ul Android</string>
+    <string name="added_title_to_queue">Adăugat%1$sLa coadă</string>
+    <string name="automatic_backup_disabled">Întăriri automate dezactivate</string>
+    <string name="download_failed">Descărcare eșuată</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">Instalează</string>
+    <string name="ui_text_9ef6a80f91" formatted="false"># 1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">%+.1f</string>
+    <string name="ui_accounts" formatted="false">+ Conturi</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0, 0s</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5. 0s</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">-</string>
+    <string name="ui_text_7be28ad40e" formatted="false">- 5,0.</string>
+    <string name="ui_text_a6dee6102d" formatted="false">11 PM</string>
+    <string name="ui_text_1a19c52178" formatted="false">12 AM</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">12 PM</string>
+    <string name="ui_text_4e37ece023" formatted="false">15ms amestec de scurtă trecere întârziat cu urechea opusă</string>
+    <string name="ui_text_76b322ac42" formatted="false">2X Viteza rapida</string>
+    <string name="ui_text_505c74ed85" formatted="false">3D Ping-Pong Bounce</string>
+    <string name="ui_text_db9b8df506" formatted="false">6 AM</string>
+    <string name="ui_text_2812537f20" formatted="false">6 PM</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080</string>
+    <string name="ui_text_05a79f06cf" formatted="false">:</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">O imagine completă cu cântece de top, artiști, albume și obiceiuri.</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">O nouă versiune este gata</string>
+    <string name="ui_account" formatted="false">Cont</string>
+    <string name="ui_account_options" formatted="false">Opțiuni cont</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">Conturi</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">Acustic Head-Shadow Crossfeed</string>
+    <string name="ui_activate" formatted="false">Activează</string>
+    <string name="ui_active" formatted="false">Activ</string>
+    <string name="ui_active_days" formatted="false">ZILE ACTIVE</string>
+    <string name="ui_active_profile" formatted="false">Profil activ</string>
+    <string name="ui_activity_by_day" formatted="false">Activitatea pe zi</string>
+    <string name="ui_add_account" formatted="false">Adaugă cont</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">Adăugați servere personalizate HTTP Addon (vorbind /manifest.json, /search, /stream) sau module Sandbox-izolate QuickJS.</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">Adaugă melodii viitoare automat</string>
+    <string name="ui_add_streaming_source" formatted="false">Adaugă sursă de streaming</string>
+    <string name="ui_add_to_playlist" formatted="false">Adaugă la lista de redare</string>
+    <string name="ui_added_playlists" formatted="false">Liste de redare adăugate</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">Ajustați marginea colț a operei de artă album pătrat.</string>
+    <string name="ui_advanced_cookie_login" formatted="false">Autentificare Cookie avansată</string>
+    <string name="ui_advanced_login" formatted="false">LOGIN ADVANCED</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">Autentificare avansată</string>
+    <string name="ui_ai_engine" formatted="false">ENGINE AI</string>
+    <string name="ui_ai_provider" formatted="false">Furnizor AI</string>
+    <string name="ui_albums" formatted="false">Albume</string>
+    <string name="ui_all_news" formatted="false">Toate ştirile</string>
+    <string name="ui_allow_downloads" formatted="false">Permite descărcarea</string>
+    <string name="ui_allow_microphone" formatted="false">Permite Microfonului</string>
+    <string name="ui_allow_microphone_access" formatted="false">Permite accesul la microfon</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">Alternați reflecții L &lt;-&gt; R</string>
+    <string name="ui_always_on_display" formatted="false">Întotdeauna pe ecran</string>
+    <string name="ui_am" formatted="false">AM</string>
+    <string name="ui_api_base_url" formatted="false">URL- ul bazei API</string>
+    <string name="ui_artist" formatted="false">Artist</string>
+    <string name="ui_artist_name" formatted="false">Nume artist</string>
+    <string name="ui_artists" formatted="false">Artiști</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">Artişti, cântece, albume, liste de redare...</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">Artiști, cântece, versuri și altele</string>
+    <string name="ui_at_least_8_characters" formatted="false">Cel puțin 8 caractere</string>
+    <string name="ui_auto_sleep_timer" formatted="false">Cronometru de somn automat</string>
+    <string name="ui_auto_activation_timeout" formatted="false">timeout AUTO-activare</string>
+    <string name="ui_avatar" formatted="false">Avatar</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">Înapoi susiTune(AES-256)</string>
+    <string name="ui_backup_password" formatted="false">Parolă de rezervă</string>
+    <string name="ui_bluetooth_device_access" formatted="false">BluetoothAcces dispozitiv</string>
+    <string name="ui_browse" formatted="false">Răsfoiește</string>
+    <string name="ui_browse_by_country" formatted="false">Navighează după țară</string>
+    <string name="ui_browse_extensions" formatted="false">Extensii de navigare</string>
+    <string name="ui_browse_live_online_radio" formatted="false">Navighează live Online Radio</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">Nu se poate șterge numai contul</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">Furnizori de canvas (Lookup Order)</string>
+    <string name="ui_captcha_guidance" formatted="false">Orientările CAPTCHA</string>
+    <string name="ui_cast_wireless_devices" formatted="false">DISPOZITIVE CAST &amp; WIRELESS</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">Alegeți surse de redare audio, niveluri fără pierderi și prioritate de rezervă</string>
+    <string name="ui_choose_avatar" formatted="false">Alege Avatar</string>
+    <string name="ui_choose_charts_region" formatted="false">Alegeți regiunea hărților</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">Alege cumiTuneapare pe ecranul tău. Redimensionează widget-ul de la lansator.</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">Alegeți profilul pentru a continua</string>
+    <string name="ui_choose_youtube_channel" formatted="false">AlegeYouTubeCanal</string>
+    <string name="ui_clear" formatted="false">Clar</string>
+    <string name="ui_clear_use_default" formatted="false">Șterge &amp; folosește implicit</string>
+    <string name="ui_clear_all" formatted="false">Șterge toate</string>
+    <string name="ui_confirm" formatted="false">Confirmă</string>
+    <string name="ui_confirm_password" formatted="false">Confirmă parola</string>
+    <string name="ui_connect_discord" formatted="false">Conectează discordia</string>
+    <string name="ui_connect_last_fm" formatted="false">ConecteazăLast.fm</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">ConecteazăSpotifycont pentru a activa Canvas buclare video de mișcare și sincronizarea taSpotifybiblioteca.</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">ConecteazăYouTube Musiccu cookie-uri sesiune</string>
+    <string name="ui_connect" formatted="false">Conectare ›</string>
+    <string name="ui_connecting_spotify" formatted="false">ConectareSpotify...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">ConectareYouTube Music...</string>
+    <string name="ui_continue" formatted="false">Continuă</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">Continuă în browser în schimb</string>
+    <string name="ui_continue_with_google" formatted="false">Continuă cu Google</string>
+    <string name="ui_continue_with_spotify" formatted="false">ContinuăSpotify</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">Acreditările Cookie sunt stocate îniTuneYouTube Musicînainte să fie salvaţi.</string>
+    <string name="ui_copy_song_name" formatted="false">Copiază numele cântecului</string>
+    <string name="ui_copy_text" formatted="false">Copiază textul</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">Copyright © 2026iTuneProiect. Acest software este furnizat fără garanție. Puteţi să îl redistribuiţi şi să îl modificaţi în condiţiile GNU GPL prezentate mai jos.</string>
+    <string name="ui_corner_length" formatted="false">Lungime colț</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">Nu s- a putut reda imaginea</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">Nu am putut\'T încarcă muzica chiar acum. Trage în jos pentru a încerca din nou.</string>
+    <string name="ui_create" formatted="false">Creează</string>
+    <string name="ui_create_add" formatted="false">Creează &amp; adăugare</string>
+    <string name="ui_current_account" formatted="false">Cont curent</string>
+    <string name="ui_custom_instructions" formatted="false">INSTRUCŢIUNI DE CURS</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">INDEX sau URL- ul REPOZITOR CUSTOM</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">Personalizează-ţi jucătorul de pe ecranul casei</string>
+    <string name="ui_customize_your_itune_card" formatted="false">PersonalizeazăiTunecard</string>
+    <string name="ui_d" formatted="false">D</string>
+    <string name="ui_delete_account" formatted="false">Șterge contul</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">Șterge contul?</string>
+    <string name="ui_developer_announcements" formatted="false">Anunţuri ale dezvoltatorului</string>
+    <string name="ui_disconnect" formatted="false">Deconectează</string>
+    <string name="ui_disconnect_discord" formatted="false">Deconectează discordia</string>
+    <string name="ui_discord_rich_presence" formatted="false">Prezenţa bogată a discordiei</string>
+    <string name="ui_dismiss" formatted="false">Liber.</string>
+    <string name="ui_display_full_screen" formatted="false">Display &amp; full screen</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">Afișează versurile sincronizate animate deasupra titlului cântecului în timp ce comenzile Canvas sunt ascunse</string>
+    <string name="ui_display_name" formatted="false">Nume afișare</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">Filtru club bipolar DJ</string>
+    <string name="ui_downloaded_cached" formatted="false">Descărcat &amp; cached</string>
+    <string name="ui_dp" formatted="false">dp</string>
+    <string name="ui_dynamic_island" formatted="false">Insula dinamică</string>
+    <string name="ui_e" formatted="false">E</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">de exemplu 127,0.01</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">de exemplu, se traduce în limba poetică cu rime</string>
+    <string name="ui_enable_auto_sleep" formatted="false">Activează somnul automat</string>
+    <string name="ui_enable_proxy" formatted="false">Activează proxy</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">ActivareSpotifyCanvas &amp; liste de redare</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">Parolă de criptare (min 8 cars)</string>
+    <string name="ui_end_of_current_track" formatted="false">Sfârșitul pistei curente</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">Introduceți un nume nou pentru acest cont.</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">Introduceți un URL manifest HTTP addon, un index al modulului QuickJS sau un criteriu final de referință Tidal.</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">Introduceți parola utilizată atunci când .ituneÎntăririle au fost create.</string>
+    <string name="ui_enter_your_name" formatted="false">Introduceți numele</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">Introduceți numele pentru a personalizaiTune</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">Fiecare ritm, imn târziu-noapte, și melodie ai trăit cu </string>
+    <string name="ui_everything" formatted="false">Totul</string>
+    <string name="ui_explore_categories" formatted="false">Explorează categorii</string>
+    <string name="ui_exporting_audio" formatted="false">Export audio...</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">Extragerea unei amprente audio scurte</string>
+    <string name="ui_favorite_stations" formatted="false">Stații preferate</string>
+    <string name="ui_favorites" formatted="false">FAVORITE</string>
+    <string name="ui_featured_hit" formatted="false">Recomandat lovit</string>
+    <string name="ui_featured_playlists" formatted="false">Liste de redare recomandate</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">Aduc calităţi audio...</string>
+    <string name="ui_fetching_live_catalog" formatted="false">Aducerea catalog live...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">Găsirea unui flux mai bun</string>
+    <string name="ui_full_view" formatted="false">Vizualizare completă</string>
+    <string name="ui_g" formatted="false">G</string>
+    <string name="ui_genre" formatted="false">GEN</string>
+    <string name="ui_genres_styles" formatted="false">Genuri &amp; stiluri</string>
+    <string name="ui_github_repository" formatted="false">Depozitul GitHub</string>
+    <string name="ui_github_repository_open_source" formatted="false">Depozitul GitHub · Open source</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 sau mai târziu</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 sau mai târziu · Copyright © 2026iTuneProiect</string>
+    <string name="ui_grant" formatted="false">Grant</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">Grant pentru a afișa numele căștilor și bateria live %</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">Hardware LoudnessEnhancer (până la +18 dB)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">Ascunde bara de stare Android și bara de navigare pentru OLED negru pur fără sudură.</string>
+    <string name="ui_history" formatted="false">Istoric</string>
+    <string name="ui_host" formatted="false">HOST</string>
+    <string name="ui_host_a_session" formatted="false">OSTAŞI O SESIUNE</string>
+    <string name="ui_host_controls_playback" formatted="false">Redare control gazdă</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">Cum să obțineți cookie-urile</string>
+    <string name="ui_hq" formatted="false">HQ</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">Identificat cu Shazam</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">Identifică muzica care te înconjoară</string>
+    <string name="ui_immersion" formatted="false">IMPERSIUNE</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">Modul imersiv (Ecranul complet)</string>
+    <string name="ui_import" formatted="false">Importă</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">Importă liste de redare publice și private • Auto-sinc</string>
+    <string name="ui_import_spotify_playlist" formatted="false">ImportăSpotifyListă de redare</string>
+    <string name="ui_in_use" formatted="false">În uz</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">Ghid în aplicație atunci când furnizorii de audio contestă controalele anti-bot</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">Instalează extensii comunitare pre-added Mornye sau scanează un index de depozit personalizat.</string>
+    <string name="ui_installed" formatted="false">Instalat</string>
+    <string name="ui_interactive_dot_curve" formatted="false">Curba punct interactiv</string>
+    <string name="ui_irecognition" formatted="false">iRecunoaștere</string>
+    <string name="ui_ireconization" formatted="false">iReconizare</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">IReconizarea ascultă câteva secunde pentru a crea o amprentă muzicală. Audio nu este salvat.</string>
+    <string name="ui_ishare" formatted="false">iShare</string>
+    <string name="ui_itune_license" formatted="false">iTuneLicență</string>
+    <string name="ui_itune_music" formatted="false">iTuneMuzica</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTuneÎntrebări versuri în prioritatea exactă de mai jos. Dacă cel mai mare furnizor activ nu are versuri sincronizate,iTuneSe întoarce la următoarea.</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTuneinteroghează sursele din ordinea indicată. Trageți extensii instalate și furnizori pentru a ajusta prioritatea de redare.</string>
+    <string name="ui_itune_time_travel" formatted="false">iTuneCălătorie în timp</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">Jet Flanger Swoosh</string>
+    <string name="ui_join" formatted="false">Alătură-te</string>
+    <string name="ui_keep_screen_on" formatted="false">Păstrați ecranul pe</string>
+    <string name="ui_l" formatted="false">L</string>
+    <string name="ui_lan_port" formatted="false">LAN Port</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">Preferința limbii (opțională, de exemplu, hindi, punjabi...)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fmScrobbling</string>
+    <string name="ui_layout" formatted="false">LAYOUT</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">Lăsați gol pentru a utiliza obiectivul implicit pentru acest furnizor.</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">Modularea fazei jetului parcursă de LFO</string>
+    <string name="ui_library" formatted="false">Bibliotecă</string>
+    <string name="ui_license" formatted="false">Licență</string>
+    <string name="ui_liked_songs" formatted="false">Mi-au plăcut cântecele.</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">Aprecieri adăugate în timpul semnării sunt salvate atât la nivel local, cât și laYouTube Music, astfel încât acestea să rămână în Biblioteca ta chiar și după semnarea afară.</string>
+    <string name="ui_listening_patterns" formatted="false">ASCULTA PATTERNS</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">Ascultând audio comun...</string>
+    <string name="ui_live" formatted="false">VIU</string>
+    <string name="ui_live_radio_stations" formatted="false">Posturi de radio live</string>
+    <string name="ui_loading_announcements" formatted="false">Se încarcă anunțurile...</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">Se încarcă artiști, liste de redare și istorie</string>
+    <string name="ui_lossless" formatted="false">Fără pierderi</string>
+    <string name="ui_lossless_audio_preference" formatted="false">Preferinţe audio fără pierderi</string>
+    <string name="ui_lyrics" formatted="false">Versuri</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">Versurile nu sunt disponibile pentru acest cântec</string>
+    <string name="ui_lyrics_providers" formatted="false">Furnizorii de versuri</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">Versurile traduse cu succes!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">Boost amplificator principal</string>
+    <string name="ui_member_since" formatted="false">MEMBRU DE LA</string>
+    <string name="ui_memoji_style" formatted="false">&amp; Stil Memoji</string>
+    <string name="ui_minutes_listened" formatted="false">Minute ascultate</string>
+    <string name="ui_mirror_vol" formatted="false">Oglindă Vol</string>
+    <string name="ui_model" formatted="false">MODEL</string>
+    <string name="ui_model_68c2cc7f" formatted="false">Model</string>
+    <string name="ui_moods_activities" formatted="false">Momente și activități</string>
+    <string name="ui_moods_moments" formatted="false">MODURI ȘI MODIFICĂRI</string>
+    <string name="ui_music_by_genre" formatted="false">Muzica de gen</string>
+    <string name="ui_music_language_preference" formatted="false">Preferinţa limbii muzicale</string>
+    <string name="ui_music_services" formatted="false">SERVICII MUSIC</string>
+    <string name="ui_name" formatted="false">Nume</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">NEARBY WI-FI HOSTS</string>
+    <string name="ui_network_proxy" formatted="false">Proxy de rețea</string>
+    <string name="ui_new" formatted="false">Nou</string>
+    <string name="ui_new_playlist" formatted="false">Listă de redare nouă</string>
+    <string name="ui_new_releases" formatted="false">Lansări noi</string>
+    <string name="ui_news_from_dev" formatted="false">Noutăţi din Dev</string>
+    <string name="ui_next_up" formatted="false">Următorul</string>
+    <string name="ui_no_albums_found" formatted="false">Nu s-au găsit albume</string>
+    <string name="ui_no_artist_information_available" formatted="false">Nu sunt disponibile informații artist</string>
+    <string name="ui_no_artists_found" formatted="false">Niciun artist nu a fost găsit</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">Nici un artist în biblioteca ta încă</string>
+    <string name="ui_no_playlists_found" formatted="false">Nicio listă de redare găsită</string>
+    <string name="ui_no_results_on_spotify" formatted="false">Niciun rezultat privindSpotify</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">Nu există albume salvate în bibliotecă</string>
+    <string name="ui_no_songs_found" formatted="false">Nu am găsit cântece.</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">Nici un cântec găsit în această versiune</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">Nici un cântec găsit în această secțiune</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">Nu s-au găsit liste de redare. Creați unul în bibliotecă!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">Încă nu am ascultat destul.</string>
+    <string name="ui_now_playing" formatted="false">Acum joc</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">Acum joacă</string>
+    <string name="ui_on_heavy_repeat" formatted="false">PE HEAVY REPEAT</string>
+    <string name="ui_options" formatted="false">OPŢIUNI</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">SAU INTRĂ SP DC COOKIE</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">Accelerație și intensitate orbitală</string>
+    <string name="ui_pair_join_a_device" formatted="false">PAIR &amp; Conectează un dispozitiv</string>
+    <string name="ui_password_optional" formatted="false">Parolă (opțional)</string>
+    <string name="ui_passwords_dont_match" formatted="false">Parolele nu se potrivesc</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">Lipește jetonul sp dc aici...</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">Lipește tasta API aici</string>
+    <string name="ui_play_in_itune" formatted="false">Joacă îniTune</string>
+    <string name="ui_play_next" formatted="false">Joacă următorul</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">Joacă pe muguri și difuzor de telefon/AUX în același timp</string>
+    <string name="ui_playlist_name" formatted="false">Nume listă de redare</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">Nume listă de redare</string>
+    <string name="ui_playlist_spotify" formatted="false">Listă de redare •Spotify</string>
+    <string name="ui_playlists" formatted="false">Liste de redare</string>
+    <string name="ui_plays" formatted="false">Joacă</string>
+    <string name="ui_pm" formatted="false">PM</string>
+    <string name="ui_port" formatted="false">Port</string>
+    <string name="ui_pre_added_extensions" formatted="false">EXTINDERI PREADERATE</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">Preferați FLAC/ALAC perfect cu biți până la 24 biți / 192 kHz atunci când este disponibil</string>
+    <string name="ui_preparing_audio_preview" formatted="false">Pregătirea previzualizare audio...</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">Impiedica afisarea dispozitivului sa se opreasca in timp ce intotdeauna este activ.</string>
+    <string name="ui_preview" formatted="false">PREVIZIUNE</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">Previzualizare</string>
+    <string name="ui_preview_always_on_display" formatted="false">Previzualizează întotdeauna pe afișare</string>
+    <string name="ui_profile" formatted="false">PROFIL</string>
+    <string name="ui_profiles_in_backup" formatted="false">PROFILE DE backup</string>
+    <string name="ui_prompt_type" formatted="false">TIP PROMPT</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">PRIORITATEA PREJUDICIULUI (COMANDĂ DE CONTRACȚIE)</string>
+    <string name="ui_queue" formatted="false">Coadă</string>
+    <string name="ui_queue_is_empty" formatted="false">Coada e goală.</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">Urmează melodiile</string>
+    <string name="ui_radio" formatted="false">Radio</string>
+    <string name="ui_read_more" formatted="false">Citeste mai mult</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">Silabă în timp real și defilare linie cu audio live</string>
+    <string name="ui_recent_searches" formatted="false">Cautări recente</string>
+    <string name="ui_recently_added" formatted="false">Adăugat recent</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">Program de somn recurent · pauză automată redare</string>
+    <string name="ui_remote_music_library" formatted="false">Biblioteca de muzică la distanță</string>
+    <string name="ui_remove" formatted="false">Elimină</string>
+    <string name="ui_rename" formatted="false">Redenumește</string>
+    <string name="ui_rename_account" formatted="false">Redenumește contul</string>
+    <string name="ui_replay" formatted="false">REPLAY</string>
+    <string name="ui_replay_c0f85d66" formatted="false">Redare</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">Necesită ieșire fără pierderi Bit-Perfect</string>
+    <string name="ui_reset" formatted="false">Reinițializează</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">Reinițializează ordinul furnizorului</string>
+    <string name="ui_reset_to_default_url" formatted="false">Resetează la URL implicit</string>
+    <string name="ui_restore_default_sources" formatted="false">Restaurează surse implicite</string>
+    <string name="ui_restore_itune_backup" formatted="false">RestaureazăiTuneÎntăriri</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">RestaureazăJioSaavnşiYouTube Musicîn ordinea implicită.JioSaavnîncepe șiYouTube MusicÎncepe.</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">Restaurează LRC Lib, KuGou, și SimpMusic ca furnizori preferați de top și re-enables toate cele 11 surse.</string>
+    <string name="ui_resume" formatted="false">Reia</string>
+    <string name="ui_rhythm_by_hour" formatted="false">Ritmul orei</string>
+    <string name="ui_room_permissions" formatted="false">Permisii de cameră</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">Trafic de rețele de aplicații de rută prin proxy HTTP sau SOCKS</string>
+    <string name="ui_save_proxy" formatted="false">Salvează Proxy</string>
+    <string name="ui_save_schedule" formatted="false">Salvează programul</string>
+    <string name="ui_save_to_gallery" formatted="false">Salvează la Galerie</string>
+    <string name="ui_save_token" formatted="false">Salvează jetonul</string>
+    <string name="ui_saved_to_your_library" formatted="false">Salvat la biblioteca ta!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">Salvat folosind Android Keystore. Fişierele de rezervă folosesc PBKDF2-HMAC-SHA256 (310.000 runde) şi AES-256-GCM.</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">Salvează la descărcare/itune/Întăriri</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">Spune un cântec, artist, album sau versuri</string>
+    <string name="ui_search" formatted="false">Caută</string>
+    <string name="ui_search_identify" formatted="false">Căutare &amp; identificare</string>
+    <string name="ui_search_announcements" formatted="false">Anunţuri de căutare...</string>
+    <string name="ui_search_country" formatted="false">Căutaţi ţara...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">Caută cântece, artiști, albume și liste de redare</string>
+    <string name="ui_search_languages" formatted="false">Limbi de căutare...</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">Caută sau tastează un model id</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">Caută cântece, artiști, albume sau liste de redare</string>
+    <string name="ui_searching_lyrics" formatted="false">Caut versuri...</string>
+    <string name="ui_searching_spotify" formatted="false">CăutareSpotify...</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">Secondary Mirror Sink</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">Selectaţi un avatar profil pentru a personaliza dumneavoastrăiTuneexperiență pe toate ecranele.</string>
+    <string name="ui_select_language" formatted="false">Alegeți limba</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">Alegeți șablonul prompt implicit pentru traducerea versurilor.</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">Selectaţi motorul pentru a utiliza pentru versuri linie-by-line traducere.</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">Selectați limba țintă pentru traducerea versurilor.</string>
+    <string name="ui_server_host_ip" formatted="false">Gazdă server / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">URL server / Manifest</string>
+    <string name="ui_settings_appearance" formatted="false">Configurări Aspect</string>
+    <string name="ui_share_lyrics" formatted="false">Partajează versuri</string>
+    <string name="ui_share_my_replay" formatted="false">Împarte reluarea mea</string>
+    <string name="ui_share_replay" formatted="false">Reluare partaj</string>
+    <string name="ui_share_this_story" formatted="false">Împarte această poveste</string>
+    <string name="ui_share_your_time_travel" formatted="false">Împărţiţi - vă călătoria în timp</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">Arată versuri sincronizate peste canvas</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">Semnează pe muzică.youtube.com într-un browser desktop. Open Developer Tools → Aplicație → Cookie-uri, apoi copiați valorile sesiunii semnate. Tratează aceste valori ca parola ta.</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">Semnează cuLast.fmcont</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">Semnează toate conturile</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">Ieșire dublă simultană</string>
+    <string name="ui_skip_sign_in" formatted="false">Sari peste conectare</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">Glisați înainte pentru versuri mai rapide · înapoi pentru mai lent · Audio neafectat</string>
+    <string name="ui_snap_0" formatted="false">Snap 0</string>
+    <string name="ui_soundstage_width" formatted="false">Lățimea scenei sonore</string>
+    <string name="ui_sources" formatted="false">Surse</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">Audio spațial și elemente esențiale</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotify&amp; Canvas</string>
+    <string name="ui_spotify_account" formatted="false">SpotifyCont</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">SpotifyCanvas, Apple Music, Tidal &amp; Community motion coperts</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">Spotifyeste conectat în prezent. Lucrare de mișcare (canvas) șiSpotifySincronizarea listei de redare este activată.</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">SpotifyCăutarea a eșuat. Încearcă din nou.</string>
+    <string name="ui_station" formatted="false">Stație</string>
+    <string name="ui_stereo_echo_delay" formatted="false">Stereo Echo &amp; Întârziere</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">Stochează acest link și adaugă automat orice cântece noi pe aplicația deschisă</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">Stream biblioteca dvs. bit-perfect fără pierderi direct din acțiunile de rețea personale sau Nextcloud.</string>
+    <string name="ui_streaming_sources" formatted="false">SURSE STREAMING</string>
+    <string name="ui_style" formatted="false">STYLE</string>
+    <string name="ui_suggestions" formatted="false">Sugestii</string>
+    <string name="ui_switch" formatted="false">Comută</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">Atingeți avatar pentru a personaliza</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">Atingeți la stânga sau la dreapta pentru a naviga • Țineți la pauză</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">Atingeți pentru a activa imediat Întotdeauna Activați Afișează acum</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">Atingeți pentru a selecta emisiunile Country &amp; City FM</string>
+    <string name="ui_target_language" formatted="false">LIMBA ŢINTĂ</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">Limba țintă</string>
+    <string name="ui_test" formatted="false">Test</string>
+    <string name="ui_test_proxy_connection" formatted="false">Conexiune proxy test</string>
+    <string name="ui_testing_proxy" formatted="false">Testarea Proxy...</string>
+    <string name="ui_that_s_your_story" formatted="false">Asta\'s Povestea ta</string>
+    <string name="ui_this_account" formatted="false">Acest cont</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">Această listă de redare este goală. Adaugă cântece de la jucător sau căutare!</string>
+    <string name="ui_time_travel" formatted="false">TIMPUL CĂLĂTORESC</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">Călătorie în timp</string>
+    <string name="ui_time_travel_wrap" formatted="false">ÎNREGISTRAREA TIMPULUI</string>
+    <string name="ui_time_synced_lyrics" formatted="false">Versuri cu sincronizare temporală</string>
+    <string name="ui_top_picks" formatted="false">Alegeri de top</string>
+    <string name="ui_top_result" formatted="false">Rezultatul principal</string>
+    <string name="ui_top_song" formatted="false">Top Song</string>
+    <string name="ui_top_songs" formatted="false">Top Songs</string>
+    <string name="ui_top_streamed" formatted="false">Top Streamed</string>
+    <string name="ui_total_listening_time" formatted="false">Timpul total de ascultare</string>
+    <string name="ui_total_time" formatted="false">Timp total</string>
+    <string name="ui_translate_actual_lines" formatted="false">Tradu linii reale</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">Tradu versuri la cerere pentru orice cântec din meniul jucătorului (... &gt; versuri &gt; traduce). Când\'Tradu linii reale\'este oprit, traducerile apar ca subtitrari sub textul original.</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">Tradu următoarele versuri în engleză. Păstrează fluxul poetic.</string>
+    <string name="ui_translating_lyrics" formatted="false">Traducerea versurilor...</string>
+    <string name="ui_translation_mode" formatted="false">Mod de traducere</string>
+    <string name="ui_translation_prompt" formatted="false">Traducerea prompt</string>
+    <string name="ui_trending_artists" formatted="false">Artisti Trending</string>
+    <string name="ui_turn_off_timer" formatted="false">Oprește cronometrul</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">Actualizați numele afișat pe cartea de profil Apple ID în Setări.</string>
+    <string name="ui_username_optional" formatted="false">Nume utilizator (opțional)</string>
+    <string name="ui_view" formatted="false">Vizualizare</string>
+    <string name="ui_view_on_shazam" formatted="false">Vedere pe Shazam</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">Legătură de placă turnantă din vinil</string>
+    <string name="ui_whats_new" formatted="false">Ce este nou?</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">Atunci când muzica este de redare, Întotdeauna On Display pornește dacă nu apare nicio atingere pe ecran pentru timpul ales. Se activează doar în interiorul aplicației.</string>
+    <string name="ui_who_is_listening" formatted="false">Cine ascultă?</string>
+    <string name="ui_widget" formatted="false">Control</string>
+    <string name="ui_you" formatted="false">Tu</string>
+    <string name="ui_your_1_artist" formatted="false">Artistul tău numărul 1</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">Cheia API este stocată în siguranță pe dispozitiv și niciodată nu a împărtășit.</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">Tokenul dvs. de sesiune discord este stocat criptat pe acest dispozitiv și utilizat doar pentru Rich Prezence.</string>
+    <string name="ui_your_favourite_song" formatted="false">Cântecul tău preferat</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">Biblioteca, listele de redare și setările vor fi criptate cu o parolă de cel puțin 8 caractere.</string>
+    <string name="ui_your_listening_experience" formatted="false">Ascultă-ţi experienţa</string>
+    <string name="ui_your_listening_pattern" formatted="false">Modelul de ascultare</string>
+    <string name="ui_your_listening_persona" formatted="false">PERSOANA TA DE ASCULTARE</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">Redarea și statisticile dumneavoastră muzicale</string>
+    <string name="ui_your_musical_anchor" formatted="false">ANCHORUL MUZICAL</string>
+    <string name="ui_your_name" formatted="false">Numele dumneavoastră</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">Parola este trimisă laLast.fmdoar pentru a crea o sesiune.iTunenu-l salva.</string>
+    <string name="ui_your_playlists" formatted="false">Jucătorii tăi</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">Listele de redare</string>
+    <string name="ui_your_sonic_peak" formatted="false">Vârful Sonic</string>
+    <string name="ui_your_spotify_playlists" formatted="false">Al tăuSpotifyListe de redare</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">Al tăuSpotifyListe de redare (Public &amp; Private)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSIC&amp; Google</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube Musiccookie-uri pentru sesiune</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">·</string>
+    <string name="ui_text_a118c40635" formatted="false" />
+    <string name="ui_album_artwork" formatted="false">Lucrarea de album</string>
+    <string name="ui_itune_waves" formatted="false">iTuneValuri</string>
+    <string name="ui_previous" formatted="false">Precedent</string>
+    <string name="ui_next" formatted="false">Înainte</string>
+    <string name="ui_audio_output" formatted="false">Realizare audio</string>
+    <string name="ui_low_volume" formatted="false">Volum scăzut</string>
+    <string name="ui_high_volume" formatted="false">Volum mare</string>
+    <string name="ui_filter" formatted="false">Filtru</string>
+    <string name="ui_refresh" formatted="false">Reîmprospătează</string>
+    <string name="ui_options_6bf5da9c" formatted="false">Opțiuni</string>
+    <string name="ui_user_profile_avatar" formatted="false">Profilul utilizatorului Avatar</string>
+    <string name="ui_news" formatted="false">Noutăţi</string>
+    <string name="ui_no_song_playing" formatted="false">Niciun cântec</string>
+    <string name="ui_next_track" formatted="false">Urmatoarea pista</string>
+    <string name="ui_see_all_songs" formatted="false">Vezi toate cântecele</string>
+    <string name="ui_favorite_radio" formatted="false">Radio favorit</string>
+    <string name="ui_live_65c821a5" formatted="false">Live</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTuneValuri de brand</string>
+    <string name="ui_refresh_network" formatted="false">Reîmprospătează rețeaua</string>
+    <string name="ui_edit_display_name" formatted="false">Editează numele afișatului</string>
+    <string name="ui_remove_from_queue" formatted="false">Elimină din coadă</string>
+    <string name="ui_search_new_releases" formatted="false">Caută versiuni noi</string>
+    <string name="ui_refresh_new_releases" formatted="false">Reîmprospătează noile versiuni</string>
+    <string name="ui_refresh_downloads" formatted="false">Actualizează descărcările</string>
+    <string name="ui_clear_cache" formatted="false">Șterge cache</string>
+    <string name="ui_sort" formatted="false">Sortează</string>
+    <string name="ui_see_all_new_releases" formatted="false">Vezi toate versiunile noi</string>
+    <string name="ui_identify" formatted="false">Identifică</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">Importă lista de redare</string>
+    <string name="ui_create_playlist" formatted="false">Creează listă de redare</string>
+    <string name="ui_liked" formatted="false">Placut</string>
+    <string name="ui_paste" formatted="false">Lipește</string>
+    <string name="ui_checked" formatted="false">Verificat</string>
+    <string name="ui_google_account_playlist" formatted="false">Lista de redare a contului Google</string>
+    <string name="ui_spotify_playlist" formatted="false">SpotifyListă de redare</string>
+    <string name="ui_local_playlist" formatted="false">Listă de redare locală</string>
+    <string name="ui_back_to_audio_engine" formatted="false">Înapoi la motorul audio</string>
+    <string name="ui_bluetooth_settings" formatted="false">BluetoothConfigurări</string>
+    <string name="ui_scan_output_devices" formatted="false">Scanează dispozitivele de ieșire</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">Dual audio simultan</string>
+    <string name="ui_selected" formatted="false">Selectat</string>
+    <string name="ui_copy" formatted="false">Copiază</string>
+    <string name="ui_copy_link" formatted="false">Copiază linkul</string>
+    <string name="ui_upgrade_quality" formatted="false">Actualizează calitatea</string>
+    <string name="ui_fm_radio" formatted="false">Radio FM</string>
+    <string name="ui_next_station" formatted="false">Staţia următoare</string>
+    <string name="ui_minimize" formatted="false">Minimizează</string>
+    <string name="ui_favorite" formatted="false">Favorit</string>
+    <string name="ui_more_options" formatted="false">Mai multe opțiuni</string>
+    <string name="ui_previous_station" formatted="false">Staţia precedentă</string>
+    <string name="ui_sleep_timer" formatted="false">Timpul de somn</string>
+    <string name="ui_audio_output_devices" formatted="false">Dispozitive de ieșire audio</string>
+    <string name="ui_station_list" formatted="false">Lista stațiilor</string>
+    <string name="ui_volume" formatted="false">Volum</string>
+    <string name="ui_open_lyrics" formatted="false">Deschide versurile</string>
+    <string name="ui_mute_volume" formatted="false">Volum mut</string>
+    <string name="ui_max_volume" formatted="false">Volum maxim</string>
+    <string name="ui_endless_queue" formatted="false">Coadă fără sfârșit</string>
+    <string name="ui_repeat" formatted="false">Repetă</string>
+    <string name="ui_refresh_stations" formatted="false">Reîmprospătează staţiile</string>
+    <string name="ui_favorite_station" formatted="false">Postul preferat</string>
+    <string name="ui_close_ireconization" formatted="false">Închide iReconizarea</string>
+    <string name="ui_cancel_voice_search" formatted="false">Anulează căutarea vocală</string>
+    <string name="ui_microphone" formatted="false">Microfon</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">Mai multe opțiuni</string>
+    <string name="ui_voice_search" formatted="false">Căutare vocală</string>
+    <string name="ui_saved" formatted="false">Salvat</string>
+    <string name="ui_fill_search_query" formatted="false">Completează interogarea căutării</string>
+    <string name="ui_remove_from_history" formatted="false">Elimină din istorie</string>
+    <string name="ui_itune_icon" formatted="false">iTunepictogramă</string>
+    <string name="ui_artwork_preview" formatted="false">Previzualizare lucrare</string>
+    <string name="ui_decrease" formatted="false">Scădere</string>
+    <string name="ui_increase" formatted="false">Creștere</string>
+    <string name="ui_open_link" formatted="false">Deschide legătura</string>
+    <string name="ui_reset_geometry" formatted="false">Resetează geometria</string>
+    <string name="ui_reorder_provider" formatted="false">Furnizor de rezervă</string>
+    <string name="ui_save_name" formatted="false">Salvează numele</string>
+    <string name="ui_editable_name" formatted="false">Nume editabil</string>
+    <string name="ui_google" formatted="false">Google</string>
+    <string name="ui_remove_account" formatted="false">Elimină contul</string>
+    <string name="ui_reorder_source_priority" formatted="false">Reordonare prioritate sursă</string>
+    <string name="ui_refresh_playlists" formatted="false">Actualizează liste de redare</string>
+    <string name="ui_replay_poster" formatted="false">Redare poster</string>
+    <string name="ui_settings" formatted="false">Configurări</string>
+    <string name="ui_artist_radio" formatted="false">Radio artist</string>
+    <string name="ui_play_all" formatted="false">Joacă tot</string>
+    <string name="ui_delete_playlist" formatted="false">Șterge lista de redare</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">Coadă fără sfârșit</string>
+    <string name="ui_artist_info" formatted="false">Informaţii artist</string>
+    <string name="ui_enabled" formatted="false">Activat</string>
+    <string name="ui_search_icon" formatted="false">Pictogramă căutare</string>
+    <string name="ui_region">Regiunea:%1$s</string>
+    <string name="ui_connected_devices">DISPOZITIVE CONECTATE (%1$s)</string>
+    <string name="ui_up_next">UP NEXT (%1$s)</string>
+    <string name="ui_text_da5c3629fd">%1$s›</string>
+    <string name="ui_active_7c6a4064">%1$s•%2$sactivă</string>
+    <string name="ui_no_new_available_right_now">Nicio nouă%1$sdisponibil chiar acum</string>
+    <string name="ui_tracks">%1$sşine •%2$s</string>
+    <string name="ui_songs">%1$scântece •%2$s•%3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s•%2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c">•%1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$spista (s) nu a putut\'nu se potrivește:</string>
+    <string name="ui_text_a3edb2b714">•%1$s-%2$s</string>
+    <string name="ui_d_eeda119e">%1$sD</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+%1$sdB</string>
+    <string name="ui_connected">%1$sconectat</string>
+    <string name="ui_open_web_player">Open Web Player (%1$s)</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">Țara:%1$s(%2$s)</string>
+    <string name="ui_city_state">Oraș/Stat:%1$s</string>
+    <string name="ui_codec_bitrate">Codec / Rata de biți:%1$s</string>
+    <string name="ui_language">Limba:%1$s</string>
+    <string name="ui_tags">Etichete:%1$s</string>
+    <string name="ui_stream">Stream:%1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">Cheia API nu este configurată pentru%1$sSetează-l în Setări &gt; versuri.</string>
+    <string name="ui_s_clip">%1$sclip s</string>
+    <string name="ui_loading_more_fm_stations_loaded">Se încarcă mai multe stații FM (%1$sîncărcat)...</string>
+    <string name="ui_found">%1$sgăsit</string>
+    <string name="ui_version">Versiune%1$s(%2$s)</string>
+    <string name="ui_of_active">%1$sdin%2$sActiv</string>
+    <string name="ui_text_adebc50ade">#%1$s</string>
+    <string name="ui_api_key">%1$sCheie API</string>
+    <string name="ui_channel">Canal:%1$s</string>
+    <string name="ui_sync_issue">Problemă de sincronizare:%1$s</string>
+    <string name="ui_enter">Intră%1$s</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">Sigur doriți să ștergeți%1$sToate datele, listele de redare, favoritele, istoria și setările din acest cont vor fi șterse permanent.</string>
+    <string name="ui_peak">Vârf:%1$s</string>
+    <string name="ui_welcome">Bine ai venit,%1$s</string>
+    <string name="ui_songs_played">%1$scântece redate</string>
+    <string name="ui_around">În jur%1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">Când lumea devine ocupat, vă acordați în cele mai multe pe%1$ss în jur%2$s.</string>
+    <string name="ui_itune_time_travel_575a110d">iTuneCălătorii în timp •%1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s·%2$s</string>
+    <string name="ui_your_biggest_day_was">Cea mai mare zi a fost%1$s.</string>
+    <string name="ui_listening_recap">%1$sascultare recapitulare</string>
+    <string name="ui_busiest_day">Cea mai aglomerată zi:%1$s</string>
+    <string name="ui_peak_hour_00">Ora de vârf:%1$sora</string>
+    <string name="ui_loading">Se încarcă%1$s...</string>
+    <string name="ui_about">Despre%1$s</string>
+    <string name="ui_songs_9b614dc8">%1$scântece</string>
+    <string name="ui_current_offset_ms">Deconectare curentă:%1$sms</string>
+    <string name="ui_connected_session">Sesiune conectată:%1$s</string>
+    <string name="ui_k">%1$sk</string>
+    <string name="ui_top_result_c5e5adab">Topreat •%1$s</string>
+    <string name="toast_song_not_found_in_itune">Song not found iniTune</string>
+    <string name="toast_playback_failed_try_again">Redare eșuată, încercați din nou</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">Cronometru de somn automat activ · Playback oprit</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">Modul offline: acest cântec nu este descărcat</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">Modul offline: nu se poate actualiza calitatea</string>
+    <string name="toast_upgrading_quality">Actualizarea calității</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">Nicio sursă de streaming fără pierderi activată în surse</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">Nici un flux de calitate mai mare găsit în surse activate</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">Shuffle este blocat de Shuffle Permanent în Setări</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">Pentru identificarea muzicii este nevoie de permisiunea Microfonului</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">Afișează peste alte aplicații permisiunea este necesară pentru popup-ul de recunoaștere</string>
+    <string name="toast_playback_failed">Redare eșuată</string>
+    <string name="toast_complete_google_sign_in_first">Conectare Google completă mai întâi</string>
+    <string name="toast_waiting_for_youtube_music_session">AşteptândYouTube Musicsesiune...</string>
+    <string name="toast_couldn_t_load_tracks">Nu am putut\'t piese de încărcare</string>
+    <string name="toast_copied_to_clipboard">Copiat în clipboard</string>
+    <string name="toast_profile_avatar_updated">Avatar profil actualizat</string>
+    <string name="toast_no_tracks_found">Nicio urmă găsită.</string>
+    <string name="toast_google_account_connected">Cont Google conectat</string>
+    <string name="toast_link_copied">Link copiat</string>
+    <string name="toast_could_not_open_browser">Nu s- a putut deschide browserul</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">Introduceți un port între 1024 și 65535</string>
+    <string name="toast_cached_music_cleared">Cached muzica eliminate</string>
+    <string name="toast_no_tracks_available_to_add">Nu există piese disponibile pentru a adăuga</string>
+    <string name="toast_enter_a_playlist_name">Introduceți un nume de listă de redare</string>
+    <string name="toast_system_sound_panel_opened">Panou de sunet de sistem deschis</string>
+    <string name="toast_download_started_check_notification">Descărcare începută · Verificare notificare</string>
+    <string name="toast_playback_will_stop_after_current_track">Redarea se va opri după pista curentă</string>
+    <string name="toast_sleep_timer_turned_off">Timpul de somn oprit</string>
+    <string name="toast_stream_url_copied">URL stream copiat</string>
+    <string name="toast_couldn_t_create_lyrics_card">Nu am putut\'t crea carte versuri</string>
+    <string name="toast_restored_online_lyrics">Versuri online restaurate</string>
+    <string name="toast_lyrics_saved">Versuri salvate</string>
+    <string name="toast_translation_cleared">Traducerea este anulată</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">Setați tasta API în setări &gt; Versurile mai întâi</string>
+    <string name="toast_no_lyrics_found_for_this_song">Nu s-au găsit versuri pentru acest cântec</string>
+    <string name="toast_could_not_create_audio_clip">Nu am putut crea clip audio</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">Fragment salvat în muzică/iTune/Snippets</string>
+    <string name="toast_playing_next">Jocul următor</string>
+    <string name="toast_added_to_queue">Adăugat la coadă</string>
+    <string name="toast_download_started_check_notifications">Descărcare începută · Verificați notificările</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">Nu am putut\'t găsi acest cântec peYouTube Music</string>
+    <string name="toast_couldn_t_start_mix">Nu am putut\'t amestec de pornire</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">Nu am putut\'t găsi piese peYouTube Music</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">Nu am putut cripta parola în siguranță. Întăririle automate nu au fost schimbate.</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">Permisiunea de stocare este necesară pentru a salva copii de rezervă în Descărcări</string>
+    <string name="toast_choose_an_itune_backup_file">Alege un .ituneFișier de rezervă</string>
+    <string name="toast_audio_artwork_cache_cleared">Cache audio &amp; de lucru eliminate</string>
+    <string name="toast_could_not_open_github">Nu am putut deschide GitHub</string>
+    <string name="toast_profile_name_updated">Nume profil actualizat</string>
+    <string name="toast_search_history_cleared">Istoricul căutării șterse</string>
+    <string name="toast_listening_history_cleared">Ascultarea istoriei eliminate</string>
+    <string name="toast_cached_songs_cleared">Cached cântece șterse</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">Setări de sistem deschise pentru a acorda Display peste alte aplicații</string>
+    <string name="toast_dynamic_island_geometry_reset">Resetarea geometriei Insulei dinamice</string>
+    <string name="toast_geometry_reset">Resetarea geometriei</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">Furnizorii de Lyrics resetează la implicite</string>
+    <string name="toast_api_key_saved">Cheie API salvată</string>
+    <string name="toast_base_url_updated">URL- ul de bază actualizat</string>
+    <string name="toast_translation_prompt_updated">Translation prompt actualizat</string>
+    <string name="toast_equalizer_reset_to_flat">Egalizator resetat la plat</string>
+    <string name="toast_dj_console_reset">Resetare consolă DJ</string>
+    <string name="toast_name_saved">Nume salvat</string>
+    <string name="toast_syncing_youtube_music_library">SincronizareYouTube MusicBiblioteca...</string>
+    <string name="toast_signed_out_local_likes_preserved">Semnat (se păstrează place locală)</string>
+    <string name="toast_signed_out_of_all_google_accounts">Semnat din toate conturile Google</string>
+    <string name="toast_discord_disconnected">Discordie deconectată</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">Introduceți o semnătură valabilăYouTube Musiccookie (SAPISID și un cookie de sesiune)</string>
+    <string name="toast_youtube_music_account_connected">YouTube Musiccont conectat</string>
+    <string name="toast_account_renamed">Cont redenumit</string>
+    <string name="toast_account_deleted">Cont șters</string>
+    <string name="toast_cannot_delete_your_only_account">Nu pot șterge singurul cont</string>
+    <string name="toast_sources_restored_to_defaults">Surse restaurate în mod implicit</string>
+    <string name="toast_spotify_disconnected">Spotifydeconectat</string>
+    <string name="toast_spotify_sp_dc_token_saved">Spotifytoken sp dc salvat</string>
+    <string name="toast_spotify_connected">Spotify connectEd!</string>
+    <string name="toast_complete_spotify_sign_in_first">CompletatSpotifysign-in primul</string>
+    <string name="toast_saved_to_gallery">Salvat la Galerie!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">PermiteiTunepentru a instala actualizări pentru a continua</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">Actualizarea descărcată APK nu este disponibilă</string>
+    <string name="toast_added_to_queue_next">Adăugat la coada următoare</string>
+    <string name="toast_link_copied_to_clipboard">Link copiat în clipboard</string>
+    <string name="toast_song_link_copied_to_clipboard">Link-ul cântec copiat în clipboard</string>
+    <string name="toast_left_ishare_session">Stânga sesiune iShare</string>
+    <string name="toast_ishare_lan_host_started">Ishare LAN Gazda a început!</string>
+    <string name="toast_scanning_lan_for_sessions">Scanez LAN pentru sesiuni...</string>
+    <string name="toast_cache_cleared">Cache șterse</string>
+    <string name="toast_signed_out_successfully">Semnat cu succes</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">Parolele trebuie să se potrivească și să aibă cel puțin 8 caractere</string>
+    <string name="toast_no_backup_file_found_in_storage">Niciun fișier de rezervă găsit în depozit</string>
+    <string name="toast_library_settings_restored">Librarie &amp; Setări restaurate!</string>
+    <string name="toast_enter_your_backup_password">Introduceți parola de rezervă</string>
+    <string name="toast_syncing_spotify_library">SincronizareSpotifyBiblioteca...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify ConnectEd!</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">Introduceți un cookie SP DC valid</string>
+    <string name="toast_playing">Joc%%1$s...</string>
+    <string name="toast_upgraded_to_lossless_kbps">Upgraded to Lossless •%%1$skbps</string>
+    <string name="toast_playing_next_0f0c851c">Joc%%1$sÎnainte</string>
+    <string name="toast_added_to_queue_88e96c25">Adăugat%%1$sla coadă</string>
+    <string name="toast_playing_cb1fb3de">Joc%%1$s...</string>
+    <string name="toast_playing_next_e0082d95">Jocul următor:%%1$s</string>
+    <string name="toast_couldn_t_load">Nu am putut\'t sarcina%%1$s</string>
+    <string name="toast_opening">Deschiderea%%1$s...</string>
+    <string name="toast_couldn_t_open">Nu am putut\'t deschis%%1$s</string>
+    <string name="toast_couldn_t_play">Nu am putut\'t play%%1$s</string>
+    <string name="toast_library_pin">Biblioteca Pin:%%1$s</string>
+    <string name="toast_copied">Copiat:%%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">Set pentru cronometrul de somn%%1$smin</string>
+    <string name="toast_lyrics_applied">Versurile aplicate (%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">Adăugat%%1$spiste la coadă</string>
+    <string name="toast_switched_feed_to">Alimentare schimbată în%%1$s</string>
+    <string name="toast_provider_updated_to">Furnizor actualizat la%%1$s</string>
+    <string name="toast_target_language_set_to">Limba țintă stabilită%%1$s</string>
+    <string name="toast_translation_mode_set_to">Modul de traducere setat la%%1$s</string>
+    <string name="toast_added_source">Sursă adăugată:%%1$s</string>
+    <string name="toast_installed_extension_s">Instalat%%1$sextensie (extensii)</string>
+    <string name="toast_imported_songs">Importat\'%%1$s\'(%%2$smelodii)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">Nu am putut\'t găsi\'%%1$s\'privindYouTube Music</string>
+    <string name="toast_added_songs_to">Adăugat%%1$scântece la%%2$s</string>
+    <string name="toast_joining">Alăturarea%%1$s...</string>
+    <string name="toast_added_to">Adăugat%%1$s</string>
+    <string name="toast_itune_v_for_android_tv">iTunev%%1$spentru Android TV</string>
+    <string name="toast_backup_failed">Backup a eșuat:%%1$s</string>
+    <string name="toast_restore_failed">Restaurare eșuată:%%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">iShare, Dynamic Island &amp; Standby</string>
+    <string name="settings_ishare" formatted="false">iShare</string>
+    <string name="settings_dynamic_island" formatted="false">Insula dinamică</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">Controlor plutitor cu bule de apă în afaraiTune</string>
+    <string name="settings_always_on_display" formatted="false">Întotdeauna pe ecran</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">Efecte acustice și audio ale motorului</string>
+    <string name="settings_dolby_atmos" formatted="false">Dolby Atmos</string>
+    <string name="settings_text_8948f8179a" formatted="false">8D Audio</string>
+    <string name="settings_spatial_audio" formatted="false">Audio spațial</string>
+    <string name="settings_equalizer_eq" formatted="false">Egalizator (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">Filtrare joasă</string>
+    <string name="settings_dj_studio_panel" formatted="false">Panou Studio DJ</string>
+    <string name="settings_audio_normalization" formatted="false">Normalizare audio</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB Bit-Perfect DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">Bypass audio pur</string>
+    <string name="settings_signal_pipeline" formatted="false">Conductă de semnal</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">[AudioEngine.pillBadge.text} -&gt; $ActiveOutputName</string>
+    <string name="settings_audio_playback" formatted="false">Redare audio</string>
+    <string name="settings_sources" formatted="false">Surse</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">GestioneazăYouTube Music,JioSaavn, extensii instalabile;WebDAV,SMB, și prioritate de redare</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">Săriți automat când eroarea se întâmplă</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">Mută la următorul cântec la coadă dacă redarea nu reușește</string>
+    <string name="settings_download_quality" formatted="false">Descarcă calitate</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">Calitatea implicită utilizată de acțiunile de descărcare a cântecelor</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">Alegeți calitatea implicită a audio pentru descărcările din aplicație.</string>
+    <string name="settings_lossless_audio" formatted="false">Audio fără pierderi</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">Actualizează calitatea cântecelor cache</string>
+    <string name="settings_streaming_quality" formatted="false">Streaming Quality</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">Selectaţi calitatea audio de streaming preferat.</string>
+    <string name="settings_pcm_output_format" formatted="false">Format de ieșire PCM</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">Reconstruiește redarea la poziția curentă</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">Alegeți formatul PCM solicitat de la Android\'s ieșire audio. Un DAC USB îl poate converti într-un format pe care îl suportă.</string>
+    <string name="settings_crossfade" formatted="false">Crossfade</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">Suprapuneți estomparea liniei finale cu începutul următorului.</string>
+    <string name="settings_automix" formatted="false">Amestec automat</string>
+    <string name="settings_afterglow" formatted="false">Afterglow</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">Aplicați același efect de egalizator Low-Pass în timpul secundelor finale selectate ale fiecărui cântec. Afterglow pauze AutoMix și Crossfade în timp ce activat.</string>
+    <string name="settings_permanent_shuffle" formatted="false">Amestecare permanentă</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">Păstrați shuffle permanent blocat pe în jucător</string>
+    <string name="settings_pause_at_volume_0" formatted="false">Pauză la volumul 0</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">Redare de pauză automată atunci când volumul ajunge la zero</string>
+    <string name="settings_volume_bar" formatted="false">Bară de volum</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">Afişat pe $ {stat.volum BarSide.lowercase()} margine atunci când apăsați butoanele de volum</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">Alegeți marginea ecranului pe care apare bara de volum în aplicație.</string>
+    <string name="settings_content" formatted="false">Conţinut</string>
+    <string name="settings_default_content_language" formatted="false">Limba de conținut implicită</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">Limbaj pentru moduri, navigare și căutare</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">Selectați limba de catalog preferată utilizată de-a lungul Browse, Moods &amp; Genres, Playlists și New Releases.</string>
+    <string name="settings_default_content_country" formatted="false">Țara de conținut implicită</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">Regiune pentru diagrame, liste de redare și noi versiuni</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">Alegeți magazinul regional folosit pentru albume nou adăugate, Moods regionale și Playlists recomandate.</string>
+    <string name="settings_hide_explicit_content" formatted="false">Ascunde conținutul explicit</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">Filtrare de cântece explicite peste Moods, Navigare &amp; Căutare</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">Acum joc &amp; sticlă lichidă</string>
+    <string name="settings_splash_screen" formatted="false">Ecranul de stropire</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">App lansare marca animație &amp; titlu fluid dezvăluie</string>
+    <string name="settings_animated_cover_art" formatted="false">Artă de acoperire animat</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">SpotifyCanvas, Apple Music, Tidal &amp; Community motion coperts</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">SpotifyConfigurare &amp; Canvas</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">Control auto-ascunde Canvas</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">Minimizează controalele după 5s în timp ce Canvas joacă (tap Canvas pentru a comuta)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">Arată versuri sincronizate peste canvas</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">Afișează versuri animate sincronizate deasupra numelui cântecului atunci când Canvas controlează ascunde</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">PrioritizeazăSpotifyCanvas</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">Încearcă.SpotifyCanvas înainte de Apple Music, Tidal &amp; Community</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">Joacă Coperta animată peste celular</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">Permite buclă video Canvas peste date mobile</string>
+    <string name="settings_player_type" formatted="false">Tip jucător</string>
+    <string name="settings_player_style" formatted="false">Stilul jucătorului</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">De colorat dinamic jucător</string>
+    <string name="settings_full_screen_cover_art" formatted="false">Artă cu ecran complet</string>
+    <string name="settings_corner_length" formatted="false">Lungime colț</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">Ajustează raza de colț a operei de artă a albumului pătrat</string>
+    <string name="settings_hide_quality_tag" formatted="false">Ascunde eticheta de calitate</string>
+    <string name="settings_hide_volume_bar" formatted="false">Ascunde bara de volum</string>
+    <string name="settings_home_top_card_style" formatted="false">Acasă Stilul cărții de top</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">Nav &amp; Mini Player din sticlă lichidă</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">Bar de sticlă și mini-jucator, cu o lentilă cu bule de apă în așteptare</string>
+    <string name="settings_time_synced_lyrics" formatted="false">Versuri cu sincronizare temporală</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">Urmează versurile în timp real</string>
+    <string name="settings_app_font" formatted="false">Fontul aplicației</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">Schimbă tipografia aplicației; comenzile jucătorului își păstrează fața de tip proiectată</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">Alegeți o față de tip pentru interfața aplicației.</string>
+    <string name="settings_lyrics_providers" formatted="false">Furnizorii de versuri</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 surse • Prioritizează &amp; comuta ordinea de rezervă</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">Chrome de sticlă lichidă</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">Antete translucide și carduri de andocare</string>
+    <string name="settings_tactile_haptics" formatted="false">Haptice tactile</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">Feedback-ul subtil al impulsurilor între comenzile jucătorului</string>
+    <string name="settings_downloads_storage" formatted="false">Descărcări și stocare</string>
+    <string name="settings_cellular_streaming" formatted="false">Streaming celular</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">Lăţimea de bandă audio a datelor mobile</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">Controlați fidelitatea audio atunci când curge departe de Wi-Fi.</string>
+    <string name="settings_download_over_wi_fi" formatted="false">Descărcare prin Wi-Fi</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">Așteptați Wi-Fi înainte de descărcările automate</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">Cache cântece după redare</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">Salvați un cântec la stocare offline după ce termină redarea</string>
+    <string name="settings_cache_quality" formatted="false">Calitatea cache-ului</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">Calitatea inferioară salvează depozitarea</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">Alegeți calitatea cântecelor salvate după redare completă. Se aplică la cântece cache de acum încolo.</string>
+    <string name="settings_song_storage_limit" formatted="false">Limita de stocare a cântecelor</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">Stocarea maximă a discului alocată pentru cache audio offline înainte ca melodiile mai vechi nejucate să fie evacuate.</string>
+    <string name="settings_clear_cached_songs" formatted="false">Clear Cached Songs</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">$ {MusicCacheManager.cachedTracks.size} cântece • $ {MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)}</string>
+    <string name="settings_automatic_downloads" formatted="false">Descărcări automate</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">Salvează pistele &amp; adăugate nou adorate offline</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">Clear App Buffer Cache</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">Elimină tamponele temporare de artă și rețea</string>
+    <string name="settings_library_listening" formatted="false">Bibliotecă și ascultare</string>
+    <string name="settings_sync_library" formatted="false">Sincronizează biblioteca</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">Păstrați artiștii, liste de redare și albume actualizate</string>
+    <string name="settings_listening_history" formatted="false">Ascultarea istoriei</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">Name</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">Păstrați place pe acest dispozitiv</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">Păstrați cântece plăcut îniTuneatunci când sunt semnate</string>
+    <string name="settings_notifications_general" formatted="false">Notificări și generale</string>
+    <string name="settings_offline_mode" formatted="false">Mod offline</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">Necesită o copie descărcată pentru a începe redarea</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">Oprește muzica pe sarcina clară</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">Opriţi redarea cândiTuneeste furat departe de recente</string>
+    <string name="settings_auto_sleep_timer" formatted="false">Cronometru de somn automat</string>
+    <string name="settings_network_proxy" formatted="false">Proxy de rețea</string>
+    <string name="settings_profile_name" formatted="false">Denumirea profilului</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">Personalizează numele de afișare al profilului Configurărilor</string>
+    <string name="settings_news_from_dev" formatted="false">Noutăţi din Dev</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">Anunturi, lansari si modificari</string>
+    <string name="settings_general_about" formatted="false">General &amp; Despre</string>
+    <string name="settings_home_screen_widget" formatted="false">Control ecran acasă</string>
+    <string name="settings_widget_customization" formatted="false">Personalizare controale</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">Alegeți o avanpremieră de mărime, lucrare de artă, control și stil widget</string>
+    <string name="settings_backup_restore" formatted="false">Restaurează</string>
+    <string name="settings_automatic_daily_backup" formatted="false">Backup zilnic automat</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">CommentiTune/Întăriri</string>
+    <string name="settings_back_up_itune" formatted="false">Înapoi susiTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">Salvează conturile, toate setările, efectele audio, datele bibliotecii și statisticile criptate</string>
+    <string name="settings_restore_from_backup" formatted="false">Restaurează de la Backup</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">Restaurează setările, efectele audio, conturile sau datele bibliotecii de la .itune</string>
+    <string name="settings_privacy" formatted="false">Confidențialitate</string>
+    <string name="settings_pause_search_history" formatted="false">Pauză istoricul căutării</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">Nu salvați noi întrebări de căutare în istorie</string>
+    <string name="settings_clear_search_history" formatted="false">Șterge istoricul căutării</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">Elimină întrebările recente din Căutare</string>
+    <string name="settings_pause_listening_history" formatted="false">Pauză Istoricul ascultării</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">Nu înregistra cântece sau recomandări de actualizare</string>
+    <string name="settings_clear_listening_history" formatted="false">Clear Ascultare Istorie</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">Elimină istoricul de redare și resetează profilul de gust</string>
+    <string name="settings_disable_screenshot" formatted="false">Dezactivează capturii de ecran</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">Capturi de ecran și înregistrare de ecran pe aplicație</string>
+    <string name="settings_best_available" formatted="false">Cel mai bun disponibil</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">Utilizați cea mai bună calitate a sursei disponibile</string>
+    <string name="settings_maximum" formatted="false">Maxim</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">Alege cel mai mare flux bitrate</string>
+    <string name="settings_high" formatted="false">Ridicat</string>
+    <string name="settings_target_about_160_kbps" formatted="false">Țintă aproximativ 160 kbps</string>
+    <string name="settings_standard" formatted="false">Standard</string>
+    <string name="settings_target_about_128_kbps" formatted="false">Țintă aproximativ 128 kbps</string>
+    <string name="settings_data_saver" formatted="false">Salvator de date</string>
+    <string name="settings_target_about_64_kbps" formatted="false">Ţintă de aproximativ 64 kbps</string>
+    <string name="settings_extreme" formatted="false">Extreme</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">Fidelitate maximă (256+ kbps)</string>
+    <string name="settings_high_b1a5954a" formatted="false">Ridicat</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">audio de înaltă calitate (~160 kbps)</string>
+    <string name="settings_medium" formatted="false">Mediu</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">Calitate audio standard (~128 kbps)</string>
+    <string name="settings_low" formatted="false">Scăzut</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">audio de salvare a datelor (~48-64 kbps)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">PCM pe 16 biți</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">Ieșire standard întreg PCM; în general compatibilă cu DAC-uri USB Audio Class</string>
+    <string name="settings_text_6697202e38" formatted="false">PCM plutitoare de 32 biți</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">Ieșire PCM plutitoare atunci când este susținută de Android și calea audio conectată</string>
+    <string name="settings_off" formatted="false">Off</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">Joaca piese curat-back-to-back</string>
+    <string name="settings_text_6597740315" formatted="false">2 secunde</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">Suprapunerea subtilă a tranziției</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 secunde</string>
+    <string name="settings_short_seamless_fade" formatted="false">Scurt fără sudură se estompeze</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 secunde</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">Tranziția în stil DJ echilibrată</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8 secunde</string>
+    <string name="settings_smooth_extended_blend" formatted="false">Amestec fin extins</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 secunde</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">Amestec maxim continuu</string>
+    <string name="settings_off_e3de5ab0" formatted="false">Off</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">Păstrați efectele normale de redare și tranzițiile</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 secunde</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">Aplicați Low-Pass în timpul fiecărei melodii</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 secunde</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">Aplicați Low-Pass în timpul fiecărei melodii</string>
+    <string name="settings_text_eb4354110e" formatted="false">15 secunde</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">Aplicați Low-Pass în timpul fiecărei melodii</string>
+    <string name="settings_right" formatted="false">Corect.</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">Afișează bara de volum de pe marginea dreaptă (default)</string>
+    <string name="settings_left" formatted="false">Stânga</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">Arată bara de volum de pe marginea stângă</string>
+    <string name="settings_high_efficiency" formatted="false">Eficiență ridicată</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">Utilizaţi date celulare minime</string>
+    <string name="settings_high_quality" formatted="false">Calitate înaltă</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 kbps redare mobilă echilibrată</string>
+    <string name="settings_lossless" formatted="false">Fără pierderi</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">Fără pierderi totale peste 5G/LTE</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">Off</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">Permite streaming numai pe Wi-Fi</string>
+    <string name="settings_text_03a001f575" formatted="false">500 MO</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">Cache compact (~70 cântece)</string>
+    <string name="settings_text_33015e637f" formatted="false">1 GB</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">Cache moderat (~150 cântece)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 GB</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">Recomandat implicit (~300 melodii)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5 GB</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">Colecţie mare offline (~800 cântece)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10 GB</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">Bibliotecă foarte mare (~1600 de cântece)</string>
+    <string name="settings_unlimited" formatted="false">Nelimitat</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">Niciodată nu evacua cântece cached</string>
+    <string name="settings_pipeline_output">%1$s→%2$s</string>
+    <string name="settings_volume_bar_side">Arată pe%1$smargine atunci când apăsați butoanele de volum</string>
+    <string name="settings_corner_radius_value">%1$ddp</string>
+    <string name="settings_active_lyrics_providers">%1$dActiv</string>
+    <string name="settings_cached_song_count_size">%1$dcântece •%2$s</string>
+    <string name="library_playlist_count_one">%1$dListă de redare</string>
+    <string name="library_playlist_count_many">%1$dListe de redare</string>
+    <string name="library_album_count_one">%1$dAlbum adăugat</string>
+    <string name="library_album_count_many">%1$dAlbume adăugate</string>
+    <string name="remove_from_favorites">Elimină din favorite</string>
+    <string name="play_top_album">Joacă album de top</string>
+    <string name="open_in_spotify">DeschideSpotify</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Utilizați interfața azeră</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Utilizați interfața bengaleză</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Utilizați interfața bulgară</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Utilizați interfața catalană</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">Utilizați interfața cehă</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Utilizați interfața daneză</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Utilizați interfața finlandeză</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Utilizați interfața greacă</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Utilizați interfața ebraică</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Utilizați interfața maghiară</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Utilizați interfața indoneziană</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Utilizați interfața Malaezia</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Utilizați interfața norvegiană</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Utilizați interfața persană</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Utilizați interfața poloneză</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Interfață în română</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Utilizați interfața slovacă</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Utilizați interfața thailandeză</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Utilizaţi interfaţa turcească</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Utilizați interfața ucraineană</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Utilizați interfața vietnameză</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Utilizați interfața Swahili</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Utilizați interfața filipineză</string>
+</resources>
