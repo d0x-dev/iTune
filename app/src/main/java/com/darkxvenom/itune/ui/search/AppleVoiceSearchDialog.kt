@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.search
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -144,7 +147,7 @@ fun AppleVoiceOptionsDialog(
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
-                            text = "Search & Identify",
+                            text = stringResource(R.string.ui_search_identify),
                             fontSize = 12.5.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White.copy(alpha = 0.45f),
@@ -205,7 +208,7 @@ fun AppleVoiceOptionsDialog(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel),
                         fontSize = 17.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color(0xFFFA2D48),
@@ -500,7 +503,7 @@ fun AppleVoiceSearchDialog(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Cancel Voice Search",
+                        contentDescription = stringResource(R.string.ui_cancel_voice_search),
                         tint = Color.White,
                         modifier = Modifier.size(20.dp),
                     )
@@ -572,7 +575,7 @@ fun AppleVoiceSearchDialog(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Mic,
-                            contentDescription = "Microphone",
+                            contentDescription = stringResource(R.string.ui_microphone),
                             tint = Color.White,
                             modifier = Modifier.size(46.dp),
                         )
@@ -601,7 +604,7 @@ fun AppleVoiceSearchDialog(
                 Spacer(Modifier.height(10.dp))
 
                 Text(
-                    text = "Say a song, artist, album, or lyrics",
+                    text = stringResource(R.string.ui_say_a_song_artist_album_or_lyrics),
                     fontSize = 14.sp,
                     color = Color.White.copy(alpha = 0.50f),
                     textAlign = TextAlign.Center,
