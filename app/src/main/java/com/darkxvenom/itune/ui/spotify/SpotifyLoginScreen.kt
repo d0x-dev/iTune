@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.spotify
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Message
@@ -147,7 +150,7 @@ fun SpotifyLoginScreen(
         val token = readSpotifySpdcCookie()
         if (token.isNullOrBlank()) {
             if (manualTrigger) {
-                Toast.makeText(context, "Complete Spotify sign-in first", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_complete_spotify_sign_in_first), Toast.LENGTH_SHORT).show()
             }
             return
         }
@@ -207,14 +210,14 @@ fun SpotifyLoginScreen(
                 IconButton(onClick = onClose) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.back),
                         tint = Color.White,
                     )
                 }
 
                 Column(modifier = Modifier.weight(1f).padding(horizontal = 4.dp)) {
                     Text(
-                        text = "Continue with Spotify",
+                        text = stringResource(R.string.ui_continue_with_spotify),
                         color = Color.White,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -249,7 +252,7 @@ fun SpotifyLoginScreen(
                             .padding(horizontal = 14.dp, vertical = 7.dp),
                     ) {
                         Text(
-                            text = "Confirm",
+                            text = stringResource(R.string.ui_confirm),
                             color = Color.Black,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
@@ -386,14 +389,14 @@ fun SpotifyLoginScreen(
                         )
                         Spacer(Modifier.height(14.dp))
                         Text(
-                            text = "Connecting Spotify...",
+                            text = stringResource(R.string.ui_connecting_spotify),
                             color = Color.White,
                             fontSize = 15.5.sp,
                             fontWeight = FontWeight.SemiBold,
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            text = "Enabling Spotify Canvas & playlists",
+                            text = stringResource(R.string.ui_enabling_spotify_canvas_playlists),
                             color = AppleTextSecondary,
                             fontSize = 12.5.sp,
                         )
