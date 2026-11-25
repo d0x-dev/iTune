@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.components
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -61,7 +64,7 @@ fun CuratedPlaylistsSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Spatial Audio & Essentials",
+                text = stringResource(R.string.ui_spatial_audio_essentials),
                 color = AppleTextPrimary,
                 fontSize = 21.sp,
                 fontWeight = FontWeight.Bold,
