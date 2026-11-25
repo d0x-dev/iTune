@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">Avbryt</string>
+    <string name="save">Lagre</string>
+    <string name="close">Lukk</string>
+    <string name="done">Ferdig</string>
+    <string name="back">Tilbake</string>
+    <string name="play">Spill av</string>
+    <string name="shuffle">Bland</string>
+    <string name="retry">Prøv igjen</string>
+    <string name="try_again">Prøv igjen</string>
+    <string name="more">Mer</string>
+    <string name="less">Mindre</string>
+    <string name="share">Del</string>
+    <string name="show_all">Vis alle</string>
+    <string name="top_songs">Topp sanger</string>
+    <string name="suggested">Foreslått</string>
+    <string name="subscribers">%1$sabonnenter</string>
+    <string name="monthly_listeners">%1$smånedlige lyttere</string>
+    <string name="signed_by">Signert av%1$s</string>
+    <string name="about_artist">Om kunstneren</string>
+    <string name="about_album">Om albumet</string>
+    <string name="recent_album">Nylig album</string>
+    <string name="recent_ep">Nylig EP</string>
+    <string name="recent_single">Nylig Single</string>
+    <string name="subscribe">Abonner</string>
+    <string name="unsubscribe">Avslutt abonnement</string>
+    <string name="add_to_library">Legg til i biblioteket</string>
+    <string name="remove_from_library">Fjern fra biblioteket</string>
+    <string name="add_to_playlist">Legg til i spilleliste</string>
+    <string name="remove_from_playlist">Fjern fra denne spillelisten</string>
+    <string name="play_next">Spill neste</string>
+    <string name="add_to_queue">Legg i kø</string>
+    <string name="start_radio">Start radio</string>
+    <string name="open">Åpne</string>
+    <string name="open_album">Åpne album</string>
+    <string name="open_artist">Åpen artist</string>
+    <string name="open_playlist">Åpne spilleliste</string>
+    <string name="song_info">Song Info</string>
+    <string name="song_info_album">Album</string>
+    <string name="song_info_release_date">Utgivelsesdato</string>
+    <string name="song_info_views">Spill / visninger</string>
+    <string name="song_info_likes">Liker</string>
+    <string name="song_info_comments">Kommentarer</string>
+    <string name="song_info_unavailable">Ikke tilgjengelig</string>
+    <string name="song_info_error">Noen opplysninger kan ikke lastes.</string>
+    <string name="song_info_retry">Prøv på nytt</string>
+    <string name="like">Som</string>
+    <string name="dislike">Deslike</string>
+    <string name="download">Last ned</string>
+    <string name="download_all">Last ned alle</string>
+    <string name="downloaded">Lastet ned</string>
+    <string name="downloading">Last ned</string>
+    <string name="download_notification_title">Last ned</string>
+    <string name="delete_download">Slett nedlasting</string>
+    <string name="delete_download_confirmation">Fjern \"%1$sfra denne enheten? Trykk igjen for å bekrefte.</string>
+    <string name="delete">Slett</string>
+    <string name="queued">Kylling</string>
+    <string name="saved_to_downloads">Lagret til nedlastinger</string>
+    <string name="search_this_list">Søk i denne listen</string>
+    <string name="clear_search">Tøm søket</string>
+    <string name="close_search">Lukk søk</string>
+    <string name="nothing_matches">Ingenting her matcher \"%1$s«</string>
+    <string name="sort_songs">Sorter sanger</string>
+    <string name="artist">kunstner</string>
+    <string name="album">album</string>
+    <string name="playlist">spilleliste</string>
+    <string name="folder">Mappe</string>
+    <string name="songs">Sanger</string>
+    <string name="song_count">%1$dsang</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$dspor</item>
+        <item quantity="other">%1$dspor</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$dminutt</item>
+        <item quantity="other">%1$dminutter</item>
+    </plurals>
+    <string name="one_hour">1 time</string>
+    <string name="hours_minutes_short">%1$dh%2$dm</string>
+    <string name="minutes_short">%1$dmin</string>
+    <string name="pin">Pin</string>
+    <string name="unpin">Unpin</string>
+    <string name="tile_identify_music">Identifiser musikk</string>
+    <string name="tile_identify_music_desc">Identifiser sanger som spiller rundt deg mediTune</string>
+    <string name="widget_itune_description">KontrolliTuneavspilling fra startskjermen</string>
+    <string name="app_language">Appspråk</string>
+    <string name="app_language_subtitle">Språk for menyer, knapper og meldinger</string>
+    <string name="app_language_description">Velg språket som brukes tiliTunegrensesnitt.</string>
+    <string name="system_default_language">Systemstandard</string>
+    <string name="follow_device_language">Følg enhetsspråket</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">Bruk det engelske grensesnittet</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface">इ के के</string>
+    <string name="hindi_interface_language">Hindi grensesnittspråk</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">Bruk det spanske grensesnittet</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">Bruk det franske grensesnittet</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">Bruk det nederlandske grensesnittet</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">Bruk det russiske grensesnittet</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">Bruk Urdu-grensesnittet</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">Bruk det kinesiske grensesnittet</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">Bruk det tyske grensesnittet</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">Bruk det portugisiske grensesnittet</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">Bruk det italienske grensesnittet</string>
+    <string name="japanese_language">日本語</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">한어</string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Svensk</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">^ واهابية</string>
+    <string name="japanese_interface">Bruk det japanske grensesnittet</string>
+    <string name="favorite_artist">favorittkunstner</string>
+    <string name="remove_favorite_artist">Fjern fra favorittkunstnere</string>
+    <string name="add_to_favorite_artists">Legg til favorittkunstnere</string>
+    <string name="removed_from_artists">Fjernet fra artister</string>
+    <string name="added_to_artists">Lagt til kunstnere</string>
+    <string name="play_top_songs">Spille sanger</string>
+    <string name="play_album">Spill av album</string>
+    <string name="play_playlist">Spill spilleliste</string>
+    <string name="create_new_playlist">Opprett ny spilleliste</string>
+    <string name="create_playlist">Lag spilleliste</string>
+    <string name="radio">Radio</string>
+    <string name="search">Søk</string>
+    <string name="share_playlist_link">Del spillelistelenke</string>
+    <string name="copy_share_link">Kopier Share Link</string>
+    <string name="rename_playlist">Endre navn på spilleliste</string>
+    <string name="delete_playlist">Slett spilleliste</string>
+    <string name="share_link_copied">Del link kopiert</string>
+    <string name="playlist_removed">Speleliste fjernet</string>
+    <string name="playlist_no_longer_available">Denne spillelisten er ikke lenger tilgjengelig.</string>
+    <string name="empty_playlist">Tom spilleliste</string>
+    <string name="filter_playlists">Filtrer spillelister...</string>
+    <string name="filter_albums">Filtrer album...</string>
+    <string name="favorite">favoritt</string>
+    <string name="tap_to_start_listening">Trykk for å begynne å lytte</string>
+    <string name="time_zero" formatted="false">0:00</string>
+    <string name="previous">Forrige</string>
+    <string name="play_or_pause">Spill eller pause</string>
+    <string name="next">Neste</string>
+    <string name="repeat">Gjenta</string>
+    <string name="open_title_options">Åpne%1$salternativer</string>
+    <string name="reset_page_title">Nullstill%1$s</string>
+    <string name="remove_device">Fjern%1$s</string>
+    <string name="profile_name">%1$sprofil</string>
+    <string name="download_option">Last ned%1$s</string>
+    <string name="open_entry_options">Åpne%1$salternativer</string>
+    <string name="avatar_number">Avatar%1$s</string>
+    <string name="options_for_track">Alternativer for%1$s</string>
+    <string name="preparing">Forbered...</string>
+    <string name="share_image">Del bildet</string>
+    <string name="speed_pitch_locked">Hastighet &amp; pitch- låst sammen</string>
+    <string name="independent_bpm_tempo_key_pitch">Uavhengig BPM tempo og nøkkel tonehøyde</string>
+    <string name="spatial_reflections_delay">refleksjoner (%1$dms)</string>
+    <string name="on">På</string>
+    <string name="off">Av</string>
+    <string name="dynamic_island_active">Dynamic Island aktiv</string>
+    <string name="dynamic_island_description">Viser jevnt utenforiTuneunder avspilling</string>
+    <string name="preparing_download">Forbereder nedlasting...</string>
+    <string name="listening_for_music">Lytter for musikk...</string>
+    <string name="hold_phone_near_sound_source">Hold telefonen nær lydkilde</string>
+    <string name="unable_to_recognize_audio">Klarte ikke gjenkjenne lyd</string>
+    <string name="song_identified">Sang Identifisert</string>
+    <string name="play_in_itune">Spill inniTune</string>
+    <string name="view_details">Vis detaljer</string>
+    <string name="no_match_found">Ingen treff funnet</string>
+    <string name="recognition_retry_message">Kunne ikke identifisere sangen. Trykk for å prøve igjen.</string>
+    <string name="microphone_permission_needed">Mikrofon tillatelse nødvendig</string>
+    <string name="microphone_permission_help">Trykk for å tillate mikrofontilgang såiTuneKan identifisere musikk.</string>
+    <string name="recognition_failed">gjenkjenning mislykkes</string>
+    <string name="tap_install_to_continue">Trykk på Installer for å fortsette</string>
+    <string name="detail_artist">Kunstner</string>
+    <string name="detail_album">Album</string>
+    <string name="set_default_ringtone_target">Sett som standard%1$s!</string>
+    <string name="added_ringtone_target">Lagt til%1$sVelg det i lydinnstillingene.</string>
+    <string name="last_fm_connected_as">Last.fmtilkoblet som%1$s</string>
+    <string name="discord_connected_as">Diskord tilkoblet som%1$s</string>
+    <string name="tv_encrypted_backup_saved">Kryptert sikkerhetskopi lagret (%1$dKB!</string>
+    <string name="sign_in_verification_failed">Login- verifisering mislyktes</string>
+    <string name="could_not_rename_playlist">Kunne ikke endre navn på spilleliste påYouTube Music</string>
+    <string name="could_not_create_playlist">Kunne ikke opprette spilleliste</string>
+    <string name="daily_encrypted_backup_enabled">Daglig kryptert sikkerhetskopi aktivert</string>
+    <string name="cookie_login_failed">Innlogging av informasjonskapsler mislyktes</string>
+    <string name="could_not_open_last_fm">Kunne ikke åpneLast.fm</string>
+    <string name="last_fm_sign_in_failed">Last.fmLogg inn mislyktes</string>
+    <string name="discord_sign_in_failed">Discord-loggen mislyktes</string>
+    <string name="could_not_open_android_installer">Kunne ikke åpne Androids installasjonsprogram</string>
+    <string name="added_title_to_queue">Lagt til \"%1$s\" til kø</string>
+    <string name="automatic_backup_disabled">Automatisk sikkerhetskopiering deaktivert</string>
+    <string name="download_failed">Last ned mislyktes</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">Installer</string>
+    <string name="ui_text_9ef6a80f91" formatted="false">#1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">%+.1f</string>
+    <string name="ui_accounts" formatted="false">+ Kontoer</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0.0s</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5.0s</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">-</string>
+    <string name="ui_text_7be28ad40e" formatted="false">-5.0s</string>
+    <string name="ui_text_a6dee6102d" formatted="false">11.00</string>
+    <string name="ui_text_1a19c52178" formatted="false">12.00</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">12.00</string>
+    <string name="ui_text_4e37ece023" formatted="false">15ms motsatt øre forsinket lavpassblanding</string>
+    <string name="ui_text_76b322ac42" formatted="false">2X hurtighastighet</string>
+    <string name="ui_text_505c74ed85" formatted="false">3D Ping-Pong Bounce</string>
+    <string name="ui_text_db9b8df506" formatted="false">6 AM</string>
+    <string name="ui_text_2812537f20" formatted="false">6 PM</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080</string>
+    <string name="ui_text_05a79f06cf" formatted="false">:)</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">Et fullt bilde med toppsanger, artister, album og vaner.</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">En ny versjon er klar</string>
+    <string name="ui_account" formatted="false">Konto</string>
+    <string name="ui_account_options" formatted="false">Kontoalternativer</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">KUNKSJONER</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">Acoustic Head-Shadow Crossfeed</string>
+    <string name="ui_activate" formatted="false">Aktiver</string>
+    <string name="ui_active" formatted="false">Aktiv</string>
+    <string name="ui_active_days" formatted="false">AKTIVE DAGER</string>
+    <string name="ui_active_profile" formatted="false">Aktiv profil</string>
+    <string name="ui_activity_by_day" formatted="false">Aktivitet etter dag</string>
+    <string name="ui_add_account" formatted="false">Legg til konto</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">Legg til egendefinerte HTTP addon-servere (talende /manifest.json, /search, /stream) eller sandbox-isolert QuickJS-moduler.</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">Legg til fremtidige sanger automatisk</string>
+    <string name="ui_add_streaming_source" formatted="false">Legg til streamingkilde</string>
+    <string name="ui_add_to_playlist" formatted="false">Legg til i spilleliste</string>
+    <string name="ui_added_playlists" formatted="false">Lagt til spillelister</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">Juster hjørnekanten av firkantede albumkunst.</string>
+    <string name="ui_advanced_cookie_login" formatted="false">Advanced Cookie Login</string>
+    <string name="ui_advanced_login" formatted="false">ADVANCED LOGIN</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">Avansert innlogging</string>
+    <string name="ui_ai_engine" formatted="false">AI ENGINE</string>
+    <string name="ui_ai_provider" formatted="false">AI-leverandør</string>
+    <string name="ui_albums" formatted="false">Album</string>
+    <string name="ui_all_news" formatted="false">Alle nyheter</string>
+    <string name="ui_allow_downloads" formatted="false">Tillat nedlastinger</string>
+    <string name="ui_allow_microphone" formatted="false">Tillat mikrofon</string>
+    <string name="ui_allow_microphone_access" formatted="false">Tillat mikrofontilgang</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">Alternative refleksjoner L &lt;-&gt; R</string>
+    <string name="ui_always_on_display" formatted="false">Alltid på skjermen</string>
+    <string name="ui_am" formatted="false">AM</string>
+    <string name="ui_api_base_url" formatted="false">API Base URL</string>
+    <string name="ui_artist" formatted="false">Kunstner</string>
+    <string name="ui_artist_name" formatted="false">Artistnavn</string>
+    <string name="ui_artists" formatted="false">Kunstnere</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">Artister, sanger, album, spillelister...</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">Kunstnere, sanger, tekster og mer</string>
+    <string name="ui_at_least_8_characters" formatted="false">Minst 8 tegn</string>
+    <string name="ui_auto_sleep_timer" formatted="false">Automatisk søvntimer</string>
+    <string name="ui_auto_activation_timeout" formatted="false">AUTO-AKTIVERINGTID</string>
+    <string name="ui_avatar" formatted="false">Avatar</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">SikkerhetskopiiTune(AES-256)</string>
+    <string name="ui_backup_password" formatted="false">Sikkerhetskopier passord</string>
+    <string name="ui_bluetooth_device_access" formatted="false">BluetoothEnhetstilgang</string>
+    <string name="ui_browse" formatted="false">Bla gjennom</string>
+    <string name="ui_browse_by_country" formatted="false">Bla gjennom Land</string>
+    <string name="ui_browse_extensions" formatted="false">Bla gjennom utvidelser</string>
+    <string name="ui_browse_live_online_radio" formatted="false">Bla gjennom Live Online Radio</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">Kan ikke slette bare konto</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">Canvasleverandører (oppslagsordre)</string>
+    <string name="ui_captcha_guidance" formatted="false">CAPTCHA Veiledning</string>
+    <string name="ui_cast_wireless_devices" formatted="false">CAST &amp; WIRELESS</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">Velg lydavspillingsstrømningskilder, tapsfrie nivåer og reserveprioritet</string>
+    <string name="ui_choose_avatar" formatted="false">Velg Avatar</string>
+    <string name="ui_choose_charts_region" formatted="false">Velg Charts Region</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">Velg hvordaniTunevises på hjemmeskjermen din. Endre størrelsen på widgeten fra oppstarteren din.</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">Velg din profil for å fortsette</string>
+    <string name="ui_choose_youtube_channel" formatted="false">VelgYouTubeKanal</string>
+    <string name="ui_clear" formatted="false">Tøm</string>
+    <string name="ui_clear_use_default" formatted="false">Tøm &amp; bruk standard</string>
+    <string name="ui_clear_all" formatted="false">Fjern alle</string>
+    <string name="ui_confirm" formatted="false">Bekreft</string>
+    <string name="ui_confirm_password" formatted="false">Bekreft passord</string>
+    <string name="ui_connect_discord" formatted="false">Koble diskord</string>
+    <string name="ui_connect_last_fm" formatted="false">Koble tilLast.fm</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">Koble til dinSpotifykonto for å aktivere Canvas looping bevegelsesvideo kunstverk og synkronisere dinSpotifybibliotek.</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">Koble tilYouTube Musicmed sesjonskapsler</string>
+    <string name="ui_connect" formatted="false">Koble til</string>
+    <string name="ui_connecting_spotify" formatted="false">Koble tilSpotify...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">Koble tilYouTube Music...</string>
+    <string name="ui_continue" formatted="false">Fortsett</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">Fortsett i nettleseren i stedet</string>
+    <string name="ui_continue_with_google" formatted="false">Fortsett med Google</string>
+    <string name="ui_continue_with_spotify" formatted="false">Fortsett medSpotify</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">Informasjonskapsler lagres iiTunekryptert kontolagring og kontrollert medYouTube Musicfør de blir frelst.</string>
+    <string name="ui_copy_song_name" formatted="false">Kopier sangnavn</string>
+    <string name="ui_copy_text" formatted="false">Kopier tekst</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">Opphavsrett © 2026iTuneProsjekt. Denne programvaren leveres uten garanti. Du kan redistribuere og endre det under GNU GPL vilkår vist nedenfor.</string>
+    <string name="ui_corner_length" formatted="false">Hjørnelengde</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">Kunne ikke vise replay-bilde</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">Kunne ikke\'Last musikk akkurat nå. Dra ned for å prøve igjen.</string>
+    <string name="ui_create" formatted="false">Lag</string>
+    <string name="ui_create_add" formatted="false">Opprett &amp; Legg til</string>
+    <string name="ui_current_account" formatted="false">Nåværende konto</string>
+    <string name="ui_custom_instructions" formatted="false">KUNSTRUKTUR</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">KORT REPOSITORY INDEX ELLER URL</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">Tilpass hjemmeskjermspilleren din</string>
+    <string name="ui_customize_your_itune_card" formatted="false">Tilpass diniTunekort</string>
+    <string name="ui_d" formatted="false">D</string>
+    <string name="ui_delete_account" formatted="false">Slett konto</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">Slette kontoen?</string>
+    <string name="ui_developer_announcements" formatted="false">Utviklermeldinger</string>
+    <string name="ui_disconnect" formatted="false">Koble fra</string>
+    <string name="ui_disconnect_discord" formatted="false">Koble fra diskord</string>
+    <string name="ui_discord_rich_presence" formatted="false">diskord rik tilstedeværelse</string>
+    <string name="ui_dismiss" formatted="false">Utstyr</string>
+    <string name="ui_display_full_screen" formatted="false">DISPLAY &amp; FULL SCREEN</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">Vis animerte synkroniserte tekster over sangtittelen mens Canvas-kontroller er skjult</string>
+    <string name="ui_display_name" formatted="false">Visningsnavn</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">DJ Bipolar Club Filter</string>
+    <string name="ui_downloaded_cached" formatted="false">Lastet ned og cached</string>
+    <string name="ui_dp" formatted="false">dp</string>
+    <string name="ui_dynamic_island" formatted="false">Dynamic Island</string>
+    <string name="ui_e" formatted="false">E</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">f.eks. 127.0.1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">f.eks. å oversette til poetisk hingst med rim</string>
+    <string name="ui_enable_auto_sleep" formatted="false">Aktiver automatisk søvn</string>
+    <string name="ui_enable_proxy" formatted="false">Aktiver mellomtenar</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">AktivererSpotifyLerret og spillelister</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">Krypteringspassord (min 8 tegn)</string>
+    <string name="ui_end_of_current_track" formatted="false">Slutt på gjeldende spor</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">Skriv inn et nytt navn på denne kontoen.</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">Angi en HTTP addon manifest URL, en QuickJS modulindeks eller et Tidal instans endepunkt.</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">Skriv inn passordet som brukes når ditt.itunebackup ble opprettet.</string>
+    <string name="ui_enter_your_name" formatted="false">Skriv inn navnet ditt</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">Skriv inn navnet ditt for å personliggjøreiTune</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">Hver rytme, nattesang og melodi du levde med - samlet på én reise.</string>
+    <string name="ui_everything" formatted="false">Alt</string>
+    <string name="ui_explore_categories" formatted="false">Utforsk kategorier</string>
+    <string name="ui_exporting_audio" formatted="false">Eksporterer lyd...</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">Pakke ut et kort lydfingeravtrykk</string>
+    <string name="ui_favorite_stations" formatted="false">Favorittstasjoner</string>
+    <string name="ui_favorites" formatted="false">FAVORITER</string>
+    <string name="ui_featured_hit" formatted="false">Utvalgte hit</string>
+    <string name="ui_featured_playlists" formatted="false">Utvalgte spillelister</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">Henter lydkvaliteter...</string>
+    <string name="ui_fetching_live_catalog" formatted="false">Henter live-katalog...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">Finne en bedre strøm</string>
+    <string name="ui_full_view" formatted="false">Full visning</string>
+    <string name="ui_g" formatted="false">G</string>
+    <string name="ui_genre" formatted="false">GENRE</string>
+    <string name="ui_genres_styles" formatted="false">Sjanger og stiler</string>
+    <string name="ui_github_repository" formatted="false">GitHub arkiv</string>
+    <string name="ui_github_repository_open_source" formatted="false">GitHub lager · Åpne kilde</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 eller nyere</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 eller nyere · Copyright © 2026iTuneProsjekt</string>
+    <string name="ui_grant" formatted="false">Grant</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">Tillat å vise navn på ørepropper og levende batteri %</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">Hardware LoudnessEnhancer (opp til +18 dB)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">Skjuler Android statuslinje og navigasjonslinje for sømløs ren OLED svart.</string>
+    <string name="ui_history" formatted="false">Historie</string>
+    <string name="ui_host" formatted="false">HOST</string>
+    <string name="ui_host_a_session" formatted="false">HOST A SESSION</string>
+    <string name="ui_host_controls_playback" formatted="false">Verten kontrollerer avspilling</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">Hvordan få dine cookies</string>
+    <string name="ui_hq" formatted="false">HQ</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">Identifisert med Shazam</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">Identifiser musikk som spiller rundt deg</string>
+    <string name="ui_immersion" formatted="false">IMMERSION</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">Fordypelig modus (full skjerm)</string>
+    <string name="ui_import" formatted="false">Importer</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">Importer offentlige og private spillelister • Auto-sync</string>
+    <string name="ui_import_spotify_playlist" formatted="false">ImporterSpotifySpilleliste</string>
+    <string name="ui_in_use" formatted="false">I bruk</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">In-app veiledning når lydleverandører utfordrer anti-bot kontroller</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">Installer forhåndstilleggte Mornye-fellesskapsutvidelser eller skann en egendefinert arkivindeks.</string>
+    <string name="ui_installed" formatted="false">Installert</string>
+    <string name="ui_interactive_dot_curve" formatted="false">Interaktiv dot kurve</string>
+    <string name="ui_irecognition" formatted="false">iRecognition</string>
+    <string name="ui_ireconization" formatted="false">iReconization</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">iReconization lytter i noen sekunder for å skape et musikk fingeravtrykk. Lyden lagres ikke.</string>
+    <string name="ui_ishare" formatted="false">iShare</string>
+    <string name="ui_itune_license" formatted="false">iTuneLisens</string>
+    <string name="ui_itune_music" formatted="false">iTuneMusikk</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTuneForespørselstekster i nøyaktig forrang nedenfor. Hvis den høyeste aktive leverandøren ikke har synkronisert tekster,iTuneSvakt faller tilbake til neste.</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTunespørringskilder i den rekkefølgen som er vist. Dra installerte utvidelser og leverandører for å justere avspillingsprioriteten.</string>
+    <string name="ui_itune_time_travel" formatted="false">iTuneReisetid</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">Jet Flanger Swoosh</string>
+    <string name="ui_join" formatted="false">Bli med</string>
+    <string name="ui_keep_screen_on" formatted="false">Hold skjermen på</string>
+    <string name="ui_l" formatted="false">L</string>
+    <string name="ui_lan_port" formatted="false">LAN Port</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">Språkpreferanse (valgfritt, f.eks. hindi, punjabi...)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fmScrobbling</string>
+    <string name="ui_layout" formatted="false">LAYOUT</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">La det være tomt å bruke standard endepunktet for denne leverandøren.</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">LFO feit jetfasemodulasjon</string>
+    <string name="ui_library" formatted="false">Bibliotek</string>
+    <string name="ui_license" formatted="false">Lisens</string>
+    <string name="ui_liked_songs" formatted="false">Likte sanger</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">Liker lagt til mens logget på lagres både lokalt og påYouTube MusicSå de blir i biblioteket ditt selv etter å ha logget ut.</string>
+    <string name="ui_listening_patterns" formatted="false">LISTERING PATTERNS</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">Lytter til den delte lyden...</string>
+    <string name="ui_live" formatted="false">LIV</string>
+    <string name="ui_live_radio_stations" formatted="false">Live radiostasjoner</string>
+    <string name="ui_loading_announcements" formatted="false">Laster inn meldinger...</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">Laster inn artister, spillelister og historie</string>
+    <string name="ui_lossless" formatted="false">Tapsløs</string>
+    <string name="ui_lossless_audio_preference" formatted="false">Tapsløs lydpreference</string>
+    <string name="ui_lyrics" formatted="false">Lyrics</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">Lyrics ikke tilgjengelig for denne sangen</string>
+    <string name="ui_lyrics_providers" formatted="false">Lyrics Providers</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">Lyrics oversatt med hell!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">Masterforsterker Boost</string>
+    <string name="ui_member_since" formatted="false">Medarbeider SINCE</string>
+    <string name="ui_memoji_style" formatted="false">Memoji og stil</string>
+    <string name="ui_minutes_listened" formatted="false">MINUTES LISTET</string>
+    <string name="ui_mirror_vol" formatted="false">Speil Vol</string>
+    <string name="ui_model" formatted="false">MODEL</string>
+    <string name="ui_model_68c2cc7f" formatted="false">Modell</string>
+    <string name="ui_moods_activities" formatted="false">Moods &amp; aktiviteter</string>
+    <string name="ui_moods_moments" formatted="false">MOD &amp; MOD</string>
+    <string name="ui_music_by_genre" formatted="false">Musikk fra Genre</string>
+    <string name="ui_music_language_preference" formatted="false">Musikkspråkpreferanser</string>
+    <string name="ui_music_services" formatted="false">MUSIC TJENESTER</string>
+    <string name="ui_name" formatted="false">Navn</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">NEARBY WI-FI HOSTS</string>
+    <string name="ui_network_proxy" formatted="false">Nettverksproxy</string>
+    <string name="ui_new" formatted="false">Ny</string>
+    <string name="ui_new_playlist" formatted="false">Ny spilleliste</string>
+    <string name="ui_new_releases" formatted="false">Nye utgivelser</string>
+    <string name="ui_news_from_dev" formatted="false">Nyheter fra dev</string>
+    <string name="ui_next_up" formatted="false">Neste</string>
+    <string name="ui_no_albums_found" formatted="false">Ingen album funnet</string>
+    <string name="ui_no_artist_information_available" formatted="false">Ingen artistinformasjon tilgjengelig</string>
+    <string name="ui_no_artists_found" formatted="false">Ingen kunstnere funnet</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">Ingen artister i biblioteket ditt ennå</string>
+    <string name="ui_no_playlists_found" formatted="false">Ingen spillelister funnet</string>
+    <string name="ui_no_results_on_spotify" formatted="false">Ingen resultater påSpotify</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">Ingen lagrede album i biblioteket ditt</string>
+    <string name="ui_no_songs_found" formatted="false">Ingen sanger funnet</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">Ingen sanger funnet i denne utgaven</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">Ingen sanger funnet i denne delen</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">Ingen spillelister funnet. Opprett en i biblioteket!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">Ikke nok å lytte enda</string>
+    <string name="ui_now_playing" formatted="false">Nå spiller</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">Nå spiller</string>
+    <string name="ui_on_heavy_repeat" formatted="false">På Heavy Repeat</string>
+    <string name="ui_options" formatted="false">Valg</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">ELLER ENTER SP DC COOKIE</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">Orbit Intensitet og hastighet</string>
+    <string name="ui_pair_join_a_device" formatted="false">PAIR &amp; KJØP EN DEVICE</string>
+    <string name="ui_password_optional" formatted="false">Passord (valgfritt)</string>
+    <string name="ui_passwords_dont_match" formatted="false">Passordene samsvarer ikke</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">Lim inn sp dc-symbol her...</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">Lim inn din API-nøkkel her</string>
+    <string name="ui_play_in_itune" formatted="false">Spill inniTune</string>
+    <string name="ui_play_next" formatted="false">Spill neste</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">Spill på knopper og telefonhøyttaler/AUX samtidig</string>
+    <string name="ui_playlist_name" formatted="false">Spillelistenavn</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">Spillelistenavn</string>
+    <string name="ui_playlist_spotify" formatted="false">SpillelisteSpotify</string>
+    <string name="ui_playlists" formatted="false">Spillelister</string>
+    <string name="ui_plays" formatted="false">Spiller</string>
+    <string name="ui_pm" formatted="false">PM</string>
+    <string name="ui_port" formatted="false">Port</string>
+    <string name="ui_pre_added_extensions" formatted="false">Foreslåtte EKSTENSJONER</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">Foretrekker bitperfekt FLAC/ALAC opp til 24-biters / 192 kHz når tilgjengelig</string>
+    <string name="ui_preparing_audio_preview" formatted="false">Forbereder forhåndsvisning av lyd...</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">Forhindrer visning av enheten fra å slå av mens alltid på skjermen er aktiv.</string>
+    <string name="ui_preview" formatted="false">Preview</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">Forhåndsvisning</string>
+    <string name="ui_preview_always_on_display" formatted="false">Forhåndsvisning alltid på skjermen</string>
+    <string name="ui_profile" formatted="false">PROFIL</string>
+    <string name="ui_profiles_in_backup" formatted="false">PROFILER I BAKSE</string>
+    <string name="ui_prompt_type" formatted="false">PROMPT TYPE</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">PRIORITY (FALLBACK ORDER)</string>
+    <string name="ui_queue" formatted="false">Køye</string>
+    <string name="ui_queue_is_empty" formatted="false">Køen er tom</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">Kylte spor å spille neste</string>
+    <string name="ui_radio" formatted="false">Radio</string>
+    <string name="ui_read_more" formatted="false">Les mer</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">Riktig stavelse og linjerulling med live lyd</string>
+    <string name="ui_recent_searches" formatted="false">Nylige søk</string>
+    <string name="ui_recently_added" formatted="false">Nylig lagt til</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">Gjentatt søvnplan · automatisk pauser avspilling</string>
+    <string name="ui_remote_music_library" formatted="false">Eksternt musikkbibliotek</string>
+    <string name="ui_remove" formatted="false">Fjern</string>
+    <string name="ui_rename" formatted="false">Endre navn</string>
+    <string name="ui_rename_account" formatted="false">Endre navn på konto</string>
+    <string name="ui_replay" formatted="false">REPLAY</string>
+    <string name="ui_replay_c0f85d66" formatted="false">Replay</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">Krev Bit-Perfect Lossless Output</string>
+    <string name="ui_reset" formatted="false">Nullstill</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">Tilbakestill leverandørbestilling &amp; standard</string>
+    <string name="ui_reset_to_default_url" formatted="false">Nullstill til standard URL</string>
+    <string name="ui_restore_default_sources" formatted="false">Gjenopprett standardkilder</string>
+    <string name="ui_restore_itune_backup" formatted="false">GjenopprettiTuneSikkerhetskopi</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">GjenoppretterJioSaavnogYouTube Musici standard rekkefølge.JioSaavnstarter ogYouTube MusicBegynner.</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">Gjenoppretter LRC Lib, KuGou og SimpMusic som topp foretrukne leverandører og kan re-enableres alle 11 kilder.</string>
+    <string name="ui_resume" formatted="false">Fortsett</string>
+    <string name="ui_rhythm_by_hour" formatted="false">Rhythm etter time</string>
+    <string name="ui_room_permissions" formatted="false">ROOM PERTER</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">Rute app nettverkstrafikk via HTTP eller SOCKS-proxy</string>
+    <string name="ui_save_proxy" formatted="false">Lagre proxy</string>
+    <string name="ui_save_schedule" formatted="false">Lagre skjema</string>
+    <string name="ui_save_to_gallery" formatted="false">Lagre i Gallery</string>
+    <string name="ui_save_token" formatted="false">Lagre Token</string>
+    <string name="ui_saved_to_your_library" formatted="false">Lagret til biblioteket!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">Lagret via Android Keystore. Sikkerhetskopifiler bruker PBKDF2-HMAC-SHA256 (310 000 runder) og AES-256-GCM.</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">Lagre til nedlastinger/itune/backups</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">Si en sang, artist, album eller tekster</string>
+    <string name="ui_search" formatted="false">Søk</string>
+    <string name="ui_search_identify" formatted="false">Søk &amp; identifiser</string>
+    <string name="ui_search_announcements" formatted="false">Søk kunngjøringer...</string>
+    <string name="ui_search_country" formatted="false">Søk i land...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">Søk etter sanger, artister, album og spillelister</string>
+    <string name="ui_search_languages" formatted="false">Søk i språk...</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">Søk eller skriv inn en modell-ID</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">Søk etter sanger, artister, album eller spillelister</string>
+    <string name="ui_searching_lyrics" formatted="false">Søker tekster...</string>
+    <string name="ui_searching_spotify" formatted="false">SøkerSpotify...</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">SECONDARY MIRROR SINK</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">Velg en profilavatar for å personliggjøre diniTuneopplevelse på alle skjermer.</string>
+    <string name="ui_select_language" formatted="false">Velg språk</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">Velg standardpromptmalen for oversettelse av tekster.</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">Velg motoren som skal brukes til linje-for-linje-tekster oversettelse.</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">Velg målspråket for oversettelse av tekster.</string>
+    <string name="ui_server_host_ip" formatted="false">Serverhotell / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">Server URL/manifest</string>
+    <string name="ui_settings_appearance" formatted="false">Innstillinger Utseende</string>
+    <string name="ui_share_lyrics" formatted="false">Share lyrics</string>
+    <string name="ui_share_my_replay" formatted="false">Del min Replay</string>
+    <string name="ui_share_replay" formatted="false">Share Replay</string>
+    <string name="ui_share_this_story" formatted="false">Del denne historien</string>
+    <string name="ui_share_your_time_travel" formatted="false">Del din tidsreise</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">Vis synkroniserte tekster Over Canvas</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">Logg på musikk.youtube.com i en skrivebordsnettleser. Åpne utviklerverktøy → Applikasjon → Informasjonskapsler, kopier deretter de loggede øktverdiene. Behandle disse verdiene som passordet ditt.</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">Logg deg inn med dinLast.fmkonto</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">Logg ut alle kontoer</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">Simultan Dual Output</string>
+    <string name="ui_skip_sign_in" formatted="false">Hopp over Logg inn</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">Skyv framover for raskere tekster · bakover for langsommere · Lyd upåvirket</string>
+    <string name="ui_snap_0" formatted="false">Snap 0</string>
+    <string name="ui_soundstage_width" formatted="false">Lydstagebredde</string>
+    <string name="ui_sources" formatted="false">Kilder</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">Romlig lyd og essensielle</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotify&amp; Canvas</string>
+    <string name="ui_spotify_account" formatted="false">SpotifyKonto</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">SpotifyCanvas, Apple musikk, Tidal &amp; fellesskap bevegelsesdekker</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">SpotifyFor tiden er det tilkoblet. Bevegelseskunst ogSpotifysynkronisering av spillelister er aktivert.</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">SpotifySøk mislyktes. Prøv igjen.</string>
+    <string name="ui_station" formatted="false">stasjon</string>
+    <string name="ui_stereo_echo_delay" formatted="false">Stereo ekko &amp; forsinkelse</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">Lager denne lenken og legger automatisk til nye sanger på appen</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">Stream din bitperfekt tapsfri bibliotek direkte fra personlige nettverksaksjer eller Nextcloud.</string>
+    <string name="ui_streaming_sources" formatted="false">STREAMING SERVICE</string>
+    <string name="ui_style" formatted="false">STYLE</string>
+    <string name="ui_suggestions" formatted="false">Forslag</string>
+    <string name="ui_switch" formatted="false">Bytt</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">Trykk på avatar for å tilpasse</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">Trykk venstre eller høyre for å bla gjennom • hold til pause</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">Trykk for å umiddelbart aktivere Alltid på skjermen nå</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">Trykk for å velge Country &amp; City FM-sendinger</string>
+    <string name="ui_target_language" formatted="false">TARGET LANGUAGE</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">Målspråk</string>
+    <string name="ui_test" formatted="false">Test</string>
+    <string name="ui_test_proxy_connection" formatted="false">Testproxy-tilkobling</string>
+    <string name="ui_testing_proxy" formatted="false">Tester proxy...</string>
+    <string name="ui_that_s_your_story" formatted="false">Det\'din historie</string>
+    <string name="ui_this_account" formatted="false">Denne kontoen</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">Denne spillelisten er tom. Legg til sanger fra spiller eller søk!</string>
+    <string name="ui_time_travel" formatted="false">TIME TRAVEL</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">Reisetid</string>
+    <string name="ui_time_travel_wrap" formatted="false">TIME TRAVEL WRAP</string>
+    <string name="ui_time_synced_lyrics" formatted="false">Tidssynkroniserte tekster</string>
+    <string name="ui_top_picks" formatted="false">Toppvalg</string>
+    <string name="ui_top_result" formatted="false">Toppresultat</string>
+    <string name="ui_top_song" formatted="false">Top Song</string>
+    <string name="ui_top_songs" formatted="false">Toppsanger</string>
+    <string name="ui_top_streamed" formatted="false">TOP STREAMET</string>
+    <string name="ui_total_listening_time" formatted="false">Total lyttetid</string>
+    <string name="ui_total_time" formatted="false">Total tid</string>
+    <string name="ui_translate_actual_lines" formatted="false">Oversett faktiske linjer</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">Oversett tekster på-demand for enhver sang fra spillermenyen (... &gt; lyrics &gt; Oversett). Når\'Oversett faktiske linjer\'er av, oversettelser vises som undertekster under den opprinnelige teksten.</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">Oversett følgende sangtekster til engelsk. Bevar poetisk flyt.</string>
+    <string name="ui_translating_lyrics" formatted="false">Oversetter tekster...</string>
+    <string name="ui_translation_mode" formatted="false">Oversettelsesmodus</string>
+    <string name="ui_translation_prompt" formatted="false">Oversettelse</string>
+    <string name="ui_trending_artists" formatted="false">Trending Artists</string>
+    <string name="ui_turn_off_timer" formatted="false">Slå av timer</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">Oppdater navnet som vises på Apple ID-profilkortet i Innstillinger.</string>
+    <string name="ui_username_optional" formatted="false">Brukernavn (Valgfritt)</string>
+    <string name="ui_view" formatted="false">Vis</string>
+    <string name="ui_view_on_shazam" formatted="false">Vis på Shazam</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">Vinyl Turntable Link</string>
+    <string name="ui_whats_new" formatted="false">Hva er nytt</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">Når musikk spilles, slår Alltid på skjermen hvis det ikke oppstår noen berøring på skjermen for det valgte tidspunktet. Aktiverer kun mens du er inne i appen.</string>
+    <string name="ui_who_is_listening" formatted="false">Hvem lytter?</string>
+    <string name="ui_widget" formatted="false">Widget</string>
+    <string name="ui_you" formatted="false">Du</string>
+    <string name="ui_your_1_artist" formatted="false">Din #1 kunstner</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">API-nøkkelen lagres trygt på enheten og deles aldri.</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">Disord-øktssymbolet lagres kryptert på denne enheten og brukes kun til Rich tilstedeværelse.</string>
+    <string name="ui_your_favourite_song" formatted="false">Din favorittsang</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">Bibliotek, spillelister og innstillinger vil bli kryptert med et passord på minst 8 tegn.</string>
+    <string name="ui_your_listening_experience" formatted="false">Din Listening Experience</string>
+    <string name="ui_your_listening_pattern" formatted="false">Ditt lyttemønster</string>
+    <string name="ui_your_listening_persona" formatted="false">Din LISTING PERSONA</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">Din musikk replay &amp; statistics</string>
+    <string name="ui_your_musical_anchor" formatted="false">Din mystiske kontaktperson</string>
+    <string name="ui_your_name" formatted="false">Ditt navn</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">Ditt passord sendes tilLast.fmBare å skape en økt.iTuneredder den ikke.</string>
+    <string name="ui_your_playlists" formatted="false">Dine plater</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">Dine spillelister</string>
+    <string name="ui_your_sonic_peak" formatted="false">Sonic Peak</string>
+    <string name="ui_your_spotify_playlists" formatted="false">DinSpotifySpillelister</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">DinSpotifySpillelister (public &amp; private)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSIC&amp; GOOGLE</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube Musicsesjonskapsler</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">·</string>
+    <string name="ui_text_a118c40635" formatted="false">━━━ ━━━━━</string>
+    <string name="ui_album_artwork" formatted="false">Albumkunst</string>
+    <string name="ui_itune_waves" formatted="false">iTunebølger</string>
+    <string name="ui_previous" formatted="false">Forrige</string>
+    <string name="ui_next" formatted="false">Neste</string>
+    <string name="ui_audio_output" formatted="false">Lydutgang</string>
+    <string name="ui_low_volume" formatted="false">Lav volum</string>
+    <string name="ui_high_volume" formatted="false">Høy volum</string>
+    <string name="ui_filter" formatted="false">Filtrer</string>
+    <string name="ui_refresh" formatted="false">Oppdater</string>
+    <string name="ui_options_6bf5da9c" formatted="false">Alternativer</string>
+    <string name="ui_user_profile_avatar" formatted="false">Brukerprofil Avatar</string>
+    <string name="ui_news" formatted="false">Nyheter</string>
+    <string name="ui_no_song_playing" formatted="false">Ingen sang spiller</string>
+    <string name="ui_next_track" formatted="false">Neste spor</string>
+    <string name="ui_see_all_songs" formatted="false">Se alle sangene</string>
+    <string name="ui_favorite_radio" formatted="false">Favorittradio</string>
+    <string name="ui_live_65c821a5" formatted="false">Live</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTuneBrand Waves</string>
+    <string name="ui_refresh_network" formatted="false">Oppdater nettverk</string>
+    <string name="ui_edit_display_name" formatted="false">Rediger skjermnavn</string>
+    <string name="ui_remove_from_queue" formatted="false">Fjern fra kø</string>
+    <string name="ui_search_new_releases" formatted="false">Søk nye utgivelser</string>
+    <string name="ui_refresh_new_releases" formatted="false">Oppdater nye utgivelser</string>
+    <string name="ui_refresh_downloads" formatted="false">Oppdater nedlastinger</string>
+    <string name="ui_clear_cache" formatted="false">Tøm cache</string>
+    <string name="ui_sort" formatted="false">Sorter</string>
+    <string name="ui_see_all_new_releases" formatted="false">Se alle nye utgivelser</string>
+    <string name="ui_identify" formatted="false">Identifiser</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">Importer spilleliste</string>
+    <string name="ui_create_playlist" formatted="false">Lag spilleliste</string>
+    <string name="ui_liked" formatted="false">Likte</string>
+    <string name="ui_paste" formatted="false">Lim inn</string>
+    <string name="ui_checked" formatted="false">Sjekket</string>
+    <string name="ui_google_account_playlist" formatted="false">Google-kontoliste</string>
+    <string name="ui_spotify_playlist" formatted="false">SpotifySpilleliste</string>
+    <string name="ui_local_playlist" formatted="false">Lokal spilleliste</string>
+    <string name="ui_back_to_audio_engine" formatted="false">Tilbake til lydmotoren</string>
+    <string name="ui_bluetooth_settings" formatted="false">BluetoothInnstillinger</string>
+    <string name="ui_scan_output_devices" formatted="false">Skann utgangsenheter</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">Simultan Dual Audio</string>
+    <string name="ui_selected" formatted="false">Valgt</string>
+    <string name="ui_copy" formatted="false">Kopier</string>
+    <string name="ui_copy_link" formatted="false">Kopier link</string>
+    <string name="ui_upgrade_quality" formatted="false">Oppgraderingskvalitet</string>
+    <string name="ui_fm_radio" formatted="false">FM Radio</string>
+    <string name="ui_next_station" formatted="false">Neste stasjon</string>
+    <string name="ui_minimize" formatted="false">Minimer</string>
+    <string name="ui_favorite" formatted="false">favoritt</string>
+    <string name="ui_more_options" formatted="false">Flere alternativer</string>
+    <string name="ui_previous_station" formatted="false">Forrige stasjon</string>
+    <string name="ui_sleep_timer" formatted="false">sovetimer</string>
+    <string name="ui_audio_output_devices" formatted="false">Lydutgangsenheter</string>
+    <string name="ui_station_list" formatted="false">stasjonsliste</string>
+    <string name="ui_volume" formatted="false">Volum</string>
+    <string name="ui_open_lyrics" formatted="false">Åpne tekster</string>
+    <string name="ui_mute_volume" formatted="false">Mute volum</string>
+    <string name="ui_max_volume" formatted="false">Maks volum</string>
+    <string name="ui_endless_queue" formatted="false">Endless kø</string>
+    <string name="ui_repeat" formatted="false">Gjenta</string>
+    <string name="ui_refresh_stations" formatted="false">Oppfriskende stasjoner</string>
+    <string name="ui_favorite_station" formatted="false">Favoritt stasjon</string>
+    <string name="ui_close_ireconization" formatted="false">Lukk iReconization</string>
+    <string name="ui_cancel_voice_search" formatted="false">Avbryt stemmesøk</string>
+    <string name="ui_microphone" formatted="false">Mikrofon</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">Flere alternativer</string>
+    <string name="ui_voice_search" formatted="false">Stemmesøk</string>
+    <string name="ui_saved" formatted="false">Lagret</string>
+    <string name="ui_fill_search_query" formatted="false">Fyll søkespørsel</string>
+    <string name="ui_remove_from_history" formatted="false">Fjern fra historien</string>
+    <string name="ui_itune_icon" formatted="false">iTuneikon</string>
+    <string name="ui_artwork_preview" formatted="false">Forhåndsvisning av kunstverk</string>
+    <string name="ui_decrease" formatted="false">Reduser</string>
+    <string name="ui_increase" formatted="false">Økning</string>
+    <string name="ui_open_link" formatted="false">Åpne lenke</string>
+    <string name="ui_reset_geometry" formatted="false">Tilbakestill Geometri</string>
+    <string name="ui_reorder_provider" formatted="false">Ombestillingsleverandør</string>
+    <string name="ui_save_name" formatted="false">Lagre navn</string>
+    <string name="ui_editable_name" formatted="false">Redigerbart navn</string>
+    <string name="ui_google" formatted="false">Google</string>
+    <string name="ui_remove_account" formatted="false">Fjern konto</string>
+    <string name="ui_reorder_source_priority" formatted="false">Omorganiser kildeprioritet</string>
+    <string name="ui_refresh_playlists" formatted="false">Oppdater spillelister</string>
+    <string name="ui_replay_poster" formatted="false">Replay Poster</string>
+    <string name="ui_settings" formatted="false">Innstillinger</string>
+    <string name="ui_artist_radio" formatted="false">Artist Radio</string>
+    <string name="ui_play_all" formatted="false">Spill av alle</string>
+    <string name="ui_delete_playlist" formatted="false">Slett spilleliste</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">Endeløs kø</string>
+    <string name="ui_artist_info" formatted="false">Artist Info</string>
+    <string name="ui_enabled" formatted="false">Aktivert</string>
+    <string name="ui_search_icon" formatted="false">Søkeikon</string>
+    <string name="ui_region">Region:%1$s</string>
+    <string name="ui_connected_devices">Konklusjon (%1$s)</string>
+    <string name="ui_up_next">UP NEXT (%1$s)</string>
+    <string name="ui_text_da5c3629fd">%1$s›</string>
+    <string name="ui_active_7c6a4064">%1$s•%2$saktiv</string>
+    <string name="ui_no_new_available_right_now">Ingen nye%1$sTilgjengelig akkurat nå</string>
+    <string name="ui_tracks">%1$sspor •%2$s</string>
+    <string name="ui_songs">%1$ssanger •%2$s•%3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s•%2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c">•%1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$sspor kan\'T matches:</string>
+    <string name="ui_text_a3edb2b714">•%1$s-%2$s</string>
+    <string name="ui_d_eeda119e">%1$sD</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+%1$sdB</string>
+    <string name="ui_connected">%1$stilkoblet</string>
+    <string name="ui_open_web_player">Åpne Web Player (%1$s)</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">Land:%1$s(%2$s)</string>
+    <string name="ui_city_state">By/stat:%1$s</string>
+    <string name="ui_codec_bitrate">Kodek/bitrate:%1$s</string>
+    <string name="ui_language">Språk:%1$s</string>
+    <string name="ui_tags">Tags:%1$s</string>
+    <string name="ui_stream">Strøm:%1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">API-nøkkel ikke konfigurert for%1$s. Vennligst sett det i Innstillinger &gt; Lyrics.</string>
+    <string name="ui_s_clip">%1$ss klipp</string>
+    <string name="ui_loading_more_fm_stations_loaded">Laster inn flere FM-stasjoner (%1$sLastet inn)...</string>
+    <string name="ui_found">%1$sfunnet</string>
+    <string name="ui_version">Utgave%1$s(%2$s)</string>
+    <string name="ui_of_active">%1$sav%2$sAktiv</string>
+    <string name="ui_text_adebc50ade">#%1$s</string>
+    <string name="ui_api_key">%1$sAPI-nøkkel</string>
+    <string name="ui_channel">Kanal:%1$s</string>
+    <string name="ui_sync_issue">Synkroniseringsproblem:%1$s</string>
+    <string name="ui_enter">Enter%1$s</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">Er du sikker på at du vil slette \"%1$sAlle data, spillelister, favoritter, historie og innstillinger i denne kontoen vil bli slettet permanent.</string>
+    <string name="ui_peak">Peak:%1$s</string>
+    <string name="ui_welcome">Velkommen,%1$s</string>
+    <string name="ui_songs_played">%1$ssanger spilt</string>
+    <string name="ui_around">rundt%1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">Når verden er opptatt, stemmer du mest på%1$ss rundt%2$s..</string>
+    <string name="ui_itune_time_travel_575a110d">iTuneTime Travel •%1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s·%2$s</string>
+    <string name="ui_your_biggest_day_was">Deres største dag var%1$s..</string>
+    <string name="ui_listening_recap">%1$sLytting recap</string>
+    <string name="ui_busiest_day">Mest travle dagen:%1$s</string>
+    <string name="ui_peak_hour_00">Peak time:%1$s:00</string>
+    <string name="ui_loading">Laster%1$s...</string>
+    <string name="ui_about">Om%1$s</string>
+    <string name="ui_songs_9b614dc8">%1$ssanger</string>
+    <string name="ui_current_offset_ms">Nåværende forskyvning:%1$sms</string>
+    <string name="ui_connected_session">Tilkoblet økt:%1$s</string>
+    <string name="ui_k">%1$sk</string>
+    <string name="ui_top_result_c5e5adab">TOP RESULT •%1$s</string>
+    <string name="toast_song_not_found_in_itune">Sangen ikke funnet iiTune</string>
+    <string name="toast_playback_failed_try_again">Avspilling mislyktes, prøv igjen</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">Auto Sleep Timer aktiv · Playback pause</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">Frakoblet modus: denne sangen er ikke lastet ned</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">Frakoblet modus: kan ikke oppgradere kvaliteten</string>
+    <string name="toast_upgrading_quality">Oppgradering kvalitet</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">Ingen tapsfrie streamingkilder aktivert i kilder</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">Ingen høyere kvalitet strøm funnet på tvers av aktiverte kilder</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">Shuffle er låst av Permanent Shuffle i innstillinger</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">Mikrofon tillatelse er nødvendig for å identifisere musikk</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">Visning av andre apper er nødvendig for å gjenkjenne popup</string>
+    <string name="toast_playback_failed">Tilbakespilling mislyktes</string>
+    <string name="toast_complete_google_sign_in_first">Komplett Google-innlogging først</string>
+    <string name="toast_waiting_for_youtube_music_session">Venter påYouTube MusicSesjon...</string>
+    <string name="toast_couldn_t_load_tracks">Kunne ikke\'t Last spor</string>
+    <string name="toast_copied_to_clipboard">Kopiert til utklippstavle</string>
+    <string name="toast_profile_avatar_updated">Profilavatar oppdatert</string>
+    <string name="toast_no_tracks_found">Ingen spor funnet</string>
+    <string name="toast_google_account_connected">Google-konto tilkoblet</string>
+    <string name="toast_link_copied">Link kopiert</string>
+    <string name="toast_could_not_open_browser">Kunne ikke åpne nettleser</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">Skriv inn en havn mellom 1024 og 65535</string>
+    <string name="toast_cached_music_cleared">Cached musikk ryddet</string>
+    <string name="toast_no_tracks_available_to_add">Ingen spor tilgjengelig å legge til</string>
+    <string name="toast_enter_a_playlist_name">Skriv inn et spillelistenavn</string>
+    <string name="toast_system_sound_panel_opened">Systemlydpanelet åpnet</string>
+    <string name="toast_download_started_check_notification">Last ned startet · Sjekk varsling</string>
+    <string name="toast_playback_will_stop_after_current_track">Avspilling vil stoppe etter gjeldende spor</string>
+    <string name="toast_sleep_timer_turned_off">Sovetimer slått av</string>
+    <string name="toast_stream_url_copied">Nettadresse kopiert</string>
+    <string name="toast_couldn_t_create_lyrics_card">Kunne ikke\'t skap tekstkort</string>
+    <string name="toast_restored_online_lyrics">Gjenopprettet online tekster</string>
+    <string name="toast_lyrics_saved">Lyrics lagret</string>
+    <string name="toast_translation_cleared">Oversettelse avklart</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">Vennligst sett API-nøkkelen i innstillinger &gt; Lyrics først</string>
+    <string name="toast_no_lyrics_found_for_this_song">Ingen tekster funnet for denne sangen</string>
+    <string name="toast_could_not_create_audio_clip">Kunne ikke opprette lydklipp</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">Snitt lagret i musikk/iTune/Snippets</string>
+    <string name="toast_playing_next">Spille neste</string>
+    <string name="toast_added_to_queue">Legg til i køen</string>
+    <string name="toast_download_started_check_notifications">Last ned startet · Sjekk varsler</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">Kunne ikke\'Finn denne sangen påYouTube Music</string>
+    <string name="toast_couldn_t_start_mix">Kunne ikke\'t start mix</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">Kunne ikke\'T Finn spor påYouTube Music</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">Kunne ikke kryptere passordet sikkert. Automatisk sikkerhetskopiering ble ikke endret.</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">Lagringstillatelse er nødvendig for å lagre sikkerhetskopier i nedlastinger</string>
+    <string name="toast_choose_an_itune_backup_file">Velg en.itunesikkerhetskopifil</string>
+    <string name="toast_audio_artwork_cache_cleared">Lyd- og kunsthåndverksbuffer slettet</string>
+    <string name="toast_could_not_open_github">Kunne ikke åpne GitHub</string>
+    <string name="toast_profile_name_updated">Profilnavn oppdatert</string>
+    <string name="toast_search_history_cleared">Søkeloggen er slettet</string>
+    <string name="toast_listening_history_cleared">Listen historie ryddet</string>
+    <string name="toast_cached_songs_cleared">Cachede sanger ryddet</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">Åpne systeminnstillinger for å gi Vis over andre apper</string>
+    <string name="toast_dynamic_island_geometry_reset">Dynamic Island geometri tilbakestilling</string>
+    <string name="toast_geometry_reset">Geometri tilbakestilles</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">Lyrics leverandører tilbakestille til standard</string>
+    <string name="toast_api_key_saved">API Nøkkel lagret</string>
+    <string name="toast_base_url_updated">Base URL oppdatert</string>
+    <string name="toast_translation_prompt_updated">Oversettelsesprompt oppdatert</string>
+    <string name="toast_equalizer_reset_to_flat">Equalizer tilbake til Flat</string>
+    <string name="toast_dj_console_reset">DJ Console tilbakestilling</string>
+    <string name="toast_name_saved">Navn lagret</string>
+    <string name="toast_syncing_youtube_music_library">SynkroniseringYouTube MusicBibliotek...</string>
+    <string name="toast_signed_out_local_likes_preserved">Signert (lokale likere bevart)</string>
+    <string name="toast_signed_out_of_all_google_accounts">Signert av alle Google-kontoer</string>
+    <string name="toast_discord_disconnected">Diskord frakoblet</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">Skriv inn et gyldig logg innYouTube Musicinformasjonskapsel (SAPISID og en økt-informasjonskapsel)</string>
+    <string name="toast_youtube_music_account_connected">YouTube Musictilkoblet konto</string>
+    <string name="toast_account_renamed">Konto omdøpt</string>
+    <string name="toast_account_deleted">Konto slettet</string>
+    <string name="toast_cannot_delete_your_only_account">Kan ikke slette din eneste konto</string>
+    <string name="toast_sources_restored_to_defaults">Kilder gjenopprettet til standard</string>
+    <string name="toast_spotify_disconnected">Spotifyfrakoblet</string>
+    <string name="toast_spotify_sp_dc_token_saved">Spotifysp dc-token lagret</string>
+    <string name="toast_spotify_connected">Spotify connectEd!</string>
+    <string name="toast_complete_spotify_sign_in_first">FullstendigSpotifyLogg inn først</string>
+    <string name="toast_saved_to_gallery">Sparet til galleriet!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">TillatiTuneå installere oppdateringer for å fortsette</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">Lastet ned oppdatering APK er utilgjengelig</string>
+    <string name="toast_added_to_queue_next">Legg til i kø neste</string>
+    <string name="toast_link_copied_to_clipboard">Koble til utklippstavle</string>
+    <string name="toast_song_link_copied_to_clipboard">Songlenke kopiert til utklippstavle</string>
+    <string name="toast_left_ishare_session">Venstre iShare-økt</string>
+    <string name="toast_ishare_lan_host_started">iShare LAN Host Startet!</string>
+    <string name="toast_scanning_lan_for_sessions">Skanner LAN for økter...</string>
+    <string name="toast_cache_cleared">Cache ryddet</string>
+    <string name="toast_signed_out_successfully">Signert vellykket</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">Passordene må matche og ha minst 8 tegn</string>
+    <string name="toast_no_backup_file_found_in_storage">Ingen sikkerhetskopifil funnet i lageret</string>
+    <string name="toast_library_settings_restored">Bibliotek og innstillinger gjenopprettet!</string>
+    <string name="toast_enter_your_backup_password">Oppgi sikkerhetskopipassord</string>
+    <string name="toast_syncing_spotify_library">SynkroniseringSpotifyBibliotek...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify ConnectEd!</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">Vennligst skriv inn en gyldig SP DC-informasjonskapsel</string>
+    <string name="toast_playing">Spille%%1$s...</string>
+    <string name="toast_upgraded_to_lossless_kbps">Oppgradert til tapsløs •%%1$skbps</string>
+    <string name="toast_playing_next_0f0c851c">Spille%%1$sneste</string>
+    <string name="toast_added_to_queue_88e96c25">Lagt til%%1$stil kø</string>
+    <string name="toast_playing_cb1fb3de">Spille%%1$s...</string>
+    <string name="toast_playing_next_e0082d95">Spiller neste:%%1$s</string>
+    <string name="toast_couldn_t_load">Kunne ikke\'t last%%1$s</string>
+    <string name="toast_opening">Åpning%%1$s...</string>
+    <string name="toast_couldn_t_open">Kunne ikke\'T åpen%%1$s</string>
+    <string name="toast_couldn_t_play">Kunne ikke\'t spille%%1$s</string>
+    <string name="toast_library_pin">Bibliotek Pin:%%1$s</string>
+    <string name="toast_copied">Kopiert:%%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">Sovetimer satt til%%1$smin</string>
+    <string name="toast_lyrics_applied">Lyrics brukt (%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">Lagt til%%1$sspor til kø</string>
+    <string name="toast_switched_feed_to">Bytt mat til%%1$s</string>
+    <string name="toast_provider_updated_to">Leverandør oppdatert til%%1$s</string>
+    <string name="toast_target_language_set_to">Målspråk satt til%%1$s</string>
+    <string name="toast_translation_mode_set_to">Oversettelsesmodus satt til%%1$s</string>
+    <string name="toast_added_source">Lagt til kilde:%%1$s</string>
+    <string name="toast_installed_extension_s">Installert%%1$sforlengelse(r)</string>
+    <string name="toast_imported_songs">Importert\'%%1$s\'(%%2$ssanger)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">Kunne ikke\'t finne\'%%1$s\'påYouTube Music</string>
+    <string name="toast_added_songs_to">Lagt til%%1$ssanger til%%2$s</string>
+    <string name="toast_joining">Registrer deg%%1$s...</string>
+    <string name="toast_added_to">Lagt til%%1$s</string>
+    <string name="toast_itune_v_for_android_tv">iTunev%%1$sAndroid TV</string>
+    <string name="toast_backup_failed">Sikkerhetskopiering mislyktes:%%1$s</string>
+    <string name="toast_restore_failed">Gjenoppretting mislyktes:%%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">iShare, Dynamic Island &amp; Standby</string>
+    <string name="settings_ishare" formatted="false">iShare</string>
+    <string name="settings_dynamic_island" formatted="false">Dynamic Island</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">Flytende vann-pubble controller utenforiTune</string>
+    <string name="settings_always_on_display" formatted="false">Alltid på skjermen</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">Lydmotor og lydeffekter</string>
+    <string name="settings_dolby_atmos" formatted="false">Dolby Atmos</string>
+    <string name="settings_text_8948f8179a" formatted="false">8D lyd</string>
+    <string name="settings_spatial_audio" formatted="false">Rumslig lyd</string>
+    <string name="settings_equalizer_eq" formatted="false">Equalizer (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">Filtrering av lavpass</string>
+    <string name="settings_dj_studio_panel" formatted="false">DJ Studio Panel</string>
+    <string name="settings_audio_normalization" formatted="false">Audio Normalisering</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB Bit-Perfect DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">Pure Audio Bypass</string>
+    <string name="settings_signal_pipeline" formatted="false">Signal Pipeline</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">[+] [+] $activeOutputName</string>
+    <string name="settings_audio_playback" formatted="false">Lyd og avspilling</string>
+    <string name="settings_sources" formatted="false">Kilder</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">AdministrerYouTube Music,JioSaavn, installerbare utvidelser,WebDAV,SMB, og avspillingsprioritet</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">Hopp automatisk over når det oppstår feil</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">Flytt til den neste køen sang hvis avspilling mislykkes</string>
+    <string name="settings_download_quality" formatted="false">Last ned kvalitet</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">Standard kvalitet som brukes av sangnedlastningshandlinger</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">Velg standard lydkvalitet for nedlastinger over hele appen.</string>
+    <string name="settings_lossless_audio" formatted="false">Tapsløs lyd</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">Oppgradere kvaliteten på cachede sanger</string>
+    <string name="settings_streaming_quality" formatted="false">Strømming Kvalitet</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">Velg din foretrukne streaming lydkvalitet.</string>
+    <string name="settings_pcm_output_format" formatted="false">PCM-utgangsformat</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">Bygger om avspilling i den nåværende posisjonen</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">Velg PCM-formatet som kreves fra Android\'lydutgang. En USB DAC kan konvertere den til et format den støtter.</string>
+    <string name="settings_crossfade" formatted="false">Crossfade</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">Overlap utfallet av sluttsporet med begynnelsen av neste.</string>
+    <string name="settings_automix" formatted="false">AutMix</string>
+    <string name="settings_afterglow" formatted="false">Afterglow</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">Bruk den samme Low-Pass Equalizer-effekten i de valgte siste sekunder av hver sang. Etterglød pauser AutMix og Crossfade mens aktivert.</string>
+    <string name="settings_permanent_shuffle" formatted="false">Permanent Shuffle</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">Hold shuffle permanent låst i spilleren</string>
+    <string name="settings_pause_at_volume_0" formatted="false">Paus ved volum 0</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">Pause avspilling automatisk når volumet når null</string>
+    <string name="settings_volume_bar" formatted="false">Volume Bar</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">Vist på ${state.volumeBarSide.lowercase()} kant når du trykker på volumknappene</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">Velg hvilken kant på skjermen som vises i app-volumlinjen.</string>
+    <string name="settings_content" formatted="false">Innhold</string>
+    <string name="settings_default_content_language" formatted="false">Standard innholdsspråk</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">Språk for Moods, Bla gjennom og søk</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">Velg det foretrukne katalogspråket som brukes over Bla gjennom, Moods &amp; Genres, spillelister og nye utgivelser.</string>
+    <string name="settings_default_content_country" formatted="false">Standard innholdsland</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">Region for diagrammer, spillelister og nye utgivelser</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">Velg den regionale butikkfronten som brukes til Newly Added-album, regionale Moods og Utvalgte spillelister.</string>
+    <string name="settings_hide_explicit_content" formatted="false">Skjul innhold</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">Filtrer eksplisitte sanger på tvers av Moods, Bla gjennom og søk</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">Nå spiller og flytende glass</string>
+    <string name="settings_splash_screen" formatted="false">Splash-skjerm</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">App lanser merkevare animasjon &amp; væske tittel avslører</string>
+    <string name="settings_animated_cover_art" formatted="false">Animert omslag Kunst</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">SpotifyCanvas, Apple musikk, Tidal &amp; fellesskap bevegelsesdekker</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">Spotify&amp; Canvasoppsett</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">Auto-skjul lerret kontroller</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">Minimer kontroller etter 5s mens Canvas spiller (tap Canvas til å bytte)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">Vis synkroniserte tekster Over Canvas</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">Vis animerte synkroniserte tekster over sangnavnet når Canvas kontroller skjule</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">PrioriterSpotifyCanvas</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">PrøvSpotifyLerret før Apple Music, Tidal &amp; Community</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">Spille animert cover over Cellular</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">Tillat looping Canvas videoer over mobile data</string>
+    <string name="settings_player_type" formatted="false">Spillertype</string>
+    <string name="settings_player_style" formatted="false">Spillerstil</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">Spiller Dynamisk Farge</string>
+    <string name="settings_full_screen_cover_art" formatted="false">Full skjerm deksel kunst</string>
+    <string name="settings_corner_length" formatted="false">Hjørnelengde</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">Juster hjørneradius av firkantet album kunstverk</string>
+    <string name="settings_hide_quality_tag" formatted="false">Skjul kvalitetsmerke</string>
+    <string name="settings_hide_volume_bar" formatted="false">Skjul volumlinjen</string>
+    <string name="settings_home_top_card_style" formatted="false">Hjem Top kortstil</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">Væskeglass Nav &amp; Mini spiller</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">Glassbar og minispiller, med vannpude linse på holdet</string>
+    <string name="settings_time_synced_lyrics" formatted="false">Tidssynkroniserte tekster</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">Følg ord og linjetekster i sanntid</string>
+    <string name="settings_app_font" formatted="false">App Font</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">Endre app-typografi; spillerens kontroller beholder sin designet typesnitt</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">Velg et skriftsnitt for appgrensesnittet.</string>
+    <string name="settings_lyrics_providers" formatted="false">Lyrics Providers</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 kilder • Prioriter og slå av reserveordre</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">Liquid Glass Chrome</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">Refraktive gjennomsiktige overskrifter og dokkkort</string>
+    <string name="settings_tactile_haptics" formatted="false">Tactile Haptics</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">Subtel puls tilbakemelding på tvers av spillerkontroller</string>
+    <string name="settings_downloads_storage" formatted="false">Nedlastinger og lagring</string>
+    <string name="settings_cellular_streaming" formatted="false">Cellular Streaming</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">Lydbredde på mobildata</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">Kontroller lydfidelighet når du strømmer bort fra Wi-Fi.</string>
+    <string name="settings_download_over_wi_fi" formatted="false">Last ned via Wi-Fi</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">Vent på Wi-Fi før automatiske nedlastinger</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">Cache sanger etter avspilling</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">Lagre en sang til offline lagring etter det er ferdig</string>
+    <string name="settings_cache_quality" formatted="false">Cachekvalitet</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">Lavere kvalitet sparer lagring</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">Velg kvaliteten på sangene som er lagret etter avspilling. Gjelder for sanger cached fra nå av.</string>
+    <string name="settings_song_storage_limit" formatted="false">Lagringsgrense for sang</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">Maksimal lagring av disk som er tildelt for frakoblet lyd cache før eldre uspillte sanger er avviklet.</string>
+    <string name="settings_clear_cached_songs" formatted="false">Tøm Cachede sanger</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">${MusicCacheManager.cachedTracks.size} sanger • ${MusicCacheManager.formatStorhet(MusicCacheManager.totalStoragebytes.longValue)}</string>
+    <string name="settings_automatic_downloads" formatted="false">Automatiske nedlastinger</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">Lagre nylig likt &amp; lagt til spor frakoblet</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">Tøm App Buffer Cache</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">Fjern midlertidig dekselkunst &amp; nettverksbuffere</string>
+    <string name="settings_library_listening" formatted="false">Bibliotek og lytte</string>
+    <string name="settings_sync_library" formatted="false">Synkroniser bibliotek</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">Hold artister, spillelister og album oppdatert</string>
+    <string name="settings_listening_history" formatted="false">Lyttende historie</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">Personlige mikser og nylig spilt</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">Hold liker på denne enheten</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">Hold liker sanger iiTunenår logget ut</string>
+    <string name="settings_notifications_general" formatted="false">Varsler og generelle</string>
+    <string name="settings_offline_mode" formatted="false">Frakoblet modus</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">Krev en nedlastet kopi for å starte avspilling</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">Stopp musikk på oppgaveklart</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">Stopp avspilling nåriTuneer sveipet bort fra nylige</string>
+    <string name="settings_auto_sleep_timer" formatted="false">Automatisk søvntimer</string>
+    <string name="settings_network_proxy" formatted="false">Nettverksproxy</string>
+    <string name="settings_profile_name" formatted="false">Profilnavn</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">Tilpass innstillingsprofilens navn</string>
+    <string name="settings_news_from_dev" formatted="false">Nyheter fra dev</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">Kunngjøringer, utgivelser og endringslogg</string>
+    <string name="settings_general_about" formatted="false">Generelt &amp; Om</string>
+    <string name="settings_home_screen_widget" formatted="false">Hjem Skjermelement</string>
+    <string name="settings_widget_customization" formatted="false">Tilpassing av Widget</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">Velg en forhåndsvisning av størrelse, kunstverk, kontroller og widget-stil</string>
+    <string name="settings_backup_restore" formatted="false">Sikkerhetskopier &amp; gjenopprett</string>
+    <string name="settings_automatic_daily_backup" formatted="false">Automatisk daglig sikkerhetskopiering</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">Krypterte daglige sikkerhetskopier • Nedlastinger/iTune/Backups</string>
+    <string name="settings_back_up_itune" formatted="false">SikkerhetskopiiTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">Lagre kontoer, alle innstillinger, lydeffekter, biblioteksdata og statistikk kryptert</string>
+    <string name="settings_restore_from_backup" formatted="false">Gjenopprett fra sikkerhetskopi</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">Gjenopprett innstillinger, lydeffekter, kontoer eller biblioteksdata fra .itune</string>
+    <string name="settings_privacy" formatted="false">Personvern</string>
+    <string name="settings_pause_search_history" formatted="false">Paus søkehistorie</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">Ikke lagre nye søk i historien</string>
+    <string name="settings_clear_search_history" formatted="false">Tøm søkeloggen</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">Fjern nylige spørsmål fra Søk</string>
+    <string name="settings_pause_listening_history" formatted="false">Paus lyttehistorie</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">Ikke ta opp spillede sanger eller oppdater anbefalinger</string>
+    <string name="settings_clear_listening_history" formatted="false">Fjern lyttehistorie</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">Fjern avspillingshistorikk og tilbakestille smaksprofil</string>
+    <string name="settings_disable_screenshot" formatted="false">Slå av skjermbilde</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">Blokker skjermbilder og skjermopptak på tvers av app</string>
+    <string name="settings_best_available" formatted="false">Best tilgjengelig</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">Bruk den høyeste tilgjengelige kildekvaliteten</string>
+    <string name="settings_maximum" formatted="false">Maksimalt</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">Velg den høyeste bitratestrøm</string>
+    <string name="settings_high" formatted="false">Høy</string>
+    <string name="settings_target_about_160_kbps" formatted="false">Mål ca 160 kbps</string>
+    <string name="settings_standard" formatted="false">Standard</string>
+    <string name="settings_target_about_128_kbps" formatted="false">Mål rundt 128 kbps</string>
+    <string name="settings_data_saver" formatted="false">Datasparer</string>
+    <string name="settings_target_about_64_kbps" formatted="false">Mål ca. 64 kbps</string>
+    <string name="settings_extreme" formatted="false">Ekstrem</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">Maksimal troskap (256+ kbps)</string>
+    <string name="settings_high_b1a5954a" formatted="false">Høy</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">Lyd av høy kvalitet (~160 kbps)</string>
+    <string name="settings_medium" formatted="false">Middels</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">Standard lydkvalitet (~128 kbps)</string>
+    <string name="settings_low" formatted="false">Lav</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">Datasparerlyd (~ 48-64 kbps)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">16-bit PCM</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">Standard heltall PCM-utgang; bredt kompatibel med USB-lydklasse DACs</string>
+    <string name="settings_text_6697202e38" formatted="false">32-bits flyte PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">Flyt PCM-utgangen når den støttes av Android og den tilkoblede lydstien</string>
+    <string name="settings_off" formatted="false">Av</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">Spill spor ren back-to-back</string>
+    <string name="settings_text_6597740315" formatted="false">2 sekunder</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">Subtle overgang overlapp</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 sekunder</string>
+    <string name="settings_short_seamless_fade" formatted="false">Kort sømløs falm</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 sekunder</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">Balansert DJ-stil overgang</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8 sekunder</string>
+    <string name="settings_smooth_extended_blend" formatted="false">Glatt utvidet blanding</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 sekunder</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">Maksimal kontinuerlig blandingsblanding</string>
+    <string name="settings_off_e3de5ab0" formatted="false">Av</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">Hold normale avspillingseffekter og overganger</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 sekunder</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">Bruk Low-Pass i hver sangs siste 5 sekunder</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 sekunder</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">Bruk Low-Pass i hver sangs siste 10 sekunder</string>
+    <string name="settings_text_eb4354110e" formatted="false">15 sekunder</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">Bruk Low-Pass i hver sangs siste 15 sekunder</string>
+    <string name="settings_right" formatted="false">Høyre</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">Vis volumlinjen på høyre kant (standard)</string>
+    <string name="settings_left" formatted="false">Venstre</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">Vis volumlinjen på venstre kant</string>
+    <string name="settings_high_efficiency" formatted="false">Høy effektivitet</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">Bruk minimale celledata</string>
+    <string name="settings_high_quality" formatted="false">Høy kvalitet</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 kbps balansert mobilavspilling</string>
+    <string name="settings_lossless" formatted="false">Tapsløs</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">Fullstendig tapsfri over 5G/LTE-nettverk</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">Av</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">Tillat streaming på Wi-Fi</string>
+    <string name="settings_text_03a001f575" formatted="false">500 MB</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">Kompakt cache (~ 70 sanger)</string>
+    <string name="settings_text_33015e637f" formatted="false">1 GB</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">Moderat cache (~ 150 sanger)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 GB</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">Anbefalt standard (~ 300 sanger)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5 GB</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">Stor offline samling (~800 sanger)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10 GB</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">Veldig stort bibliotek (~ 1600 sanger)</string>
+    <string name="settings_unlimited" formatted="false">ubegrenset</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">Aldri evict cached sanger</string>
+    <string name="settings_pipeline_output">%1$s→%2$s</string>
+    <string name="settings_volume_bar_side">Vist på%1$skant når du trykker på volumknappene</string>
+    <string name="settings_corner_radius_value">%1$ddp</string>
+    <string name="settings_active_lyrics_providers">%1$dAktiv</string>
+    <string name="settings_cached_song_count_size">%1$dsanger •%2$s</string>
+    <string name="library_playlist_count_one">%1$dSpilleliste</string>
+    <string name="library_playlist_count_many">%1$dSpillelister</string>
+    <string name="library_album_count_one">%1$dLagt til album</string>
+    <string name="library_album_count_many">%1$dLagt til album</string>
+    <string name="remove_from_favorites">Fjern fra favoritter</string>
+    <string name="play_top_album">Spill toppalbum</string>
+    <string name="open_in_spotify">Åpne iSpotify</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Bruk aserbajdsjansk grensesnitt</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Bruk Bengali-grensesnittet</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Bruk det bulgarske grensesnittet</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Bruk det katalanske grensesnittet</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">Bruk tsjekkisk grensesnitt</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Bruk det danske grensesnittet</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Bruk det finske grensesnittet</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Bruk det greske grensesnittet</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Bruk det hebraiske grensesnittet</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Bruk det ungarske grensesnittet</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Bruk det indonesiske grensesnittet</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Bruk Malay-grensesnittet</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Norsk grensesnitt</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Bruk det persiske grensesnittet</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Bruk det polske grensesnittet</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Bruk det rumenske grensesnittet</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Bruk det slovakiske grensesnittet</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Bruk det thailandske grensesnittet</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Bruk det tyrkiske grensesnittet</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Bruk det ukrainske grensesnittet</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Bruk det vietnamesiske grensesnittet</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Bruk Swahili-grensesnittet</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Bruk filippinsk grensesnitt</string>
+</resources>
