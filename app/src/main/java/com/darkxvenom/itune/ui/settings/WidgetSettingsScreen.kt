@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.settings
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -96,17 +99,17 @@ fun WidgetSettingsScreen(
             modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text("Customize your Home Screen player", color = Color.White, fontSize = 27.sp,
+            Text(stringResource(R.string.ui_customize_your_home_screen_player), color = Color.White, fontSize = 27.sp,
                 lineHeight = 32.sp, fontWeight = FontWeight.Bold)
         }
 
-        Text("PREVIEW", color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+        Text(stringResource(R.string.ui_preview), color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
         WidgetPreview(size = size, style = style, artwork = artwork, controls = controls, favorite = favorite, blurredArtwork = blurredArtwork)
-        Text("Choose how iTune appears on your Home Screen. Resize the widget from your launcher.",
+        Text(stringResource(R.string.ui_choose_how_itune_appears_on_your_home_screen_resize_th),
             color = Color(0xFF9A9A9E), fontSize = 13.sp, lineHeight = 18.sp,
             modifier = Modifier.padding(top = 10.dp, bottom = 24.dp))
 
-        Text("LAYOUT", color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+        Text(stringResource(R.string.ui_layout), color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
         WidgetChoiceRow(
             options = listOf("Compact", "Standard", "Expanded"),
             selected = when (size) {
@@ -123,7 +126,7 @@ fun WidgetSettingsScreen(
             WidgetPreferences.setSize(context, size); refresh()
         }
 
-        Text("STYLE", color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.SemiBold,
+        Text(stringResource(R.string.ui_style), color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(top = 20.dp))
         WidgetChoiceRow(
             options = listOf("Artwork", "Dark", "Light"),
@@ -141,7 +144,7 @@ fun WidgetSettingsScreen(
             WidgetPreferences.setStyle(context, style); refresh()
         }
 
-        Text("OPTIONS", color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.SemiBold,
+        Text(stringResource(R.string.ui_options), color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(top = 22.dp, bottom = 8.dp))
         Column(Modifier.clip(RoundedCornerShape(20.dp)).background(Color(0xFF1C1C1E))) {
             WidgetOptionRow("Album artwork", "Show the current song cover", artwork) {
@@ -168,7 +171,7 @@ fun WidgetSettingsScreen(
           modifier = Modifier.align(Alignment.TopCenter),
           centerContent = {
               FrostedTopBarTitlePill(hazeState = hazeState) {
-                  Text("Widget", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold,
+                  Text(stringResource(R.string.ui_widget), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold,
                       maxLines = 1, textAlign = TextAlign.Center)
               }
           },
@@ -232,12 +235,12 @@ private fun WidgetPreview(size: String, style: String, artwork: Boolean, control
         }
         Column(Modifier.weight(1f).padding(start = 12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("iTune", color = fg.copy(alpha = .72f), fontSize = 11.sp, modifier = Modifier.weight(1f))
+                Text(stringResource(R.string.app_name), color = fg.copy(alpha = .72f), fontSize = 11.sp, modifier = Modifier.weight(1f))
                 if (favorite) Icon(Icons.Rounded.StarBorder, "Favorite", tint = fg, modifier = Modifier.size(19.dp))
             }
-            Text("Now Playing", color = fg, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1)
-            Text("Artist name", color = fg.copy(alpha = .72f), fontSize = 12.sp, maxLines = 1)
-            if (!compact) Text("━━━ ━━━━━", color = fg.copy(alpha = .45f), fontSize = 10.sp, modifier = Modifier.padding(top = 4.dp))
+            Text(stringResource(R.string.ui_now_playing), color = fg, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+            Text(stringResource(R.string.ui_artist_name), color = fg.copy(alpha = .72f), fontSize = 12.sp, maxLines = 1)
+            if (!compact) Text(stringResource(R.string.ui_text_a118c40635), color = fg.copy(alpha = .45f), fontSize = 10.sp, modifier = Modifier.padding(top = 4.dp))
             if (controls) Row(Modifier.fillMaxWidth().padding(top = 6.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
                 if (!compact) Icon(Icons.Rounded.SkipPrevious, "Previous", tint = fg, modifier = Modifier.size(19.dp))
                 Icon(Icons.Rounded.Pause, "Play or pause", tint = fg, modifier = Modifier.size(19.dp))
