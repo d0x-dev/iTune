@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.browse
 
+
+import androidx.compose.ui.res.stringResource
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
@@ -168,7 +170,7 @@ fun BrowseChartsView(
                 )
                 Spacer(Modifier.width(6.dp))
                 Text(
-                    text = "Region: $regionName",
+                    text = stringResource(R.string.ui_region, regionName),
                     color = Color.White.copy(alpha = 0.90f),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
@@ -198,7 +200,7 @@ fun BrowseChartsView(
                             artists = appleArtists,
                             onTrackClick = { track ->
                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                Toast.makeText(context, "Playing ${track.title}...", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_playing_cb1fb3de, track.title), Toast.LENGTH_SHORT).show()
                                 ChartsRepository.playTrack(track, appleTracks)
                             }
                         )
@@ -219,7 +221,7 @@ fun BrowseChartsView(
                             headerFeatured = true,
                             onTrackClick = { track ->
                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                Toast.makeText(context, "Playing ${track.title}...", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_playing_cb1fb3de, track.title), Toast.LENGTH_SHORT).show()
                                 ChartsRepository.playTrack(track, ituneTracks)
                             }
                         )
@@ -236,7 +238,7 @@ fun BrowseChartsView(
                             tracks = ytTracks,
                             onTrackClick = { track ->
                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                Toast.makeText(context, "Playing ${track.title}...", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_playing_cb1fb3de, track.title), Toast.LENGTH_SHORT).show()
                                 ChartsRepository.playTrack(track, ytTracks)
                             }
                         )
@@ -253,7 +255,7 @@ fun BrowseChartsView(
                             tracks = jioTracks,
                             onTrackClick = { track ->
                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                Toast.makeText(context, "Playing ${track.title}...", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_playing_cb1fb3de, track.title), Toast.LENGTH_SHORT).show()
                                 ChartsRepository.playTrack(track, jioTracks)
                             }
                         )
@@ -352,7 +354,7 @@ private fun ChartsTrackList(
         // Optional Featured Hero row for iTune
         if (headerFeatured && tracks.isNotEmpty()) {
             Text(
-                text = "Featured Hit",
+                text = stringResource(R.string.ui_featured_hit),
                 color = AppleTextPrimary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
@@ -368,7 +370,7 @@ private fun ChartsTrackList(
         // Trending Artists shelf if available
         if (artists.isNotEmpty()) {
             Text(
-                text = "Trending Artists",
+                text = stringResource(R.string.ui_trending_artists),
                 color = AppleTextPrimary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
@@ -415,7 +417,7 @@ private fun ChartsTrackList(
         }
 
         Text(
-            text = "Top Songs",
+            text = stringResource(R.string.ui_top_songs),
             color = AppleTextPrimary,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
@@ -490,7 +492,7 @@ private fun FeaturedChartHeroCard(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "#1",
+                    text = stringResource(R.string.ui_text_9ef6a80f91),
                     color = Color(0xFFFFD700),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
@@ -502,7 +504,7 @@ private fun FeaturedChartHeroCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "TOP STREAMED",
+                    text = stringResource(R.string.ui_top_streamed),
                     color = AppleMusicRed,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
@@ -538,7 +540,7 @@ private fun FeaturedChartHeroCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.PlayArrow,
-                    contentDescription = "Play",
+                    contentDescription = stringResource(R.string.play),
                     tint = Color.White,
                     modifier = Modifier.size(20.dp)
                 )
@@ -628,7 +630,7 @@ private fun ChartSongRowItem(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "E",
+                            text = stringResource(R.string.ui_e),
                             color = Color.Black,
                             fontSize = 8.5.sp,
                             fontWeight = FontWeight.ExtraBold
@@ -653,7 +655,7 @@ private fun ChartSongRowItem(
         ) {
             Icon(
                 imageVector = Icons.Default.PlayArrow,
-                contentDescription = "Play",
+                contentDescription = stringResource(R.string.play),
                 tint = AppleMusicRed,
                 modifier = Modifier.size(20.dp)
             )
@@ -667,7 +669,7 @@ private fun ChartSongRowItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.MoreHoriz,
-                    contentDescription = "Options",
+                    contentDescription = stringResource(R.string.ui_options_6bf5da9c),
                     tint = AppleTextSecondary,
                     modifier = Modifier.size(18.dp)
                 )
@@ -679,7 +681,7 @@ private fun ChartSongRowItem(
                 modifier = Modifier.background(Color(0xFF2C2C2E))
             ) {
                 DropdownMenuItem(
-                    text = { Text("Play Next", color = Color.White) },
+                    text = { Text(stringResource(R.string.ui_play_next), color = Color.White) },
                     onClick = {
                         menuExpanded = false
                         val mTrack = MusicTrack(
@@ -691,15 +693,15 @@ private fun ChartSongRowItem(
                             isExplicit = track.isExplicit
                         )
                         MusicPlayerState.playNext(mTrack)
-                        Toast.makeText(context, "Playing next: ${track.title}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_playing_next_e0082d95, track.title), Toast.LENGTH_SHORT).show()
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Copy Song Name", color = Color.White) },
+                    text = { Text(stringResource(R.string.ui_copy_song_name), color = Color.White) },
                     onClick = {
                         menuExpanded = false
                         clipboardManager.setText(AnnotatedString("${track.title} - ${track.artist}"))
-                        Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_copied_to_clipboard), Toast.LENGTH_SHORT).show()
                     }
                 )
             }
@@ -785,7 +787,7 @@ private fun ChartsEmptyView(message: String, onRetry: (() -> Unit)? = null) {
                         .padding(horizontal = 20.dp, vertical = 8.dp)
                 ) {
                     Text(
-                        text = "Retry",
+                        text = stringResource(R.string.retry),
                         color = Color.White,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -825,7 +827,7 @@ private fun ChartRegionPickerSheet(
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             Text(
-                text = "Choose Charts Region",
+                text = stringResource(R.string.ui_choose_charts_region),
                 color = AppleTextPrimary,
                 fontSize = 19.sp,
                 fontWeight = FontWeight.Bold,
@@ -836,14 +838,14 @@ private fun ChartRegionPickerSheet(
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                placeholder = { Text("Search country...", color = AppleTextSecondary) },
+                placeholder = { Text(stringResource(R.string.ui_search_country), color = AppleTextSecondary) },
                 leadingIcon = {
                     Icon(Icons.Default.Search, contentDescription = null, tint = AppleTextSecondary)
                 },
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
                         IconButton(onClick = { searchQuery = "" }) {
-                            Icon(Icons.Default.Close, contentDescription = "Clear", tint = AppleTextSecondary)
+                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.ui_clear), tint = AppleTextSecondary)
                         }
                     }
                 },
