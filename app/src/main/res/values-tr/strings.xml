@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">İptal</string>
+    <string name="save">Kaydet</string>
+    <string name="close">Kapat</string>
+    <string name="done">Bitti</string>
+    <string name="back">Geri</string>
+    <string name="play">Çal</string>
+    <string name="shuffle">Karıştır</string>
+    <string name="retry">Yeniden dene</string>
+    <string name="try_again">Tekrar dene</string>
+    <string name="more">Daha fazla</string>
+    <string name="less">Daha az</string>
+    <string name="share">Paylaş</string>
+    <string name="show_all">Tümünü göster</string>
+    <string name="top_songs">En iyi şarkılar</string>
+    <string name="suggested">Önerilen</string>
+    <string name="subscribers">%1$s abone</string>
+    <string name="monthly_listeners">%1$s aylık dinleyici</string>
+    <string name="signed_by">İmzalayan: %1$s</string>
+    <string name="about_artist">Sanatçı hakkında</string>
+    <string name="about_album">Albüm hakkında</string>
+    <string name="recent_album">Son albüm</string>
+    <string name="recent_ep">Son EP</string>
+    <string name="recent_single">Son single</string>
+    <string name="subscribe">Abone ol</string>
+    <string name="unsubscribe">Abonelikten çık</string>
+    <string name="add_to_library">Kitaplığa ekle</string>
+    <string name="remove_from_library">Kitaplıktan kaldır</string>
+    <string name="add_to_playlist">Çalma listesine ekle</string>
+    <string name="remove_from_playlist">Bu çalma listesinden kaldır</string>
+    <string name="play_next">Sıradaki olarak çal</string>
+    <string name="add_to_queue">Kuyruğa ekle</string>
+    <string name="start_radio">Radyoyu başlat</string>
+    <string name="open">Aç</string>
+    <string name="open_album">Albümü aç</string>
+    <string name="open_artist">Sanatçıyı aç</string>
+    <string name="open_playlist">Çalma listesini aç</string>
+    <string name="song_info">Şarkı bilgisi</string>
+    <string name="song_info_album">Albüm</string>
+    <string name="song_info_release_date">Çıkış tarihi</string>
+    <string name="song_info_views">Çalma / görüntüleme</string>
+    <string name="song_info_likes">Beğeniler</string>
+    <string name="song_info_comments">Yorumlar</string>
+    <string name="song_info_unavailable">Kullanılamıyor</string>
+    <string name="song_info_error">Bazı bilgiler yüklenemedi.</string>
+    <string name="song_info_retry">Yeniden dene</string>
+    <string name="like">Beğen</string>
+    <string name="dislike">Beğenme</string>
+    <string name="download">İndir</string>
+    <string name="download_all">Tümünü indir</string>
+    <string name="downloaded">İndirildi</string>
+    <string name="downloading">İndiriliyor</string>
+    <string name="download_notification_title">İndiriliyor</string>
+    <string name="delete_download">İndirmeyi sil</string>
+    <string name="delete_download_confirmation">“%1$s” bu cihazdan kaldırılsın mı? Onaylamak için tekrar dokunun.</string>
+    <string name="delete">Sil</string>
+    <string name="queued">Kuyrukta</string>
+    <string name="saved_to_downloads">İndirilenler\'e kaydedildi</string>
+    <string name="search_this_list">Bu listede ara</string>
+    <string name="clear_search">Aramayı temizle</string>
+    <string name="close_search">Aramayı kapat</string>
+    <string name="nothing_matches">Burada “%1$s” ile eşleşen bir şey yok</string>
+    <string name="sort_songs">Şarkıları sırala</string>
+    <string name="artist">sanatçı</string>
+    <string name="album">albüm</string>
+    <string name="playlist">çalma listesi</string>
+    <string name="folder">Klasör</string>
+    <string name="songs">Şarkılar</string>
+    <string name="song_count">%1$d şarkı</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$d parça</item>
+        <item quantity="other">%1$d parça</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$d dakika</item>
+        <item quantity="other">%1$d dakika</item>
+    </plurals>
+    <string name="one_hour">1 saat</string>
+    <string name="hours_minutes_short">%1$d sa %2$d dk</string>
+    <string name="minutes_short">%1$d dk</string>
+    <string name="pin">Sabitle</string>
+    <string name="unpin">Sabitlemeyi kaldır</string>
+    <string name="tile_identify_music">Müziği tanı</string>
+    <string name="tile_identify_music_desc">iTune ile çevrenizde çalan şarkıları tanıyın</string>
+    <string name="widget_itune_description">iTune oynatmayı ana ekranınızdan kontrol edin</string>
+    <string name="app_language">Uygulama dili</string>
+    <string name="app_language_subtitle">Menüler, düğmeler ve mesajlar için dil</string>
+    <string name="app_language_description">iTune arayüzü için kullanılacak dili seçin.</string>
+    <string name="system_default_language">Sistem varsayılanı</string>
+    <string name="follow_device_language">Cihaz dilini takip et</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">Use the English interface</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface">इंटरफ़ेस के लिए हिन्दी का उपयोग करें</string>
+    <string name="hindi_interface_language">Hindi interface language</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">Use the Spanish interface</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">Use the French interface</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">Use the Dutch interface</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">Use the Russian interface</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">Use the Urdu interface</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">Use the Chinese interface</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">Use the German interface</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">Use the Portuguese interface</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">Use the Italian interface</string>
+    <string name="japanese_language">日本語</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">한국어 인터페이스</string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Svenskt gränssnitt</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">الواجهة العربية</string>
+    <string name="japanese_interface">Use the Japanese interface</string>
+    <string name="favorite_artist">Favori sanatçı</string>
+    <string name="remove_favorite_artist">Favori sanatçılardan kaldır</string>
+    <string name="add_to_favorite_artists">Favori sanatçılara ekle</string>
+    <string name="removed_from_artists">Sanatçılardan kaldırıldı</string>
+    <string name="added_to_artists">Sanatçılara eklendi</string>
+    <string name="play_top_songs">En iyi şarkıları çal</string>
+    <string name="play_album">Albümü çal</string>
+    <string name="play_playlist">Çalma listesini çal</string>
+    <string name="create_new_playlist">Yeni çalma listesi oluştur</string>
+    <string name="create_playlist">Çalma listesi oluştur</string>
+    <string name="radio">Radyo</string>
+    <string name="search">Ara</string>
+    <string name="share_playlist_link">Çalma listesi bağlantısını paylaş</string>
+    <string name="copy_share_link">Paylaşım bağlantısını kopyala</string>
+    <string name="rename_playlist">Çalma listesini yeniden adlandır</string>
+    <string name="delete_playlist">Çalma listesini sil</string>
+    <string name="share_link_copied">Paylaşım bağlantısı kopyalandı</string>
+    <string name="playlist_removed">Çalma listesi kaldırıldı</string>
+    <string name="playlist_no_longer_available">Bu çalma listesi artık kullanılamıyor.</string>
+    <string name="empty_playlist">Boş çalma listesi</string>
+    <string name="filter_playlists">Çalma listelerini filtrele...</string>
+    <string name="filter_albums">Albümleri filtrele...</string>
+    <string name="favorite">Favori</string>
+    <string name="tap_to_start_listening">Dinlemeye başlamak için dokunun</string>
+    <string name="time_zero" formatted="false">0:00</string>
+    <string name="previous">Önceki</string>
+    <string name="play_or_pause">Çal veya duraklat</string>
+    <string name="next">Sonraki</string>
+    <string name="repeat">Tekrarla</string>
+    <string name="open_title_options">%1$s seçeneklerini aç</string>
+    <string name="reset_page_title">%1$s öğesini sıfırla</string>
+    <string name="remove_device">%1$s öğesini kaldır</string>
+    <string name="profile_name">%1$s profili</string>
+    <string name="download_option">%1$s öğesini indir</string>
+    <string name="open_entry_options">%1$s seçeneklerini aç</string>
+    <string name="avatar_number">Avatar %1$s</string>
+    <string name="options_for_track">%1$s için seçenekler</string>
+    <string name="preparing">Hazırlanıyor…</string>
+    <string name="share_image">Görüntüyü paylaş</string>
+    <string name="speed_pitch_locked">Hız ve perde birlikte kilitli</string>
+    <string name="independent_bpm_tempo_key_pitch">Bağımsız BPM tempo ve anahtar perde</string>
+    <string name="spatial_reflections_delay">Uzamsal yansımalar (%1$d ms)</string>
+    <string name="on">Açık</string>
+    <string name="off">Kapalı</string>
+    <string name="dynamic_island_active">Dynamic Island etkin</string>
+    <string name="dynamic_island_description">Oynatma sırasında iTune dışında sorunsuz görünür</string>
+    <string name="preparing_download">İndirme hazırlanıyor…</string>
+    <string name="listening_for_music">Müzik dinleniyor…</string>
+    <string name="hold_phone_near_sound_source">Telefonu ses kaynağına yakın tutun</string>
+    <string name="unable_to_recognize_audio">Ses tanınamadı</string>
+    <string name="song_identified">Şarkı tanımlandı</string>
+    <string name="play_in_itune">iTune\'da çal</string>
+    <string name="view_details">Ayrıntıları görüntüle</string>
+    <string name="no_match_found">Eşleşme bulunamadı</string>
+    <string name="recognition_retry_message">Şarkı tanımlanamadı. Tekrar denemek için dokunun.</string>
+    <string name="microphone_permission_needed">Mikrofon izni gerekli</string>
+    <string name="microphone_permission_help">iTune\'un müziği tanımlayabilmesi için mikrofon erişimine izin vermek üzere dokunun.</string>
+    <string name="recognition_failed">Tanıma başarısız</string>
+    <string name="tap_install_to_continue">Devam etmek için Yükle\'ye dokunun</string>
+    <string name="detail_artist">Sanatçı</string>
+    <string name="detail_album">Albüm</string>
+    <string name="set_default_ringtone_target">Varsayılan %1$s olarak ayarla!</string>
+    <string name="added_ringtone_target">%1$s öğesine eklendi. Ses ayarlarından seçin.</string>
+    <string name="last_fm_connected_as">Last.fm %1$s olarak bağlandı</string>
+    <string name="discord_connected_as">Discord %1$s olarak bağlandı</string>
+    <string name="tv_encrypted_backup_saved">Şifreli yedek kaydedildi (%1$d KB)!</string>
+    <string name="sign_in_verification_failed">Oturum açma doğrulaması başarısız</string>
+    <string name="could_not_rename_playlist">YouTube Music\'te çalma listesi yeniden adlandırılamadı</string>
+    <string name="could_not_create_playlist">Çalma listesi oluşturulamadı</string>
+    <string name="daily_encrypted_backup_enabled">Günlük şifreli yedekleme etkinleştirildi</string>
+    <string name="cookie_login_failed">Çerez oturum açma başarısız</string>
+    <string name="could_not_open_last_fm">Last.fm açılamadı</string>
+    <string name="last_fm_sign_in_failed">Last.fm oturum açma başarısız</string>
+    <string name="discord_sign_in_failed">Discord oturum açma başarısız</string>
+    <string name="could_not_open_android_installer">Android yükleyicisi açılamadı</string>
+    <string name="added_title_to_queue">“%1$s” kuyruğa eklendi</string>
+    <string name="automatic_backup_disabled">Otomatik yedekleme devre dışı</string>
+    <string name="download_failed">İndirme başarısız</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">Yükle</string>
+    <string name="ui_text_9ef6a80f91" formatted="false">#1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">%+.1f</string>
+    <string name="ui_accounts" formatted="false">+ Hesaplar</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0.0s</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5.0s</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">-</string>
+    <string name="ui_text_7be28ad40e" formatted="false">-5.0s</string>
+    <string name="ui_text_a6dee6102d" formatted="false">23:00</string>
+    <string name="ui_text_1a19c52178" formatted="false">00:00</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">12:00</string>
+    <string name="ui_text_4e37ece023" formatted="false">15ms karşı kulak gecikmeli alçak geçiren karışım</string>
+    <string name="ui_text_76b322ac42" formatted="false">2X Hızlı Hız</string>
+    <string name="ui_text_505c74ed85" formatted="false">3D Ping-Pong Sıçrama</string>
+    <string name="ui_text_db9b8df506" formatted="false">06:00</string>
+    <string name="ui_text_2812537f20" formatted="false">18:00</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080</string>
+    <string name="ui_text_05a79f06cf" formatted="false">:</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">En iyi şarkılar, sanatçılar, albümler ve alışkanlıklarla tam bir görünüm.</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">Yeni bir sürüm hazır</string>
+    <string name="ui_account" formatted="false">Hesap</string>
+    <string name="ui_account_options" formatted="false">Hesap seçenekleri</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">HESAPLAR</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">Akustik Kafa Gölgesi Çapraz Besleme</string>
+    <string name="ui_activate" formatted="false">Etkinleştir</string>
+    <string name="ui_active" formatted="false">Etkin</string>
+    <string name="ui_active_days" formatted="false">AKTİF GÜNLER</string>
+    <string name="ui_active_profile" formatted="false">Etkin profil</string>
+    <string name="ui_activity_by_day" formatted="false">Güne göre etkinlik</string>
+    <string name="ui_add_account" formatted="false">Hesap ekle</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">Özel HTTP eklenti sunucuları (/manifest.json, /search, /stream sunan) veya sandbox ile izole edilmiş QuickJS modülleri ekleyin.</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">Gelecek şarkıları otomatik ekle</string>
+    <string name="ui_add_streaming_source" formatted="false">Yayın kaynağı ekle</string>
+    <string name="ui_add_to_playlist" formatted="false">Çalma listesine ekle</string>
+    <string name="ui_added_playlists" formatted="false">Eklenen çalma listeleri</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">Kare albüm kapağının köşe kenarını ayarlayın.</string>
+    <string name="ui_advanced_cookie_login" formatted="false">Gelişmiş çerez oturum açma</string>
+    <string name="ui_advanced_login" formatted="false">GELİŞMİŞ OTURUM AÇMA</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">Gelişmiş oturum açma</string>
+    <string name="ui_ai_engine" formatted="false">AI MOTORU</string>
+    <string name="ui_ai_provider" formatted="false">AI sağlayıcısı</string>
+    <string name="ui_albums" formatted="false">Albümler</string>
+    <string name="ui_all_news" formatted="false">Tüm haberler</string>
+    <string name="ui_allow_downloads" formatted="false">İndirmelere izin ver</string>
+    <string name="ui_allow_microphone" formatted="false">Mikrofona izin ver</string>
+    <string name="ui_allow_microphone_access" formatted="false">Mikrofon erişimine izin ver</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">Yansımaları L &lt;-&gt; R arasında değiştirir</string>
+    <string name="ui_always_on_display" formatted="false">Her Zaman Açık Ekran</string>
+    <string name="ui_am" formatted="false">ÖÖ</string>
+    <string name="ui_api_base_url" formatted="false">API temel URL\'si</string>
+    <string name="ui_artist" formatted="false">Sanatçı</string>
+    <string name="ui_artist_name" formatted="false">Sanatçı adı</string>
+    <string name="ui_artists" formatted="false">Sanatçılar</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">Sanatçılar, şarkılar, albümler, çalma listeleri…</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">Sanatçılar, şarkılar, şarkı sözleri ve daha fazlası</string>
+    <string name="ui_at_least_8_characters" formatted="false">En az 8 karakter</string>
+    <string name="ui_auto_sleep_timer" formatted="false">Otomatik uyku zamanlayıcısı</string>
+    <string name="ui_auto_activation_timeout" formatted="false">OTOMATİK ETKİNLEŞTİRME ZAMAN AŞIMI</string>
+    <string name="ui_avatar" formatted="false">Avatar</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">iTune\'u Yedekle (AES-256)</string>
+    <string name="ui_backup_password" formatted="false">Yedekleme parolası</string>
+    <string name="ui_bluetooth_device_access" formatted="false">Bluetooth cihaz erişimi</string>
+    <string name="ui_browse" formatted="false">Gözat</string>
+    <string name="ui_browse_by_country" formatted="false">Ülkeye göre gözat</string>
+    <string name="ui_browse_extensions" formatted="false">Uzantılara gözat</string>
+    <string name="ui_browse_live_online_radio" formatted="false">Canlı çevrimiçi radyoya gözat</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">Tek hesap silinemez</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">Canvas sağlayıcıları (arama sırası)</string>
+    <string name="ui_captcha_guidance" formatted="false">CAPTCHA rehberliği</string>
+    <string name="ui_cast_wireless_devices" formatted="false">YAYIN VE KABLOSUZ CİHAZLAR</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">Ses oynatma yayın kaynaklarını, kayıpsız katmanları ve yedek önceliğini seçin</string>
+    <string name="ui_choose_avatar" formatted="false">Avatar seç</string>
+    <string name="ui_choose_charts_region" formatted="false">Liste bölgesini seç</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">iTune\'un Ana Ekranınızda nasıl görüneceğini seçin. Widget\'ı başlatıcınızdan yeniden boyutlandırın.</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">Devam etmek için profilinizi seçin</string>
+    <string name="ui_choose_youtube_channel" formatted="false">YouTube kanalı seç</string>
+    <string name="ui_clear" formatted="false">Temizle</string>
+    <string name="ui_clear_use_default" formatted="false">Temizle ve varsayılanı kullan</string>
+    <string name="ui_clear_all" formatted="false">Tümünü temizle</string>
+    <string name="ui_confirm" formatted="false">Onayla</string>
+    <string name="ui_confirm_password" formatted="false">Parolayı onayla</string>
+    <string name="ui_connect_discord" formatted="false">Discord\'u bağla</string>
+    <string name="ui_connect_last_fm" formatted="false">Last.fm\'i bağla</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">Canvas döngülü hareketli video kapaklarını etkinleştirmek ve Spotify kitaplığınızı eşitlemek için Spotify hesabınızı bağlayın.</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">YouTube Music\'i oturum çerezleriyle bağla</string>
+    <string name="ui_connect" formatted="false">Bağlan ›</string>
+    <string name="ui_connecting_spotify" formatted="false">Spotify bağlanıyor...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">YouTube Music bağlanıyor...</string>
+    <string name="ui_continue" formatted="false">Devam</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">Bunun yerine tarayıcıda devam et</string>
+    <string name="ui_continue_with_google" formatted="false">Google ile devam et</string>
+    <string name="ui_continue_with_spotify" formatted="false">Spotify ile devam et</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">Çerez kimlik bilgileri iTune\'un şifreli hesap deposunda saklanır ve kaydedilmeden önce YouTube Music ile doğrulanır.</string>
+    <string name="ui_copy_song_name" formatted="false">Şarkı adını kopyala</string>
+    <string name="ui_copy_text" formatted="false">Metni kopyala</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">Telif Hakkı © 2026 iTune Project. Bu yazılım garanti olmaksızın sağlanır. Aşağıda gösterilen GNU GPL koşulları altında yeniden dağıtabilir ve değiştirebilirsiniz.</string>
+    <string name="ui_corner_length" formatted="false">Köşe uzunluğu</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">Replay görüntüsü oluşturulamadı</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">Müzik şu anda yüklenemedi. Tekrar denemek için aşağı çekin.</string>
+    <string name="ui_create" formatted="false">Oluştur</string>
+    <string name="ui_create_add" formatted="false">Oluştur ve ekle</string>
+    <string name="ui_current_account" formatted="false">Mevcut hesap</string>
+    <string name="ui_custom_instructions" formatted="false">ÖZEL TALİMATLAR</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">ÖZEL DEPO DİZİNİ VEYA URL\'Sİ</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">Ana Ekran oynatıcınızı özelleştirin</string>
+    <string name="ui_customize_your_itune_card" formatted="false">iTune kartınızı özelleştirin</string>
+    <string name="ui_d" formatted="false">D</string>
+    <string name="ui_delete_account" formatted="false">Hesabı sil</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">Hesap silinsin mi?</string>
+    <string name="ui_developer_announcements" formatted="false">Geliştirici duyuruları</string>
+    <string name="ui_disconnect" formatted="false">Bağlantıyı kes</string>
+    <string name="ui_disconnect_discord" formatted="false">Discord bağlantısını kes</string>
+    <string name="ui_discord_rich_presence" formatted="false">Discord Rich Presence</string>
+    <string name="ui_dismiss" formatted="false">Kapat</string>
+    <string name="ui_display_full_screen" formatted="false">EKRAN VE TAM EKRAN</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">Canvas kontrolleri gizliyken şarkı başlığının üzerinde animasyonlu senkronize şarkı sözlerini göster</string>
+    <string name="ui_display_name" formatted="false">Görünen ad</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">DJ Bipolar Kulüp Filtresi</string>
+    <string name="ui_downloaded_cached" formatted="false">İndirildi ve önbelleğe alındı</string>
+    <string name="ui_dp" formatted="false">dp</string>
+    <string name="ui_dynamic_island" formatted="false">Dynamic Island</string>
+    <string name="ui_e" formatted="false">E</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">ör. 127.0.0.1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">ör. kafiyeli şiirsel hinglish\'e çevir</string>
+    <string name="ui_enable_auto_sleep" formatted="false">Otomatik uykuyu etkinleştir</string>
+    <string name="ui_enable_proxy" formatted="false">Proxy\'yi etkinleştir</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">Spotify Canvas ve çalma listeleri etkinleştiriliyor</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">Şifreleme parolası (en az 8 karakter)</string>
+    <string name="ui_end_of_current_track" formatted="false">Mevcut parçanın sonu</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">Bu hesap için yeni bir ad girin.</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">Bir HTTP eklenti manifest URL\'si, bir QuickJS modül dizini veya bir Tidal örneği uç noktası girin.</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">.itune yedeğiniz oluşturulduğunda kullanılan parolayı girin.</string>
+    <string name="ui_enter_your_name" formatted="false">Adınızı girin</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">iTune\'u kişiselleştirmek için adınızı girin</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">Yaşadığınız her ritim, gece yarısı marşı ve melodi — tek bir yolculukta toplandı.</string>
+    <string name="ui_everything" formatted="false">Her şey</string>
+    <string name="ui_explore_categories" formatted="false">Kategorileri keşfet</string>
+    <string name="ui_exporting_audio" formatted="false">Ses dışa aktarılıyor…</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">Kısa bir ses parmak izi çıkarılıyor</string>
+    <string name="ui_favorite_stations" formatted="false">Favori istasyonlar</string>
+    <string name="ui_favorites" formatted="false">FAVORİLER</string>
+    <string name="ui_featured_hit" formatted="false">Öne çıkan hit</string>
+    <string name="ui_featured_playlists" formatted="false">Öne çıkan çalma listeleri</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">Ses kaliteleri alınıyor…</string>
+    <string name="ui_fetching_live_catalog" formatted="false">Canlı katalog alınıyor...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">Daha iyi bir yayın bulunuyor</string>
+    <string name="ui_full_view" formatted="false">Tam görünüm</string>
+    <string name="ui_g" formatted="false">G</string>
+    <string name="ui_genre" formatted="false">TÜR</string>
+    <string name="ui_genres_styles" formatted="false">Türler ve stiller</string>
+    <string name="ui_github_repository" formatted="false">GitHub deposu</string>
+    <string name="ui_github_repository_open_source" formatted="false">GitHub deposu · Açık kaynak</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 veya sonrası</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 veya sonrası · Telif Hakkı © 2026 iTune Project</string>
+    <string name="ui_grant" formatted="false">Ver</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">Kulaklık adını ve canlı pil %\'sini göstermek için izin ver</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">Donanım LoudnessEnhancer (+18 dB\'ye kadar)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">Kusursuz saf OLED siyahı için Android durum çubuğunu ve gezinme çubuğunu gizler.</string>
+    <string name="ui_history" formatted="false">Geçmiş</string>
+    <string name="ui_host" formatted="false">HOST</string>
+    <string name="ui_host_a_session" formatted="false">OTURUM HOST\'U OL</string>
+    <string name="ui_host_controls_playback" formatted="false">Host oynatmayı kontrol eder</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">Çerezlerinizi nasıl alırsınız</string>
+    <string name="ui_hq" formatted="false">HQ</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">Shazam ile tanımlandı</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">Çevrenizde çalan müziği tanımlayın</string>
+    <string name="ui_immersion" formatted="false">SÜRÜKLEME</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">Sürükleyici mod (tam ekran)</string>
+    <string name="ui_import" formatted="false">İçe aktar</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">Herkese açık ve özel çalma listelerini içe aktar • Otomatik eşitle</string>
+    <string name="ui_import_spotify_playlist" formatted="false">Spotify çalma listesini içe aktar</string>
+    <string name="ui_in_use" formatted="false">Kullanımda</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">Ses sağlayıcıları anti-bot kontrollerine meydan okuduğunda uygulama içi rehberlik</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">Önceden eklenmiş Mornye topluluk uzantılarını yükleyin veya özel bir depo dizinini tarayın.</string>
+    <string name="ui_installed" formatted="false">Yüklendi</string>
+    <string name="ui_interactive_dot_curve" formatted="false">Etkileşimli nokta eğrisi</string>
+    <string name="ui_irecognition" formatted="false">iRecognition</string>
+    <string name="ui_ireconization" formatted="false">iReconization</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">iReconization, bir müzik parmak izi oluşturmak için birkaç saniye dinler. Ses kaydedilmez.</string>
+    <string name="ui_ishare" formatted="false">iShare</string>
+    <string name="ui_itune_license" formatted="false">iTune Lisansı</string>
+    <string name="ui_itune_music" formatted="false">iTune Music</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTune, şarkı sözlerini aşağıdaki tam öncelik sırasına göre sorgular. En yüksek etkin önceliğe sahip sağlayıcıda senkronize şarkı sözü yoksa iTune sorunsuz bir şekilde bir sonrakine geçer.</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTune, kaynakları gösterilen sırayla sorgular. Oynatma önceliğini ayarlamak için yüklü uzantıları ve sağlayıcıları sürükleyin.</string>
+    <string name="ui_itune_time_travel" formatted="false">iTune Time Travel</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">Jet Flanger Swoosh</string>
+    <string name="ui_join" formatted="false">Katıl</string>
+    <string name="ui_keep_screen_on" formatted="false">Ekranı açık tut</string>
+    <string name="ui_l" formatted="false">L</string>
+    <string name="ui_lan_port" formatted="false">LAN bağlantı noktası</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">Dil tercihi (isteğe bağlı, ör. Hintçe, Pencapça…)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fm Scrobbling</string>
+    <string name="ui_layout" formatted="false">DÜZEN</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">Bu sağlayıcı için varsayılan uç noktayı kullanmak üzere boş bırakın.</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">LFO tarafından süpürülen jet faz modülasyonu</string>
+    <string name="ui_library" formatted="false">Kitaplık</string>
+    <string name="ui_license" formatted="false">Lisans</string>
+    <string name="ui_liked_songs" formatted="false">Beğenilen şarkılar</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">Oturum açıkken eklenen beğeniler hem yerel olarak hem de YouTube Music\'te kaydedilir, böylece oturumu kapattıktan sonra bile Kitaplığınızda kalır.</string>
+    <string name="ui_listening_patterns" formatted="false">DİNLEME DESENLERİ</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">Paylaşılan ses dinleniyor…</string>
+    <string name="ui_live" formatted="false">CANLI</string>
+    <string name="ui_live_radio_stations" formatted="false">Canlı radyo istasyonları</string>
+    <string name="ui_loading_announcements" formatted="false">Duyurular yükleniyor…</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">Sanatçılar, çalma listeleri ve geçmiş yükleniyor</string>
+    <string name="ui_lossless" formatted="false">Kayıpsız</string>
+    <string name="ui_lossless_audio_preference" formatted="false">Kayıpsız ses tercihi</string>
+    <string name="ui_lyrics" formatted="false">Şarkı sözleri</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">Bu şarkı için şarkı sözleri mevcut değil</string>
+    <string name="ui_lyrics_providers" formatted="false">Şarkı sözü sağlayıcıları</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">Şarkı sözleri başarıyla çevrildi!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">Ana Amplifikatör Güçlendirme</string>
+    <string name="ui_member_since" formatted="false">ÜYELİK TARİHİ</string>
+    <string name="ui_memoji_style" formatted="false">Memoji ve stil</string>
+    <string name="ui_minutes_listened" formatted="false">DİNLENEN DAKİKA</string>
+    <string name="ui_mirror_vol" formatted="false">Ayna Ses</string>
+    <string name="ui_model" formatted="false">MODEL</string>
+    <string name="ui_model_68c2cc7f" formatted="false">Model</string>
+    <string name="ui_moods_activities" formatted="false">Ruh halleri ve etkinlikler</string>
+    <string name="ui_moods_moments" formatted="false">RUH HALLERİ VE ANLAR</string>
+    <string name="ui_music_by_genre" formatted="false">Türe göre müzik</string>
+    <string name="ui_music_language_preference" formatted="false">Müzik dili tercihi</string>
+    <string name="ui_music_services" formatted="false">MÜZİK HİZMETLERİ</string>
+    <string name="ui_name" formatted="false">Ad</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">YAKIN WI-FI HOST\'LARI</string>
+    <string name="ui_network_proxy" formatted="false">Ağ proxy\'si</string>
+    <string name="ui_new" formatted="false">Yeni</string>
+    <string name="ui_new_playlist" formatted="false">Yeni çalma listesi</string>
+    <string name="ui_new_releases" formatted="false">Yeni çıkanlar</string>
+    <string name="ui_news_from_dev" formatted="false">Geliştiriciden haberler</string>
+    <string name="ui_next_up" formatted="false">Sıradaki</string>
+    <string name="ui_no_albums_found" formatted="false">Albüm bulunamadı</string>
+    <string name="ui_no_artist_information_available" formatted="false">Sanatçı bilgisi mevcut değil</string>
+    <string name="ui_no_artists_found" formatted="false">Sanatçı bulunamadı</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">Kitaplığınızda henüz sanatçı yok</string>
+    <string name="ui_no_playlists_found" formatted="false">Çalma listesi bulunamadı</string>
+    <string name="ui_no_results_on_spotify" formatted="false">Spotify\'da sonuç yok</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">Kitaplığınızda kayıtlı albüm yok</string>
+    <string name="ui_no_songs_found" formatted="false">Şarkı bulunamadı</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">Bu sürümde şarkı bulunamadı</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">Bu bölümde şarkı bulunamadı</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">Kullanıcı çalma listesi bulunamadı. Kitaplıkta bir tane oluşturun!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">Henüz yeterince dinleme yok</string>
+    <string name="ui_now_playing" formatted="false">Şimdi çalıyor</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">Şimdi çalıyor</string>
+    <string name="ui_on_heavy_repeat" formatted="false">SÜREKLİ TEKRARDA</string>
+    <string name="ui_options" formatted="false">SEÇENEKLER</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">VEYA SP_DC ÇEREZİNİ GİRİN</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">Yörünge yoğunluğu ve hızı</string>
+    <string name="ui_pair_join_a_device" formatted="false">EŞLEŞTİR VE CİHAZA KATIL</string>
+    <string name="ui_password_optional" formatted="false">Parola (isteğe bağlı)</string>
+    <string name="ui_passwords_dont_match" formatted="false">Parolalar eşleşmiyor</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">sp_dc belirtecini buraya yapıştırın…</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">API anahtarınızı buraya yapıştırın</string>
+    <string name="ui_play_in_itune" formatted="false">iTune\'da çal</string>
+    <string name="ui_play_next" formatted="false">Sıradaki olarak çal</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">Kulaklıklarda ve telefon hoparlöründe/AUX\'ta aynı anda çal</string>
+    <string name="ui_playlist_name" formatted="false">Çalma listesi adı</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">Çalma listesi adı</string>
+    <string name="ui_playlist_spotify" formatted="false">Çalma listesi • Spotify</string>
+    <string name="ui_playlists" formatted="false">Çalma listeleri</string>
+    <string name="ui_plays" formatted="false">Çalmalar</string>
+    <string name="ui_pm" formatted="false">ÖS</string>
+    <string name="ui_port" formatted="false">Bağlantı noktası</string>
+    <string name="ui_pre_added_extensions" formatted="false">ÖNCEDEN EKLENMİŞ UZANTILAR</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">Mevcut olduğunda 24-bit / 192 kHz\'e kadar bit-perfect FLAC/ALAC tercih et</string>
+    <string name="ui_preparing_audio_preview" formatted="false">Ses önizlemesi hazırlanıyor…</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">Her Zaman Açık Ekran etkinken cihaz ekranının kapanmasını önler.</string>
+    <string name="ui_preview" formatted="false">ÖNİZLEME</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">Önizleme</string>
+    <string name="ui_preview_always_on_display" formatted="false">Her Zaman Açık Ekranı önizle</string>
+    <string name="ui_profile" formatted="false">PROFİL</string>
+    <string name="ui_profiles_in_backup" formatted="false">YEDEKTEKİ PROFİLLER</string>
+    <string name="ui_prompt_type" formatted="false">PROMPT TÜRÜ</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">SAĞLAYICI ÖNCELİĞİ (YEDEK SIRASI)</string>
+    <string name="ui_queue" formatted="false">Kuyruk</string>
+    <string name="ui_queue_is_empty" formatted="false">Kuyruk boş</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">Sıradaki olarak çalınacak kuyruktaki parçalar</string>
+    <string name="ui_radio" formatted="false">Radyo</string>
+    <string name="ui_read_more" formatted="false">Devamını oku</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">Canlı sesle gerçek zamanlı hece ve satır kaydırma</string>
+    <string name="ui_recent_searches" formatted="false">Son aramalar</string>
+    <string name="ui_recently_added" formatted="false">Son eklenenler</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">Yinelenen uyku programı · oynatmayı otomatik duraklatır</string>
+    <string name="ui_remote_music_library" formatted="false">Uzak müzik kitaplığı</string>
+    <string name="ui_remove" formatted="false">Kaldır</string>
+    <string name="ui_rename" formatted="false">Yeniden adlandır</string>
+    <string name="ui_rename_account" formatted="false">Hesabı yeniden adlandır</string>
+    <string name="ui_replay" formatted="false">REPLAY</string>
+    <string name="ui_replay_c0f85d66" formatted="false">Replay</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">Bit-Perfect Kayıpsız Çıkış Gerektir</string>
+    <string name="ui_reset" formatted="false">Sıfırla</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">Sağlayıcı sırasını ve varsayılanları sıfırla</string>
+    <string name="ui_reset_to_default_url" formatted="false">Varsayılan URL\'ye sıfırla</string>
+    <string name="ui_restore_default_sources" formatted="false">Varsayılan kaynakları geri yükle</string>
+    <string name="ui_restore_itune_backup" formatted="false">iTune yedeğini geri yükle</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">JioSaavn ve YouTube Music\'i varsayılan sırayla geri yükler. JioSaavn kapalı, YouTube Music açık başlar.</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">LRC Lib, KuGou ve SimpMusic\'i en çok tercih edilen sağlayıcılar olarak geri yükler ve 11 kaynağın tümünü yeniden etkinleştirir.</string>
+    <string name="ui_resume" formatted="false">Devam et</string>
+    <string name="ui_rhythm_by_hour" formatted="false">Saate göre ritim</string>
+    <string name="ui_room_permissions" formatted="false">ODA İZİNLERİ</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">Uygulama ağ trafiğini HTTP veya SOCKS proxy üzerinden yönlendir</string>
+    <string name="ui_save_proxy" formatted="false">Proxy\'yi kaydet</string>
+    <string name="ui_save_schedule" formatted="false">Programı kaydet</string>
+    <string name="ui_save_to_gallery" formatted="false">Galeriye kaydet</string>
+    <string name="ui_save_token" formatted="false">Belirteci kaydet</string>
+    <string name="ui_saved_to_your_library" formatted="false">Kitaplığınıza kaydedildi!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">Android Keystore kullanılarak kaydedildi. Yedekleme dosyaları PBKDF2-HMAC-SHA256 (310.000 tur) ve AES-256-GCM kullanır.</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">Şuraya kaydeder:  Downloads/itune/backups</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">Bir şarkı, sanatçı, albüm veya şarkı sözü söyleyin</string>
+    <string name="ui_search" formatted="false">Ara</string>
+    <string name="ui_search_identify" formatted="false">Ara ve tanımla</string>
+    <string name="ui_search_announcements" formatted="false">Duyurularda ara…</string>
+    <string name="ui_search_country" formatted="false">Ülke ara...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">Şarkı, sanatçı, albüm ve çalma listesi ara</string>
+    <string name="ui_search_languages" formatted="false">Dil ara...</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">Model kimliği arayın veya yazın</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">Şarkı, sanatçı, albüm veya çalma listesi ara</string>
+    <string name="ui_searching_lyrics" formatted="false">Şarkı sözleri aranıyor…</string>
+    <string name="ui_searching_spotify" formatted="false">Spotify\'da aranıyor…</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">İKİNCİL AYNA HEDEFİ</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">Tüm ekranlarda iTune deneyiminizi kişiselleştirmek için bir profil avatarı seçin.</string>
+    <string name="ui_select_language" formatted="false">Dil seç</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">Şarkı sözü çevirisi için varsayılan prompt şablonunu seçin.</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">Satır satır şarkı sözü çevirisi için kullanılacak motoru seçin.</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">Şarkı sözü çevirisi için hedef dili seçin.</string>
+    <string name="ui_server_host_ip" formatted="false">Sunucu ana bilgisayarı / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">Sunucu URL\'si / Manifest</string>
+    <string name="ui_settings_appearance" formatted="false">Ayarlar görünümü</string>
+    <string name="ui_share_lyrics" formatted="false">Şarkı sözlerini paylaş</string>
+    <string name="ui_share_my_replay" formatted="false">Replay\'imi paylaş</string>
+    <string name="ui_share_replay" formatted="false">Replay\'i paylaş</string>
+    <string name="ui_share_this_story" formatted="false">Bu hikayeyi paylaş</string>
+    <string name="ui_share_your_time_travel" formatted="false">Time Travel\'ınızı paylaşın</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">Canvas üzerinde senkronize şarkı sözlerini göster</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">Bir masaüstü tarayıcısında music.youtube.com\'a giriş yapın. Geliştirici Araçları → Application → Cookies\'i açın, ardından oturum açmış oturum değerlerini kopyalayın. Bu değerleri parolanız gibi koruyun.</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">Last.fm hesabınızla giriş yapın</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">Tüm hesaplardan çıkış yap</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">Eşzamanlı ikili çıkış</string>
+    <string name="ui_skip_sign_in" formatted="false">Oturum açmayı atla</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">Daha hızlı şarkı sözleri için ileri kaydırın · daha yavaş için geri · Ses etkilenmez</string>
+    <string name="ui_snap_0" formatted="false">Snap 0</string>
+    <string name="ui_soundstage_width" formatted="false">Ses sahnesi genişliği</string>
+    <string name="ui_sources" formatted="false">Kaynaklar</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">Uzamsal ses ve temel öğeler</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotify ve Canvas</string>
+    <string name="ui_spotify_account" formatted="false">Spotify hesabı</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">Spotify Canvas, Apple Music, Tidal ve topluluk hareketli kapakları</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">Spotify şu anda bağlı. Hareketli kapak (Canvas) ve Spotify çalma listesi eşitlemesi etkin.</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">Spotify araması başarısız oldu. Tekrar deneyin.</string>
+    <string name="ui_station" formatted="false">İstasyon</string>
+    <string name="ui_stereo_echo_delay" formatted="false">Stereo yankı ve gecikme</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">Bu bağlantıyı saklar ve uygulama açıldığında yeni şarkıları otomatik ekler</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">Bit-perfect kayıpsız kitaplığınızı doğrudan kişisel ağ paylaşımlarından veya Nextcloud\'dan yayınlayın.</string>
+    <string name="ui_streaming_sources" formatted="false">YAYIN KAYNAKLARI</string>
+    <string name="ui_style" formatted="false">STİL</string>
+    <string name="ui_suggestions" formatted="false">Öneriler</string>
+    <string name="ui_switch" formatted="false">Değiştir</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">Özelleştirmek için avatara dokunun</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">Gözatmak için sola veya sağa dokunun  •  Duraklatmak için basılı tutun</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">Her Zaman Açık Ekranı hemen etkinleştirmek için dokunun</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">Ülke ve Şehir FM yayınlarını seçmek için dokunun</string>
+    <string name="ui_target_language" formatted="false">HEDEF DİL</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">Hedef dil</string>
+    <string name="ui_test" formatted="false">Test et</string>
+    <string name="ui_test_proxy_connection" formatted="false">Proxy bağlantısını test et</string>
+    <string name="ui_testing_proxy" formatted="false">Proxy test ediliyor…</string>
+    <string name="ui_that_s_your_story" formatted="false">Bu sizin hikayeniz</string>
+    <string name="ui_this_account" formatted="false">Bu hesap</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">Bu çalma listesi boş. Oynatıcıdan veya aramadan şarkı ekleyin!</string>
+    <string name="ui_time_travel" formatted="false">ZAMANDA YOLCULUK</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">Zamanda yolculuk</string>
+    <string name="ui_time_travel_wrap" formatted="false">ZAMANDA YOLCULUK ÖZETİ</string>
+    <string name="ui_time_synced_lyrics" formatted="false">Zaman senkronize şarkı sözleri</string>
+    <string name="ui_top_picks" formatted="false">En iyi seçimler</string>
+    <string name="ui_top_result" formatted="false">En iyi sonuç</string>
+    <string name="ui_top_song" formatted="false">En iyi şarkı</string>
+    <string name="ui_top_songs" formatted="false">En iyi şarkılar</string>
+    <string name="ui_top_streamed" formatted="false">EN ÇOK YAYINLANAN</string>
+    <string name="ui_total_listening_time" formatted="false">Toplam dinleme süresi</string>
+    <string name="ui_total_time" formatted="false">Toplam süre</string>
+    <string name="ui_translate_actual_lines" formatted="false">Gerçek satırları çevir</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">Oynatıcı menüsünden (...) herhangi bir şarkı için şarkı sözlerini isteğe bağlı olarak çevirin (... &gt; Şarkı Sözleri &gt; Çevir). \'Gerçek satırları çevir\' kapalıyken, çeviriler orijinal metnin altında altyazı olarak görünür.</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">Aşağıdaki şarkı sözü satırlarını İngilizceye çevirin. Şiirsel akışı koruyun.</string>
+    <string name="ui_translating_lyrics" formatted="false">Şarkı sözleri çevriliyor...</string>
+    <string name="ui_translation_mode" formatted="false">Çeviri modu</string>
+    <string name="ui_translation_prompt" formatted="false">Çeviri prompt\'u</string>
+    <string name="ui_trending_artists" formatted="false">Trend olan sanatçılar</string>
+    <string name="ui_turn_off_timer" formatted="false">Zamanlayıcıyı kapat</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">Ayarlar\'da Apple ID profil kartınızda görünen adı güncelleyin.</string>
+    <string name="ui_username_optional" formatted="false">Kullanıcı adı (isteğe bağlı)</string>
+    <string name="ui_view" formatted="false">Görüntüle</string>
+    <string name="ui_view_on_shazam" formatted="false">Shazam\'da görüntüle</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">Vinil pikap bağlantısı</string>
+    <string name="ui_whats_new" formatted="false">YENİLİKLER</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">Müzik çalarken, seçilen süre boyunca ekrana dokunulmazsa Her Zaman Açık Ekran açılır. Yalnızca uygulama içindeyken etkinleşir.</string>
+    <string name="ui_who_is_listening" formatted="false">Kim dinliyor?</string>
+    <string name="ui_widget" formatted="false">Widget</string>
+    <string name="ui_you" formatted="false">Siz</string>
+    <string name="ui_your_1_artist" formatted="false">1 Numaranız Sanatçı</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">API anahtarınız cihazda güvenli bir şekilde saklanır ve asla paylaşılmaz.</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">Discord oturum belirteciniz bu cihazda şifreli olarak saklanır ve yalnızca Rich Presence için kullanılır.</string>
+    <string name="ui_your_favourite_song" formatted="false">Favori şarkınız</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">Kitaplığınız, çalma listeleriniz ve ayarlarınız en az 8 karakterlik bir parolayla şifrelenecek.</string>
+    <string name="ui_your_listening_experience" formatted="false">DİNLEME DENEYİMİNİZ</string>
+    <string name="ui_your_listening_pattern" formatted="false">Dinleme deseniniz</string>
+    <string name="ui_your_listening_persona" formatted="false">DİNLEME KİŞİLİĞİNİZ</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">Müzik Replay\'iniz ve istatistikleriniz</string>
+    <string name="ui_your_musical_anchor" formatted="false">MÜZİKAL ÇAPANIZ</string>
+    <string name="ui_your_name" formatted="false">Adınız</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">Parolanız Last.fm\'e yalnızca oturum oluşturmak için gönderilir. iTune onu kaydetmez.</string>
+    <string name="ui_your_playlists" formatted="false">ÇALMA LİSTELERİNİZ</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">Çalma listeleriniz</string>
+    <string name="ui_your_sonic_peak" formatted="false">Sonik zirveniz</string>
+    <string name="ui_your_spotify_playlists" formatted="false">Spotify çalma listeleriniz</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">Spotify çalma listeleriniz (herkese açık ve özel)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSIC VE GOOGLE</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube Music oturum çerezleri</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">·</string>
+    <string name="ui_text_a118c40635" formatted="false">━━━ ━━━━━</string>
+    <string name="ui_album_artwork" formatted="false">Albüm kapağı</string>
+    <string name="ui_itune_waves" formatted="false">iTune Waves</string>
+    <string name="ui_previous" formatted="false">Önceki</string>
+    <string name="ui_next" formatted="false">Sonraki</string>
+    <string name="ui_audio_output" formatted="false">Ses çıkışı</string>
+    <string name="ui_low_volume" formatted="false">Düşük ses</string>
+    <string name="ui_high_volume" formatted="false">Yüksek ses</string>
+    <string name="ui_filter" formatted="false">Filtre</string>
+    <string name="ui_refresh" formatted="false">Yenile</string>
+    <string name="ui_options_6bf5da9c" formatted="false">Seçenekler</string>
+    <string name="ui_user_profile_avatar" formatted="false">Kullanıcı profil avatarı</string>
+    <string name="ui_news" formatted="false">Haberler</string>
+    <string name="ui_no_song_playing" formatted="false">Şarkı çalmıyor</string>
+    <string name="ui_next_track" formatted="false">Sonraki parça</string>
+    <string name="ui_see_all_songs" formatted="false">Tüm şarkıları gör</string>
+    <string name="ui_favorite_radio" formatted="false">Favori radyo</string>
+    <string name="ui_live_65c821a5" formatted="false">Canlı</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTune Marka Dalgaları</string>
+    <string name="ui_refresh_network" formatted="false">Ağı yenile</string>
+    <string name="ui_edit_display_name" formatted="false">Görünen adı düzenle</string>
+    <string name="ui_remove_from_queue" formatted="false">Kuyruktan kaldır</string>
+    <string name="ui_search_new_releases" formatted="false">Yeni çıkanları ara</string>
+    <string name="ui_refresh_new_releases" formatted="false">Yeni çıkanları yenile</string>
+    <string name="ui_refresh_downloads" formatted="false">İndirmeleri yenile</string>
+    <string name="ui_clear_cache" formatted="false">Önbelleği temizle</string>
+    <string name="ui_sort" formatted="false">Sırala</string>
+    <string name="ui_see_all_new_releases" formatted="false">Tüm yeni çıkanları gör</string>
+    <string name="ui_identify" formatted="false">Tanımla</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">Çalma listesini içe aktar</string>
+    <string name="ui_create_playlist" formatted="false">Çalma listesi oluştur</string>
+    <string name="ui_liked" formatted="false">Beğenildi</string>
+    <string name="ui_paste" formatted="false">Yapıştır</string>
+    <string name="ui_checked" formatted="false">İşaretlendi</string>
+    <string name="ui_google_account_playlist" formatted="false">Google Hesabı Çalma Listesi</string>
+    <string name="ui_spotify_playlist" formatted="false">Spotify Çalma Listesi</string>
+    <string name="ui_local_playlist" formatted="false">Yerel Çalma Listesi</string>
+    <string name="ui_back_to_audio_engine" formatted="false">Ses motoruna dön</string>
+    <string name="ui_bluetooth_settings" formatted="false">Bluetooth ayarları</string>
+    <string name="ui_scan_output_devices" formatted="false">Çıkış cihazlarını tara</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">Eşzamanlı ikili ses</string>
+    <string name="ui_selected" formatted="false">Seçildi</string>
+    <string name="ui_copy" formatted="false">Kopyala</string>
+    <string name="ui_copy_link" formatted="false">Bağlantıyı kopyala</string>
+    <string name="ui_upgrade_quality" formatted="false">Kaliteyi yükselt</string>
+    <string name="ui_fm_radio" formatted="false">FM Radyo</string>
+    <string name="ui_next_station" formatted="false">Sonraki istasyon</string>
+    <string name="ui_minimize" formatted="false">Simge durumuna küçült</string>
+    <string name="ui_favorite" formatted="false">Favori</string>
+    <string name="ui_more_options" formatted="false">Diğer seçenekler</string>
+    <string name="ui_previous_station" formatted="false">Önceki istasyon</string>
+    <string name="ui_sleep_timer" formatted="false">Uyku zamanlayıcısı</string>
+    <string name="ui_audio_output_devices" formatted="false">Ses çıkış cihazları</string>
+    <string name="ui_station_list" formatted="false">İstasyon listesi</string>
+    <string name="ui_volume" formatted="false">Ses düzeyi</string>
+    <string name="ui_open_lyrics" formatted="false">Şarkı sözlerini aç</string>
+    <string name="ui_mute_volume" formatted="false">Sesi kapat</string>
+    <string name="ui_max_volume" formatted="false">Maksimum ses</string>
+    <string name="ui_endless_queue" formatted="false">Sonsuz kuyruk</string>
+    <string name="ui_repeat" formatted="false">Tekrarla</string>
+    <string name="ui_refresh_stations" formatted="false">İstasyonları yenile</string>
+    <string name="ui_favorite_station" formatted="false">Favori istasyon</string>
+    <string name="ui_close_ireconization" formatted="false">iReconization\'ı kapat</string>
+    <string name="ui_cancel_voice_search" formatted="false">Sesli aramayı iptal et</string>
+    <string name="ui_microphone" formatted="false">Mikrofon</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">Diğer seçenekler</string>
+    <string name="ui_voice_search" formatted="false">Sesli arama</string>
+    <string name="ui_saved" formatted="false">Kaydedildi</string>
+    <string name="ui_fill_search_query" formatted="false">Arama sorgusunu doldur</string>
+    <string name="ui_remove_from_history" formatted="false">Geçmişten kaldır</string>
+    <string name="ui_itune_icon" formatted="false">iTune simgesi</string>
+    <string name="ui_artwork_preview" formatted="false">Kapak önizlemesi</string>
+    <string name="ui_decrease" formatted="false">Azalt</string>
+    <string name="ui_increase" formatted="false">Artır</string>
+    <string name="ui_open_link" formatted="false">Bağlantıyı aç</string>
+    <string name="ui_reset_geometry" formatted="false">Geometriyi sıfırla</string>
+    <string name="ui_reorder_provider" formatted="false">Sağlayıcıyı yeniden sırala</string>
+    <string name="ui_save_name" formatted="false">Adı kaydet</string>
+    <string name="ui_editable_name" formatted="false">Düzenlenebilir ad</string>
+    <string name="ui_google" formatted="false">Google</string>
+    <string name="ui_remove_account" formatted="false">Hesabı kaldır</string>
+    <string name="ui_reorder_source_priority" formatted="false">Kaynak önceliğini yeniden sırala</string>
+    <string name="ui_refresh_playlists" formatted="false">Çalma listelerini yenile</string>
+    <string name="ui_replay_poster" formatted="false">Replay posteri</string>
+    <string name="ui_settings" formatted="false">Ayarlar</string>
+    <string name="ui_artist_radio" formatted="false">Sanatçı radyosu</string>
+    <string name="ui_play_all" formatted="false">Tümünü çal</string>
+    <string name="ui_delete_playlist" formatted="false">Çalma listesini sil</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">Sonsuz kuyruk</string>
+    <string name="ui_artist_info" formatted="false">Sanatçı bilgisi</string>
+    <string name="ui_enabled" formatted="false">Etkin</string>
+    <string name="ui_search_icon" formatted="false">Arama simgesi</string>
+    <string name="ui_region">Bölge: %1$s</string>
+    <string name="ui_connected_devices">BAĞLI CİHAZLAR (%1$s)</string>
+    <string name="ui_up_next">SIRADAKİ (%1$s)</string>
+    <string name="ui_text_da5c3629fd">%1$s  ›</string>
+    <string name="ui_active_7c6a4064">%1$s • %2$s etkin</string>
+    <string name="ui_no_new_available_right_now">Şu anda yeni %1$s mevcut değil</string>
+    <string name="ui_tracks">%1$s parça • %2$s</string>
+    <string name="ui_songs">%1$s şarkı • %2$s • %3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s • %2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c"> • %1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$s parça eşleştirilemedi:</string>
+    <string name="ui_text_a3edb2b714">• %1$s - %2$s</string>
+    <string name="ui_d_eeda119e">%1$sD</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+%1$s dB</string>
+    <string name="ui_connected">%1$s bağlandı</string>
+    <string name="ui_open_web_player">Web Oynatıcıyı Aç (%1$s)</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">Ülke: %1$s (%2$s)</string>
+    <string name="ui_city_state">Şehir / Eyalet: %1$s</string>
+    <string name="ui_codec_bitrate">Codec / Bit hızı: %1$s</string>
+    <string name="ui_language">Dil: %1$s</string>
+    <string name="ui_tags">Etiketler: %1$s</string>
+    <string name="ui_stream">Yayın: %1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">%1$s için API Anahtarı yapılandırılmadı. Lütfen Ayarlar &gt; Şarkı Sözleri\'nde ayarlayın.</string>
+    <string name="ui_s_clip">%1$ss klip</string>
+    <string name="ui_loading_more_fm_stations_loaded">Daha fazla FM istasyonu yükleniyor (%1$s yüklendi)...</string>
+    <string name="ui_found">%1$s bulundu</string>
+    <string name="ui_version">Sürüm %1$s (%2$s)</string>
+    <string name="ui_of_active">%1$s / %2$s etkin</string>
+    <string name="ui_text_adebc50ade">#%1$s</string>
+    <string name="ui_api_key">%1$s API Anahtarı</string>
+    <string name="ui_channel">Kanal: %1$s</string>
+    <string name="ui_sync_issue">Eşitleme sorunu: %1$s</string>
+    <string name="ui_enter">%1$s girin</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">“%1$s” öğesini silmek istediğinizden emin misiniz? Bu hesaptaki tüm veriler, çalma listeleri, favoriler, geçmiş ve ayarlar kalıcı olarak silinecek.</string>
+    <string name="ui_peak">Tepe: %1$s</string>
+    <string name="ui_welcome">Hoş geldiniz, %1$s</string>
+    <string name="ui_songs_played">%1$s şarkı çalındı</string>
+    <string name="ui_around">yaklaşık %1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">Dünya meşgulleştiğinde, en çok %1$s günlerinde %2$s civarında bağlanırsınız.</string>
+    <string name="ui_itune_time_travel_575a110d">iTune Time Travel  •  %1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s · %2$s</string>
+    <string name="ui_your_biggest_day_was">En büyük gününüz %1$s idi.</string>
+    <string name="ui_listening_recap">%1$s dinleme özeti</string>
+    <string name="ui_busiest_day">En yoğun gün: %1$s</string>
+    <string name="ui_peak_hour_00">Yoğun saat: %1$s:00</string>
+    <string name="ui_loading">%1$s yükleniyor…</string>
+    <string name="ui_about">%1$s hakkında</string>
+    <string name="ui_songs_9b614dc8">%1$s şarkı</string>
+    <string name="ui_current_offset_ms">Mevcut ofset: %1$s ms</string>
+    <string name="ui_connected_session">Bağlı oturum: %1$s</string>
+    <string name="ui_k">%1$sk</string>
+    <string name="ui_top_result_c5e5adab">EN İYİ SONUÇ • %1$s</string>
+    <string name="toast_song_not_found_in_itune">Şarkı iTune\'da bulunamadı</string>
+    <string name="toast_playback_failed_try_again">Oynatma başarısız oldu, tekrar deneyin</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">Otomatik uyku zamanlayıcısı etkin · Oynatma duraklatıldı</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">Çevrimdışı mod: bu şarkı indirilmedi</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">Çevrimdışı mod: kalite yükseltilemez</string>
+    <string name="toast_upgrading_quality">Kalite yükseltiliyor</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">Kaynaklar\'da kayıpsız yayın kaynağı etkin değil</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">Etkin kaynaklarda daha yüksek kaliteli yayın bulunamadı</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">Karıştırma, Ayarlar\'daki Kalıcı Karıştırma tarafından kilitlendi</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">Müziği tanımlamak için mikrofon izni gerekli</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">Tanıma açılır penceresi için diğer uygulamaların üzerinde görüntüleme izni gerekli</string>
+    <string name="toast_playback_failed">Oynatma başarısız</string>
+    <string name="toast_complete_google_sign_in_first">Önce Google oturum açmayı tamamlayın</string>
+    <string name="toast_waiting_for_youtube_music_session">YouTube Music oturumu bekleniyor...</string>
+    <string name="toast_couldn_t_load_tracks">Parçalar yüklenemedi</string>
+    <string name="toast_copied_to_clipboard">Panoya kopyalandı</string>
+    <string name="toast_profile_avatar_updated">Profil avatarı güncellendi</string>
+    <string name="toast_no_tracks_found">Parça bulunamadı</string>
+    <string name="toast_google_account_connected">Google hesabı bağlandı</string>
+    <string name="toast_link_copied">Bağlantı kopyalandı</string>
+    <string name="toast_could_not_open_browser">Tarayıcı açılamadı</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">1024 ile 65535 arasında bir bağlantı noktası girin</string>
+    <string name="toast_cached_music_cleared">Önbelleğe alınan müzik temizlendi</string>
+    <string name="toast_no_tracks_available_to_add">Eklemek için parça yok</string>
+    <string name="toast_enter_a_playlist_name">Bir çalma listesi adı girin</string>
+    <string name="toast_system_sound_panel_opened">Sistem ses paneli açıldı</string>
+    <string name="toast_download_started_check_notification">İndirme başladı · Bildirimi kontrol edin</string>
+    <string name="toast_playback_will_stop_after_current_track">Oynatma mevcut parçadan sonra duracak</string>
+    <string name="toast_sleep_timer_turned_off">Uyku zamanlayıcısı kapatıldı</string>
+    <string name="toast_stream_url_copied">Yayın URL\'si kopyalandı</string>
+    <string name="toast_couldn_t_create_lyrics_card">Şarkı sözü kartı oluşturulamadı</string>
+    <string name="toast_restored_online_lyrics">Çevrimiçi şarkı sözleri geri yüklendi</string>
+    <string name="toast_lyrics_saved">Şarkı sözleri kaydedildi</string>
+    <string name="toast_translation_cleared">Çeviri temizlendi</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">Lütfen önce Ayarlar &gt; Şarkı Sözleri\'nde API Anahtarınızı ayarlayın</string>
+    <string name="toast_no_lyrics_found_for_this_song">Bu şarkı için şarkı sözü bulunamadı</string>
+    <string name="toast_could_not_create_audio_clip">Ses klibi oluşturulamadı</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">Parça Music/iTune/Snippets konumuna kaydedildi</string>
+    <string name="toast_playing_next">Sıradaki çalınıyor</string>
+    <string name="toast_added_to_queue">Kuyruğa eklendi</string>
+    <string name="toast_download_started_check_notifications">İndirme başladı · Bildirimleri kontrol edin</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">Bu şarkı YouTube Music\'te bulunamadı</string>
+    <string name="toast_couldn_t_start_mix">Mix başlatılamadı</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">YouTube Music\'te parça bulunamadı</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">Parola güvenli bir şekilde şifrelenemedi. Otomatik yedekleme değiştirilmedi.</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">Yedekleri İndirilenler\'e kaydetmek için depolama izni gerekli</string>
+    <string name="toast_choose_an_itune_backup_file">Bir .itune yedekleme dosyası seçin</string>
+    <string name="toast_audio_artwork_cache_cleared">Ses ve kapak önbelleği temizlendi</string>
+    <string name="toast_could_not_open_github">GitHub açılamadı</string>
+    <string name="toast_profile_name_updated">Profil adı güncellendi</string>
+    <string name="toast_search_history_cleared">Arama geçmişi temizlendi</string>
+    <string name="toast_listening_history_cleared">Dinleme geçmişi temizlendi</string>
+    <string name="toast_cached_songs_cleared">Önbelleğe alınan şarkılar temizlendi</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">Diğer uygulamaların üzerinde görüntüleme izni vermek için sistem ayarlarını açın</string>
+    <string name="toast_dynamic_island_geometry_reset">Dynamic Island geometrisi sıfırlandı</string>
+    <string name="toast_geometry_reset">Geometri sıfırlandı</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">Şarkı sözü sağlayıcıları varsayılanlara sıfırlandı</string>
+    <string name="toast_api_key_saved">API Anahtarı kaydedildi</string>
+    <string name="toast_base_url_updated">Temel URL güncellendi</string>
+    <string name="toast_translation_prompt_updated">Çeviri prompt\'u güncellendi</string>
+    <string name="toast_equalizer_reset_to_flat">Ekolayzer Düz\'e sıfırlandı</string>
+    <string name="toast_dj_console_reset">DJ Konsolu sıfırlandı</string>
+    <string name="toast_name_saved">Ad kaydedildi</string>
+    <string name="toast_syncing_youtube_music_library">YouTube Music kitaplığı eşitleniyor...</string>
+    <string name="toast_signed_out_local_likes_preserved">Oturum kapatıldı (yerel beğeniler korundu)</string>
+    <string name="toast_signed_out_of_all_google_accounts">Tüm Google hesaplarından çıkış yapıldı</string>
+    <string name="toast_discord_disconnected">Discord bağlantısı kesildi</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">Geçerli bir oturum açmış YouTube Music çerezi girin (SAPISID ve bir oturum çerezi)</string>
+    <string name="toast_youtube_music_account_connected">YouTube Music hesabı bağlandı</string>
+    <string name="toast_account_renamed">Hesap yeniden adlandırıldı</string>
+    <string name="toast_account_deleted">Hesap silindi</string>
+    <string name="toast_cannot_delete_your_only_account">Tek hesabınızı silemezsiniz</string>
+    <string name="toast_sources_restored_to_defaults">Kaynaklar varsayılanlara geri yüklendi</string>
+    <string name="toast_spotify_disconnected">Spotify bağlantısı kesildi</string>
+    <string name="toast_spotify_sp_dc_token_saved">Spotify sp_dc belirteci kaydedildi</string>
+    <string name="toast_spotify_connected">Spotify bağlandı!</string>
+    <string name="toast_complete_spotify_sign_in_first">Önce Spotify oturum açmayı tamamlayın</string>
+    <string name="toast_saved_to_gallery">Galeriye kaydedildi!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">Devam etmek için iTune\'un güncellemeleri yüklemesine izin verin</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">İndirilen güncelleme APK\'sı kullanılamıyor</string>
+    <string name="toast_added_to_queue_next">Sıradaki kuyruğa eklendi</string>
+    <string name="toast_link_copied_to_clipboard">Bağlantı panoya kopyalandı</string>
+    <string name="toast_song_link_copied_to_clipboard">Şarkı bağlantısı panoya kopyalandı</string>
+    <string name="toast_left_ishare_session">iShare Oturumundan ayrıldı</string>
+    <string name="toast_ishare_lan_host_started">iShare LAN Host\'u Başlatıldı!</string>
+    <string name="toast_scanning_lan_for_sessions">Oturumlar için LAN taranıyor…</string>
+    <string name="toast_cache_cleared">Önbellek Temizlendi</string>
+    <string name="toast_signed_out_successfully">Başarıyla çıkış yapıldı</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">Parolalar eşleşmeli ve en az 8 karakter olmalıdır</string>
+    <string name="toast_no_backup_file_found_in_storage">Depolamada yedekleme dosyası bulunamadı</string>
+    <string name="toast_library_settings_restored">Kitaplık ve Ayarlar Geri Yüklendi!</string>
+    <string name="toast_enter_your_backup_password">Yedekleme parolanızı girin</string>
+    <string name="toast_syncing_spotify_library">Spotify kitaplığı eşitleniyor...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify Bağlandı!</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">Lütfen geçerli bir SP_DC çerezi girin</string>
+    <string name="toast_playing">%%1$s çalınıyor…</string>
+    <string name="toast_upgraded_to_lossless_kbps">Kayıpsız\'a yükseltildi • %%1$s kbps</string>
+    <string name="toast_playing_next_0f0c851c">%%1$s sıradaki olarak çalınıyor</string>
+    <string name="toast_added_to_queue_88e96c25">%%1$s kuyruğa eklendi</string>
+    <string name="toast_playing_cb1fb3de">%%1$s çalınıyor...</string>
+    <string name="toast_playing_next_e0082d95">Sıradaki çalınıyor: %%1$s</string>
+    <string name="toast_couldn_t_load">%%1$s yüklenemedi</string>
+    <string name="toast_opening">%%1$s açılıyor…</string>
+    <string name="toast_couldn_t_open">%%1$s açılamadı</string>
+    <string name="toast_couldn_t_play">%%1$s çalınamadı</string>
+    <string name="toast_library_pin">Kitaplık PIN\'i: %%1$s</string>
+    <string name="toast_copied">Kopyalandı: %%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">Uyku zamanlayıcısı %%1$s dk olarak ayarlandı</string>
+    <string name="toast_lyrics_applied">Şarkı sözleri uygulandı (%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">%%1$s parça kuyruğa eklendi</string>
+    <string name="toast_switched_feed_to">Akış %%1$s olarak değiştirildi</string>
+    <string name="toast_provider_updated_to">Sağlayıcı %%1$s olarak güncellendi</string>
+    <string name="toast_target_language_set_to">Hedef dil %%1$s olarak ayarlandı</string>
+    <string name="toast_translation_mode_set_to">Çeviri modu %%1$s olarak ayarlandı</string>
+    <string name="toast_added_source">Kaynak eklendi: %%1$s</string>
+    <string name="toast_installed_extension_s">%%1$s uzantı yüklendi</string>
+    <string name="toast_imported_songs">\'%%1$s\' içe aktarıldı (%%2$s şarkı)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">YouTube Music\'te \'%%1$s\' bulunamadı</string>
+    <string name="toast_added_songs_to">%%1$s şarkı %%2$s listesine eklendi</string>
+    <string name="toast_joining">%%1$s öğesine katılınıyor…</string>
+    <string name="toast_added_to">%%1$s öğesine eklendi</string>
+    <string name="toast_itune_v_for_android_tv">Android TV için iTune v%%1$s</string>
+    <string name="toast_backup_failed">Yedekleme başarısız: %%1$s</string>
+    <string name="toast_restore_failed">Geri yükleme başarısız: %%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">iShare, Dynamic Island ve StandBy</string>
+    <string name="settings_ishare" formatted="false">iShare</string>
+    <string name="settings_dynamic_island" formatted="false">Dynamic Island</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">iTune dışında yüzen su balonu denetleyicisi</string>
+    <string name="settings_always_on_display" formatted="false">Her Zaman Açık Ekran</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">Ses motoru ve ses efektleri</string>
+    <string name="settings_dolby_atmos" formatted="false">Dolby Atmos</string>
+    <string name="settings_text_8948f8179a" formatted="false">8D Ses</string>
+    <string name="settings_spatial_audio" formatted="false">Uzamsal ses</string>
+    <string name="settings_equalizer_eq" formatted="false">Ekolayzer (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">Alçak geçiren filtreleme</string>
+    <string name="settings_dj_studio_panel" formatted="false">DJ Studio Paneli</string>
+    <string name="settings_audio_normalization" formatted="false">Ses normalizasyonu</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB Bit-Perfect DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">Saf Ses Bypass</string>
+    <string name="settings_signal_pipeline" formatted="false">Sinyal hattı</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">${audioEngine.pillBadge.text} -&gt; $activeOutputName</string>
+    <string name="settings_audio_playback" formatted="false">Ses ve oynatma</string>
+    <string name="settings_sources" formatted="false">Kaynaklar</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">YouTube Music, JioSaavn, yüklenebilir uzantılar, WebDAV, SMB ve oynatma önceliğini yönetin</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">Hata oluştuğunda otomatik atla</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">Oynatma başarısız olursa kuyruktaki sonraki şarkıya geç</string>
+    <string name="settings_download_quality" formatted="false">İndirme kalitesi</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">Şarkı indirme işlemlerinde kullanılan varsayılan kalite</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">Uygulama genelinde indirmeler için varsayılan ses kalitesini seçin.</string>
+    <string name="settings_lossless_audio" formatted="false">Kayıpsız ses</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">Önbelleğe alınan şarkıların kalitesini yükselt</string>
+    <string name="settings_streaming_quality" formatted="false">Yayın kalitesi</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">Tercih ettiğiniz yayın ses kalitesini seçin.</string>
+    <string name="settings_pcm_output_format" formatted="false">PCM çıkış formatı</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">Oynatmayı mevcut konumda yeniden oluşturur</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">Android\'in ses çıkışından istenen PCM formatını seçin. Bir USB DAC bunu desteklediği bir formata dönüştürebilir.</string>
+    <string name="settings_crossfade" formatted="false">Çapraz geçiş</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">Biten parçanın sönümlenmesini bir sonrakinin başlangıcıyla örtüştürün.</string>
+    <string name="settings_automix" formatted="false">AutoMix</string>
+    <string name="settings_afterglow" formatted="false">Afterglow</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">Her şarkının seçilen son saniyelerinde aynı Alçak Geçiren Ekolayzer efektini uygulayın. Afterglow etkinken AutoMix ve Çapraz Geçiş\'i duraklatır.</string>
+    <string name="settings_permanent_shuffle" formatted="false">Kalıcı karıştırma</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">Oynatıcıda karıştırmayı kalıcı olarak açık tut</string>
+    <string name="settings_pause_at_volume_0" formatted="false">Ses 0\'da duraklat</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">Ses sıfıra ulaştığında oynatmayı otomatik duraklat</string>
+    <string name="settings_volume_bar" formatted="false">Ses çubuğu</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">Ses düğmelerine bastığınızda ${state.volumeBarSide.lowercase()} kenarında gösterilir</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">Uygulama içi ses çubuğunun ekranın hangi kenarında görüneceğini seçin.</string>
+    <string name="settings_content" formatted="false">İçerik</string>
+    <string name="settings_default_content_language" formatted="false">Varsayılan içerik dili</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">Ruh Halleri, Gözat ve Arama için dil</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">Gözat, Ruh Halleri ve Türler, Çalma Listeleri ve Yeni Çıkanlar genelinde kullanılan tercih edilen katalog dilini seçin.</string>
+    <string name="settings_default_content_country" formatted="false">Varsayılan içerik ülkesi</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">Listeler, Çalma Listeleri ve Yeni Çıkanlar için bölge</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">Yeni eklenen albümler, bölgesel Ruh Halleri ve Öne Çıkan Çalma Listeleri için kullanılan bölgesel mağaza ön yüzünü seçin.</string>
+    <string name="settings_hide_explicit_content" formatted="false">Müstehcen içeriği gizle</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">Ruh Halleri, Gözat ve Arama genelinde müstehcen şarkıları filtrele</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">Şimdi Çalıyor ve Liquid Glass</string>
+    <string name="settings_splash_screen" formatted="false">Açılış ekranı</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">Uygulama başlatma marka animasyonu ve akıcı başlık açığa çıkarma</string>
+    <string name="settings_animated_cover_art" formatted="false">Hareketli kapak resmi</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">Spotify Canvas, Apple Music, Tidal ve topluluk hareketli kapakları</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">Spotify ve Canvas kurulumu</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">Canvas kontrollerini otomatik gizle</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">Canvas oynarken 5 sn sonra kontrolleri simge durumuna küçült (geçiş için Canvas\'a dokunun)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">Canvas üzerinde senkronize şarkı sözlerini göster</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">Canvas kontrolleri gizlendiğinde şarkı adının üzerinde animasyonlu senkronize şarkı sözlerini göster</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">Spotify Canvas\'a öncelik ver</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">Apple Music, Tidal ve Topluluk\'tan önce Spotify Canvas\'ı dene</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">Hücresel üzerinden hareketli kapak oynat</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">Mobil veri üzerinden döngülü Canvas videolarına izin ver</string>
+    <string name="settings_player_type" formatted="false">Oynatıcı türü</string>
+    <string name="settings_player_style" formatted="false">Oynatıcı stili</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">Oynatıcı dinamik renklendirme</string>
+    <string name="settings_full_screen_cover_art" formatted="false">Tam ekran kapak resmi</string>
+    <string name="settings_corner_length" formatted="false">Köşe uzunluğu</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">Kare albüm kapağının köşe yarıçapını ayarlayın</string>
+    <string name="settings_hide_quality_tag" formatted="false">Kalite etiketini gizle</string>
+    <string name="settings_hide_volume_bar" formatted="false">Ses çubuğunu gizle</string>
+    <string name="settings_home_top_card_style" formatted="false">Ana ekran üst kart stili</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">Liquid Glass gezinme ve mini oynatıcı</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">Cam çubuk ve mini oynatıcı, basılı tutulduğunda su balonu merceği ile</string>
+    <string name="settings_time_synced_lyrics" formatted="false">Zaman senkronize şarkı sözleri</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">Kelime ve satır şarkı sözlerini gerçek zamanlı takip et</string>
+    <string name="settings_app_font" formatted="false">Uygulama yazı tipi</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">Uygulama tipografisini değiştir; oynatıcı kontrolleri tasarlanmış yazı tiplerini korur</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">Uygulama arayüzü için bir yazı tipi seçin.</string>
+    <string name="settings_lyrics_providers" formatted="false">Şarkı sözü sağlayıcıları</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 kaynak • Önceliklendir ve yedek sırasını değiştir</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">Liquid Glass Chrome</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">Kırılmalı yarı saydam başlıklar ve dock kartları</string>
+    <string name="settings_tactile_haptics" formatted="false">Dokunsal haptikler</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">Oynatıcı kontrolleri genelinde hafif darbe geri bildirimi</string>
+    <string name="settings_downloads_storage" formatted="false">İndirmeler ve depolama</string>
+    <string name="settings_cellular_streaming" formatted="false">Hücresel yayın</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">Mobil veride ses bant genişliği</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">Wi-Fi\'den uzaktayken yayın yaparken ses sadakatini kontrol edin.</string>
+    <string name="settings_download_over_wi_fi" formatted="false">Wi-Fi üzerinden indir</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">Otomatik indirmelerden önce Wi-Fi bekle</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">Oynatmadan sonra şarkıları önbelleğe al</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">Çalmayı bitirdikten sonra bir şarkıyı çevrimdışı depolamaya kaydet</string>
+    <string name="settings_cache_quality" formatted="false">Önbellek kalitesi</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">Daha düşük kalite depolama tasarrufu sağlar</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">Oynatma tamamlandıktan sonra kaydedilen şarkıların kalitesini seçin. Şu andan itibaren önbelleğe alınan şarkılar için geçerlidir.</string>
+    <string name="settings_song_storage_limit" formatted="false">Şarkı depolama sınırı</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">Eski çalınmamış şarkılar çıkarılmadan önce çevrimdışı ses önbelleği için ayrılan maksimum disk depolaması.</string>
+    <string name="settings_clear_cached_songs" formatted="false">Önbelleğe alınan şarkıları temizle</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">${MusicCacheManager.cachedTracks.size} şarkı • ${MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)}</string>
+    <string name="settings_automatic_downloads" formatted="false">Otomatik indirmeler</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">Yeni beğenilen ve eklenen parçaları çevrimdışı kaydet</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">Uygulama arabellek önbelleğini temizle</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">Geçici kapak resimlerini ve ağ arabelleklerini kaldır</string>
+    <string name="settings_library_listening" formatted="false">Kitaplık ve dinleme</string>
+    <string name="settings_sync_library" formatted="false">Kitaplığı eşitle</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">Sanatçıları, çalma listelerini ve albümleri güncel tut</string>
+    <string name="settings_listening_history" formatted="false">Dinleme geçmişi</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">Kişiselleştirilmiş Mix\'leri ve Son Çalınanları şekillendir</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">Beğenileri bu cihazda tut</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">Oturum kapatıldığında beğenilen şarkıları iTune\'da tut</string>
+    <string name="settings_notifications_general" formatted="false">Bildirimler ve genel</string>
+    <string name="settings_offline_mode" formatted="false">Çevrimdışı mod</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">Oynatmayı başlatmak için indirilmiş bir kopya gerektir</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">Görev temizlendiğinde müziği durdur</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">iTune son kullanılanlardan kaydırıldığında oynatmayı durdur</string>
+    <string name="settings_auto_sleep_timer" formatted="false">Otomatik uyku zamanlayıcısı</string>
+    <string name="settings_network_proxy" formatted="false">Ağ proxy\'si</string>
+    <string name="settings_profile_name" formatted="false">Profil adı</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">Ayarlar profil görünen adınızı özelleştirin</string>
+    <string name="settings_news_from_dev" formatted="false">Geliştiriciden haberler</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">Duyurular, sürümler ve değişiklik günlüğü</string>
+    <string name="settings_general_about" formatted="false">Genel ve hakkında</string>
+    <string name="settings_home_screen_widget" formatted="false">Ana ekran widget\'ı</string>
+    <string name="settings_widget_customization" formatted="false">Widget özelleştirme</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">Bir boyut önizlemesi, kapak resmi, kontroller ve widget stili seçin</string>
+    <string name="settings_backup_restore" formatted="false">Yedekle ve geri yükle</string>
+    <string name="settings_automatic_daily_backup" formatted="false">Otomatik günlük yedekleme</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">Şifreli günlük yedeklemeler • Downloads/iTune/Backups</string>
+    <string name="settings_back_up_itune" formatted="false">iTune\'u yedekle</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">Hesapları, tüm ayarları, ses efektlerini, kitaplık verilerini ve istatistikleri şifreli kaydet</string>
+    <string name="settings_restore_from_backup" formatted="false">Yedekten geri yükle</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">.itune dosyasından ayarları, ses efektlerini, hesapları veya kitaplık verilerini geri yükle</string>
+    <string name="settings_privacy" formatted="false">Gizlilik</string>
+    <string name="settings_pause_search_history" formatted="false">Arama geçmişini duraklat</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">Yeni arama sorgularını geçmişe kaydetme</string>
+    <string name="settings_clear_search_history" formatted="false">Arama geçmişini temizle</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">Son sorguları Arama\'dan kaldır</string>
+    <string name="settings_pause_listening_history" formatted="false">Dinleme geçmişini duraklat</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">Çalınan şarkıları kaydetme veya önerileri güncelleme</string>
+    <string name="settings_clear_listening_history" formatted="false">Dinleme geçmişini temizle</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">Oynatma geçmişini kaldır ve zevk profilini sıfırla</string>
+    <string name="settings_disable_screenshot" formatted="false">Ekran görüntüsünü devre dışı bırak</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">Uygulama genelinde ekran görüntülerini ve ekran kaydını engelle</string>
+    <string name="settings_best_available" formatted="false">Mevcut en iyi</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">Mevcut en yüksek kaynak kalitesini kullan</string>
+    <string name="settings_maximum" formatted="false">Maksimum</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">En yüksek bit hızlı yayını seç</string>
+    <string name="settings_high" formatted="false">Yüksek</string>
+    <string name="settings_target_about_160_kbps" formatted="false">Yaklaşık 160 kbps hedefle</string>
+    <string name="settings_standard" formatted="false">Standart</string>
+    <string name="settings_target_about_128_kbps" formatted="false">Yaklaşık 128 kbps hedefle</string>
+    <string name="settings_data_saver" formatted="false">Veri tasarrufu</string>
+    <string name="settings_target_about_64_kbps" formatted="false">Yaklaşık 64 kbps hedefle</string>
+    <string name="settings_extreme" formatted="false">Ekstrem</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">Maksimum sadakat (256+ kbps)</string>
+    <string name="settings_high_b1a5954a" formatted="false">Yüksek</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">Yüksek kaliteli ses (~160 kbps)</string>
+    <string name="settings_medium" formatted="false">Orta</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">Standart ses kalitesi (~128 kbps)</string>
+    <string name="settings_low" formatted="false">Düşük</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">Veri tasarrufu sesi (~48-64 kbps)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">16-bit PCM</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">Standart tamsayı PCM çıkışı; USB Audio Class DAC\'ları ile geniş uyumluluk</string>
+    <string name="settings_text_6697202e38" formatted="false">32-bit float PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">Android ve bağlı ses yolu tarafından desteklendiğinde float PCM çıkışı</string>
+    <string name="settings_off" formatted="false">Kapalı</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">Parçaları temiz bir şekilde arka arkaya çal</string>
+    <string name="settings_text_6597740315" formatted="false">2 sn</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">Hafif geçiş örtüşmesi</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 sn</string>
+    <string name="settings_short_seamless_fade" formatted="false">Kısa kesintisiz sönümleme</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 sn</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">Dengeli DJ tarzı geçiş</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8 sn</string>
+    <string name="settings_smooth_extended_blend" formatted="false">Pürüzsüz genişletilmiş karışım</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 sn</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">Maksimum sürekli mix karışımı</string>
+    <string name="settings_off_e3de5ab0" formatted="false">Kapalı</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">Normal oynatma efektlerini ve geçişlerini koru</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 sn</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">Her şarkının son 5 saniyesinde alçak geçiren uygula</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 sn</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">Her şarkının son 10 saniyesinde alçak geçiren uygula</string>
+    <string name="settings_text_eb4354110e" formatted="false">15 sn</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">Her şarkının son 15 saniyesinde alçak geçiren uygula</string>
+    <string name="settings_right" formatted="false">Sağ</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">Ses çubuğunu sağ kenarda göster (varsayılan)</string>
+    <string name="settings_left" formatted="false">Sol</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">Ses çubuğunu sol kenarda göster</string>
+    <string name="settings_high_efficiency" formatted="false">Yüksek verimlilik</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">Minimum hücresel veri kullan</string>
+    <string name="settings_high_quality" formatted="false">Yüksek kalite</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 kbps dengeli mobil oynatma</string>
+    <string name="settings_lossless" formatted="false">Kayıpsız</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">5G/LTE ağlarında tam kayıpsız</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">Kapalı</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">Yalnızca Wi-Fi\'de yayına izin ver</string>
+    <string name="settings_text_03a001f575" formatted="false">500 MB</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">Kompakt önbellek (~70 şarkı)</string>
+    <string name="settings_text_33015e637f" formatted="false">1 GB</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">Orta önbellek (~150 şarkı)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 GB</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">Önerilen varsayılan (~300 şarkı)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5 GB</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">Büyük çevrimdışı koleksiyon (~800 şarkı)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10 GB</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">Çok büyük kitaplık (~1.600 şarkı)</string>
+    <string name="settings_unlimited" formatted="false">Sınırsız</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">Önbelleğe alınan şarkıları asla çıkarma</string>
+    <string name="settings_pipeline_output">%1$s → %2$s</string>
+    <string name="settings_volume_bar_side">Ses düğmelerine bastığınızda %1$s kenarında gösterilir</string>
+    <string name="settings_corner_radius_value">%1$d dp</string>
+    <string name="settings_active_lyrics_providers">%1$d Etkin</string>
+    <string name="settings_cached_song_count_size">%1$d şarkı • %2$s</string>
+    <string name="library_playlist_count_one">%1$d Çalma Listesi</string>
+    <string name="library_playlist_count_many">%1$d Çalma Listesi</string>
+    <string name="library_album_count_one">%1$d Eklenen Albüm</string>
+    <string name="library_album_count_many">%1$d Eklenen Albüm</string>
+    <string name="remove_from_favorites">Favorilerden kaldır</string>
+    <string name="play_top_album">En İyi Albümü Çal</string>
+    <string name="open_in_spotify">Spotify\'da aç</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Use the Azerbaijani interface</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Use the Bengali interface</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Use the Bulgarian interface</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Use the Catalan interface</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">Use the Czech interface</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Use the Danish interface</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Use the Finnish interface</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Use the Greek interface</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Use the Hebrew interface</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Use the Hungarian interface</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Use the Indonesian interface</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Use the Malay interface</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Use the Norwegian interface</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Use the Persian interface</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Use the Polish interface</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Use the Romanian interface</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Use the Slovak interface</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Use the Thai interface</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Use the Turkish interface</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Use the Ukrainian interface</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Use the Vietnamese interface</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Use the Swahili interface</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Use the Filipino interface</string>
+</resources>
