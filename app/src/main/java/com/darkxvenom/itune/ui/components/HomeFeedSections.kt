@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.components
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -178,7 +180,7 @@ fun SquareCardShelf(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.MoreHoriz,
-                                contentDescription = "Options",
+                                contentDescription = stringResource(R.string.ui_options_6bf5da9c),
                                 tint = Color.White,
                                 modifier = Modifier.size(16.dp),
                             )
@@ -345,7 +347,7 @@ fun WideCardShelf(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.MoreHoriz,
-                                contentDescription = "Options",
+                                contentDescription = stringResource(R.string.ui_options_6bf5da9c),
                                 tint = Color.White,
                                 modifier = Modifier.size(16.dp),
                             )
@@ -517,7 +519,7 @@ fun LiveFeaturedHeroCarousel(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.MoreHoriz,
-                                    contentDescription = "Options",
+                                    contentDescription = stringResource(R.string.ui_options_6bf5da9c),
                                     tint = AppleTextSecondary,
                                     modifier = Modifier.size(18.dp),
                                 )
@@ -649,7 +651,7 @@ private fun PortraitHeroCardItem(
             )
             Spacer(Modifier.width(4.dp))
             Text(
-                text = "iTune",
+                text = stringResource(R.string.app_name),
                 style = TextStyle(
                     fontFamily = LocalAppFontFamily.current,
                     fontWeight = FontWeight.Bold,
@@ -817,7 +819,7 @@ private fun AppleHeroCardItem(
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(
-                        text = "iTune",
+                        text = stringResource(R.string.app_name),
                         style = TextStyle(
                             fontFamily = LocalAppFontFamily.current,
                             fontWeight = FontWeight.Bold,
