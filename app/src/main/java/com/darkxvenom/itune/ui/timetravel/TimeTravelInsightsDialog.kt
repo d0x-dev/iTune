@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.timetravel
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -231,7 +234,7 @@ fun TimeTravelInsightsDialog(
                         )
                         Spacer(Modifier.width(6.dp))
                         Text(
-                            text = "iTune Time Travel",
+                            text = stringResource(R.string.ui_itune_time_travel),
                             color = Color.White,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
@@ -247,7 +250,7 @@ fun TimeTravelInsightsDialog(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Close,
-                            contentDescription = "Close",
+                            contentDescription = stringResource(R.string.close),
                             tint = Color.White,
                             modifier = Modifier.size(20.dp),
                         )
@@ -290,7 +293,7 @@ fun TimeTravelInsightsDialog(
 
                 // Bottom Hint
                 Text(
-                    text = "Tap left or right to browse  •  Hold to pause",
+                    text = stringResource(R.string.ui_tap_left_or_right_to_browse_hold_to_pause),
                     color = Color.White.copy(alpha = 0.45f),
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center,
@@ -334,7 +337,7 @@ private fun IntroSlide(displayName: String, periodLabel: String) {
         Spacer(Modifier.height(32.dp))
 
         Text(
-            text = "Welcome, $displayName",
+            text = stringResource(R.string.ui_welcome, displayName),
             color = Color.White.copy(alpha = 0.82f),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
@@ -355,7 +358,7 @@ private fun IntroSlide(displayName: String, periodLabel: String) {
         Spacer(Modifier.height(18.dp))
 
         Text(
-            text = "Every rhythm, late-night anthem, and melody you lived with — gathered in one journey.",
+            text = stringResource(R.string.ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi),
             color = Color.White.copy(alpha = 0.75f),
             fontSize = 16.sp,
             textAlign = TextAlign.Center,
@@ -377,7 +380,7 @@ private fun TopArtistSlide(stats: TimeTravelStats) {
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "YOUR MUSICAL ANCHOR",
+            text = stringResource(R.string.ui_your_musical_anchor),
             color = Color.White.copy(alpha = 0.68f),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
@@ -387,7 +390,7 @@ private fun TopArtistSlide(stats: TimeTravelStats) {
         Spacer(Modifier.height(8.dp))
 
         Text(
-            text = "Your #1 Artist",
+            text = stringResource(R.string.ui_your_1_artist),
             color = Color.White,
             fontSize = 38.sp,
             fontWeight = FontWeight.Black,
@@ -466,7 +469,7 @@ private fun TopSongSlide(stats: TimeTravelStats) {
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "ON HEAVY REPEAT",
+            text = stringResource(R.string.ui_on_heavy_repeat),
             color = Color.White.copy(alpha = 0.82f),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
@@ -476,7 +479,7 @@ private fun TopSongSlide(stats: TimeTravelStats) {
         Spacer(Modifier.height(8.dp))
 
         Text(
-            text = "Your Favourite Song",
+            text = stringResource(R.string.ui_your_favourite_song),
             color = Color.White,
             fontSize = 36.sp,
             fontWeight = FontWeight.Black,
@@ -563,7 +566,7 @@ private fun ListeningTimeSlide(stats: TimeTravelStats) {
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "IMMERSION",
+            text = stringResource(R.string.ui_immersion),
             color = Color.White.copy(alpha = 0.64f),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
@@ -573,7 +576,7 @@ private fun ListeningTimeSlide(stats: TimeTravelStats) {
         Spacer(Modifier.height(8.dp))
 
         Text(
-            text = "Total Listening Time",
+            text = stringResource(R.string.ui_total_listening_time),
             color = Color.White,
             fontSize = 36.sp,
             fontWeight = FontWeight.Black,
@@ -592,7 +595,7 @@ private fun ListeningTimeSlide(stats: TimeTravelStats) {
         Spacer(Modifier.height(14.dp))
 
         Text(
-            text = "${stats.totalPlays} songs played",
+            text = stringResource(R.string.ui_songs_played, stats.totalPlays),
             color = Color.White.copy(alpha = 0.64f),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
@@ -633,7 +636,7 @@ private fun ActivityPeakSlide(stats: TimeTravelStats) {
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "LISTENING PATTERNS",
+            text = stringResource(R.string.ui_listening_patterns),
             color = Color.White.copy(alpha = 0.72f),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
@@ -643,7 +646,7 @@ private fun ActivityPeakSlide(stats: TimeTravelStats) {
         Spacer(Modifier.height(8.dp))
 
         Text(
-            text = "Your Sonic Peak",
+            text = stringResource(R.string.ui_your_sonic_peak),
             color = Color.White,
             fontSize = 36.sp,
             fontWeight = FontWeight.Black,
@@ -667,7 +670,7 @@ private fun ActivityPeakSlide(stats: TimeTravelStats) {
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "around $hourString",
+                    text = stringResource(R.string.ui_around, hourString),
                     color = Color.White.copy(alpha = 0.72f),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -678,7 +681,7 @@ private fun ActivityPeakSlide(stats: TimeTravelStats) {
         Spacer(Modifier.height(28.dp))
 
         Text(
-            text = "When the world gets busy, you tune in most on ${peakDayName}s around ${hourString}.",
+            text = stringResource(R.string.ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro, peakDayName, hourString),
             color = Color.White.copy(alpha = 0.75f),
             fontSize = 16.sp,
             textAlign = TextAlign.Center,
@@ -700,7 +703,7 @@ private fun PersonalitySlide(stats: TimeTravelStats) {
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "YOUR LISTENING PERSONA",
+            text = stringResource(R.string.ui_your_listening_persona),
             color = Color(p.primaryColorHex),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
@@ -761,7 +764,7 @@ private fun ShareSummarySlide(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "TIME TRAVEL WRAP",
+            text = stringResource(R.string.ui_time_travel_wrap),
             color = Color.White.copy(alpha = 0.82f),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
@@ -771,7 +774,7 @@ private fun ShareSummarySlide(
         Spacer(Modifier.height(8.dp))
 
         Text(
-            text = "That's Your Story",
+            text = stringResource(R.string.ui_that_s_your_story),
             color = Color.White,
             fontSize = 36.sp,
             fontWeight = FontWeight.Black,
@@ -793,7 +796,7 @@ private fun ShareSummarySlide(
         ) {
             Column {
                 Text(
-                    text = "iTune Time Travel  •  ${stats.period.label}",
+                    text = stringResource(R.string.ui_itune_time_travel_575a110d, stats.period.label),
                     color = Color.White.copy(alpha = 0.82f),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
@@ -811,16 +814,16 @@ private fun ShareSummarySlide(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Column {
-                        Text(text = "Total Time", color = Color.White.copy(alpha = 0.6f), fontSize = 12.sp)
+                        Text(text = stringResource(R.string.ui_total_time), color = Color.White.copy(alpha = 0.6f), fontSize = 12.sp)
                         Text(text = stats.formattedListeningTime, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     }
                     Column {
-                        Text(text = "Top Song", color = Color.White.copy(alpha = 0.6f), fontSize = 12.sp)
+                        Text(text = stringResource(R.string.ui_top_song), color = Color.White.copy(alpha = 0.6f), fontSize = 12.sp)
                         Text(text = stats.topSongs.firstOrNull()?.title?.take(16) ?: "—", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     }
                     Column {
-                        Text(text = "Plays", color = Color.White.copy(alpha = 0.6f), fontSize = 12.sp)
-                        Text(text = "${stats.totalPlays}", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Text(text = stringResource(R.string.ui_plays), color = Color.White.copy(alpha = 0.6f), fontSize = 12.sp)
+                        Text(text = stringResource(R.string.ui_text_c79f71243f, stats.totalPlays), color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -846,7 +849,7 @@ private fun ShareSummarySlide(
             )
             Spacer(Modifier.width(10.dp))
             Text(
-                text = "Share Your Time Travel",
+                text = stringResource(R.string.ui_share_your_time_travel),
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
             )
