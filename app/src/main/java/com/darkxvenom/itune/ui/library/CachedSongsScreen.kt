@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.library
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -216,7 +219,7 @@ fun CachedSongsScreen(
                 IconButton(onClick = { downloadRefresh++ }) {
                     Icon(
                         imageVector = Icons.Rounded.Refresh,
-                        contentDescription = "Refresh Downloads",
+                        contentDescription = stringResource(R.string.ui_refresh_downloads),
                         tint = Color.White.copy(alpha = 0.88f),
                         modifier = Modifier.size(20.dp),
                     )
@@ -225,7 +228,7 @@ fun CachedSongsScreen(
                 IconButton(onClick = { showClearDialog = true }) {
                     Icon(
                         imageVector = Icons.Rounded.DeleteSweep,
-                        contentDescription = "Clear Cache",
+                        contentDescription = stringResource(R.string.ui_clear_cache),
                         tint = Color.White.copy(alpha = 0.88f),
                         modifier = Modifier.size(20.dp),
                     )
@@ -346,7 +349,7 @@ fun CachedSongsScreen(
                             fontWeight = FontWeight.Bold,
                         )
                         Text(
-                            text = "${visibleSongs.size} tracks • $sectionStorageSize",
+                            text = stringResource(R.string.ui_tracks, visibleSongs.size, sectionStorageSize),
                             color = Color.White.copy(alpha = 0.52f),
                             fontSize = 12.sp,
                         )
@@ -395,7 +398,7 @@ fun CachedSongsScreen(
             onConfirm = {
                 MusicCacheManager.clearAllCache()
                 showClearDialog = false
-                Toast.makeText(context, "Cached music cleared", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_cached_music_cleared), Toast.LENGTH_SHORT).show()
             },
         )
     }
@@ -576,7 +579,7 @@ private fun CachedSongsHeroSection(
         Spacer(Modifier.height(4.dp))
 
         Text(
-            text = "$songCount songs • $totalStorageSize • $limitText",
+            text = stringResource(R.string.ui_songs, songCount, totalStorageSize, limitText),
             color = Color.White.copy(alpha = 0.58f),
             fontSize = 13.sp,
             fontWeight = FontWeight.Normal,
@@ -617,7 +620,7 @@ private fun CachedSongsHeroSection(
                 )
                 Spacer(Modifier.width(6.dp))
                 Text(
-                    text = "Play",
+                    text = stringResource(R.string.play),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                 )
@@ -649,7 +652,7 @@ private fun CachedSongsHeroSection(
                 )
                 Spacer(Modifier.width(6.dp))
                 Text(
-                    text = "Shuffle",
+                    text = stringResource(R.string.shuffle),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                 )
