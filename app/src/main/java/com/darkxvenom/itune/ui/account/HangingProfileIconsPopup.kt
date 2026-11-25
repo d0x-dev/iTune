@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.account
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -112,7 +115,7 @@ fun HangingProfileIconsPopup(
                     ) { /* prevent dismissal on clicking inside */ },
             ) {
                 Text(
-                    text = "ACCOUNTS",
+                    text = stringResource(R.string.ui_accounts_d7cfa423),
                     color = Color.White.copy(alpha = 0.52f),
                     fontSize = 11.5.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -158,7 +161,7 @@ fun HangingProfileIconsPopup(
                             )
                             if (isActive) {
                                 Text(
-                                    text = "Active Profile",
+                                    text = stringResource(R.string.ui_active_profile),
                                     color = AppleMusicRed,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Normal,
@@ -169,7 +172,7 @@ fun HangingProfileIconsPopup(
                         if (isActive) {
                             Icon(
                                 imageVector = Icons.Rounded.Check,
-                                contentDescription = "Active",
+                                contentDescription = stringResource(R.string.ui_active),
                                 tint = AppleMusicRed,
                                 modifier = Modifier.size(16.dp),
                             )
@@ -210,7 +213,7 @@ fun HangingProfileIconsPopup(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Add,
-                            contentDescription = "Add Account",
+                            contentDescription = stringResource(R.string.ui_add_account),
                             tint = Color.White,
                             modifier = Modifier.size(20.dp),
                         )
@@ -219,7 +222,7 @@ fun HangingProfileIconsPopup(
                     Spacer(Modifier.width(12.dp))
 
                     Text(
-                        text = "Add Account",
+                        text = stringResource(R.string.ui_add_account),
                         color = Color.White,
                         fontSize = 14.5.sp,
                         fontWeight = FontWeight.Medium,
