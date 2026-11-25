@@ -1,0 +1,1170 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">取消</string>
+    <string name="save">保存</string>
+    <string name="close">关闭</string>
+    <string name="done">完成</string>
+    <string name="back">返回</string>
+    <string name="play">播放</string>
+    <string name="shuffle">随机播放</string>
+    <string name="retry">重试</string>
+    <string name="try_again">再试一次</string>
+    <string name="more">更多</string>
+    <string name="less">更少</string>
+    <string name="share">分享</string>
+    <string name="show_all">显示全部</string>
+    <string name="top_songs">热门歌曲</string>
+    <string name="suggested">推荐</string>
+    <string name="subscribers">%1$s 订阅者</string>
+    <string name="monthly_listeners">%1$s 月度听众</string>
+    <string name="signed_by">由 %1$s 签名</string>
+    <string name="about_artist">关于艺术家</string>
+    <string name="about_album">关于专辑</string>
+    <string name="recent_album">最近专辑</string>
+    <string name="recent_ep">最近 EP</string>
+    <string name="recent_single">最近单曲</string>
+    <string name="subscribe">订阅</string>
+    <string name="unsubscribe">取消订阅</string>
+    <string name="add_to_library">添加到媒体库</string>
+    <string name="remove_from_library">从媒体库移除</string>
+    <string name="add_to_playlist">添加到播放列表</string>
+    <string name="remove_from_playlist">从此播放列表移除</string>
+    <string name="play_next">下一首播放</string>
+    <string name="add_to_queue">添加到队列</string>
+    <string name="start_radio">启动电台</string>
+    <string name="open">打开</string>
+    <string name="open_album">打开专辑</string>
+    <string name="open_artist">打开艺术家</string>
+    <string name="open_playlist">打开播放列表</string>
+    <string name="song_info">歌曲信息</string>
+    <string name="song_info_album">专辑</string>
+    <string name="song_info_release_date">发行日期</string>
+    <string name="song_info_views">播放量 / 浏览量</string>
+    <string name="song_info_likes">喜欢</string>
+    <string name="song_info_comments">评论</string>
+    <string name="song_info_unavailable">不可用</string>
+    <string name="song_info_error">部分信息无法加载。</string>
+    <string name="song_info_retry">重试</string>
+    <string name="like">喜欢</string>
+    <string name="dislike">不喜欢</string>
+    <string name="download">下载</string>
+    <string name="download_all">全部下载</string>
+    <string name="downloaded">已下载</string>
+    <string name="downloading">下载中</string>
+    <string name="download_notification_title">下载中</string>
+    <string name="delete_download">删除下载</string>
+    <string name="delete_download_confirmation">从本设备移除“%1$s”？再次点按以确认。</string>
+    <string name="delete">删除</string>
+    <string name="queued">已排队</string>
+    <string name="saved_to_downloads">已保存到下载</string>
+    <string name="search_this_list">搜索此列表</string>
+    <string name="clear_search">清除搜索</string>
+    <string name="close_search">关闭搜索</string>
+    <string name="nothing_matches">没有匹配“%1$s”的内容</string>
+    <string name="sort_songs">排序歌曲</string>
+    <string name="artist">艺术家</string>
+    <string name="album">专辑</string>
+    <string name="playlist">播放列表</string>
+    <string name="folder">文件夹</string>
+    <string name="songs">歌曲</string>
+    <string name="song_count">%1$d 首歌曲</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$d 首曲目</item>
+        <item quantity="other">%1$d 首曲目</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$d 分钟</item>
+        <item quantity="other">%1$d 分钟</item>
+    </plurals>
+    <string name="one_hour">1 小时</string>
+    <string name="hours_minutes_short">%1$d小时 %2$d分钟</string>
+    <string name="minutes_short">%1$d 分</string>
+    <string name="pin">固定</string>
+    <string name="unpin">取消固定</string>
+    <string name="tile_identify_music">识别音乐</string>
+    <string name="tile_identify_music_desc">使用 iTune 识别您周围播放的歌曲</string>
+    <string name="widget_itune_description">从主屏幕控制 iTune 播放</string>
+    <string name="favorite">收藏</string>
+    <string name="tap_to_start_listening">点按以开始聆听</string>
+    <string name="time_zero" formatted="false">0:00</string>
+    <string name="previous">上一首</string>
+    <string name="play_or_pause">播放或暂停</string>
+    <string name="next">下一首</string>
+    <string name="repeat">循环</string>
+    <string name="open_title_options">打开 %1$s 选项</string>
+    <string name="reset_page_title">重置 %1$s</string>
+    <string name="remove_device">移除 %1$s</string>
+    <string name="profile_name">%1$s 个人资料</string>
+    <string name="download_option">下载 %1$s</string>
+    <string name="open_entry_options">打开 %1$s 选项</string>
+    <string name="avatar_number">头像 %1$s</string>
+    <string name="options_for_track">%1$s 的选项</string>
+    <string name="preparing">准备中…</string>
+    <string name="share_image">分享图片</string>
+    <string name="speed_pitch_locked">速度和音调已锁定</string>
+    <string name="independent_bpm_tempo_key_pitch">独立 BPM 节拍和调性音调</string>
+    <string name="spatial_reflections_delay">空间反射 (%1$d 毫秒)</string>
+    <string name="on">开启</string>
+    <string name="off">关闭</string>
+    <string name="dynamic_island_active">动态岛活跃中</string>
+    <string name="dynamic_island_description">播放期间在 iTune 之外平滑显示</string>
+    <string name="preparing_download">准备下载…</string>
+    <string name="listening_for_music">聆听音乐中…</string>
+    <string name="hold_phone_near_sound_source">将手机靠近声音源</string>
+    <string name="unable_to_recognize_audio">无法识别音频</string>
+    <string name="song_identified">歌曲已识别</string>
+    <string name="play_in_itune">在 iTune 中播放</string>
+    <string name="view_details">查看详情</string>
+    <string name="no_match_found">未找到匹配</string>
+    <string name="recognition_retry_message">无法识别歌曲。点按以重试。</string>
+    <string name="microphone_permission_needed">需要麦克风权限</string>
+    <string name="microphone_permission_help">点按以允许麦克风访问，以便 iTune 能够识别音乐。</string>
+    <string name="recognition_failed">识别失败</string>
+    <string name="tap_install_to_continue">点按安装以继续</string>
+    <string name="detail_artist">艺术家</string>
+    <string name="detail_album">专辑</string>
+    <string name="set_default_ringtone_target">设置为默认 %1$s！</string>
+    <string name="added_ringtone_target">已添加到 %1$s。在声音设置中选择它。</string>
+    <string name="last_fm_connected_as">Last.fm 已作为 %1$s 连接</string>
+    <string name="discord_connected_as">Discord 已作为 %1$s 连接</string>
+    <string name="tv_encrypted_backup_saved">已保存加密备份 (%1$d KB)！</string>
+    <string name="sign_in_verification_failed">登录验证失败</string>
+    <string name="could_not_rename_playlist">无法在 YouTube Music 中重命名播放列表</string>
+    <string name="could_not_create_playlist">无法创建播放列表</string>
+    <string name="daily_encrypted_backup_enabled">每日加密备份已启用</string>
+    <string name="cookie_login_failed">Cookie 登录失败</string>
+    <string name="could_not_open_last_fm">无法打开 Last.fm</string>
+    <string name="last_fm_sign_in_failed">Last.fm 登录失败</string>
+    <string name="discord_sign_in_failed">Discord 登录失败</string>
+    <string name="could_not_open_android_installer">无法打开 Android 安装程序</string>
+    <string name="added_title_to_queue">已将“%1$s”添加到队列</string>
+    <string name="automatic_backup_disabled">自动备份已禁用</string>
+    <string name="download_failed">下载失败</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">安装</string>
+    <string name="ui_text_9ef6a80f91" formatted="false">#1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">%+.1f</string>
+    <string name="ui_accounts" formatted="false">+ 账户</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0.0秒</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5.0秒</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">-</string>
+    <string name="ui_text_7be28ad40e" formatted="false">-5.0秒</string>
+    <string name="ui_text_a6dee6102d" formatted="false">晚上 11 点</string>
+    <string name="ui_text_1a19c52178" formatted="false">凌晨 12 点</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">中午 12 点</string>
+    <string name="ui_text_4e37ece023" formatted="false">15 毫秒反向耳低通混合</string>
+    <string name="ui_text_76b322ac42" formatted="false">2 倍速</string>
+    <string name="ui_text_505c74ed85" formatted="false">3D 乒乓回弹</string>
+    <string name="ui_text_db9b8df506" formatted="false">上午 6 点</string>
+    <string name="ui_text_2812537f20" formatted="false">下午 6 点</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080</string>
+    <string name="ui_text_05a79f06cf" formatted="false">：</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">顶级歌曲、艺术家、专辑和习惯的完整图景。</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">新版本已就绪</string>
+    <string name="ui_account" formatted="false">账户</string>
+    <string name="ui_account_options" formatted="false">账户选项</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">账户</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">声学头部阴影交叉馈送</string>
+    <string name="ui_activate" formatted="false">激活</string>
+    <string name="ui_active" formatted="false">活动</string>
+    <string name="ui_active_days" formatted="false">活跃天数</string>
+    <string name="ui_active_profile" formatted="false">活动配置文件</string>
+    <string name="ui_activity_by_day" formatted="false">按天活动</string>
+    <string name="ui_add_account" formatted="false">添加账户</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">添加自定义 HTTP 插件服务器（支持 /manifest.json、/search、/stream）或沙盒隔离的 QuickJS 模块。</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">自动添加未来歌曲</string>
+    <string name="ui_add_streaming_source" formatted="false">添加流媒体源</string>
+    <string name="ui_add_to_playlist" formatted="false">添加到播放列表</string>
+    <string name="ui_added_playlists" formatted="false">已添加的播放列表</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">调整正方形专辑艺术的边缘。</string>
+    <string name="ui_advanced_cookie_login" formatted="false">高级 Cookie 登录</string>
+    <string name="ui_advanced_login" formatted="false">高级登录</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">高级登录</string>
+    <string name="ui_ai_engine" formatted="false">AI 引擎</string>
+    <string name="ui_ai_provider" formatted="false">AI 提供商</string>
+    <string name="ui_albums" formatted="false">专辑</string>
+    <string name="ui_all_news" formatted="false">全部新闻</string>
+    <string name="ui_allow_downloads" formatted="false">允许下载</string>
+    <string name="ui_allow_microphone" formatted="false">允许麦克风</string>
+    <string name="ui_allow_microphone_access" formatted="false">允许麦克风访问</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">交替反射 L &lt;-&gt; R</string>
+    <string name="ui_always_on_display" formatted="false">常亮显示</string>
+    <string name="ui_am" formatted="false">上午</string>
+    <string name="ui_api_base_url" formatted="false">API 基础 URL</string>
+    <string name="ui_artist" formatted="false">艺术家</string>
+    <string name="ui_artist_name" formatted="false">艺术家名称</string>
+    <string name="ui_artists" formatted="false">艺术家</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">艺术家、歌曲、专辑、播放列表…</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">艺术家、歌曲、歌词及更多</string>
+    <string name="ui_at_least_8_characters" formatted="false">至少 8 个字符</string>
+    <string name="ui_auto_sleep_timer" formatted="false">自动睡眠定时器</string>
+    <string name="ui_auto_activation_timeout" formatted="false">自动激活超时</string>
+    <string name="ui_avatar" formatted="false">头像</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">备份 iTune (AES-256)</string>
+    <string name="ui_backup_password" formatted="false">备份密码</string>
+    <string name="ui_bluetooth_device_access" formatted="false">Bluetooth 设备访问</string>
+    <string name="ui_browse" formatted="false">浏览</string>
+    <string name="ui_browse_by_country" formatted="false">按国家浏览</string>
+    <string name="ui_browse_extensions" formatted="false">浏览扩展</string>
+    <string name="ui_browse_live_online_radio" formatted="false">浏览直播在线电台</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">无法删除唯一账户</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">Canvas 提供商（查找顺序）</string>
+    <string name="ui_captcha_guidance" formatted="false">验证码指南</string>
+    <string name="ui_cast_wireless_devices" formatted="false">投射和无线设备</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">选择音频播放流媒体源、无损层级和备用优先级</string>
+    <string name="ui_choose_avatar" formatted="false">选择头像</string>
+    <string name="ui_choose_charts_region" formatted="false">选择排行榜地区</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">选择 iTune 在主屏幕上的显示方式。从启动器调整小部件大小。</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">选择您的个人资料以继续</string>
+    <string name="ui_choose_youtube_channel" formatted="false">选择 YouTube 频道</string>
+    <string name="ui_clear" formatted="false">清除</string>
+    <string name="ui_clear_use_default" formatted="false">清除并使用默认值</string>
+    <string name="ui_clear_all" formatted="false">全部清除</string>
+    <string name="ui_confirm" formatted="false">确认</string>
+    <string name="ui_confirm_password" formatted="false">确认密码</string>
+    <string name="ui_connect_discord" formatted="false">连接 Discord</string>
+    <string name="ui_connect_last_fm" formatted="false">连接 Last.fm</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">连接您的 Spotify 账户以启用 Canvas 循环动画并同步 Spotify 媒体库。</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">使用会话 Cookie 连接 YouTube Music</string>
+    <string name="ui_connect" formatted="false">连接 ›</string>
+    <string name="ui_connecting_spotify" formatted="false">正在连接 Spotify...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">正在连接 YouTube Music...</string>
+    <string name="ui_continue" formatted="false">继续</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">改为在浏览器中继续</string>
+    <string name="ui_continue_with_google" formatted="false">使用 Google 继续</string>
+    <string name="ui_continue_with_spotify" formatted="false">使用 Spotify 继续</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">Cookie 凭据存储在 iTune 的加密账户存储中，并在保存前与 YouTube Music 验证。</string>
+    <string name="ui_copy_song_name" formatted="false">复制歌曲名称</string>
+    <string name="ui_copy_text" formatted="false">复制文本</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">版权所有 © 2026 iTune Project。此软件按原样提供，不提供任何担保。您可以根据下方所示的 GNU GPL 条款重新分发和修改。</string>
+    <string name="ui_corner_length" formatted="false">角长度</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">无法渲染回放图像</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">当前无法加载音乐。下拉以重试。</string>
+    <string name="ui_create" formatted="false">创建</string>
+    <string name="ui_create_add" formatted="false">创建并添加</string>
+    <string name="ui_current_account" formatted="false">当前账户</string>
+    <string name="ui_custom_instructions" formatted="false">自定义指令</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">自定义仓库索引或 URL</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">自定义您的主屏幕播放器</string>
+    <string name="ui_customize_your_itune_card" formatted="false">自定义您的 iTune 卡片</string>
+    <string name="ui_d" formatted="false">D</string>
+    <string name="ui_delete_account" formatted="false">删除账户</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">删除账户？</string>
+    <string name="ui_developer_announcements" formatted="false">开发者公告</string>
+    <string name="ui_disconnect" formatted="false">断开连接</string>
+    <string name="ui_disconnect_discord" formatted="false">断开 Discord 连接</string>
+    <string name="ui_discord_rich_presence" formatted="false">Discord 富状态</string>
+    <string name="ui_dismiss" formatted="false">关闭</string>
+    <string name="ui_display_full_screen" formatted="false">全屏显示</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">在歌曲标题上方显示动画同步歌词，当 Canvas 控件隐藏时</string>
+    <string name="ui_display_name" formatted="false">显示名称</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">DJ Bipolar 俱乐部滤镜</string>
+    <string name="ui_downloaded_cached" formatted="false">已下载并缓存</string>
+    <string name="ui_dp" formatted="false">DP</string>
+    <string name="ui_dynamic_island" formatted="false">动态岛</string>
+    <string name="ui_e" formatted="false">乙</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">例如 127.0.0.1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">例如 翻译成带韵文的诗意混合语</string>
+    <string name="ui_enable_auto_sleep" formatted="false">启用自动睡眠</string>
+    <string name="ui_enable_proxy" formatted="false">启用代理</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">正在启用 Spotify Canvas 和播放列表</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">加密密码（最少 8 个字符）</string>
+    <string name="ui_end_of_current_track" formatted="false">当前曲目结束</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">为该账户输入新名称。</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">输入 HTTP 插件清单 URL、QuickJS 模块索引或 Tidal 终端。</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">输入创建 iTune 备份时使用的密码。</string>
+    <string name="ui_enter_your_name" formatted="false">输入您的姓名</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">输入您的姓名以个性化 iTune</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">您生活过的每个节奏、深夜颂歌和旋律——集于一身。</string>
+    <string name="ui_everything" formatted="false">全部</string>
+    <string name="ui_explore_categories" formatted="false">探索分类</string>
+    <string name="ui_exporting_audio" formatted="false">正在导出音频…</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">正在提取短音频指纹</string>
+    <string name="ui_favorite_stations" formatted="false">喜欢的电台</string>
+    <string name="ui_favorites" formatted="false">收藏</string>
+    <string name="ui_featured_hit" formatted="false">精选热门</string>
+    <string name="ui_featured_playlists" formatted="false">精选播放列表</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">正在获取音频质量…</string>
+    <string name="ui_fetching_live_catalog" formatted="false">正在获取直播目录...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">正在寻找更好的流</string>
+    <string name="ui_full_view" formatted="false">全屏</string>
+    <string name="ui_g" formatted="false">G</string>
+    <string name="ui_genre" formatted="false">类型</string>
+    <string name="ui_genres_styles" formatted="false">类型和风格</string>
+    <string name="ui_github_repository" formatted="false">GitHub 仓库</string>
+    <string name="ui_github_repository_open_source" formatted="false">GitHub 仓库 · 开源</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 或更高版本</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 或更高版本 · 版权所有 © 2026 iTune Project</string>
+    <string name="ui_grant" formatted="false">授予</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">授予以显示耳机名称和实时电池百分比</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">硬件响度增强器（最高 +18 dB）</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">隐藏 Android 状态栏和导航栏，实现无缝纯黑 OLED。</string>
+    <string name="ui_history" formatted="false">历史记录</string>
+    <string name="ui_host" formatted="false">主机</string>
+    <string name="ui_host_a_session" formatted="false">主持会话</string>
+    <string name="ui_host_controls_playback" formatted="false">主机控制播放</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">如何获取您的 Cookie</string>
+    <string name="ui_hq" formatted="false">高质量</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">通过 Shazam 识别</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">识别您周围播放的音乐</string>
+    <string name="ui_immersion" formatted="false">沉浸式</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">沉浸模式（全屏）</string>
+    <string name="ui_import" formatted="false">导入</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">导入公共和私有播放列表 • 自动同步</string>
+    <string name="ui_import_spotify_playlist" formatted="false">导入 Spotify 播放列表</string>
+    <string name="ui_in_use" formatted="false">使用中</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">应用内指南，当音频提供商挑战反机器人检查时</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">安装预添加的 Mornye 社区扩展或扫描自定义仓库索引。</string>
+    <string name="ui_installed" formatted="false">已安装</string>
+    <string name="ui_interactive_dot_curve" formatted="false">交互式点曲线</string>
+    <string name="ui_irecognition" formatted="false">iRecognition</string>
+    <string name="ui_ireconization" formatted="false">智能再确认</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">iReconization 监听几秒钟以创建音乐指纹。音频不会保存。</string>
+    <string name="ui_ishare" formatted="false">爱分享</string>
+    <string name="ui_itune_license" formatted="false">iTune 许可证</string>
+    <string name="ui_itune_music" formatted="false">iTune 音乐</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTune 按以下确切优先级查询歌词。如果最高活跃提供商没有同步歌词，iTune 将无缝回退到下一个。</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTune 按所示顺序查询源。拖动已安装的扩展和提供商以调整播放优先级。</string>
+    <string name="ui_itune_time_travel" formatted="false">iTune 时间旅行</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">喷射法兰奇呼啸声</string>
+    <string name="ui_join" formatted="false">加入</string>
+    <string name="ui_keep_screen_on" formatted="false">保持屏幕常亮</string>
+    <string name="ui_l" formatted="false">L</string>
+    <string name="ui_lan_port" formatted="false">LAN 端口</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">语言偏好（可选，例如 印地语、旁遮普语…）</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fm 记录</string>
+    <string name="ui_layout" formatted="false">布局</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">留空以使用该提供商的默认终端。</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">LFO 扫频喷射相位调制</string>
+    <string name="ui_library" formatted="false">媒体库</string>
+    <string name="ui_license" formatted="false">许可证</string>
+    <string name="ui_liked_songs" formatted="false">喜欢的歌曲</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">登录期间添加的喜欢会同时保存在本地和 YouTube Music，因此即使注销后它们仍留在您的媒体库中。</string>
+    <string name="ui_listening_patterns" formatted="false">聆听模式</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">正在聆听共享音频…</string>
+    <string name="ui_live" formatted="false">直播</string>
+    <string name="ui_live_radio_stations" formatted="false">直播电台</string>
+    <string name="ui_loading_announcements" formatted="false">正在加载公告…</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">正在加载艺术家、播放列表和历史记录</string>
+    <string name="ui_lossless" formatted="false">无损</string>
+    <string name="ui_lossless_audio_preference" formatted="false">无损音频偏好</string>
+    <string name="ui_lyrics" formatted="false">歌词</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">此歌曲歌词不可用</string>
+    <string name="ui_lyrics_providers" formatted="false">歌词提供商</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">歌词翻译成功！</string>
+    <string name="ui_master_amplifier_boost" formatted="false">主放大器增益</string>
+    <string name="ui_member_since" formatted="false">会员自</string>
+    <string name="ui_memoji_style" formatted="false">Memoji 和样式</string>
+    <string name="ui_minutes_listened" formatted="false">聆听分钟数</string>
+    <string name="ui_mirror_vol" formatted="false">镜像音量</string>
+    <string name="ui_model" formatted="false">型号</string>
+    <string name="ui_model_68c2cc7f" formatted="false">型号</string>
+    <string name="ui_moods_activities" formatted="false">情绪和活动</string>
+    <string name="ui_moods_moments" formatted="false">情绪和时刻</string>
+    <string name="ui_music_by_genre" formatted="false">按类型音乐</string>
+    <string name="ui_music_language_preference" formatted="false">音乐语言偏好</string>
+    <string name="ui_music_services" formatted="false">音乐服务</string>
+    <string name="ui_name" formatted="false">姓名</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">附近的 Wi-Fi 主机</string>
+    <string name="ui_network_proxy" formatted="false">网络代理</string>
+    <string name="ui_new" formatted="false">新</string>
+    <string name="ui_new_playlist" formatted="false">新建播放列表</string>
+    <string name="ui_new_releases" formatted="false">新发行</string>
+    <string name="ui_news_from_dev" formatted="false">开发者新闻</string>
+    <string name="ui_next_up" formatted="false">下一个</string>
+    <string name="ui_no_albums_found" formatted="false">未找到专辑</string>
+    <string name="ui_no_artist_information_available" formatted="false">无艺术家信息可用</string>
+    <string name="ui_no_artists_found" formatted="false">未找到艺术家</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">您的媒体库中暂无艺术家</string>
+    <string name="ui_no_playlists_found" formatted="false">未找到播放列表</string>
+    <string name="ui_no_results_on_spotify" formatted="false">Spotify 上未找到结果</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">您的媒体库中没有保存的专辑</string>
+    <string name="ui_no_songs_found" formatted="false">未找到歌曲</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">此版本中未找到歌曲</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">此部分中未找到歌曲</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">未找到用户播放列表。在媒体库中创建一个！</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">聆听还不够</string>
+    <string name="ui_now_playing" formatted="false">当前播放</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">正在播放</string>
+    <string name="ui_on_heavy_repeat" formatted="false">循环播放中</string>
+    <string name="ui_options" formatted="false">选项</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">或输入 SP_DC Cookie</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">轨道强度与速度</string>
+    <string name="ui_pair_join_a_device" formatted="false">配对并加入设备</string>
+    <string name="ui_password_optional" formatted="false">密码（可选）</string>
+    <string name="ui_passwords_dont_match" formatted="false">密码不匹配</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">在此粘贴 sp_dc 令牌…</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">在此粘贴您的 API 密钥</string>
+    <string name="ui_play_in_itune" formatted="false">在 iTune 中播放</string>
+    <string name="ui_play_next" formatted="false">下一首播放</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">同时在耳机和手机扬声器/AUX 上播放</string>
+    <string name="ui_playlist_name" formatted="false">播放列表名称</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">播放列表名称</string>
+    <string name="ui_playlist_spotify" formatted="false">播放列表 • Spotify</string>
+    <string name="ui_playlists" formatted="false">播放列表</string>
+    <string name="ui_plays" formatted="false">播放次数</string>
+    <string name="ui_pm" formatted="false">下午</string>
+    <string name="ui_port" formatted="false">端口</string>
+    <string name="ui_pre_added_extensions" formatted="false">预添加的扩展</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">当可用时优先选择位完美 FLAC/ALAC，最高 24 位 / 192 kHz</string>
+    <string name="ui_preparing_audio_preview" formatted="false">正在准备音频预览…</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">Always On Display 启用时防止设备显示屏关闭。</string>
+    <string name="ui_preview" formatted="false">预览</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">预览</string>
+    <string name="ui_preview_always_on_display" formatted="false">预览 Always On Display</string>
+    <string name="ui_profile" formatted="false">个人资料</string>
+    <string name="ui_profiles_in_backup" formatted="false">备份中的个人资料</string>
+    <string name="ui_prompt_type" formatted="false">提示类型</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">提供商优先级（备用顺序）</string>
+    <string name="ui_queue" formatted="false">队列</string>
+    <string name="ui_queue_is_empty" formatted="false">队列为空</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">队列中的曲目将下一首播放</string>
+    <string name="ui_radio" formatted="false">电台</string>
+    <string name="ui_read_more" formatted="false">阅读更多</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">带实时音频的实时音节和行滚动</string>
+    <string name="ui_recent_searches" formatted="false">最近搜索</string>
+    <string name="ui_recently_added" formatted="false">最近添加</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">重复睡眠计划 · 自动暂停播放</string>
+    <string name="ui_remote_music_library" formatted="false">远程音乐库</string>
+    <string name="ui_remove" formatted="false">移除</string>
+    <string name="ui_rename" formatted="false">重命名</string>
+    <string name="ui_rename_account" formatted="false">重命名账户</string>
+    <string name="ui_replay" formatted="false">回放</string>
+    <string name="ui_replay_c0f85d66" formatted="false">回放</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">要求位完美无损输出</string>
+    <string name="ui_reset" formatted="false">重置</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">重置提供商顺序和默认值</string>
+    <string name="ui_reset_to_default_url" formatted="false">重置为默认 URL</string>
+    <string name="ui_restore_default_sources" formatted="false">恢复默认源</string>
+    <string name="ui_restore_itune_backup" formatted="false">恢复 iTune 备份</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">恢复 JioSaavn 和 YouTube Music 为默认顺序。JioSaavn 默认关闭，YouTube Music 默认开启。</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">恢复 LRC Lib、KuGou 和 SimpMusic 作为首选提供商，并重新启用所有 11 个源。</string>
+    <string name="ui_resume" formatted="false">恢复</string>
+    <string name="ui_rhythm_by_hour" formatted="false">按小时节奏</string>
+    <string name="ui_room_permissions" formatted="false">房间权限</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">通过 HTTP 或 SOCKS 代理路由应用网络流量</string>
+    <string name="ui_save_proxy" formatted="false">保存代理</string>
+    <string name="ui_save_schedule" formatted="false">保存计划</string>
+    <string name="ui_save_to_gallery" formatted="false">保存到图库</string>
+    <string name="ui_save_token" formatted="false">保存令牌</string>
+    <string name="ui_saved_to_your_library" formatted="false">已保存到您的媒体库！</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">已使用 Android Keystore 保存。备份文件使用 PBKDF2-HMAC-SHA256（310,000 轮）和 AES-256-GCM。</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">保存到 下载/itune/backups</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">说出一首歌曲、艺术家、专辑或歌词</string>
+    <string name="ui_search" formatted="false">搜索</string>
+    <string name="ui_search_identify" formatted="false">搜索并识别</string>
+    <string name="ui_search_announcements" formatted="false">搜索公告…</string>
+    <string name="ui_search_country" formatted="false">搜索国家…</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">搜索歌曲、艺术家、专辑和播放列表</string>
+    <string name="ui_search_languages" formatted="false">搜索语言…</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">搜索或输入型号 ID</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">搜索歌曲、艺术家、专辑或播放列表</string>
+    <string name="ui_searching_lyrics" formatted="false">正在搜索歌词…</string>
+    <string name="ui_searching_spotify" formatted="false">正在搜索 Spotify…</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">次要镜像接收器</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">选择个人资料头像以在所有屏幕上个性化您的 iTune 体验。</string>
+    <string name="ui_select_language" formatted="false">选择语言</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">选择歌词翻译的默认提示模板。</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">选择用于逐行歌词翻译的引擎。</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">选择歌词翻译的目标语言。</string>
+    <string name="ui_server_host_ip" formatted="false">服务器主机 / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">服务器 URL / 清单</string>
+    <string name="ui_settings_appearance" formatted="false">设置外观</string>
+    <string name="ui_share_lyrics" formatted="false">分享歌词</string>
+    <string name="ui_share_my_replay" formatted="false">分享我的回放</string>
+    <string name="ui_share_replay" formatted="false">分享回放</string>
+    <string name="ui_share_this_story" formatted="false">分享此故事</string>
+    <string name="ui_share_your_time_travel" formatted="false">分享你的时间旅行</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">在 Canvas 上方显示同步歌词</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">在桌面浏览器中登录 music.youtube.com。打开 开发者工具 → 应用程序 → Cookie，然后复制已登录会话值。请像对待密码一样对待这些值。</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">使用 Last.fm 账户登录</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">登出所有账户</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">同时双输出</string>
+    <string name="ui_skip_sign_in" formatted="false">跳过登录</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">向前滑动加快歌词 · 向后滑动减慢歌词 · 音频不受影响</string>
+    <string name="ui_snap_0" formatted="false">捕捉 0</string>
+    <string name="ui_soundstage_width" formatted="false">声场宽度</string>
+    <string name="ui_sources" formatted="false">源</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">空间音频和基本功能</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotify 和 Canvas</string>
+    <string name="ui_spotify_account" formatted="false">Spotify 账户</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">Spotify Canvas、Apple Music、Tidal 及社区动态封面</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">Spotify 当前已连接。动态封面 (Canvas) 和 Spotify 播放列表同步已启用。</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">Spotify 搜索失败。请重试。</string>
+    <string name="ui_station" formatted="false">电台</string>
+    <string name="ui_stereo_echo_delay" formatted="false">立体声回声和延迟</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">存储此链接并在打开应用时自动添加任何新歌曲</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">直接从个人网络共享或 Nextcloud 流式传输您的位完美无损库。</string>
+    <string name="ui_streaming_sources" formatted="false">流媒体源</string>
+    <string name="ui_style" formatted="false">样式</string>
+    <string name="ui_suggestions" formatted="false">建议</string>
+    <string name="ui_switch" formatted="false">切换</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">点按头像以自定义</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">点按左或右浏览 • 长按暂停</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">点按立即激活 Always On Display</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">点按选择国家/城市 FM 广播</string>
+    <string name="ui_target_language" formatted="false">目标语言</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">目标语言</string>
+    <string name="ui_test" formatted="false">测试</string>
+    <string name="ui_test_proxy_connection" formatted="false">测试代理连接</string>
+    <string name="ui_testing_proxy" formatted="false">正在测试代理…</string>
+    <string name="ui_that_s_your_story" formatted="false">这就是你的故事</string>
+    <string name="ui_this_account" formatted="false">此账户</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">此播放列表为空。从播放器或搜索添加歌曲！</string>
+    <string name="ui_time_travel" formatted="false">时间旅行</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">时间旅行</string>
+    <string name="ui_time_travel_wrap" formatted="false">时间旅行包装</string>
+    <string name="ui_time_synced_lyrics" formatted="false">时间同步歌词</string>
+    <string name="ui_top_picks" formatted="false">热门精选</string>
+    <string name="ui_top_result" formatted="false">顶级结果</string>
+    <string name="ui_top_song" formatted="false">热门歌曲</string>
+    <string name="ui_top_songs" formatted="false">热门歌曲</string>
+    <string name="ui_top_streamed" formatted="false">最多播放</string>
+    <string name="ui_total_listening_time" formatted="false">总聆听时间</string>
+    <string name="ui_total_time" formatted="false">总时长</string>
+    <string name="ui_translate_actual_lines" formatted="false">翻译实际行</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">按需从播放器菜单 (... &gt; 歌词 &gt; 翻译) 翻译任何歌曲的歌词。当\'翻译实际行\'关闭时，翻译将作为副标题显示在原文下方。</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">将以下歌曲歌词行翻译成英语。保持诗意流畅。</string>
+    <string name="ui_translating_lyrics" formatted="false">正在翻译歌词...</string>
+    <string name="ui_translation_mode" formatted="false">翻译模式</string>
+    <string name="ui_translation_prompt" formatted="false">翻译提示</string>
+    <string name="ui_trending_artists" formatted="false">热门艺术家</string>
+    <string name="ui_turn_off_timer" formatted="false">关闭定时器</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">在设置中更新 Apple ID 个人资料卡上显示的名称。</string>
+    <string name="ui_username_optional" formatted="false">用户名（可选）</string>
+    <string name="ui_view" formatted="false">查看</string>
+    <string name="ui_view_on_shazam" formatted="false">在 Shazam 上查看</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">黑胶唱盘链接</string>
+    <string name="ui_whats_new" formatted="false">新增功能</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">播放音乐时，如果屏幕在选定时间内未触摸，Always On Display 将开启。仅在应用内激活。</string>
+    <string name="ui_who_is_listening" formatted="false">谁在聆听？</string>
+    <string name="ui_widget" formatted="false">小部件</string>
+    <string name="ui_you" formatted="false">你</string>
+    <string name="ui_your_1_artist" formatted="false">你的 #1 艺术家</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">您的 API 密钥安全地存储在设备上，绝不共享。</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">您的 Discord 会话令牌加密存储在此设备上，仅用于富状态。</string>
+    <string name="ui_your_favourite_song" formatted="false">你最喜欢的歌曲</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">您的媒体库、播放列表和设置将使用至少 8 个字符的密码加密。</string>
+    <string name="ui_your_listening_experience" formatted="false">您的聆听体验</string>
+    <string name="ui_your_listening_pattern" formatted="false">您的聆听模式</string>
+    <string name="ui_your_listening_persona" formatted="false">您的聆听人格</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">您的音乐回放与统计</string>
+    <string name="ui_your_musical_anchor" formatted="false">您的音乐锚点</string>
+    <string name="ui_your_name" formatted="false">你的姓名</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">您的密码仅发送到 Last.fm 以创建会话。iTune 不保存它。</string>
+    <string name="ui_your_playlists" formatted="false">您的播放列表</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">您的播放列表</string>
+    <string name="ui_your_sonic_peak" formatted="false">你的声学巅峰</string>
+    <string name="ui_your_spotify_playlists" formatted="false">您的 Spotify 播放列表</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">您的 Spotify 播放列表（公开和私有）</string>
+    <string name="ui_youtube_music_google" formatted="false">YouTube Music 和 Google</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube Music 会话 Cookie</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">·</string>
+    <string name="ui_text_a118c40635" formatted="false">────────────────────────────────────────────────────────────────────────</string>
+    <string name="ui_album_artwork" formatted="false">专辑封面</string>
+    <string name="ui_itune_waves" formatted="false">iTune 波形</string>
+    <string name="ui_previous" formatted="false">上一首</string>
+    <string name="ui_next" formatted="false">下一首</string>
+    <string name="ui_audio_output" formatted="false">音频输出</string>
+    <string name="ui_low_volume" formatted="false">低音量</string>
+    <string name="ui_high_volume" formatted="false">高音量</string>
+    <string name="ui_filter" formatted="false">筛选</string>
+    <string name="ui_refresh" formatted="false">刷新</string>
+    <string name="ui_options_6bf5da9c" formatted="false">选项</string>
+    <string name="ui_user_profile_avatar" formatted="false">用户个人资料头像</string>
+    <string name="ui_news" formatted="false">新闻</string>
+    <string name="ui_no_song_playing" formatted="false">当前无歌曲播放</string>
+    <string name="ui_next_track" formatted="false">下一首曲目</string>
+    <string name="ui_see_all_songs" formatted="false">查看所有歌曲</string>
+    <string name="ui_favorite_radio" formatted="false">喜欢的电台</string>
+    <string name="ui_live_65c821a5" formatted="false">直播</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTune 品牌波形</string>
+    <string name="ui_refresh_network" formatted="false">刷新网络</string>
+    <string name="ui_edit_display_name" formatted="false">编辑显示名称</string>
+    <string name="ui_remove_from_queue" formatted="false">从队列移除</string>
+    <string name="ui_search_new_releases" formatted="false">搜索新发行</string>
+    <string name="ui_refresh_new_releases" formatted="false">刷新新发行</string>
+    <string name="ui_refresh_downloads" formatted="false">刷新下载</string>
+    <string name="ui_clear_cache" formatted="false">清除缓存</string>
+    <string name="ui_sort" formatted="false">排序</string>
+    <string name="ui_see_all_new_releases" formatted="false">查看所有新发行</string>
+    <string name="ui_identify" formatted="false">识别</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">导入播放列表</string>
+    <string name="ui_create_playlist" formatted="false">创建播放列表</string>
+    <string name="ui_liked" formatted="false">已喜欢</string>
+    <string name="ui_paste" formatted="false">粘贴</string>
+    <string name="ui_checked" formatted="false">已检查</string>
+    <string name="ui_google_account_playlist" formatted="false">Google 账户播放列表</string>
+    <string name="ui_spotify_playlist" formatted="false">Spotify 播放列表</string>
+    <string name="ui_local_playlist" formatted="false">本地播放列表</string>
+    <string name="ui_back_to_audio_engine" formatted="false">返回音频引擎</string>
+    <string name="ui_bluetooth_settings" formatted="false">蓝牙设置</string>
+    <string name="ui_scan_output_devices" formatted="false">扫描输出设备</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">同时双音频</string>
+    <string name="ui_selected" formatted="false">已选定</string>
+    <string name="ui_copy" formatted="false">复制</string>
+    <string name="ui_copy_link" formatted="false">复制链接</string>
+    <string name="ui_upgrade_quality" formatted="false">升级音质</string>
+    <string name="ui_fm_radio" formatted="false">FM 电台</string>
+    <string name="ui_next_station" formatted="false">下一电台</string>
+    <string name="ui_minimize" formatted="false">最小化</string>
+    <string name="ui_favorite" formatted="false">收藏</string>
+    <string name="ui_more_options" formatted="false">更多选项</string>
+    <string name="ui_previous_station" formatted="false">上一电台</string>
+    <string name="ui_sleep_timer" formatted="false">睡眠定时器</string>
+    <string name="ui_audio_output_devices" formatted="false">音频输出设备</string>
+    <string name="ui_station_list" formatted="false">电台列表</string>
+    <string name="ui_volume" formatted="false">音量</string>
+    <string name="ui_open_lyrics" formatted="false">打开歌词</string>
+    <string name="ui_mute_volume" formatted="false">静音</string>
+    <string name="ui_max_volume" formatted="false">最大音量</string>
+    <string name="ui_endless_queue" formatted="false">无限队列</string>
+    <string name="ui_repeat" formatted="false">循环</string>
+    <string name="ui_refresh_stations" formatted="false">刷新电台</string>
+    <string name="ui_favorite_station" formatted="false">喜欢的电台</string>
+    <string name="ui_close_ireconization" formatted="false">关闭 iReconization</string>
+    <string name="ui_cancel_voice_search" formatted="false">取消语音搜索</string>
+    <string name="ui_microphone" formatted="false">麦克风</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">更多选项</string>
+    <string name="ui_voice_search" formatted="false">语音搜索</string>
+    <string name="ui_saved" formatted="false">已保存</string>
+    <string name="ui_fill_search_query" formatted="false">填充搜索查询</string>
+    <string name="ui_remove_from_history" formatted="false">从历史记录移除</string>
+    <string name="ui_itune_icon" formatted="false">iTune 图标</string>
+    <string name="ui_artwork_preview" formatted="false">封面预览</string>
+    <string name="ui_decrease" formatted="false">减小</string>
+    <string name="ui_increase" formatted="false">增大</string>
+    <string name="ui_open_link" formatted="false">打开链接</string>
+    <string name="ui_reset_geometry" formatted="false">重置几何</string>
+    <string name="ui_reorder_provider" formatted="false">重新排序提供商</string>
+    <string name="ui_save_name" formatted="false">保存名称</string>
+    <string name="ui_editable_name" formatted="false">可编辑名称</string>
+    <string name="ui_google" formatted="false">Google</string>
+    <string name="ui_remove_account" formatted="false">移除账户</string>
+    <string name="ui_reorder_source_priority" formatted="false">重新排序源优先级</string>
+    <string name="ui_refresh_playlists" formatted="false">刷新播放列表</string>
+    <string name="ui_replay_poster" formatted="false">回放海报</string>
+    <string name="ui_settings" formatted="false">设置</string>
+    <string name="ui_artist_radio" formatted="false">艺术家电台</string>
+    <string name="ui_play_all" formatted="false">全部播放</string>
+    <string name="ui_delete_playlist" formatted="false">删除播放列表</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">无限队列</string>
+    <string name="ui_artist_info" formatted="false">艺术家信息</string>
+    <string name="ui_enabled" formatted="false">已启用</string>
+    <string name="ui_search_icon" formatted="false">搜索图标</string>
+    <string name="ui_region">地区：%1$s</string>
+    <string name="ui_connected_devices">已连接设备 (%1$s)</string>
+    <string name="ui_up_next">下一个 (%1$s)</string>
+    <string name="ui_text_da5c3629fd">%1$s ›</string>
+    <string name="ui_active_7c6a4064">%1$s • %2$s 活跃</string>
+    <string name="ui_no_new_available_right_now">目前没有新的 %1$s 可用</string>
+    <string name="ui_tracks">%1$s 曲目 • %2$s</string>
+    <string name="ui_songs">%1$s 首歌曲 • %2$s • %3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s • %2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s
+ </string>
+    <string name="ui_text_620b6e059c">• %1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$s 首曲目无法匹配：</string>
+    <string name="ui_text_a3edb2b714">• %1$s - %2$s</string>
+    <string name="ui_d_eeda119e">%1$s 天</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+%1$s 分贝</string>
+    <string name="ui_connected">%1$s 已连接</string>
+    <string name="ui_open_web_player">打开网页播放器 (%1$s)</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">国家：%1$s (%2$s)</string>
+    <string name="ui_city_state">城市 / 州：%1$s</string>
+    <string name="ui_codec_bitrate">编解码器 / 比特率：%1$s</string>
+    <string name="ui_language">语言：%1$s</string>
+    <string name="ui_tags">标签：%1$s</string>
+    <string name="ui_stream">流：%1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">未为 %1$s 配置 API 密钥。请在 设置 &gt; 歌词 中设置。</string>
+    <string name="ui_s_clip">%1$s 片段</string>
+    <string name="ui_loading_more_fm_stations_loaded">正在加载更多 FM 电台 (%1$s 已加载)...</string>
+    <string name="ui_found">找到 %1$s</string>
+    <string name="ui_version">版本 %1$s (%2$s)</string>
+    <string name="ui_of_active">%1$s 中有 %2$s 个活跃</string>
+    <string name="ui_text_adebc50ade">#%1$s</string>
+    <string name="ui_api_key">%1$s API 密钥</string>
+    <string name="ui_channel">频道：%1$s</string>
+    <string name="ui_sync_issue">同步问题：%1$s</string>
+    <string name="ui_enter">输入 %1$s</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">您确定要删除“%1$s”吗？该账户的所有数据、播放列表、收藏、历史记录和设置将被永久删除。</string>
+    <string name="ui_peak">峰值：%1$s</string>
+    <string name="ui_welcome">欢迎，%1$s</string>
+    <string name="ui_songs_played">已播放 %1$s 首歌曲</string>
+    <string name="ui_around">大约 %1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">当世界变得繁忙时，您大多在 %1$s 周围的 %2$s 调频。</string>
+    <string name="ui_itune_time_travel_575a110d">iTune 时间旅行 • %1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s · %2$s</string>
+    <string name="ui_your_biggest_day_was">你最大的一天是 %1$s。</string>
+    <string name="ui_listening_recap">%1$s 聆听回顾</string>
+    <string name="ui_busiest_day">最繁忙的一天：%1$s</string>
+    <string name="ui_peak_hour_00">峰值小时：%1$s:00</string>
+    <string name="ui_loading">正在加载 %1$s…</string>
+    <string name="ui_about">关于 %1$s</string>
+    <string name="ui_songs_9b614dc8">%1$s 首歌曲</string>
+    <string name="ui_current_offset_ms">当前偏移：%1$s 毫秒</string>
+    <string name="ui_connected_session">已连接会话：%1$s</string>
+    <string name="ui_k">%1$sK</string>
+    <string name="ui_top_result_c5e5adab">顶级结果 • %1$s</string>
+    <string name="toast_song_not_found_in_itune">iTune 中未找到歌曲</string>
+    <string name="toast_playback_failed_try_again">播放失败，请重试</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">自动睡眠定时器已激活 · 播放已暂停</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">离线模式：此歌曲未下载</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">离线模式：无法升级音质</string>
+    <string name="toast_upgrading_quality">正在升级音质</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">源中未启用无损流媒体源</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">在启用的源中未找到更高质量的流</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">随机播放被设置中的永久随机锁定</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">需要麦克风权限以识别音乐</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">识别弹窗需要显示在其他应用之上的权限</string>
+    <string name="toast_playback_failed">播放失败</string>
+    <string name="toast_complete_google_sign_in_first">先完成 Google 登录</string>
+    <string name="toast_waiting_for_youtube_music_session">正在等待 YouTube Music 会话...</string>
+    <string name="toast_couldn_t_load_tracks">无法加载曲目</string>
+    <string name="toast_copied_to_clipboard">已复制到剪贴板</string>
+    <string name="toast_profile_avatar_updated">个人资料头像已更新</string>
+    <string name="toast_no_tracks_found">未找到曲目</string>
+    <string name="toast_google_account_connected">Google 账户已连接</string>
+    <string name="toast_link_copied">链接已复制</string>
+    <string name="toast_could_not_open_browser">无法打开浏览器</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">输入 1024 到 65535 之间的端口</string>
+    <string name="toast_cached_music_cleared">缓存音乐已清除</string>
+    <string name="toast_no_tracks_available_to_add">没有可添加的曲目</string>
+    <string name="toast_enter_a_playlist_name">输入播放列表名称</string>
+    <string name="toast_system_sound_panel_opened">系统声音面板已打开</string>
+    <string name="toast_download_started_check_notification">下载已开始 · 检查通知</string>
+    <string name="toast_playback_will_stop_after_current_track">播放将在当前曲目后停止</string>
+    <string name="toast_sleep_timer_turned_off">睡眠定时器已关闭</string>
+    <string name="toast_stream_url_copied">流 URL 已复制</string>
+    <string name="toast_couldn_t_create_lyrics_card">无法创建歌词卡</string>
+    <string name="toast_restored_online_lyrics">已恢复在线歌词</string>
+    <string name="toast_lyrics_saved">歌词已保存</string>
+    <string name="toast_translation_cleared">翻译已清除</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">请先在 设置 &gt; 歌词 中设置您的 API 密钥</string>
+    <string name="toast_no_lyrics_found_for_this_song">未找到此歌曲的歌词</string>
+    <string name="toast_could_not_create_audio_clip">无法创建音频片段</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">片段已保存到 Music/iTune/Snippets</string>
+    <string name="toast_playing_next">正在播放下一首</string>
+    <string name="toast_added_to_queue">已添加到队列</string>
+    <string name="toast_download_started_check_notifications">下载已开始 · 检查通知</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">未在 YouTube Music 上找到此歌曲</string>
+    <string name="toast_couldn_t_start_mix">无法启动混音</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">未在 YouTube Music 上找到曲目</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">无法安全加密密码。自动备份未更改。</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">需要存储权限才能在下载中保存备份</string>
+    <string name="toast_choose_an_itune_backup_file">选择一个 iTune 备份文件</string>
+    <string name="toast_audio_artwork_cache_cleared">音频和封面缓存已清除</string>
+    <string name="toast_could_not_open_github">无法打开 GitHub</string>
+    <string name="toast_profile_name_updated">个人资料名称已更新</string>
+    <string name="toast_search_history_cleared">搜索历史记录已清除</string>
+    <string name="toast_listening_history_cleared">聆听历史记录已清除</string>
+    <string name="toast_cached_songs_cleared">缓存歌曲已清除</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">打开系统设置以授予显示在其他应用之上的权限</string>
+    <string name="toast_dynamic_island_geometry_reset">动态岛几何已重置</string>
+    <string name="toast_geometry_reset">几何已重置</string>
+    <string name="app_language">应用语言</string>
+    <string name="app_language_subtitle">菜单、按钮和消息的语言</string>
+    <string name="app_language_description">选择 iTune 界面使用的语言。</string>
+    <string name="system_default_language">系统默认</string>
+    <string name="follow_device_language">使用设备语言</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">使用英文界面</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface">使用印地语界面</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">使用西班牙语界面</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">使用法语界面</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">使用荷兰语界面</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">使用俄语界面</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">使用乌尔都语界面</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">使用中文界面</string>
+    <string name="hindi_interface_language">印地语界面</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">歌词提供商重置为默认值</string>
+    <string name="toast_api_key_saved">API 密钥已保存</string>
+    <string name="toast_base_url_updated">基本网址已更新</string>
+    <string name="toast_translation_prompt_updated">翻译提示已更新</string>
+    <string name="toast_equalizer_reset_to_flat">均衡器重置为平直</string>
+    <string name="toast_dj_console_reset">DJ 控制台重置</string>
+    <string name="toast_name_saved">名称已保存</string>
+    <string name="toast_syncing_youtube_music_library">正在同步 YouTube Music 库...</string>
+    <string name="toast_signed_out_local_likes_preserved">已注销（保留本地点赞）</string>
+    <string name="toast_signed_out_of_all_google_accounts">注销所有 Google 帐户</string>
+    <string name="toast_discord_disconnected">Discord 已断开</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">输入有效的登录 YouTube Music cookie（SAPISID 和会话 cookie）</string>
+    <string name="toast_youtube_music_account_connected">YouTube Music 账户已连接</string>
+    <string name="toast_account_renamed">帐户已重命名</string>
+    <string name="toast_account_deleted">帐户已删除</string>
+    <string name="toast_cannot_delete_your_only_account">无法删除您唯一的帐户</string>
+    <string name="toast_sources_restored_to_defaults">源恢复为默认值</string>
+    <string name="toast_spotify_disconnected">Spotify 已断开</string>
+    <string name="toast_spotify_sp_dc_token_saved">Spotify sp_dc 令牌已保存</string>
+    <string name="toast_spotify_connected">Spotify已连接！</string>
+    <string name="toast_complete_spotify_sign_in_first">先完成Spotify登录</string>
+    <string name="toast_saved_to_gallery">已保存到图库！</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">允许 iTune 安装更新以继续</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">下载的更新 APK 不可用</string>
+    <string name="toast_added_to_queue_next">接下来添加到队列</string>
+    <string name="toast_link_copied_to_clipboard">链接已复制到剪贴板</string>
+    <string name="toast_song_link_copied_to_clipboard">歌曲链接已复制到剪贴板</string>
+    <string name="toast_left_ishare_session">离开 iShare 会话</string>
+    <string name="toast_ishare_lan_host_started">iShare LAN主机启动！</string>
+    <string name="toast_scanning_lan_for_sessions">正在扫描 LAN 中的会话...</string>
+    <string name="toast_cache_cleared">缓存已清除</string>
+    <string name="toast_signed_out_successfully">退出成功</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">密码必须匹配且至少包含 8 个字符</string>
+    <string name="toast_no_backup_file_found_in_storage">存储中未找到备份文件</string>
+    <string name="toast_library_settings_restored">库和设置已恢复！</string>
+    <string name="toast_enter_your_backup_password">输入您的备份密码</string>
+    <string name="toast_syncing_spotify_library">正在同步 Spotify 库...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify 已连接！</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">请输入有效的 SP_DC cookie</string>
+    <string name="toast_playing">正在玩 %%1$s...</string>
+    <string name="toast_upgraded_to_lossless_kbps">升级到无损 • %%1$s kbps</string>
+    <string name="toast_playing_next_0f0c851c">接下来玩 %%1$s</string>
+    <string name="toast_added_to_queue_88e96c25">将 %%1$s 添加到队列中</string>
+    <string name="toast_playing_cb1fb3de">正在玩 %%1$s...</string>
+    <string name="toast_playing_next_e0082d95">下一个播放：%%1$s</string>
+    <string name="toast_couldn_t_load">无法加载 %%1$s</string>
+    <string name="toast_opening">打开 %%1$s…</string>
+    <string name="toast_couldn_t_open">无法打开 %%1$s</string>
+    <string name="toast_couldn_t_play">无法播放 %%1$s</string>
+    <string name="toast_library_pin">库密码：%%1$s</string>
+    <string name="toast_copied">已复制：%%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">睡眠定时器设置为 %%1$s 分钟</string>
+    <string name="toast_lyrics_applied">应用歌词 (%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">将 %%1$s 曲目添加到队列中</string>
+    <string name="toast_switched_feed_to">将馈送切换至 %%1$s</string>
+    <string name="toast_provider_updated_to">提供商更新为 %%1$s</string>
+    <string name="toast_target_language_set_to">目标语言设置为 %%1$s</string>
+    <string name="toast_translation_mode_set_to">翻译模式设置为 %%1$s</string>
+    <string name="toast_added_source">添加来源：%%1$s</string>
+    <string name="toast_installed_extension_s">已安装 %%1$s 扩展</string>
+    <string name="toast_imported_songs">导入“%%1$s”（%%2$s 歌曲）</string>
+    <string name="toast_couldn_t_find_on_youtube_music">在 YouTube Music 上找不到“%%1$s”</string>
+    <string name="toast_added_songs_to">将 %%1$s 歌曲添加到 %%2$s</string>
+    <string name="toast_joining">加入 %%1$s...</string>
+    <string name="toast_added_to">添加到 %%1$s</string>
+    <string name="toast_itune_v_for_android_tv">iTune v%%1$s 适用于 Android 电视</string>
+    <string name="toast_backup_failed">备份失败：%%1$s</string>
+    <string name="toast_restore_failed">恢复失败：%%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">iShare、动态岛和待机</string>
+    <string name="settings_ishare" formatted="false">爱分享</string>
+    <string name="settings_dynamic_island" formatted="false">动态岛</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">外浮式水泡控制器iTune</string>
+    <string name="settings_always_on_display" formatted="false">始终显示</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">音频引擎和音效</string>
+    <string name="settings_dolby_atmos" formatted="false">杜比全景声</string>
+    <string name="settings_text_8948f8179a" formatted="false">8D音频</string>
+    <string name="settings_spatial_audio" formatted="false">空间音频</string>
+    <string name="settings_equalizer_eq" formatted="false">均衡器（EQ）</string>
+    <string name="settings_low_pass_filtering" formatted="false">低通滤波</string>
+    <string name="settings_dj_studio_panel" formatted="false">DJ 工作室面板</string>
+    <string name="settings_audio_normalization" formatted="false">音频标准化</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB 位完美 DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">纯音频旁路</string>
+    <string name="settings_signal_pipeline" formatted="false">信号管道</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">${audioEngine.pillBadge.text} -&gt; $activeOutputName</string>
+    <string name="settings_audio_playback" formatted="false">音频与播放</string>
+    <string name="settings_sources" formatted="false">来源</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">管理 YouTube Music、JioSaavn、可安装扩展、WebDAV、SMB 和播放优先级</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">发生错误时自动跳过</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">如果播放失败，则移至下一首排队的歌曲</string>
+    <string name="settings_download_quality" formatted="false">下载质量</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">歌曲下载操作使用的默认质量</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">选择整个应用程序下载的默认音频质量。</string>
+    <string name="settings_lossless_audio" formatted="false">无损音频</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">升级缓存歌曲的质量</string>
+    <string name="settings_streaming_quality" formatted="false">流媒体质量</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">选择您喜欢的流媒体音频质量。</string>
+    <string name="settings_pcm_output_format" formatted="false">PCM 输出格式</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">在当前位置重建播放</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">选择 Android 音频输出请求的 PCM 格式。 USB DAC 可以将其转换为它支持的格式。</string>
+    <string name="settings_crossfade" formatted="false">交叉淡入淡出</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">将结束曲目的淡出与下一首曲目的开始重叠。</string>
+    <string name="settings_automix" formatted="false">自动混音</string>
+    <string name="settings_afterglow" formatted="false">余辉</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">在每首歌曲的选定最后几秒应用相同的低通均衡器效果。启用后，Afterglow 会暂停自动混合和交叉淡入淡出。</string>
+    <string name="settings_permanent_shuffle" formatted="false">永久随机播放</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">让随机播放在播放器中永久锁定</string>
+    <string name="settings_pause_at_volume_0" formatted="false">在音量 0 处暂停</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">音量为零时自动暂停播放</string>
+    <string name="settings_volume_bar" formatted="false">音量条</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">当您按音量按钮时显示在 ${state.volumeBarSide.lowercase()} 边缘</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">选择应用内音量条显示在屏幕的哪个边缘。</string>
+    <string name="settings_content" formatted="false">内容</string>
+    <string name="settings_default_content_language" formatted="false">默认内容语言</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">表达心情、浏览和搜索的语言</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">选择浏览、情绪和流派、播放列表和新版本中使用的首选目录语言。</string>
+    <string name="settings_default_content_country" formatted="false">默认内容国家/地区</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">排行榜、播放列表和新版本的区域</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">选择用于新添加专辑、地区心情和精选播放列表的地区店面。</string>
+    <string name="settings_hide_explicit_content" formatted="false">隐藏露骨内容</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">通过心情、浏览和搜索过滤露骨的歌曲</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">正在播放&amp;液体玻璃</string>
+    <string name="settings_splash_screen" formatted="false">启动画面</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">应用程序启动品牌动画和流畅的标题揭晓</string>
+    <string name="settings_animated_cover_art" formatted="false">动画封面艺术</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">Spotify 帆布、Apple Music、潮汐和社区运动罩</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">Spotify 和画布设置</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">自动隐藏画布控件</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">Canvas 播放时 5 秒后最小化控件（点击 Canvas 进行切换）</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">在画布上显示同步歌词</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">当 Canvas 控件隐藏时，在歌曲名称上方显示动画同步歌词</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">优先考虑Spotify帆布</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">在 Apple Music、潮汐和社区之前尝试 Spotify Canvas</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">通过手机播放动画封面</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">允许通过移动数据循环播放 Canvas 视频</string>
+    <string name="settings_player_type" formatted="false">玩家类型</string>
+    <string name="settings_player_style" formatted="false">球员风格</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">玩家动态着色</string>
+    <string name="settings_full_screen_cover_art" formatted="false">全屏封面艺术</string>
+    <string name="settings_corner_length" formatted="false">角长</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">调整方形专辑封面的圆角半径</string>
+    <string name="settings_hide_quality_tag" formatted="false">隐藏质量标签</string>
+    <string name="settings_hide_volume_bar" formatted="false">隐藏音量栏</string>
+    <string name="settings_home_top_card_style" formatted="false">首页顶卡风格</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">液体玻璃导航和迷你播放器</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">玻璃吧台和迷你播放器，带有水泡透镜</string>
+    <string name="settings_time_synced_lyrics" formatted="false">时间同步歌词</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">实时跟随歌词和歌词</string>
+    <string name="settings_app_font" formatted="false">应用程序字体</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">更改应用程序排版；播放器控件保留其设计的字体</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">选择应用程序界面的字体。</string>
+    <string name="settings_lyrics_providers" formatted="false">歌词提供者</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 个来源 • 确定优先级并切换后备顺序</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">液态玻璃铬</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">折射半透明接头和底座卡</string>
+    <string name="settings_tactile_haptics" formatted="false">触觉</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">玩家控制上的微妙脉冲反馈</string>
+    <string name="settings_downloads_storage" formatted="false">下载和存储</string>
+    <string name="settings_cellular_streaming" formatted="false">蜂窝流媒体</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">移动数据上的音频带宽</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">从 Wi-Fi 流式传输时控制音频保真度。</string>
+    <string name="settings_download_over_wi_fi" formatted="false">下载过Wi-Fi</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">自动下载前等待 Wi-Fi</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">播放后缓存歌曲</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">歌曲播放完毕后将其保存到离线存储</string>
+    <string name="settings_cache_quality" formatted="false">缓存质量</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">较低的质量可以节省存储空间</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">选择播放完成后保存的歌曲的质量。适用于从现在开始缓存的歌曲。</string>
+    <string name="settings_song_storage_limit" formatted="false">歌曲存储限制</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">在驱逐较旧的未播放歌曲之前为离线音频缓存分配的最大磁盘存储空间。</string>
+    <string name="settings_clear_cached_songs" formatted="false">清除缓存的歌曲</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">${MusicCacheManager.cachedTracks.size} 歌曲 • ${MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)}</string>
+    <string name="settings_automatic_downloads" formatted="false">自动下载</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">离线保存新喜欢和添加的曲目</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">清除应用程序缓冲区缓存</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">删除临时封面艺术和网络缓冲区</string>
+    <string name="settings_library_listening" formatted="false">图书馆与听力</string>
+    <string name="settings_sync_library" formatted="false">同步库</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">保持艺术家、播放列表和专辑的更新</string>
+    <string name="settings_listening_history" formatted="false">聆听历史</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">塑造个性化的混音和最近播放的内容</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">在此设备上保持点赞</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">退出时将喜欢的歌曲保留在 iTune 中</string>
+    <string name="settings_notifications_general" formatted="false">通知和一般信息</string>
+    <string name="settings_offline_mode" formatted="false">离线模式</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">需要下载副本才能开始播放</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">任务清除时停止音乐</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">当 iTune 从最近播放的内容中滑开时停止播放</string>
+    <string name="settings_auto_sleep_timer" formatted="false">自动睡眠定时器</string>
+    <string name="settings_network_proxy" formatted="false">网络代理</string>
+    <string name="settings_profile_name" formatted="false">个人资料名称</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">自定义您的设置个人资料显示名称</string>
+    <string name="settings_news_from_dev" formatted="false">来自开发者的消息</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">公告、发布和变更日志</string>
+    <string name="settings_general_about" formatted="false">一般及关于</string>
+    <string name="settings_home_screen_widget" formatted="false">主屏幕小部件</string>
+    <string name="settings_widget_customization" formatted="false">小部件定制</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">选择尺寸预览、图稿、控件和小部件样式</string>
+    <string name="settings_backup_restore" formatted="false">备份与恢复</string>
+    <string name="settings_automatic_daily_backup" formatted="false">自动每日备份</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">加密的每日备份 • 下载/iTune/备份</string>
+    <string name="settings_back_up_itune" formatted="false">备份iTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">加密保存帐户、所有设置、音频效果、库数据和统计数据</string>
+    <string name="settings_restore_from_backup" formatted="false">从备份恢复</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">从 .itune 恢复设置、音频效果、帐户或库数据</string>
+    <string name="settings_privacy" formatted="false">隐私</string>
+    <string name="settings_pause_search_history" formatted="false">暂停搜索历史记录</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">不要将新的搜索查询保存到历史记录中</string>
+    <string name="settings_clear_search_history" formatted="false">清除搜索历史记录</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">从搜索中删除最近的查询</string>
+    <string name="settings_pause_listening_history" formatted="false">暂停收听历史记录</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">不记录播放的歌曲或更新推荐</string>
+    <string name="settings_clear_listening_history" formatted="false">清晰的收听历史记录</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">删除播放历史记录并重置品味配置文件</string>
+    <string name="settings_disable_screenshot" formatted="false">禁用屏幕截图</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">跨应用程序阻止屏幕截图和屏幕录制</string>
+    <string name="settings_best_available" formatted="false">最佳可用</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">使用最高的可用源质量</string>
+    <string name="settings_maximum" formatted="false">最大</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">选择最高码率的码流</string>
+    <string name="settings_high" formatted="false">高</string>
+    <string name="settings_target_about_160_kbps" formatted="false">目标约为 160 kbps</string>
+    <string name="settings_standard" formatted="false">标准型</string>
+    <string name="settings_target_about_128_kbps" formatted="false">目标约为 128 kbps</string>
+    <string name="settings_data_saver" formatted="false">数据保护程序</string>
+    <string name="settings_target_about_64_kbps" formatted="false">目标约为 64 kbps</string>
+    <string name="settings_extreme" formatted="false">极限</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">最大保真度 (256+ kbps)</string>
+    <string name="settings_high_b1a5954a" formatted="false">高</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">高品质音频（~160 kbps）</string>
+    <string name="settings_medium" formatted="false">中等</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">标准音频质量（~128 kbps）</string>
+    <string name="settings_low" formatted="false">低</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">数据保护音频（~48-64 kbps）</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">16位PCM</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">标准整数PCM输出；与 USB 音频类 DAC 广泛兼容</string>
+    <string name="settings_text_6697202e38" formatted="false">32位浮点数PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">当 Android 和连接的音频路径支持时，浮点 PCM 输出</string>
+    <string name="settings_off" formatted="false">关闭</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">连续播放曲目干净利落</string>
+    <string name="settings_text_6597740315" formatted="false">2秒</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">微妙的过渡重叠</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4秒</string>
+    <string name="settings_short_seamless_fade" formatted="false">短距离无缝淡入淡出</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6秒</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">均衡的 DJ 风格过渡</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8秒</string>
+    <string name="settings_smooth_extended_blend" formatted="false">平滑扩展混合</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12秒</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">最大连续混合混合</string>
+    <string name="settings_off_e3de5ab0" formatted="false">关闭</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">保持正常的播放效果和过渡</string>
+    <string name="settings_text_6db610cca6" formatted="false">5秒</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">在每首歌曲的最后 5 秒应用低通</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10秒</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">在每首歌曲的最后 10 秒应用低通</string>
+    <string name="settings_text_eb4354110e" formatted="false">15秒</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">在每首歌曲的最后 15 秒应用低通</string>
+    <string name="settings_right" formatted="false">右</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">在右边缘显示音量条（默认）</string>
+    <string name="settings_left" formatted="false">左</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">在左边缘显示音量条</string>
+    <string name="settings_high_efficiency" formatted="false">高效率</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">使用最少的蜂窝数据</string>
+    <string name="settings_high_quality" formatted="false">高品质</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 kbps 平衡移动播放</string>
+    <string name="settings_lossless" formatted="false">无损</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">5G/LTE 网络完全无损</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">关闭</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">仅允许在 Wi-Fi 上进行流式传输</string>
+    <string name="settings_text_03a001f575" formatted="false">500MB</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">紧凑的缓存（约 70 首歌曲）</string>
+    <string name="settings_text_33015e637f" formatted="false">1GB</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">中等缓存（约 150 首歌曲）</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2GB</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">推荐默认值（~300 首歌曲）</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5GB</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">大型离线收藏（约 800 首歌曲）</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10GB</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">非常大的库（约 1,600 首歌曲）</string>
+    <string name="settings_unlimited" formatted="false">无限</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">切勿逐出缓存的歌曲</string>
+    <string name="settings_pipeline_output">%1$s → %2$s</string>
+    <string name="settings_volume_bar_side">当您按下音量按钮时显示在 %1$s 边缘</string>
+    <string name="settings_corner_radius_value">%1$d dp</string>
+    <string name="settings_active_lyrics_providers">%1$d 主动</string>
+    <string name="settings_cached_song_count_size">%1$d 歌曲 • %2$s</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">使用德语界面</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">使用葡萄牙语界面</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">使用意大利语界面</string>
+    <string name="japanese_language">日本語</string>
+    <string name="japanese_interface">使用日语界面</string>
+    <string name="favorite_artist">最喜欢的艺术家</string>
+    <string name="remove_favorite_artist">从最喜欢的艺术家中删除</string>
+    <string name="add_to_favorite_artists">添加到最喜欢的艺术家</string>
+    <string name="removed_from_artists">从艺术家中删除</string>
+    <string name="added_to_artists">添加到艺术家</string>
+    <string name="play_top_songs">播放热门歌曲</string>
+    <string name="play_album">播放专辑</string>
+    <string name="play_playlist">播放播放列表</string>
+    <string name="create_new_playlist">创建新的播放列表</string>
+    <string name="create_playlist">创建播放列表</string>
+    <string name="radio">收音机</string>
+    <string name="search">搜索</string>
+    <string name="share_playlist_link">分享播放列表链接</string>
+    <string name="copy_share_link">复制分享链接</string>
+    <string name="rename_playlist">重命名播放列表</string>
+    <string name="delete_playlist">删除播放列表</string>
+    <string name="share_link_copied">分享链接已复制</string>
+    <string name="playlist_removed">播放列表已删除</string>
+    <string name="playlist_no_longer_available">该播放列表不再可用。</string>
+    <string name="empty_playlist">空播放列表</string>
+    <string name="filter_playlists">过滤播放列表...</string>
+    <string name="filter_albums">筛选相册...</string>
+    <string name="library_playlist_count_one">%1$d 播放列表</string>
+    <string name="library_playlist_count_many">%1$d 播放列表</string>
+    <string name="library_album_count_one">%1$d 添加专辑</string>
+    <string name="library_album_count_many">%1$d 添加专辑</string>
+    <string name="remove_from_favorites">从收藏夹中删除</string>
+    <string name="play_top_album">播放热门专辑</string>
+    <string name="open_in_spotify">在 Spotify 中打开</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">한국어 인터페이스</string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Svenskt gränssnitt</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">الواجهة العربية</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Use the Azerbaijani interface</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Use the Bengali interface</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Use the Bulgarian interface</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Use the Catalan interface</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">Use the Czech interface</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Use the Danish interface</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Use the Finnish interface</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Use the Greek interface</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Use the Hebrew interface</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Use the Hungarian interface</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Use the Indonesian interface</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Use the Malay interface</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Use the Norwegian interface</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Use the Persian interface</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Use the Polish interface</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Use the Romanian interface</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Use the Slovak interface</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Use the Thai interface</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Use the Turkish interface</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Use the Ukrainian interface</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Use the Vietnamese interface</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Use the Swahili interface</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Use the Filipino interface</string>
+</resources>
