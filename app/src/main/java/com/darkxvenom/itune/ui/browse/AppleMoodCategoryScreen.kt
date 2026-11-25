@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.browse
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -262,7 +265,7 @@ fun AppleMoodCategoryScreen(
                         val queue = if (shuffled) loaded.shuffled() else loaded
                         MusicPlayerState.play(queue.first(), queue, expandPlayer = false)
                     } else {
-                        Toast.makeText(context, "Couldn't load tracks", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_couldn_t_load_tracks), Toast.LENGTH_SHORT).show()
                     }
                 } finally {
                     isPlayingMix = false
@@ -361,7 +364,7 @@ fun AppleMoodCategoryScreen(
                                     Spacer(Modifier.width(16.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
-                                            text = "MOODS & MOMENTS",
+                                            text = stringResource(R.string.ui_moods_moments),
                                             color = artworkPalette.accent,
                                             fontSize = 11.5.sp,
                                             fontWeight = FontWeight.Bold,
@@ -580,7 +583,7 @@ fun AppleMoodCategoryScreen(
                         ) {
                             Icon(
                                 imageVector = ITubeIcons.Search,
-                                contentDescription = "Filter",
+                                contentDescription = stringResource(R.string.ui_filter),
                                 tint = if (searchOpen) LibraryCrimsonAccent else Color.White,
                                 modifier = Modifier.size(21.dp),
                             )
@@ -588,7 +591,7 @@ fun AppleMoodCategoryScreen(
                         IconButton(onClick = { refreshNonce++ }) {
                             Icon(
                                 imageVector = Icons.Rounded.Refresh,
-                                contentDescription = "Refresh",
+                                contentDescription = stringResource(R.string.ui_refresh),
                                 tint = Color.White,
                                 modifier = Modifier.size(21.dp),
                             )
