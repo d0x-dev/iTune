@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.splash
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -322,7 +324,7 @@ fun SplashScreen(
             // 1. Animated Brand Waves Icon
             Image(
                 painter = painterResource(id = R.drawable.ic_itune_waves),
-                contentDescription = "iTune Waves",
+                contentDescription = stringResource(R.string.ui_itune_waves),
                 colorFilter = ColorFilter.tint(currentIconColor),
                 modifier = Modifier
                     .size(with(density) { currentIconSizePx.toDp() })
