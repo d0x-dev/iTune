@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.timetravel
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -59,7 +62,7 @@ fun ListeningActivityByDayChart(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "Activity by Day",
+                text = stringResource(R.string.ui_activity_by_day),
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
@@ -76,7 +79,7 @@ fun ListeningActivityByDayChart(
                 else -> "Active"
             }
             Text(
-                text = "Peak: $peakName",
+                text = stringResource(R.string.ui_peak, peakName),
                 color = Color(0xFFFC3C44),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -167,7 +170,7 @@ fun ListeningActivityByHourChart(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "Rhythm by Hour",
+                text = stringResource(R.string.ui_rhythm_by_hour),
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
@@ -180,7 +183,7 @@ fun ListeningActivityByHourChart(
                 else -> "$peakHour AM"
             }
             Text(
-                text = "Peak: $peakText",
+                text = stringResource(R.string.ui_peak, peakText),
                 color = Color(0xFF7928CA),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -237,11 +240,11 @@ fun ListeningActivityByHourChart(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text("12 AM", color = Color.White.copy(alpha = 0.4f), fontSize = 10.sp)
-            Text("6 AM", color = Color.White.copy(alpha = 0.4f), fontSize = 10.sp)
-            Text("12 PM", color = Color.White.copy(alpha = 0.4f), fontSize = 10.sp)
-            Text("6 PM", color = Color.White.copy(alpha = 0.4f), fontSize = 10.sp)
-            Text("11 PM", color = Color.White.copy(alpha = 0.4f), fontSize = 10.sp)
+            Text(stringResource(R.string.ui_text_1a19c52178), color = Color.White.copy(alpha = 0.4f), fontSize = 10.sp)
+            Text(stringResource(R.string.ui_text_db9b8df506), color = Color.White.copy(alpha = 0.4f), fontSize = 10.sp)
+            Text(stringResource(R.string.ui_text_0d472b5ab0), color = Color.White.copy(alpha = 0.4f), fontSize = 10.sp)
+            Text(stringResource(R.string.ui_text_2812537f20), color = Color.White.copy(alpha = 0.4f), fontSize = 10.sp)
+            Text(stringResource(R.string.ui_text_a6dee6102d), color = Color.White.copy(alpha = 0.4f), fontSize = 10.sp)
         }
     }
 }
