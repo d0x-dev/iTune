@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.settings
 
+
+import androidx.compose.ui.res.stringResource
 import android.widget.Toast
 import android.annotation.SuppressLint
 import android.view.ViewGroup
@@ -222,7 +224,7 @@ fun SettingsProfileAccountScreen(
         IShareSyncManager.setDisplayName(cleanName)
         MultiAccountManager.updateActiveAccountProfile(context, displayName = cleanName)
         focusManager.clearFocus()
-        Toast.makeText(context, "Name saved", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.toast_name_saved), Toast.LENGTH_SHORT).show()
     }
 
     BackHandler(enabled = loginMode == null) {
@@ -253,7 +255,7 @@ fun SettingsProfileAccountScreen(
                 // Header
                 item(key = "profile_header") {
                     Text(
-                        text = "Account",
+                        text = stringResource(R.string.ui_account),
                         color = Color.White,
                         fontSize = 34.sp,
                         fontWeight = FontWeight.Bold,
@@ -299,7 +301,7 @@ fun SettingsProfileAccountScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Rounded.PhotoCamera,
-                                    contentDescription = "Choose Avatar",
+                                    contentDescription = stringResource(R.string.ui_choose_avatar),
                                     tint = Color.White,
                                     modifier = Modifier.size(15.dp),
                                 )
@@ -308,7 +310,7 @@ fun SettingsProfileAccountScreen(
 
                         Spacer(Modifier.height(10.dp))
                         Text(
-                            text = "Tap avatar to customize",
+                            text = stringResource(R.string.ui_tap_avatar_to_customize),
                             color = AppleTextSecondary,
                             fontSize = 13.sp,
                             modifier = Modifier.clickable {
@@ -327,7 +329,7 @@ fun SettingsProfileAccountScreen(
                             .padding(horizontal = 16.dp),
                     ) {
                         Text(
-                            text = "PROFILE",
+                            text = stringResource(R.string.ui_profile),
                             color = Color.White.copy(alpha = 0.56f),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -349,7 +351,7 @@ fun SettingsProfileAccountScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Text(
-                                    text = "Name",
+                                    text = stringResource(R.string.ui_name),
                                     color = Color.White,
                                     fontSize = 15.5.sp,
                                     fontWeight = FontWeight.Medium,
@@ -375,7 +377,7 @@ fun SettingsProfileAccountScreen(
                                         Box(contentAlignment = Alignment.CenterStart) {
                                             if (nameInput.isEmpty()) {
                                                 Text(
-                                                    text = "Your Name",
+                                                    text = stringResource(R.string.ui_your_name),
                                                     color = Color.White.copy(alpha = 0.35f),
                                                     fontSize = 15.5.sp,
                                                 )
@@ -395,13 +397,13 @@ fun SettingsProfileAccountScreen(
                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                             Icon(
                                                 imageVector = Icons.Rounded.Check,
-                                                contentDescription = "Save name",
+                                                contentDescription = stringResource(R.string.ui_save_name),
                                                 tint = Color.White,
                                                 modifier = Modifier.size(13.dp),
                                             )
                                             Spacer(Modifier.width(3.dp))
                                             Text(
-                                                text = "Save",
+                                                text = stringResource(R.string.save),
                                                 color = Color.White,
                                                 fontSize = 12.sp,
                                                 fontWeight = FontWeight.SemiBold,
@@ -411,7 +413,7 @@ fun SettingsProfileAccountScreen(
                                 } else {
                                     Icon(
                                         imageVector = Icons.Rounded.Edit,
-                                        contentDescription = "Editable Name",
+                                        contentDescription = stringResource(R.string.ui_editable_name),
                                         tint = Color.White.copy(alpha = 0.38f),
                                         modifier = Modifier.size(16.dp),
                                     )
@@ -436,14 +438,14 @@ fun SettingsProfileAccountScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Text(
-                                    text = "Avatar",
+                                    text = stringResource(R.string.ui_avatar),
                                     color = Color.White,
                                     fontSize = 15.5.sp,
                                     fontWeight = FontWeight.Medium,
                                     modifier = Modifier.weight(1f),
                                 )
                                 Text(
-                                    text = "Memoji & Style",
+                                    text = stringResource(R.string.ui_memoji_style),
                                     color = AppleTextSecondary,
                                     fontSize = 14.sp,
                                 )
@@ -470,7 +472,7 @@ fun SettingsProfileAccountScreen(
                             .padding(horizontal = 16.dp),
                     ) {
                         Text(
-                            text = "ACCOUNTS",
+                            text = stringResource(R.string.ui_accounts_d7cfa423),
                             color = Color.White.copy(alpha = 0.56f),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -526,7 +528,7 @@ fun SettingsProfileAccountScreen(
                                         )
                                         if (isActive) {
                                             Text(
-                                                text = "Current Account",
+                                                text = stringResource(R.string.ui_current_account),
                                                 color = AppleMusicRed,
                                                 fontSize = 12.sp,
                                                 fontWeight = FontWeight.Normal,
@@ -537,7 +539,7 @@ fun SettingsProfileAccountScreen(
                                     if (isActive) {
                                         Icon(
                                             imageVector = Icons.Rounded.Check,
-                                            contentDescription = "Active",
+                                            contentDescription = stringResource(R.string.ui_active),
                                             tint = AppleMusicRed,
                                             modifier = Modifier.size(18.dp),
                                         )
@@ -558,7 +560,7 @@ fun SettingsProfileAccountScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Rounded.MoreVert,
-                                            contentDescription = "Account Options",
+                                            contentDescription = stringResource(R.string.ui_account_options),
                                             tint = Color.White.copy(alpha = 0.58f),
                                             modifier = Modifier.size(20.dp),
                                         )
@@ -599,7 +601,7 @@ fun SettingsProfileAccountScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Rounded.Add,
-                                        contentDescription = "Add Account",
+                                        contentDescription = stringResource(R.string.ui_add_account),
                                         tint = AppleMusicRed,
                                         modifier = Modifier.size(22.dp),
                                     )
@@ -608,7 +610,7 @@ fun SettingsProfileAccountScreen(
                                 Spacer(Modifier.width(14.dp))
 
                                 Text(
-                                    text = "Add Account",
+                                    text = stringResource(R.string.ui_add_account),
                                     color = AppleMusicRed,
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.SemiBold,
@@ -626,7 +628,7 @@ fun SettingsProfileAccountScreen(
                             .padding(horizontal = 16.dp),
                     ) {
                         Text(
-                            text = "YOUTUBE MUSIC & GOOGLE",
+                            text = stringResource(R.string.ui_youtube_music_google),
                             color = Color.White.copy(alpha = 0.56f),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -674,7 +676,7 @@ fun SettingsProfileAccountScreen(
                                         } else {
                                             Image(
                                                 painter = painterResource(R.drawable.ic_google_logo),
-                                                contentDescription = "Google",
+                                                contentDescription = stringResource(R.string.ui_google),
                                                 modifier = Modifier.size(24.dp),
                                             )
                                         }
@@ -703,7 +705,7 @@ fun SettingsProfileAccountScreen(
                                         )
                                         if (!ytAccount.channelName.isNullOrBlank()) {
                                             Text(
-                                                text = "Channel: ${ytAccount.channelName}",
+                                                text = stringResource(R.string.ui_channel, ytAccount.channelName.orEmpty()),
                                                 color = Color(0xFF34C759),
                                                 fontSize = 12.sp,
                                                 fontWeight = FontWeight.Medium,
@@ -731,7 +733,7 @@ fun SettingsProfileAccountScreen(
                                         .clickable(enabled = !ytAccount.isSyncing) {
                                             haptics.play(Haptic.Tap)
                                             YouTubeLibrarySyncManager.launchFullSync(context)
-                                            Toast.makeText(context, "Syncing YouTube Music library...", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.toast_syncing_youtube_music_library), Toast.LENGTH_SHORT).show()
                                         }
                                         .padding(horizontal = 16.dp, vertical = 14.dp),
                                     verticalAlignment = Alignment.CenterVertically,
@@ -776,7 +778,7 @@ fun SettingsProfileAccountScreen(
 
                                 if (!ytAccount.lastSyncError.isNullOrBlank()) {
                                     Text(
-                                        text = "Sync issue: ${ytAccount.lastSyncError}",
+                                        text = stringResource(R.string.ui_sync_issue, ytAccount.lastSyncError.orEmpty()),
                                         color = Color(0xFFFF6961),
                                         fontSize = 12.sp,
                                         lineHeight = 16.sp,
@@ -822,7 +824,7 @@ fun SettingsProfileAccountScreen(
                                     Spacer(Modifier.width(12.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
-                                            text = "Choose YouTube Channel",
+                                            text = stringResource(R.string.ui_choose_youtube_channel),
                                             color = Color.White,
                                             fontSize = 15.5.sp,
                                             fontWeight = FontWeight.Medium,
@@ -868,7 +870,7 @@ fun SettingsProfileAccountScreen(
                                                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                                             } else {
                                                 YouTubeLibrarySyncManager.signOutAndPreserveLocal(context)
-                                                Toast.makeText(context, "Signed out (local likes preserved)", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, context.getString(R.string.toast_signed_out_local_likes_preserved), Toast.LENGTH_SHORT).show()
                                             }
                                         }
                                         .padding(horizontal = 16.dp, vertical = 14.dp),
@@ -914,14 +916,14 @@ fun SettingsProfileAccountScreen(
                                             .clickable {
                                                 haptics.play(Haptic.Select)
                                                 YouTubeLibrarySyncManager.signOutAndPreserveLocal(context)
-                                                Toast.makeText(context, "Signed out of all Google accounts", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, context.getString(R.string.toast_signed_out_of_all_google_accounts), Toast.LENGTH_SHORT).show()
                                             }
                                             .padding(horizontal = 16.dp, vertical = 14.dp),
                                         verticalAlignment = Alignment.CenterVertically,
                                     ) {
                                         Spacer(Modifier.width(41.dp))
                                         Text(
-                                            text = "Sign Out All Accounts",
+                                            text = stringResource(R.string.ui_sign_out_all_accounts),
                                             color = AppleMusicRed.copy(alpha = 0.88f),
                                             fontSize = 15.sp,
                                             fontWeight = FontWeight.Medium,
@@ -957,7 +959,7 @@ fun SettingsProfileAccountScreen(
                                         )
                                         if (changed) {
                                             val label = profile.name.ifBlank { session.name.ifBlank { "Google Account" } }
-                                            Toast.makeText(context, "Switched feed to $label", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.toast_switched_feed_to, label), Toast.LENGTH_SHORT).show()
                                         }
                                     },
                                     onRemoveAccount = { session ->
@@ -988,7 +990,7 @@ fun SettingsProfileAccountScreen(
 
                         Spacer(Modifier.height(8.dp))
                         Text(
-                            text = "Likes added while signed in are saved both locally and on YouTube Music, so they remain in your Library even after signing out.",
+                            text = stringResource(R.string.ui_likes_added_while_signed_in_are_saved_both_locally_and),
                             color = AppleTextSecondary.copy(alpha = 0.72f),
                             fontSize = 12.sp,
                             lineHeight = 16.sp,
@@ -1002,7 +1004,7 @@ fun SettingsProfileAccountScreen(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     ) {
                         Text(
-                            text = "MUSIC SERVICES",
+                            text = stringResource(R.string.ui_music_services),
                             color = Color.White.copy(alpha = 0.56f),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -1028,13 +1030,13 @@ fun SettingsProfileAccountScreen(
                                 ) {
                                     Image(
                                         painter = painterResource(R.drawable.ic_spotify),
-                                        contentDescription = "Spotify",
+                                        contentDescription = stringResource(R.string.ui_spotify),
                                         modifier = Modifier.size(22.dp),
                                     )
                                 }
                                 Spacer(Modifier.width(12.dp))
                                 Column(Modifier.weight(1f)) {
-                                    Text("Spotify & Canvas", color = Color.White, fontSize = 15.5.sp, fontWeight = FontWeight.Medium)
+                                    Text(stringResource(R.string.ui_spotify_canvas), color = Color.White, fontSize = 15.5.sp, fontWeight = FontWeight.Medium)
                                     val spotifySub = if (settingsState.spotifySpdcToken.isNotBlank()) {
                                         "Connected · Canvas, Playlists & Import"
                                     } else {
@@ -1061,11 +1063,11 @@ fun SettingsProfileAccountScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Box(Modifier.size(30.dp).clip(RoundedCornerShape(8.dp)).background(Color(0xFFD51007)), contentAlignment = Alignment.Center) {
-                                    Text("L", color = Color.White, fontSize = 19.sp, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(R.string.ui_l), color = Color.White, fontSize = 19.sp, fontWeight = FontWeight.Bold)
                                 }
                                 Spacer(Modifier.width(12.dp))
                                 Column(Modifier.weight(1f)) {
-                                    Text("Last.fm Scrobbling", color = Color.White, fontSize = 15.5.sp, fontWeight = FontWeight.Medium)
+                                    Text(stringResource(R.string.ui_last_fm_scrobbling), color = Color.White, fontSize = 15.5.sp, fontWeight = FontWeight.Medium)
                                     Text(LastFmIntegration.status, color = AppleTextSecondary, fontSize = 12.5.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                                 }
                                 Text(
@@ -1084,11 +1086,11 @@ fun SettingsProfileAccountScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Box(Modifier.size(30.dp).clip(RoundedCornerShape(8.dp)).background(Color(0xFF5865F2)), contentAlignment = Alignment.Center) {
-                                    Text("D", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(R.string.ui_d), color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                                 }
                                 Spacer(Modifier.width(12.dp))
                                 Column(Modifier.weight(1f)) {
-                                    Text("Discord Rich Presence", color = Color.White, fontSize = 15.5.sp, fontWeight = FontWeight.Medium)
+                                    Text(stringResource(R.string.ui_discord_rich_presence), color = Color.White, fontSize = 15.5.sp, fontWeight = FontWeight.Medium)
                                     val subtitle = when {
                                         DiscordPresenceManager.username.isBlank() -> "Optional · Show what you’re listening to"
                                         DiscordPresenceManager.enabled -> "On · ${DiscordPresenceManager.displayName}"
@@ -1112,11 +1114,11 @@ fun SettingsProfileAccountScreen(
                                 Row(
                                     modifier = Modifier.fillMaxWidth().clickable {
                                         DiscordPresenceManager.disconnect()
-                                        Toast.makeText(context, "Discord disconnected", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, context.getString(R.string.toast_discord_disconnected), Toast.LENGTH_SHORT).show()
                                     }.padding(start = 58.dp, end = 16.dp, top = 11.dp, bottom = 12.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
-                                    Text("Disconnect Discord", color = AppleMusicRed, fontSize = 13.5.sp, fontWeight = FontWeight.Medium)
+                                    Text(stringResource(R.string.ui_disconnect_discord), color = AppleMusicRed, fontSize = 13.5.sp, fontWeight = FontWeight.Medium)
                                 }
                             }
                         }
@@ -1126,7 +1128,7 @@ fun SettingsProfileAccountScreen(
                 item(key = "advanced_google_login") {
                     Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
                         Text(
-                            text = "ADVANCED LOGIN",
+                            text = stringResource(R.string.ui_advanced_login),
                             color = Color.White.copy(alpha = 0.56f),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -1144,8 +1146,8 @@ fun SettingsProfileAccountScreen(
                             }
                             Spacer(Modifier.width(12.dp))
                             Column(Modifier.weight(1f)) {
-                                Text("Advanced Cookie Login", color = Color.White, fontSize = 15.5.sp, fontWeight = FontWeight.Medium)
-                                Text("Connect YouTube Music with session cookies", color = AppleTextSecondary, fontSize = 12.5.sp)
+                                Text(stringResource(R.string.ui_advanced_cookie_login), color = Color.White, fontSize = 15.5.sp, fontWeight = FontWeight.Medium)
+                                Text(stringResource(R.string.ui_connect_youtube_music_with_session_cookies), color = AppleTextSecondary, fontSize = 12.5.sp)
                             }
                             Icon(SfIcons.ChevronRight, contentDescription = null, tint = Color.White.copy(alpha = 0.36f), modifier = Modifier.size(13.dp))
                         }
@@ -1168,7 +1170,7 @@ fun SettingsProfileAccountScreen(
                     if (isScrolled) {
                         FrostedTopBarTitlePill(hazeState = hazeState) {
                             Text(
-                                text = "Account",
+                                text = stringResource(R.string.ui_account),
                                 color = Color.White,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -1210,7 +1212,7 @@ fun SettingsProfileAccountScreen(
                 onDismiss = { if (!advancedCookieLoginBusy) showAdvancedCookieLogin = false },
                 onSave = { cookie, visitorData ->
                     if (!looksSignedInCookies(cookie)) {
-                        Toast.makeText(context, "Enter a valid signed-in YouTube Music cookie (SAPISID and a session cookie)", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, context.getString(R.string.toast_enter_a_valid_signed_in_youtube_music_cookie_sapis), Toast.LENGTH_LONG).show()
                     } else {
                         advancedCookieLoginBusy = true
                         integrationScope.launch {
@@ -1234,9 +1236,9 @@ fun SettingsProfileAccountScreen(
                             advancedCookieLoginBusy = false
                             if (attempt.isSuccess) {
                                 showAdvancedCookieLogin = false
-                                Toast.makeText(context, "YouTube Music account connected", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_youtube_music_account_connected), Toast.LENGTH_SHORT).show()
                             } else {
-                                Toast.makeText(context, attempt.exceptionOrNull()?.message ?: "Cookie login failed", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, attempt.exceptionOrNull()?.message ?: context.getString(R.string.cookie_login_failed), Toast.LENGTH_LONG).show()
                             }
                         }
                     }
@@ -1251,7 +1253,7 @@ fun SettingsProfileAccountScreen(
                 onBrowserSignIn = {
                     integrationScope.launch {
                         LastFmIntegration.beginSignIn(context).onFailure {
-                            Toast.makeText(context, it.message ?: "Couldn't open Last.fm", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, it.message ?: context.getString(R.string.could_not_open_last_fm), Toast.LENGTH_LONG).show()
                         }
                         showLastFmSignIn = false
                     }
@@ -1263,9 +1265,9 @@ fun SettingsProfileAccountScreen(
                         lastFmBusy = false
                         if (result.isSuccess) {
                             showLastFmSignIn = false
-                            Toast.makeText(context, "Last.fm connected as ${result.getOrNull()}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.last_fm_connected_as, result.getOrNull().orEmpty()), Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(context, result.exceptionOrNull()?.message ?: "Last.fm sign in failed", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, result.exceptionOrNull()?.message ?: context.getString(R.string.last_fm_sign_in_failed), Toast.LENGTH_LONG).show()
                         }
                     }
                 },
@@ -1283,9 +1285,9 @@ fun SettingsProfileAccountScreen(
                         discordLoginBusy = false
                         if (result.isSuccess) {
                             showDiscordLogin = false
-                            Toast.makeText(context, "Discord connected as ${result.getOrNull()}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.discord_connected_as, result.getOrNull().orEmpty()), Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(context, result.exceptionOrNull()?.message ?: "Discord sign in failed", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, result.exceptionOrNull()?.message ?: context.getString(R.string.discord_sign_in_failed), Toast.LENGTH_LONG).show()
                         }
                     }
                 },
@@ -1328,7 +1330,7 @@ fun SettingsProfileAccountScreen(
                             SettingsStore.setString(context, SettingsStore.KEY_DISPLAY_NAME, newName.trim())
                             IShareSyncManager.setDisplayName(newName.trim())
                         }
-                        Toast.makeText(context, "Account renamed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_account_renamed), Toast.LENGTH_SHORT).show()
                     }
                     accountActionTarget = null
                 }
@@ -1349,9 +1351,9 @@ fun SettingsProfileAccountScreen(
                         haptics.play(Haptic.Tap)
                         val success = MultiAccountManager.deleteAccount(context, target.id)
                         if (success) {
-                            Toast.makeText(context, "Account deleted", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_account_deleted), Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(context, "Cannot delete your only account", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_cannot_delete_your_only_account), Toast.LENGTH_SHORT).show()
                         }
                     }
                     accountActionTarget = null
@@ -1377,7 +1379,7 @@ private fun DiscordLoginDialog(
                 .background(Color.Black).border(1.dp, Color(0xFF2C2C2E), RoundedCornerShape(26.dp))
                 .padding(16.dp),
         ) {
-            Text("Connect Discord", color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.ui_connect_discord), color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Bold)
             Text(
                 if (busy) "Verifying your Discord account…" else "Sign in securely on Discord to enable listening presence.",
                 color = AppleTextSecondary, fontSize = 13.sp, modifier = Modifier.padding(top = 5.dp, bottom = 12.dp),
@@ -1425,12 +1427,12 @@ private fun DiscordLoginDialog(
                 update = { webView = it },
             )
             Text(
-                "Your Discord session token is stored encrypted on this device and used only for Rich Presence.",
+                stringResource(R.string.ui_your_discord_session_token_is_stored_encrypted_on_this),
                 color = AppleTextSecondary.copy(alpha = 0.8f), fontSize = 11.sp, lineHeight = 15.sp,
                 modifier = Modifier.padding(top = 11.dp, bottom = 7.dp),
             )
             Text(
-                "Cancel", color = AppleTextSecondary, fontSize = 14.sp,
+                stringResource(R.string.cancel), color = AppleTextSecondary, fontSize = 14.sp,
                 modifier = Modifier.align(Alignment.End).clip(RoundedCornerShape(8.dp)).clickable(enabled = !busy) {
                     webView?.loadUrl("about:blank")
                     onDismiss()
@@ -1456,15 +1458,15 @@ private fun LastFmSignInDialog(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(Modifier.size(54.dp).clip(CircleShape).background(Color(0xFFD51007)), contentAlignment = Alignment.Center) {
-                Text("L", color = Color.White, fontSize = 29.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.ui_l), color = Color.White, fontSize = 29.sp, fontWeight = FontWeight.Bold)
             }
             Spacer(Modifier.height(12.dp))
-            Text("Connect Last.fm", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-            Text("Sign in with your Last.fm account", color = AppleTextSecondary, fontSize = 14.sp, modifier = Modifier.padding(top = 4.dp, bottom = 15.dp))
+            Text(stringResource(R.string.ui_connect_last_fm), color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.ui_sign_in_with_your_last_fm_account), color = AppleTextSecondary, fontSize = 14.sp, modifier = Modifier.padding(top = 4.dp, bottom = 15.dp))
             CookieInput("Username", username, { username = it })
             CookieInput("Password", password, { password = it }, secure = true)
             Text(
-                "Your password is sent to Last.fm only to create a session. iTune does not save it.",
+                stringResource(R.string.ui_your_password_is_sent_to_last_fm_only_to_create_a_sess),
                 color = AppleTextSecondary.copy(alpha = 0.8f), fontSize = 11.5.sp, lineHeight = 16.sp,
                 modifier = Modifier.fillMaxWidth().padding(top = 9.dp),
             )
@@ -1473,12 +1475,12 @@ private fun LastFmSignInDialog(
                 onDirectSignIn(username.trim(), password)
             }
             Text(
-                "Continue in browser instead",
+                stringResource(R.string.ui_continue_in_browser_instead),
                 color = Color(0xFF0A84FF), fontSize = 14.sp, fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 14.dp).clip(RoundedCornerShape(8.dp)).clickable(enabled = !busy, onClick = onBrowserSignIn).padding(7.dp),
             )
             Text(
-                "Cancel", color = AppleTextSecondary, fontSize = 14.sp,
+                stringResource(R.string.cancel), color = AppleTextSecondary, fontSize = 14.sp,
                 modifier = Modifier.padding(top = 2.dp).clip(RoundedCornerShape(8.dp)).clickable(enabled = !busy, onClick = onDismiss).padding(7.dp),
             )
         }
@@ -1520,11 +1522,11 @@ private fun AdvancedGoogleCookieLoginDialog(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(Modifier.size(54.dp).clip(CircleShape).background(Color(0xFF1C1C1E)), contentAlignment = Alignment.Center) {
-                Text("G", color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.ui_g), color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.Bold)
             }
             Spacer(Modifier.height(12.dp))
-            Text("Advanced Login", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-            Text("YouTube Music session cookies", color = AppleTextSecondary, fontSize = 14.sp, modifier = Modifier.padding(top = 4.dp, bottom = 18.dp))
+            Text(stringResource(R.string.ui_advanced_login_3fde9a4d), color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.ui_youtube_music_session_cookies), color = AppleTextSecondary, fontSize = 14.sp, modifier = Modifier.padding(top = 4.dp, bottom = 18.dp))
 
             Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color(0xFF111113)).padding(14.dp)) {
                 Row(
@@ -1532,12 +1534,12 @@ private fun AdvancedGoogleCookieLoginDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("How to get your cookies", color = Color(0xFF0A84FF), fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.ui_how_to_get_your_cookies), color = Color(0xFF0A84FF), fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
                     Text(if (showHelp) "⌃" else "⌄", color = AppleTextSecondary, fontSize = 18.sp)
                 }
                 if (showHelp) {
                     Text(
-                        "Sign in to music.youtube.com in a desktop browser. Open Developer Tools → Application → Cookies, then copy the signed-in session values. Treat these values like your password.",
+                        stringResource(R.string.ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open),
                         color = AppleTextSecondary, fontSize = 12.5.sp, lineHeight = 18.sp, modifier = Modifier.padding(top = 9.dp),
                     )
                 }
@@ -1560,7 +1562,7 @@ private fun AdvancedGoogleCookieLoginDialog(
             }
             CookieInput("Visitor Data (optional)", visitorData, { visitorData = it })
             Text(
-                "Cookie credentials are stored in iTune’s encrypted account storage and checked with YouTube Music before they are saved.",
+                stringResource(R.string.ui_cookie_credentials_are_stored_in_itunes_encrypted_acco),
                 color = AppleTextSecondary.copy(alpha = 0.8f), fontSize = 11.5.sp, lineHeight = 16.sp,
                 modifier = Modifier.fillMaxWidth().padding(top = 9.dp),
             )
@@ -1595,7 +1597,7 @@ private fun CookieInput(
             modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).background(Color(0xFF1C1C1E)).padding(12.dp),
             decorationBox = { inner ->
                 Box {
-                    if (value.isEmpty()) Text("Enter $label", color = Color.White.copy(alpha = 0.3f), fontSize = 14.sp)
+                    if (value.isEmpty()) Text(stringResource(R.string.ui_enter, label), color = Color.White.copy(alpha = 0.3f), fontSize = 14.sp)
                     inner()
                 }
             },
@@ -1683,7 +1685,7 @@ fun ContinueWithGoogleRedCard(
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_google_logo),
-                    contentDescription = "Google",
+                    contentDescription = stringResource(R.string.ui_google),
                     modifier = Modifier.size(22.dp),
                 )
             }
@@ -1903,7 +1905,7 @@ private fun SavedAccountsAndChannelsCard(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Close,
-                            contentDescription = "Remove account",
+                            contentDescription = stringResource(R.string.ui_remove_account),
                             tint = Color.White.copy(alpha = 0.45f),
                             modifier = Modifier.size(16.dp),
                         )
@@ -2010,13 +2012,13 @@ private fun SavedProfileSwitchRow(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Rounded.Check,
-                        contentDescription = "Active",
+                        contentDescription = stringResource(R.string.ui_active),
                         tint = Color(0xFF34C759),
                         modifier = Modifier.size(13.dp),
                     )
                     Spacer(Modifier.width(3.dp))
                     Text(
-                        text = "Active",
+                        text = stringResource(R.string.ui_active),
                         color = Color(0xFF34C759),
                         fontSize = 11.5.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -2025,7 +2027,7 @@ private fun SavedProfileSwitchRow(
             }
         } else {
             Text(
-                text = "Switch",
+                text = stringResource(R.string.ui_switch),
                 color = AppleMusicRed,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -2040,7 +2042,7 @@ private fun SavedProfileSwitchRow(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Close,
-                    contentDescription = "Remove account",
+                    contentDescription = stringResource(R.string.ui_remove_account),
                     tint = Color.White.copy(alpha = 0.44f),
                     modifier = Modifier.size(16.dp),
                 )
@@ -2118,7 +2120,7 @@ private fun AccountActionMenuDialog(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "Account Options",
+                            text = stringResource(R.string.ui_account_options),
                             color = AppleTextSecondary,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal
@@ -2141,13 +2143,13 @@ private fun AccountActionMenuDialog(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Edit,
-                        contentDescription = "Rename",
+                        contentDescription = stringResource(R.string.ui_rename),
                         tint = Color.White.copy(alpha = 0.9f),
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(Modifier.width(14.dp))
                     Text(
-                        text = "Rename",
+                        text = stringResource(R.string.ui_rename),
                         color = Color.White,
                         fontSize = 15.5.sp,
                         fontWeight = FontWeight.Medium
@@ -2165,21 +2167,21 @@ private fun AccountActionMenuDialog(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete",
+                        contentDescription = stringResource(R.string.delete),
                         tint = if (canDelete) AppleMusicRed else AppleMusicRed.copy(alpha = 0.4f),
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(Modifier.width(14.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Delete",
+                            text = stringResource(R.string.delete),
                             color = if (canDelete) AppleMusicRed else AppleMusicRed.copy(alpha = 0.4f),
                             fontSize = 15.5.sp,
                             fontWeight = FontWeight.Medium
                         )
                         if (!canDelete) {
                             Text(
-                                text = "Cannot delete only account",
+                                text = stringResource(R.string.ui_cannot_delete_only_account),
                                 color = AppleTextSecondary.copy(alpha = 0.7f),
                                 fontSize = 11.5.sp
                             )
@@ -2201,7 +2203,7 @@ private fun AccountActionMenuDialog(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel),
                         color = Color.White.copy(alpha = 0.65f),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold
@@ -2250,14 +2252,14 @@ private fun AccountRenameDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Rename Account",
+                    text = stringResource(R.string.ui_rename_account),
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    text = "Enter a new name for this account.",
+                    text = stringResource(R.string.ui_enter_a_new_name_for_this_account),
                     color = AppleTextSecondary,
                     fontSize = 13.sp,
                     textAlign = TextAlign.Center
@@ -2313,7 +2315,7 @@ private fun AccountRenameDialog(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Cancel",
+                            text = stringResource(R.string.cancel),
                             color = Color.White.copy(alpha = 0.8f),
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium
@@ -2334,7 +2336,7 @@ private fun AccountRenameDialog(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Save",
+                            text = stringResource(R.string.save),
                             color = Color.White,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold
@@ -2391,7 +2393,7 @@ private fun AccountDeleteConfirmDialog(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete",
+                        contentDescription = stringResource(R.string.delete),
                         tint = AppleMusicRed,
                         modifier = Modifier.size(26.dp)
                     )
@@ -2400,7 +2402,7 @@ private fun AccountDeleteConfirmDialog(
                 Spacer(Modifier.height(14.dp))
 
                 Text(
-                    text = "Delete Account?",
+                    text = stringResource(R.string.ui_delete_account_9bce384b),
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
@@ -2409,7 +2411,7 @@ private fun AccountDeleteConfirmDialog(
                 Spacer(Modifier.height(10.dp))
 
                 Text(
-                    text = "Are you sure you want to delete “${account.displayName}”? All data, playlists, favorites, history, and settings in this account will be permanently deleted.",
+                    text = stringResource(R.string.ui_are_you_sure_you_want_to_delete_all_data_playlists, account.displayName),
                     color = AppleTextSecondary,
                     fontSize = 13.5.sp,
                     textAlign = TextAlign.Center,
@@ -2433,7 +2435,7 @@ private fun AccountDeleteConfirmDialog(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Delete Account",
+                            text = stringResource(R.string.ui_delete_account),
                             color = Color.White,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold
@@ -2450,7 +2452,7 @@ private fun AccountDeleteConfirmDialog(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Cancel",
+                            text = stringResource(R.string.cancel),
                             color = Color.White.copy(alpha = 0.65f),
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium
