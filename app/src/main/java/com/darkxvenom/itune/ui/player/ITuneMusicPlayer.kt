@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.player
 
+
+import androidx.compose.ui.res.stringResource
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -1492,7 +1494,7 @@ fun ITuneMusicPlayer(
                         Spacer(Modifier.width(6.dp))
                         Icon(
                             imageVector = SfIcons.ChevronRight,
-                            contentDescription = "Open lyrics",
+                            contentDescription = stringResource(R.string.ui_open_lyrics),
                             tint = playerAccentColor.copy(alpha = 0.68f),
                             modifier = Modifier.size(11.dp),
                         )
@@ -1589,7 +1591,7 @@ fun ITuneMusicPlayer(
         ) {
             Image(
                 painter = painterResource(R.drawable.skip_next),
-                contentDescription = "Next",
+                contentDescription = stringResource(R.string.ui_next),
                 colorFilter = ColorFilter.tint(Color.White),
                 modifier = Modifier.size(curNextIconSizeDp)
             )
@@ -1684,7 +1686,7 @@ fun ITuneMusicPlayer(
         ) {
             Image(
                 painter = painterResource(R.drawable.more_horiz),
-                contentDescription = "More Options",
+                contentDescription = stringResource(R.string.ui_more_options),
                 colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.96f)),
                 modifier = Modifier.size(curMoreIconSizeDp)
             )
@@ -1944,7 +1946,7 @@ fun ITuneMusicPlayer(
                 ) {
                     Image(
                         painter = painterResource(R.drawable.skip_previous),
-                        contentDescription = "Previous",
+                        contentDescription = stringResource(R.string.ui_previous),
                         colorFilter = ColorFilter.tint(Color.White),
                         modifier = Modifier.size(52.dp)
                     )
@@ -2014,7 +2016,7 @@ fun ITuneMusicPlayer(
                     // 1. Left: Lyrics Button
                     BottomPanelToggleButton(
                         iconRes = R.drawable.lyrics,
-                        contentDescription = "Lyrics",
+                        contentDescription = stringResource(R.string.ui_lyrics),
                         iconSize = 25.dp,
                         active = isLyricsOpen,
                         accentColor = playerAccentColor,
@@ -2123,7 +2125,7 @@ fun ITuneMusicPlayer(
                     // 3. Right: Queue Button
                     BottomPanelToggleButton(
                         iconRes = R.drawable.queue_music,
-                        contentDescription = "Queue",
+                        contentDescription = stringResource(R.string.ui_queue),
                         iconSize = 26.dp,
                         active = isQueueOpen,
                         accentColor = playerAccentColor,
@@ -2186,7 +2188,7 @@ fun ITuneMusicPlayer(
                         )
                         Spacer(Modifier.width(3.dp))
                         Text(
-                            text = "$visibleBattery%",
+                            text = stringResource(R.string.ui_text_fc9db15ab9, visibleBattery),
                             color = if (visibleBattery <= 20) Color(0xFFFF6961) else Color.White.copy(alpha = 0.70f),
                             fontFamily = SFProDisplay,
                             fontSize = 10.5.sp,
@@ -2379,7 +2381,7 @@ private fun InPlayerQueueContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Queue",
+                    text = stringResource(R.string.ui_queue),
                     style = TextStyle(
                         fontFamily = SFProDisplay,
                         fontWeight = FontWeight.W800,
@@ -2394,7 +2396,7 @@ private fun InPlayerQueueContent(
         // "Now playing" Subtitle
         item(key = "header_now_playing") {
             Text(
-                text = "Now playing",
+                text = stringResource(R.string.ui_now_playing_1c388f14),
                 style = TextStyle(
                     fontFamily = SFProDisplay,
                     fontWeight = FontWeight.W600,
@@ -2499,7 +2501,7 @@ private fun InPlayerQueueContent(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Close,
-                        contentDescription = "Remove",
+                        contentDescription = stringResource(R.string.ui_remove),
                         tint = Color.White.copy(alpha = 0.55f),
                         modifier = Modifier.size(18.dp)
                     )
@@ -2516,7 +2518,7 @@ private fun InPlayerQueueContent(
                         .padding(top = 10.dp, bottom = 4.dp)
                 ) {
                     Text(
-                        text = "Next up",
+                        text = stringResource(R.string.ui_next_up),
                         style = TextStyle(
                             fontFamily = SFProDisplay,
                             fontWeight = FontWeight.W700,
@@ -2527,7 +2529,7 @@ private fun InPlayerQueueContent(
                     )
                     Spacer(Modifier.height(2.dp))
                     Text(
-                        text = "Queued tracks to play next",
+                        text = stringResource(R.string.ui_queued_tracks_to_play_next),
                         style = TextStyle(
                             fontFamily = SFProDisplay,
                             fontWeight = FontWeight.W400,
@@ -2638,7 +2640,7 @@ private fun InPlayerQueueContent(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Close,
-                            contentDescription = "Remove",
+                            contentDescription = stringResource(R.string.ui_remove),
                             tint = Color.White.copy(alpha = 0.45f),
                             modifier = Modifier.size(16.dp)
                         )
@@ -2877,7 +2879,7 @@ internal fun IosVolumeSlider(
     ) {
         Icon(
             imageVector = if (currentVolume == 0) Icons.AutoMirrored.Rounded.VolumeOff else Icons.AutoMirrored.Rounded.VolumeDown,
-            contentDescription = "Mute Volume",
+            contentDescription = stringResource(R.string.ui_mute_volume),
             tint = Color.White.copy(alpha = 0.65f),
             modifier = Modifier
                 .size(19.dp)
@@ -2978,7 +2980,7 @@ internal fun IosVolumeSlider(
 
         Icon(
             imageVector = Icons.AutoMirrored.Rounded.VolumeUp,
-            contentDescription = "Max Volume",
+            contentDescription = stringResource(R.string.ui_max_volume),
             tint = Color.White.copy(alpha = 0.65f),
             modifier = Modifier
                 .size(19.dp)
@@ -3023,7 +3025,7 @@ fun FastHoldPill(
                     modifier = Modifier.size(14.dp)
                 )
                 Text(
-                    text = "2X Fast Speed",
+                    text = stringResource(R.string.ui_text_76b322ac42),
                     fontSize = 12.5.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
@@ -3113,7 +3115,7 @@ private fun AirbudsIShareSplitCapsule(
         ) {
             Image(
                 painter = painterResource(outputIconRes),
-                contentDescription = "Audio Output",
+                contentDescription = stringResource(R.string.ui_audio_output),
                 colorFilter = ColorFilter.tint(Color.White.copy(alpha = if (isOutputPopupOpen) 1f else 0.92f)),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.size(if (outputIconRes == R.drawable.ic_airbuds) 27.dp else 21.dp),
@@ -3132,7 +3134,7 @@ private fun AirbudsIShareSplitCapsule(
         ) {
             Image(
                 painter = painterResource(R.drawable.ic_ishare),
-                contentDescription = "iShare",
+                contentDescription = stringResource(R.string.ui_ishare),
                 colorFilter = ColorFilter.tint(Color.White.copy(alpha = if (ishareActive || isPopupOpen) 1f else 0.88f)),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.size(21.dp),
@@ -3178,7 +3180,7 @@ private fun ShuffleRepeatSplitCapsule(
     ) {
         SplitCapsuleSegment(
             iconRes = if (shuffleEnabled) R.drawable.shuffle_on else R.drawable.shuffle,
-            contentDescription = "Shuffle",
+            contentDescription = stringResource(R.string.shuffle),
             active = shuffleEnabled,
             accentColor = accentColor,
             opticalOffsetStart = 2.dp,
@@ -3190,7 +3192,7 @@ private fun ShuffleRepeatSplitCapsule(
         )
         SplitCapsuleSegment(
             iconRes = R.drawable.ic_infinite_queue,
-            contentDescription = "Endless Queue",
+            contentDescription = stringResource(R.string.ui_endless_queue),
             active = endlessQueueEnabled,
             accentColor = accentColor,
             opticalOffsetStart = 0.dp,
@@ -3202,7 +3204,7 @@ private fun ShuffleRepeatSplitCapsule(
         )
         SplitCapsuleSegment(
             iconRes = repeatIcon,
-            contentDescription = "Repeat",
+            contentDescription = stringResource(R.string.ui_repeat),
             active = repeatMode != Player.REPEAT_MODE_OFF,
             accentColor = accentColor,
             opticalOffsetStart = 0.dp,
