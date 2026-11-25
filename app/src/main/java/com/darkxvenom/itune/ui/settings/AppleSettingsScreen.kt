@@ -11,6 +11,10 @@
 
 package com.darkxvenom.itune.ui.settings
 
+import android.app.Activity
+import android.content.Context
+
+import androidx.compose.ui.res.stringResource
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -137,6 +141,7 @@ import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.auth.YouTubeProfile
 import com.darkxvenom.itune.data.library.ContentLocaleCatalog
+import com.darkxvenom.itune.data.library.AppLocaleManager
 import com.darkxvenom.itune.data.library.SearchHistoryStore
 import com.darkxvenom.itune.data.library.LibraryStore
 import com.darkxvenom.itune.data.backup.BackupRestoreManager
@@ -425,16 +430,20 @@ fun AppleSettingsScreen(
         if (saved) {
             autoBackupEnabled = enabled
             showAutoBackupDialog = false
-            Toast.makeText(context, if (enabled) "Daily encrypted backup enabled" else "Automatic backup disabled", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context.getString(if (enabled) R.string.daily_encrypted_backup_enabled else R.string.automatic_backup_disabled),
+                Toast.LENGTH_SHORT,
+            ).show()
         } else {
-            Toast.makeText(context, "Could not encrypt the password securely. Automatic backup was not changed.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.toast_could_not_encrypt_the_password_securely_automatic), Toast.LENGTH_LONG).show()
         }
     }
     val legacyStoragePermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         val pending = pendingAutoBackupConfig
         pendingAutoBackupConfig = null
         if (granted && pending != null) saveAutoBackup(pending.first, pending.second)
-        else if (!granted) Toast.makeText(context, "Storage permission is needed to save backups in Downloads", Toast.LENGTH_LONG).show()
+        else if (!granted) Toast.makeText(context, context.getString(R.string.toast_storage_permission_is_needed_to_save_backups_in_do), Toast.LENGTH_LONG).show()
     }
 
     val createBackupLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
@@ -472,7 +481,7 @@ fun AppleSettingsScreen(
                 }
             }.getOrNull()
             if (name.isNullOrBlank() || !name.endsWith(".itune", ignoreCase = true)) {
-                Toast.makeText(context, "Choose an .itune backup file", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.toast_choose_an_itune_backup_file), Toast.LENGTH_LONG).show()
             } else {
                 restoreUri = uri
                 restorePassword = ""
@@ -501,6 +510,7 @@ fun AppleSettingsScreen(
         isCheckingForUpdate,
     ) {
         buildSettingsSections(
+            context = context,
             state = state,
             audioEngine = audioEngineState,
             bitPerfectActive = audioOutputState.bitPerfectActive,
@@ -535,11 +545,14 @@ fun AppleSettingsScreen(
                     com.darkxvenom.itune.backend.MusicPlayerState.setPcmOutputFormat(value)
                 } else {
                     SettingsStore.setString(context, key, value)
+                    if (key == SettingsStore.KEY_APP_LANGUAGE && android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) {
+                        (context as? Activity)?.recreate()
+                    }
                 }
             },
             onClearCache = {
                 SettingsStore.clearAudioCache(context)
-                Toast.makeText(context, "Audio & artwork cache cleared", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_audio_artwork_cache_cleared), Toast.LENGTH_SHORT).show()
             },
             onClearSongCache = { clearAction = SettingsClearAction.CACHED_SONGS },
             onEditName = { showNameDialog = true },
@@ -671,7 +684,7 @@ fun AppleSettingsScreen(
                                     )
                                     if (trimmedQuery.isNotEmpty()) {
                                         Text(
-                                            text = "$totalMatchedCount found",
+                                            text = stringResource(R.string.ui_found, totalMatchedCount),
                                             color = AppleMusicRed,
                                             fontSize = 13.5.sp,
                                             fontWeight = FontWeight.SemiBold,
@@ -735,7 +748,7 @@ fun AppleSettingsScreen(
                                                 )
                                                 if (switched) {
                                                     val label = profile.name.ifBlank { session.name.ifBlank { "Google Account" } }
-                                                    Toast.makeText(context, "Switched feed to $label", Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(context, context.getString(R.string.toast_switched_feed_to, label), Toast.LENGTH_SHORT).show()
                                                 }
                                             },
                                             onManageAll = {
@@ -847,19 +860,19 @@ fun AppleSettingsScreen(
                                 ) {
                                     Image(
                                         painter = painterResource(R.drawable.ic_itune_waves),
-                                        contentDescription = "iTune icon",
+                                        contentDescription = stringResource(R.string.ui_itune_icon),
                                         modifier = Modifier.size(38.dp),
                                     )
                                     Spacer(Modifier.height(8.dp))
                                     Text(
-                                        text = "Version ${AppUpdateManager.installedVersion} (${AppUpdateManager.installedVersionCode})",
+                                        text = stringResource(R.string.ui_version, AppUpdateManager.installedVersion, AppUpdateManager.installedVersionCode),
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
                                         fontSize = 11.sp,
                                         textAlign = TextAlign.Center,
                                     )
                                     Spacer(Modifier.height(5.dp))
                                     Text(
-                                        text = "GitHub repository · Open source",
+                                        text = stringResource(R.string.ui_github_repository_open_source),
                                         color = Color(0xFF0A84FF),
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Medium,
@@ -868,7 +881,7 @@ fun AppleSettingsScreen(
                                             runCatching {
                                                 context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, Uri.parse("https://github.com/d0x-dev/itune")))
                                             }.onFailure {
-                                                Toast.makeText(context, "Could not open GitHub", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, context.getString(R.string.toast_could_not_open_github), Toast.LENGTH_SHORT).show()
                                             }
                                         },
                                     )
@@ -921,7 +934,7 @@ fun AppleSettingsScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Rounded.Sort,
-                                    contentDescription = "Settings Appearance",
+                                    contentDescription = stringResource(R.string.ui_settings_appearance),
                                     tint = Color.White,
                                     modifier = Modifier.size(21.dp),
                                 )
@@ -1089,7 +1102,7 @@ fun AppleSettingsScreen(
                 SettingsStore.setString(context, SettingsStore.KEY_DISPLAY_NAME, updated)
                 IShareSyncManager.setDisplayName(updated)
                 showNameDialog = false
-                Toast.makeText(context, "Profile name updated", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_profile_name_updated), Toast.LENGTH_SHORT).show()
             },
             onDismiss = { showNameDialog = false },
         )
@@ -1251,16 +1264,16 @@ fun AppleSettingsScreen(
                 when (pendingClearAction) {
                     SettingsClearAction.SEARCH_HISTORY -> {
                         SearchHistoryStore.clearAll(context)
-                        Toast.makeText(context, "Search history cleared", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_search_history_cleared), Toast.LENGTH_SHORT).show()
                     }
                     SettingsClearAction.LISTENING_HISTORY -> {
                         com.darkxvenom.itune.data.library.ListeningProfileStore.clear(context)
                         com.darkxvenom.itune.data.library.LibraryStore.clearRecentSongs(context)
-                        Toast.makeText(context, "Listening history cleared", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_listening_history_cleared), Toast.LENGTH_SHORT).show()
                     }
                     SettingsClearAction.CACHED_SONGS -> {
                         MusicCacheManager.clearAllCache()
-                        Toast.makeText(context, "Cached songs cleared", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_cached_songs_cleared), Toast.LENGTH_SHORT).show()
                     }
                 }
                 clearAction = null
@@ -1307,7 +1320,7 @@ private fun SettingsAppearancePopup(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = "Settings Appearance",
+                text = stringResource(R.string.ui_settings_appearance),
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
@@ -1448,7 +1461,7 @@ private fun SettingsAccountQuickSwitchRow(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "+ Accounts",
+                    text = stringResource(R.string.ui_accounts),
                     color = AppleMusicRed,
                     fontSize = 12.5.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -1521,7 +1534,7 @@ private fun SettingsAccountCard(
 
             Icon(
                 imageVector = SfIcons.ChevronRight,
-                contentDescription = "Choose Avatar",
+                contentDescription = stringResource(R.string.ui_choose_avatar),
                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.42f),
                 modifier = Modifier.size(14.dp),
             )
@@ -1671,7 +1684,7 @@ private fun SettingsEntryRow(
                     Spacer(Modifier.width(5.dp))
                     Icon(
                         imageVector = SfIcons.ChevronRight,
-                        contentDescription = "Open ${entry.title} options",
+                        contentDescription = stringResource(R.string.open_entry_options, entry.title),
                         tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.42f),
                         modifier = Modifier.size(12.dp),
                     )
@@ -1994,7 +2007,7 @@ private fun SettingsOptionPickerDialog(
                     if (selected) {
                         Icon(
                             imageVector = Icons.Rounded.Check,
-                            contentDescription = "Selected",
+                            contentDescription = stringResource(R.string.ui_selected),
                             tint = AppleMusicRed,
                             modifier = Modifier.size(19.dp),
                         )
@@ -2014,7 +2027,7 @@ private fun SettingsOptionPickerDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Cancel",
+                text = stringResource(R.string.cancel),
                 color = Color(0xFF8E8E93),
                 fontSize = 16.5.sp,
                 fontWeight = FontWeight.Medium,
@@ -2048,14 +2061,14 @@ private fun SettingsDisplayNameDialog(
     SettingsModalFrame(onDismiss = onDismiss) {
         Spacer(Modifier.height(20.dp))
         Text(
-            text = "Display Name",
+            text = stringResource(R.string.ui_display_name),
             color = MaterialTheme.colorScheme.onSurface,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
         )
         Spacer(Modifier.height(5.dp))
         Text(
-            text = "Update the name shown on your Apple ID profile card in Settings.",
+            text = stringResource(R.string.ui_update_the_name_shown_on_your_apple_id_profile_card_in),
             color = AppleTextSecondary,
             fontSize = 12.5.sp,
             textAlign = TextAlign.Center,
@@ -2074,7 +2087,7 @@ private fun SettingsDisplayNameDialog(
         ) {
             if (fieldValue.text.isEmpty()) {
                 Text(
-                    text = "Enter your name",
+                    text = stringResource(R.string.ui_enter_your_name),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
                     fontSize = 15.5.sp,
                 )
@@ -2121,7 +2134,7 @@ private fun SettingsDisplayNameDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Save",
+                text = stringResource(R.string.save),
                 color = if (cleanText.isNotEmpty()) AppleMusicRed else Color.White.copy(alpha = 0.30f),
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -2138,7 +2151,7 @@ private fun SettingsDisplayNameDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Cancel",
+                text = stringResource(R.string.cancel),
                 color = Color(0xFF8E8E93),
                 fontSize = 17.sp,
             )
@@ -2164,12 +2177,12 @@ private fun SettingsAboutDialog(
         Spacer(Modifier.height(22.dp))
         Image(
             painter = painterResource(R.drawable.ic_itune_waves),
-            contentDescription = "iTune icon",
+            contentDescription = stringResource(R.string.ui_itune_icon),
             modifier = Modifier.size(54.dp),
         )
         Spacer(Modifier.height(7.dp))
         Text(
-            text = "iTune",
+            text = stringResource(R.string.app_name),
             color = MaterialTheme.colorScheme.onSurface,
             fontSize = 21.sp,
             fontWeight = FontWeight.Bold,
@@ -2291,10 +2304,10 @@ private fun SettingsAboutDialog(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("License", color = MaterialTheme.colorScheme.onSurface, fontSize = 14.5.sp, fontWeight = FontWeight.SemiBold)
-                    Text("GNU GPL v3.0 or later · Copyright © 2026 iTune Project", color = AppleTextSecondary, fontSize = 11.5.sp)
+                    Text(stringResource(R.string.ui_license), color = MaterialTheme.colorScheme.onSurface, fontSize = 14.5.sp, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project), color = AppleTextSecondary, fontSize = 11.5.sp)
                 }
-                Text("View", color = AppleMusicRed, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.ui_view), color = AppleMusicRed, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
             }
             HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
             Row(
@@ -2306,8 +2319,8 @@ private fun SettingsAboutDialog(
                     .padding(horizontal = 14.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("GitHub Repository", color = MaterialTheme.colorScheme.onSurface, fontSize = 13.5.sp, modifier = Modifier.weight(1f))
-                Text("Open", color = AppleMusicRed, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.ui_github_repository), color = MaterialTheme.colorScheme.onSurface, fontSize = 13.5.sp, modifier = Modifier.weight(1f))
+                Text(stringResource(R.string.open), color = AppleMusicRed, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
             }
         }
 
@@ -2321,7 +2334,7 @@ private fun SettingsAboutDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Done",
+                text = stringResource(R.string.done),
                 color = AppleMusicRed,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -2344,14 +2357,14 @@ private fun CoverCornerRadiusDialog(
     SettingsModalFrame(onDismiss = onDismiss) {
         Spacer(Modifier.height(20.dp))
         Text(
-            text = "Corner Length",
+            text = stringResource(R.string.ui_corner_length),
             color = MaterialTheme.colorScheme.onSurface,
             fontSize = 18.5.sp,
             fontWeight = FontWeight.SemiBold,
         )
         Spacer(Modifier.height(4.dp))
         Text(
-            text = "Adjust the corner edge of square album artwork.",
+            text = stringResource(R.string.ui_adjust_the_corner_edge_of_square_album_artwork),
             color = AppleTextSecondary,
             fontSize = 12.5.sp,
             textAlign = TextAlign.Center,
@@ -2387,7 +2400,7 @@ private fun CoverCornerRadiusDialog(
             if (!currentArtUrl.isNullOrBlank()) {
                 AsyncImage(
                     model = currentArtUrl,
-                    contentDescription = "Artwork Preview",
+                    contentDescription = stringResource(R.string.ui_artwork_preview),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize(),
                 )
@@ -2404,7 +2417,7 @@ private fun CoverCornerRadiusDialog(
                     )
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        text = "iTune Music",
+                        text = stringResource(R.string.ui_itune_music),
                         color = Color.White.copy(alpha = 0.55f),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Medium,
@@ -2428,7 +2441,7 @@ private fun CoverCornerRadiusDialog(
             )
             Spacer(Modifier.width(4.dp))
             Text(
-                text = "dp",
+                text = stringResource(R.string.ui_dp),
                 color = AppleTextSecondary,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
@@ -2517,7 +2530,7 @@ private fun CoverCornerRadiusDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Done",
+                text = stringResource(R.string.done),
                 color = AppleMusicRed,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -2535,7 +2548,7 @@ private fun CoverCornerRadiusDialog(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Cancel",
+                text = stringResource(R.string.cancel),
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.70f),
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Normal,
@@ -2551,20 +2564,20 @@ private fun SettingsLicenseDialog(onDismiss: () -> Unit) {
     SettingsModalFrame(onDismiss = onDismiss) {
         Spacer(Modifier.height(20.dp))
         Text(
-            text = "iTune License",
+            text = stringResource(R.string.ui_itune_license),
             color = MaterialTheme.colorScheme.onSurface,
             fontSize = 19.sp,
             fontWeight = FontWeight.SemiBold,
         )
         Spacer(Modifier.height(4.dp))
         Text(
-            text = "GNU GPL v3.0 or later",
+            text = stringResource(R.string.ui_gnu_gpl_v3_0_or_later),
             color = AppleTextSecondary,
             fontSize = 12.sp,
         )
         Spacer(Modifier.height(6.dp))
         Text(
-            text = "Copyright © 2026 iTune Project. This software is provided without warranty. You may redistribute and modify it under the GNU GPL terms shown below.",
+            text = stringResource(R.string.ui_copyright_2026_itune_project_this_software_is_provided),
             color = AppleTextSecondary,
             fontSize = 11.sp,
         )
@@ -2834,14 +2847,14 @@ The GNU General Public License does not permit incorporating your program into p
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text("GitHub Repository", color = Color(0xFF64AFFF), fontSize = 13.sp, fontWeight = FontWeight.Medium)
+            Text(stringResource(R.string.ui_github_repository), color = Color(0xFF64AFFF), fontSize = 13.sp, fontWeight = FontWeight.Medium)
         }
         HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
         Box(
             modifier = Modifier.fillMaxWidth().height(48.dp).clickable { onDismiss() },
             contentAlignment = Alignment.Center,
         ) {
-            Text("Done", color = AppleMusicRed, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.done), color = AppleMusicRed, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
         }
     }
 }
@@ -2927,6 +2940,7 @@ internal fun SettingsModalFrame(
 
 @androidx.annotation.OptIn(UnstableApi::class)
 private fun buildSettingsSections(
+    context: Context,
     state: SettingsUiState,
     audioEngine: AudioEngineUiState,
     bitPerfectActive: Boolean,
@@ -2966,11 +2980,11 @@ private fun buildSettingsSections(
     return listOf(
         SettingsSection(
             id = "ishare_together",
-            title = "iShare, Dynamic Island & StandBy",
+            title = context.getString(R.string.settings_ishare_dynamic_island_standby),
             entries = listOf(
                 SettingsEntry.Action(
                     id = "ishare",
-                    title = "iShare",
+                    title = context.getString(R.string.settings_ishare),
                     subtitle = if (iShareSession != null) {
                         val modeTag = if (iShareIsLan) "Wi-Fi LAN" else "Pairing Code"
                         "Live ($modeTag) • ${iShareSession.code}"
@@ -2992,8 +3006,8 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.Action(
                     id = "dynamic_island",
-                    title = "Dynamic Island",
-                    subtitle = "Floating water-bubble controller outside iTune",
+                    title = context.getString(R.string.settings_dynamic_island),
+                    subtitle = context.getString(R.string.settings_floating_water_bubble_controller_outside_itune),
                     iconRes = R.drawable.ic_settings_dynamic_island,
                     keywords = listOf(
                         "dynamic island", "notch", "pill", "overlay", "water",
@@ -3004,7 +3018,7 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.Action(
                     id = "always_on_display",
-                    title = "Always On Display",
+                    title = context.getString(R.string.settings_always_on_display),
                     subtitle = if (state.aodEnabled) {
                         "Auto-activates on idle (${if (state.aodTimeoutSeconds > 0) "${state.aodTimeoutSeconds}s" else "Manual"}) • OLED StandBy"
                     } else {
@@ -3019,11 +3033,11 @@ private fun buildSettingsSections(
         ),
         SettingsSection(
             id = "audio_engine_effects",
-            title = "Audio Engine & Sound Effects",
+            title = context.getString(R.string.settings_audio_engine_sound_effects),
             entries = listOf(
                 SettingsEntry.EffectToggleAction(
                     id = "engine_dolby_atmos",
-                    title = "Dolby Atmos",
+                    title = context.getString(R.string.settings_dolby_atmos),
                     subtitle = if (audioEngine.dolbyAtmosEnabled && !effectsDisabled) {
                         if (audioEngine.dolbyWidthWide) "Wide Concert (2.75x) • Tap to adjust" else "Studio Balanced (2.25x) • Active"
                     } else {
@@ -3038,7 +3052,7 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.EffectToggleAction(
                     id = "engine_8d_audio",
-                    title = "8D Audio",
+                    title = context.getString(R.string.settings_text_8948f8179a),
                     subtitle = if (audioEngine.eightDAudioEnabled && !effectsDisabled) {
                         "${audioEngine.eightDAudioLevel}D 360° orbit active • Tap to adjust"
                     } else {
@@ -3053,7 +3067,7 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.EffectToggleAction(
                     id = "engine_spatial_audio",
-                    title = "Spatial Audio",
+                    title = context.getString(R.string.settings_spatial_audio),
                     subtitle = if (audioEngine.spatialAudioEnabled && !effectsDisabled) {
                         "${"%.1f".format(audioEngine.spatialWidth)}x width • ${if (audioEngine.spatialCrossfeed) "Crossfeed On" else "Crossfeed Off"}"
                     } else {
@@ -3068,7 +3082,7 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.EffectToggleAction(
                     id = "engine_equalizer",
-                    title = "Equalizer (EQ)",
+                    title = context.getString(R.string.settings_equalizer_eq),
                     subtitle = if (audioEngine.eqEnabled && !effectsDisabled) {
                         "Preset: ${audioEngine.eqPreset} • Dot Curve & Seekbars"
                     } else {
@@ -3083,7 +3097,7 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.Toggle(
                     id = "engine_low_pass_filter",
-                    title = "Low-Pass Filtering",
+                    title = context.getString(R.string.settings_low_pass_filtering),
                     subtitle = if (audioEngine.lowPassFilterActive && !effectsDisabled) {
                         "Active on hook line (11s) • Bass filter"
                     } else if (audioEngine.lowPassFilterEnabled && !effectsDisabled) {
@@ -3098,7 +3112,7 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.EffectToggleAction(
                     id = "engine_dj_console",
-                    title = "DJ Studio Panel",
+                    title = context.getString(R.string.settings_dj_studio_panel),
                     subtitle = if (audioEngine.djEnabled && !effectsDisabled) {
                         val boostTag = if (audioEngine.djBoostPercent > 100) "${audioEngine.djBoostPercent}% Boost" else "Studio DSP Active"
                         "$boostTag • Tap to open Master/Echo/Mixer/Deck"
@@ -3114,7 +3128,7 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.EffectToggleAction(
                     id = "engine_normalization",
-                    title = "Audio Normalization",
+                    title = context.getString(R.string.settings_audio_normalization),
                     subtitle = if (audioEngine.normalizationEnabled && !effectsDisabled) {
                         "${audioEngine.normalizationProfile.label} (${audioEngine.normalizationProfile.targetLufs.toInt()} LUFS) • ${"%+.1f".format(audioEngine.normalizationOffsetMb / 100f)} dB"
                     } else {
@@ -3129,7 +3143,7 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.EffectToggleAction(
                     id = "engine_bit_perfect",
-                    title = "USB Bit-Perfect DAC",
+                    title = context.getString(R.string.settings_usb_bit_perfect_dac),
                     subtitle = if (bitPerfectActive) {
                         "Hardware bit-exact lock active"
                     } else if (audioEngine.bitPerfectEnabled) {
@@ -3146,7 +3160,7 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.Toggle(
                     id = "engine_pure_bypass",
-                    title = "Pure Audio Bypass",
+                    title = context.getString(R.string.settings_pure_audio_bypass),
                     subtitle = if (audioEngine.bypassAllEffects) {
                         "Active • All DSP locked for untouched source"
                     } else {
@@ -3159,8 +3173,8 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.Action(
                     id = "engine_pipeline",
-                    title = "Signal Pipeline",
-                    subtitle = "${audioEngine.pillBadge.text} -> $activeOutputName",
+                    title = context.getString(R.string.settings_signal_pipeline),
+                    subtitle = context.getString(R.string.settings_audioengine_pillbadge_text_activeoutputname),
                     iconRes = R.drawable.ic_output_pipeline,
                     keywords = listOf("pipeline", "signal", "chain", "dsp", "sample rate", "output"),
                     trailingValue = if (effectsDisabled) "Bypassed" else "Inspect",
@@ -3170,12 +3184,12 @@ private fun buildSettingsSections(
         ),
         SettingsSection(
             id = "audio_playback",
-            title = "Audio & Playback",
+            title = context.getString(R.string.settings_audio_playback),
             entries = listOf(
                 SettingsEntry.Action(
                     id = "music_sources",
-                    title = "Sources",
-                    subtitle = "Manage YouTube Music, JioSaavn, installable extensions, WebDAV, SMB, and playback priority",
+                    title = context.getString(R.string.settings_sources),
+                    subtitle = context.getString(R.string.settings_manage_youtube_music_jiosaavn_installable_extens),
                     iconRes = R.drawable.ic_settings_streaming_quality,
                     keywords = listOf("sources", "addons", "extensions", "jiosaavn", "youtube music", "priority"),
                     trailingValue = "Manage",
@@ -3183,8 +3197,8 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.Toggle(
                     id = "auto_skip_on_error",
-                    title = "Auto Skip When Error Occurs",
-                    subtitle = "Move to the next queued song if playback fails",
+                    title = context.getString(R.string.settings_auto_skip_when_error_occurs),
+                    subtitle = context.getString(R.string.settings_move_to_the_next_queued_song_if_playback_fails),
                     iconRes = R.drawable.skip_next,
                     keywords = listOf("auto skip", "skip", "error", "failed playback", "next track"),
                     checked = state.autoSkipOnError,
@@ -3192,24 +3206,24 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.Picker(
                     id = "download_quality",
-                    title = "Download Quality",
-                    subtitle = "Default quality used by song download actions",
+                    title = context.getString(R.string.settings_download_quality),
+                    subtitle = context.getString(R.string.settings_default_quality_used_by_song_download_actions),
                     iconRes = R.drawable.ic_settings_streaming_quality,
                     keywords = listOf("download", "quality", "audio", "maximum", "standard", "data saver"),
                     currentValue = state.downloadQuality,
-                    description = "Choose the default audio quality for downloads across the app.",
+                    description = context.getString(R.string.settings_choose_the_default_audio_quality_for_downloads_a),
                     options = listOf(
-                        SettingsOptionChoice("Best Available", "Use the highest available source quality"),
-                        SettingsOptionChoice("Maximum", "Choose the highest bitrate stream"),
-                        SettingsOptionChoice("High", "Target about 160 kbps"),
-                        SettingsOptionChoice("Standard", "Target about 128 kbps"),
-                        SettingsOptionChoice("Data Saver", "Target about 64 kbps"),
+                        SettingsOptionChoice(context.getString(R.string.settings_best_available), context.getString(R.string.settings_use_the_highest_available_source_quality)),
+                        SettingsOptionChoice(context.getString(R.string.settings_maximum), context.getString(R.string.settings_choose_the_highest_bitrate_stream)),
+                        SettingsOptionChoice(context.getString(R.string.settings_high), context.getString(R.string.settings_target_about_160_kbps)),
+                        SettingsOptionChoice(context.getString(R.string.settings_standard), context.getString(R.string.settings_target_about_128_kbps)),
+                        SettingsOptionChoice(context.getString(R.string.settings_data_saver), context.getString(R.string.settings_target_about_64_kbps)),
                     ),
                     onSelect = { onSelectString(SettingsStore.KEY_DOWNLOAD_QUALITY, it) },
                 ),
                 SettingsEntry.Toggle(
                     id = "lossless_audio",
-                    title = "Lossless Audio",
+                    title = context.getString(R.string.settings_lossless_audio),
                     subtitle = if (state.losslessAudio) {
                         "Studio-grade maximum fidelity audio stream"
                     } else {
@@ -3222,7 +3236,7 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.Toggle(
                     id = "upgrade_cached_songs",
-                    title = "Upgrade Quality of Cached Songs",
+                    title = context.getString(R.string.settings_upgrade_quality_of_cached_songs),
                     subtitle = if (state.upgradeCachedSongs) {
                         if (state.jioSaavnProvider) "Cached YouTube songs are replaced with JioSaavn quality when played"
                         else "On · needs JioSaavn Provider to take effect"
@@ -3236,7 +3250,7 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.Picker(
                     id = "audio_quality",
-                    title = "Streaming Quality",
+                    title = context.getString(R.string.settings_streaming_quality),
                     subtitle = if (state.losslessAudio) {
                         "Locked to Maximum Quality (Lossless Active)"
                     } else {
@@ -3245,27 +3259,27 @@ private fun buildSettingsSections(
                     iconRes = R.drawable.ic_settings_streaming_quality,
                     keywords = listOf("bitrate", "quality", "audio", "extreme", "high", "medium", "low", "stream"),
                     currentValue = if (state.losslessAudio) "Lossless (Max)" else state.audioQuality,
-                    description = "Select your preferred streaming audio quality.",
+                    description = context.getString(R.string.settings_select_your_preferred_streaming_audio_quality),
                     enabled = !state.losslessAudio,
                     options = listOf(
-                        SettingsOptionChoice("Extreme", "Maximum fidelity (256+ kbps)"),
-                        SettingsOptionChoice("High", "High quality audio (~160 kbps)"),
-                        SettingsOptionChoice("Medium", "Standard audio quality (~128 kbps)"),
-                        SettingsOptionChoice("Low", "Data saver audio (~48-64 kbps)"),
+                        SettingsOptionChoice(context.getString(R.string.settings_extreme), context.getString(R.string.settings_maximum_fidelity_256_kbps)),
+                        SettingsOptionChoice(context.getString(R.string.settings_high_b1a5954a), context.getString(R.string.settings_high_quality_audio_160_kbps)),
+                        SettingsOptionChoice(context.getString(R.string.settings_medium), context.getString(R.string.settings_standard_audio_quality_128_kbps)),
+                        SettingsOptionChoice(context.getString(R.string.settings_low), context.getString(R.string.settings_data_saver_audio_48_64_kbps)),
                     ),
                     onSelect = { onSelectString(SettingsStore.KEY_AUDIO_QUALITY, it) },
                 ),
                 SettingsEntry.Picker(
                     id = "pcm_output_format",
-                    title = "PCM Output Format",
-                    subtitle = "Rebuilds playback at the current position",
+                    title = context.getString(R.string.settings_pcm_output_format),
+                    subtitle = context.getString(R.string.settings_rebuilds_playback_at_the_current_position),
                     iconRes = R.drawable.ic_settings_streaming_quality,
                     keywords = listOf("pcm", "16 bit", "32 bit", "float", "uac", "usb dac", "output format"),
                     currentValue = state.pcmOutputFormat,
-                    description = "Choose the PCM format requested from Android's audio output. A USB DAC may convert it to a format it supports.",
+                    description = context.getString(R.string.settings_choose_the_pcm_format_requested_from_android_s_a),
                     options = listOf(
-                        SettingsOptionChoice("16-bit PCM", "Standard integer PCM output; broadly compatible with USB Audio Class DACs"),
-                        SettingsOptionChoice("32-bit float PCM", "Float PCM output when supported by Android and the connected audio path"),
+                        SettingsOptionChoice(context.getString(R.string.settings_text_bc7f1ee919), context.getString(R.string.settings_standard_integer_pcm_output_broadly_compatible_w)),
+                        SettingsOptionChoice(context.getString(R.string.settings_text_6697202e38), context.getString(R.string.settings_float_pcm_output_when_supported_by_android_and_t)),
                     ),
                     onSelect = { onSelectString(SettingsStore.KEY_PCM_OUTPUT_FORMAT, it) },
                 ),
@@ -3274,20 +3288,20 @@ private fun buildSettingsSections(
                     baseEntries + listOf(
                         SettingsEntry.Picker(
                             id = "crossfade",
-                            title = "Crossfade",
+                            title = context.getString(R.string.settings_crossfade),
                             subtitle = if (state.afterglowDuration == "Off") "Smooth transition between songs" else "Unavailable while Afterglow is active",
                             iconRes = R.drawable.ic_settings_crossfade,
                             keywords = listOf("gapless", "fade", "blend", "mix", "dj", "transition"),
                             currentValue = state.crossfadeDuration,
-                            description = "Overlap the fade-out of the ending track with the start of the next.",
+                            description = context.getString(R.string.settings_overlap_the_fade_out_of_the_ending_track_with_th),
                             enabled = state.afterglowDuration == "Off",
                             options = listOf(
-                                SettingsOptionChoice("Off", "Play tracks cleanly back-to-back"),
-                                SettingsOptionChoice("2 sec", "Subtle transition overlap"),
-                                SettingsOptionChoice("4 sec", "Short seamless fade"),
-                                SettingsOptionChoice("6 sec", "Balanced DJ-style transition"),
-                                SettingsOptionChoice("8 sec", "Smooth extended blend"),
-                                SettingsOptionChoice("12 sec", "Maximum continuous mix blend"),
+                                SettingsOptionChoice(context.getString(R.string.settings_off), context.getString(R.string.settings_play_tracks_cleanly_back_to_back)),
+                                SettingsOptionChoice(context.getString(R.string.settings_text_6597740315), context.getString(R.string.settings_subtle_transition_overlap)),
+                                SettingsOptionChoice(context.getString(R.string.settings_text_7bd0ce5454), context.getString(R.string.settings_short_seamless_fade)),
+                                SettingsOptionChoice(context.getString(R.string.settings_text_56628a6fa5), context.getString(R.string.settings_balanced_dj_style_transition)),
+                                SettingsOptionChoice(context.getString(R.string.settings_text_81e9ba46e0), context.getString(R.string.settings_smooth_extended_blend)),
+                                SettingsOptionChoice(context.getString(R.string.settings_text_e0529daa1e), context.getString(R.string.settings_maximum_continuous_mix_blend)),
                             ),
                             onSelect = { onSelectString(SettingsStore.KEY_CROSSFADE, it) },
                         )
@@ -3298,7 +3312,7 @@ private fun buildSettingsSections(
             } + listOf(
                 SettingsEntry.Toggle(
                     id = "automix",
-                    title = "AutoMix",
+                    title = context.getString(R.string.settings_automix),
                     subtitle = if (state.afterglowDuration == "Off") "Smart blends that adapt to every song" else "Unavailable while Afterglow is active",
                     iconRes = R.drawable.ic_settings_automix,
                     keywords = listOf("automix", "auto mix", "smart", "dj", "blend", "transition", "crossfade", "level", "loudness"),
@@ -3308,25 +3322,25 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.Picker(
                     id = "afterglow",
-                    title = "Afterglow",
+                    title = context.getString(R.string.settings_afterglow),
                     subtitle = if (state.afterglowDuration == "Off") "Apply the Low-Pass effect at each song’s end" else "Low-Pass for the final ${state.afterglowDuration.removeSuffix(" sec")} seconds",
                     iconRes = R.drawable.ic_fx_low_pass,
                     keywords = listOf("afterglow", "ending", "outro", "low pass", "final seconds", "song end"),
                     currentValue = state.afterglowDuration,
-                    description = "Apply the same Low-Pass Equalizer effect during the selected final seconds of every song. Afterglow pauses AutoMix and Crossfade while enabled.",
+                    description = context.getString(R.string.settings_apply_the_same_low_pass_equalizer_effect_during),
                     enabled = true,
                     options = listOf(
-                        SettingsOptionChoice("Off", "Keep normal playback effects and transitions"),
-                        SettingsOptionChoice("5 sec", "Apply Low-Pass during each song’s final 5 seconds"),
-                        SettingsOptionChoice("10 sec", "Apply Low-Pass during each song’s final 10 seconds"),
-                        SettingsOptionChoice("15 sec", "Apply Low-Pass during each song’s final 15 seconds"),
+                        SettingsOptionChoice(context.getString(R.string.settings_off_e3de5ab0), context.getString(R.string.settings_keep_normal_playback_effects_and_transitions)),
+                        SettingsOptionChoice(context.getString(R.string.settings_text_6db610cca6), context.getString(R.string.settings_apply_low_pass_during_each_songs_final_5_seconds)),
+                        SettingsOptionChoice(context.getString(R.string.settings_text_65ca1d0712), context.getString(R.string.settings_apply_low_pass_during_each_songs_final_10_second)),
+                        SettingsOptionChoice(context.getString(R.string.settings_text_eb4354110e), context.getString(R.string.settings_apply_low_pass_during_each_songs_final_15_second)),
                     ),
                     onSelect = { onSelectString(SettingsStore.KEY_AFTERGLOW_DURATION, it) },
                 ),
                 SettingsEntry.Toggle(
                     id = "permanent_shuffle",
-                    title = "Permanent Shuffle",
-                    subtitle = "Keep shuffle permanently locked on in player",
+                    title = context.getString(R.string.settings_permanent_shuffle),
+                    subtitle = context.getString(R.string.settings_keep_shuffle_permanently_locked_on_in_player),
                     iconRes = R.drawable.shuffle,
                     keywords = listOf("shuffle", "permanent", "lock", "random", "playback"),
                     checked = state.permanentShuffle,
@@ -3334,8 +3348,8 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.Toggle(
                     id = "pause_on_zero_volume",
-                    title = "Pause at Volume 0",
-                    subtitle = "Automatically pause playback when volume reaches zero",
+                    title = context.getString(R.string.settings_pause_at_volume_0),
+                    subtitle = context.getString(R.string.settings_automatically_pause_playback_when_volume_reaches),
                     iconRes = R.drawable.volume_off,
                     keywords = listOf("pause", "volume", "zero", "mute", "playback", "silence"),
                     checked = state.pauseOnZeroVolume,
@@ -3343,15 +3357,15 @@ private fun buildSettingsSections(
                 ),
                 SettingsEntry.Picker(
                     id = "volume_bar_side",
-                    title = "Volume Bar",
-                    subtitle = "Shown on the ${state.volumeBarSide.lowercase()} edge when you press the volume buttons",
+                    title = context.getString(R.string.settings_volume_bar),
+                    subtitle = context.getString(R.string.settings_shown_on_the_state_volumebarside_lowercase_edge),
                     iconRes = R.drawable.volume_off,
                     keywords = listOf("volume", "bar", "left", "right", "side", "slider", "hud"),
                     currentValue = state.volumeBarSide,
-                    description = "Choose which edge of the screen the in-app volume bar appears on.",
+                    description = context.getString(R.string.settings_choose_which_edge_of_the_screen_the_in_app_volum),
                     options = listOf(
-                        SettingsOptionChoice("Right", "Show the volume bar on the right edge (default)"),
-                        SettingsOptionChoice("Left", "Show the volume bar on the left edge"),
+                        SettingsOptionChoice(context.getString(R.string.settings_right), context.getString(R.string.settings_show_the_volume_bar_on_the_right_edge_default)),
+                        SettingsOptionChoice(context.getString(R.string.settings_left), context.getString(R.string.settings_show_the_volume_bar_on_the_left_edge)),
                     ),
                     onSelect = { onSelectString(SettingsStore.KEY_VOLUME_BAR_SIDE, it) },
                 ),
@@ -3359,16 +3373,16 @@ private fun buildSettingsSections(
         ),
     SettingsSection(
         id = "content_settings",
-        title = "Content",
+        title = context.getString(R.string.settings_content),
         entries = listOf(
             SettingsEntry.Picker(
                 id = "content_language",
-                title = "Default Content Language",
-                subtitle = "Language for Moods, Browse & Search",
+                title = context.getString(R.string.settings_default_content_language),
+                subtitle = context.getString(R.string.settings_language_for_moods_browse_search),
                 iconRes = R.drawable.ic_settings_content_language,
                 keywords = listOf("language", "locale", "hl", "region", "translate", "moods", "browse"),
                 currentValue = ContentLocaleCatalog.languageLabel(state.contentLanguage),
-                description = "Select the preferred catalog language used across Browse, Moods & Genres, Playlists, and New Releases.",
+                description = context.getString(R.string.settings_select_the_preferred_catalog_language_used_acros),
                 options = ContentLocaleCatalog.languages.map { option ->
                     SettingsOptionChoice(option.displayName, option.detail)
                 },
@@ -3379,12 +3393,12 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Picker(
                 id = "content_country",
-                title = "Default Content Country",
-                subtitle = "Region for Charts, Playlists & New Releases",
+                title = context.getString(R.string.settings_default_content_country),
+                subtitle = context.getString(R.string.settings_region_for_charts_playlists_new_releases),
                 iconRes = R.drawable.ic_settings_content_country,
                 keywords = listOf("country", "region", "gl", "charts", "playlists", "newly added", "local"),
                 currentValue = ContentLocaleCatalog.countryLabel(state.contentCountry),
-                description = "Choose the regional storefront used for Newly Added albums, regional Moods, and Featured Playlists.",
+                description = context.getString(R.string.settings_choose_the_regional_storefront_used_for_newly_ad),
                 options = ContentLocaleCatalog.countries.map { option ->
                     SettingsOptionChoice(option.displayName, option.detail)
                 },
@@ -3395,8 +3409,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "hide_explicit_content",
-                title = "Hide Explicit Content",
-                subtitle = "Filter explicit songs across Moods, Browse & Search",
+                title = context.getString(R.string.settings_hide_explicit_content),
+                subtitle = context.getString(R.string.settings_filter_explicit_songs_across_moods_browse_search),
                 iconRes = R.drawable.ic_settings_explicit,
                 keywords = listOf("explicit", "clean", "parental", "hide", "filter", "restricted"),
                 checked = state.hideExplicitContent,
@@ -3406,12 +3420,12 @@ private fun buildSettingsSections(
     ),
     SettingsSection(
         id = "visuals_glass",
-        title = "Now Playing & Liquid Glass",
+        title = context.getString(R.string.settings_now_playing_liquid_glass),
         entries = listOfNotNull(
             SettingsEntry.Toggle(
                 id = "splash_screen",
-                title = "Splash Screen",
-                subtitle = "App launch brand animation & fluid title reveal",
+                title = context.getString(R.string.settings_splash_screen),
+                subtitle = context.getString(R.string.settings_app_launch_brand_animation_fluid_title_reveal),
                 iconRes = R.drawable.ic_itune_waves,
                 keywords = listOf("splash", "opening", "launch", "animation", "brand", "intro"),
                 checked = state.splashScreenEnabled,
@@ -3419,8 +3433,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "animated_artwork",
-                title = "Animated Cover Art",
-                subtitle = "Spotify Canvas, Apple Music, Tidal & Community motion covers",
+                title = context.getString(R.string.settings_animated_cover_art),
+                subtitle = context.getString(R.string.settings_spotify_canvas_apple_music_tidal_community_motio),
                 iconRes = R.drawable.ic_settings_animated_art,
                 keywords = listOf("motion", "canvas", "video", "cover", "artwork", "animation", "spotify", "apple", "tidal"),
                 checked = state.animatedArtwork,
@@ -3428,7 +3442,7 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Action(
                 id = "spotify_integration",
-                title = "Spotify & Canvas Setup",
+                title = context.getString(R.string.settings_spotify_canvas_setup),
                 subtitle = if (state.spotifySpdcToken.isNotBlank()) {
                     "Connected • Canvas, Playlists & Import"
                 } else {
@@ -3441,8 +3455,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "canvas_auto_hide",
-                title = "Auto-Hide Canvas Controls",
-                subtitle = "Minimize controls after 5s while Canvas plays (tap Canvas to toggle)",
+                title = context.getString(R.string.settings_auto_hide_canvas_controls),
+                subtitle = context.getString(R.string.settings_minimize_controls_after_5s_while_canvas_plays_ta),
                 iconRes = R.drawable.ic_settings_animated_art,
                 keywords = listOf("canvas", "spotify", "auto", "hide", "minimize", "controls", "player"),
                 checked = state.spotifyCanvasAutoHide,
@@ -3450,8 +3464,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "show_synced_lyrics_over_canvas",
-                title = "Show Synced Lyrics Over Canvas",
-                subtitle = "Display animated synced lyrics above the song name when Canvas controls hide",
+                title = context.getString(R.string.settings_show_synced_lyrics_over_canvas),
+                subtitle = context.getString(R.string.settings_display_animated_synced_lyrics_above_the_song_na),
                 iconRes = R.drawable.lyrics,
                 keywords = listOf("canvas", "synced", "lyrics", "kinetic", "overlay", "words", "animation"),
                 checked = state.showSyncedLyricsOverCanvas,
@@ -3459,8 +3473,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "prioritize_spotify_canvas",
-                title = "Prioritize Spotify Canvas",
-                subtitle = "Try Spotify Canvas before Apple Music, Tidal & Community",
+                title = context.getString(R.string.settings_prioritize_spotify_canvas),
+                subtitle = context.getString(R.string.settings_try_spotify_canvas_before_apple_music_tidal_comm),
                 iconRes = R.drawable.ic_spotify,
                 keywords = listOf("spotify", "canvas", "priority", "first", "apple", "tidal"),
                 checked = state.prioritizeSpotifyCanvas,
@@ -3468,8 +3482,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "canvas_over_cellular",
-                title = "Play Animated Cover Over Cellular",
-                subtitle = "Allow looping Canvas videos over mobile data",
+                title = context.getString(R.string.settings_play_animated_cover_over_cellular),
+                subtitle = context.getString(R.string.settings_allow_looping_canvas_videos_over_mobile_data),
                 iconRes = R.drawable.ic_settings_animated_art,
                 keywords = listOf("canvas", "cellular", "mobile", "data", "video", "cover"),
                 checked = state.canvasOverCellular,
@@ -3477,7 +3491,7 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.SegmentedToggle(
                 id = "player_type",
-                title = "Player Type",
+                title = context.getString(R.string.settings_player_type),
                 subtitle = if (state.playerType == "Static") {
                     "Static • Welcome screen ambient mesh gradient"
                 } else {
@@ -3494,7 +3508,7 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.SegmentedToggle(
                 id = "player_style",
-                title = "Player Style",
+                title = context.getString(R.string.settings_player_style),
                 subtitle = if (state.playerStyle == SettingsStore.PLAYER_STYLE_SECONDARY) {
                     "Secondary • Album-led player with a dedicated queue layout"
                 } else {
@@ -3508,7 +3522,7 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "player_dynamic_coloring",
-                title = "Player Dynamic Coloring",
+                title = context.getString(R.string.settings_player_dynamic_coloring),
                 subtitle = if (state.playerDynamicColoring) {
                     "Artwork colors on player controls, text & button bubbles"
                 } else {
@@ -3521,7 +3535,7 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "full_screen_cover_art",
-                title = "Full screen cover art",
+                title = context.getString(R.string.settings_full_screen_cover_art),
                 subtitle = if (state.fullScreenCoverArt) {
                     "Full screen cover art expands to fill the player"
                 } else {
@@ -3535,17 +3549,17 @@ private fun buildSettingsSections(
             if (!state.fullScreenCoverArt) {
                 SettingsEntry.Action(
                     id = "cover_corner_radius",
-                    title = "Corner Length",
-                    subtitle = "Adjust corner radius of square album artwork",
+                    title = context.getString(R.string.settings_corner_length),
+                    subtitle = context.getString(R.string.settings_adjust_corner_radius_of_square_album_artwork),
                     iconRes = R.drawable.ic_lib_albums,
                     keywords = listOf("corner", "length", "radius", "square", "edge", "cover", "art"),
-                    trailingValue = "${state.coverCornerRadius} dp",
+                    trailingValue = context.getString(R.string.settings_corner_radius_value, state.coverCornerRadius),
                     onAction = onOpenCornerLength,
                 )
             } else null,
             SettingsEntry.Toggle(
                 id = "hide_quality_tag",
-                title = "Hide Quality Tag",
+                title = context.getString(R.string.settings_hide_quality_tag),
                 subtitle = if (state.hideQualityTag) {
                     "Quality pill badge is hidden from both players"
                 } else {
@@ -3558,7 +3572,7 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "hide_volume_bar",
-                title = "Hide Volume Bar",
+                title = context.getString(R.string.settings_hide_volume_bar),
                 subtitle = if (state.hideVolumeBar) {
                     "Volume slider is hidden from the player"
                 } else {
@@ -3571,7 +3585,7 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.SegmentedToggle(
                 id = "top_card_type",
-                title = "Home Top Card Style",
+                title = context.getString(R.string.settings_home_top_card_style),
                 subtitle = when (state.topCardType) {
                     SettingsStore.TOP_CARD_TYPE_PORTRAIT -> "Portrait — Apple Music card with frosted blur"
                     SettingsStore.TOP_CARD_TYPE_APPLE -> "Apple — Full artwork, title on top, frosted details"
@@ -3588,8 +3602,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "liquid_glass_nav",
-                title = "Liquid Glass Nav & Mini Player",
-                subtitle = "Glass bar and mini player, with a water-bubble lens on hold",
+                title = context.getString(R.string.settings_liquid_glass_nav_mini_player),
+                subtitle = context.getString(R.string.settings_glass_bar_and_mini_player_with_a_water_bubble_le),
                 iconRes = R.drawable.ic_settings_liquid_glass,
                 keywords = listOf("liquid", "glass", "nav", "navigation", "mini", "player", "bubble", "lens", "blur", "bar"),
                 checked = state.liquidGlassNav,
@@ -3597,8 +3611,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "time_synced_lyrics",
-                title = "Time-Synced Lyrics",
-                subtitle = "Follow word and line lyrics in real time",
+                title = context.getString(R.string.settings_time_synced_lyrics),
+                subtitle = context.getString(R.string.settings_follow_word_and_line_lyrics_in_real_time),
                 iconRes = R.drawable.ic_settings_lyrics,
                 keywords = listOf("lyrics", "sing", "karaoke", "text"),
                 checked = state.timeSyncedLyrics,
@@ -3606,12 +3620,12 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Picker(
                 id = "app_font",
-                title = "App Font",
-                subtitle = "Change app typography; player controls retain their designed typeface",
+                title = context.getString(R.string.settings_app_font),
+                subtitle = context.getString(R.string.settings_change_app_typography_player_controls_retain_the),
                 iconRes = R.drawable.ic_settings_liquid_glass,
                 keywords = listOf("font", "typeface", "typography", "doto", "dotrice", "linotte", "poppins", "sf pro"),
                 currentValue = AppFont.fromKey(state.appFont).label,
-                description = "Choose a typeface for the app interface.",
+                description = context.getString(R.string.settings_choose_a_typeface_for_the_app_interface),
                 options = AppFont.entries.map { font ->
                     SettingsOptionChoice(font.label, "Use ${font.label} throughout the app")
                 },
@@ -3619,21 +3633,21 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Action(
                 id = "lyrics_providers",
-                title = "Lyrics Providers",
-                subtitle = "11 sources • Prioritize & toggle fallback order",
+                title = context.getString(R.string.settings_lyrics_providers),
+                subtitle = context.getString(R.string.settings_text_2707ccbc8e),
                 iconRes = R.drawable.lyrics,
                 keywords = listOf(
                     "lyrics", "providers", "lrclib", "kugou", "simpmusic",
                     "subtitles", "betterlyrics", "youly", "megalobiz",
                     "paxsenix", "portato", "unison", "sources", "priority"
                 ),
-                trailingValue = "${state.lyricsProviderOrder.count { it !in state.disabledLyricsProviders }} Active",
+                trailingValue = context.getString(R.string.settings_active_lyrics_providers, state.lyricsProviderOrder.count { it !in state.disabledLyricsProviders }),
                 onAction = onOpenLyricsSettings,
             ),
             SettingsEntry.Toggle(
                 id = "liquid_glass",
-                title = "Liquid Glass Chrome",
-                subtitle = "Refractive translucent headers & dock cards",
+                title = context.getString(R.string.settings_liquid_glass_chrome),
+                subtitle = context.getString(R.string.settings_refractive_translucent_headers_dock_cards),
                 iconRes = R.drawable.ic_settings_liquid_glass,
                 keywords = listOf("blur", "frosted", "theme", "dark", "oled", "glass", "transparent"),
                 checked = state.liquidGlassChrome,
@@ -3641,8 +3655,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "tactile_haptics",
-                title = "Tactile Haptics",
-                subtitle = "Subtle pulse feedback across player controls",
+                title = context.getString(R.string.settings_tactile_haptics),
+                subtitle = context.getString(R.string.settings_subtle_pulse_feedback_across_player_controls),
                 iconRes = R.drawable.ic_settings_haptics,
                 keywords = listOf("vibrate", "feedback", "touch", "haptic"),
                 checked = state.tactileHaptics,
@@ -3652,28 +3666,28 @@ private fun buildSettingsSections(
     ),
     SettingsSection(
         id = "downloads_storage",
-        title = "Downloads & Storage",
+        title = context.getString(R.string.settings_downloads_storage),
         entries = listOf(
             SettingsEntry.Picker(
                 id = "cellular_streaming",
-                title = "Cellular Streaming",
-                subtitle = "Audio bandwidth on mobile data",
+                title = context.getString(R.string.settings_cellular_streaming),
+                subtitle = context.getString(R.string.settings_audio_bandwidth_on_mobile_data),
                 iconRes = R.drawable.ic_settings_cellular,
                 keywords = listOf("mobile data", "5g", "lte", "cellular", "roaming"),
                 currentValue = state.cellularStreaming,
-                description = "Control audio fidelity when streaming away from Wi-Fi.",
+                description = context.getString(R.string.settings_control_audio_fidelity_when_streaming_away_from),
                 options = listOf(
-                    SettingsOptionChoice("High Efficiency", "Use minimal cellular data"),
-                    SettingsOptionChoice("High Quality", "AAC 256 kbps balanced mobile playback"),
-                    SettingsOptionChoice("Lossless", "Full lossless over 5G/LTE networks"),
-                    SettingsOptionChoice("Off", "Allow streaming on Wi-Fi only"),
+                    SettingsOptionChoice(context.getString(R.string.settings_high_efficiency), context.getString(R.string.settings_use_minimal_cellular_data)),
+                    SettingsOptionChoice(context.getString(R.string.settings_high_quality), context.getString(R.string.settings_aac_256_kbps_balanced_mobile_playback)),
+                    SettingsOptionChoice(context.getString(R.string.settings_lossless), context.getString(R.string.settings_full_lossless_over_5g_lte_networks)),
+                    SettingsOptionChoice(context.getString(R.string.settings_off_e3de5ab0_x), context.getString(R.string.settings_allow_streaming_on_wi_fi_only)),
                 ),
                 onSelect = { onSelectString(SettingsStore.KEY_CELLULAR_STREAMING, it) },
             ),
             SettingsEntry.Toggle(
                 id = "download_wifi_only",
-                title = "Download Over Wi-Fi",
-                subtitle = "Wait for Wi-Fi before automatic downloads",
+                title = context.getString(R.string.settings_download_over_wi_fi),
+                subtitle = context.getString(R.string.settings_wait_for_wi_fi_before_automatic_downloads),
                 iconRes = R.drawable.ic_settings_wifi,
                 keywords = listOf("wifi", "offline", "save", "bandwidth"),
                 checked = state.downloadOverWifiOnly,
@@ -3681,8 +3695,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "cache_songs_playing",
-                title = "Cache Songs After Playback",
-                subtitle = "Save a song to offline storage after it finishes playing",
+                title = context.getString(R.string.settings_cache_songs_after_playback),
+                subtitle = context.getString(R.string.settings_save_a_song_to_offline_storage_after_it_finishes),
                 iconRes = R.drawable.ic_settings_offline,
                 keywords = listOf("cache", "song", "offline", "playing", "streaming", "itube"),
                 checked = MusicCacheManager.cachingEnabled.value,
@@ -3690,12 +3704,12 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Picker(
                 id = "song_cache_quality",
-                title = "Cache Quality",
-                subtitle = "Lower quality saves storage",
+                title = context.getString(R.string.settings_cache_quality),
+                subtitle = context.getString(R.string.settings_lower_quality_saves_storage),
                 iconRes = R.drawable.ic_settings_storage,
                 keywords = listOf("cache", "quality", "compress", "low", "high", "space", "storage", "bitrate"),
                 currentValue = MusicCacheManager.cacheQuality.value,
-                description = "Choose the quality of songs saved after playback completes. Applies to songs cached from now on.",
+                description = context.getString(R.string.settings_choose_the_quality_of_songs_saved_after_playback),
                 options = listOf(
                     SettingsOptionChoice(MusicCacheManager.QUALITY_LOW, "Compressed to 64 kbps AAC • smallest files (~2 MB per song)"),
                     SettingsOptionChoice(MusicCacheManager.QUALITY_MEDIUM, "Compressed to 128 kbps AAC • balanced (~4 MB per song)"),
@@ -3705,7 +3719,7 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Picker(
                 id = "song_cache_limit",
-                title = "Song Storage Limit",
+                title = context.getString(R.string.settings_song_storage_limit),
                 subtitle = if (MusicCacheManager.maxCacheLimitMB.longValue <= 0) "Unlimited storage" else "Auto-evicts oldest songs beyond limit",
                 iconRes = R.drawable.ic_settings_storage,
                 keywords = listOf("storage", "limit", "cache", "mb", "gb", "evict"),
@@ -3717,14 +3731,14 @@ private fun buildSettingsSections(
                     10240L -> "10 GB"
                     else -> "Unlimited"
                 },
-                description = "Maximum disk storage allocated for offline audio cache before older unplayed songs are evicted.",
+                description = context.getString(R.string.settings_maximum_disk_storage_allocated_for_offline_audio),
                 options = listOf(
-                    SettingsOptionChoice("500 MB", "Compact cache (~70 songs)"),
-                    SettingsOptionChoice("1 GB", "Moderate cache (~150 songs)"),
-                    SettingsOptionChoice("2 GB", "Recommended default (~300 songs)"),
-                    SettingsOptionChoice("5 GB", "Large offline collection (~800 songs)"),
-                    SettingsOptionChoice("10 GB", "Very large library (~1,600 songs)"),
-                    SettingsOptionChoice("Unlimited", "Never evict cached songs"),
+                    SettingsOptionChoice(context.getString(R.string.settings_text_03a001f575), context.getString(R.string.settings_compact_cache_70_songs)),
+                    SettingsOptionChoice(context.getString(R.string.settings_text_33015e637f), context.getString(R.string.settings_moderate_cache_150_songs)),
+                    SettingsOptionChoice(context.getString(R.string.settings_text_d3b403ba96), context.getString(R.string.settings_recommended_default_300_songs)),
+                    SettingsOptionChoice(context.getString(R.string.settings_text_227edb6ac4), context.getString(R.string.settings_large_offline_collection_800_songs)),
+                    SettingsOptionChoice(context.getString(R.string.settings_text_ca3389aabc), context.getString(R.string.settings_very_large_library_1_600_songs)),
+                    SettingsOptionChoice(context.getString(R.string.settings_unlimited), context.getString(R.string.settings_never_evict_cached_songs)),
                 ),
                 onSelect = { choice ->
                     val limitMb = when (choice) {
@@ -3740,8 +3754,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Action(
                 id = "clear_cached_songs",
-                title = "Clear Cached Songs",
-                subtitle = "${MusicCacheManager.cachedTracks.size} songs • ${MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)}",
+                title = context.getString(R.string.settings_clear_cached_songs),
+                subtitle = context.getString(R.string.settings_musiccachemanager_cachedtracks_size_songs_musicc),
                 iconRes = R.drawable.ic_settings_clear_cache,
                 keywords = listOf("clear", "cache", "songs", "delete", "free", "offline"),
                 trailingValue = MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue),
@@ -3749,8 +3763,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "automatic_downloads",
-                title = "Automatic Downloads",
-                subtitle = "Save newly liked & added tracks offline",
+                title = context.getString(R.string.settings_automatic_downloads),
+                subtitle = context.getString(R.string.settings_save_newly_liked_added_tracks_offline),
                 iconRes = R.drawable.ic_settings_downloads,
                 keywords = listOf("offline", "auto", "sync", "download"),
                 checked = state.automaticDownloads,
@@ -3758,8 +3772,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Action(
                 id = "audio_cache",
-                title = "Clear App Buffer Cache",
-                subtitle = "Remove temporary cover art & network buffers",
+                title = context.getString(R.string.settings_clear_app_buffer_cache),
+                subtitle = context.getString(R.string.settings_remove_temporary_cover_art_network_buffers),
                 iconRes = R.drawable.ic_settings_clear_cache,
                 keywords = listOf("cache", "storage", "free", "clean", "memory", "buffer"),
                 trailingValue = state.cachedSizeLabel,
@@ -3769,12 +3783,12 @@ private fun buildSettingsSections(
     ),
     SettingsSection(
         id = "library_activity",
-        title = "Library & Listening",
+        title = context.getString(R.string.settings_library_listening),
         entries = listOf(
             SettingsEntry.Toggle(
                 id = "sync_library",
-                title = "Sync Library",
-                subtitle = "Keep artists, playlists & albums updated",
+                title = context.getString(R.string.settings_sync_library),
+                subtitle = context.getString(R.string.settings_keep_artists_playlists_albums_updated),
                 iconRes = R.drawable.ic_settings_sync_library,
                 keywords = listOf("cloud", "playlists", "library", "backup"),
                 checked = state.syncLibrary,
@@ -3782,8 +3796,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "listening_history",
-                title = "Listening History",
-                subtitle = "Shape Personalized Mixes & Recently Played",
+                title = context.getString(R.string.settings_listening_history),
+                subtitle = context.getString(R.string.settings_shape_personalized_mixes_recently_played),
                 iconRes = R.drawable.ic_settings_history,
                 keywords = listOf("privacy", "recommendations", "recent", "mix"),
                 checked = state.useListeningHistory,
@@ -3791,8 +3805,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "add_favorites",
-                title = "Keep Likes on This Device",
-                subtitle = "Keep liked songs in iTune when signed out",
+                title = context.getString(R.string.settings_keep_likes_on_this_device),
+                subtitle = context.getString(R.string.settings_keep_liked_songs_in_itune_when_signed_out),
                 iconRes = R.drawable.ic_settings_favorites,
                 keywords = listOf("liked", "heart", "star", "favorites", "library", "offline", "sign out"),
                 checked = state.addFavoriteSongs,
@@ -3802,12 +3816,186 @@ private fun buildSettingsSections(
     ),
     SettingsSection(
         id = "notifications_general",
-        title = "Notifications & General",
+        title = context.getString(R.string.settings_notifications_general),
         entries = listOf(
+            SettingsEntry.Picker(
+                id = "app_language",
+                title = context.getString(R.string.app_language),
+                subtitle = when (state.appLanguage) {
+                    AppLocaleManager.HINDI -> context.getString(R.string.hindi_interface)
+                    AppLocaleManager.SPANISH -> context.getString(R.string.spanish_interface)
+                    AppLocaleManager.FRENCH -> context.getString(R.string.french_interface)
+                    AppLocaleManager.DUTCH -> context.getString(R.string.dutch_interface)
+                    AppLocaleManager.RUSSIAN -> context.getString(R.string.russian_interface)
+                    AppLocaleManager.URDU -> context.getString(R.string.urdu_interface)
+                    AppLocaleManager.CHINESE -> context.getString(R.string.chinese_interface)
+                    AppLocaleManager.GERMAN -> context.getString(R.string.german_interface)
+                    AppLocaleManager.PORTUGUESE -> context.getString(R.string.portuguese_interface)
+                    AppLocaleManager.ITALIAN -> context.getString(R.string.italian_interface)
+                    AppLocaleManager.JAPANESE -> context.getString(R.string.japanese_interface)
+                    AppLocaleManager.KOREAN -> context.getString(R.string.korean_interface)
+                    AppLocaleManager.SWEDISH -> context.getString(R.string.swedish_interface)
+                    AppLocaleManager.ARABIC -> context.getString(R.string.arabic_interface)
+                    AppLocaleManager.AZERBAIJANI -> context.getString(R.string.azerbaijani_interface)
+                    AppLocaleManager.BENGALI -> context.getString(R.string.bengali_interface)
+                    AppLocaleManager.BULGARIAN -> context.getString(R.string.bulgarian_interface)
+                    AppLocaleManager.CATALAN -> context.getString(R.string.catalan_interface)
+                    AppLocaleManager.CZECH -> context.getString(R.string.czech_interface)
+                    AppLocaleManager.DANISH -> context.getString(R.string.danish_interface)
+                    AppLocaleManager.FINNISH -> context.getString(R.string.finnish_interface)
+                    AppLocaleManager.GREEK -> context.getString(R.string.greek_interface)
+                    AppLocaleManager.HEBREW -> context.getString(R.string.hebrew_interface)
+                    AppLocaleManager.HUNGARIAN -> context.getString(R.string.hungarian_interface)
+                    AppLocaleManager.INDONESIAN -> context.getString(R.string.indonesian_interface)
+                    AppLocaleManager.MALAY -> context.getString(R.string.malay_interface)
+                    AppLocaleManager.NORWEGIAN -> context.getString(R.string.norwegian_interface)
+                    AppLocaleManager.PERSIAN -> context.getString(R.string.persian_interface)
+                    AppLocaleManager.POLISH -> context.getString(R.string.polish_interface)
+                    AppLocaleManager.ROMANIAN -> context.getString(R.string.romanian_interface)
+                    AppLocaleManager.SLOVAK -> context.getString(R.string.slovak_interface)
+                    AppLocaleManager.THAI -> context.getString(R.string.thai_interface)
+                    AppLocaleManager.TURKISH -> context.getString(R.string.turkish_interface)
+                    AppLocaleManager.UKRAINIAN -> context.getString(R.string.ukrainian_interface)
+                    AppLocaleManager.VIETNAMESE -> context.getString(R.string.vietnamese_interface)
+                    AppLocaleManager.SWAHILI -> context.getString(R.string.swahili_interface)
+                    AppLocaleManager.TAGALOG -> context.getString(R.string.tagalog_interface)
+                    AppLocaleManager.ENGLISH -> context.getString(R.string.english_interface)
+                    else -> context.getString(R.string.follow_device_language)
+                },
+                iconRes = R.drawable.ic_settings_content_language,
+                keywords = listOf("app language", "interface language", "hindi", "हिन्दी", "english", "system"),
+                currentValue = when (state.appLanguage) {
+                    AppLocaleManager.HINDI -> context.getString(R.string.hindi_language)
+                    AppLocaleManager.SPANISH -> context.getString(R.string.spanish_language)
+                    AppLocaleManager.FRENCH -> context.getString(R.string.french_language)
+                    AppLocaleManager.DUTCH -> context.getString(R.string.dutch_language)
+                    AppLocaleManager.RUSSIAN -> context.getString(R.string.russian_language)
+                    AppLocaleManager.URDU -> context.getString(R.string.urdu_language)
+                    AppLocaleManager.CHINESE -> context.getString(R.string.chinese_language)
+                    AppLocaleManager.GERMAN -> context.getString(R.string.german_language)
+                    AppLocaleManager.PORTUGUESE -> context.getString(R.string.portuguese_language)
+                    AppLocaleManager.ITALIAN -> context.getString(R.string.italian_language)
+                    AppLocaleManager.JAPANESE -> context.getString(R.string.japanese_language)
+                    AppLocaleManager.KOREAN -> context.getString(R.string.korean_language)
+                    AppLocaleManager.SWEDISH -> context.getString(R.string.swedish_language)
+                    AppLocaleManager.ARABIC -> context.getString(R.string.arabic_language)
+                    AppLocaleManager.AZERBAIJANI -> context.getString(R.string.azerbaijani_language)
+                    AppLocaleManager.BENGALI -> context.getString(R.string.bengali_language)
+                    AppLocaleManager.BULGARIAN -> context.getString(R.string.bulgarian_language)
+                    AppLocaleManager.CATALAN -> context.getString(R.string.catalan_language)
+                    AppLocaleManager.CZECH -> context.getString(R.string.czech_language)
+                    AppLocaleManager.DANISH -> context.getString(R.string.danish_language)
+                    AppLocaleManager.FINNISH -> context.getString(R.string.finnish_language)
+                    AppLocaleManager.GREEK -> context.getString(R.string.greek_language)
+                    AppLocaleManager.HEBREW -> context.getString(R.string.hebrew_language)
+                    AppLocaleManager.HUNGARIAN -> context.getString(R.string.hungarian_language)
+                    AppLocaleManager.INDONESIAN -> context.getString(R.string.indonesian_language)
+                    AppLocaleManager.MALAY -> context.getString(R.string.malay_language)
+                    AppLocaleManager.NORWEGIAN -> context.getString(R.string.norwegian_language)
+                    AppLocaleManager.PERSIAN -> context.getString(R.string.persian_language)
+                    AppLocaleManager.POLISH -> context.getString(R.string.polish_language)
+                    AppLocaleManager.ROMANIAN -> context.getString(R.string.romanian_language)
+                    AppLocaleManager.SLOVAK -> context.getString(R.string.slovak_language)
+                    AppLocaleManager.THAI -> context.getString(R.string.thai_language)
+                    AppLocaleManager.TURKISH -> context.getString(R.string.turkish_language)
+                    AppLocaleManager.UKRAINIAN -> context.getString(R.string.ukrainian_language)
+                    AppLocaleManager.VIETNAMESE -> context.getString(R.string.vietnamese_language)
+                    AppLocaleManager.SWAHILI -> context.getString(R.string.swahili_language)
+                    AppLocaleManager.TAGALOG -> context.getString(R.string.tagalog_language)
+                    AppLocaleManager.ENGLISH -> context.getString(R.string.english_language)
+                    else -> context.getString(R.string.system_default_language)
+                },
+                description = context.getString(R.string.app_language_description),
+                options = listOf(
+                    SettingsOptionChoice(context.getString(R.string.system_default_language), context.getString(R.string.follow_device_language)),
+                    SettingsOptionChoice(context.getString(R.string.english_language), context.getString(R.string.english_interface)),
+                    SettingsOptionChoice(context.getString(R.string.hindi_language), context.getString(R.string.hindi_interface)),
+                    SettingsOptionChoice(context.getString(R.string.spanish_language), context.getString(R.string.spanish_interface)),
+                    SettingsOptionChoice(context.getString(R.string.french_language), context.getString(R.string.french_interface)),
+                    SettingsOptionChoice(context.getString(R.string.dutch_language), context.getString(R.string.dutch_interface)),
+                    SettingsOptionChoice(context.getString(R.string.russian_language), context.getString(R.string.russian_interface)),
+                    SettingsOptionChoice(context.getString(R.string.urdu_language), context.getString(R.string.urdu_interface)),
+                    SettingsOptionChoice(context.getString(R.string.chinese_language), context.getString(R.string.chinese_interface)),
+                    SettingsOptionChoice(context.getString(R.string.german_language), context.getString(R.string.german_interface)),
+                    SettingsOptionChoice(context.getString(R.string.portuguese_language), context.getString(R.string.portuguese_interface)),
+                    SettingsOptionChoice(context.getString(R.string.italian_language), context.getString(R.string.italian_interface)),
+                    SettingsOptionChoice(context.getString(R.string.japanese_language), context.getString(R.string.japanese_interface)),
+                    SettingsOptionChoice(context.getString(R.string.korean_language), context.getString(R.string.korean_interface)),
+                    SettingsOptionChoice(context.getString(R.string.swedish_language), context.getString(R.string.swedish_interface)),
+                    SettingsOptionChoice(context.getString(R.string.arabic_language), context.getString(R.string.arabic_interface)),
+                    SettingsOptionChoice(context.getString(R.string.azerbaijani_language), context.getString(R.string.azerbaijani_interface)),
+                    SettingsOptionChoice(context.getString(R.string.bengali_language), context.getString(R.string.bengali_interface)),
+                    SettingsOptionChoice(context.getString(R.string.bulgarian_language), context.getString(R.string.bulgarian_interface)),
+                    SettingsOptionChoice(context.getString(R.string.catalan_language), context.getString(R.string.catalan_interface)),
+                    SettingsOptionChoice(context.getString(R.string.czech_language), context.getString(R.string.czech_interface)),
+                    SettingsOptionChoice(context.getString(R.string.danish_language), context.getString(R.string.danish_interface)),
+                    SettingsOptionChoice(context.getString(R.string.finnish_language), context.getString(R.string.finnish_interface)),
+                    SettingsOptionChoice(context.getString(R.string.greek_language), context.getString(R.string.greek_interface)),
+                    SettingsOptionChoice(context.getString(R.string.hebrew_language), context.getString(R.string.hebrew_interface)),
+                    SettingsOptionChoice(context.getString(R.string.hungarian_language), context.getString(R.string.hungarian_interface)),
+                    SettingsOptionChoice(context.getString(R.string.indonesian_language), context.getString(R.string.indonesian_interface)),
+                    SettingsOptionChoice(context.getString(R.string.malay_language), context.getString(R.string.malay_interface)),
+                    SettingsOptionChoice(context.getString(R.string.norwegian_language), context.getString(R.string.norwegian_interface)),
+                    SettingsOptionChoice(context.getString(R.string.persian_language), context.getString(R.string.persian_interface)),
+                    SettingsOptionChoice(context.getString(R.string.polish_language), context.getString(R.string.polish_interface)),
+                    SettingsOptionChoice(context.getString(R.string.romanian_language), context.getString(R.string.romanian_interface)),
+                    SettingsOptionChoice(context.getString(R.string.slovak_language), context.getString(R.string.slovak_interface)),
+                    SettingsOptionChoice(context.getString(R.string.thai_language), context.getString(R.string.thai_interface)),
+                    SettingsOptionChoice(context.getString(R.string.turkish_language), context.getString(R.string.turkish_interface)),
+                    SettingsOptionChoice(context.getString(R.string.ukrainian_language), context.getString(R.string.ukrainian_interface)),
+                    SettingsOptionChoice(context.getString(R.string.vietnamese_language), context.getString(R.string.vietnamese_interface)),
+                    SettingsOptionChoice(context.getString(R.string.swahili_language), context.getString(R.string.swahili_interface)),
+                    SettingsOptionChoice(context.getString(R.string.tagalog_language), context.getString(R.string.tagalog_interface)),
+                ),
+                onSelect = { chosenLabel ->
+                    val language = when (chosenLabel) {
+                        context.getString(R.string.hindi_language) -> AppLocaleManager.HINDI
+                        context.getString(R.string.spanish_language) -> AppLocaleManager.SPANISH
+                        context.getString(R.string.french_language) -> AppLocaleManager.FRENCH
+                        context.getString(R.string.dutch_language) -> AppLocaleManager.DUTCH
+                        context.getString(R.string.russian_language) -> AppLocaleManager.RUSSIAN
+                        context.getString(R.string.urdu_language) -> AppLocaleManager.URDU
+                        context.getString(R.string.chinese_language) -> AppLocaleManager.CHINESE
+                        context.getString(R.string.german_language) -> AppLocaleManager.GERMAN
+                        context.getString(R.string.portuguese_language) -> AppLocaleManager.PORTUGUESE
+                        context.getString(R.string.italian_language) -> AppLocaleManager.ITALIAN
+                        context.getString(R.string.japanese_language) -> AppLocaleManager.JAPANESE
+                        context.getString(R.string.korean_language) -> AppLocaleManager.KOREAN
+                        context.getString(R.string.swedish_language) -> AppLocaleManager.SWEDISH
+                        context.getString(R.string.arabic_language) -> AppLocaleManager.ARABIC
+                        context.getString(R.string.azerbaijani_language) -> AppLocaleManager.AZERBAIJANI
+                        context.getString(R.string.bengali_language) -> AppLocaleManager.BENGALI
+                        context.getString(R.string.bulgarian_language) -> AppLocaleManager.BULGARIAN
+                        context.getString(R.string.catalan_language) -> AppLocaleManager.CATALAN
+                        context.getString(R.string.czech_language) -> AppLocaleManager.CZECH
+                        context.getString(R.string.danish_language) -> AppLocaleManager.DANISH
+                        context.getString(R.string.finnish_language) -> AppLocaleManager.FINNISH
+                        context.getString(R.string.greek_language) -> AppLocaleManager.GREEK
+                        context.getString(R.string.hebrew_language) -> AppLocaleManager.HEBREW
+                        context.getString(R.string.hungarian_language) -> AppLocaleManager.HUNGARIAN
+                        context.getString(R.string.indonesian_language) -> AppLocaleManager.INDONESIAN
+                        context.getString(R.string.malay_language) -> AppLocaleManager.MALAY
+                        context.getString(R.string.norwegian_language) -> AppLocaleManager.NORWEGIAN
+                        context.getString(R.string.persian_language) -> AppLocaleManager.PERSIAN
+                        context.getString(R.string.polish_language) -> AppLocaleManager.POLISH
+                        context.getString(R.string.romanian_language) -> AppLocaleManager.ROMANIAN
+                        context.getString(R.string.slovak_language) -> AppLocaleManager.SLOVAK
+                        context.getString(R.string.thai_language) -> AppLocaleManager.THAI
+                        context.getString(R.string.turkish_language) -> AppLocaleManager.TURKISH
+                        context.getString(R.string.ukrainian_language) -> AppLocaleManager.UKRAINIAN
+                        context.getString(R.string.vietnamese_language) -> AppLocaleManager.VIETNAMESE
+                        context.getString(R.string.swahili_language) -> AppLocaleManager.SWAHILI
+                        context.getString(R.string.tagalog_language) -> AppLocaleManager.TAGALOG
+                        context.getString(R.string.english_language) -> AppLocaleManager.ENGLISH
+                        else -> AppLocaleManager.SYSTEM_DEFAULT
+                    }
+                    onSelectString(SettingsStore.KEY_APP_LANGUAGE, language)
+                },
+            ),
             SettingsEntry.Toggle(
                 id = "offline_mode",
-                title = "Offline Mode",
-                subtitle = "Require a downloaded copy to start playback",
+                title = context.getString(R.string.settings_offline_mode),
+                subtitle = context.getString(R.string.settings_require_a_downloaded_copy_to_start_playback),
                 iconRes = R.drawable.ic_settings_offline,
                 keywords = listOf("airplane", "offline", "local", "disconnect"),
                 checked = state.offlineMode,
@@ -3815,8 +4003,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "stop_music_on_task_clear",
-                title = "Stop Music on Task Clear",
-                subtitle = "Stop playback when iTune is swiped away from recents",
+                title = context.getString(R.string.settings_stop_music_on_task_clear),
+                subtitle = context.getString(R.string.settings_stop_playback_when_itune_is_swiped_away_from_rec),
                 iconRes = R.drawable.ic_settings_sleep_timer,
                 keywords = listOf("stop", "close", "recents", "swipe", "task", "clear", "background", "playback"),
                 checked = state.stopMusicOnTaskClear,
@@ -3824,7 +4012,7 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Action(
                 id = "auto_sleep_timer",
-                title = "Auto Sleep Timer",
+                title = context.getString(R.string.settings_auto_sleep_timer),
                 subtitle = if (state.autoSleepTimerEnabled) {
                     val sH = if (state.autoSleepStartHour == 0) 12 else if (state.autoSleepStartHour > 12) state.autoSleepStartHour - 12 else state.autoSleepStartHour
                     val sAm = if (state.autoSleepStartHour >= 12) "PM" else "AM"
@@ -3841,7 +4029,7 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Action(
                 id = "network_proxy",
-                title = "Network Proxy",
+                title = context.getString(R.string.settings_network_proxy),
                 subtitle = if (state.proxyEnabled && state.proxyHost.isNotBlank()) {
                     "${state.proxyType} · ${state.proxyHost}:${state.proxyPort}"
                 } else {
@@ -3854,8 +4042,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Action(
                 id = "display_name",
-                title = "Profile Name",
-                subtitle = "Customize your Settings profile display name",
+                title = context.getString(R.string.settings_profile_name),
+                subtitle = context.getString(R.string.settings_customize_your_settings_profile_display_name),
                 iconRes = R.drawable.ic_settings_profile_name,
                 keywords = listOf("name", "profile", "account", "rename", "user"),
                 trailingValue = state.displayName,
@@ -3863,8 +4051,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Action(
                 id = "developer_news",
-                title = "News from dev",
-                subtitle = "Announcements, releases & changelog",
+                title = context.getString(R.string.settings_news_from_dev),
+                subtitle = context.getString(R.string.settings_announcements_releases_changelog),
                 iconRes = R.drawable.newspaper,
                 keywords = listOf("news", "developer", "dev", "updates", "changelog", "announcements", "release", "airbeats"),
                 trailingValue = null,
@@ -3872,7 +4060,7 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Action(
                 id = "about_itune",
-                title = "General & About",
+                title = context.getString(R.string.settings_general_about),
                 subtitle = when {
                     updateVersion != null -> "iTune $updateVersion is ready to update • Build details & Liquid Glass"
                     isCheckingForUpdate -> "Checking GitHub for updates • Build details & Liquid Glass"
@@ -3888,12 +4076,12 @@ private fun buildSettingsSections(
     ),
     SettingsSection(
         id = "home_screen_widget",
-        title = "Home Screen Widget",
+        title = context.getString(R.string.settings_home_screen_widget),
         entries = listOf(
             SettingsEntry.Action(
                 id = "widget_customization",
-                title = "Widget Customization",
-                subtitle = "Choose a size preview, artwork, controls and widget style",
+                title = context.getString(R.string.settings_widget_customization),
+                subtitle = context.getString(R.string.settings_choose_a_size_preview_artwork_controls_and_widge),
                 iconRes = R.drawable.ic_settings_about,
                 keywords = listOf("widget", "home screen", "player", "artwork", "controls", "style", "customize"),
                 trailingValue = "Customize",
@@ -3903,12 +4091,12 @@ private fun buildSettingsSections(
     ),
     SettingsSection(
         id = "backup_restore",
-        title = "Backup & Restore",
+        title = context.getString(R.string.settings_backup_restore),
         entries = listOf(
             SettingsEntry.Action(
                 id = "auto_backup_itune",
-                title = "Automatic Daily Backup",
-                subtitle = "Encrypted daily backups • Downloads/iTune/Backups",
+                title = context.getString(R.string.settings_automatic_daily_backup),
+                subtitle = context.getString(R.string.settings_encrypted_daily_backups_downloads_itune_backups),
                 iconRes = R.drawable.ic_settings_storage,
                 keywords = listOf("automatic", "daily", "backup", "password", "encrypted"),
                 trailingValue = "Configure",
@@ -3916,8 +4104,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Action(
                 id = "backup_itune",
-                title = "Back Up iTune",
-                subtitle = "Save accounts, all settings, audio effects, library data and stats encrypted",
+                title = context.getString(R.string.settings_back_up_itune),
+                subtitle = context.getString(R.string.settings_save_accounts_all_settings_audio_effects_library),
                 iconRes = R.drawable.ic_settings_storage,
                 keywords = listOf("backup", "export", "save", "encrypted", "account", "playlist", "history", "stats"),
                 trailingValue = "Create",
@@ -3925,8 +4113,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Action(
                 id = "restore_itune",
-                title = "Restore from Backup",
-                subtitle = "Restore settings, audio effects, accounts or library data from .itune",
+                title = context.getString(R.string.settings_restore_from_backup),
+                subtitle = context.getString(R.string.settings_restore_settings_audio_effects_accounts_or_libra),
                 iconRes = R.drawable.ic_settings_history,
                 keywords = listOf("restore", "import", "backup", "itune", "account", "library"),
                 trailingValue = "Choose File",
@@ -3936,12 +4124,12 @@ private fun buildSettingsSections(
     ),
     SettingsSection(
         id = "privacy_card",
-        title = "Privacy",
+        title = context.getString(R.string.settings_privacy),
         entries = listOf(
             SettingsEntry.Toggle(
                 id = "pause_search_history",
-                title = "Pause Search History",
-                subtitle = "Do not save new search queries to history",
+                title = context.getString(R.string.settings_pause_search_history),
+                subtitle = context.getString(R.string.settings_do_not_save_new_search_queries_to_history),
                 iconRes = R.drawable.ic_settings_clear_history,
                 keywords = listOf("pause", "search", "history", "private", "queries"),
                 checked = state.pauseSearchHistory,
@@ -3949,8 +4137,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Action(
                 id = "clear_search_history",
-                title = "Clear Search History",
-                subtitle = "Remove recent queries from Search",
+                title = context.getString(R.string.settings_clear_search_history),
+                subtitle = context.getString(R.string.settings_remove_recent_queries_from_search),
                 iconRes = R.drawable.ic_settings_clear_history,
                 keywords = listOf("search", "recent", "queries", "clear", "delete", "privacy"),
                 trailingValue = if (searchHistoryCount == 0) "Empty" else "$searchHistoryCount saved",
@@ -3958,8 +4146,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "pause_listening_history",
-                title = "Pause Listening History",
-                subtitle = "Do not record played songs or update recommendations",
+                title = context.getString(R.string.settings_pause_listening_history),
+                subtitle = context.getString(R.string.settings_do_not_record_played_songs_or_update_recommendat),
                 iconRes = R.drawable.ic_settings_history,
                 keywords = listOf("pause", "listening", "history", "playback", "privacy"),
                 checked = state.pauseListeningHistory,
@@ -3967,8 +4155,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Action(
                 id = "clear_listening_history",
-                title = "Clear Listening History",
-                subtitle = "Remove playback history and reset taste profile",
+                title = context.getString(R.string.settings_clear_listening_history),
+                subtitle = context.getString(R.string.settings_remove_playback_history_and_reset_taste_profile),
                 iconRes = R.drawable.ic_settings_history,
                 keywords = listOf("clear", "listening", "history", "reset", "privacy", "taste"),
                 trailingValue = "Clear",
@@ -3976,8 +4164,8 @@ private fun buildSettingsSections(
             ),
             SettingsEntry.Toggle(
                 id = "disable_screenshot",
-                title = "Disable Screenshot",
-                subtitle = "Block screenshots and screen recording across app",
+                title = context.getString(R.string.settings_disable_screenshot),
+                subtitle = context.getString(R.string.settings_block_screenshots_and_screen_recording_across_ap),
                 iconRes = R.drawable.ic_settings_explicit,
                 keywords = listOf("screenshot", "capture", "record", "security", "flag_secure", "block"),
                 checked = state.disableScreenshot,
