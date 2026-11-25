@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.components
 
+
+import androidx.compose.ui.res.stringResource
 import android.os.Build
 import android.view.WindowManager
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -231,7 +233,7 @@ fun DeveloperNewsPopupDialog(
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.newspaper),
-                                    contentDescription = "News",
+                                    contentDescription = stringResource(R.string.ui_news),
                                     tint = AppleMusicRed,
                                     modifier = Modifier.size(26.dp)
                                 )
@@ -376,7 +378,7 @@ fun DeveloperNewsPopupDialog(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "All News",
+                        text = stringResource(R.string.ui_all_news),
                         color = AppleMusicRed,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -401,7 +403,7 @@ fun DeveloperNewsPopupDialog(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Dismiss",
+                        text = stringResource(R.string.ui_dismiss),
                         color = Color(0xFF8E8E93),
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Normal,
