@@ -13,6 +13,7 @@ package com.darkxvenom.itune.data.repository
 
 import android.content.ContentUris
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -28,7 +29,7 @@ internal object DownloadedAudioRepository {
     fun load(context: Context): List<Song> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         loadFromMediaStore(context)
     } else {
-        loadFromLegacyFolder()
+        loadFromLegacyFolder(context)
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -66,6 +67,7 @@ internal object DownloadedAudioRepository {
                 val id = cursor.getLong(idColumn)
                 val uri = ContentUris.withAppendedId(MediaStore.Downloads.EXTERNAL_CONTENT_URI, id)
                 songs += createSong(
+                    context = context,
                     id = "download_$id",
                     uri = uri,
                     displayName = name,
@@ -79,7 +81,7 @@ internal object DownloadedAudioRepository {
     }
 
     @Suppress("DEPRECATION")
-    private fun loadFromLegacyFolder(): List<Song> {
+    private fun loadFromLegacyFolder(context: Context): List<Song> {
         val directory = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
             "iTune",
@@ -92,6 +94,7 @@ internal object DownloadedAudioRepository {
             .map { file ->
                 val modifiedSeconds = file.lastModified() / 1_000L
                 createSong(
+                    context = context,
                     id = "download_${file.absolutePath.hashCode()}",
                     uri = Uri.fromFile(file),
                     displayName = file.name,
@@ -109,6 +112,7 @@ internal object DownloadedAudioRepository {
     }
 
     private fun createSong(
+        context: Context,
         id: String,
         uri: Uri,
         displayName: String,
@@ -125,11 +129,34 @@ internal object DownloadedAudioRepository {
             videoId = id,
             title = parsedTitle.ifBlank { "Downloaded song" },
             artist = artist,
-            thumbnailUrl = null,
+            thumbnailUrl = extractEmbeddedArtwork(context, uri),
             localUri = uri.toString(),
             downloadFormat = displayName.substringAfterLast('.', "").uppercase().ifBlank { null },
             localDateAddedSeconds = dateAddedSeconds.takeIf { it > 0L },
             localFileSizeBytes = fileSizeBytes.coerceAtLeast(0L),
         )
+    }
+
+    /**
+     * Extracts embedded album art from a downloaded audio file and caches it locally so the
+     * library can render covers for offline tracks even when the source is no longer online.
+     * Returns a `file://` URI to the cached artwork, or null if no embedded art exists.
+     */
+    private fun extractEmbeddedArtwork(context: Context, audioUri: Uri): String? {
+        return runCatching {
+            val retriever = MediaMetadataRetriever().apply {
+                setDataSource(context, audioUri)
+            }
+            val artBytes = retriever.embeddedPicture
+            retriever.release()
+            artBytes?.takeIf { it.isNotEmpty() }?.let { bytes ->
+                val cacheFile = File(
+                    context.cacheDir,
+                    "itune_dl_art_${audioUri.lastPathSegment ?: System.currentTimeMillis()}.jpg",
+                )
+                cacheFile.writeBytes(bytes)
+                "file://${cacheFile.absolutePath}"
+            } ?: null
+        }.getOrDefault(null)
     }
 }
