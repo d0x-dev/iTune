@@ -75,6 +75,7 @@ data class SettingsUiState(
     val useListeningHistory: Boolean = true,
     val contentLanguage: String = ContentLocaleCatalog.SYSTEM_DEFAULT,
     val contentCountry: String = ContentLocaleCatalog.SYSTEM_DEFAULT,
+    val appLanguage: String = AppLocaleManager.SYSTEM_DEFAULT,
     val hideExplicitContent: Boolean = false,
     val explicitContent: String = "Allowed",
     val addFavoriteSongs: Boolean = true,
@@ -196,6 +197,7 @@ object SettingsStore {
     const val KEY_LISTENING_HISTORY = "use_listening_history"
     const val KEY_CONTENT_LANGUAGE = "content_language"
     const val KEY_CONTENT_COUNTRY = "content_country"
+    const val KEY_APP_LANGUAGE = "app_language"
     const val KEY_HIDE_EXPLICIT = "hide_explicit_content"
     const val KEY_EXPLICIT_CONTENT = "explicit_content"
     const val KEY_ADD_FAVORITE_SONGS = "add_favorite_songs"
@@ -226,7 +228,11 @@ object SettingsStore {
         "portato",
         "youly",
         "megalobiz",
-        "youtube_music"
+        "youtube_music",
+        "genius",
+        "azlyrics",
+        "musixmatch",
+        "letssingit"
     )
     const val KEY_STOP_MUSIC_ON_TASK_CLEAR = "stop_music_on_task_clear"
     const val KEY_AUTO_SKIP_ON_ERROR = "auto_skip_on_error"
@@ -394,10 +400,12 @@ object SettingsStore {
         val normalized = when (key) {
             KEY_CONTENT_LANGUAGE -> ContentLocaleCatalog.normalizeLanguageChoice(trimmed)
             KEY_CONTENT_COUNTRY -> ContentLocaleCatalog.normalizeCountryChoice(trimmed)
+            KEY_APP_LANGUAGE -> AppLocaleManager.normalizeLanguageChoice(trimmed)
             KEY_PLAYER_STYLE -> normalizePlayerStyle(trimmed)
             else -> trimmed
         }
         prefs?.edit()?.putString(key, normalized)?.apply()
+        if (key == KEY_APP_LANGUAGE) AppLocaleManager.setLanguage(context, normalized)
         val cur = _state.value
         val localeChanged = (key == KEY_CONTENT_LANGUAGE && normalized != cur.contentLanguage) ||
             (key == KEY_CONTENT_COUNTRY && normalized != cur.contentCountry)
@@ -425,6 +433,7 @@ object SettingsStore {
             KEY_OPTIMIZE_STORAGE -> cur.copy(optimizeStorage = normalized)
             KEY_CONTENT_LANGUAGE -> cur.copy(contentLanguage = normalized)
             KEY_CONTENT_COUNTRY -> cur.copy(contentCountry = normalized)
+            KEY_APP_LANGUAGE -> cur.copy(appLanguage = normalized)
             KEY_EXPLICIT_CONTENT -> {
                 val hide = normalized.equals("Clean Only", ignoreCase = true)
                 prefs?.edit()?.putBoolean(KEY_HIDE_EXPLICIT, hide)?.apply()
@@ -593,28 +602,28 @@ object SettingsStore {
     fun setAutoSleepConfig(
         context: Context,
         enabled: Boolean,
-        startH: Int,
-        startM: Int,
-        endH: Int,
-        endM: Int,
+        startHour: Int,
+        startMinute: Int,
+        endHour: Int,
+        endMinute: Int,
         days: Set<String>
     ) {
         ensureInit(context)
         prefs?.edit()
             ?.putBoolean(KEY_AUTO_SLEEP_ENABLED, enabled)
-            ?.putInt(KEY_AUTO_SLEEP_START_HOUR, startH)
-            ?.putInt(KEY_AUTO_SLEEP_START_MINUTE, startM)
-            ?.putInt(KEY_AUTO_SLEEP_END_HOUR, endH)
-            ?.putInt(KEY_AUTO_SLEEP_END_MINUTE, endM)
+            ?.putInt(KEY_AUTO_SLEEP_START_HOUR, startHour)
+            ?.putInt(KEY_AUTO_SLEEP_START_MINUTE, startMinute)
+            ?.putInt(KEY_AUTO_SLEEP_END_HOUR, endHour)
+            ?.putInt(KEY_AUTO_SLEEP_END_MINUTE, endMinute)
             ?.putStringSet(KEY_AUTO_SLEEP_DAYS, days)
             ?.apply()
         _state.value = _state.value.copy(
             autoSleepTimerEnabled = enabled,
-            autoSleepStartHour = startH,
-            autoSleepStartMinute = startM,
-            autoSleepEndHour = endH,
-            autoSleepEndMinute = endM,
-            autoSleepDays = days
+            autoSleepStartHour = startHour,
+            autoSleepStartMinute = startMinute,
+            autoSleepEndHour = endHour,
+            autoSleepEndMinute = endMinute,
+            autoSleepDays = days,
         )
     }
 
@@ -642,124 +651,158 @@ object SettingsStore {
             proxyHost = host,
             proxyPort = port,
             proxyUser = user,
-            proxyPass = pass
+            proxyPass = pass,
         )
     }
 
+    fun setAudioQuality(context: Context, quality: String) {
+        setString(context, KEY_AUDIO_QUALITY, quality)
+    }
+
+    fun setDownloadQuality(context: Context, quality: String) {
+        setString(context, KEY_DOWNLOAD_QUALITY, quality)
+    }
+
+    fun setPcmOutputFormat(context: Context, format: String) {
+        setString(context, KEY_PCM_OUTPUT_FORMAT, format)
+    }
+
+    fun setEqPreset(context: Context, preset: String) {
+        setString(context, KEY_EQ_PRESET, preset)
+    }
+
+    fun setCrossfadeDuration(context: Context, duration: String) {
+        setString(context, KEY_CROSSFADE, duration)
+    }
+
+    fun setAfterglowDuration(context: Context, duration: String) {
+        setString(context, KEY_AFTERGLOW_DURATION, duration)
+    }
+
+    fun setCellularStreaming(context: Context, quality: String) {
+        setString(context, KEY_CELLULAR_STREAMING, quality)
+    }
+
+    fun setOptimizeStorage(context: Context, storage: String) {
+        setString(context, KEY_OPTIMIZE_STORAGE, storage)
+    }
+
+    fun setContentLanguage(context: Context, language: String) {
+        setString(context, KEY_CONTENT_LANGUAGE, language)
+    }
+
+    fun setContentCountry(context: Context, country: String) {
+        setString(context, KEY_CONTENT_COUNTRY, country)
+    }
+
+    fun setAppLanguage(context: Context, language: String) {
+        setString(context, KEY_APP_LANGUAGE, language)
+    }
+
+    fun setExplicitContent(context: Context, content: String) {
+        setString(context, KEY_EXPLICIT_CONTENT, content)
+    }
+
+    fun setSleepTimer(context: Context, timer: String) {
+        setString(context, KEY_SLEEP_TIMER, timer)
+    }
+
+    fun setCachedSizeLabel(context: Context, label: String) {
+        setString(context, KEY_CACHE_LABEL, label)
+    }
+
     private fun loadFromPrefs(context: Context, p: SharedPreferences): SettingsUiState {
-        val defaults = SettingsUiState()
-        val legacyExplicit = p.getString(KEY_EXPLICIT_CONTENT, defaults.explicitContent) ?: defaults.explicitContent
-        val hideExplicit = if (p.contains(KEY_HIDE_EXPLICIT)) {
-            p.getBoolean(KEY_HIDE_EXPLICIT, defaults.hideExplicitContent)
-        } else {
-            legacyExplicit.equals("Clean Only", ignoreCase = true)
-        }
-        val savedOrderStr = p.getString(KEY_LYRICS_PROVIDER_ORDER, null)
-        val parsedOrder = if (!savedOrderStr.isNullOrBlank()) {
-            val list = savedOrderStr.split(",").map { it.trim() }.filter { it.isNotEmpty() }
-            val missing = DEFAULT_LYRICS_PROVIDERS_ORDER.filter { it !in list }
-            list + missing
-        } else {
-            DEFAULT_LYRICS_PROVIDERS_ORDER
-        }
-        val disabledSet = p.getStringSet(KEY_LYRICS_DISABLED_PROVIDERS, emptySet()) ?: emptySet()
         return SettingsUiState(
-            displayName = p.getString(KEY_DISPLAY_NAME, defaults.displayName)?.ifBlank { defaults.displayName }
-                ?: defaults.displayName,
-            welcomeCompleted = p.getBoolean(KEY_WELCOME_COMPLETED, defaults.welcomeCompleted),
-            splashScreenEnabled = p.getBoolean(KEY_SPLASH_SCREEN, defaults.splashScreenEnabled),
-            spatialAudioMode = p.getString(KEY_SPATIAL_AUDIO, defaults.spatialAudioMode)
-                ?: defaults.spatialAudioMode,
-            dolbyAtmos = p.getBoolean(KEY_DOLBY_ATMOS, defaults.dolbyAtmos),
-            losslessAudio = p.getBoolean(KEY_LOSSLESS_AUDIO, defaults.losslessAudio),
-            jioSaavnProvider = p.getBoolean(KEY_JIOSAAVN_PROVIDER, defaults.jioSaavnProvider),
-            upgradeCachedSongs = p.getBoolean(KEY_UPGRADE_CACHED, defaults.upgradeCachedSongs),
-            volumeBarSide = if (p.getString(KEY_VOLUME_BAR_SIDE, defaults.volumeBarSide).equals("Left", true)) "Left" else "Right",
-            audioQuality = normalizeAudioQuality(p.getString(KEY_AUDIO_QUALITY, defaults.audioQuality)),
-            downloadQuality = p.getString(KEY_DOWNLOAD_QUALITY, defaults.downloadQuality)?.takeIf { it in setOf("Best Available", "Maximum", "High", "Standard", "Data Saver") } ?: defaults.downloadQuality,
-            pcmOutputFormat = p.getString(KEY_PCM_OUTPUT_FORMAT, defaults.pcmOutputFormat) ?: defaults.pcmOutputFormat,
-            eqPreset = p.getString(KEY_EQ_PRESET, defaults.eqPreset) ?: defaults.eqPreset,
-            crossfadeDuration = p.getString(KEY_CROSSFADE, defaults.crossfadeDuration) ?: defaults.crossfadeDuration,
-            afterglowDuration = normalizeAfterglowDuration(p.getString(KEY_AFTERGLOW_DURATION, defaults.afterglowDuration)),
-            autoMix = p.getBoolean(KEY_AUTOMIX, defaults.autoMix),
-            automixEnabled = p.getBoolean(KEY_AUTOMIX, defaults.automixEnabled),
-            soundCheck = p.getBoolean(KEY_SOUND_CHECK, defaults.soundCheck),
-            animatedArtwork = p.getBoolean(KEY_ANIMATED_ARTWORK, defaults.animatedArtwork),
-            canvasOverCellular = p.getBoolean(KEY_CANVAS_OVER_CELLULAR, defaults.canvasOverCellular),
-            spotifySpdcToken = EncryptedAuthPrefs.getDecrypted(context, KEY_SPOTIFY_SPDC_TOKEN).orEmpty(),
-            spotifyCanvasAutoHide = p.getBoolean(KEY_SPOTIFY_CANVAS_AUTO_HIDE, defaults.spotifyCanvasAutoHide),
-            prioritizeSpotifyCanvas = p.getBoolean(KEY_PRIORITIZE_SPOTIFY_CANVAS, defaults.prioritizeSpotifyCanvas),
-            showSyncedLyricsOverCanvas = p.getBoolean(KEY_SHOW_SYNCED_LYRICS_OVER_CANVAS, defaults.showSyncedLyricsOverCanvas),
-            timeSyncedLyrics = p.getBoolean(KEY_TIME_SYNCED_LYRICS, defaults.timeSyncedLyrics),
-            playerType = p.getString(KEY_PLAYER_TYPE, defaults.playerType) ?: defaults.playerType,
-            playerStyle = normalizePlayerStyle(p.getString(KEY_PLAYER_STYLE, defaults.playerStyle) ?: defaults.playerStyle),
-            playerDynamicColoring = p.getBoolean(KEY_PLAYER_DYNAMIC_COLORING, defaults.playerDynamicColoring),
-            fullScreenCoverArt = p.getBoolean(KEY_FULL_SCREEN_COVER_ART, defaults.fullScreenCoverArt),
-            coverCornerRadius = p.getInt(KEY_COVER_CORNER_RADIUS, defaults.coverCornerRadius),
-            hideQualityTag = p.getBoolean(KEY_HIDE_QUALITY_TAG, defaults.hideQualityTag),
-            hideVolumeBar = p.getBoolean(KEY_HIDE_VOLUME_BAR, defaults.hideVolumeBar),
-            liquidGlassNav = p.getBoolean(KEY_LIQUID_GLASS_NAV, defaults.liquidGlassNav),
-            topCardType = p.getString(KEY_TOP_CARD_TYPE, defaults.topCardType) ?: defaults.topCardType,
-            appFont = p.getString(KEY_APP_FONT, defaults.appFont) ?: defaults.appFont,
-            liquidGlassChrome = p.getBoolean(KEY_LIQUID_GLASS, defaults.liquidGlassChrome),
-            settingsMinimised = p.getBoolean(KEY_SETTINGS_MINIMISED, defaults.settingsMinimised),
-            tactileHaptics = p.getBoolean(KEY_TACTILE_HAPTICS, defaults.tactileHaptics),
-            cellularStreaming = p.getString(KEY_CELLULAR_STREAMING, defaults.cellularStreaming)
-                ?: defaults.cellularStreaming,
-            downloadOverWifiOnly = p.getBoolean(KEY_DOWNLOAD_WIFI_ONLY, defaults.downloadOverWifiOnly),
-            automaticDownloads = p.getBoolean(KEY_AUTO_DOWNLOADS, defaults.automaticDownloads),
-            optimizeStorage = p.getString(KEY_OPTIMIZE_STORAGE, defaults.optimizeStorage)
-                ?: defaults.optimizeStorage,
-            cachedSizeLabel = p.getString(KEY_CACHE_LABEL, defaults.cachedSizeLabel) ?: defaults.cachedSizeLabel,
-            syncLibrary = p.getBoolean(KEY_SYNC_LIBRARY, defaults.syncLibrary),
-            useListeningHistory = p.getBoolean(KEY_LISTENING_HISTORY, defaults.useListeningHistory),
-            contentLanguage = ContentLocaleCatalog.normalizeLanguageChoice(
-                p.getString(KEY_CONTENT_LANGUAGE, defaults.contentLanguage),
-            ),
-            contentCountry = ContentLocaleCatalog.normalizeCountryChoice(
-                p.getString(KEY_CONTENT_COUNTRY, defaults.contentCountry),
-            ),
-            hideExplicitContent = hideExplicit,
-            explicitContent = if (hideExplicit) "Clean Only" else "Allowed",
-            addFavoriteSongs = p.getBoolean(KEY_ADD_FAVORITE_SONGS, defaults.addFavoriteSongs),
-            newMusicAlerts = p.getBoolean(KEY_NEW_MUSIC_ALERTS, defaults.newMusicAlerts),
-            offlineMode = p.getBoolean(KEY_OFFLINE_MODE, defaults.offlineMode),
-            sleepTimer = p.getString(KEY_SLEEP_TIMER, defaults.sleepTimer) ?: defaults.sleepTimer,
-            lyricsProviderOrder = parsedOrder,
-            disabledLyricsProviders = disabledSet,
-            lyricsTranslationEnabled = p.getBoolean(KEY_LYRICS_TRANSLATION_ENABLED, defaults.lyricsTranslationEnabled),
-            lyricsTranslationProvider = p.getString(KEY_LYRICS_TRANSLATION_PROVIDER, defaults.lyricsTranslationProvider) ?: defaults.lyricsTranslationProvider,
-            lyricsTranslationApiKey = p.getString(KEY_LYRICS_TRANSLATION_API_KEY, defaults.lyricsTranslationApiKey) ?: defaults.lyricsTranslationApiKey,
-            lyricsTranslationBaseUrl = p.getString(KEY_LYRICS_TRANSLATION_BASE_URL, defaults.lyricsTranslationBaseUrl) ?: defaults.lyricsTranslationBaseUrl,
-            lyricsTranslationModel = p.getString(KEY_LYRICS_TRANSLATION_MODEL, defaults.lyricsTranslationModel) ?: defaults.lyricsTranslationModel,
-            lyricsTranslationCustomPrompt = p.getString(KEY_LYRICS_TRANSLATION_CUSTOM_PROMPT, defaults.lyricsTranslationCustomPrompt) ?: defaults.lyricsTranslationCustomPrompt,
-            lyricsReplaceOriginal = p.getBoolean(KEY_LYRICS_REPLACE_ORIGINAL, defaults.lyricsReplaceOriginal),
-            lyricsTranslateLanguage = p.getString(KEY_LYRICS_TRANSLATE_LANGUAGE, defaults.lyricsTranslateLanguage) ?: defaults.lyricsTranslateLanguage,
-            lyricsTranslateMode = p.getString(KEY_LYRICS_TRANSLATE_MODE, defaults.lyricsTranslateMode) ?: defaults.lyricsTranslateMode,
-            stopMusicOnTaskClear = p.getBoolean(KEY_STOP_MUSIC_ON_TASK_CLEAR, defaults.stopMusicOnTaskClear),
-            autoSkipOnError = p.getBoolean(KEY_AUTO_SKIP_ON_ERROR, defaults.autoSkipOnError),
-            permanentShuffle = p.getBoolean(KEY_PERMANENT_SHUFFLE, defaults.permanentShuffle),
-            autoSleepTimerEnabled = p.getBoolean(KEY_AUTO_SLEEP_ENABLED, defaults.autoSleepTimerEnabled),
-            autoSleepStartHour = p.getInt(KEY_AUTO_SLEEP_START_HOUR, defaults.autoSleepStartHour),
-            autoSleepStartMinute = p.getInt(KEY_AUTO_SLEEP_START_MINUTE, defaults.autoSleepStartMinute),
-            autoSleepEndHour = p.getInt(KEY_AUTO_SLEEP_END_HOUR, defaults.autoSleepEndHour),
-            autoSleepEndMinute = p.getInt(KEY_AUTO_SLEEP_END_MINUTE, defaults.autoSleepEndMinute),
-            autoSleepDays = p.getStringSet(KEY_AUTO_SLEEP_DAYS, defaults.autoSleepDays) ?: defaults.autoSleepDays,
-            proxyEnabled = p.getBoolean(KEY_PROXY_ENABLED, defaults.proxyEnabled),
-            proxyType = p.getString(KEY_PROXY_TYPE, defaults.proxyType) ?: defaults.proxyType,
-            proxyHost = p.getString(KEY_PROXY_HOST, defaults.proxyHost) ?: defaults.proxyHost,
-            proxyPort = p.getInt(KEY_PROXY_PORT, defaults.proxyPort),
-            proxyUser = p.getString(KEY_PROXY_USER, defaults.proxyUser) ?: defaults.proxyUser,
-            proxyPass = p.getString(KEY_PROXY_PASS, defaults.proxyPass) ?: defaults.proxyPass,
-            pauseSearchHistory = p.getBoolean(KEY_PAUSE_SEARCH_HISTORY, defaults.pauseSearchHistory),
-            pauseListeningHistory = p.getBoolean(KEY_PAUSE_LISTENING_HISTORY, defaults.pauseListeningHistory),
-            disableScreenshot = p.getBoolean(KEY_DISABLE_SCREENSHOT, defaults.disableScreenshot),
-            pauseOnZeroVolume = p.getBoolean(KEY_PAUSE_ON_ZERO_VOLUME, defaults.pauseOnZeroVolume),
-            lowPassFilterEnabled = p.getBoolean(KEY_LOW_PASS_FILTER, defaults.lowPassFilterEnabled),
-            aodEnabled = p.getBoolean(KEY_AOD_ENABLED, defaults.aodEnabled),
-            aodTimeoutSeconds = p.getInt(KEY_AOD_TIMEOUT, defaults.aodTimeoutSeconds),
-            aodImmersive = p.getBoolean(KEY_AOD_IMMERSIVE, defaults.aodImmersive),
-            aodKeepScreenOn = p.getBoolean(KEY_AOD_KEEP_SCREEN_ON, defaults.aodKeepScreenOn),
+            displayName = p.getString(KEY_DISPLAY_NAME, "Dark Venom") ?: "Dark Venom",
+            welcomeCompleted = p.getBoolean(KEY_WELCOME_COMPLETED, false),
+            splashScreenEnabled = p.getBoolean(KEY_SPLASH_SCREEN, true),
+            spatialAudioMode = p.getString(KEY_SPATIAL_AUDIO, "Automatic") ?: "Automatic",
+            dolbyAtmos = p.getBoolean(KEY_DOLBY_ATMOS, true),
+            losslessAudio = p.getBoolean(KEY_LOSSLESS_AUDIO, true),
+            jioSaavnProvider = p.getBoolean(KEY_JIOSAAVN_PROVIDER, false),
+            upgradeCachedSongs = p.getBoolean(KEY_UPGRADE_CACHED, false),
+            volumeBarSide = p.getString(KEY_VOLUME_BAR_SIDE, "Right") ?: "Right",
+            audioQuality = p.getString(KEY_AUDIO_QUALITY, "Extreme") ?: "Extreme",
+            downloadQuality = p.getString(KEY_DOWNLOAD_QUALITY, "Best Available") ?: "Best Available",
+            pcmOutputFormat = p.getString(KEY_PCM_OUTPUT_FORMAT, "16-bit PCM") ?: "16-bit PCM",
+            eqPreset = p.getString(KEY_EQ_PRESET, "Late Night") ?: "Late Night",
+            crossfadeDuration = p.getString(KEY_CROSSFADE, "Off") ?: "Off",
+            autoMix = p.getBoolean(KEY_AUTOMIX, false),
+            automixEnabled = p.getBoolean(KEY_AUTOMIX, false),
+            afterglowDuration = p.getString(KEY_AFTERGLOW_DURATION, "Off") ?: "Off",
+            soundCheck = p.getBoolean(KEY_SOUND_CHECK, true),
+            animatedArtwork = p.getBoolean(KEY_ANIMATED_ARTWORK, true),
+            canvasOverCellular = p.getBoolean(KEY_CANVAS_OVER_CELLULAR, false),
+            spotifySpdcToken = p.getString(KEY_SPOTIFY_SPDC_TOKEN, "") ?: "",
+            spotifyCanvasAutoHide = p.getBoolean(KEY_SPOTIFY_CANVAS_AUTO_HIDE, true),
+            prioritizeSpotifyCanvas = p.getBoolean(KEY_PRIORITIZE_SPOTIFY_CANVAS, false),
+            showSyncedLyricsOverCanvas = p.getBoolean(KEY_SHOW_SYNCED_LYRICS_OVER_CANVAS, true),
+            timeSyncedLyrics = p.getBoolean(KEY_TIME_SYNCED_LYRICS, true),
+            playerType = p.getString(KEY_PLAYER_TYPE, "Dynamic") ?: "Dynamic",
+            playerStyle = p.getString(KEY_PLAYER_STYLE, PLAYER_STYLE_PRIMARY) ?: PLAYER_STYLE_PRIMARY,
+            playerDynamicColoring = p.getBoolean(KEY_PLAYER_DYNAMIC_COLORING, true),
+            fullScreenCoverArt = p.getBoolean(KEY_FULL_SCREEN_COVER_ART, true),
+            coverCornerRadius = p.getInt(KEY_COVER_CORNER_RADIUS, 8),
+            hideQualityTag = p.getBoolean(KEY_HIDE_QUALITY_TAG, false),
+            hideVolumeBar = p.getBoolean(KEY_HIDE_VOLUME_BAR, false),
+            topCardType = p.getString(KEY_TOP_CARD_TYPE, "Portrait") ?: "Portrait",
+            liquidGlassNav = p.getBoolean(KEY_LIQUID_GLASS_NAV, false),
+            appFont = p.getString(KEY_APP_FONT, "system") ?: "system",
+            settingsMinimised = p.getBoolean(KEY_SETTINGS_MINIMISED, false),
+            liquidGlassChrome = p.getBoolean(KEY_LIQUID_GLASS, true),
+            tactileHaptics = p.getBoolean(KEY_TACTILE_HAPTICS, true),
+            cellularStreaming = p.getString(KEY_CELLULAR_STREAMING, "High Quality") ?: "High Quality",
+            downloadOverWifiOnly = p.getBoolean(KEY_DOWNLOAD_WIFI_ONLY, true),
+            automaticDownloads = p.getBoolean(KEY_AUTO_DOWNLOADS, false),
+            optimizeStorage = p.getString(KEY_OPTIMIZE_STORAGE, "16 GB") ?: "16 GB",
+            cachedSizeLabel = p.getString(KEY_CACHE_LABEL, "284 MB") ?: "284 MB",
+            syncLibrary = p.getBoolean(KEY_SYNC_LIBRARY, true),
+            useListeningHistory = p.getBoolean(KEY_LISTENING_HISTORY, true),
+            contentLanguage = p.getString(KEY_CONTENT_LANGUAGE, ContentLocaleCatalog.SYSTEM_DEFAULT) ?: ContentLocaleCatalog.SYSTEM_DEFAULT,
+            contentCountry = p.getString(KEY_CONTENT_COUNTRY, ContentLocaleCatalog.SYSTEM_DEFAULT) ?: ContentLocaleCatalog.SYSTEM_DEFAULT,
+            appLanguage = p.getString(KEY_APP_LANGUAGE, AppLocaleManager.SYSTEM_DEFAULT) ?: AppLocaleManager.SYSTEM_DEFAULT,
+            hideExplicitContent = p.getBoolean(KEY_HIDE_EXPLICIT, false),
+            explicitContent = p.getString(KEY_EXPLICIT_CONTENT, "Allowed") ?: "Allowed",
+            addFavoriteSongs = p.getBoolean(KEY_ADD_FAVORITE_SONGS, true),
+            newMusicAlerts = p.getBoolean(KEY_NEW_MUSIC_ALERTS, true),
+            offlineMode = p.getBoolean(KEY_OFFLINE_MODE, false),
+            sleepTimer = p.getString(KEY_SLEEP_TIMER, "Off") ?: "Off",
+            lyricsProviderOrder = p.getString(KEY_LYRICS_PROVIDER_ORDER, "")
+                ?.split(",")?.filter { it.isNotBlank() }?.takeIf { it.isNotEmpty() } ?: DEFAULT_LYRICS_PROVIDERS_ORDER,
+            disabledLyricsProviders = p.getStringSet(KEY_LYRICS_DISABLED_PROVIDERS, emptySet())?.toSet() ?: emptySet(),
+            lyricsTranslationEnabled = p.getBoolean(KEY_LYRICS_TRANSLATION_ENABLED, false),
+            lyricsTranslationProvider = p.getString(KEY_LYRICS_TRANSLATION_PROVIDER, "OpenRouter") ?: "OpenRouter",
+            lyricsTranslationApiKey = p.getString(KEY_LYRICS_TRANSLATION_API_KEY, "") ?: "",
+            lyricsTranslationBaseUrl = p.getString(KEY_LYRICS_TRANSLATION_BASE_URL, "") ?: "",
+            lyricsTranslationModel = p.getString(KEY_LYRICS_TRANSLATION_MODEL, "") ?: "",
+            lyricsTranslationCustomPrompt = p.getString(KEY_LYRICS_TRANSLATION_CUSTOM_PROMPT, "") ?: "",
+            lyricsReplaceOriginal = p.getBoolean(KEY_LYRICS_REPLACE_ORIGINAL, false),
+            lyricsTranslateLanguage = p.getString(KEY_LYRICS_TRANSLATE_LANGUAGE, "hi-Latn") ?: "hi-Latn",
+            lyricsTranslateMode = p.getString(KEY_LYRICS_TRANSLATE_MODE, "Literal") ?: "Literal",
+            stopMusicOnTaskClear = p.getBoolean(KEY_STOP_MUSIC_ON_TASK_CLEAR, false),
+            autoSkipOnError = p.getBoolean(KEY_AUTO_SKIP_ON_ERROR, true),
+            permanentShuffle = p.getBoolean(KEY_PERMANENT_SHUFFLE, false),
+            autoSleepTimerEnabled = p.getBoolean(KEY_AUTO_SLEEP_ENABLED, false),
+            autoSleepStartHour = p.getInt(KEY_AUTO_SLEEP_START_HOUR, 23),
+            autoSleepStartMinute = p.getInt(KEY_AUTO_SLEEP_START_MINUTE, 0),
+            autoSleepEndHour = p.getInt(KEY_AUTO_SLEEP_END_HOUR, 7),
+            autoSleepEndMinute = p.getInt(KEY_AUTO_SLEEP_END_MINUTE, 0),
+            autoSleepDays = p.getStringSet(KEY_AUTO_SLEEP_DAYS, setOf("All"))?.toSet() ?: setOf("All"),
+            proxyEnabled = p.getBoolean(KEY_PROXY_ENABLED, false),
+            proxyType = p.getString(KEY_PROXY_TYPE, "HTTP") ?: "HTTP",
+            proxyHost = p.getString(KEY_PROXY_HOST, "") ?: "",
+            proxyPort = p.getInt(KEY_PROXY_PORT, 8080),
+            proxyUser = p.getString(KEY_PROXY_USER, "") ?: "",
+            proxyPass = p.getString(KEY_PROXY_PASS, "") ?: "",
+            pauseSearchHistory = p.getBoolean(KEY_PAUSE_SEARCH_HISTORY, false),
+            pauseListeningHistory = p.getBoolean(KEY_PAUSE_LISTENING_HISTORY, false),
+            disableScreenshot = p.getBoolean(KEY_DISABLE_SCREENSHOT, false),
+            pauseOnZeroVolume = p.getBoolean(KEY_PAUSE_ON_ZERO_VOLUME, false),
+            lowPassFilterEnabled = p.getBoolean(KEY_LOW_PASS_FILTER, false),
+            aodEnabled = p.getBoolean(KEY_AOD_ENABLED, false),
+            aodTimeoutSeconds = p.getInt(KEY_AOD_TIMEOUT, 10),
+            aodImmersive = p.getBoolean(KEY_AOD_IMMERSIVE, true),
+            aodKeepScreenOn = p.getBoolean(KEY_AOD_KEEP_SCREEN_ON, true),
         )
     }
 }
