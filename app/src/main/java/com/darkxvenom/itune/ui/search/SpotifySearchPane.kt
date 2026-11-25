@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.search
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import android.widget.Toast
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -160,7 +163,7 @@ fun SpotifySearchPane(query: String) {
             val tracks = coroutineScope {
                 list.drop(index).take(20).map { async { SpotifyHomeRepository.matchSong(it) } }
             }.mapNotNull { it.await() }
-            if (tracks.isEmpty()) Toast.makeText(context, "Couldn't find this song on YouTube Music", Toast.LENGTH_SHORT).show()
+            if (tracks.isEmpty()) Toast.makeText(context, context.getString(R.string.toast_couldn_t_find_this_song_on_youtube_music), Toast.LENGTH_SHORT).show()
             else {
                 SpotifyHomeRepository.markOrigin(tracks.map { it.id })
                 MusicPlayerState.play(tracks.first(), tracks)
@@ -186,11 +189,11 @@ fun SpotifySearchPane(query: String) {
             }
         }
         when {
-            state == null -> Text("Searching Spotify…", color = Color.Gray, modifier = Modifier.padding(16.dp))
-            state.isFailure -> Text("Spotify search failed. Try again.", color = Color.Gray, modifier = Modifier.padding(16.dp))
+            state == null -> Text(stringResource(R.string.ui_searching_spotify), color = Color.Gray, modifier = Modifier.padding(16.dp))
+            state.isFailure -> Text(stringResource(R.string.ui_spotify_search_failed_try_again), color = Color.Gray, modifier = Modifier.padding(16.dp))
             else -> {
                 val r = state.getOrThrow()
-                if (r.isEmpty) Text("No results on Spotify", color = Color.Gray, modifier = Modifier.padding(16.dp))
+                if (r.isEmpty) Text(stringResource(R.string.ui_no_results_on_spotify), color = Color.Gray, modifier = Modifier.padding(16.dp))
                 val all = filter == SpFilter.ALL
                 if (r.songs.isNotEmpty() && (all || filter == SpFilter.SONGS)) {
                     SectionHeader("Songs", all) { filter = SpFilter.SONGS }
@@ -235,7 +238,7 @@ private fun entitySection(
 private fun SectionHeader(title: String, showMore: Boolean, onMore: () -> Unit) {
     Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(title, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        if (showMore) Text("More", color = Color(0xFF1DB954), fontSize = 14.sp, modifier = Modifier.clickable(onClick = onMore))
+        if (showMore) Text(stringResource(R.string.more), color = Color(0xFF1DB954), fontSize = 14.sp, modifier = Modifier.clickable(onClick = onMore))
     }
 }
 
