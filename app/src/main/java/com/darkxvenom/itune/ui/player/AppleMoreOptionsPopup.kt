@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.player
 
+
+import androidx.compose.ui.res.stringResource
 import com.darkxvenom.itune.ui.aod.AlwaysOnDisplayManager
 
 import android.Manifest
@@ -677,7 +679,7 @@ fun AppleMoreOptionsPopup(
             val isFavorite = MusicPlayerState.isFavorite(track.id)
             HeaderCircleActionButton(
                 iconRes = R.drawable.ic_menu_share,
-                contentDescription = "Share",
+                contentDescription = stringResource(R.string.share),
                 onClick = {
                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                     val link = "https://music.youtube.com/watch?v=${track.id}"
@@ -694,13 +696,13 @@ fun AppleMoreOptionsPopup(
             )
             HeaderCircleActionButton(
                 iconRes = R.drawable.ic_menu_copy_link,
-                contentDescription = "Copy link",
+                contentDescription = stringResource(R.string.ui_copy_link),
                 onClick = {
                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                     val link = "https://music.youtube.com/watch?v=${track.id}"
                     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
                     clipboard?.setPrimaryClip(ClipData.newPlainText("Track Link", link))
-                    Toast.makeText(context, "Link copied", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_link_copied), Toast.LENGTH_SHORT).show()
                     onDismiss()
                 }
             )
@@ -884,7 +886,7 @@ fun AppleMoreOptionsPopup(
                                     Column(modifier = Modifier.fillMaxWidth()) {
                                         PopupSubPageHeader(title = "Artists", onBack = { activePage = MorePopupPage.MAIN })
                                         if (names.isEmpty()) {
-                                            Text("No artist information available", color = Color.White.copy(alpha = 0.65f), modifier = Modifier.padding(18.dp))
+                                            Text(stringResource(R.string.ui_no_artist_information_available), color = Color.White.copy(alpha = 0.65f), modifier = Modifier.padding(18.dp))
                                         }
                                         names.forEachIndexed { index, name ->
                                             val profile = artistProfiles[name]
@@ -911,14 +913,14 @@ fun AppleMoreOptionsPopup(
                                             ) {
                                                 AsyncImage(
                                                     model = profile?.thumbnailUrl ?: track.thumbnailUrl,
-                                                    contentDescription = "$name profile",
+                                                    contentDescription = stringResource(R.string.profile_name, name),
                                                     contentScale = ContentScale.Crop,
                                                     modifier = Modifier.size(42.dp).clip(CircleShape),
                                                 )
                                                 Spacer(Modifier.width(12.dp))
                                                 Column(Modifier.weight(1f)) {
                                                     Text(profile?.name ?: name, color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                                                    Text(profile?.subscribers ?: "Artist", color = Color.White.copy(alpha = 0.62f), fontSize = 12.sp)
+                                                    Text(profile?.subscribers ?: stringResource(R.string.detail_artist), color = Color.White.copy(alpha = 0.62f), fontSize = 12.sp)
                                                 }
                                             }
                                             if (index < names.lastIndex) PopupMenuDivider()
@@ -1119,7 +1121,7 @@ private fun UpgradeQualityRow(onClick: () -> Unit) {
         MorePopupRowFrame(title = "Upgrade Quality", onClick = onClick) {
             Image(
                 painter = painterResource(id = R.drawable.ic_lossless),
-                contentDescription = "Upgrade Quality",
+                contentDescription = stringResource(R.string.ui_upgrade_quality),
                 colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
                 modifier = Modifier.size(width = 21.dp, height = 16.dp)
             )
@@ -1217,7 +1219,7 @@ internal fun PopupSubPageHeader(
         IconButton(onClick = onBack, modifier = Modifier.size(36.dp)) {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.back),
                 tint = Color.White,
                 modifier = Modifier.size(19.dp)
             )
@@ -1290,7 +1292,7 @@ private fun MorePopupDownloadSection(
             permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         } else {
             AudioDownloader.download(context, track, option)
-            Toast.makeText(context, "Download started · Check notification", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_download_started_check_notification), Toast.LENGTH_SHORT).show()
             onDownloadStarted()
         }
     }
@@ -1339,7 +1341,7 @@ private fun MorePopupDownloadSection(
                             modifier = Modifier.size(26.dp)
                         )
                         Text(
-                            text = "Fetching audio qualities…",
+                            text = stringResource(R.string.ui_fetching_audio_qualities),
                             fontFamily = SFProDisplay,
                             fontSize = 13.sp,
                             color = Color.White.copy(alpha = 0.68f)
@@ -1370,7 +1372,7 @@ private fun MorePopupDownloadSection(
                             .padding(horizontal = 16.dp, vertical = 7.dp)
                     ) {
                         Text(
-                            text = "Retry",
+                            text = stringResource(R.string.retry),
                             fontFamily = SFProDisplay,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -1431,7 +1433,7 @@ private fun MorePopupDownloadSection(
                                             .padding(horizontal = 5.dp, vertical = 1.dp)
                                     ) {
                                         Text(
-                                            text = "HQ",
+                                            text = stringResource(R.string.ui_hq),
                                             fontSize = 10.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = Color.White
@@ -1450,7 +1452,7 @@ private fun MorePopupDownloadSection(
 
                         Image(
                             painter = painterResource(id = R.drawable.ic_menu_download),
-                            contentDescription = "Download ${opt.label}",
+                            contentDescription = stringResource(R.string.download_option, opt.label),
                             colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.85f)),
                             modifier = Modifier.size(19.dp)
                         )
@@ -1478,10 +1480,10 @@ private fun MorePopupDetailsSection(
         PopupMenuDivider()
         DetailInfoRow(label = "Title", value = track.title)
         PopupMenuDivider()
-        DetailInfoRow(label = "Artist", value = track.artists)
+        DetailInfoRow(label = stringResource(R.string.detail_artist), value = track.artists)
         if (!track.album.isNullOrBlank()) {
             PopupMenuDivider()
-            DetailInfoRow(label = "Album", value = track.album)
+            DetailInfoRow(label = stringResource(R.string.detail_album), value = track.album)
         }
         PopupMenuDivider()
         DetailInfoRow(label = "Duration", value = durText)
@@ -1542,7 +1544,7 @@ private fun MorePopupSleepTimerSection(
                     .height(44.dp)
                     .clickable {
                         MusicPlayerState.setSleepTimer(mins)
-                        Toast.makeText(context, "Sleep timer set for $mins min", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_sleep_timer_set_for_min, mins), Toast.LENGTH_SHORT).show()
                         onSelectDone()
                     }
                     .padding(horizontal = 16.dp),
@@ -1573,7 +1575,7 @@ private fun MorePopupSleepTimerSection(
                 .height(44.dp)
                 .clickable {
                     MusicPlayerState.setSleepTimerEndOfTrack()
-                    Toast.makeText(context, "Playback will stop after current track", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_playback_will_stop_after_current_track), Toast.LENGTH_SHORT).show()
                     onSelectDone()
                 }
                 .padding(horizontal = 16.dp),
@@ -1581,7 +1583,7 @@ private fun MorePopupSleepTimerSection(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "End of current track",
+                text = stringResource(R.string.ui_end_of_current_track),
                 fontFamily = SFProDisplay,
                 fontSize = 15.sp,
                 color = Color.White.copy(alpha = 0.92f)
@@ -1604,14 +1606,14 @@ private fun MorePopupSleepTimerSection(
                     .height(44.dp)
                     .clickable {
                         MusicPlayerState.cancelSleepTimer()
-                        Toast.makeText(context, "Sleep timer turned off", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_sleep_timer_turned_off), Toast.LENGTH_SHORT).show()
                         onSelectDone()
                     }
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Turn Off Timer",
+                    text = stringResource(R.string.ui_turn_off_timer),
                     fontFamily = SFProDisplay,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 15.sp,
