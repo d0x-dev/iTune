@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">キャンセル</string>
+    <string name="save">保存</string>
+    <string name="close">閉じる</string>
+    <string name="done">完了</string>
+    <string name="back">戻る</string>
+    <string name="play">再生</string>
+    <string name="shuffle">シャッフル</string>
+    <string name="retry">再試行</string>
+    <string name="try_again">もう一度試す</string>
+    <string name="more">もっと見る</string>
+    <string name="less">少なく表示</string>
+    <string name="share">共有</string>
+    <string name="show_all">すべて表示</string>
+    <string name="top_songs">トップソング</string>
+    <string name="suggested">おすすめ</string>
+    <string name="subscribers">登録者 %1$s 人</string>
+    <string name="monthly_listeners">月間リスナー %1$s 人</string>
+    <string name="signed_by">契約: %1$s</string>
+    <string name="about_artist">アーティストについて</string>
+    <string name="about_album">アルバムについて</string>
+    <string name="recent_album">最新アルバム</string>
+    <string name="recent_ep">最新EP</string>
+    <string name="recent_single">最新シングル</string>
+    <string name="subscribe">登録</string>
+    <string name="unsubscribe">登録解除</string>
+    <string name="add_to_library">ライブラリに追加</string>
+    <string name="remove_from_library">ライブラリから削除</string>
+    <string name="add_to_playlist">プレイリストに追加</string>
+    <string name="remove_from_playlist">このプレイリストから削除</string>
+    <string name="play_next">次に再生</string>
+    <string name="add_to_queue">キューに追加</string>
+    <string name="start_radio">ラジオを開始</string>
+    <string name="open">開く</string>
+    <string name="open_album">アルバムを開く</string>
+    <string name="open_artist">アーティストを開く</string>
+    <string name="open_playlist">プレイリストを開く</string>
+    <string name="song_info">曲情報</string>
+    <string name="song_info_album">アルバム</string>
+    <string name="song_info_release_date">リリース日</string>
+    <string name="song_info_views">再生回数 / 視聴回数</string>
+    <string name="song_info_likes">高評価</string>
+    <string name="song_info_comments">コメント</string>
+    <string name="song_info_unavailable">利用できません</string>
+    <string name="song_info_error">一部の情報を読み込めませんでした。</string>
+    <string name="song_info_retry">再試行</string>
+    <string name="like">高評価</string>
+    <string name="dislike">低評価</string>
+    <string name="download">ダウンロード</string>
+    <string name="download_all">すべてダウンロード</string>
+    <string name="downloaded">ダウンロード済み</string>
+    <string name="downloading">ダウンロード中</string>
+    <string name="download_notification_title">ダウンロード中</string>
+    <string name="delete_download">ダウンロードを削除</string>
+    <string name="delete_download_confirmation">「%1$s」をこのデバイスから削除しますか? 確認するにはもう一度タップしてください。</string>
+    <string name="delete">削除</string>
+    <string name="queued">キューに追加済み</string>
+    <string name="saved_to_downloads">ダウンロードに保存しました</string>
+    <string name="search_this_list">このリストを検索</string>
+    <string name="clear_search">検索をクリア</string>
+    <string name="close_search">検索を閉じる</string>
+    <string name="nothing_matches">ここには「%1$s」に一致するものがありません</string>
+    <string name="sort_songs">曲を並べ替え</string>
+    <string name="artist">アーティスト</string>
+    <string name="album">アルバム</string>
+    <string name="playlist">プレイリスト</string>
+    <string name="folder">フォルダ</string>
+    <string name="songs">曲</string>
+    <string name="song_count">%1$d 曲</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$d トラック</item>
+        <item quantity="other">%1$d トラック</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$d 分</item>
+        <item quantity="other">%1$d 分</item>
+    </plurals>
+    <string name="one_hour">1 時間</string>
+    <string name="hours_minutes_short">%1$d時間 %2$d分</string>
+    <string name="minutes_short">%1$d 分</string>
+    <string name="pin">ピン留め</string>
+    <string name="unpin">ピン留めを解除</string>
+    <string name="tile_identify_music">音楽を識別</string>
+    <string name="tile_identify_music_desc">iTune で周囲で再生中の曲を識別します</string>
+    <string name="widget_itune_description">ホーム画面から iTune の再生を操作します</string>
+    <string name="app_language">アプリの言語</string>
+    <string name="app_language_subtitle">メニュー、ボタン、メッセージの言語</string>
+    <string name="app_language_description">iTune のインターフェースで使用する言語を選択してください。</string>
+    <string name="system_default_language">システムデフォルト</string>
+    <string name="follow_device_language">デバイスの言語に合わせる</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">Use the English interface</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface">इंटरफ़ेस के लिए हिन्दी का उपयोग करें</string>
+    <string name="hindi_interface_language">Hindi interface language</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">Use the Spanish interface</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">Use the French interface</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">Use the Dutch interface</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">Use the Russian interface</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">Use the Urdu interface</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">Use the Chinese interface</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">Use the German interface</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">Use the Portuguese interface</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">Use the Italian interface</string>
+    <string name="japanese_language">日本語</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">한국어 인터페이스</string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Svenskt gränssnitt</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">الواجهة العربية</string>
+    <string name="japanese_interface">日本語インターフェースを使用</string>
+    <string name="favorite_artist">お気に入りのアーティスト</string>
+    <string name="remove_favorite_artist">お気に入りのアーティストから削除</string>
+    <string name="add_to_favorite_artists">お気に入りのアーティストに追加</string>
+    <string name="removed_from_artists">アーティストから削除しました</string>
+    <string name="added_to_artists">アーティストに追加しました</string>
+    <string name="play_top_songs">トップソングを再生</string>
+    <string name="play_album">アルバムを再生</string>
+    <string name="play_playlist">プレイリストを再生</string>
+    <string name="create_new_playlist">新しいプレイリストを作成</string>
+    <string name="create_playlist">プレイリストを作成</string>
+    <string name="radio">ラジオ</string>
+    <string name="search">検索</string>
+    <string name="share_playlist_link">プレイリストのリンクを共有</string>
+    <string name="copy_share_link">共有リンクをコピー</string>
+    <string name="rename_playlist">プレイリストの名前を変更</string>
+    <string name="delete_playlist">プレイリストを削除</string>
+    <string name="share_link_copied">共有リンクをコピーしました</string>
+    <string name="playlist_removed">プレイリストを削除しました</string>
+    <string name="playlist_no_longer_available">このプレイリストはもう利用できません。</string>
+    <string name="empty_playlist">空のプレイリスト</string>
+    <string name="filter_playlists">プレイリストを絞り込む...</string>
+    <string name="filter_albums">アルバムを絞り込む...</string>
+    <string name="favorite">お気に入り</string>
+    <string name="tap_to_start_listening">タップして聴き始める</string>
+    <string name="time_zero" formatted="false">0:00</string>
+    <string name="previous">前へ</string>
+    <string name="play_or_pause">再生または一時停止</string>
+    <string name="next">次へ</string>
+    <string name="repeat">リピート</string>
+    <string name="open_title_options">%1$s のオプションを開く</string>
+    <string name="reset_page_title">%1$s をリセット</string>
+    <string name="remove_device">%1$s を削除</string>
+    <string name="profile_name">%1$s のプロフィール</string>
+    <string name="download_option">%1$s をダウンロード</string>
+    <string name="open_entry_options">%1$s のオプションを開く</string>
+    <string name="avatar_number">アバター %1$s</string>
+    <string name="options_for_track">%1$s のオプション</string>
+    <string name="preparing">準備中…</string>
+    <string name="share_image">画像を共有</string>
+    <string name="speed_pitch_locked">速度とピッチが連動</string>
+    <string name="independent_bpm_tempo_key_pitch">BPM テンポとキーピッチを独立</string>
+    <string name="spatial_reflections_delay">空間反射 (%1$d ms)</string>
+    <string name="on">オン</string>
+    <string name="off">オフ</string>
+    <string name="dynamic_island_active">Dynamic Island 有効</string>
+    <string name="dynamic_island_description">再生中は iTune の外に滑らかに表示されます</string>
+    <string name="preparing_download">ダウンロードを準備中…</string>
+    <string name="listening_for_music">音楽を聴き取り中…</string>
+    <string name="hold_phone_near_sound_source">スマートフォンを音源に近づけてください</string>
+    <string name="unable_to_recognize_audio">音声を認識できません</string>
+    <string name="song_identified">曲を識別しました</string>
+    <string name="play_in_itune">iTune で再生</string>
+    <string name="view_details">詳細を表示</string>
+    <string name="no_match_found">一致するものが見つかりません</string>
+    <string name="recognition_retry_message">曲を識別できませんでした。タップしてもう一度試してください。</string>
+    <string name="microphone_permission_needed">マイクの許可が必要です</string>
+    <string name="microphone_permission_help">iTune が音楽を識別できるようにマイクへのアクセスを許可するにはタップしてください。</string>
+    <string name="recognition_failed">認識に失敗しました</string>
+    <string name="tap_install_to_continue">続行するには「インストール」をタップしてください</string>
+    <string name="detail_artist">アーティスト</string>
+    <string name="detail_album">アルバム</string>
+    <string name="set_default_ringtone_target">デフォルトの%1$sに設定しました!</string>
+    <string name="added_ringtone_target">%1$s に追加しました。サウンド設定で選択してください。</string>
+    <string name="last_fm_connected_as">Last.fm に %1$s として接続しました</string>
+    <string name="discord_connected_as">Discord に %1$s として接続しました</string>
+    <string name="tv_encrypted_backup_saved">暗号化バックアップを保存しました (%1$d KB)!</string>
+    <string name="sign_in_verification_failed">サインイン認証に失敗しました</string>
+    <string name="could_not_rename_playlist">YouTube Music でプレイリストの名前を変更できませんでした</string>
+    <string name="could_not_create_playlist">プレイリストを作成できませんでした</string>
+    <string name="daily_encrypted_backup_enabled">毎日の暗号化バックアップを有効にしました</string>
+    <string name="cookie_login_failed">Cookie ログインに失敗しました</string>
+    <string name="could_not_open_last_fm">Last.fm を開けませんでした</string>
+    <string name="last_fm_sign_in_failed">Last.fm のサインインに失敗しました</string>
+    <string name="discord_sign_in_failed">Discord のサインインに失敗しました</string>
+    <string name="could_not_open_android_installer">Android のインストーラーを開けませんでした</string>
+    <string name="added_title_to_queue">「%1$s」をキューに追加しました</string>
+    <string name="automatic_backup_disabled">自動バックアップを無効にしました</string>
+    <string name="download_failed">ダウンロードに失敗しました</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">インストール</string>
+    <string name="ui_text_9ef6a80f91" formatted="false">#1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">%+.1f</string>
+    <string name="ui_accounts" formatted="false">+ アカウント</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0.0s</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5.0s</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">-</string>
+    <string name="ui_text_7be28ad40e" formatted="false">-5.0s</string>
+    <string name="ui_text_a6dee6102d" formatted="false">23:00</string>
+    <string name="ui_text_1a19c52178" formatted="false">0:00</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">12:00</string>
+    <string name="ui_text_4e37ece023" formatted="false">15ms 反対側耳遅延ローパスブレンド</string>
+    <string name="ui_text_76b322ac42" formatted="false">2倍速</string>
+    <string name="ui_text_505c74ed85" formatted="false">3D ピンポン・バウンス</string>
+    <string name="ui_text_db9b8df506" formatted="false">6:00</string>
+    <string name="ui_text_2812537f20" formatted="false">18:00</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080</string>
+    <string name="ui_text_05a79f06cf" formatted="false">:</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">トップソング、アーティスト、アルバム、習慣をまとめた全体像。</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">新しいバージョンの準備ができました</string>
+    <string name="ui_account" formatted="false">アカウント</string>
+    <string name="ui_account_options" formatted="false">アカウントオプション</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">アカウント</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">アコースティック・ヘッドシャドウ・クロスフィード</string>
+    <string name="ui_activate" formatted="false">有効化</string>
+    <string name="ui_active" formatted="false">有効</string>
+    <string name="ui_active_days" formatted="false">アクティブ日数</string>
+    <string name="ui_active_profile" formatted="false">アクティブなプロフィール</string>
+    <string name="ui_activity_by_day" formatted="false">日別アクティビティ</string>
+    <string name="ui_add_account" formatted="false">アカウントを追加</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">カスタム HTTP アドオンサーバー (/manifest.json、/search、/stream を提供) またはサンドボックス分離された QuickJS モジュールを追加します。</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">今後の曲を自動的に追加</string>
+    <string name="ui_add_streaming_source" formatted="false">ストリーミングソースを追加</string>
+    <string name="ui_add_to_playlist" formatted="false">プレイリストに追加</string>
+    <string name="ui_added_playlists" formatted="false">追加したプレイリスト</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">正方形のアルバムアートワークの角の端を調整します。</string>
+    <string name="ui_advanced_cookie_login" formatted="false">詳細な Cookie ログイン</string>
+    <string name="ui_advanced_login" formatted="false">詳細ログイン</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">詳細ログイン</string>
+    <string name="ui_ai_engine" formatted="false">AI エンジン</string>
+    <string name="ui_ai_provider" formatted="false">AI プロバイダー</string>
+    <string name="ui_albums" formatted="false">アルバム</string>
+    <string name="ui_all_news" formatted="false">すべてのニュース</string>
+    <string name="ui_allow_downloads" formatted="false">ダウンロードを許可</string>
+    <string name="ui_allow_microphone" formatted="false">マイクを許可</string>
+    <string name="ui_allow_microphone_access" formatted="false">マイクへのアクセスを許可</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">反射を L &lt;-&gt; R で交互に切り替え</string>
+    <string name="ui_always_on_display" formatted="false">常時表示ディスプレイ</string>
+    <string name="ui_am" formatted="false">午前</string>
+    <string name="ui_api_base_url" formatted="false">API ベース URL</string>
+    <string name="ui_artist" formatted="false">アーティスト</string>
+    <string name="ui_artist_name" formatted="false">アーティスト名</string>
+    <string name="ui_artists" formatted="false">アーティスト</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">アーティスト、曲、アルバム、プレイリスト…</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">アーティスト、曲、歌詞など</string>
+    <string name="ui_at_least_8_characters" formatted="false">8 文字以上</string>
+    <string name="ui_auto_sleep_timer" formatted="false">自動スリープタイマー</string>
+    <string name="ui_auto_activation_timeout" formatted="false">自動有効化タイムアウト</string>
+    <string name="ui_avatar" formatted="false">アバター</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">iTune をバックアップ (AES-256)</string>
+    <string name="ui_backup_password" formatted="false">バックアップパスワード</string>
+    <string name="ui_bluetooth_device_access" formatted="false">Bluetooth デバイスアクセス</string>
+    <string name="ui_browse" formatted="false">ブラウズ</string>
+    <string name="ui_browse_by_country" formatted="false">国別にブラウズ</string>
+    <string name="ui_browse_extensions" formatted="false">拡張機能をブラウズ</string>
+    <string name="ui_browse_live_online_radio" formatted="false">ライブオンラインラジオをブラウズ</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">唯一のアカウントは削除できません</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">Canvas プロバイダー (検索順序)</string>
+    <string name="ui_captcha_guidance" formatted="false">CAPTCHA ガイダンス</string>
+    <string name="ui_cast_wireless_devices" formatted="false">キャストとワイヤレスデバイス</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">オーディオ再生のストリーミングソース、ロスレス階層、フォールバック優先度を選択します</string>
+    <string name="ui_choose_avatar" formatted="false">アバターを選択</string>
+    <string name="ui_choose_charts_region" formatted="false">チャートの地域を選択</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">iTune がホーム画面にどのように表示されるかを選択します。ランチャーからウィジェットのサイズを変更できます。</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">続行するにはプロフィールを選択してください</string>
+    <string name="ui_choose_youtube_channel" formatted="false">YouTube チャンネルを選択</string>
+    <string name="ui_clear" formatted="false">クリア</string>
+    <string name="ui_clear_use_default" formatted="false">クリアしてデフォルトを使用</string>
+    <string name="ui_clear_all" formatted="false">すべてクリア</string>
+    <string name="ui_confirm" formatted="false">確認</string>
+    <string name="ui_confirm_password" formatted="false">パスワードを確認</string>
+    <string name="ui_connect_discord" formatted="false">Discord を接続</string>
+    <string name="ui_connect_last_fm" formatted="false">Last.fm を接続</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">Canvas のループモーション動画アートワークを有効にし、Spotify ライブラリを同期するには、Spotify アカウントを接続してください。</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">セッション Cookie で YouTube Music を接続</string>
+    <string name="ui_connect" formatted="false">接続 ›</string>
+    <string name="ui_connecting_spotify" formatted="false">Spotify に接続中...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">YouTube Music に接続中...</string>
+    <string name="ui_continue" formatted="false">続行</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">代わりにブラウザで続行</string>
+    <string name="ui_continue_with_google" formatted="false">Google で続行</string>
+    <string name="ui_continue_with_spotify" formatted="false">Spotify で続行</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">Cookie 認証情報は iTune の暗号化されたアカウントストレージに保存され、保存前に YouTube Music で検証されます。</string>
+    <string name="ui_copy_song_name" formatted="false">曲名をコピー</string>
+    <string name="ui_copy_text" formatted="false">テキストをコピー</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">Copyright © 2026 iTune Project. このソフトウェアは無保証で提供されます。以下に示す GNU GPL の条項に基づいて再配布および変更することができます。</string>
+    <string name="ui_corner_length" formatted="false">角の長さ</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">Replay 画像をレンダリングできませんでした</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">現在音楽を読み込めません。下に引っ張ってもう一度試してください。</string>
+    <string name="ui_create" formatted="false">作成</string>
+    <string name="ui_create_add" formatted="false">作成して追加</string>
+    <string name="ui_current_account" formatted="false">現在のアカウント</string>
+    <string name="ui_custom_instructions" formatted="false">カスタム指示</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">カスタムリポジトリのインデックスまたは URL</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">ホーム画面プレーヤーをカスタマイズ</string>
+    <string name="ui_customize_your_itune_card" formatted="false">iTune カードをカスタマイズ</string>
+    <string name="ui_d" formatted="false">D</string>
+    <string name="ui_delete_account" formatted="false">アカウントを削除</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">アカウントを削除しますか?</string>
+    <string name="ui_developer_announcements" formatted="false">開発者からのお知らせ</string>
+    <string name="ui_disconnect" formatted="false">切断</string>
+    <string name="ui_disconnect_discord" formatted="false">Discord を切断</string>
+    <string name="ui_discord_rich_presence" formatted="false">Discord Rich Presence</string>
+    <string name="ui_dismiss" formatted="false">閉じる</string>
+    <string name="ui_display_full_screen" formatted="false">表示と全画面</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">Canvas コントロールが非表示のとき、曲名の上にアニメーション付きの同期歌詞を表示します</string>
+    <string name="ui_display_name" formatted="false">表示名</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">DJ バイポーラ・クラブフィルター</string>
+    <string name="ui_downloaded_cached" formatted="false">ダウンロード済みとキャッシュ済み</string>
+    <string name="ui_dp" formatted="false">dp</string>
+    <string name="ui_dynamic_island" formatted="false">Dynamic Island</string>
+    <string name="ui_e" formatted="false">E</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">例: 127.0.0.1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">例: 韻を踏んだ詩的なヒングリッシュに翻訳する</string>
+    <string name="ui_enable_auto_sleep" formatted="false">自動スリープを有効化</string>
+    <string name="ui_enable_proxy" formatted="false">プロキシを有効化</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">Spotify Canvas とプレイリストを有効化中</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">暗号化パスワード (8 文字以上)</string>
+    <string name="ui_end_of_current_track" formatted="false">現在のトラックの終了時</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">このアカウントの新しい名前を入力してください。</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">HTTP アドオンのマニフェスト URL、QuickJS モジュールインデックス、または Tidal インスタンスのエンドポイントを入力してください。</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">.itune バックアップの作成時に使用したパスワードを入力してください。</string>
+    <string name="ui_enter_your_name" formatted="false">名前を入力</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">iTune をパーソナライズするために名前を入力してください</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">あなたが共に生きたすべてのリズム、深夜のアンセム、メロディー — ひとつの旅に集めました。</string>
+    <string name="ui_everything" formatted="false">すべて</string>
+    <string name="ui_explore_categories" formatted="false">カテゴリを探索</string>
+    <string name="ui_exporting_audio" formatted="false">オーディオをエクスポート中…</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">短いオーディオフィンガープリントを抽出中</string>
+    <string name="ui_favorite_stations" formatted="false">お気に入りのステーション</string>
+    <string name="ui_favorites" formatted="false">お気に入り</string>
+    <string name="ui_featured_hit" formatted="false">注目のヒット</string>
+    <string name="ui_featured_playlists" formatted="false">注目のプレイリスト</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">オーディオ品質を取得中…</string>
+    <string name="ui_fetching_live_catalog" formatted="false">ライブカタログを取得中...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">より良いストリームを検索中</string>
+    <string name="ui_full_view" formatted="false">全体表示</string>
+    <string name="ui_g" formatted="false">G</string>
+    <string name="ui_genre" formatted="false">ジャンル</string>
+    <string name="ui_genres_styles" formatted="false">ジャンルとスタイル</string>
+    <string name="ui_github_repository" formatted="false">GitHub リポジトリ</string>
+    <string name="ui_github_repository_open_source" formatted="false">GitHub リポジトリ · オープンソース</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 以降</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 以降 · Copyright © 2026 iTune Project</string>
+    <string name="ui_grant" formatted="false">許可</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">イヤホン名とリアルタイムバッテリー % を表示するために許可</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">ハードウェア LoudnessEnhancer (+18 dB まで)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">シームレスな純粋な OLED ブラックのために Android のステータスバーとナビゲーションバーを非表示にします。</string>
+    <string name="ui_history" formatted="false">履歴</string>
+    <string name="ui_host" formatted="false">ホスト</string>
+    <string name="ui_host_a_session" formatted="false">セッションをホスト</string>
+    <string name="ui_host_controls_playback" formatted="false">ホストが再生を制御</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">Cookie の取得方法</string>
+    <string name="ui_hq" formatted="false">HQ</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">Shazam で識別</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">周囲で再生中の音楽を識別</string>
+    <string name="ui_immersion" formatted="false">イマージョン</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">没入モード (全画面)</string>
+    <string name="ui_import" formatted="false">インポート</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">公開・非公開プレイリストをインポート • 自動同期</string>
+    <string name="ui_import_spotify_playlist" formatted="false">Spotify プレイリストをインポート</string>
+    <string name="ui_in_use" formatted="false">使用中</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">オーディオプロバイダーがアンチボットチェックを要求した場合のアプリ内ガイダンス</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">事前に追加された Mornye コミュニティ拡張機能をインストールするか、カスタムリポジトリのインデックスをスキャンします。</string>
+    <string name="ui_installed" formatted="false">インストール済み</string>
+    <string name="ui_interactive_dot_curve" formatted="false">インタラクティブドットカーブ</string>
+    <string name="ui_irecognition" formatted="false">iRecognition</string>
+    <string name="ui_ireconization" formatted="false">iReconization</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">iReconization は数秒間聴いて音楽のフィンガープリントを作成します。オーディオは保存されません。</string>
+    <string name="ui_ishare" formatted="false">iShare</string>
+    <string name="ui_itune_license" formatted="false">iTune ライセンス</string>
+    <string name="ui_itune_music" formatted="false">iTune Music</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTune は以下の正確な優先順位で歌詞を照会します。最も優先度の高い有効なプロバイダーに同期歌詞がない場合、iTune はシームレスに次へフォールバックします。</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTune は表示された順序でソースを照会します。インストール済みの拡張機能とプロバイダーをドラッグして再生の優先度を調整します。</string>
+    <string name="ui_itune_time_travel" formatted="false">iTune Time Travel</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">ジェットフランジャー・スウッシュ</string>
+    <string name="ui_join" formatted="false">参加</string>
+    <string name="ui_keep_screen_on" formatted="false">画面をオンのままにする</string>
+    <string name="ui_l" formatted="false">L</string>
+    <string name="ui_lan_port" formatted="false">LAN ポート</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">言語設定 (任意、例: ヒンディー語、パンジャブ語…)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fm スクロブル</string>
+    <string name="ui_layout" formatted="false">レイアウト</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">このプロバイダーのデフォルトエンドポイントを使用するには空のままにしてください。</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">LFO スイープ・ジェット位相変調</string>
+    <string name="ui_library" formatted="false">ライブラリ</string>
+    <string name="ui_license" formatted="false">ライセンス</string>
+    <string name="ui_liked_songs" formatted="false">高評価した曲</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">サインイン中に追加された高評価はローカルと YouTube Music の両方に保存されるため、サインアウト後もライブラリに残ります。</string>
+    <string name="ui_listening_patterns" formatted="false">リスニングパターン</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">共有されたオーディオを聴いています…</string>
+    <string name="ui_live" formatted="false">ライブ</string>
+    <string name="ui_live_radio_stations" formatted="false">ライブラジオステーション</string>
+    <string name="ui_loading_announcements" formatted="false">お知らせを読み込み中…</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">アーティスト、プレイリスト、履歴を読み込み中</string>
+    <string name="ui_lossless" formatted="false">ロスレス</string>
+    <string name="ui_lossless_audio_preference" formatted="false">ロスレスオーディオ設定</string>
+    <string name="ui_lyrics" formatted="false">歌詞</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">この曲の歌詞は利用できません</string>
+    <string name="ui_lyrics_providers" formatted="false">歌詞プロバイダー</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">歌詞の翻訳に成功しました!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">マスターアンプブースト</string>
+    <string name="ui_member_since" formatted="false">登録日</string>
+    <string name="ui_memoji_style" formatted="false">ミー文字とスタイル</string>
+    <string name="ui_minutes_listened" formatted="false">再生時間 (分)</string>
+    <string name="ui_mirror_vol" formatted="false">ミラー音量</string>
+    <string name="ui_model" formatted="false">モデル</string>
+    <string name="ui_model_68c2cc7f" formatted="false">モデル</string>
+    <string name="ui_moods_activities" formatted="false">ムードとアクティビティ</string>
+    <string name="ui_moods_moments" formatted="false">ムードと瞬間</string>
+    <string name="ui_music_by_genre" formatted="false">ジャンル別の音楽</string>
+    <string name="ui_music_language_preference" formatted="false">音楽の言語設定</string>
+    <string name="ui_music_services" formatted="false">音楽サービス</string>
+    <string name="ui_name" formatted="false">名前</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">近くの Wi-Fi ホスト</string>
+    <string name="ui_network_proxy" formatted="false">ネットワークプロキシ</string>
+    <string name="ui_new" formatted="false">新規</string>
+    <string name="ui_new_playlist" formatted="false">新しいプレイリスト</string>
+    <string name="ui_new_releases" formatted="false">新着リリース</string>
+    <string name="ui_news_from_dev" formatted="false">開発者からのニュース</string>
+    <string name="ui_next_up" formatted="false">次に再生</string>
+    <string name="ui_no_albums_found" formatted="false">アルバムが見つかりません</string>
+    <string name="ui_no_artist_information_available" formatted="false">アーティスト情報がありません</string>
+    <string name="ui_no_artists_found" formatted="false">アーティストが見つかりません</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">ライブラリにまだアーティストがいません</string>
+    <string name="ui_no_playlists_found" formatted="false">プレイリストが見つかりません</string>
+    <string name="ui_no_results_on_spotify" formatted="false">Spotify に結果がありません</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">ライブラリに保存されたアルバムはありません</string>
+    <string name="ui_no_songs_found" formatted="false">曲が見つかりません</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">このリリースに曲が見つかりません</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">このセクションに曲が見つかりません</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">ユーザープレイリストが見つかりません。ライブラリで作成してください!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">まだ十分な再生履歴がありません</string>
+    <string name="ui_now_playing" formatted="false">再生中</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">再生中</string>
+    <string name="ui_on_heavy_repeat" formatted="false">リピート再生中</string>
+    <string name="ui_options" formatted="false">オプション</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">または SP_DC Cookie を入力</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">オービットの強度と速度</string>
+    <string name="ui_pair_join_a_device" formatted="false">デバイスをペアリングして参加</string>
+    <string name="ui_password_optional" formatted="false">パスワード (任意)</string>
+    <string name="ui_passwords_dont_match" formatted="false">パスワードが一致しません</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">sp_dc トークンをここに貼り付け…</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">API キーをここに貼り付け</string>
+    <string name="ui_play_in_itune" formatted="false">iTune で再生</string>
+    <string name="ui_play_next" formatted="false">次に再生</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">イヤホンとスマートフォンのスピーカー/AUX で同時に再生</string>
+    <string name="ui_playlist_name" formatted="false">プレイリスト名</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">プレイリスト名</string>
+    <string name="ui_playlist_spotify" formatted="false">プレイリスト • Spotify</string>
+    <string name="ui_playlists" formatted="false">プレイリスト</string>
+    <string name="ui_plays" formatted="false">再生回数</string>
+    <string name="ui_pm" formatted="false">午後</string>
+    <string name="ui_port" formatted="false">ポート</string>
+    <string name="ui_pre_added_extensions" formatted="false">事前に追加された拡張機能</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">利用可能な場合は 24-bit / 192 kHz までのビットパーフェクト FLAC/ALAC を優先</string>
+    <string name="ui_preparing_audio_preview" formatted="false">オーディオプレビューを準備中…</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">常時表示ディスプレイが有効な間、デバイスの画面がオフになるのを防ぎます。</string>
+    <string name="ui_preview" formatted="false">プレビュー</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">プレビュー</string>
+    <string name="ui_preview_always_on_display" formatted="false">常時表示ディスプレイをプレビュー</string>
+    <string name="ui_profile" formatted="false">プロフィール</string>
+    <string name="ui_profiles_in_backup" formatted="false">バックアップ内のプロフィール</string>
+    <string name="ui_prompt_type" formatted="false">プロンプトタイプ</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">プロバイダーの優先度 (フォールバック順序)</string>
+    <string name="ui_queue" formatted="false">キュー</string>
+    <string name="ui_queue_is_empty" formatted="false">キューは空です</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">次に再生するキュー内のトラック</string>
+    <string name="ui_radio" formatted="false">ラジオ</string>
+    <string name="ui_read_more" formatted="false">続きを読む</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">ライブオーディオに合わせたリアルタイムの音節と行のスクロール</string>
+    <string name="ui_recent_searches" formatted="false">最近の検索</string>
+    <string name="ui_recently_added" formatted="false">最近追加されたもの</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">繰り返しスリープスケジュール · 再生を自動一時停止</string>
+    <string name="ui_remote_music_library" formatted="false">リモート音楽ライブラリ</string>
+    <string name="ui_remove" formatted="false">削除</string>
+    <string name="ui_rename" formatted="false">名前を変更</string>
+    <string name="ui_rename_account" formatted="false">アカウント名を変更</string>
+    <string name="ui_replay" formatted="false">リプレイ</string>
+    <string name="ui_replay_c0f85d66" formatted="false">リプレイ</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">ビットパーフェクト・ロスレス出力を要求</string>
+    <string name="ui_reset" formatted="false">リセット</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">プロバイダーの順序とデフォルトをリセット</string>
+    <string name="ui_reset_to_default_url" formatted="false">デフォルト URL にリセット</string>
+    <string name="ui_restore_default_sources" formatted="false">デフォルトのソースを復元</string>
+    <string name="ui_restore_itune_backup" formatted="false">iTune バックアップを復元</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">JioSaavn と YouTube Music をデフォルトの順序で復元します。JioSaavn はオフ、YouTube Music はオンで開始します。</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">LRC Lib、KuGou、SimpMusic を最優先プロバイダーとして復元し、11 個のソースすべてを再有効化します。</string>
+    <string name="ui_resume" formatted="false">再開</string>
+    <string name="ui_rhythm_by_hour" formatted="false">時間別リズム</string>
+    <string name="ui_room_permissions" formatted="false">ルームの権限</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">HTTP または SOCKS プロキシ経由でアプリのネットワークトラフィックをルーティング</string>
+    <string name="ui_save_proxy" formatted="false">プロキシを保存</string>
+    <string name="ui_save_schedule" formatted="false">スケジュールを保存</string>
+    <string name="ui_save_to_gallery" formatted="false">ギャラリーに保存</string>
+    <string name="ui_save_token" formatted="false">トークンを保存</string>
+    <string name="ui_saved_to_your_library" formatted="false">ライブラリに保存しました!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">Android Keystore を使用して保存されました。バックアップファイルは PBKDF2-HMAC-SHA256 (310,000 ラウンド) と AES-256-GCM を使用します。</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">保存先:  Downloads/itune/backups</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">曲、アーティスト、アルバム、または歌詞を話してください</string>
+    <string name="ui_search" formatted="false">検索</string>
+    <string name="ui_search_identify" formatted="false">検索と識別</string>
+    <string name="ui_search_announcements" formatted="false">お知らせを検索…</string>
+    <string name="ui_search_country" formatted="false">国を検索...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">曲、アーティスト、アルバム、プレイリストを検索</string>
+    <string name="ui_search_languages" formatted="false">言語を検索...</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">モデル ID を検索または入力</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">曲、アーティスト、アルバム、プレイリストを検索</string>
+    <string name="ui_searching_lyrics" formatted="false">歌詞を検索中…</string>
+    <string name="ui_searching_spotify" formatted="false">Spotify を検索中…</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">セカンダリミラーシンク</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">すべての画面で iTune 体験をパーソナライズするには、プロフィールアバターを選択してください。</string>
+    <string name="ui_select_language" formatted="false">言語を選択</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">歌詞翻訳のデフォルトプロンプトテンプレートを選択してください。</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">行ごとの歌詞翻訳に使用するエンジンを選択してください。</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">歌詞翻訳の対象言語を選択してください。</string>
+    <string name="ui_server_host_ip" formatted="false">サーバーホスト / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">サーバー URL / マニフェスト</string>
+    <string name="ui_settings_appearance" formatted="false">設定の外観</string>
+    <string name="ui_share_lyrics" formatted="false">歌詞を共有</string>
+    <string name="ui_share_my_replay" formatted="false">自分のリプレイを共有</string>
+    <string name="ui_share_replay" formatted="false">リプレイを共有</string>
+    <string name="ui_share_this_story" formatted="false">このストーリーを共有</string>
+    <string name="ui_share_your_time_travel" formatted="false">Time Travel を共有</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">Canvas 上に同期歌詞を表示</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">デスクトップブラウザで music.youtube.com にサインインします。開発者ツール → Application → Cookies を開き、サインインしたセッション値をコピーします。これらの値はパスワードと同様に扱ってください。</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">Last.fm アカウントでサインイン</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">すべてのアカウントからサインアウト</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">同時デュアル出力</string>
+    <string name="ui_skip_sign_in" formatted="false">サインインをスキップ</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">前にスライドで歌詞が速く · 後ろで遅く · オーディオは影響を受けません</string>
+    <string name="ui_snap_0" formatted="false">スナップ 0</string>
+    <string name="ui_soundstage_width" formatted="false">サウンドステージの幅</string>
+    <string name="ui_sources" formatted="false">ソース</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">空間オーディオとエッセンシャル</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotify と Canvas</string>
+    <string name="ui_spotify_account" formatted="false">Spotify アカウント</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">Spotify Canvas、Apple Music、Tidal、コミュニティのモーションカバー</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">Spotify は現在接続されています。モーションアートワーク (Canvas) と Spotify プレイリストの同期が有効になっています。</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">Spotify の検索に失敗しました。もう一度試してください。</string>
+    <string name="ui_station" formatted="false">ステーション</string>
+    <string name="ui_stereo_echo_delay" formatted="false">ステレオエコーとディレイ</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">このリンクを保存し、アプリ起動時に新しい曲を自動的に追加します</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">パーソナルネットワーク共有または Nextcloud から、ビットパーフェクト・ロスレスライブラリを直接ストリーミングします。</string>
+    <string name="ui_streaming_sources" formatted="false">ストリーミングソース</string>
+    <string name="ui_style" formatted="false">スタイル</string>
+    <string name="ui_suggestions" formatted="false">候補</string>
+    <string name="ui_switch" formatted="false">切り替え</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">アバターをタップしてカスタマイズ</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">左右にタップしてブラウズ  •  長押しで一時停止</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">タップして常時表示ディスプレイを今すぐ有効化</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">タップして国と都市の FM 放送を選択</string>
+    <string name="ui_target_language" formatted="false">対象言語</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">対象言語</string>
+    <string name="ui_test" formatted="false">テスト</string>
+    <string name="ui_test_proxy_connection" formatted="false">プロキシ接続をテスト</string>
+    <string name="ui_testing_proxy" formatted="false">プロキシをテスト中…</string>
+    <string name="ui_that_s_your_story" formatted="false">これがあなたのストーリー</string>
+    <string name="ui_this_account" formatted="false">このアカウント</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">このプレイリストは空です。プレーヤーまたは検索から曲を追加してください!</string>
+    <string name="ui_time_travel" formatted="false">タイムトラベル</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">タイムトラベル</string>
+    <string name="ui_time_travel_wrap" formatted="false">タイムトラベルラップ</string>
+    <string name="ui_time_synced_lyrics" formatted="false">時間同期歌詞</string>
+    <string name="ui_top_picks" formatted="false">トップピック</string>
+    <string name="ui_top_result" formatted="false">トップ結果</string>
+    <string name="ui_top_song" formatted="false">トップソング</string>
+    <string name="ui_top_songs" formatted="false">トップソング</string>
+    <string name="ui_top_streamed" formatted="false">最多ストリーミング</string>
+    <string name="ui_total_listening_time" formatted="false">合計再生時間</string>
+    <string name="ui_total_time" formatted="false">合計時間</string>
+    <string name="ui_translate_actual_lines" formatted="false">実際の行を翻訳</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">プレーヤーメニュー (...) から任意の曲の歌詞をオンデマンドで翻訳します (... &gt; 歌詞 &gt; 翻訳)。「実際の行を翻訳」がオフの場合、翻訳は元のテキストの下に字幕として表示されます。</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">次の曲の歌詞の行を英語に翻訳してください。詩的な流れを保ってください。</string>
+    <string name="ui_translating_lyrics" formatted="false">歌詞を翻訳中...</string>
+    <string name="ui_translation_mode" formatted="false">翻訳モード</string>
+    <string name="ui_translation_prompt" formatted="false">翻訳プロンプト</string>
+    <string name="ui_trending_artists" formatted="false">トレンドのアーティスト</string>
+    <string name="ui_turn_off_timer" formatted="false">タイマーをオフにする</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">設定で Apple ID プロフィールカードに表示される名前を更新します。</string>
+    <string name="ui_username_optional" formatted="false">ユーザー名 (任意)</string>
+    <string name="ui_view" formatted="false">表示</string>
+    <string name="ui_view_on_shazam" formatted="false">Shazam で表示</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">レコードプレーヤーリンク</string>
+    <string name="ui_whats_new" formatted="false">新機能</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">音楽が再生されているとき、選択した時間画面にタッチがない場合に常時表示ディスプレイがオンになります。アプリ内でのみ有効になります。</string>
+    <string name="ui_who_is_listening" formatted="false">誰が聴いていますか?</string>
+    <string name="ui_widget" formatted="false">ウィジェット</string>
+    <string name="ui_you" formatted="false">あなた</string>
+    <string name="ui_your_1_artist" formatted="false">あなたの No.1 アーティスト</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">API キーはデバイス上に安全に保存され、共有されることはありません。</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">Discord セッショントークンはこのデバイスに暗号化されて保存され、Rich Presence にのみ使用されます。</string>
+    <string name="ui_your_favourite_song" formatted="false">あなたのお気に入りの曲</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">ライブラリ、プレイリスト、設定は 8 文字以上のパスワードで暗号化されます。</string>
+    <string name="ui_your_listening_experience" formatted="false">あなたのリスニング体験</string>
+    <string name="ui_your_listening_pattern" formatted="false">あなたのリスニングパターン</string>
+    <string name="ui_your_listening_persona" formatted="false">あなたのリスニングペルソナ</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">あなたの音楽リプレイと統計</string>
+    <string name="ui_your_musical_anchor" formatted="false">あなたの音楽のアンカー</string>
+    <string name="ui_your_name" formatted="false">あなたの名前</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">パスワードはセッションを作成するためにのみ Last.fm に送信されます。iTune はそれを保存しません。</string>
+    <string name="ui_your_playlists" formatted="false">あなたのプレイリスト</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">あなたのプレイリスト</string>
+    <string name="ui_your_sonic_peak" formatted="false">あなたのソニックピーク</string>
+    <string name="ui_your_spotify_playlists" formatted="false">あなたの Spotify プレイリスト</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">あなたの Spotify プレイリスト (公開・非公開)</string>
+    <string name="ui_youtube_music_google" formatted="false">YouTube Music と Google</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube Music セッション Cookie</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">·</string>
+    <string name="ui_text_a118c40635" formatted="false">━━━ ━━━━━</string>
+    <string name="ui_album_artwork" formatted="false">アルバムアートワーク</string>
+    <string name="ui_itune_waves" formatted="false">iTune Waves</string>
+    <string name="ui_previous" formatted="false">前へ</string>
+    <string name="ui_next" formatted="false">次へ</string>
+    <string name="ui_audio_output" formatted="false">オーディオ出力</string>
+    <string name="ui_low_volume" formatted="false">低音量</string>
+    <string name="ui_high_volume" formatted="false">高音量</string>
+    <string name="ui_filter" formatted="false">フィルター</string>
+    <string name="ui_refresh" formatted="false">更新</string>
+    <string name="ui_options_6bf5da9c" formatted="false">オプション</string>
+    <string name="ui_user_profile_avatar" formatted="false">ユーザープロフィールアバター</string>
+    <string name="ui_news" formatted="false">ニュース</string>
+    <string name="ui_no_song_playing" formatted="false">曲を再生していません</string>
+    <string name="ui_next_track" formatted="false">次のトラック</string>
+    <string name="ui_see_all_songs" formatted="false">すべての曲を見る</string>
+    <string name="ui_favorite_radio" formatted="false">お気に入りのラジオ</string>
+    <string name="ui_live_65c821a5" formatted="false">ライブ</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTune ブランドウェーブ</string>
+    <string name="ui_refresh_network" formatted="false">ネットワークを更新</string>
+    <string name="ui_edit_display_name" formatted="false">表示名を編集</string>
+    <string name="ui_remove_from_queue" formatted="false">キューから削除</string>
+    <string name="ui_search_new_releases" formatted="false">新着リリースを検索</string>
+    <string name="ui_refresh_new_releases" formatted="false">新着リリースを更新</string>
+    <string name="ui_refresh_downloads" formatted="false">ダウンロードを更新</string>
+    <string name="ui_clear_cache" formatted="false">キャッシュをクリア</string>
+    <string name="ui_sort" formatted="false">並べ替え</string>
+    <string name="ui_see_all_new_releases" formatted="false">すべての新着リリースを見る</string>
+    <string name="ui_identify" formatted="false">識別</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">プレイリストをインポート</string>
+    <string name="ui_create_playlist" formatted="false">プレイリストを作成</string>
+    <string name="ui_liked" formatted="false">高評価済み</string>
+    <string name="ui_paste" formatted="false">貼り付け</string>
+    <string name="ui_checked" formatted="false">チェック済み</string>
+    <string name="ui_google_account_playlist" formatted="false">Google アカウントのプレイリスト</string>
+    <string name="ui_spotify_playlist" formatted="false">Spotify プレイリスト</string>
+    <string name="ui_local_playlist" formatted="false">ローカルプレイリスト</string>
+    <string name="ui_back_to_audio_engine" formatted="false">オーディオエンジンに戻る</string>
+    <string name="ui_bluetooth_settings" formatted="false">Bluetooth 設定</string>
+    <string name="ui_scan_output_devices" formatted="false">出力デバイスをスキャン</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">同時デュアルオーディオ</string>
+    <string name="ui_selected" formatted="false">選択済み</string>
+    <string name="ui_copy" formatted="false">コピー</string>
+    <string name="ui_copy_link" formatted="false">リンクをコピー</string>
+    <string name="ui_upgrade_quality" formatted="false">品質をアップグレード</string>
+    <string name="ui_fm_radio" formatted="false">FM ラジオ</string>
+    <string name="ui_next_station" formatted="false">次のステーション</string>
+    <string name="ui_minimize" formatted="false">最小化</string>
+    <string name="ui_favorite" formatted="false">お気に入り</string>
+    <string name="ui_more_options" formatted="false">その他のオプション</string>
+    <string name="ui_previous_station" formatted="false">前のステーション</string>
+    <string name="ui_sleep_timer" formatted="false">スリープタイマー</string>
+    <string name="ui_audio_output_devices" formatted="false">オーディオ出力デバイス</string>
+    <string name="ui_station_list" formatted="false">ステーションリスト</string>
+    <string name="ui_volume" formatted="false">音量</string>
+    <string name="ui_open_lyrics" formatted="false">歌詞を開く</string>
+    <string name="ui_mute_volume" formatted="false">音量をミュート</string>
+    <string name="ui_max_volume" formatted="false">最大音量</string>
+    <string name="ui_endless_queue" formatted="false">エンドレスキュー</string>
+    <string name="ui_repeat" formatted="false">リピート</string>
+    <string name="ui_refresh_stations" formatted="false">ステーションを更新</string>
+    <string name="ui_favorite_station" formatted="false">お気に入りのステーション</string>
+    <string name="ui_close_ireconization" formatted="false">iReconization を閉じる</string>
+    <string name="ui_cancel_voice_search" formatted="false">音声検索をキャンセル</string>
+    <string name="ui_microphone" formatted="false">マイク</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">その他のオプション</string>
+    <string name="ui_voice_search" formatted="false">音声検索</string>
+    <string name="ui_saved" formatted="false">保存済み</string>
+    <string name="ui_fill_search_query" formatted="false">検索クエリを入力</string>
+    <string name="ui_remove_from_history" formatted="false">履歴から削除</string>
+    <string name="ui_itune_icon" formatted="false">iTune アイコン</string>
+    <string name="ui_artwork_preview" formatted="false">アートワークプレビュー</string>
+    <string name="ui_decrease" formatted="false">減らす</string>
+    <string name="ui_increase" formatted="false">増やす</string>
+    <string name="ui_open_link" formatted="false">リンクを開く</string>
+    <string name="ui_reset_geometry" formatted="false">ジオメトリをリセット</string>
+    <string name="ui_reorder_provider" formatted="false">プロバイダーを並べ替え</string>
+    <string name="ui_save_name" formatted="false">名前を保存</string>
+    <string name="ui_editable_name" formatted="false">編集可能な名前</string>
+    <string name="ui_google" formatted="false">Google</string>
+    <string name="ui_remove_account" formatted="false">アカウントを削除</string>
+    <string name="ui_reorder_source_priority" formatted="false">ソースの優先度を並べ替え</string>
+    <string name="ui_refresh_playlists" formatted="false">プレイリストを更新</string>
+    <string name="ui_replay_poster" formatted="false">リプレイポスター</string>
+    <string name="ui_settings" formatted="false">設定</string>
+    <string name="ui_artist_radio" formatted="false">アーティストラジオ</string>
+    <string name="ui_play_all" formatted="false">すべて再生</string>
+    <string name="ui_delete_playlist" formatted="false">プレイリストを削除</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">エンドレスキュー</string>
+    <string name="ui_artist_info" formatted="false">アーティスト情報</string>
+    <string name="ui_enabled" formatted="false">有効</string>
+    <string name="ui_search_icon" formatted="false">検索アイコン</string>
+    <string name="ui_region">地域: %1$s</string>
+    <string name="ui_connected_devices">接続済みデバイス (%1$s)</string>
+    <string name="ui_up_next">次に再生 (%1$s)</string>
+    <string name="ui_text_da5c3629fd">%1$s  ›</string>
+    <string name="ui_active_7c6a4064">%1$s • %2$s 有効</string>
+    <string name="ui_no_new_available_right_now">現在利用可能な新しい %1$s はありません</string>
+    <string name="ui_tracks">%1$s トラック • %2$s</string>
+    <string name="ui_songs">%1$s 曲 • %2$s • %3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s • %2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c"> • %1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$s トラックを一致させられませんでした:</string>
+    <string name="ui_text_a3edb2b714">• %1$s - %2$s</string>
+    <string name="ui_d_eeda119e">%1$sD</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+%1$s dB</string>
+    <string name="ui_connected">%1$s 接続済み</string>
+    <string name="ui_open_web_player">Web プレーヤーを開く (%1$s)</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">国: %1$s (%2$s)</string>
+    <string name="ui_city_state">都市 / 州: %1$s</string>
+    <string name="ui_codec_bitrate">コーデック / ビットレート: %1$s</string>
+    <string name="ui_language">言語: %1$s</string>
+    <string name="ui_tags">タグ: %1$s</string>
+    <string name="ui_stream">ストリーム: %1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">%1$s の API キーが設定されていません。設定 &gt; 歌詞で設定してください。</string>
+    <string name="ui_s_clip">%1$s 秒のクリップ</string>
+    <string name="ui_loading_more_fm_stations_loaded">さらに FM ステーションを読み込み中 (%1$s 読み込み済み)...</string>
+    <string name="ui_found">%1$s 件見つかりました</string>
+    <string name="ui_version">バージョン %1$s (%2$s)</string>
+    <string name="ui_of_active">%1$s / %2$s 有効</string>
+    <string name="ui_text_adebc50ade">#%1$s</string>
+    <string name="ui_api_key">%1$s API キー</string>
+    <string name="ui_channel">チャンネル: %1$s</string>
+    <string name="ui_sync_issue">同期の問題: %1$s</string>
+    <string name="ui_enter">%1$s を入力</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">「%1$s」を削除してもよろしいですか? このアカウントのすべてのデータ、プレイリスト、お気に入り、履歴、設定が完全に削除されます。</string>
+    <string name="ui_peak">ピーク: %1$s</string>
+    <string name="ui_welcome">ようこそ、%1$s さん</string>
+    <string name="ui_songs_played">%1$s 曲再生</string>
+    <string name="ui_around">%1$s 頃</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">世界が忙しくなると、あなたは %1$s の %2$s 頃に最もよく聴きます。</string>
+    <string name="ui_itune_time_travel_575a110d">iTune Time Travel  •  %1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s · %2$s</string>
+    <string name="ui_your_biggest_day_was">あなたの最大の日は %1$s でした。</string>
+    <string name="ui_listening_recap">%1$s のリスニングまとめ</string>
+    <string name="ui_busiest_day">最も忙しい日: %1$s</string>
+    <string name="ui_peak_hour_00">ピーク時間: %1$s:00</string>
+    <string name="ui_loading">%1$s を読み込み中…</string>
+    <string name="ui_about">%1$s について</string>
+    <string name="ui_songs_9b614dc8">%1$s 曲</string>
+    <string name="ui_current_offset_ms">現在のオフセット: %1$s ms</string>
+    <string name="ui_connected_session">接続済みセッション: %1$s</string>
+    <string name="ui_k">%1$sk</string>
+    <string name="ui_top_result_c5e5adab">トップ結果 • %1$s</string>
+    <string name="toast_song_not_found_in_itune">iTune で曲が見つかりません</string>
+    <string name="toast_playback_failed_try_again">再生に失敗しました。もう一度試してください</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">自動スリープタイマー有効 · 再生を一時停止しました</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">オフラインモード: この曲はダウンロードされていません</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">オフラインモード: 品質をアップグレードできません</string>
+    <string name="toast_upgrading_quality">品質をアップグレード中</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">ソースでロスレスストリーミングソースが有効になっていません</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">有効なソースの中により高品質のストリームが見つかりません</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">シャッフルは設定の永久シャッフルによってロックされています</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">音楽を識別するにはマイクの許可が必要です</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">認識ポップアップには他のアプリの上に表示する許可が必要です</string>
+    <string name="toast_playback_failed">再生に失敗しました</string>
+    <string name="toast_complete_google_sign_in_first">先に Google サインインを完了してください</string>
+    <string name="toast_waiting_for_youtube_music_session">YouTube Music セッションを待機中...</string>
+    <string name="toast_couldn_t_load_tracks">トラックを読み込めませんでした</string>
+    <string name="toast_copied_to_clipboard">クリップボードにコピーしました</string>
+    <string name="toast_profile_avatar_updated">プロフィールアバターを更新しました</string>
+    <string name="toast_no_tracks_found">トラックが見つかりません</string>
+    <string name="toast_google_account_connected">Google アカウントを接続しました</string>
+    <string name="toast_link_copied">リンクをコピーしました</string>
+    <string name="toast_could_not_open_browser">ブラウザを開けませんでした</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">1024 から 65535 の間のポートを入力してください</string>
+    <string name="toast_cached_music_cleared">キャッシュされた音楽をクリアしました</string>
+    <string name="toast_no_tracks_available_to_add">追加できるトラックがありません</string>
+    <string name="toast_enter_a_playlist_name">プレイリスト名を入力してください</string>
+    <string name="toast_system_sound_panel_opened">システムサウンドパネルを開きました</string>
+    <string name="toast_download_started_check_notification">ダウンロードを開始しました · 通知を確認してください</string>
+    <string name="toast_playback_will_stop_after_current_track">現在のトラックの後に再生が停止します</string>
+    <string name="toast_sleep_timer_turned_off">スリープタイマーをオフにしました</string>
+    <string name="toast_stream_url_copied">ストリーム URL をコピーしました</string>
+    <string name="toast_couldn_t_create_lyrics_card">歌詞カードを作成できませんでした</string>
+    <string name="toast_restored_online_lyrics">オンライン歌詞を復元しました</string>
+    <string name="toast_lyrics_saved">歌詞を保存しました</string>
+    <string name="toast_translation_cleared">翻訳をクリアしました</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">先に設定 &gt; 歌詞で API キーを設定してください</string>
+    <string name="toast_no_lyrics_found_for_this_song">この曲の歌詞が見つかりません</string>
+    <string name="toast_could_not_create_audio_clip">オーディオクリップを作成できませんでした</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">スニペットを Music/iTune/Snippets に保存しました</string>
+    <string name="toast_playing_next">次に再生中</string>
+    <string name="toast_added_to_queue">キューに追加しました</string>
+    <string name="toast_download_started_check_notifications">ダウンロードを開始しました · 通知を確認してください</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">YouTube Music でこの曲が見つかりませんでした</string>
+    <string name="toast_couldn_t_start_mix">ミックスを開始できませんでした</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">YouTube Music でトラックが見つかりませんでした</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">パスワードを安全に暗号化できませんでした。自動バックアップは変更されていません。</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">ダウンロードにバックアップを保存するにはストレージの許可が必要です</string>
+    <string name="toast_choose_an_itune_backup_file">.itune バックアップファイルを選択してください</string>
+    <string name="toast_audio_artwork_cache_cleared">オーディオとアートワークのキャッシュをクリアしました</string>
+    <string name="toast_could_not_open_github">GitHub を開けませんでした</string>
+    <string name="toast_profile_name_updated">プロフィール名を更新しました</string>
+    <string name="toast_search_history_cleared">検索履歴をクリアしました</string>
+    <string name="toast_listening_history_cleared">リスニング履歴をクリアしました</string>
+    <string name="toast_cached_songs_cleared">キャッシュされた曲をクリアしました</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">他のアプリの上に表示する許可を与えるためにシステム設定を開いてください</string>
+    <string name="toast_dynamic_island_geometry_reset">Dynamic Island ジオメトリをリセットしました</string>
+    <string name="toast_geometry_reset">ジオメトリをリセットしました</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">歌詞プロバイダーをデフォルトにリセットしました</string>
+    <string name="toast_api_key_saved">API キーを保存しました</string>
+    <string name="toast_base_url_updated">ベース URL を更新しました</string>
+    <string name="toast_translation_prompt_updated">翻訳プロンプトを更新しました</string>
+    <string name="toast_equalizer_reset_to_flat">イコライザーをフラットにリセットしました</string>
+    <string name="toast_dj_console_reset">DJ コンソールをリセットしました</string>
+    <string name="toast_name_saved">名前を保存しました</string>
+    <string name="toast_syncing_youtube_music_library">YouTube Music ライブラリを同期中...</string>
+    <string name="toast_signed_out_local_likes_preserved">サインアウトしました (ローカルの高評価は保持)</string>
+    <string name="toast_signed_out_of_all_google_accounts">すべての Google アカウントからサインアウトしました</string>
+    <string name="toast_discord_disconnected">Discord を切断しました</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">有効なサインイン済みの YouTube Music Cookie (SAPISID とセッション Cookie) を入力してください</string>
+    <string name="toast_youtube_music_account_connected">YouTube Music アカウントを接続しました</string>
+    <string name="toast_account_renamed">アカウント名を変更しました</string>
+    <string name="toast_account_deleted">アカウントを削除しました</string>
+    <string name="toast_cannot_delete_your_only_account">唯一のアカウントは削除できません</string>
+    <string name="toast_sources_restored_to_defaults">ソースをデフォルトに復元しました</string>
+    <string name="toast_spotify_disconnected">Spotify を切断しました</string>
+    <string name="toast_spotify_sp_dc_token_saved">Spotify sp_dc トークンを保存しました</string>
+    <string name="toast_spotify_connected">Spotify に接続しました!</string>
+    <string name="toast_complete_spotify_sign_in_first">先に Spotify サインインを完了してください</string>
+    <string name="toast_saved_to_gallery">ギャラリーに保存しました!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">続行するには iTune にアップデートのインストールを許可してください</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">ダウンロードした更新 APK は利用できません</string>
+    <string name="toast_added_to_queue_next">次に再生するキューに追加しました</string>
+    <string name="toast_link_copied_to_clipboard">リンクをクリップボードにコピーしました</string>
+    <string name="toast_song_link_copied_to_clipboard">曲のリンクをクリップボードにコピーしました</string>
+    <string name="toast_left_ishare_session">iShare セッションを退出しました</string>
+    <string name="toast_ishare_lan_host_started">iShare LAN ホストを開始しました!</string>
+    <string name="toast_scanning_lan_for_sessions">LAN でセッションをスキャン中…</string>
+    <string name="toast_cache_cleared">キャッシュをクリアしました</string>
+    <string name="toast_signed_out_successfully">サインアウトしました</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">パスワードは一致し、8 文字以上である必要があります</string>
+    <string name="toast_no_backup_file_found_in_storage">ストレージにバックアップファイルが見つかりません</string>
+    <string name="toast_library_settings_restored">ライブラリと設定を復元しました!</string>
+    <string name="toast_enter_your_backup_password">バックアップパスワードを入力してください</string>
+    <string name="toast_syncing_spotify_library">Spotify ライブラリを同期中...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify に接続しました!</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">有効な SP_DC Cookie を入力してください</string>
+    <string name="toast_playing">%%1$s を再生中…</string>
+    <string name="toast_upgraded_to_lossless_kbps">ロスレスにアップグレードしました • %%1$s kbps</string>
+    <string name="toast_playing_next_0f0c851c">次に %%1$s を再生中</string>
+    <string name="toast_added_to_queue_88e96c25">%%1$s をキューに追加しました</string>
+    <string name="toast_playing_cb1fb3de">%%1$s を再生中...</string>
+    <string name="toast_playing_next_e0082d95">次に再生: %%1$s</string>
+    <string name="toast_couldn_t_load">%%1$s を読み込めませんでした</string>
+    <string name="toast_opening">%%1$s を開いています…</string>
+    <string name="toast_couldn_t_open">%%1$s を開けませんでした</string>
+    <string name="toast_couldn_t_play">%%1$s を再生できませんでした</string>
+    <string name="toast_library_pin">ライブラリ PIN: %%1$s</string>
+    <string name="toast_copied">コピーしました: %%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">スリープタイマーを %%1$s 分に設定しました</string>
+    <string name="toast_lyrics_applied">歌詞を適用しました (%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">%%1$s トラックをキューに追加しました</string>
+    <string name="toast_switched_feed_to">フィードを %%1$s に切り替えました</string>
+    <string name="toast_provider_updated_to">プロバイダーを %%1$s に更新しました</string>
+    <string name="toast_target_language_set_to">対象言語を %%1$s に設定しました</string>
+    <string name="toast_translation_mode_set_to">翻訳モードを %%1$s に設定しました</string>
+    <string name="toast_added_source">ソースを追加しました: %%1$s</string>
+    <string name="toast_installed_extension_s">%%1$s 個の拡張機能をインストールしました</string>
+    <string name="toast_imported_songs">\'%%1$s\' をインポートしました (%%2$s 曲)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">YouTube Music で \'%%1$s\' が見つかりませんでした</string>
+    <string name="toast_added_songs_to">%%1$s 曲を %%2$s に追加しました</string>
+    <string name="toast_joining">%%1$s に参加中…</string>
+    <string name="toast_added_to">%%1$s に追加しました</string>
+    <string name="toast_itune_v_for_android_tv">Android TV 用 iTune v%%1$s</string>
+    <string name="toast_backup_failed">バックアップに失敗しました: %%1$s</string>
+    <string name="toast_restore_failed">復元に失敗しました: %%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">iShare、Dynamic Island、StandBy</string>
+    <string name="settings_ishare" formatted="false">iShare</string>
+    <string name="settings_dynamic_island" formatted="false">Dynamic Island</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">iTune 外のフローティング・ウォーターバブルコントローラー</string>
+    <string name="settings_always_on_display" formatted="false">常時表示ディスプレイ</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">オーディオエンジンとサウンドエフェクト</string>
+    <string name="settings_dolby_atmos" formatted="false">Dolby Atmos</string>
+    <string name="settings_text_8948f8179a" formatted="false">8D オーディオ</string>
+    <string name="settings_spatial_audio" formatted="false">空間オーディオ</string>
+    <string name="settings_equalizer_eq" formatted="false">イコライザー (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">ローパスフィルタリング</string>
+    <string name="settings_dj_studio_panel" formatted="false">DJ スタジオパネル</string>
+    <string name="settings_audio_normalization" formatted="false">オーディオノーマライゼーション</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB ビットパーフェクト DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">ピュアオーディオバイパス</string>
+    <string name="settings_signal_pipeline" formatted="false">シグナルパイプライン</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">${audioEngine.pillBadge.text} -&gt; $activeOutputName</string>
+    <string name="settings_audio_playback" formatted="false">オーディオと再生</string>
+    <string name="settings_sources" formatted="false">ソース</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">YouTube Music、JioSaavn、インストール可能な拡張機能、WebDAV、SMB、再生の優先度を管理します</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">エラー発生時に自動スキップ</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">再生に失敗した場合、キューの次の曲に移動</string>
+    <string name="settings_download_quality" formatted="false">ダウンロード品質</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">曲のダウンロード操作で使用されるデフォルト品質</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">アプリ全体のダウンロードのデフォルトオーディオ品質を選択してください。</string>
+    <string name="settings_lossless_audio" formatted="false">ロスレスオーディオ</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">キャッシュされた曲の品質をアップグレード</string>
+    <string name="settings_streaming_quality" formatted="false">ストリーミング品質</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">お好みのストリーミングオーディオ品質を選択してください。</string>
+    <string name="settings_pcm_output_format" formatted="false">PCM 出力フォーマット</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">現在の位置で再生を再構築します</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">Android のオーディオ出力に要求する PCM フォーマットを選択します。USB DAC はサポートするフォーマットに変換する場合があります。</string>
+    <string name="settings_crossfade" formatted="false">クロスフェード</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">終了するトラックのフェードアウトを次のトラックの開始と重ねます。</string>
+    <string name="settings_automix" formatted="false">AutoMix</string>
+    <string name="settings_afterglow" formatted="false">Afterglow</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">各曲の選択した最後の数秒間に同じローパスイコライザー効果を適用します。Afterglow が有効な間は AutoMix とクロスフェードを一時停止します。</string>
+    <string name="settings_permanent_shuffle" formatted="false">永久シャッフル</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">プレーヤーでシャッフルを永続的にロックオン</string>
+    <string name="settings_pause_at_volume_0" formatted="false">音量 0 で一時停止</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">音量がゼロになったら自動的に再生を一時停止</string>
+    <string name="settings_volume_bar" formatted="false">音量バー</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">音量ボタンを押すと ${state.volumeBarSide.lowercase()} 端に表示されます</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">アプリ内音量バーが表示される画面の端を選択してください。</string>
+    <string name="settings_content" formatted="false">コンテンツ</string>
+    <string name="settings_default_content_language" formatted="false">デフォルトのコンテンツ言語</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">ムード、ブラウズ、検索の言語</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">ブラウズ、ムードとジャンル、プレイリスト、新着リリース全体で使用される優先カタログ言語を選択してください。</string>
+    <string name="settings_default_content_country" formatted="false">デフォルトのコンテンツ国</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">チャート、プレイリスト、新着リリースの地域</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">新しく追加されたアルバム、地域のムード、注目のプレイリストに使用される地域ストアフロントを選択してください。</string>
+    <string name="settings_hide_explicit_content" formatted="false">露骨なコンテンツを非表示</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">ムード、ブラウズ、検索全体で露骨な曲をフィルタリング</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">再生中とリキッドグラス</string>
+    <string name="settings_splash_screen" formatted="false">スプラッシュ画面</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">アプリ起動時のブランドアニメーションと流動的なタイトル表示</string>
+    <string name="settings_animated_cover_art" formatted="false">アニメーションカバーアート</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">Spotify Canvas、Apple Music、Tidal、コミュニティのモーションカバー</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">Spotify と Canvas の設定</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">Canvas コントロールを自動非表示</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">Canvas 再生中 5 秒後にコントロールを最小化 (Canvas をタップして切り替え)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">Canvas 上に同期歌詞を表示</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">Canvas コントロールが非表示のとき、曲名の上にアニメーション付きの同期歌詞を表示</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">Spotify Canvas を優先</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">Apple Music、Tidal、コミュニティより先に Spotify Canvas を試す</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">モバイル通信でアニメーションカバーを再生</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">モバイルデータで Canvas 動画のループを許可</string>
+    <string name="settings_player_type" formatted="false">プレーヤータイプ</string>
+    <string name="settings_player_style" formatted="false">プレーヤースタイル</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">プレーヤーのダイナミックカラーリング</string>
+    <string name="settings_full_screen_cover_art" formatted="false">全画面カバーアート</string>
+    <string name="settings_corner_length" formatted="false">角の長さ</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">正方形のアルバムアートワークの角の半径を調整</string>
+    <string name="settings_hide_quality_tag" formatted="false">品質タグを非表示</string>
+    <string name="settings_hide_volume_bar" formatted="false">音量バーを非表示</string>
+    <string name="settings_home_top_card_style" formatted="false">ホーム上部カードスタイル</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">リキッドグラスナビとミニプレーヤー</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">ガラスバーとミニプレーヤー、長押しでウォーターバブルレンズ</string>
+    <string name="settings_time_synced_lyrics" formatted="false">時間同期歌詞</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">単語と行の歌詞をリアルタイムで追跡</string>
+    <string name="settings_app_font" formatted="false">アプリのフォント</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">アプリのタイポグラフィを変更; プレーヤーコントロールはデザインされた書体を保持します</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">アプリインターフェースの書体を選択してください。</string>
+    <string name="settings_lyrics_providers" formatted="false">歌詞プロバイダー</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 ソース • 優先順位とフォールバック順序を切り替え</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">リキッドグラス Chrome</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">屈折する半透明のヘッダーとドックカード</string>
+    <string name="settings_tactile_haptics" formatted="false">触覚フィードバック</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">プレーヤーコントロール全体に微妙なパルスフィードバック</string>
+    <string name="settings_downloads_storage" formatted="false">ダウンロードとストレージ</string>
+    <string name="settings_cellular_streaming" formatted="false">モバイルストリーミング</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">モバイルデータでのオーディオ帯域幅</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">Wi-Fi から離れてストリーミングするときのオーディオ忠実度を制御します。</string>
+    <string name="settings_download_over_wi_fi" formatted="false">Wi-Fi でダウンロード</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">自動ダウンロードの前に Wi-Fi を待機</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">再生後に曲をキャッシュ</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">再生が終了した後に曲をオフラインストレージに保存</string>
+    <string name="settings_cache_quality" formatted="false">キャッシュ品質</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">低品質はストレージを節約します</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">再生完了後に保存される曲の品質を選択してください。今後キャッシュされる曲に適用されます。</string>
+    <string name="settings_song_storage_limit" formatted="false">曲のストレージ制限</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">古い未再生の曲が削除される前にオフラインオーディオキャッシュに割り当てられる最大ディスクストレージ。</string>
+    <string name="settings_clear_cached_songs" formatted="false">キャッシュされた曲をクリア</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">${MusicCacheManager.cachedTracks.size} 曲 • ${MusicCacheManager.formatStorageSize(MusicCacheManager.totalStorageBytes.longValue)}</string>
+    <string name="settings_automatic_downloads" formatted="false">自動ダウンロード</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">新しく高評価・追加されたトラックをオフラインで保存</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">アプリのバッファキャッシュをクリア</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">一時的なカバーアートとネットワークバッファを削除</string>
+    <string name="settings_library_listening" formatted="false">ライブラリとリスニング</string>
+    <string name="settings_sync_library" formatted="false">ライブラリを同期</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">アーティスト、プレイリスト、アルバムを最新の状態に保つ</string>
+    <string name="settings_listening_history" formatted="false">リスニング履歴</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">パーソナライズされたミックスと最近再生した曲を形成</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">高評価をこのデバイスに保持</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">サインアウト時に高評価した曲を iTune に保持</string>
+    <string name="settings_notifications_general" formatted="false">通知と一般</string>
+    <string name="settings_offline_mode" formatted="false">オフラインモード</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">再生を開始するにはダウンロード済みのコピーを要求</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">タスククリア時に音楽を停止</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">iTune が最近のアプリからスワイプされたときに再生を停止</string>
+    <string name="settings_auto_sleep_timer" formatted="false">自動スリープタイマー</string>
+    <string name="settings_network_proxy" formatted="false">ネットワークプロキシ</string>
+    <string name="settings_profile_name" formatted="false">プロフィール名</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">設定プロフィールの表示名をカスタマイズ</string>
+    <string name="settings_news_from_dev" formatted="false">開発者からのニュース</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">お知らせ、リリース、変更履歴</string>
+    <string name="settings_general_about" formatted="false">一般と情報</string>
+    <string name="settings_home_screen_widget" formatted="false">ホーム画面ウィジェット</string>
+    <string name="settings_widget_customization" formatted="false">ウィジェットのカスタマイズ</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">サイズプレビュー、アートワーク、コントロール、ウィジェットスタイルを選択</string>
+    <string name="settings_backup_restore" formatted="false">バックアップと復元</string>
+    <string name="settings_automatic_daily_backup" formatted="false">毎日の自動バックアップ</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">暗号化された毎日のバックアップ • Downloads/iTune/Backups</string>
+    <string name="settings_back_up_itune" formatted="false">iTune をバックアップ</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">アカウント、すべての設定、オーディオエフェクト、ライブラリデータ、統計を暗号化して保存</string>
+    <string name="settings_restore_from_backup" formatted="false">バックアップから復元</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">.itune から設定、オーディオエフェクト、アカウント、ライブラリデータを復元</string>
+    <string name="settings_privacy" formatted="false">プライバシー</string>
+    <string name="settings_pause_search_history" formatted="false">検索履歴を一時停止</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">新しい検索クエリを履歴に保存しない</string>
+    <string name="settings_clear_search_history" formatted="false">検索履歴をクリア</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">最近のクエリを検索から削除</string>
+    <string name="settings_pause_listening_history" formatted="false">リスニング履歴を一時停止</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">再生した曲を記録せず、おすすめを更新しない</string>
+    <string name="settings_clear_listening_history" formatted="false">リスニング履歴をクリア</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">再生履歴を削除し、好みのプロファイルをリセット</string>
+    <string name="settings_disable_screenshot" formatted="false">スクリーンショットを無効化</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">アプリ全体でスクリーンショットと画面録画をブロック</string>
+    <string name="settings_best_available" formatted="false">利用可能な最高品質</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">利用可能な最高のソース品質を使用</string>
+    <string name="settings_maximum" formatted="false">最大</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">最高ビットレートのストリームを選択</string>
+    <string name="settings_high" formatted="false">高</string>
+    <string name="settings_target_about_160_kbps" formatted="false">約 160 kbps を目標</string>
+    <string name="settings_standard" formatted="false">標準</string>
+    <string name="settings_target_about_128_kbps" formatted="false">約 128 kbps を目標</string>
+    <string name="settings_data_saver" formatted="false">データセーバー</string>
+    <string name="settings_target_about_64_kbps" formatted="false">約 64 kbps を目標</string>
+    <string name="settings_extreme" formatted="false">エクストリーム</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">最大忠実度 (256+ kbps)</string>
+    <string name="settings_high_b1a5954a" formatted="false">高</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">高品質オーディオ (~160 kbps)</string>
+    <string name="settings_medium" formatted="false">中</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">標準オーディオ品質 (~128 kbps)</string>
+    <string name="settings_low" formatted="false">低</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">データセーバーオーディオ (~48-64 kbps)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">16-bit PCM</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">標準の整数 PCM 出力; USB Audio Class DAC と広く互換性があります</string>
+    <string name="settings_text_6697202e38" formatted="false">32-bit float PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">Android と接続されたオーディオパスでサポートされている場合の float PCM 出力</string>
+    <string name="settings_off" formatted="false">オフ</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">トラックをクリーンに連続再生</string>
+    <string name="settings_text_6597740315" formatted="false">2 秒</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">微妙なトランジションオーバーラップ</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 秒</string>
+    <string name="settings_short_seamless_fade" formatted="false">短いシームレスフェード</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 秒</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">バランスの取れた DJ スタイルのトランジション</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8 秒</string>
+    <string name="settings_smooth_extended_blend" formatted="false">スムーズで拡張されたブレンド</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 秒</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">最大の連続ミックスブレンド</string>
+    <string name="settings_off_e3de5ab0" formatted="false">オフ</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">通常の再生エフェクトとトランジションを保持</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 秒</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">各曲の最後の 5 秒間にローパスを適用</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 秒</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">各曲の最後の 10 秒間にローパスを適用</string>
+    <string name="settings_text_eb4354110e" formatted="false">15 秒</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">各曲の最後の 15 秒間にローパスを適用</string>
+    <string name="settings_right" formatted="false">右</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">音量バーを右端に表示 (デフォルト)</string>
+    <string name="settings_left" formatted="false">左</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">音量バーを左端に表示</string>
+    <string name="settings_high_efficiency" formatted="false">高効率</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">モバイルデータを最小限に使用</string>
+    <string name="settings_high_quality" formatted="false">高品質</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 kbps のバランスの取れたモバイル再生</string>
+    <string name="settings_lossless" formatted="false">ロスレス</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">5G/LTE ネットワークでの完全ロスレス</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">オフ</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">Wi-Fi のみでストリーミングを許可</string>
+    <string name="settings_text_03a001f575" formatted="false">500 MB</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">コンパクトキャッシュ (~70 曲)</string>
+    <string name="settings_text_33015e637f" formatted="false">1 GB</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">中程度のキャッシュ (~150 曲)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 GB</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">推奨デフォルト (~300 曲)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5 GB</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">大規模なオフラインコレクション (~800 曲)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10 GB</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">非常に大きなライブラリ (~1,600 曲)</string>
+    <string name="settings_unlimited" formatted="false">無制限</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">キャッシュされた曲を削除しない</string>
+    <string name="settings_pipeline_output">%1$s → %2$s</string>
+    <string name="settings_volume_bar_side">音量ボタンを押すと %1$s 端に表示されます</string>
+    <string name="settings_corner_radius_value">%1$d dp</string>
+    <string name="settings_active_lyrics_providers">%1$d 有効</string>
+    <string name="settings_cached_song_count_size">%1$d 曲 • %2$s</string>
+    <string name="library_playlist_count_one">%1$d プレイリスト</string>
+    <string name="library_playlist_count_many">%1$d プレイリスト</string>
+    <string name="library_album_count_one">%1$d 追加されたアルバム</string>
+    <string name="library_album_count_many">%1$d 追加されたアルバム</string>
+    <string name="remove_from_favorites">お気に入りから削除</string>
+    <string name="play_top_album">トップアルバムを再生</string>
+    <string name="open_in_spotify">Spotify で開く</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Use the Azerbaijani interface</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Use the Bengali interface</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Use the Bulgarian interface</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Use the Catalan interface</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">Use the Czech interface</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Use the Danish interface</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Use the Finnish interface</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Use the Greek interface</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Use the Hebrew interface</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Use the Hungarian interface</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Use the Indonesian interface</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Use the Malay interface</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Use the Norwegian interface</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Use the Persian interface</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Use the Polish interface</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Use the Romanian interface</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Use the Slovak interface</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Use the Thai interface</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Use the Turkish interface</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Use the Ukrainian interface</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Use the Vietnamese interface</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Use the Swahili interface</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Use the Filipino interface</string>
+</resources>
