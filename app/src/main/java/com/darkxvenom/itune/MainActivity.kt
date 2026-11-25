@@ -12,6 +12,7 @@
 package com.darkxvenom.itune
 
 import android.content.Intent
+import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
@@ -40,6 +41,7 @@ import com.darkxvenom.itune.data.auth.GoogleAuthStore
 import com.darkxvenom.itune.data.auth.YouTubeLibrarySyncManager
 import com.darkxvenom.itune.data.canvas.SpotifyToken
 import com.darkxvenom.itune.data.library.SettingsStore
+import com.darkxvenom.itune.data.library.AppLocaleManager
 import com.darkxvenom.itune.data.lastfm.LastFmIntegration
 import com.darkxvenom.itune.data.spotify.SpotifyLibrary
 import com.darkxvenom.itune.data.spotify.SpotifyPlaylistAutoSyncManager
@@ -69,6 +71,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLocaleManager.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AvatarManager.init(this)
@@ -360,7 +366,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun playRecognizedSong(title: String, artist: String) {
-        android.widget.Toast.makeText(this, "Playing $title…", android.widget.Toast.LENGTH_SHORT).show()
+        android.widget.Toast.makeText(this, this.getString(R.string.toast_playing, title), android.widget.Toast.LENGTH_SHORT).show()
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val query = "$title $artist".trim()
@@ -372,12 +378,12 @@ class MainActivity : ComponentActivity() {
                     }
                 } else {
                     withContext(Dispatchers.Main) {
-                        android.widget.Toast.makeText(this@MainActivity, "Song not found in iTune", android.widget.Toast.LENGTH_SHORT).show()
+                        android.widget.Toast.makeText(this@MainActivity, this@MainActivity.getString(R.string.toast_song_not_found_in_itune), android.widget.Toast.LENGTH_SHORT).show()
                     }
                 }
             } catch (_: Exception) {
                 withContext(Dispatchers.Main) {
-                    android.widget.Toast.makeText(this@MainActivity, "Playback failed, try again", android.widget.Toast.LENGTH_SHORT).show()
+                    android.widget.Toast.makeText(this@MainActivity, this@MainActivity.getString(R.string.toast_playback_failed_try_again), android.widget.Toast.LENGTH_SHORT).show()
                 }
             }
         }
