@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.search
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import androidx.compose.material3.MaterialTheme
 
 import android.widget.Toast
@@ -380,7 +383,7 @@ fun SearchScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Search",
+                                text = stringResource(R.string.ui_search),
                                 color = AppleTextPrimary,
                                 fontSize = 34.sp,
                                 fontWeight = FontWeight.Bold,
@@ -430,7 +433,7 @@ fun SearchScreen(
 
                     AnimatedVisibility(visible = uiMode != SearchUiMode.EXPLORE) {
                         Text(
-                            text = "Cancel",
+                            text = stringResource(R.string.cancel),
                             color = Color(0xFFFA2D48),
                             fontSize = 15.5.sp,
                             fontWeight = FontWeight.Medium,
@@ -471,7 +474,7 @@ fun SearchScreen(
                     SearchUiMode.EXPLORE -> {
                         item(span = { GridItemSpan(2) }, key = "explore_categories_header") {
                             Text(
-                                text = "Explore Categories",
+                                text = stringResource(R.string.ui_explore_categories),
                                 color = AppleTextPrimary,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
@@ -520,7 +523,7 @@ fun SearchScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = "Search songs, artists, albums, or playlists",
+                                        text = stringResource(R.string.ui_search_songs_artists_albums_or_playlists),
                                         color = AppleTextSecondary,
                                         fontSize = 14.5.sp
                                     )
@@ -659,7 +662,7 @@ fun SearchScreen(
                                                                 SpotifyHomeRepository.markOrigin(listOf(matched.id))
                                                                 MusicPlayerState.playWithRadioQueue(matched, expandPlayer = true)
                                                             } else {
-                                                                Toast.makeText(context, "Couldn't find this song on YouTube Music", Toast.LENGTH_SHORT).show()
+                                                                Toast.makeText(context, context.getString(R.string.toast_couldn_t_find_this_song_on_youtube_music), Toast.LENGTH_SHORT).show()
                                                             }
                                                         }
                                                     } else {
@@ -721,7 +724,7 @@ fun SearchScreen(
                                                             expandPlayer = false
                                                         )
                                                     } else {
-                                                        Toast.makeText(context, "No tracks found", Toast.LENGTH_SHORT).show()
+                                                        Toast.makeText(context, context.getString(R.string.toast_no_tracks_found), Toast.LENGTH_SHORT).show()
                                                     }
                                                 } finally {
                                                     topResultBusyAction = null
@@ -759,7 +762,7 @@ fun SearchScreen(
                                                             expandPlayer = false
                                                         )
                                                     } else {
-                                                        Toast.makeText(context, "Couldn't start mix", Toast.LENGTH_SHORT).show()
+                                                        Toast.makeText(context, context.getString(R.string.toast_couldn_t_start_mix), Toast.LENGTH_SHORT).show()
                                                     }
                                                 } finally {
                                                     topResultBusyAction = null
@@ -786,7 +789,7 @@ fun SearchScreen(
                                                                 SpotifyHomeRepository.markOrigin(listOf(matched.id))
                                                                 MusicPlayerState.playWithRadioQueue(topResult.track.copy(id = matched.id, thumbnailUrl = matched.thumbnailUrl ?: topResult.track.thumbnailUrl), expandPlayer = false)
                                                             } else {
-                                                                Toast.makeText(context, "Couldn't find this song on YouTube Music", Toast.LENGTH_SHORT).show()
+                                                                Toast.makeText(context, context.getString(R.string.toast_couldn_t_find_this_song_on_youtube_music), Toast.LENGTH_SHORT).show()
                                                             }
                                                         }
                                                     } else {
@@ -831,13 +834,13 @@ fun SearchScreen(
                                                                     SpotifyHomeRepository.markOrigin(matched.map { it.id })
                                                                     MusicPlayerState.play(matched.first(), matched, expandPlayer = false)
                                                                 } else {
-                                                                    Toast.makeText(context, "Couldn't find tracks on YouTube Music", Toast.LENGTH_SHORT).show()
+                                                                    Toast.makeText(context, context.getString(R.string.toast_couldn_t_find_tracks_on_youtube_music), Toast.LENGTH_SHORT).show()
                                                                 }
                                                             } else {
                                                                 MusicPlayerState.play(loaded.first(), loaded, expandPlayer = false)
                                                             }
                                                         } else {
-                                                            Toast.makeText(context, "No tracks found", Toast.LENGTH_SHORT).show()
+                                                            Toast.makeText(context, context.getString(R.string.toast_no_tracks_found), Toast.LENGTH_SHORT).show()
                                                         }
                                                     }
                                                 }
@@ -876,13 +879,13 @@ fun SearchScreen(
                                                                     SpotifyHomeRepository.markOrigin(matched.map { it.id })
                                                                     MusicPlayerState.play(matched.first(), matched, expandPlayer = false)
                                                                 } else {
-                                                                    Toast.makeText(context, "Couldn't find tracks on YouTube Music", Toast.LENGTH_SHORT).show()
+                                                                    Toast.makeText(context, context.getString(R.string.toast_couldn_t_find_tracks_on_youtube_music), Toast.LENGTH_SHORT).show()
                                                                 }
                                                             } else {
                                                                 MusicPlayerState.play(loaded.first(), loaded, expandPlayer = false)
                                                             }
                                                         } else {
-                                                            Toast.makeText(context, "No tracks found", Toast.LENGTH_SHORT).show()
+                                                            Toast.makeText(context, context.getString(R.string.toast_no_tracks_found), Toast.LENGTH_SHORT).show()
                                                         }
                                                     }
                                                 }
@@ -974,7 +977,7 @@ fun SearchScreen(
                                                         SpotifyHomeRepository.markOrigin(listOf(matched.id))
                                                         MusicPlayerState.playWithRadioQueue(matched, expandPlayer = false)
                                                     } else {
-                                                        Toast.makeText(context, "Couldn't find this song on YouTube Music", Toast.LENGTH_SHORT).show()
+                                                        Toast.makeText(context, context.getString(R.string.toast_couldn_t_find_this_song_on_youtube_music), Toast.LENGTH_SHORT).show()
                                                     }
                                                 }
                                             } else {
@@ -993,7 +996,7 @@ fun SearchScreen(
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            text = "No songs found",
+                                            text = stringResource(R.string.ui_no_songs_found),
                                             color = AppleTextSecondary,
                                             fontSize = 14.5.sp
                                         )
@@ -1039,7 +1042,7 @@ fun SearchScreen(
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            text = "No artists found",
+                                            text = stringResource(R.string.ui_no_artists_found),
                                             color = AppleTextSecondary,
                                             fontSize = 14.5.sp
                                         )
@@ -1086,7 +1089,7 @@ fun SearchScreen(
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            text = "No albums found",
+                                            text = stringResource(R.string.ui_no_albums_found),
                                             color = AppleTextSecondary,
                                             fontSize = 14.5.sp
                                         )
@@ -1133,7 +1136,7 @@ fun SearchScreen(
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            text = "No playlists found",
+                                            text = stringResource(R.string.ui_no_playlists_found),
                                             color = AppleTextSecondary,
                                             fontSize = 14.5.sp
                                         )
@@ -1179,7 +1182,7 @@ fun SearchScreen(
                     if (loaded.isNotEmpty()) {
                         MusicPlayerState.play(loaded.first(), loaded)
                     } else {
-                        Toast.makeText(context, "No tracks found", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_no_tracks_found), Toast.LENGTH_SHORT).show()
                     }
                 }
             },
@@ -1192,9 +1195,9 @@ fun SearchScreen(
                     )
                     if (loaded.isNotEmpty()) {
                         MusicPlayerState.addToQueue(loaded)
-                        Toast.makeText(context, "Added ${loaded.size} tracks to queue", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_added_tracks_to_queue, loaded.size), Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(context, "No tracks found", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_no_tracks_found), Toast.LENGTH_SHORT).show()
                     }
                 }
             },
@@ -1265,7 +1268,7 @@ fun AppleSearchBar(
         ) {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = "Search",
+                contentDescription = stringResource(R.string.ui_search),
                 tint = AppleTextSecondary,
                 modifier = Modifier.size(20.dp)
             )
@@ -1278,7 +1281,7 @@ fun AppleSearchBar(
             ) {
                 if (value.text.isEmpty()) {
                     Text(
-                        text = "Artists, Songs, Lyrics & More",
+                        text = stringResource(R.string.ui_artists_songs_lyrics_more),
                         color = AppleTextSecondary,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal,
@@ -1314,7 +1317,7 @@ fun AppleSearchBar(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Clear search",
+                        contentDescription = stringResource(R.string.clear_search),
                         tint = AppleTextSecondary,
                         modifier = Modifier.size(18.dp)
                     )
@@ -1326,7 +1329,7 @@ fun AppleSearchBar(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Mic,
-                        contentDescription = "Voice search",
+                        contentDescription = stringResource(R.string.ui_voice_search),
                         tint = AppleTextSecondary,
                         modifier = Modifier.size(20.dp)
                     )
