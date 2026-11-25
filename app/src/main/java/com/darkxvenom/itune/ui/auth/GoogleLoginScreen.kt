@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.auth
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import android.annotation.SuppressLint
 import android.content.Context
 import android.webkit.CookieManager
@@ -140,7 +143,7 @@ fun GoogleLoginScreen(
         }
         if (mergedCookies == null || !cookieReady) {
             if (manualTrigger) {
-                Toast.makeText(context, "Complete Google sign-in first", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_complete_google_sign_in_first), Toast.LENGTH_SHORT).show()
             }
             return
         }
@@ -149,7 +152,7 @@ fun GoogleLoginScreen(
             val loggedIn = obj?.optString("loggedIn") == "true"
             if (obj == null || !loggedIn) {
                 if (manualTrigger) {
-                    Toast.makeText(context, "Waiting for YouTube Music session...", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_waiting_for_youtube_music_session), Toast.LENGTH_SHORT).show()
                 }
                 return@evaluateJavascript
             }
@@ -180,7 +183,7 @@ fun GoogleLoginScreen(
                     onSignedIn()
                 } catch (e: Throwable) {
                     capturedOnce = false
-                    Toast.makeText(context, e.message ?: "Sign-in verification failed", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, e.message ?: context.getString(R.string.sign_in_verification_failed), Toast.LENGTH_LONG).show()
                 } finally {
                     isCapturing = false
                 }
@@ -220,7 +223,7 @@ fun GoogleLoginScreen(
                 IconButton(onClick = onClose) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.back),
                         tint = Color.White,
                     )
                 }
@@ -266,7 +269,7 @@ fun GoogleLoginScreen(
                             .padding(horizontal = 14.dp, vertical = 7.dp),
                     ) {
                         Text(
-                            text = "Confirm",
+                            text = stringResource(R.string.ui_confirm),
                             color = Color.White,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -366,14 +369,14 @@ fun GoogleLoginScreen(
                         )
                         Spacer(Modifier.height(14.dp))
                         Text(
-                            text = "Connecting YouTube Music...",
+                            text = stringResource(R.string.ui_connecting_youtube_music),
                             color = Color.White,
                             fontSize = 15.5.sp,
                             fontWeight = FontWeight.SemiBold,
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            text = "Loading artists, playlists & history",
+                            text = stringResource(R.string.ui_loading_artists_playlists_history),
                             color = AppleTextSecondary,
                             fontSize = 12.5.sp,
                         )
