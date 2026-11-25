@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.settings
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -244,7 +246,7 @@ private fun DeveloperNewsListContent(
             centerContent = {
                 FrostedTopBarTitlePill(hazeState = null) {
                     Text(
-                        text = "News from dev",
+                        text = stringResource(R.string.ui_news_from_dev),
                         style = TextStyle(
                             fontFamily = LocalAppFontFamily.current,
                             fontWeight = FontWeight.SemiBold,
@@ -258,7 +260,7 @@ private fun DeveloperNewsListContent(
                 IconButton(onClick = onSearchToggle) {
                     Icon(
                         imageVector = Icons.Rounded.Search,
-                        contentDescription = "Search",
+                        contentDescription = stringResource(R.string.ui_search),
                         tint = if (isSearchActive) AppleCrimson else Color.White,
                         modifier = Modifier.size(22.dp)
                     )
@@ -269,7 +271,7 @@ private fun DeveloperNewsListContent(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.newspaper),
-                        contentDescription = "Refresh",
+                        contentDescription = stringResource(R.string.ui_refresh),
                         tint = AppleCrimsonSoft,
                         modifier = Modifier
                             .size(20.dp)
@@ -317,7 +319,7 @@ private fun DeveloperNewsListContent(
                         decorationBox = { innerTextField ->
                             if (searchQuery.isEmpty()) {
                                 Text(
-                                    text = "Search announcements…",
+                                    text = stringResource(R.string.ui_search_announcements),
                                     color = Color.White.copy(alpha = 0.45f),
                                     fontSize = 15.sp,
                                     fontFamily = LocalAppFontFamily.current
@@ -333,7 +335,7 @@ private fun DeveloperNewsListContent(
                         ) {
                             Icon(
                                 imageVector = SfIcons.Close,
-                                contentDescription = "Clear",
+                                contentDescription = stringResource(R.string.ui_clear),
                                 tint = Color.White.copy(alpha = 0.6f),
                                 modifier = Modifier.size(14.dp)
                             )
@@ -363,7 +365,7 @@ private fun DeveloperNewsListContent(
                             strokeWidth = 3.dp
                         )
                         Text(
-                            text = "Loading announcements…",
+                            text = stringResource(R.string.ui_loading_announcements),
                             style = TextStyle(
                                 fontFamily = LocalAppFontFamily.current,
                                 fontWeight = FontWeight.Medium,
@@ -439,7 +441,7 @@ private fun AnnouncementsHeroCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Developer Announcements",
+                    text = stringResource(R.string.ui_developer_announcements),
                     style = TextStyle(
                         fontFamily = LocalAppFontFamily.current,
                         fontWeight = FontWeight.Bold,
@@ -580,7 +582,7 @@ private fun DeveloperNewsListItemCard(
                             modifier = Modifier.padding(horizontal = 18.dp, vertical = 7.dp)
                         ) {
                             Text(
-                                text = "Read More",
+                                text = stringResource(R.string.ui_read_more),
                                 style = TextStyle(
                                     fontFamily = LocalAppFontFamily.current,
                                     fontWeight = FontWeight.Bold,
@@ -650,7 +652,7 @@ private fun DeveloperNewsDetailContent(
                     }) {
                         Icon(
                             painter = painterResource(R.drawable.open_in_new),
-                            contentDescription = "Open Link",
+                            contentDescription = stringResource(R.string.ui_open_link),
                             tint = AppleCrimsonSoft,
                             modifier = Modifier.size(20.dp)
                         )
