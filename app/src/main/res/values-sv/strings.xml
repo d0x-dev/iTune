@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">Avbryt</string>
+    <string name="save">Spara</string>
+    <string name="close">Stäng</string>
+    <string name="done">Klart</string>
+    <string name="back">Tillbaka</string>
+    <string name="play">Spela</string>
+    <string name="shuffle">Blanda</string>
+    <string name="retry">Försök igen</string>
+    <string name="try_again">Försök igen</string>
+    <string name="more">Mer</string>
+    <string name="less">Mindre</string>
+    <string name="share">Dela</string>
+    <string name="show_all">Visa alla</string>
+    <string name="top_songs">Topplåtar</string>
+    <string name="suggested">Föreslaget</string>
+    <string name="subscribers">%1$s prenumeranter</string>
+    <string name="monthly_listeners">%1$s lyssnare per månad</string>
+    <string name="signed_by">Signerad av %1$s</string>
+    <string name="about_artist">Om artisten</string>
+    <string name="about_album">Om albumet</string>
+    <string name="recent_album">Senaste albumet</string>
+    <string name="recent_ep">Senaste EP:n</string>
+    <string name="recent_single">Senaste singeln</string>
+    <string name="subscribe">Prenumerera</string>
+    <string name="unsubscribe">Avsluta prenumerationen</string>
+    <string name="add_to_library">Lägg till i biblioteket</string>
+    <string name="remove_from_library">Ta bort från biblioteket</string>
+    <string name="add_to_playlist">Lägg till i spellista</string>
+    <string name="remove_from_playlist">Ta bort från den här spellistan</string>
+    <string name="play_next">Spela härnäst</string>
+    <string name="add_to_queue">Lägg till i kön</string>
+    <string name="start_radio">Starta radio</string>
+    <string name="open">Öppna</string>
+    <string name="open_album">Öppna album</string>
+    <string name="open_artist">Öppna artist</string>
+    <string name="open_playlist">Öppna spellista</string>
+    <string name="song_info">Låtinfo</string>
+    <string name="song_info_album">Album</string>
+    <string name="song_info_release_date">Utgivningsdatum</string>
+    <string name="song_info_views">Uppspelningar / visningar</string>
+    <string name="song_info_likes">Gilla-markeringar</string>
+    <string name="song_info_comments">Kommentarer</string>
+    <string name="song_info_unavailable">Inte tillgängligt</string>
+    <string name="song_info_error">En del information kunde inte läsas in.</string>
+    <string name="song_info_retry">Retry</string>
+    <string name="like">Gilla</string>
+    <string name="dislike">Ogilla</string>
+    <string name="download">Ladda ned</string>
+    <string name="download_all">Ladda ned alla</string>
+    <string name="downloaded">Nedladdad</string>
+    <string name="downloading">Laddar ned</string>
+    <string name="download_notification_title">Laddar ned</string>
+    <string name="delete_download">Ta bort nedladdning</string>
+    <string name="delete_download_confirmation">Ta bort ”%1$s” från den här enheten? Tryck igen för att bekräfta.</string>
+    <string name="delete">Ta bort</string>
+    <string name="queued">I kön</string>
+    <string name="saved_to_downloads">Sparad i Nedladdningar</string>
+    <string name="search_this_list">Sök i listan</string>
+    <string name="clear_search">Rensa sökning</string>
+    <string name="close_search">Stäng sökning</string>
+    <string name="nothing_matches">Inget här matchar ”%1$s”</string>
+    <string name="sort_songs">Sortera låtar</string>
+    <string name="artist">artist</string>
+    <string name="album">album</string>
+    <string name="playlist">spellista</string>
+    <string name="folder">Mapp</string>
+    <string name="songs">Låtar</string>
+    <string name="song_count">%1$dsång</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$dspår</item>
+        <item quantity="other">%1$dspår</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$dMinut</item>
+        <item quantity="other">%1$dminuter minuter</item>
+    </plurals>
+    <string name="one_hour">1 timme</string>
+    <string name="hours_minutes_short">%1$dHöjd%2$dm m m</string>
+    <string name="minutes_short">%1$dMin min min min min</string>
+    <string name="pin">Fäst</string>
+    <string name="unpin">Lossa</string>
+    <string name="tile_identify_music">Identifiera musik</string>
+    <string name="tile_identify_music_desc">Identifiera låtar som leker runt dig mediTune</string>
+    <string name="widget_itune_description">KontrollkontrolliTuneUppspelning från din hemskärm</string>
+    <string name="app_language">Ap språk</string>
+    <string name="app_language_subtitle">Språk för menyer, knappar och meddelanden</string>
+    <string name="app_language_description">Välj språket för iTunes gränssnitt.</string>
+    <string name="system_default_language">Systemstandard</string>
+    <string name="follow_device_language">Följ enhetens språk</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">Använd det engelska gränssnittet</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface">के हिन्दी हिन्दी का का</string>
+    <string name="hindi_interface_language">Hindi gränssnitt språk</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">Använd det spanska gränssnittet</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">Använd det franska gränssnittet</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">Använd det nederländska gränssnittet</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">Använd det ryska gränssnittet</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">Använd Urdu gränssnitt</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">Använd det kinesiska gränssnittet</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">Använd det tyska gränssnittet</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">Använd portugisiska gränssnittet</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">Använd det italienska gränssnittet</string>
+    <string name="japanese_language">日本語</string>
+    <string name="japanese_interface">Använd det japanska gränssnittet</string>
+    <string name="favorite_artist">Favoritartist</string>
+    <string name="remove_favorite_artist">Ta bort från favoritartister</string>
+    <string name="add_to_favorite_artists">Lägg till bland favoritartister</string>
+    <string name="removed_from_artists">Borttagen från Artister</string>
+    <string name="added_to_artists">Tillagd bland Artister</string>
+    <string name="play_top_songs">Spela topplåtar</string>
+    <string name="play_album">Spela album</string>
+    <string name="play_playlist">Spela spellista</string>
+    <string name="create_new_playlist">Skapa ny spellista</string>
+    <string name="create_playlist">Skapa spellista</string>
+    <string name="radio">Radio</string>
+    <string name="search">Sök</string>
+    <string name="share_playlist_link">Dela spellistelänk</string>
+    <string name="copy_share_link">Kopiera delningslänk</string>
+    <string name="rename_playlist">Byt namn på spellista</string>
+    <string name="delete_playlist">Ta bort spellista</string>
+    <string name="share_link_copied">Dela länk kopierad</string>
+    <string name="playlist_removed">Spellista bort</string>
+    <string name="playlist_no_longer_available">Denna spellista är inte längre tillgänglig.</string>
+    <string name="empty_playlist">Tom Playlist</string>
+    <string name="filter_playlists">Filterspellistor...</string>
+    <string name="filter_albums">Filtrera album...</string>
+    <string name="favorite">Favorit</string>
+    <string name="tap_to_start_listening">Tryck på att börja lyssna</string>
+    <string name="time_zero" formatted="false">0:00</string>
+    <string name="previous">Föregående</string>
+    <string name="play_or_pause">Spela eller paus</string>
+    <string name="next">Nästa Nästa</string>
+    <string name="repeat">Upprepa</string>
+    <string name="open_title_options">Öppet Öppet Öppet%1$soptioner</string>
+    <string name="reset_page_title">Återställ%1$s</string>
+    <string name="remove_device">Ta bort%1$s</string>
+    <string name="profile_name">%1$sProfilprofil</string>
+    <string name="download_option">Ladda ner%1$s</string>
+    <string name="open_entry_options">Öppet Öppet Öppet%1$soptioner</string>
+    <string name="avatar_number">Avatar%1$s</string>
+    <string name="options_for_track">Alternativ för%1$s</string>
+    <string name="preparing">Förbered...</string>
+    <string name="share_image">Dela bild</string>
+    <string name="speed_pitch_locked">Speed &amp; pitch låst tillsammans</string>
+    <string name="independent_bpm_tempo_key_pitch">Oberoende BPM tempo &amp; key pitch</string>
+    <string name="spatial_reflections_delay">Rumsliga reflektioner (%1$dms)</string>
+    <string name="on">På</string>
+    <string name="off">Off Off Off</string>
+    <string name="dynamic_island_active">Dynamisk ö aktiv</string>
+    <string name="dynamic_island_description">Visar smidigt utanföriTuneunder uppspelning</string>
+    <string name="preparing_download">Förbered nedladdning...</string>
+    <string name="listening_for_music">Lyssna på musik...</string>
+    <string name="hold_phone_near_sound_source">Håll telefon nära ljudkälla</string>
+    <string name="unable_to_recognize_audio">Kan inte känna igen ljud</string>
+    <string name="song_identified">Sång identifierad</string>
+    <string name="play_in_itune">Spela iniTune</string>
+    <string name="view_details">Visa detaljer</string>
+    <string name="no_match_found">Ingen match hittades</string>
+    <string name="recognition_retry_message">Kunde inte identifiera sången. Tryck för att försöka igen.</string>
+    <string name="microphone_permission_needed">Mikrofontillstånd behövs</string>
+    <string name="microphone_permission_help">Tryck för att tillåta mikrofonåtkomst såiTunekan identifiera musik.</string>
+    <string name="recognition_failed">Erkännande misslyckades</string>
+    <string name="tap_install_to_continue">Tryck Installera för att fortsätta</string>
+    <string name="detail_artist">Konstnär</string>
+    <string name="detail_album">Album</string>
+    <string name="set_default_ringtone_target">Sätt som standard%1$s!!</string>
+    <string name="added_ringtone_target">Läggs till%1$sVälj det i ljudinställningar.</string>
+    <string name="last_fm_connected_as">Last.fmansluten som%1$s</string>
+    <string name="discord_connected_as">Discord ansluten som%1$s</string>
+    <string name="tv_encrypted_backup_saved">Krypterad säkerhetskopia sparad (%1$dKB)!</string>
+    <string name="sign_in_verification_failed">Sign-in verifiering misslyckades</string>
+    <string name="could_not_rename_playlist">Kan inte byta namn på spellistan påYouTube Music</string>
+    <string name="could_not_create_playlist">Kunde inte skapa spellista</string>
+    <string name="daily_encrypted_backup_enabled">Daglig krypterad backup aktiverad</string>
+    <string name="cookie_login_failed">Cookie inloggning misslyckades</string>
+    <string name="could_not_open_last_fm">Kunde inte öppnaLast.fm</string>
+    <string name="last_fm_sign_in_failed">Last.fmTecken i misslyckad</string>
+    <string name="discord_sign_in_failed">Discord sign in misslyckades</string>
+    <string name="could_not_open_android_installer">Kan inte öppna Androids installatör</string>
+    <string name="added_title_to_queue">Tillagd "%1$sAtt köa</string>
+    <string name="automatic_backup_disabled">Automatisk backup inaktiverad</string>
+    <string name="download_failed">Ladda ner misslyckad</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">Installera</string>
+    <string name="ui_text_9ef6a80f91" formatted="false"># 1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">%+.1f</string>
+    <string name="ui_accounts" formatted="false">+ konton</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0.0</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5.0</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">-</string>
+    <string name="ui_text_7be28ad40e" formatted="false">-5.0</string>
+    <string name="ui_text_a6dee6102d" formatted="false">11 PM</string>
+    <string name="ui_text_1a19c52178" formatted="false">12 AM</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">12 PM</string>
+    <string name="ui_text_4e37ece023" formatted="false">15ms motsatt öra försenad lågpassblandning</string>
+    <string name="ui_text_76b322ac42" formatted="false">2X snabbhastighet</string>
+    <string name="ui_text_505c74ed85" formatted="false">3D Ping-Pong Bounce</string>
+    <string name="ui_text_db9b8df506" formatted="false">6.00</string>
+    <string name="ui_text_2812537f20" formatted="false">6 PM</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080</string>
+    <string name="ui_text_05a79f06cf" formatted="false">Från:</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">En hel bild med topplåtar, artister, album och vanor.</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">En ny version är klar</string>
+    <string name="ui_account" formatted="false">Kontokonto</string>
+    <string name="ui_account_options" formatted="false">Kontoalternativ</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">Åtaganden</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">Acoustic Head-Shadow Crossfeed</string>
+    <string name="ui_activate" formatted="false">Aktivera</string>
+    <string name="ui_active" formatted="false">Aktiv</string>
+    <string name="ui_active_days" formatted="false">ACTIVE DAYS</string>
+    <string name="ui_active_profile" formatted="false">Aktiv profil</string>
+    <string name="ui_activity_by_day" formatted="false">Aktivitet per dag</string>
+    <string name="ui_add_account" formatted="false">Lägga till konto</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">Lägg till anpassade HTTP-tilläggsservrar (tal /manifest.json, /search, /stream) eller sandbox-isolerade QuickJS-moduler.</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">Lägg till framtida låtar automatiskt</string>
+    <string name="ui_add_streaming_source" formatted="false">Lägg till streaming källa</string>
+    <string name="ui_add_to_playlist" formatted="false">Lägg till i Playlist</string>
+    <string name="ui_added_playlists" formatted="false">Lägga till spellistor</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">Justera hörnet kanten av kvadrat album konstverk.</string>
+    <string name="ui_advanced_cookie_login" formatted="false">Avancerad Cookie Login</string>
+    <string name="ui_advanced_login" formatted="false">Avancerad LOGIN</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">Avancerad inloggning</string>
+    <string name="ui_ai_engine" formatted="false">AI Engine</string>
+    <string name="ui_ai_provider" formatted="false">AI leverantör</string>
+    <string name="ui_albums" formatted="false">Album</string>
+    <string name="ui_all_news" formatted="false">Alla nyheter</string>
+    <string name="ui_allow_downloads" formatted="false">Tillåt nedladdningar</string>
+    <string name="ui_allow_microphone" formatted="false">Tillåt mikrofon</string>
+    <string name="ui_allow_microphone_access" formatted="false">Tillåt mikrofonåtkomst</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">Alternativa reflektioner L &lt;-&gt; R</string>
+    <string name="ui_always_on_display" formatted="false">Alltid på displayen</string>
+    <string name="ui_am" formatted="false">Am</string>
+    <string name="ui_api_base_url" formatted="false">API Base URL</string>
+    <string name="ui_artist" formatted="false">Konstnär</string>
+    <string name="ui_artist_name" formatted="false">Konstnärsnamn</string>
+    <string name="ui_artists" formatted="false">Konstnär</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">Konstnärer, sånger, album, spellistor...</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">Konstnärer, sånger, texter och mer</string>
+    <string name="ui_at_least_8_characters" formatted="false">Minst 8 tecken</string>
+    <string name="ui_auto_sleep_timer" formatted="false">Auto Sleep Timer</string>
+    <string name="ui_auto_activation_timeout" formatted="false">AUTO-ACTIVATION TIMEOUT</string>
+    <string name="ui_avatar" formatted="false">Avatar</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">Back UpiTune(AES-256)</string>
+    <string name="ui_backup_password" formatted="false">Backup lösenord</string>
+    <string name="ui_bluetooth_device_access" formatted="false">BluetoothEnhet Access</string>
+    <string name="ui_browse" formatted="false">Bläddra</string>
+    <string name="ui_browse_by_country" formatted="false">Bläddra efter land</string>
+    <string name="ui_browse_extensions" formatted="false">Bläddra bland förlängningar</string>
+    <string name="ui_browse_live_online_radio" formatted="false">Bläddra i Live Online Radio</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">Kan inte ta bort endast konto</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">Canvas Leverantörer (Lookup Order)</string>
+    <string name="ui_captcha_guidance" formatted="false">CAPTCHA Vägledning</string>
+    <string name="ui_cast_wireless_devices" formatted="false">CAST &amp; WIRELESS DEVICES</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">Välj ljuduppspelningsströmningskällor, förlustfria nivåer och nedgångsprioritet</string>
+    <string name="ui_choose_avatar" formatted="false">Välj Avatar</string>
+    <string name="ui_choose_charts_region" formatted="false">Välj diagram Region</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">Välj huriTunevisas på din hemskärm. Ändra widgeten från din launcher.</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">Välj din profil för att fortsätta</string>
+    <string name="ui_choose_youtube_channel" formatted="false">Välj Välj Välj VäljYouTubeKanal</string>
+    <string name="ui_clear" formatted="false">Clear</string>
+    <string name="ui_clear_use_default" formatted="false">Tydliga och använda standard</string>
+    <string name="ui_clear_all" formatted="false">Tydliga alla</string>
+    <string name="ui_confirm" formatted="false">bekräfta</string>
+    <string name="ui_confirm_password" formatted="false">Konfirmera lösenord</string>
+    <string name="ui_connect_discord" formatted="false">Connect Discord</string>
+    <string name="ui_connect_last_fm" formatted="false">AnslutLast.fm</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">Anslut dinSpotifykonto för att aktivera Canvas looping rörelse video konstverk och synkronisera dinSpotifyBiblioteket.</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">AnslutYouTube Musicmed sessionscookies</string>
+    <string name="ui_connect" formatted="false">Anslut ›</string>
+    <string name="ui_connecting_spotify" formatted="false">AnslutningSpotify......</string>
+    <string name="ui_connecting_youtube_music" formatted="false">AnslutningYouTube Music......</string>
+    <string name="ui_continue" formatted="false">Fortsätt</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">Fortsätt i webbläsare istället</string>
+    <string name="ui_continue_with_google" formatted="false">Fortsätt med Google</string>
+    <string name="ui_continue_with_spotify" formatted="false">Fortsätt medSpotify</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">Cookie-uppgifter lagras iiTuneKrypterad kontolagring och kontrollerad medYouTube Musicinnan de blir frälsta.</string>
+    <string name="ui_copy_song_name" formatted="false">Copy Song namn</string>
+    <string name="ui_copy_text" formatted="false">Kopiera text</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">Copyright © 2026iTuneProjekt. Denna programvara tillhandahålls utan garanti. Du kan omfördela och ändra den under GNU GPL-villkoren som visas nedan.</string>
+    <string name="ui_corner_length" formatted="false">Corner Längd</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">Kunde inte göra replay bild</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">Kunde\'T ladda musik just nu. Dra ner för att försöka igen.</string>
+    <string name="ui_create" formatted="false">Skapa</string>
+    <string name="ui_create_add" formatted="false">Skapa och lägga till</string>
+    <string name="ui_current_account" formatted="false">Nuvarande konto</string>
+    <string name="ui_custom_instructions" formatted="false">KUNDSSTÄLLNINGAR</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">CUSTOM REPOSITORY INDEX ELLER URL</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">Anpassa din hemskärmsspelare</string>
+    <string name="ui_customize_your_itune_card" formatted="false">Anpassa diniTunekortkort</string>
+    <string name="ui_d" formatted="false">D D D D D</string>
+    <string name="ui_delete_account" formatted="false">Radera konto</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">Radera konto?</string>
+    <string name="ui_developer_announcements" formatted="false">Utvecklare uttalanden</string>
+    <string name="ui_disconnect" formatted="false">Disconnect</string>
+    <string name="ui_disconnect_discord" formatted="false">Disconnect Discord</string>
+    <string name="ui_discord_rich_presence" formatted="false">Discord Rich närvaro</string>
+    <string name="ui_dismiss" formatted="false">Avfärda</string>
+    <string name="ui_display_full_screen" formatted="false">Display &amp; Fullständiga SCREEN</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">Visa animerade synkroniserade texter ovanför sångtiteln medan Canvas kontroller är dolda</string>
+    <string name="ui_display_name" formatted="false">Visa namn</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">DJ Bipolar Club Filter</string>
+    <string name="ui_downloaded_cached" formatted="false">Ladda ner &amp; Cached</string>
+    <string name="ui_dp" formatted="false">DP</string>
+    <string name="ui_dynamic_island" formatted="false">Dynamisk ö</string>
+    <string name="ui_e" formatted="false">E E E E</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">t.ex. 127.0.0.1</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">t.ex. översätta till poetisk hinglish med rim</string>
+    <string name="ui_enable_auto_sleep" formatted="false">Aktivera automatisk sömn</string>
+    <string name="ui_enable_proxy" formatted="false">Aktivera Proxy</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">möjliggöraSpotifyCanvas &amp; spellistor</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">Krypteringslösenord (min 8 chars)</string>
+    <string name="ui_end_of_current_track" formatted="false">Slut på nuvarande spår</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">Ange ett nytt namn för detta konto.</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">Ange en HTTP addon manifest URL, en QuickJS modul index, eller en Tidal instans endpoint.</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">Ange lösenordet som används när din .itunebackup skapades.</string>
+    <string name="ui_enter_your_name" formatted="false">Ange ditt namn</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">Ange ditt namn för att personifieraiTune</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">Varje rytm, sena nattsång och melodi du levde med - samlades på en resa.</string>
+    <string name="ui_everything" formatted="false">Allting Allt</string>
+    <string name="ui_explore_categories" formatted="false">Utforska Kategorier</string>
+    <string name="ui_exporting_audio" formatted="false">Exportera ljud...</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">Extrahera ett kort ljud fingeravtryck</string>
+    <string name="ui_favorite_stations" formatted="false">Favoritstationer</string>
+    <string name="ui_favorites" formatted="false">Favoriter</string>
+    <string name="ui_featured_hit" formatted="false">Funktionerad Hit</string>
+    <string name="ui_featured_playlists" formatted="false">Utvalda spellistor</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">Fetching ljudkvaliteter...</string>
+    <string name="ui_fetching_live_catalog" formatted="false">Fetching live katalog...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">Hitta en bättre stream</string>
+    <string name="ui_full_view" formatted="false">Full View</string>
+    <string name="ui_g" formatted="false">G G G G</string>
+    <string name="ui_genre" formatted="false">GENRE</string>
+    <string name="ui_genres_styles" formatted="false">Genres &amp; Styles</string>
+    <string name="ui_github_repository" formatted="false">GitHub Repository</string>
+    <string name="ui_github_repository_open_source" formatted="false">GitHub repository · Öppen källa</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GNU GPL v3.0 eller senare</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GNU GPL v3.0 eller senare · Copyright © 2026iTuneProjektprojekt</string>
+    <string name="ui_grant" formatted="false">Grant</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">Bevilja att visa öronproppar namn &amp; levande batteri%</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">Hardware LoudnessEnhancer (upp till +18 dB)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">Döljer Android status bar och navigation bar för sömlös ren OLED svart.</string>
+    <string name="ui_history" formatted="false">Historia historia</string>
+    <string name="ui_host" formatted="false">Host</string>
+    <string name="ui_host_a_session" formatted="false">Värd en känsla</string>
+    <string name="ui_host_controls_playback" formatted="false">Värdkontroller uppspelning</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">Hur man får dina cookies</string>
+    <string name="ui_hq" formatted="false">HQ</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">Identifierad med Shazam</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">Identifiera musik som spelar runt dig</string>
+    <string name="ui_immersion" formatted="false">IMMERSION</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">Immersivt läge (fullskärm)</string>
+    <string name="ui_import" formatted="false">Importera import</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">Importera offentliga och privata spellistor • Autosynkronisering</string>
+    <string name="ui_import_spotify_playlist" formatted="false">Importera importSpotifyPlaylist</string>
+    <string name="ui_in_use" formatted="false">I användning</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">In-app vägledning när ljudleverantörer utmanar anti-bot kontroller</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">Installera pre-added Mornye gemenskapstillägg eller skanna ett anpassat förvaringsindex.</string>
+    <string name="ui_installed" formatted="false">Installerad</string>
+    <string name="ui_interactive_dot_curve" formatted="false">Interaktiv Dot Curve</string>
+    <string name="ui_irecognition" formatted="false">iRecognition</string>
+    <string name="ui_ireconization" formatted="false">iReconization</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">iReconization lyssnar några sekunder för att skapa ett fingeravtryck. Audio sparas inte.</string>
+    <string name="ui_ishare" formatted="false">iShare</string>
+    <string name="ui_itune_license" formatted="false">iTuneLicens</string>
+    <string name="ui_itune_music" formatted="false">iTuneMusik Musik</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTunefrågor texter i exakt företräde nedan. Om den högsta aktiva leverantören inte har synkroniserat texter,iTuneSömlöst faller tillbaka till nästa.</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTunefrågor källor i den ordning som visas. Dra installerade tillägg och leverantörer för att justera uppspelningsprioritet.</string>
+    <string name="ui_itune_time_travel" formatted="false">iTuneTidsresor</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">Jet Flanger Swoosh</string>
+    <string name="ui_join" formatted="false">Gå med</string>
+    <string name="ui_keep_screen_on" formatted="false">Håll skärm på</string>
+    <string name="ui_l" formatted="false">L L L</string>
+    <string name="ui_lan_port" formatted="false">LAN Port</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">Språkpreferens (tillval, t.ex. Hindi, Punjabi...)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fmScrobbling</string>
+    <string name="ui_layout" formatted="false">LAYOUT</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">Lämna tom för att använda standard endpoint för denna leverantör.</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">LFO svept jet fas modulering</string>
+    <string name="ui_library" formatted="false">Bibliotek</string>
+    <string name="ui_license" formatted="false">Licens</string>
+    <string name="ui_liked_songs" formatted="false">Gillade sånger</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">Liksom läggs till medan inloggningen sparas både lokalt och påYouTube MusicSå de stannar kvar i ditt bibliotek även efter att ha undertecknat.</string>
+    <string name="ui_listening_patterns" formatted="false">LISTENING PATTERNS</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">Lyssna på det delade ljudet...</string>
+    <string name="ui_live" formatted="false">Livet</string>
+    <string name="ui_live_radio_stations" formatted="false">Live Radio Stations</string>
+    <string name="ui_loading_announcements" formatted="false">Ledande meddelanden...</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">Loading artister, spellistor och historia</string>
+    <string name="ui_lossless" formatted="false">Lossless</string>
+    <string name="ui_lossless_audio_preference" formatted="false">Lossless Audio Preference</string>
+    <string name="ui_lyrics" formatted="false">Text</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">Lyrics inte tillgänglig för den här låten</string>
+    <string name="ui_lyrics_providers" formatted="false">Lyrics leverantörer</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">Lyrics översattes framgångsrikt!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">Master förstärkare Boost</string>
+    <string name="ui_member_since" formatted="false">MEMBER SINCE</string>
+    <string name="ui_memoji_style" formatted="false">Memoji och Style</string>
+    <string name="ui_minutes_listened" formatted="false">Minuter som lyser</string>
+    <string name="ui_mirror_vol" formatted="false">Mirror Vol</string>
+    <string name="ui_model" formatted="false">MODEL</string>
+    <string name="ui_model_68c2cc7f" formatted="false">Modellmodell</string>
+    <string name="ui_moods_activities" formatted="false">humör och aktiviteter</string>
+    <string name="ui_moods_moments" formatted="false">MOODS &amp; MOMENTS</string>
+    <string name="ui_music_by_genre" formatted="false">Musik av Genre</string>
+    <string name="ui_music_language_preference" formatted="false">Musikspråkspreferens</string>
+    <string name="ui_music_services" formatted="false">Musiktjänster</string>
+    <string name="ui_name" formatted="false">Namnnamn</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">NARBY WI-FI HOSTS</string>
+    <string name="ui_network_proxy" formatted="false">Network Proxy</string>
+    <string name="ui_new" formatted="false">Nytt nytt</string>
+    <string name="ui_new_playlist" formatted="false">Ny spellista</string>
+    <string name="ui_new_releases" formatted="false">Nya releaser</string>
+    <string name="ui_news_from_dev" formatted="false">Nyheter från Dev</string>
+    <string name="ui_next_up" formatted="false">Nästa upp</string>
+    <string name="ui_no_albums_found" formatted="false">Inga album hittades</string>
+    <string name="ui_no_artist_information_available" formatted="false">Ingen konstnärsinformation tillgänglig</string>
+    <string name="ui_no_artists_found" formatted="false">Inga konstnärer hittade</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">Inga konstnärer i ditt bibliotek ännu</string>
+    <string name="ui_no_playlists_found" formatted="false">Inga spellistor hittades</string>
+    <string name="ui_no_results_on_spotify" formatted="false">Inga resultat påSpotify</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">Inga sparade album i ditt bibliotek</string>
+    <string name="ui_no_songs_found" formatted="false">Inga låtar hittades</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">Inga låtar som finns i denna release</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">Inga låtar som finns i detta avsnitt</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">Inga användarspellistor hittades. Skapa en i biblioteket!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">Inte nog med att lyssna ännu</string>
+    <string name="ui_now_playing" formatted="false">Nu spelar jag</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">Nu spelar jag</string>
+    <string name="ui_on_heavy_repeat" formatted="false">På tunga återtagande</string>
+    <string name="ui_options" formatted="false">Optioner</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">ELLER SP DC COOKIE</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">Orbit Intensity &amp; Speed</string>
+    <string name="ui_pair_join_a_device" formatted="false">PAIR &amp; JOIN A DEVICE</string>
+    <string name="ui_password_optional" formatted="false">Lösenord (Optional)</string>
+    <string name="ui_passwords_dont_match" formatted="false">Lösenord matchar inte</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">Paste sp dc token här...</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">Klistra på din API-nyckel här</string>
+    <string name="ui_play_in_itune" formatted="false">Spela iniTune</string>
+    <string name="ui_play_next" formatted="false">Spela nästa</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">Spela på knoppar och telefonhögtalare/AUX samtidigt</string>
+    <string name="ui_playlist_name" formatted="false">Spellista namn</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">Spellista namn</string>
+    <string name="ui_playlist_spotify" formatted="false">Spellista •Spotify</string>
+    <string name="ui_playlists" formatted="false">Spellistor</string>
+    <string name="ui_plays" formatted="false">Spelar</string>
+    <string name="ui_pm" formatted="false">PM</string>
+    <string name="ui_port" formatted="false">Port Port Port Port</string>
+    <string name="ui_pre_added_extensions" formatted="false">PRE-ADDED EXTENSIONS</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">Föredra bit-perfekt FLAC/ALAC upp till 24-bit / 192 kHz när det är tillgängligt</string>
+    <string name="ui_preparing_audio_preview" formatted="false">Förbereda ljudförhandsgranskning...</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">Förhindrar enhetsdisplay från att stänga av medan Always On Display är aktiv.</string>
+    <string name="ui_preview" formatted="false">Preview</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">Förhandsgranskning</string>
+    <string name="ui_preview_always_on_display" formatted="false">Förhandsvisning alltid på displayen</string>
+    <string name="ui_profile" formatted="false">Förtroende</string>
+    <string name="ui_profiles_in_backup" formatted="false">Profiler i BACKUP</string>
+    <string name="ui_prompt_type" formatted="false">PROMPT TYPE</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">PROVIDER PRIORITY (FALLBACK ORDER)</string>
+    <string name="ui_queue" formatted="false">Queue</string>
+    <string name="ui_queue_is_empty" formatted="false">Queue är tom</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">Queued spår att spela nästa</string>
+    <string name="ui_radio" formatted="false">Radio Radio Radio</string>
+    <string name="ui_read_more" formatted="false">Läs mer</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">Real-time stavelse och linje rullning med levande ljud</string>
+    <string name="ui_recent_searches" formatted="false">Nya sökningar</string>
+    <string name="ui_recently_added" formatted="false">Nyligen tillagd</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">Återkommande sömnschema · auto pausar uppspelning</string>
+    <string name="ui_remote_music_library" formatted="false">Fjärrmusikbibliotek</string>
+    <string name="ui_remove" formatted="false">Ta bort</string>
+    <string name="ui_rename" formatted="false">Rename</string>
+    <string name="ui_rename_account" formatted="false">Rename-konto</string>
+    <string name="ui_replay" formatted="false">Ersättning</string>
+    <string name="ui_replay_c0f85d66" formatted="false">Replay</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">Kräv Bit-Perfect Lossless Output</string>
+    <string name="ui_reset" formatted="false">Återställ</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">Reset Provider Order &amp; Standards</string>
+    <string name="ui_reset_to_default_url" formatted="false">Återställ till Default URL</string>
+    <string name="ui_restore_default_sources" formatted="false">Återställ standardkällor</string>
+    <string name="ui_restore_itune_backup" formatted="false">ÅterställiTuneBackup</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">RestoresJioSaavnochYouTube Musici standardordningen.JioSaavnbörjar ochYouTube MusicBörjar på.</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">Återställer LRC Lib, KuGou och SimpMusic som bästa leverantörer och återaktiverar alla 11 källor.</string>
+    <string name="ui_resume" formatted="false">Resume</string>
+    <string name="ui_rhythm_by_hour" formatted="false">Rytm från Hour</string>
+    <string name="ui_room_permissions" formatted="false">ROOM PERMISSIONER</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">Route app nätverkstrafik via HTTP eller SOCKS proxy</string>
+    <string name="ui_save_proxy" formatted="false">Spara Proxy</string>
+    <string name="ui_save_schedule" formatted="false">Spara schema</string>
+    <string name="ui_save_to_gallery" formatted="false">Spara till Galleri</string>
+    <string name="ui_save_token" formatted="false">Spara Token</string>
+    <string name="ui_saved_to_your_library" formatted="false">Sparat till ditt bibliotek!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">Sparas med Android Keystore. Backup-filer använder PBKDF2-HMAC-SHA256 (310.000 rundor) och AES-256-GCM.</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">Spara till nedladdningar/itune/backups</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">Säg en sång, artist, album eller text</string>
+    <string name="ui_search" formatted="false">Sök efter Sök</string>
+    <string name="ui_search_identify" formatted="false">Sök och identifiera</string>
+    <string name="ui_search_announcements" formatted="false">Sökmeddelanden...</string>
+    <string name="ui_search_country" formatted="false">Sök land...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">Sök efter låtar, artister, album och spellistor</string>
+    <string name="ui_search_languages" formatted="false">Sök språk...</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">Sök eller skriv en modell id</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">Sök låtar, artister, album eller spellistor</string>
+    <string name="ui_searching_lyrics" formatted="false">Söker lyrics...</string>
+    <string name="ui_searching_spotify" formatted="false">SökerSpotify......</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">Secondary Mirrror Sink</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">Välj en profil avatar för att anpassa diniTuneerfarenhet över alla skärmar.</string>
+    <string name="ui_select_language" formatted="false">Välj språk</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">Välj standard snabb mall för textöversättning.</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">Välj motorn för att använda för line-by-line textöversättning.</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">Välj målspråket för textöversättning.</string>
+    <string name="ui_server_host_ip" formatted="false">Server Host / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">Server URL / Manifest</string>
+    <string name="ui_settings_appearance" formatted="false">Inställningar Utseende</string>
+    <string name="ui_share_lyrics" formatted="false">Dela Lyrics</string>
+    <string name="ui_share_my_replay" formatted="false">Dela min replay</string>
+    <string name="ui_share_replay" formatted="false">Dela Replay</string>
+    <string name="ui_share_this_story" formatted="false">Dela denna historia</string>
+    <string name="ui_share_your_time_travel" formatted="false">Dela din tidsresa</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">Visa synced Lyrics över Canvas</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">Logga in på musik.youtube.com i en stationär webbläsare. Open Developer Tools → Applikation → Cookies, kopiera sedan de inloggade sessionsvärdena. Behandla dessa värden som ditt lösenord.</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">Logga in med dinLast.fmkonto</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">Logga ut alla konton</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">Samtidig Dual Output</string>
+    <string name="ui_skip_sign_in" formatted="false">Skip Sign in</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">Skjut framåt för snabbare texter · bakåt för långsammare · Audio opåverkad</string>
+    <string name="ui_snap_0" formatted="false">Snap 0</string>
+    <string name="ui_soundstage_width" formatted="false">Soundstage Width</string>
+    <string name="ui_sources" formatted="false">Källor</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">Spatial Audio och Essentials</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotifyoch Canvas</string>
+    <string name="ui_spotify_account" formatted="false">SpotifyKontokonto</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">SpotifyCanvas, Apple Music, Tidal &amp; Community rörelse täcker</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">Spotifyär för närvarande ansluten. Motion artwork (Canvas) ochSpotifyspellista synkronisering är aktiverad.</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">SpotifySök misslyckades. Försök igen.</string>
+    <string name="ui_station" formatted="false">Station</string>
+    <string name="ui_stereo_echo_delay" formatted="false">Stereo Echo &amp; Delay</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">Stores this link and auto-adds any new songs on app open</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">Stream ditt bit-perfekta förlustfria bibliotek direkt från personliga nätverksaktier eller Nextcloud.</string>
+    <string name="ui_streaming_sources" formatted="false">STREAMING SOURCES</string>
+    <string name="ui_style" formatted="false">Style</string>
+    <string name="ui_suggestions" formatted="false">Förslag</string>
+    <string name="ui_switch" formatted="false">Switch</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">Tap Avatar att anpassa</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">Tryck vänster eller höger för att bläddra • Håll dig till paus</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">Tryck för att omedelbart aktivera Always On Display nu</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">Tryck på för att välja Country &amp; City FM-sändningar</string>
+    <string name="ui_target_language" formatted="false">TARGET LANGUAGE</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">Målspråk</string>
+    <string name="ui_test" formatted="false">Testa test</string>
+    <string name="ui_test_proxy_connection" formatted="false">Test Proxy Connection</string>
+    <string name="ui_testing_proxy" formatted="false">Testa proxy...</string>
+    <string name="ui_that_s_your_story" formatted="false">Detta\'Din berättelse</string>
+    <string name="ui_this_account" formatted="false">Detta konto</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">Denna spellista är tom. Lägg till låtar från spelare eller sök!</string>
+    <string name="ui_time_travel" formatted="false">Tidsträning</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">Tidsresor</string>
+    <string name="ui_time_travel_wrap" formatted="false">Tid TRAVEL WRAP</string>
+    <string name="ui_time_synced_lyrics" formatted="false">Time-Synced Lyrics</string>
+    <string name="ui_top_picks" formatted="false">Top Picks</string>
+    <string name="ui_top_result" formatted="false">Toppresultat</string>
+    <string name="ui_top_song" formatted="false">Top Song</string>
+    <string name="ui_top_songs" formatted="false">Top Songs</string>
+    <string name="ui_top_streamed" formatted="false">Top STREAMED</string>
+    <string name="ui_total_listening_time" formatted="false">Totalt lyssnande tid</string>
+    <string name="ui_total_time" formatted="false">Totaltid</string>
+    <string name="ui_translate_actual_lines" formatted="false">Översätta faktiska linjer</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">Översätt texter på begäran för någon låt från spelarmenyn (... &gt; Text &gt; Översättning). När när\'Översätta faktiska linjer\'är av, översättningar visas som undertexter under den ursprungliga texten.</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">Översätt följande låttextlinjer till engelska. Bevara poetiskt flöde.</string>
+    <string name="ui_translating_lyrics" formatted="false">Översätta texter...</string>
+    <string name="ui_translation_mode" formatted="false">Översättningsläge</string>
+    <string name="ui_translation_prompt" formatted="false">Översättningsprompt</string>
+    <string name="ui_trending_artists" formatted="false">Trending Artists</string>
+    <string name="ui_turn_off_timer" formatted="false">Turn Off Timer</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">Uppdatera det namn som visas på ditt Apple ID-profilkort i Inställningar.</string>
+    <string name="ui_username_optional" formatted="false">Användarnamn (Optional)</string>
+    <string name="ui_view" formatted="false">Utsikt</string>
+    <string name="ui_view_on_shazam" formatted="false">Utsikt över Shazam</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">Vinyl Turntable Link</string>
+    <string name="ui_whats_new" formatted="false">Vad är nytt</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">När musiken spelar aktiveras Alltid On Display om ingen beröring sker på skärmen för den valda tiden. aktiveras endast medan inuti appen.</string>
+    <string name="ui_who_is_listening" formatted="false">Vem lyssnar?</string>
+    <string name="ui_widget" formatted="false">Widget</string>
+    <string name="ui_you" formatted="false">Du du du</string>
+    <string name="ui_your_1_artist" formatted="false">Din #1 konstnär</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">Din API-nyckel lagras säkert på enheten och delas aldrig.</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">Din Discord session token lagras krypterad på den här enheten och används endast för Rich Presence.</string>
+    <string name="ui_your_favourite_song" formatted="false">Din favoritlåt</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">Ditt bibliotek, spellistor och inställningar kommer att krypteras med ett lösenord på minst 8 tecken.</string>
+    <string name="ui_your_listening_experience" formatted="false">Din upplysning erfarenhet</string>
+    <string name="ui_your_listening_pattern" formatted="false">Ditt lyssnande mönster</string>
+    <string name="ui_your_listening_persona" formatted="false">Din lisning peersona</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">Din musikreplay och statistik</string>
+    <string name="ui_your_musical_anchor" formatted="false">Din musikaliska ankar</string>
+    <string name="ui_your_name" formatted="false">Ditt namn</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">Ditt lösenord skickas tillLast.fmbara för att skapa en session.iTuneInte rädda det.</string>
+    <string name="ui_your_playlists" formatted="false">Dina lektioner</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">Dina spellistor</string>
+    <string name="ui_your_sonic_peak" formatted="false">Din Sonic Peak</string>
+    <string name="ui_your_spotify_playlists" formatted="false">Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Din Din Din Din Din Din Din Din Din Din Dina Dina Dina Dina Din Dina Dina Din Din Din Din Din Din Din Din Din Din Din Din Dina Dina Din Din Din Dina Din DinSpotifySpellistor</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Dina Din Din Din Din Din Din Din Din Din Din Dina Dina Dina Dina Din Dina Dina Din Din Din Din Din Din Din Din Din Din Din Din Dina Dina Din Din Din Dina Din DinSpotifySpellistor (Public &amp; Private)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSICoch Google</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube Musicsession cookies</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">·</string>
+    <string name="ui_text_a118c40635" formatted="false">❤️</string>
+    <string name="ui_album_artwork" formatted="false">Album konstverk</string>
+    <string name="ui_itune_waves" formatted="false">iTuneVågor</string>
+    <string name="ui_previous" formatted="false">Föregående</string>
+    <string name="ui_next" formatted="false">Nästa Nästa</string>
+    <string name="ui_audio_output" formatted="false">Audio Output</string>
+    <string name="ui_low_volume" formatted="false">Låg volym</string>
+    <string name="ui_high_volume" formatted="false">Hög volym</string>
+    <string name="ui_filter" formatted="false">Filter</string>
+    <string name="ui_refresh" formatted="false">Refresh</string>
+    <string name="ui_options_6bf5da9c" formatted="false">Alternativ</string>
+    <string name="ui_user_profile_avatar" formatted="false">Användarprofil Avatar</string>
+    <string name="ui_news" formatted="false">Nyhet</string>
+    <string name="ui_no_song_playing" formatted="false">Ingen låt spela</string>
+    <string name="ui_next_track" formatted="false">Nästa Track</string>
+    <string name="ui_see_all_songs" formatted="false">Se alla låtar</string>
+    <string name="ui_favorite_radio" formatted="false">Favorit radio</string>
+    <string name="ui_live_65c821a5" formatted="false">Livet Live</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTuneBrand Waves</string>
+    <string name="ui_refresh_network" formatted="false">Refresh Network</string>
+    <string name="ui_edit_display_name" formatted="false">Edit Display Namn</string>
+    <string name="ui_remove_from_queue" formatted="false">Ta bort från kö</string>
+    <string name="ui_search_new_releases" formatted="false">Sök nya releaser</string>
+    <string name="ui_refresh_new_releases" formatted="false">Refresh New Releases</string>
+    <string name="ui_refresh_downloads" formatted="false">Refresh Downloads</string>
+    <string name="ui_clear_cache" formatted="false">Clear Cache</string>
+    <string name="ui_sort" formatted="false">Sort</string>
+    <string name="ui_see_all_new_releases" formatted="false">Se alla nya releaser</string>
+    <string name="ui_identify" formatted="false">Identifiera</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">Importera spellista</string>
+    <string name="ui_create_playlist" formatted="false">Skapa spellista</string>
+    <string name="ui_liked" formatted="false">Gillar</string>
+    <string name="ui_paste" formatted="false">Paste</string>
+    <string name="ui_checked" formatted="false">Kontrollerad</string>
+    <string name="ui_google_account_playlist" formatted="false">Google Account Playlist</string>
+    <string name="ui_spotify_playlist" formatted="false">SpotifyPlaylist</string>
+    <string name="ui_local_playlist" formatted="false">Lokal spellista</string>
+    <string name="ui_back_to_audio_engine" formatted="false">Tillbaka till Audio Motor</string>
+    <string name="ui_bluetooth_settings" formatted="false">BluetoothInställningar</string>
+    <string name="ui_scan_output_devices" formatted="false">Scan Output Enheter</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">samtidig dual audio</string>
+    <string name="ui_selected" formatted="false">Valt</string>
+    <string name="ui_copy" formatted="false">Kopiera</string>
+    <string name="ui_copy_link" formatted="false">Kopiera länk</string>
+    <string name="ui_upgrade_quality" formatted="false">Uppgradera kvalitet</string>
+    <string name="ui_fm_radio" formatted="false">FM Radio</string>
+    <string name="ui_next_station" formatted="false">Nästa station</string>
+    <string name="ui_minimize" formatted="false">Minimera</string>
+    <string name="ui_favorite" formatted="false">Favorit</string>
+    <string name="ui_more_options" formatted="false">Fler alternativ</string>
+    <string name="ui_previous_station" formatted="false">Föregående Station</string>
+    <string name="ui_sleep_timer" formatted="false">Sova timer</string>
+    <string name="ui_audio_output_devices" formatted="false">Audio Output Devices</string>
+    <string name="ui_station_list" formatted="false">Station List</string>
+    <string name="ui_volume" formatted="false">Volymen</string>
+    <string name="ui_open_lyrics" formatted="false">Öppna texter</string>
+    <string name="ui_mute_volume" formatted="false">Mute Volume</string>
+    <string name="ui_max_volume" formatted="false">Max volym</string>
+    <string name="ui_endless_queue" formatted="false">Endless Queue</string>
+    <string name="ui_repeat" formatted="false">Upprepa</string>
+    <string name="ui_refresh_stations" formatted="false">Refresh stationer</string>
+    <string name="ui_favorite_station" formatted="false">Favoritstation</string>
+    <string name="ui_close_ireconization" formatted="false">Nära iReconization</string>
+    <string name="ui_cancel_voice_search" formatted="false">Avbryta röstsökning</string>
+    <string name="ui_microphone" formatted="false">Mikrofon</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">Fler alternativ</string>
+    <string name="ui_voice_search" formatted="false">Röstsökning</string>
+    <string name="ui_saved" formatted="false">Sparad</string>
+    <string name="ui_fill_search_query" formatted="false">Fyll sökfråga</string>
+    <string name="ui_remove_from_history" formatted="false">Ta bort från historien</string>
+    <string name="ui_itune_icon" formatted="false">iTuneikon</string>
+    <string name="ui_artwork_preview" formatted="false">Artwork Preview</string>
+    <string name="ui_decrease" formatted="false">Minska</string>
+    <string name="ui_increase" formatted="false">Öka</string>
+    <string name="ui_open_link" formatted="false">Öppen länk</string>
+    <string name="ui_reset_geometry" formatted="false">Återställ Geometri</string>
+    <string name="ui_reorder_provider" formatted="false">Reorderleverantör</string>
+    <string name="ui_save_name" formatted="false">Spara namn</string>
+    <string name="ui_editable_name" formatted="false">Redigerbart namn</string>
+    <string name="ui_google" formatted="false">Google Google Google Google</string>
+    <string name="ui_remove_account" formatted="false">Ta bort konto</string>
+    <string name="ui_reorder_source_priority" formatted="false">Reorderkälla prioritet</string>
+    <string name="ui_refresh_playlists" formatted="false">Refresh spellistor</string>
+    <string name="ui_replay_poster" formatted="false">Replay Poster</string>
+    <string name="ui_settings" formatted="false">Inställningar</string>
+    <string name="ui_artist_radio" formatted="false">Artistradio</string>
+    <string name="ui_play_all" formatted="false">Spela alla</string>
+    <string name="ui_delete_playlist" formatted="false">Delete Playlist</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">oändlig kö</string>
+    <string name="ui_artist_info" formatted="false">Artist Info</string>
+    <string name="ui_enabled" formatted="false">Enabled</string>
+    <string name="ui_search_icon" formatted="false">Sök ikon</string>
+    <string name="ui_region">Region:%1$s</string>
+    <string name="ui_connected_devices">KONNECTED DEVICES%1$s) )</string>
+    <string name="ui_up_next">UP NEXT (UP NEXT)%1$s) )</string>
+    <string name="ui_text_da5c3629fd">%1$s›</string>
+    <string name="ui_active_7c6a4064">%1$s • %2$s aktiva</string>
+    <string name="ui_no_new_available_right_now">Inga nya%1$stillgängligt just nu</string>
+    <string name="ui_tracks">%1$s spår • %2$s</string>
+    <string name="ui_songs">%1$s låtar • %2$s • %3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s • %2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c">••%1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$sspår(s) kunde\'t matchas:</string>
+    <string name="ui_text_a3edb2b714">• %1$s - %2$s</string>
+    <string name="ui_d_eeda119e">%1$sD D D D D</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+ + +%1$sdB</string>
+    <string name="ui_connected">%1$sansluten</string>
+    <string name="ui_open_web_player">Open Web Player (öppen webbspelare)%1$s) )</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">Land: %1$s (%2$s)</string>
+    <string name="ui_city_state">City / State:%1$s</string>
+    <string name="ui_codec_bitrate">Codec / Bitrate:%1$s</string>
+    <string name="ui_language">Språk:%1$s</string>
+    <string name="ui_tags">Taggar:%1$s</string>
+    <string name="ui_stream">Stream:%1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">API Key inte konfigurerad för%1$sVänligen ange det i Inställningar &gt; Text.</string>
+    <string name="ui_s_clip">%1$ss Clip</string>
+    <string name="ui_loading_more_fm_stations_loaded">Laddar fler FM-stationer (%1$sladdad)...</string>
+    <string name="ui_found">%1$shittade</string>
+    <string name="ui_version">Version %1$s (%2$s)</string>
+    <string name="ui_of_active">%1$s av %2$s aktiva</string>
+    <string name="ui_text_adebc50ade"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #%1$s</string>
+    <string name="ui_api_key">%1$sAPI Key</string>
+    <string name="ui_channel">Kanal:%1$s</string>
+    <string name="ui_sync_issue">Synkronisera frågan:%1$s</string>
+    <string name="ui_enter">Enter%1$s</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">Är du säker på att du vill ta bort "%1$sAlla data, spellistor, favoriter, historia och inställningar i detta konto kommer att raderas permanent.</string>
+    <string name="ui_peak">Peak:%1$s</string>
+    <string name="ui_welcome">Välkommen,%1$s</string>
+    <string name="ui_songs_played">%1$sLåtar spelade</string>
+    <string name="ui_around">runt omkring%1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">När världen blir hektisk lyssnar du mest på %1$s runt %2$s.</string>
+    <string name="ui_itune_time_travel_575a110d">iTuneTime Travel%1$s</string>
+    <string name="ui_text_c1aacd9629">%1$s · %2$s</string>
+    <string name="ui_your_biggest_day_was">Din största dag var%1$s.</string>
+    <string name="ui_listening_recap">%1$sLyssna recap</string>
+    <string name="ui_busiest_day">Upptagen dag:%1$s</string>
+    <string name="ui_peak_hour_00">Peak hour:%1$s:00</string>
+    <string name="ui_loading">Loading%1$s......</string>
+    <string name="ui_about">Om%1$s</string>
+    <string name="ui_songs_9b614dc8">%1$sLåtar</string>
+    <string name="ui_current_offset_ms">Nuvarande offset:%1$sMs</string>
+    <string name="ui_connected_session">Ansluten session:%1$s</string>
+    <string name="ui_k">%1$sKälla K</string>
+    <string name="ui_top_result_c5e5adab">Top RESULT •%1$s</string>
+    <string name="toast_song_not_found_in_itune">Sång som inte finns iiTune</string>
+    <string name="toast_playback_failed_try_again">Uppspelning misslyckades, försök igen</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">Auto Sleep Timer aktiv · Uppspelning pausad</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">Offline-läge: den här låten laddas inte ner</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">Offline-läge: kan inte uppgradera kvalitet</string>
+    <string name="toast_upgrading_quality">Uppgradering av kvalitet</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">Inga förlustfria strömkällor aktiverade i källor</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">Ingen högre kvalitetsström som finns över aktiverade källor</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">Shuffle är låst av Permanent Shuffle i Inställningar</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">Mikrofontillstånd behövs för att identifiera musik</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">Visa över andra appar tillstånd krävs för erkännande popup</string>
+    <string name="toast_playback_failed">Uppspelning misslyckades</string>
+    <string name="toast_complete_google_sign_in_first">Slutför Google Sign-in först</string>
+    <string name="toast_waiting_for_youtube_music_session">Väntar påYouTube Musicsession...</string>
+    <string name="toast_couldn_t_load_tracks">Kunde\'T load tracks</string>
+    <string name="toast_copied_to_clipboard">Kopierad till Clipboard</string>
+    <string name="toast_profile_avatar_updated">Profil avatar uppdaterad</string>
+    <string name="toast_no_tracks_found">Inga spår hittades</string>
+    <string name="toast_google_account_connected">Google-konto anslutet</string>
+    <string name="toast_link_copied">Länk kopierad</string>
+    <string name="toast_could_not_open_browser">Kunde inte öppna webbläsare</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">Ange en hamn mellan 1024 och 65535</string>
+    <string name="toast_cached_music_cleared">Cachad musik rensad</string>
+    <string name="toast_no_tracks_available_to_add">Inga spår tillgängliga för att lägga till</string>
+    <string name="toast_enter_a_playlist_name">Ange ett spellistanamn</string>
+    <string name="toast_system_sound_panel_opened">Systemljud panel öppnas</string>
+    <string name="toast_download_started_check_notification">Ladda ner start · Kontrollera meddelande</string>
+    <string name="toast_playback_will_stop_after_current_track">Uppspelningen kommer att sluta efter aktuellt spår</string>
+    <string name="toast_sleep_timer_turned_off">Sömn timer avstängd</string>
+    <string name="toast_stream_url_copied">Stream URL kopierad</string>
+    <string name="toast_couldn_t_create_lyrics_card">Kunde\'Skapa lyrics card</string>
+    <string name="toast_restored_online_lyrics">Återställd online lyrics</string>
+    <string name="toast_lyrics_saved">Lyrics räddad</string>
+    <string name="toast_translation_cleared">Översättning cleared</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">Ange din API-nyckel i Inställningar &gt; Lyrics först</string>
+    <string name="toast_no_lyrics_found_for_this_song">Inga texter hittades för den här låten</string>
+    <string name="toast_could_not_create_audio_clip">Kunde inte skapa ljudklipp</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">Snippet sparas till musik/iTuneSnippets</string>
+    <string name="toast_playing_next">Spela nästa</string>
+    <string name="toast_added_to_queue">Läggs till kö</string>
+    <string name="toast_download_started_check_notifications">Ladda ner start · Kontrollera meddelanden</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">Kunde\'Hitta den här låten påYouTube Music</string>
+    <string name="toast_couldn_t_start_mix">Kunde\'T Start mix</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">Kunde\'Hitta spår påYouTube Music</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">Kunde inte kryptera lösenordet säkert. Automatisk backup ändrades inte.</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">Lagringstillstånd behövs för att spara säkerhetskopior i nedladdningar</string>
+    <string name="toast_choose_an_itune_backup_file">Välj en .itunebackup file</string>
+    <string name="toast_audio_artwork_cache_cleared">Audio &amp; Artwork Cache rensad</string>
+    <string name="toast_could_not_open_github">Kunde inte öppna GitHub</string>
+    <string name="toast_profile_name_updated">Profilnamn uppdaterat</string>
+    <string name="toast_search_history_cleared">Sök historia rensad</string>
+    <string name="toast_listening_history_cleared">Lyssna på historien cleared</string>
+    <string name="toast_cached_songs_cleared">Cachade låtar rensade</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">Öppna systeminställningar för att bevilja Display över andra appar</string>
+    <string name="toast_dynamic_island_geometry_reset">Dynamic Island geometri återställs</string>
+    <string name="toast_geometry_reset">Geometri återställ</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">Lyrics-leverantörer återställs till standarder</string>
+    <string name="toast_api_key_saved">API Key sparad</string>
+    <string name="toast_base_url_updated">Base URL uppdaterad</string>
+    <string name="toast_translation_prompt_updated">Översättning snabb uppdaterad</string>
+    <string name="toast_equalizer_reset_to_flat">Equalizer återställs till Flat</string>
+    <string name="toast_dj_console_reset">DJ Console återställd</string>
+    <string name="toast_name_saved">Namn sparat</string>
+    <string name="toast_syncing_youtube_music_library">SynkroniseraYouTube MusicBiblioteket...</string>
+    <string name="toast_signed_out_local_likes_preserved">Logga ut (lokala som bevarade)</string>
+    <string name="toast_signed_out_of_all_google_accounts">Logga ut från alla Google-konton</string>
+    <string name="toast_discord_disconnected">Discord frånkopplad</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">Ange ett giltigt inloggatYouTube Musiccookie (SAPISID och en session cookie)</string>
+    <string name="toast_youtube_music_account_connected">YouTube Musickonto ansluten</string>
+    <string name="toast_account_renamed">Konto omdöpt</string>
+    <string name="toast_account_deleted">Konto raderat</string>
+    <string name="toast_cannot_delete_your_only_account">Kan inte ta bort ditt enda konto</string>
+    <string name="toast_sources_restored_to_defaults">Källor återställda till standarder</string>
+    <string name="toast_spotify_disconnected">SpotifyFrånkopplad</string>
+    <string name="toast_spotify_sp_dc_token_saved">SpotifySp dc token sparad</string>
+    <string name="toast_spotify_connected">Spotify connected!</string>
+    <string name="toast_complete_spotify_sign_in_first">KomplettSpotifysign-in första</string>
+    <string name="toast_saved_to_gallery">Sparad till Galleri!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">TillåtiTuneatt installera uppdateringar för att fortsätta</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">Ladda ner uppdatering APK är otillgänglig</string>
+    <string name="toast_added_to_queue_next">Läggs till kö nästa</string>
+    <string name="toast_link_copied_to_clipboard">Link kopierad till Clipboard</string>
+    <string name="toast_song_link_copied_to_clipboard">Song länk kopierad till clipboard</string>
+    <string name="toast_left_ishare_session">Vänster iShare Session</string>
+    <string name="toast_ishare_lan_host_started">IShare LAN Host startade!</string>
+    <string name="toast_scanning_lan_for_sessions">Skanna LAN för sessioner...</string>
+    <string name="toast_cache_cleared">Cache klar</string>
+    <string name="toast_signed_out_successfully">Logga ut framgångsrikt</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">Lösenord måste matcha och ha minst 8 tecken</string>
+    <string name="toast_no_backup_file_found_in_storage">Ingen backup-fil som finns i lagring</string>
+    <string name="toast_library_settings_restored">Bibliotek &amp; inställningar återställs!</string>
+    <string name="toast_enter_your_backup_password">Ange ditt backup lösenord</string>
+    <string name="toast_syncing_spotify_library">SynkroniseraSpotifyBiblioteket...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify Connected!</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">Ange en giltig SP DC cookie</string>
+    <string name="toast_playing">Spelar: %%1$s…</string>
+    <string name="toast_upgraded_to_lossless_kbps">Uppgraderat till Lossless • %%1$s kbps</string>
+    <string name="toast_playing_next_0f0c851c">Spelar %%1$s härnäst</string>
+    <string name="toast_added_to_queue_88e96c25">Lade till %%1$s i kön</string>
+    <string name="toast_playing_cb1fb3de">Spelar: %%1$s…</string>
+    <string name="toast_playing_next_e0082d95">Spelar härnäst: %%1$s</string>
+    <string name="toast_couldn_t_load">Kunde inte läsa in %%1$s</string>
+    <string name="toast_opening">Öppnar %%1$s…</string>
+    <string name="toast_couldn_t_open">Kunde inte öppna %%1$s</string>
+    <string name="toast_couldn_t_play">Kunde inte spela %%1$s</string>
+    <string name="toast_library_pin">Bibliotekets PIN-kod: %%1$s</string>
+    <string name="toast_copied">Kopierat: %%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">Sovtimern är inställd på %%1$s min</string>
+    <string name="toast_lyrics_applied">Texten har tillämpats (%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">Lade till %%1$s spår i kön</string>
+    <string name="toast_switched_feed_to">Bytte flöde till %%1$s</string>
+    <string name="toast_provider_updated_to">Uppdaterade leverantören till %%1$s</string>
+    <string name="toast_target_language_set_to">Målspråket är inställt på %%1$s</string>
+    <string name="toast_translation_mode_set_to">Översättningsläget är inställt på %%1$s</string>
+    <string name="toast_added_source">Lade till källa: %%1$s</string>
+    <string name="toast_installed_extension_s">Installerade %%1$s tillägg</string>
+    <string name="toast_imported_songs">Importerade \'%%1$s\' (%%2$s låtar)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">Hittade inte \'%%1$s\' på YouTube Music</string>
+    <string name="toast_added_songs_to">Lade till %%1$s låtar i %%2$s</string>
+    <string name="toast_joining">Ansluter till %%1$s…</string>
+    <string name="toast_added_to">Lade till i %%1$s</string>
+    <string name="toast_itune_v_for_android_tv">iTune v%%1$s för Android TV</string>
+    <string name="toast_backup_failed">Säkerhetskopieringen misslyckades: %%1$s</string>
+    <string name="toast_restore_failed">Återställningen misslyckades: %%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">iShare, Dynamic Island &amp; StandBy</string>
+    <string name="settings_ishare" formatted="false">iShare</string>
+    <string name="settings_dynamic_island" formatted="false">Dynamisk ö</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">Flytande vattenbubbla styrenhet utanföriTune</string>
+    <string name="settings_always_on_display" formatted="false">Alltid på displayen</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">Audio Engine &amp; Sound Effects</string>
+    <string name="settings_dolby_atmos" formatted="false">Dolby Atmos</string>
+    <string name="settings_text_8948f8179a" formatted="false">8D Audio</string>
+    <string name="settings_spatial_audio" formatted="false">Spatial Audio</string>
+    <string name="settings_equalizer_eq" formatted="false">Equalizer (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">Lågpassfiltrering</string>
+    <string name="settings_dj_studio_panel" formatted="false">DJ Studio Panel</string>
+    <string name="settings_audio_normalization" formatted="false">Audio Normalization</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB Bit-Perfect DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">Rena Audio Bypass</string>
+    <string name="settings_signal_pipeline" formatted="false">Signal Pipeline</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">${audioEngine.pillBadge.text} -&gt; $activeOutputName</string>
+    <string name="settings_audio_playback" formatted="false">Audio &amp; Playback</string>
+    <string name="settings_sources" formatted="false">Källor</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">HanteraYouTube Music,JioSaavn, installationsbara tillägg,WebDAV,SMBoch uppspelningsprioritering</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">Auto hoppa när fel inträffar</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">Flytta till nästa kö låt om uppspelningen misslyckas</string>
+    <string name="settings_download_quality" formatted="false">Ladda ner kvalitet</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">Standardkvalitet som används av låtnedladdningsåtgärder</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">Välj standard ljudkvalitet för nedladdningar över appen.</string>
+    <string name="settings_lossless_audio" formatted="false">Lossless Audio</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">Uppgradera kvaliteten på cachade låtar</string>
+    <string name="settings_streaming_quality" formatted="false">Streaming kvalitet</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">Välj din föredragna streaming ljudkvalitet.</string>
+    <string name="settings_pcm_output_format" formatted="false">PCM Output Format</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">Rebuilds uppspelning på nuvarande position</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">Välj PCM-format begärt från Android\'s ljudutgång. En USB DAC kan konvertera den till ett format som den stöder.</string>
+    <string name="settings_crossfade" formatted="false">Crossfade</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">Överlappa fade-out av slutbanan med början av nästa.</string>
+    <string name="settings_automix" formatted="false">AutoMix</string>
+    <string name="settings_afterglow" formatted="false">Efterglödning</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">Applicera samma Low-Pass Equalizer-effekt under de valda sista sekunderna av varje låt. Afterglow pausar AutoMix och Crossfade när det är aktiverat.</string>
+    <string name="settings_permanent_shuffle" formatted="false">Permanent shuffle</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">Håll shuffle permanent låst på spelare</string>
+    <string name="settings_pause_at_volume_0" formatted="false">Paus på volym 0</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">Automatiskt paus uppspelning när volymen når noll</string>
+    <string name="settings_volume_bar" formatted="false">Volume Bar</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">Visas på ${state.volumeBarSide.lowercase()} kant när du trycker på volymknapparna</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">Välj vilken kant av skärmen in-app volym bar visas på.</string>
+    <string name="settings_content" formatted="false">Innehåll</string>
+    <string name="settings_default_content_language" formatted="false">Standard innehållsspråk</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">Språk för humör, bläddra och sök</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">Välj det föredragna katalogspråket som används över Browse, Moods &amp; Genres, Playlists och New Releases.</string>
+    <string name="settings_default_content_country" formatted="false">Standard Content Country</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">Region för diagram, spellistor och nya releaser</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">Välj den regionala butiksfront som används för nytillkomna album, regionala humör och presenterade spellistor.</string>
+    <string name="settings_hide_explicit_content" formatted="false">Dölja explicit innehåll</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">Filtrera uttryckliga låtar över Moods, Browse &amp; Search</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">Spela och flytande glas</string>
+    <string name="settings_splash_screen" formatted="false">Splash Screen</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">App lansera varumärke animation &amp; fluid titel avslöja</string>
+    <string name="settings_animated_cover_art" formatted="false">Animerad Cover Art</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">SpotifyCanvas, Apple Music, Tidal &amp; Community rörelse täcker</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">Spotifyoch Canvas Setup</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">Auto-Hide Canvas kontroller</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">Minimera kontroller efter 5s medan Canvas spelar (tap Canvas att växla)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">Visa synced Lyrics över Canvas</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">Visa animerade synkroniserade texter ovanför låtnamnet när Canvas kontrollerar dölja</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">PrioriteraSpotifyCanvas</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">FörsökSpotifyCanvas före Apple Music, Tidal &amp; Community</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">Spela animerad täckning över cellulär</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">Låt Looping Canvas-videor över mobildata</string>
+    <string name="settings_player_type" formatted="false">Spelartyp</string>
+    <string name="settings_player_style" formatted="false">Spelaren Style</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">Spelaren Dynamic Coloring</string>
+    <string name="settings_full_screen_cover_art" formatted="false">Full skärm cover art</string>
+    <string name="settings_corner_length" formatted="false">Corner Längd</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">Justera hörn radien av kvadrat album konstverk</string>
+    <string name="settings_hide_quality_tag" formatted="false">Hide Quality Tag</string>
+    <string name="settings_hide_volume_bar" formatted="false">Hide Volume Bar</string>
+    <string name="settings_home_top_card_style" formatted="false">Home Top Card Style</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">Liquid Glass Nav &amp; Mini Player</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">Glasbar och minispelare, med en vattenbubbla lins på håll</string>
+    <string name="settings_time_synced_lyrics" formatted="false">Time-Synced Lyrics</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">Följ ord och linjetexter i realtid</string>
+    <string name="settings_app_font" formatted="false">App Font</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">Ändra apptypografi; spelarkontroller behåller sitt designade typsnitt</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">Välj ett typsnitt för appgränssnittet.</string>
+    <string name="settings_lyrics_providers" formatted="false">Lyrics leverantörer</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 källor • Prioritera och växla nedgångsorder</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">Flytande glas Chrome</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">Refraktiva genomskinliga rubriker och dockkort</string>
+    <string name="settings_tactile_haptics" formatted="false">Tactile Haptics</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">Subtil pulsåterkoppling över spelarkontroller</string>
+    <string name="settings_downloads_storage" formatted="false">Nedladdningar och lagring</string>
+    <string name="settings_cellular_streaming" formatted="false">Cellulär streaming</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">Audio bandbredd på mobildata</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">Kontrollera ljudfidelitet när du strömmar bort från Wi-Fi.</string>
+    <string name="settings_download_over_wi_fi" formatted="false">Ladda ner över Wi-Fi</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">Vänta på Wi-Fi innan automatisk nedladdning</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">Cache Songs efter uppspelning</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">Spara en låt till offline lagring efter det slutar spela</string>
+    <string name="settings_cache_quality" formatted="false">Cache kvalitet</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">Lägre kvalitet sparar lagring</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">Välj kvaliteten på låtar som sparas efter uppspelningen slutförs. Gäller för låtar cachade från och med nu.</string>
+    <string name="settings_song_storage_limit" formatted="false">Song Storage Limit</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">Maximal disklagring fördelad för offline ljud cache innan äldre ospelade låtar vräknas.</string>
+    <string name="settings_clear_cached_songs" formatted="false">Clear Cached sånger</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">${MusicCacheManager.cachedTracks.size} låtar • ${MusicCacheManager.formatStorageSize (MusicCacheManager.totalStorageBytes.longValue)}</string>
+    <string name="settings_automatic_downloads" formatted="false">Automatiska nedladdningar</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">Spara nygjort och lagt till spår offline</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">Clear App Buffer Cache</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">Ta bort tillfällig täckning konst &amp; nätverk buffertar</string>
+    <string name="settings_library_listening" formatted="false">Bibliotek och lyssna</string>
+    <string name="settings_sync_library" formatted="false">Sync Library</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">Håll artister, spellistor och album uppdaterade</string>
+    <string name="settings_listening_history" formatted="false">Lyssna historia</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">Shape Personalized Mixes och nyligen spelad</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">Fortsätt som på denna enhet</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">Fortsätt gilla låtar iiTunenär de undertecknats</string>
+    <string name="settings_notifications_general" formatted="false">Meddelanden och General</string>
+    <string name="settings_offline_mode" formatted="false">Offline läge</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">Kräver en nedladdad kopia för att starta uppspelning</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">Stop Music på Task Clear</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">Sluta uppspelning näriTunesveps bort från nyheterna</string>
+    <string name="settings_auto_sleep_timer" formatted="false">Auto Sleep Timer</string>
+    <string name="settings_network_proxy" formatted="false">Network Proxy</string>
+    <string name="settings_profile_name" formatted="false">Profilnamn</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">Anpassa ditt Inställningar profil display namn</string>
+    <string name="settings_news_from_dev" formatted="false">Nyheter från Dev</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">Meddelanden, releases &amp; changelog</string>
+    <string name="settings_general_about" formatted="false">General &amp; Om</string>
+    <string name="settings_home_screen_widget" formatted="false">Home Screen Widget</string>
+    <string name="settings_widget_customization" formatted="false">Widget anpassning</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">Välj en storlek förhandsgranskning, konstverk, kontroller och widget stil</string>
+    <string name="settings_backup_restore" formatted="false">Backup &amp; Restore</string>
+    <string name="settings_automatic_daily_backup" formatted="false">Automatisk daglig backup</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">Krypterade dagliga säkerhetskopior • Nedladdningar/iTune/Backups</string>
+    <string name="settings_back_up_itune" formatted="false">Back UpiTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">Spara konton, alla inställningar, ljudeffekter, biblioteksdata och statistik krypterad</string>
+    <string name="settings_restore_from_backup" formatted="false">Återställ från Backup</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">Återställ inställningar, ljudeffekter, konton eller biblioteksdata från .itune</string>
+    <string name="settings_privacy" formatted="false">Sekretess</string>
+    <string name="settings_pause_search_history" formatted="false">Paus sökhistorik</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">Spara inte nya sökfrågor till historien</string>
+    <string name="settings_clear_search_history" formatted="false">Clear Search History</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">Ta bort de senaste frågorna från Search</string>
+    <string name="settings_pause_listening_history" formatted="false">Paus lyssna historia</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">Spela inte in spelade låtar eller uppdatera rekommendationer</string>
+    <string name="settings_clear_listening_history" formatted="false">Tydlig lyssnande historia</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">Ta bort uppspelningshistorik och återställ smakprofil</string>
+    <string name="settings_disable_screenshot" formatted="false">Inaktivera skärmdump</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">Blockera skärmdumpar och skärminspelning över app</string>
+    <string name="settings_best_available" formatted="false">Bästa tillgängliga</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">Använd högsta tillgängliga källkvalitet</string>
+    <string name="settings_maximum" formatted="false">Maximum</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">Välj den högsta bitrate stream</string>
+    <string name="settings_high" formatted="false">Hög</string>
+    <string name="settings_target_about_160_kbps" formatted="false">Mål ca 160 kbps</string>
+    <string name="settings_standard" formatted="false">Standard</string>
+    <string name="settings_target_about_128_kbps" formatted="false">Mål ca 128 kbps</string>
+    <string name="settings_data_saver" formatted="false">Data Saver</string>
+    <string name="settings_target_about_64_kbps" formatted="false">Mål om 64 kbps</string>
+    <string name="settings_extreme" formatted="false">Extremt</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">Maximal trohet (256 + kbps)</string>
+    <string name="settings_high_b1a5954a" formatted="false">Hög</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">Hög kvalitet ljud (~160 kbps)</string>
+    <string name="settings_medium" formatted="false">Medium</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">Standard ljudkvalitet (~128 kbps)</string>
+    <string name="settings_low" formatted="false">Låg</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">Data sparar ljud (~48-64 kbps)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">16-bit PCM</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">Standard integer PCM-utgång; brett kompatibel med USB Audio Class DACs</string>
+    <string name="settings_text_6697202e38" formatted="false">32-bitars flyt PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">Float PCM-utgång när den stöds av Android och den anslutna ljudvägen</string>
+    <string name="settings_off" formatted="false">Off Off Off</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">Spela spår rent back-to-back</string>
+    <string name="settings_text_6597740315" formatted="false">2 sec</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">Subtil övergång överlapp</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 sec</string>
+    <string name="settings_short_seamless_fade" formatted="false">Kort sömlös blek</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 sec</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">Balanserad DJ-stil övergång</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8 sec</string>
+    <string name="settings_smooth_extended_blend" formatted="false">Smooth förlängd blandning</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 sec</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">Maximal kontinuerlig mix blandning</string>
+    <string name="settings_off_e3de5ab0" formatted="false">Off Off Off</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">Håll normala uppspelningseffekter och övergångar</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 sec</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">Applicera lågpass under varje låts sista 5 sekunder</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 sec</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">Applicera lågpass under varje låts sista 10 sekunder</string>
+    <string name="settings_text_eb4354110e" formatted="false">15 sec</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">Applicera lågpass under varje låts sista 15 sekunder</string>
+    <string name="settings_right" formatted="false">Rätt rätt</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">Visa volymfältet på högerkanten (standard)</string>
+    <string name="settings_left" formatted="false">Vänstern</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">Visa volymen bar på vänsterkanten</string>
+    <string name="settings_high_efficiency" formatted="false">Hög effektivitet</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">Använd minimala cellulära data</string>
+    <string name="settings_high_quality" formatted="false">Hög kvalitet</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 kbps balanserad mobiluppspelning</string>
+    <string name="settings_lossless" formatted="false">Lossless</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">Full förlustfri över 5G/LTE-nätverk</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">Off Off Off</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">Tillåt streaming på Wi-Fi endast</string>
+    <string name="settings_text_03a001f575" formatted="false">500 MB</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">Kompakt cache (~70 låtar)</string>
+    <string name="settings_text_33015e637f" formatted="false">1 GB</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">Måttlig cache (~ 150 låtar)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 GB</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">Rekommenderad standard (~300 låtar)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5 GB</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">Stor offline samling (~800 låtar)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10 GB</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">Mycket stort bibliotek (~1 600 låtar)</string>
+    <string name="settings_unlimited" formatted="false">Obegränsad</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">Aldrig evict cached låtar</string>
+    <string name="settings_pipeline_output">%1$s→%2$s</string>
+    <string name="settings_volume_bar_side">Visad på%1$skant när du trycker på volymknapparna</string>
+    <string name="settings_corner_radius_value">%1$dDP</string>
+    <string name="settings_active_lyrics_providers">%1$dAktiv</string>
+    <string name="settings_cached_song_count_size">%1$dLåtar •%2$s</string>
+    <string name="library_playlist_count_one">%1$dPlaylist</string>
+    <string name="library_playlist_count_many">%1$dSpellistor</string>
+    <string name="library_album_count_one">%1$dTillagt album</string>
+    <string name="library_album_count_many">%1$dTillagda album</string>
+    <string name="remove_from_favorites">Ta bort från favoriter</string>
+    <string name="play_top_album">Spela Top Album</string>
+    <string name="open_in_spotify">Öppna inSpotify</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">Koreanskt gränssnitt</string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">Svenskt gränssnitt</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">Arabiskt gränssnitt</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">Use the Azerbaijani interface</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">Use the Bengali interface</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">Use the Bulgarian interface</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">Use the Catalan interface</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">Use the Czech interface</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">Use the Danish interface</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">Use the Finnish interface</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">Use the Greek interface</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">Use the Hebrew interface</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">Use the Hungarian interface</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">Use the Indonesian interface</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">Use the Malay interface</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">Use the Norwegian interface</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">Use the Persian interface</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">Use the Polish interface</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">Use the Romanian interface</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">Use the Slovak interface</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">Use the Thai interface</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">Use the Turkish interface</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">Use the Ukrainian interface</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">Use the Vietnamese interface</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">Use the Swahili interface</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">Use the Filipino interface</string>
+</resources>
