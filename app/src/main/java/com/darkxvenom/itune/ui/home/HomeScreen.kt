@@ -11,6 +11,9 @@
 
 package com.darkxvenom.itune.ui.home
 
+
+import androidx.compose.ui.res.stringResource
+import com.darkxvenom.itune.R
 import com.darkxvenom.itune.ui.artist.components.backdrop.backdrops.layerBackdrop
 import com.darkxvenom.itune.ui.artist.components.backdrop.backdrops.rememberLayerBackdrop
 import com.darkxvenom.itune.ui.artist.components.isGlassSupported
@@ -323,7 +326,7 @@ fun HomeScreen(
                         if (tracks.isNotEmpty()) {
                             MusicPlayerState.play(tracks.first(), tracks)
                         } else {
-                            Toast.makeText(context, "Couldn't load ${item.title}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_couldn_t_load, item.title), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -347,14 +350,14 @@ fun HomeScreen(
                     thumbnailUrl = item.thumbnailUrl, initialType = nativeType,
                 )
             } else {
-                Toast.makeText(context, "Opening ${item.title}…", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_opening, item.title), Toast.LENGTH_SHORT).show()
                 coroutineScope.launch {
                     when (val action = SpotifyHomeRepository.resolve(item)) {
                         is SpotifyHomeRepository.Action.Play -> {
                             SpotifyHomeRepository.markOrigin(action.tracks.map { it.id })
                             MusicPlayerState.play(action.tracks.first(), action.tracks)
                         }
-                        else -> Toast.makeText(context, "Couldn't open ${item.title}", Toast.LENGTH_SHORT).show()
+                        else -> Toast.makeText(context, context.getString(R.string.toast_couldn_t_open, item.title), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -367,14 +370,14 @@ fun HomeScreen(
 
     // Play button on the big Spotify cards: start the playlist right away (Preview / card tap opens it).
     val onSpotifyHeroPlay: (HomeFeedItem) -> Unit = { item ->
-        Toast.makeText(context, "Playing ${item.title}…", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.toast_playing, item.title), Toast.LENGTH_SHORT).show()
         coroutineScope.launch {
             when (val action = SpotifyHomeRepository.resolve(item)) {
                 is SpotifyHomeRepository.Action.Play -> {
                     SpotifyHomeRepository.markOrigin(action.tracks.map { it.id })
                     MusicPlayerState.play(action.tracks.first(), action.tracks)
                 }
-                else -> Toast.makeText(context, "Couldn't play ${item.title}", Toast.LENGTH_SHORT).show()
+                else -> Toast.makeText(context, context.getString(R.string.toast_couldn_t_play, item.title), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -684,7 +687,7 @@ fun HomeScreen(
                     } else {
                         item(key = "feed_error") {
                             Text(
-                                text = "Couldn't load music right now. Pull down to try again.",
+                                text = stringResource(R.string.ui_couldn_t_load_music_right_now_pull_down_to_try_again),
                                 color = com.darkxvenom.itune.ui.theme.AppleTextSecondary,
                                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 24.dp),
                             )
@@ -832,7 +835,7 @@ fun HomeScreen(
             ) {
                 LibraryScreen(
                     onPinClick = { pin ->
-                        Toast.makeText(context, "Library Pin: ${pin.title}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_library_pin, pin.title), Toast.LENGTH_SHORT).show()
                     },
                     onFavoriteArtistClick = { artist ->
                         libraryHostController.openDetail(
@@ -1318,7 +1321,7 @@ fun HomeScreen(
                     if (loaded.isNotEmpty()) {
                         MusicPlayerState.play(loaded.first(), loaded)
                     } else {
-                        Toast.makeText(context, "No tracks found", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_no_tracks_found), Toast.LENGTH_SHORT).show()
                     }
                 }
             },
@@ -1331,7 +1334,7 @@ fun HomeScreen(
                     )
                     if (loaded.isNotEmpty()) {
                         MusicPlayerState.addToQueue(loaded)
-                        Toast.makeText(context, "Added \"$title\" to queue", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.added_title_to_queue, title), Toast.LENGTH_SHORT).show()
                     }
                 }
             },
@@ -1455,7 +1458,7 @@ fun HomeScreen(
                 initialCookie = null,
                 onSignedIn = {
                     showHomeGoogleLogin = false
-                    Toast.makeText(context, "Google account connected", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_google_account_connected), Toast.LENGTH_SHORT).show()
                 },
                 onClose = { showHomeGoogleLogin = false },
                 modifier = Modifier.fillMaxSize(),
