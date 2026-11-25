@@ -1,0 +1,1169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">iTune</string>
+    <string name="cancel">ยกเลิก</string>
+    <string name="save">บันทึก</string>
+    <string name="close">ปิด</string>
+    <string name="done">เสร็จสิ้น</string>
+    <string name="back">ย้อนกลับ</string>
+    <string name="play">เล่น</string>
+    <string name="shuffle">สุ่ม</string>
+    <string name="retry">ลองอีกครั้ง</string>
+    <string name="try_again">ลองอีกครั้ง</string>
+    <string name="more">เพิ่มเติม</string>
+    <string name="less">น้อยลง</string>
+    <string name="share">แชร์</string>
+    <string name="show_all">แสดงทั้งหมด</string>
+    <string name="top_songs">เพลงยอดนิยม</string>
+    <string name="suggested">แนะนํา</string>
+    <string name="subscribers">%1$sสมาชิก</string>
+    <string name="monthly_listeners">%1$sผู้ฟังรายเดือน</string>
+    <string name="signed_by">เซ็นกํากับโดย%1$s</string>
+    <string name="about_artist">เกี่ยวกับศิลปิน</string>
+    <string name="about_album">เกี่ยวกับอัลบั้ม</string>
+    <string name="recent_album">อัลบั้มล่าสุด</string>
+    <string name="recent_ep">แฟ้มภาพล่าสุด</string>
+    <string name="recent_single">ซิงเกิลล่าสุด</string>
+    <string name="subscribe">ติดตาม</string>
+    <string name="unsubscribe">เลิกติดตาม</string>
+    <string name="add_to_library">เพิ่มไปยังคลังเพลง</string>
+    <string name="remove_from_library">ลบออกจากไลบรารี</string>
+    <string name="add_to_playlist">เพิ่มไปยังรายการเล่น</string>
+    <string name="remove_from_playlist">ลบออกจากรายการเล่นนี้</string>
+    <string name="play_next">เล่นรายการถัดไป</string>
+    <string name="add_to_queue">เพิ่มไปยังคิว</string>
+    <string name="start_radio">เริ่มวิทยุ</string>
+    <string name="open">เปิด</string>
+    <string name="open_album">เปิดอัลบั้ม</string>
+    <string name="open_artist">ศิลปินที่เปิด</string>
+    <string name="open_playlist">เปิดรายการเล่น</string>
+    <string name="song_info">ข้อมูลเพลง</string>
+    <string name="song_info_album">อัลบั้ม</string>
+    <string name="song_info_release_date">วันที่ปล่อย</string>
+    <string name="song_info_views">เล่น/ มุมมอง</string>
+    <string name="song_info_likes">ชอบ</string>
+    <string name="song_info_comments">หมายเหตุ</string>
+    <string name="song_info_unavailable">ไม่มี</string>
+    <string name="song_info_error">ไม่สามารถโหลดข้อมูลได้</string>
+    <string name="song_info_retry">ลองใหม่</string>
+    <string name="like">เหมือน</string>
+    <string name="dislike">ไม่สนใจ</string>
+    <string name="download">ดาวน์โหลด</string>
+    <string name="download_all">ดาวน์โหลดทั้งหมด</string>
+    <string name="downloaded">ดาวน์โหลดแล้ว</string>
+    <string name="downloading">กําลังดาวน์โหลด</string>
+    <string name="download_notification_title">กําลังดาวน์โหลด</string>
+    <string name="delete_download">ลบการดาวน์โหลด</string>
+    <string name="delete_download_confirmation">เอาออก%1$s” จาก อุปกรณ์ นี้ หรือ? เคาะอีกครั้งเพื่อยืนยัน</string>
+    <string name="delete">ลบ</string>
+    <string name="queued">เข้าคิว</string>
+    <string name="saved_to_downloads">บันทึกลงการดาวน์โหลดแล้ว</string>
+    <string name="search_this_list">ค้นหารายการนี้</string>
+    <string name="clear_search">ล้างการค้นหา</string>
+    <string name="close_search">ปิดการค้นหา</string>
+    <string name="nothing_matches">ที่ นี่ ไม่ มี อะไร ที่ เข้า กัน ได้ “%1$s”</string>
+    <string name="sort_songs">เรียงลําดับเพลง</string>
+    <string name="artist">ศิลปิน</string>
+    <string name="album">อัลบั้ม</string>
+    <string name="playlist">รายการเล่น</string>
+    <string name="folder">โฟลเดอร์</string>
+    <string name="songs">เพลง</string>
+    <string name="song_count">%1$dเพลง</string>
+    <plurals name="track_count_plural">
+        <item quantity="one">%1$dเพลง</item>
+        <item quantity="other">%1$dเพลง</item>
+    </plurals>
+    <plurals name="minute_count">
+        <item quantity="one">%1$dนาที</item>
+        <item quantity="other">%1$dนาที</item>
+    </plurals>
+    <string name="one_hour">1 ชั่วโมง</string>
+    <string name="hours_minutes_short">%1$dh%2$dm</string>
+    <string name="minutes_short">%1$dนาที</string>
+    <string name="pin">พิน</string>
+    <string name="unpin">ยกเลิกหมุด</string>
+    <string name="tile_identify_music">การแสดงตัวของเพลง</string>
+    <string name="tile_identify_music_desc">ระบุเพลงที่เล่นรอบ ๆ ตัวคุณiTune</string>
+    <string name="widget_itune_description">ควบคุมiTuneเล่นเพลงจากหน้าจอบ้านของคุณ</string>
+    <string name="app_language">ภาษาของแอป</string>
+    <string name="app_language_subtitle">ภาษาสําหรับเมนู, จดหมายปุ่ม</string>
+    <string name="app_language_description">เลือกภาษาที่ใช้สําหรับภาษาiTuneอินเตอร์เฟส</string>
+    <string name="system_default_language">ค่าปริยายของระบบ</string>
+    <string name="follow_device_language">ตามภาษาอุปกรณ์</string>
+    <string name="english_language">English</string>
+    <string name="english_interface">ใช้ส่วนติดต่อภาษาอังกฤษ</string>
+    <string name="hindi_language">हिन्दी</string>
+    <string name="hindi_interface">इंटरफ़ेस के लिए हिन्दी का का उपयोग करें</string>
+    <string name="hindi_interface_language">ภาษาส่วนติดต่อภาษาฮินดูName</string>
+    <string name="spanish_language">Español</string>
+    <string name="spanish_interface">ใช้ส่วนติดต่อแบบสเปน</string>
+    <string name="french_language">Français</string>
+    <string name="french_interface">ใช้ส่วนติดต่อแบบฝรั่งเศส</string>
+    <string name="dutch_language">Nederlands</string>
+    <string name="dutch_interface">ใช้ส่วนติดต่อภาษาดัตช์</string>
+    <string name="russian_language">Русский</string>
+    <string name="russian_interface">ใช้ส่วนติดต่อภาษารัสเซีย</string>
+    <string name="urdu_language">اردو</string>
+    <string name="urdu_interface">ใช้ส่วนติดต่อของ Urdu</string>
+    <string name="chinese_language">中文</string>
+    <string name="chinese_interface">ใช้ส่วนติดต่อของภาษาจีน</string>
+    <string name="german_language">Deutsch</string>
+    <string name="german_interface">ใช้ส่วนติดต่อของภาษาเยอรมัน</string>
+    <string name="portuguese_language">Português</string>
+    <string name="portuguese_interface">ใช้ส่วนติดต่อผู้ใช้แบบโปรตุเกส</string>
+    <string name="italian_language">Italiano</string>
+    <string name="italian_interface">ใช้ส่วนติดต่อผู้ใช้อิตาลี</string>
+    <string name="japanese_language">日本語</string>
+    <string name="korean_language">한국어</string>
+    <string name="korean_interface">한국어 인터페이스</string>
+    <string name="swedish_language">Svenska</string>
+    <string name="swedish_interface">สเวน สก อตต์</string>
+    <string name="arabic_language">العربية</string>
+    <string name="arabic_interface">ราย ละเอียด</string>
+    <string name="japanese_interface">ใช้ส่วนติดต่อผู้ใช้ของญี่ปุ่น</string>
+    <string name="favorite_artist">ศิลปินโปรด</string>
+    <string name="remove_favorite_artist">ลบออกจากศิลปินที่ชื่นชอบ</string>
+    <string name="add_to_favorite_artists">เพิ่มไปยังศิลปินโปรด</string>
+    <string name="removed_from_artists">เอาออกจากศิลปินแล้ว</string>
+    <string name="added_to_artists">เพิ่มไปยังศิลปิน</string>
+    <string name="play_top_songs">เล่นเพลงบน</string>
+    <string name="play_album">เล่นอัลบั้ม</string>
+    <string name="play_playlist">เล่นรายการเล่น</string>
+    <string name="create_new_playlist">สร้างรายการเล่นใหม่</string>
+    <string name="create_playlist">สร้างรายการเล่น</string>
+    <string name="radio">วิทยุ</string>
+    <string name="search">ค้นหา</string>
+    <string name="share_playlist_link">เชื่อมต่อรายการเล่นร่วมกัน</string>
+    <string name="copy_share_link">คัดลอกที่อยู่เชื่อมโยงที่ใช้ร่วมกัน</string>
+    <string name="rename_playlist">เปลี่ยนชื่อรายการเล่น</string>
+    <string name="delete_playlist">ลบรายการเล่น</string>
+    <string name="share_link_copied">คัดลอกลิงก์ที่ใช้ร่วมกัน</string>
+    <string name="playlist_removed">ลบรายการเล่นออก</string>
+    <string name="playlist_no_longer_available">รายการเล่นนี้ไม่มีอยู่</string>
+    <string name="empty_playlist">รายการเล่นว่าง</string>
+    <string name="filter_playlists">กรองรายการเล่น...</string>
+    <string name="filter_albums">อัลบั้มตัวกรอง...</string>
+    <string name="favorite">รายการโปรด</string>
+    <string name="tap_to_start_listening">เคาะเพื่อเริ่มการฟัง</string>
+    <string name="time_zero" formatted="false">0:00</string>
+    <string name="previous">ก่อนหน้า</string>
+    <string name="play_or_pause">เล่นหรือหยุดชั่วคราว</string>
+    <string name="next">ต่อไป</string>
+    <string name="repeat">ทําซ้ํา</string>
+    <string name="open_title_options">เปิด%1$sตัวเลือก</string>
+    <string name="reset_page_title">ตั้งค่าใหม่%1$s</string>
+    <string name="remove_device">ลบ%1$s</string>
+    <string name="profile_name">%1$sโพรไฟล์</string>
+    <string name="download_option">ดาวน์โหลด%1$s</string>
+    <string name="open_entry_options">เปิด%1$sตัวเลือก</string>
+    <string name="avatar_number">ผู้อวตาร%1$s</string>
+    <string name="options_for_track">ตัวเลือกสําหรับ%1$s</string>
+    <string name="preparing">กําลังเตรียม...</string>
+    <string name="share_image">ใช้รูปภาพร่วมกัน</string>
+    <string name="speed_pitch_locked">การวางแบบเร็วและล็อคไว้ด้วย</string>
+    <string name="independent_bpm_tempo_key_pitch">การกดปุ่มพิมพ์ BPM แบบอิสระ</string>
+    <string name="spatial_reflections_delay">การสะท้อนสเปกตรัม (พ.ศ.%1$dMs)</string>
+    <string name="on">บน</string>
+    <string name="off">ปิด</string>
+    <string name="dynamic_island_active">ใช้งานเกาะแบบไม่ตายตัว</string>
+    <string name="dynamic_island_description">แสดงผลอย่างราบรื่นภายนอกiTuneระหว่างการเล่น</string>
+    <string name="preparing_download">กําลังเตรียมการดาวน์โหลด...</string>
+    <string name="listening_for_music">ฟังเพลง...</string>
+    <string name="hold_phone_near_sound_source">เก็บโทรศัพท์ไว้ใกล้แหล่งเสียง</string>
+    <string name="unable_to_recognize_audio">ไม่สามารถจัดการเสียงได้</string>
+    <string name="song_identified">เพลงถูกจําแนก</string>
+    <string name="play_in_itune">เล่นiTune</string>
+    <string name="view_details">รายละเอียดมุมมอง</string>
+    <string name="no_match_found">ไม่พบคําค้น</string>
+    <string name="recognition_retry_message">ไม่สามารถจําแนกเพลงได้ ลองเคาะอีกครั้ง</string>
+    <string name="microphone_permission_needed">ต้องการสิทธิ์ในการใช้ไมโครโฟน</string>
+    <string name="microphone_permission_help">เคาะเพื่ออนุญาตให้ใช้งานไมโครโฟนได้iTuneสามารถระบุดนตรีได้</string>
+    <string name="recognition_failed">การเรียกดูล้มเหลว</string>
+    <string name="tap_install_to_continue">ติดตั้งแท็บเพื่อดําเนินการต่อ</string>
+    <string name="detail_artist">ศิลปิน</string>
+    <string name="detail_album">อัลบั้ม</string>
+    <string name="set_default_ringtone_target">ตั้งเป็นค่าปริยาย%1$sไม่!</string>
+    <string name="added_ringtone_target">เพิ่มไปยัง%1$sเลือกในการตั้งค่าเสียง</string>
+    <string name="last_fm_connected_as">Last.fmเชื่อมต่อแล้ว%1$s</string>
+    <string name="discord_connected_as">ข้อมูลที่เชื่อมต่ออยู่%1$s</string>
+    <string name="tv_encrypted_backup_saved">บันทึกการสํารองข้อมูลที่ถูกเข้ารหัสแล้ว (PDF) Name%1$dคีท)!</string>
+    <string name="sign_in_verification_failed">การเซ็นล้มเหลว</string>
+    <string name="could_not_rename_playlist">ไม่สามารถเปลี่ยนชื่อรายการเล่นได้YouTube Music</string>
+    <string name="could_not_create_playlist">ไม่สามารถสร้างรายการเล่นได้</string>
+    <string name="daily_encrypted_backup_enabled">เปิดใช้งานการสํารองข้อมูลแบบเข้ารหัสทุกวัน</string>
+    <string name="cookie_login_failed">ล้มเหลวในการล็อกอินคุกกี้</string>
+    <string name="could_not_open_last_fm">เปิด ไม่ ได้Last.fm</string>
+    <string name="last_fm_sign_in_failed">Last.fmการเซ็นล้มเหลว</string>
+    <string name="discord_sign_in_failed">การเซ็นแบบดิสโคสต์ล้มเหลว</string>
+    <string name="could_not_open_android_installer">ไม่สามารถเปิดตัวติดตั้งของแอนดรอยด์ได้</string>
+    <string name="added_title_to_queue">เพิ่ม “%1$s” ถึง คิว</string>
+    <string name="automatic_backup_disabled">ปิดการใช้งานการสํารองข้อมูลอัตโนมัติ</string>
+    <string name="download_failed">การดาวน์โหลดล้มเหลว</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="install">ติดตั้ง</string>
+    <string name="ui_text_9ef6a80f91" formatted="false">#1</string>
+    <string name="ui_text_c6a3564f1d" formatted="false">%+. 1f</string>
+    <string name="ui_accounts" formatted="false">เพิ่มบัญชีผู้ใช้</string>
+    <string name="ui_text_4d4026c0de" formatted="false">+0.0</string>
+    <string name="ui_text_88c8b670f9" formatted="false">+5.0s</string>
+    <string name="ui_text_3bc15c8aae" formatted="false">-</string>
+    <string name="ui_text_7be28ad40e" formatted="false">-5.0s</string>
+    <string name="ui_text_a6dee6102d" formatted="false">11 โมงเย็น</string>
+    <string name="ui_text_1a19c52178" formatted="false">12 พ.ศ.</string>
+    <string name="ui_text_0d472b5ab0" formatted="false">12 โมงเย็น</string>
+    <string name="ui_text_4e37ece023" formatted="false">15 ม. ม.</string>
+    <string name="ui_text_76b322ac42" formatted="false">สปีด 2X</string>
+    <string name="ui_text_505c74ed85" formatted="false">เด้ง 3 มิติ</string>
+    <string name="ui_text_db9b8df506" formatted="false">6 April</string>
+    <string name="ui_text_2812537f20" formatted="false">6 โมงเย็น</string>
+    <string name="ui_text_5e3274dc1e" formatted="false">8080</string>
+    <string name="ui_text_05a79f06cf" formatted="false">-</string>
+    <string name="ui_a_full_picture_with_top_songs_artists_albums_and_habit" formatted="false">ภาพเต็มที่มีเพลง, ศิลปิน, อัลบั้มและนิสัย</string>
+    <string name="ui_a_new_version_is_ready" formatted="false">รุ่นใหม่พร้อม</string>
+    <string name="ui_account" formatted="false">บัญชี</string>
+    <string name="ui_account_options" formatted="false">ตัวเลือกบัญชีผู้ใช้</string>
+    <string name="ui_accounts_d7cfa423" formatted="false">บัญชี</string>
+    <string name="ui_acoustic_head_shadow_crossfeed" formatted="false">Acustic head-Shadow Crosset</string>
+    <string name="ui_activate" formatted="false">เรียกทํางาน</string>
+    <string name="ui_active" formatted="false">ทํางาน</string>
+    <string name="ui_active_days" formatted="false">กิจกรรม</string>
+    <string name="ui_active_profile" formatted="false">โพรไฟล์ที่ทํางานอยู่</string>
+    <string name="ui_activity_by_day" formatted="false">กิจกรรม ตาม วัน</string>
+    <string name="ui_add_account" formatted="false">เพิ่มบัญชีผู้ใช้</string>
+    <string name="ui_add_custom_http_addon_servers_speaking_manifest_json_s" formatted="false">เพิ่มเซิร์ฟเวอร์ HTTP แบบตั้งเอง (พูด/ manifest.json, / stream, / stream) หรือ sandbox-solidate โมดูล SwickJS</string>
+    <string name="ui_add_future_songs_automatically" formatted="false">เพิ่มเพลงในอนาคตโดยอัตโนมัติ</string>
+    <string name="ui_add_streaming_source" formatted="false">เพิ่มแหล่งข้อมูล</string>
+    <string name="ui_add_to_playlist" formatted="false">เพิ่มไปยังรายการเล่น</string>
+    <string name="ui_added_playlists" formatted="false">เพิ่มรายการเล่น</string>
+    <string name="ui_adjust_the_corner_edge_of_square_album_artwork" formatted="false">ปรับมุมมุมของศิลปะอัลบั้มสี่เหลี่ยม</string>
+    <string name="ui_advanced_cookie_login" formatted="false">ล็อกอินคุกกี้ขั้นสูง</string>
+    <string name="ui_advanced_login" formatted="false">โรค ข้อ อักเสบ</string>
+    <string name="ui_advanced_login_3fde9a4d" formatted="false">ล็อกอินขั้นสูง</string>
+    <string name="ui_ai_engine" formatted="false">เครื่องยนต์ AI</string>
+    <string name="ui_ai_provider" formatted="false">ผู้จัดทํา AI</string>
+    <string name="ui_albums" formatted="false">อัลบั้ม</string>
+    <string name="ui_all_news" formatted="false">ข่าวทั้งหมด</string>
+    <string name="ui_allow_downloads" formatted="false">อนุญาตให้ดาวน์โหลด</string>
+    <string name="ui_allow_microphone" formatted="false">อนุญาตให้ใช้ไมโครโฟน</string>
+    <string name="ui_allow_microphone_access" formatted="false">อนุญาตให้ใช้งานไมโครโฟนได้</string>
+    <string name="ui_alternates_reflections_l_r" formatted="false">ตัวแปรสะท้อน L &lt;-&gt; R</string>
+    <string name="ui_always_on_display" formatted="false">แสดงเสมอ</string>
+    <string name="ui_am" formatted="false">AM</string>
+    <string name="ui_api_base_url" formatted="false">ที่อยู่ URL APPI</string>
+    <string name="ui_artist" formatted="false">ศิลปิน</string>
+    <string name="ui_artist_name" formatted="false">ชื่อศิลปิน</string>
+    <string name="ui_artists" formatted="false">ศิลปิน</string>
+    <string name="ui_artists_songs_albums_playlists" formatted="false">ศิลปิน เพลง อัลบั้ม รายการเล่น...</string>
+    <string name="ui_artists_songs_lyrics_more" formatted="false">ศิลปิน, เพลง, เนื้อเพลง &amp; More</string>
+    <string name="ui_at_least_8_characters" formatted="false">มีตัวอักษรอย่างน้อย 8 ตัว</string>
+    <string name="ui_auto_sleep_timer" formatted="false">ตัวจับเวลาการนอนอัตโนมัติ</string>
+    <string name="ui_auto_activation_timeout" formatted="false">เวลาอยุโต</string>
+    <string name="ui_avatar" formatted="false">ผู้อวตาร</string>
+    <string name="ui_back_up_itune_aes_256" formatted="false">ถอยกลับiTuneAES-256)</string>
+    <string name="ui_backup_password" formatted="false">รหัสผ่านการสํารองข้อมูล</string>
+    <string name="ui_bluetooth_device_access" formatted="false">Bluetoothการเข้าใช้งานอุปกรณ์</string>
+    <string name="ui_browse" formatted="false">เรียกดู</string>
+    <string name="ui_browse_by_country" formatted="false">เรียกดูตามประเทศ</string>
+    <string name="ui_browse_extensions" formatted="false">ส่วนขยายการเรียกดู</string>
+    <string name="ui_browse_live_online_radio" formatted="false">เรียกดูรายการวิทยุออนไลน์</string>
+    <string name="ui_cannot_delete_only_account" formatted="false">ไม่สามารถลบเฉพาะบัญชีได้</string>
+    <string name="ui_canvas_providers_lookup_order" formatted="false">ผู้จัดทํา Canvas (ลําดับรายการดูภาพ)</string>
+    <string name="ui_captcha_guidance" formatted="false">แคปช่าแนะแนว</string>
+    <string name="ui_cast_wireless_devices" formatted="false">CSS &amp; WIREVEIVES</string>
+    <string name="ui_choose_audio_playback_streaming_sources_lossless_tiers" formatted="false">เลือกแหล่งข้อมูลการวนเสียง, tails ไร้การสูญเสีย, และลําดับการถอย</string>
+    <string name="ui_choose_avatar" formatted="false">เลือกอวตาร</string>
+    <string name="ui_choose_charts_region" formatted="false">เลือกขอบเขตของแผนภูมิ</string>
+    <string name="ui_choose_how_itune_appears_on_your_home_screen_resize_th" formatted="false">เลือกวิธีiTuneปรากฏตัวที่หน้าจอบ้านของคุณ ปรับขนาดวิดเจ็ตจากตัวยิง</string>
+    <string name="ui_choose_your_profile_to_continue" formatted="false">เลือกโพรไฟล์ของคุณที่จะทําต่อไป</string>
+    <string name="ui_choose_youtube_channel" formatted="false">เลือกYouTubeช่อง</string>
+    <string name="ui_clear" formatted="false">ล้าง</string>
+    <string name="ui_clear_use_default" formatted="false">ล้างใช้ค่าปริยาย</string>
+    <string name="ui_clear_all" formatted="false">ล้างทั้งหมด</string>
+    <string name="ui_confirm" formatted="false">ยืนยัน</string>
+    <string name="ui_confirm_password" formatted="false">ยืนยันรหัสผ่าน</string>
+    <string name="ui_connect_discord" formatted="false">เชื่อมต่อ Discord</string>
+    <string name="ui_connect_last_fm" formatted="false">เชื่อมต่อLast.fm</string>
+    <string name="ui_connect_your_spotify_account_to_enable_canvas_looping" formatted="false">เชื่อมต่อของคุณSpotifyบัญชีเพื่อให้Canvas วนวิดีโอวิดีโอเคลื่อนไหวและปรับเทียบข้อมูลของคุณSpotifyห้องสมุด</string>
+    <string name="ui_connect_youtube_music_with_session_cookies" formatted="false">เชื่อมต่อYouTube Musicด้วยคุกกี้ของเซสชัน</string>
+    <string name="ui_connect" formatted="false">เชื่อมต่อ ›</string>
+    <string name="ui_connecting_spotify" formatted="false">กําลังเชื่อมต่อSpotify...</string>
+    <string name="ui_connecting_youtube_music" formatted="false">กําลังเชื่อมต่อYouTube Music...</string>
+    <string name="ui_continue" formatted="false">ทําต่อไป</string>
+    <string name="ui_continue_in_browser_instead" formatted="false">ทําต่อไปในเบราว์เซอร์แทน</string>
+    <string name="ui_continue_with_google" formatted="false">ทําต่อด้วยกูเกิ้ล</string>
+    <string name="ui_continue_with_spotify" formatted="false">ทําต่อไปSpotify</string>
+    <string name="ui_cookie_credentials_are_stored_in_itunes_encrypted_acco" formatted="false">เอกสารรับรองคุกกี้ถูกจัดเก็บไว้ในiTuneการ เก็บ บัญชี ที่ มี รหัส และ การ ตรวจ สอบYouTube Musicก่อนที่พวกมันจะรอด</string>
+    <string name="ui_copy_song_name" formatted="false">คัดลอกชื่อเพลง</string>
+    <string name="ui_copy_text" formatted="false">คัดลอกข้อความ</string>
+    <string name="ui_copyright_2026_itune_project_this_software_is_provided" formatted="false">สงวนลิขสิทธิ์ ISH 2026iTuneโครงการ ซอฟต์แวร์นี้ได้รับการจัดหาโดยไม่มีการรับประกัน คุณอาจจะทําการแจกจ่ายข้อมูลและแก้ไขมันก็ได้ ภายใต้เงื่อนไข GPL ที่แสดงด้านล่างนี้</string>
+    <string name="ui_corner_length" formatted="false">ความยาวมุม</string>
+    <string name="ui_could_not_render_replay_image" formatted="false">ไม่สามารถเขียนภาพซ้ําได้</string>
+    <string name="ui_couldn_t_load_music_right_now_pull_down_to_try_again" formatted="false">สามารถ\'ใส่เพลงเดี๋ยวนี้ ดึงลงมาลองอีกครั้ง</string>
+    <string name="ui_create" formatted="false">สร้าง</string>
+    <string name="ui_create_add" formatted="false">สร้างและเพิ่ม</string>
+    <string name="ui_current_account" formatted="false">บัญชีผู้ใช้ปัจจุบัน</string>
+    <string name="ui_custom_instructions" formatted="false">ความ จริง</string>
+    <string name="ui_custom_repository_index_or_url" formatted="false">Conds ของ CUSTOM</string>
+    <string name="ui_customize_your_home_screen_player" formatted="false">ปรับแต่งตัวเล่นหน้าจอส่วนตัวของคุณ</string>
+    <string name="ui_customize_your_itune_card" formatted="false">กําหนดเองiTuneการ์ด</string>
+    <string name="ui_d" formatted="false">D</string>
+    <string name="ui_delete_account" formatted="false">ลบบัญชีผู้ใช้</string>
+    <string name="ui_delete_account_9bce384b" formatted="false">ลบบัญชีผู้ใช้หรือไม่?</string>
+    <string name="ui_developer_announcements" formatted="false">การประกาศของผู้พัฒนา</string>
+    <string name="ui_disconnect" formatted="false">ยุติการเชื่อมต่อ</string>
+    <string name="ui_disconnect_discord" formatted="false">ยกเลิกดิสควอร์ด</string>
+    <string name="ui_discord_rich_presence" formatted="false">การ แสดง ความ ดี งาม</string>
+    <string name="ui_dismiss" formatted="false">ไม่สนใจ</string>
+    <string name="ui_display_full_screen" formatted="false">ดิส เลก เซีย</string>
+    <string name="ui_display_animated_synced_lyrics_above_the_song_title_wh" formatted="false">แสดงแถบชุดลวดลายStencils</string>
+    <string name="ui_display_name" formatted="false">ชื่อการแสดงผล</string>
+    <string name="ui_dj_bipolar_club_filter" formatted="false">ตัวกรองของ DJ Biologar Club</string>
+    <string name="ui_downloaded_cached" formatted="false">ดาวน์โหลดและแคชแล้ว</string>
+    <string name="ui_dp" formatted="false">Dp</string>
+    <string name="ui_dynamic_island" formatted="false">เกาะทึบ</string>
+    <string name="ui_e" formatted="false">E</string>
+    <string name="ui_e_g_127_0_0_1" formatted="false">e.g. 127.0.1.</string>
+    <string name="ui_e_g_translate_into_poetic_hinglish_with_rhymes" formatted="false">e.g. แปลเป็นบทกวี hing dictions ด้วยบทกวี</string>
+    <string name="ui_enable_auto_sleep" formatted="false">เปิดใช้การนอนอัตโนมัติ</string>
+    <string name="ui_enable_proxy" formatted="false">เปิดใช้งานพร็อกซี</string>
+    <string name="ui_enabling_spotify_canvas_playlists" formatted="false">กําลังเปิดใช้งานSpotifyรายการเล่น Canvas</string>
+    <string name="ui_encryption_password_min_8_chars" formatted="false">รหัสผ่านการเข้ารหัส (in 8 อักขระ)</string>
+    <string name="ui_end_of_current_track" formatted="false">จบเพลงที่เล่นอยู่</string>
+    <string name="ui_enter_a_new_name_for_this_account" formatted="false">ป้อนชื่อใหม่สําหรับบัญชีผู้ใช้นี้</string>
+    <string name="ui_enter_an_http_addon_manifest_url_a_quickjs_module_inde" formatted="false">ป้อนที่อยู่ URL ที่แสดงแบบ HTTP, ดัชนีของโมดูลด่วน หรือจุดสิ้นสุดของ TDL</string>
+    <string name="ui_enter_the_password_used_when_your_itune_backup_was_cre" formatted="false">ป้อนรหัสผ่านที่ใช้เมื่อituneการสํารองข้อมูลถูกสร้างขึ้น</string>
+    <string name="ui_enter_your_name" formatted="false">ป้อนชื่อของคุณ</string>
+    <string name="ui_enter_your_name_to_personalize_itune" formatted="false">ป้อนชื่อของคุณเพื่อใช้ส่วนตัวiTune</string>
+    <string name="ui_every_rhythm_late_night_anthem_and_melody_you_lived_wi" formatted="false">ทุกจังหวะ, เพลงยามดึก, และท่วงทํานองที่คุณอาศัยอยู่ มารวมกันในการเดินทางเดียว</string>
+    <string name="ui_everything" formatted="false">ทุกอย่าง</string>
+    <string name="ui_explore_categories" formatted="false">หมวดหมู่สํารวจ</string>
+    <string name="ui_exporting_audio" formatted="false">กําลังส่งออกเสียง...</string>
+    <string name="ui_extracting_a_short_audio_fingerprint" formatted="false">คลายลายนิ้วมือเสียงสั้น</string>
+    <string name="ui_favorite_stations" formatted="false">สถานีโปรด</string>
+    <string name="ui_favorites" formatted="false">นก แก้ว</string>
+    <string name="ui_featured_hit" formatted="false">ตีแบบย่อ</string>
+    <string name="ui_featured_playlists" formatted="false">รายการเล่นที่มีคุณลักษณะ</string>
+    <string name="ui_fetching_audio_qualities" formatted="false">กําลังดึงข้อมูลคุณภาพเสียง...</string>
+    <string name="ui_fetching_live_catalog" formatted="false">กําลังรับรายการที่อยู่...</string>
+    <string name="ui_finding_a_better_stream" formatted="false">การ หา ลําธาร ที่ ดี กว่า</string>
+    <string name="ui_full_view" formatted="false">มุมมองเต็ม</string>
+    <string name="ui_g" formatted="false">ขนาด G</string>
+    <string name="ui_genre" formatted="false">อิน เดีย น แดง</string>
+    <string name="ui_genres_styles" formatted="false">ประเภท</string>
+    <string name="ui_github_repository" formatted="false">คําบรรยาย GitHub</string>
+    <string name="ui_github_repository_open_source" formatted="false">Github load search open source</string>
+    <string name="ui_gnu_gpl_v3_0_or_later" formatted="false">GPL รุ่น 3. 0 หรือในภายหลัง</string>
+    <string name="ui_gnu_gpl_v3_0_or_later_copyright_2026_itune_project" formatted="false">GLSGL v3. 0 หรือต่อมา สืบค้นเมื่อ 2026iTuneโครงการ</string>
+    <string name="ui_grant" formatted="false">ยินยอม</string>
+    <string name="ui_grant_to_show_earbuds_name_live_battery" formatted="false">ยินยอมแสดงชื่อหูฟังและแบตเตอรีแบบใช้อยู่ %</string>
+    <string name="ui_hardware_loudnessenhancer_up_to_18_db" formatted="false">ฮาร์ดแวร์ Sound Enhancer (ขึ้นถึง +18 dB)</string>
+    <string name="ui_hides_android_status_bar_and_navigation_bar_for_seamle" formatted="false">ซ่อนแถบสถานะแอนดรอยด์ และแถบนําทางสําหรับสีดําบริสุทธิ์</string>
+    <string name="ui_history" formatted="false">ประวัติ</string>
+    <string name="ui_host" formatted="false">HOST</string>
+    <string name="ui_host_a_session" formatted="false">จง เฝ้า ระวัง</string>
+    <string name="ui_host_controls_playback" formatted="false">เครื่องควบคุมการเล่น</string>
+    <string name="ui_how_to_get_your_cookies" formatted="false">เอาคุ้กกี้มายังไง</string>
+    <string name="ui_hq" formatted="false">ขนาด HQ</string>
+    <string name="ui_https_example_com_index_json" formatted="false">https://example.com/index.json</string>
+    <string name="ui_https_example_com_manifest_json" formatted="false">https://example.com/manifest.json</string>
+    <string name="ui_https_open_spotify_com_playlist" formatted="false">https://open.spotify.com/playlist/…</string>
+    <string name="ui_identified_with_shazam" formatted="false">ไม่รวมเข้ากับชาแซม</string>
+    <string name="ui_identify_music_playing_around_you" formatted="false">ระบุ ตัว ดนตรี ที่ กําลัง เล่น อยู่ รอบ ตัว คุณ</string>
+    <string name="ui_immersion" formatted="false">การ อพยพ</string>
+    <string name="ui_immersive_mode_full_screen" formatted="false">โหมด OpenPGP (หน้าจอเต็ม)</string>
+    <string name="ui_import" formatted="false">นําเข้า</string>
+    <string name="ui_import_public_private_playlists_auto_sync" formatted="false">นําเข้ารายการเล่นส่วนตัว</string>
+    <string name="ui_import_spotify_playlist" formatted="false">นําเข้าSpotifyรายการเล่น</string>
+    <string name="ui_in_use" formatted="false">ใช้ได้</string>
+    <string name="ui_in_app_guidance_when_audio_providers_challenge_anti_bo" formatted="false">คําแนะนําในการใช้งานเมื่อผู้ให้บริการเสียง ท้าการตรวจสอบกับบอท</string>
+    <string name="ui_install_pre_added_mornye_community_extensions_or_scan" formatted="false">ติดตั้งส่วนขยายของชุมชนมอรีที่ถูกเพิ่มเติมหรือสแกนดัชนีที่กําหนดเอง</string>
+    <string name="ui_installed" formatted="false">ติดตั้ง</string>
+    <string name="ui_interactive_dot_curve" formatted="false">แก้ไขลวดลายจุดเชื่อมต่อStencils</string>
+    <string name="ui_irecognition" formatted="false">การตรวจสอบสิทธิ์</string>
+    <string name="ui_ireconization" formatted="false">การยกเลิก</string>
+    <string name="ui_ireconization_listens_for_a_few_seconds_to_create_a_mu" formatted="false">การขอฟังเพลงสัก 2-3 วินาที บันทึกเสียงไม่ได้</string>
+    <string name="ui_ishare" formatted="false">แบบ IShare</string>
+    <string name="ui_itune_license" formatted="false">iTuneสัญญาอนุญาตสิทธิ์</string>
+    <string name="ui_itune_music" formatted="false">iTuneเพลง</string>
+    <string name="ui_itune_queries_lyrics_in_the_exact_precedence_below_if" formatted="false">iTuneเนื้อเพลงในลําดับแรก ด้านล่างนี้ ถ้าผู้ให้บริการสูงสุดไม่มีเนื้อร้องที่สอดคล้องกันiTuneถอยกลับไปหาคนต่อไป</string>
+    <string name="ui_itune_queries_sources_in_the_order_shown_drag_installe" formatted="false">iTuneแหล่งที่มาของลําดับที่แสดง ลากนามสกุลและผู้ให้บริการที่ถูกติดตั้งแล้วเพื่อปรับระดับความสําคัญของการเล่น</string>
+    <string name="ui_itune_time_travel" formatted="false">iTuneการท่องเวลา</string>
+    <string name="ui_jet_flanger_swoosh" formatted="false">เจ็ต ฟแลงเกอร์</string>
+    <string name="ui_join" formatted="false">เข้าร่วม</string>
+    <string name="ui_keep_screen_on" formatted="false">คงหน้าจอไว้</string>
+    <string name="ui_l" formatted="false">L</string>
+    <string name="ui_lan_port" formatted="false">พอร์ต LA</string>
+    <string name="ui_language_preference_optional_e_g_hindi_punjabi" formatted="false">การปรับแต่งภาษา (Overal, e.g. ฮินดี, Punjabi...)</string>
+    <string name="ui_last_fm_scrobbling" formatted="false">Last.fmสับปะรด</string>
+    <string name="ui_layout" formatted="false">LAYT</string>
+    <string name="ui_leave_empty_to_use_default_endpoint_for_this_provider" formatted="false">ปล่อยว่างไว้ใช้จุดสิ้นสุดปริยายกับผู้ให้บริการนี้</string>
+    <string name="ui_lfo_swept_jet_phase_modulation" formatted="false">ระบบย่อยของ LFO</string>
+    <string name="ui_library" formatted="false">ไลบรารี</string>
+    <string name="ui_license" formatted="false">สัญญาอนุญาตสิทธิ์</string>
+    <string name="ui_liked_songs" formatted="false">เพลงที่ชื่นชอบ</string>
+    <string name="ui_likes_added_while_signed_in_are_saved_both_locally_and" formatted="false">รายการที่เพิ่มเข้ามาขณะเซ็นจะถูกบันทึกทั้งภายในและหลังYouTube Musicดังนั้นพวกเขาจึงยังคงอยู่ในห้องสมุดของคุณ แม้หลังจากที่ลงนามออก</string>
+    <string name="ui_listening_patterns" formatted="false">การ สื่อ ความ</string>
+    <string name="ui_listening_to_the_shared_audio" formatted="false">ฟังเสียงร่วมกัน...</string>
+    <string name="ui_live" formatted="false">ชีวิต</string>
+    <string name="ui_live_radio_stations" formatted="false">สถานีวิทยุสด</string>
+    <string name="ui_loading_announcements" formatted="false">กําลังโหลดประกาศ...</string>
+    <string name="ui_loading_artists_playlists_history" formatted="false">กําลังโหลดศิลปิน, รายการเล่นและประวัติการใช้</string>
+    <string name="ui_lossless" formatted="false">ไร้การสูญเสีย</string>
+    <string name="ui_lossless_audio_preference" formatted="false">การใช้เสียงแบบไม่สูญเสียคุณภาพ</string>
+    <string name="ui_lyrics" formatted="false">เนื้อเพลง</string>
+    <string name="ui_lyrics_not_available_for_this_song" formatted="false">ไม่มีเนื้อร้องสําหรับเพลงนี้</string>
+    <string name="ui_lyrics_providers" formatted="false">ผู้จัดทําเนื้อร้อง</string>
+    <string name="ui_lyrics_translated_successfully" formatted="false">เนื้อเพลงแปลสําเร็จแล้ว!</string>
+    <string name="ui_master_amplifier_boost" formatted="false">เครื่องขยายเสียง</string>
+    <string name="ui_member_since" formatted="false">ตั้งแต่</string>
+    <string name="ui_memoji_style" formatted="false">รูปแบบ Memoji</string>
+    <string name="ui_minutes_listened" formatted="false">คํา แนะ นํา</string>
+    <string name="ui_mirror_vol" formatted="false">โวลต์กระจก</string>
+    <string name="ui_model" formatted="false">แบบ Model</string>
+    <string name="ui_model_68c2cc7f" formatted="false">รุ่น</string>
+    <string name="ui_moods_activities" formatted="false">ชื่อแฟ้มและกิจกรรม</string>
+    <string name="ui_moods_moments" formatted="false">แม่</string>
+    <string name="ui_music_by_genre" formatted="false">เพลงโดย Genre</string>
+    <string name="ui_music_language_preference" formatted="false">เลือกภาษาของดนตรี</string>
+    <string name="ui_music_services" formatted="false">บริการ ด้าน ดนตรี</string>
+    <string name="ui_name" formatted="false">ชื่อ</string>
+    <string name="ui_nearby_wi_fi_hosts" formatted="false">(หัวเราะ)</string>
+    <string name="ui_network_proxy" formatted="false">พร็อกซีเครือข่าย</string>
+    <string name="ui_new" formatted="false">สร้างนัดหมายใหม่New</string>
+    <string name="ui_new_playlist" formatted="false">สร้างรายการเล่นใหม่</string>
+    <string name="ui_new_releases" formatted="false">ออกใหม่</string>
+    <string name="ui_news_from_dev" formatted="false">ข่าวจากเดวอน</string>
+    <string name="ui_next_up" formatted="false">ต่อไป</string>
+    <string name="ui_no_albums_found" formatted="false">ไม่พบอัลบั้ม</string>
+    <string name="ui_no_artist_information_available" formatted="false">ไม่มีข้อมูลของศิลปิน</string>
+    <string name="ui_no_artists_found" formatted="false">ไม่พบศิลปิน</string>
+    <string name="ui_no_artists_in_your_library_yet" formatted="false">ยังไม่มีศิลปินในห้องสมุดของคุณ</string>
+    <string name="ui_no_playlists_found" formatted="false">ไม่พบรายการเล่น</string>
+    <string name="ui_no_results_on_spotify" formatted="false">ไม่มีผลSpotify</string>
+    <string name="ui_no_saved_albums_in_your_library" formatted="false">ยังไม่มีการบันทึกอัลบั้มในไลบรารีของคุณ</string>
+    <string name="ui_no_songs_found" formatted="false">ไม่พบเพลงใด ๆ</string>
+    <string name="ui_no_songs_found_in_this_release" formatted="false">ไม่พบเพลงในรุ่นนี้</string>
+    <string name="ui_no_songs_found_in_this_section" formatted="false">ไม่พบเพลงในส่วนนี้</string>
+    <string name="ui_no_user_playlists_found_create_one_in_library" formatted="false">ไม่พบรายการเล่นของผู้ใช้ สร้างในห้องสมุด!</string>
+    <string name="ui_not_enough_listening_yet" formatted="false">ยังฟังไม่พอ</string>
+    <string name="ui_now_playing" formatted="false">กําลังเล่นอยู่</string>
+    <string name="ui_now_playing_1c388f14" formatted="false">กําลังเล่นอยู่</string>
+    <string name="ui_on_heavy_repeat" formatted="false">บน ท้องฟ้า</string>
+    <string name="ui_options" formatted="false">โอ เปรา</string>
+    <string name="ui_or_enter_sp_dc_cookie" formatted="false">หรือกด pP DC Cokie</string>
+    <string name="ui_orbit_intensity_speed" formatted="false">ความทึบแสงและความเร็วของออร์บิท</string>
+    <string name="ui_pair_join_a_device" formatted="false">PARIR &amp; Join ถอดรหัส</string>
+    <string name="ui_password_optional" formatted="false">รหัสผ่าน (มาตรฐาน)</string>
+    <string name="ui_passwords_dont_match" formatted="false">รหัสผ่าน ไม่ ตรง กับ</string>
+    <string name="ui_paste_sp_dc_token_here" formatted="false">วางสัญลักษณ์ sp dc ไว้ที่นี่...</string>
+    <string name="ui_paste_your_api_key_here" formatted="false">วางกุญแจ API ของคุณที่นี่</string>
+    <string name="ui_play_in_itune" formatted="false">เล่นiTune</string>
+    <string name="ui_play_next" formatted="false">เล่นถัดไป</string>
+    <string name="ui_play_on_buds_phone_speaker_aux_at_the_same_time" formatted="false">เล่นเมื่อเรียกผุด ลําโพง/ AUX ในเวลาเดียวกัน</string>
+    <string name="ui_playlist_name" formatted="false">ชื่อรายการเล่น</string>
+    <string name="ui_playlist_name_544f7553" formatted="false">ชื่อรายการเล่น</string>
+    <string name="ui_playlist_spotify" formatted="false">• รายการเล่นSpotify</string>
+    <string name="ui_playlists" formatted="false">รายการเล่น</string>
+    <string name="ui_plays" formatted="false">เล่น</string>
+    <string name="ui_pm" formatted="false">บ่าย</string>
+    <string name="ui_port" formatted="false">พอร์ต</string>
+    <string name="ui_pre_added_extensions" formatted="false">แรงจูงใจก่อนกําหนด</string>
+    <string name="ui_prefer_bit_perfect_flac_alac_up_to_24_bit_192_khz_when" formatted="false">FLAC/ALAC แบบมีระดับขนาด 24 บิต/ 192 khz แบบสมบูรณ์สมบูรณ์เมื่อมีอยู่</string>
+    <string name="ui_preparing_audio_preview" formatted="false">กําลังเตรียมตัวอย่างเสียง...</string>
+    <string name="ui_prevents_device_display_from_turning_off_while_always" formatted="false">ป้องกันการแสดงผลอุปกรณ์จากการปิดการทํางาน ในขณะที่เปิดใช้อยู่บนการแสดงผลเสมอ</string>
+    <string name="ui_preview" formatted="false">(ตอนที่แล้ว)</string>
+    <string name="ui_preview_f1fbb2b4" formatted="false">แสดงตัวอย่าง</string>
+    <string name="ui_preview_always_on_display" formatted="false">แสดงตัวอย่างเสมอเมื่อแสดง</string>
+    <string name="ui_profile" formatted="false">ประวัติ</string>
+    <string name="ui_profiles_in_backup" formatted="false">ประวัติ โดย ย่อ</string>
+    <string name="ui_prompt_type" formatted="false">ISMPT TYPE</string>
+    <string name="ui_provider_priority_fallback_order" formatted="false">Provieder Projectity (Fallback Order).</string>
+    <string name="ui_queue" formatted="false">คิว</string>
+    <string name="ui_queue_is_empty" formatted="false">คิวว่าง</string>
+    <string name="ui_queued_tracks_to_play_next" formatted="false">เล่นแทร็กถัดไปเข้าคิวรอเล่น</string>
+    <string name="ui_radio" formatted="false">วิทยุ</string>
+    <string name="ui_read_more" formatted="false">อ่านเพิ่มเติม</string>
+    <string name="ui_real_time_syllable_and_line_scrolling_with_live_audio" formatted="false">พยางค์แบบเรียลไทม์และการเลื่อนบรรทัดด้วยเสียงสด</string>
+    <string name="ui_recent_searches" formatted="false">การค้นหาเมื่อเร็ว ๆ นี้</string>
+    <string name="ui_recently_added" formatted="false">เพิ่มเมื่อเร็ว ๆ นี้</string>
+    <string name="ui_recurring_sleep_schedule_auto_pauses_playback" formatted="false">เริ่มเวลานอนใหม่</string>
+    <string name="ui_remote_music_library" formatted="false">ไลบรารีเพลงทางไกล</string>
+    <string name="ui_remove" formatted="false">ลบ</string>
+    <string name="ui_rename" formatted="false">เปลี่ยนชื่อ</string>
+    <string name="ui_rename_account" formatted="false">เปลี่ยนชื่อบัญชีผู้ใช้</string>
+    <string name="ui_replay" formatted="false">REPLAY</string>
+    <string name="ui_replay_c0f85d66" formatted="false">เล่นใหม่</string>
+    <string name="ui_require_bit_perfect_lossless_output" formatted="false">ต้องการการแสดงผลแบบไม่สูญเสียคุณภาพบิต</string>
+    <string name="ui_reset" formatted="false">ตั้งค่าใหม่</string>
+    <string name="ui_reset_provider_order_defaults" formatted="false">ตั้งค่าลําดับของผู้จัดทําใหม่</string>
+    <string name="ui_reset_to_default_url" formatted="false">ปรับกลับไปใช้ที่อยู่ URL ปริยาย</string>
+    <string name="ui_restore_default_sources" formatted="false">เรียกคืนแหล่งปริยาย</string>
+    <string name="ui_restore_itune_backup" formatted="false">เรียกคืนiTuneสํารองข้อมูล</string>
+    <string name="ui_restores_jiosaavn_and_youtube_music_in_the_default_ord" formatted="false">เรียกคืนข้อมูลJioSaavnและYouTube MusicในลําดับปริยายJioSaavnเริ่มออกและYouTube Musicเริ่มได้</string>
+    <string name="ui_restores_lrc_lib_kugou_and_simpmusic_as_top_preferred" formatted="false">เรียกคืนข้อมูล LRC Lib, Kugou, และ SimpMusic เป็นผู้ให้บริการยอดนิยม และสร้างใหม่ทั้งหมด 11 แหล่ง</string>
+    <string name="ui_resume" formatted="false">ทําต่อไป</string>
+    <string name="ui_rhythm_by_hour" formatted="false">เส้นทแยง</string>
+    <string name="ui_room_permissions" formatted="false">ห้อง พัก</string>
+    <string name="ui_route_app_network_traffic_via_http_or_socks_proxy" formatted="false">การจราจรบนเครือข่ายของ App ผ่านพร็อกซี HTTP หรือ SOCKS</string>
+    <string name="ui_save_proxy" formatted="false">บันทึกพร็อกซี</string>
+    <string name="ui_save_schedule" formatted="false">บันทึกตาราง</string>
+    <string name="ui_save_to_gallery" formatted="false">บันทึกไปยังแกลเลอรี</string>
+    <string name="ui_save_token" formatted="false">บันทึกสิ่งที่จะทํา</string>
+    <string name="ui_saved_to_your_library" formatted="false">เก็บไว้ที่ห้องสมุด!</string>
+    <string name="ui_saved_using_android_keystore_backup_files_use_pbkdf2_h" formatted="false">บันทึกการใช้ Android คีย์ทอร์ แฟ้มสํารองข้อมูลใช้ PBKDF2-HMAC-SHA256 (30,000 นัด) และ AES-256-GCM.</string>
+    <string name="ui_saves_to_downloads_itune_backups" formatted="false">บันทึกไปยังการดาวน์โหลด/itune/ แบ็คอัพ</string>
+    <string name="ui_say_a_song_artist_album_or_lyrics" formatted="false">พูดเพลง ศิลปิน อัลบั้ม หรือเนื้อเพลง</string>
+    <string name="ui_search" formatted="false">ค้นหา</string>
+    <string name="ui_search_identify" formatted="false">ค้นหาและระบุ</string>
+    <string name="ui_search_announcements" formatted="false">ค้นหาประกาศ...</string>
+    <string name="ui_search_country" formatted="false">สืบค้นตามประเทศ...</string>
+    <string name="ui_search_for_songs_artists_albums_and_playlists" formatted="false">ค้นหาเพลง, ศิลปิน, อัลบั้ม, และรายการเล่น</string>
+    <string name="ui_search_languages" formatted="false">ค้นหาภาษา...</string>
+    <string name="ui_search_or_type_a_model_id" formatted="false">ค้นหาหรือพิมพ์หมายเลขรุ่น</string>
+    <string name="ui_search_songs_artists_albums_or_playlists" formatted="false">ค้นหาเพลง, ศิลปิน, อัลบั้ม, หรือรายการเล่น</string>
+    <string name="ui_searching_lyrics" formatted="false">ค้นหาเนื้อร้อง...</string>
+    <string name="ui_searching_spotify" formatted="false">ค้นหาSpotify...</string>
+    <string name="ui_secondary_mirror_sink" formatted="false">MiROR SINK ตัวที่สอง</string>
+    <string name="ui_select_a_profile_avatar_to_personalize_your_itune_expe" formatted="false">เลือกอวตารของโพรไฟล์เพื่อใช้ส่วนตัวiTuneมีประสบการณ์ตลอดทุกหน้าจอ</string>
+    <string name="ui_select_language" formatted="false">เลือกภาษา</string>
+    <string name="ui_select_the_default_prompt_template_for_lyrics_translat" formatted="false">เลือกต้นแบบจดหมายที่ถามเพื่อใช้ในการแปลเนื้อเพลง</string>
+    <string name="ui_select_the_engine_to_use_for_line_by_line_lyrics_trans" formatted="false">เลือกกลไกที่จะใช้สําหรับการแปลเนื้อร้องแบบบรรทัดต่อบรรทัด</string>
+    <string name="ui_select_the_target_language_for_lyrics_translation" formatted="false">เลือกภาษาเป้าหมายสําหรับแปลเนื้อเพลง</string>
+    <string name="ui_server_host_ip" formatted="false">เครื่องแม่ข่าย / IP</string>
+    <string name="ui_server_url_manifest" formatted="false">ที่อยู่ URL ของแม่ข่าย / ชัดเจน</string>
+    <string name="ui_settings_appearance" formatted="false">รูปลักษณ์ของการตั้งค่า</string>
+    <string name="ui_share_lyrics" formatted="false">เพลงใช้ร่วมกัน</string>
+    <string name="ui_share_my_replay" formatted="false">เล่นด้วยกัน</string>
+    <string name="ui_share_replay" formatted="false">เล่นร่วมกัน</string>
+    <string name="ui_share_this_story" formatted="false">เล่าเรื่องนี้ร่วมกัน</string>
+    <string name="ui_share_your_time_travel" formatted="false">แบ่ง เวลา เดิน ทาง ของ คุณ</string>
+    <string name="ui_show_synced_lyrics_over_canvas" formatted="false">แสดงเนื้อร้องที่ปรับเทียบกันเหนือ Canvas</string>
+    <string name="ui_sign_in_to_music_youtube_com_in_a_desktop_browser_open" formatted="false">ลงชื่อในดนตรีyoutube.com ในเว็บเบราว์เซอร์ เปิดโปรแกรมของนักพัฒนา ปฏิบัติต่อค่าเหล่านี้เช่นรหัสผ่านของคุณ</string>
+    <string name="ui_sign_in_with_your_last_fm_account" formatted="false">ลงชื่อด้วยLast.fmบัญชี</string>
+    <string name="ui_sign_out_all_accounts" formatted="false">เซ็น</string>
+    <string name="ui_simultaneous_dual_output" formatted="false">การแสดงผลแบบนุ่มนวล</string>
+    <string name="ui_skip_sign_in" formatted="false">ข้ามเข้าสู่ระบบ</string>
+    <string name="ui_slide_forward_for_faster_lyrics_backward_for_slower_au" formatted="false">เลื่อนหน้าไปข้างหน้าสําหรับเนื้อเพลงที่เร็วขึ้น</string>
+    <string name="ui_snap_0" formatted="false">จับ 0</string>
+    <string name="ui_soundstage_width" formatted="false">แผ่นเสียง</string>
+    <string name="ui_sources" formatted="false">แหล่ง</string>
+    <string name="ui_spatial_audio_essentials" formatted="false">ความสําคัญของระบบเสียงแบบสแปม</string>
+    <string name="ui_spotify_canvas" formatted="false">Spotify&amp; Canvas</string>
+    <string name="ui_spotify_account" formatted="false">Spotifyบัญชี</string>
+    <string name="ui_spotify_canvas_apple_music_tidal_community_motion_cove" formatted="false">SpotifyCanvas, Apple Music, TDL &amp; Company</string>
+    <string name="ui_spotify_is_currently_connected_motion_artwork_canvas_a" formatted="false">Spotifyกําลังเชื่อมต่ออยู่ ภาพ วาด ที่ น่า ประทับ ใจ (แคนาดา) และSpotifyเปิดใช้การปรับเทียบรายการเล่น</string>
+    <string name="ui_spotify_search_failed_try_again" formatted="false">Spotifyการค้นหาล้มเหลว ลองอีกที</string>
+    <string name="ui_station" formatted="false">สถานี</string>
+    <string name="ui_stereo_echo_delay" formatted="false">หน่วงเวลาเสียงสเตริโอ</string>
+    <string name="ui_stores_this_link_and_auto_adds_any_new_songs_on_app_op" formatted="false">เก็บที่อยู่เชื่อมโยงนี้ และเพิ่มรายการเพลงใหม่ใด ๆ เมื่อเปิดโปรแกรม</string>
+    <string name="ui_stream_your_bit_perfect_lossless_library_directly_from" formatted="false">เติมข้อมูลในไลบรารีที่ไม่มีการสูญเสียคุณภาพบิตโดยตรงของคุณ โดยตรงจากหุ้นเครือข่ายส่วนบุคคลหรือเมฆดวงต่อไป</string>
+    <string name="ui_streaming_sources" formatted="false">การ ตั้ง ครรภ์</string>
+    <string name="ui_style" formatted="false">เส้นพริ้วไหว</string>
+    <string name="ui_suggestions" formatted="false">ข้อ เสนอ แนะ</string>
+    <string name="ui_switch" formatted="false">สลับ</string>
+    <string name="ui_tap_avatar_to_customize" formatted="false">อวตารการเคาะเพื่อปรับแต่ง</string>
+    <string name="ui_tap_left_or_right_to_browse_hold_to_pause" formatted="false">เคาะซ้ายหรือขวาเพื่อเรียกดู</string>
+    <string name="ui_tap_to_immediately_activate_always_on_display_now" formatted="false">เคาะเพื่อเรียกทํางานทันที</string>
+    <string name="ui_tap_to_select_country_city_fm_broadcasts" formatted="false">แท็บเพื่อเลือกการออกอากาศของสถานี Country &amp; City FM</string>
+    <string name="ui_target_language" formatted="false">ภาษาทาร์เกต</string>
+    <string name="ui_target_language_ec8afa0d" formatted="false">ภาษาเป้าหมาย</string>
+    <string name="ui_test" formatted="false">ทดสอบ</string>
+    <string name="ui_test_proxy_connection" formatted="false">การเชื่อมต่อพร็อกซีสําหรับทดสอบ</string>
+    <string name="ui_testing_proxy" formatted="false">ทดสอบพร็อกซี...</string>
+    <string name="ui_that_s_your_story" formatted="false">นั่น\'เรื่อง ราว ของ คุณ</string>
+    <string name="ui_this_account" formatted="false">บัญชีนี้</string>
+    <string name="ui_this_playlist_is_empty_add_songs_from_player_or_search" formatted="false">รายการเล่นนี้ว่าง เพิ่มเพลงจากผู้เล่นหรือการค้นหา!</string>
+    <string name="ui_time_travel" formatted="false">เส้นเวลา</string>
+    <string name="ui_time_travel_88c82a47" formatted="false">การท่องเวลา</string>
+    <string name="ui_time_travel_wrap" formatted="false">เวลาเดินเรือ</string>
+    <string name="ui_time_synced_lyrics" formatted="false">Name=เวลาName</string>
+    <string name="ui_top_picks" formatted="false">เลือกด้านบน</string>
+    <string name="ui_top_result" formatted="false">ผลลัพธ์สูงสุด</string>
+    <string name="ui_top_song" formatted="false">เพลงยอดนิยม</string>
+    <string name="ui_top_songs" formatted="false">เพลงยอดนิยม</string>
+    <string name="ui_top_streamed" formatted="false">ปรับ ตั้ง</string>
+    <string name="ui_total_listening_time" formatted="false">เวลาฟังทั้งหมด</string>
+    <string name="ui_total_time" formatted="false">เวลารวม</string>
+    <string name="ui_translate_actual_lines" formatted="false">แปลบรรทัดจริง</string>
+    <string name="ui_translate_lyrics_on_demand_for_any_song_from_the_playe" formatted="false">แปลเนื้อร้องเมื่อ-demand สําหรับเพลงใด ๆ จากเมนูผู้เล่น (... &gt; เนื้อเพลง &gt; แปล) เมื่อ\'แปลบรรทัดจริง\'นอก จาก นี้ ฉบับ แปล ต่าง ๆ ยัง ปรากฏ ว่า เป็น คํา จารึก ใต้ ต้น ฉบับ.</string>
+    <string name="ui_translate_the_following_song_lyrics_lines_to_english_p" formatted="false">แปลเนื้อร้องต่อไปนี้เป็นภาษาอังกฤษ การไหลของบทกวี</string>
+    <string name="ui_translating_lyrics" formatted="false">กําลังแปลงเนื้อร้อง...</string>
+    <string name="ui_translation_mode" formatted="false">โหมดแปลภาษา</string>
+    <string name="ui_translation_prompt" formatted="false">แจ้งการแปลภาษา</string>
+    <string name="ui_trending_artists" formatted="false">ศิลปินต่าง ๆ</string>
+    <string name="ui_turn_off_timer" formatted="false">ปิดเครื่องจับเวลา</string>
+    <string name="ui_update_the_name_shown_on_your_apple_id_profile_card_in" formatted="false">ปรับปรุงชื่อที่แสดงบนนามบัตรของ Apple ในการตั้งค่า</string>
+    <string name="ui_username_optional" formatted="false">ชื่อผู้ใช้ (มาตรฐาน)</string>
+    <string name="ui_view" formatted="false">แสดง</string>
+    <string name="ui_view_on_shazam" formatted="false">ดูบนชาซาม</string>
+    <string name="ui_vinyl_turntable_link" formatted="false">ส่วนเชื่อมโยงของวินซิล</string>
+    <string name="ui_whats_new" formatted="false">อะไร ใหม่</string>
+    <string name="ui_when_music_is_playing_always_on_display_turns_on_if_no" formatted="false">เมื่อเล่นเพลงอยู่ จงเปิดการแสดงผลหากไม่มีการสัมผัสบนหน้าจอสําหรับเวลาที่เลือก เปิดใช้งานขณะอยู่ในโปรแกรมเท่านั้น</string>
+    <string name="ui_who_is_listening" formatted="false">ใครกําลังฟังอยู่?</string>
+    <string name="ui_widget" formatted="false">วิดเจ็ตComment</string>
+    <string name="ui_you" formatted="false">คุณ</string>
+    <string name="ui_your_1_artist" formatted="false">ศิลปิน # 1 ของคุณ</string>
+    <string name="ui_your_api_key_is_stored_securely_on_device_and_never_sh" formatted="false">กุญแจ API ของคุณถูกเก็บไว้บนอุปกรณ์อย่างปลอดภัย และไม่เคยใช้ร่วมกัน</string>
+    <string name="ui_your_discord_session_token_is_stored_encrypted_on_this" formatted="false">แผ่นดิสก์ของคุณ จะถูกเก็บไว้โดยเข้ารหัสบนอุปกรณ์นี้ และถูกใช้เพื่อความสมบูรณ์เท่านั้น</string>
+    <string name="ui_your_favourite_song" formatted="false">เพลงโปรดของคุณ</string>
+    <string name="ui_your_library_playlists_and_settings_will_be_encrypted" formatted="false">ไลบรารี, รายการเล่นและการตั้งค่าของคุณ จะถูกเข้ารหัสด้วยรหัสผ่านอย่างน้อย 8 ตัวอักษร</string>
+    <string name="ui_your_listening_experience" formatted="false">ความ สามารถ ของ คุณ</string>
+    <string name="ui_your_listening_pattern" formatted="false">รูปแบบการรับฟังของคุณ</string>
+    <string name="ui_your_listening_persona" formatted="false">ตัวตนของคุณ</string>
+    <string name="ui_your_music_replay_statistics" formatted="false">สถิติการเล่นเพลงของคุณ</string>
+    <string name="ui_your_musical_anchor" formatted="false">นักแสดงเพลงของคุณ</string>
+    <string name="ui_your_name" formatted="false">ชื่อของคุณ</string>
+    <string name="ui_your_password_is_sent_to_last_fm_only_to_create_a_sess" formatted="false">รหัสผ่านของคุณถูกส่งไปยังLast.fmแค่สร้างกลุ่มงานเท่านั้นiTuneไม่ช่วยเลย</string>
+    <string name="ui_your_playlists" formatted="false">ผู้เล่นของคุณ</string>
+    <string name="ui_your_playlists_b2cd0ef2" formatted="false">รายการเล่นของคุณ</string>
+    <string name="ui_your_sonic_peak" formatted="false">ยอดโซนิค</string>
+    <string name="ui_your_spotify_playlists" formatted="false">คุณSpotifyรายการเล่น</string>
+    <string name="ui_your_spotify_playlists_public_private" formatted="false">คุณSpotifyรายการเล่น (ส่วนตัว)</string>
+    <string name="ui_youtube_music_google" formatted="false">YOUTUBE MUSICแปรงทาสี</string>
+    <string name="ui_youtube_music_session_cookies" formatted="false">YouTube Musicคุกกี้ของเซสชัน</string>
+    <string name="ui_text_1fdf0d90c3" formatted="false">อะ</string>
+    <string name="ui_text_a118c40635" formatted="false">━━━ ━━━━━</string>
+    <string name="ui_album_artwork" formatted="false">อัลบั้มงานศิลป์</string>
+    <string name="ui_itune_waves" formatted="false">iTuneคลื่น</string>
+    <string name="ui_previous" formatted="false">ก่อนหน้า</string>
+    <string name="ui_next" formatted="false">ต่อไป</string>
+    <string name="ui_audio_output" formatted="false">ส่วนส่งออกเสียง</string>
+    <string name="ui_low_volume" formatted="false">ระดับเสียงน้อย</string>
+    <string name="ui_high_volume" formatted="false">ระดับเสียงสูง</string>
+    <string name="ui_filter" formatted="false">กรอง</string>
+    <string name="ui_refresh" formatted="false">ปรับปรุงใหม่</string>
+    <string name="ui_options_6bf5da9c" formatted="false">ตัวเลือก</string>
+    <string name="ui_user_profile_avatar" formatted="false">ตัวเรียกดูโพรไฟล์ของผู้ใช้</string>
+    <string name="ui_news" formatted="false">ข่าว</string>
+    <string name="ui_no_song_playing" formatted="false">ไม่มีเพลงเล่น</string>
+    <string name="ui_next_track" formatted="false">แทร็กถัดไป</string>
+    <string name="ui_see_all_songs" formatted="false">ดูเพลงทั้งหมด</string>
+    <string name="ui_favorite_radio" formatted="false">รายการวิทยุโปรด</string>
+    <string name="ui_live_65c821a5" formatted="false">สด</string>
+    <string name="ui_itune_brand_waves" formatted="false">iTuneคลื่นแบรนด์</string>
+    <string name="ui_refresh_network" formatted="false">ปรับปรุงเครือข่ายใหม่</string>
+    <string name="ui_edit_display_name" formatted="false">แก้ไขชื่อการแสดงผล</string>
+    <string name="ui_remove_from_queue" formatted="false">ลบออกจากคิว</string>
+    <string name="ui_search_new_releases" formatted="false">สืบค้นใหม่</string>
+    <string name="ui_refresh_new_releases" formatted="false">ปรับปรุงการปล่อยใหม่</string>
+    <string name="ui_refresh_downloads" formatted="false">ดาวน์โหลดใหม่</string>
+    <string name="ui_clear_cache" formatted="false">ล้างแคช</string>
+    <string name="ui_sort" formatted="false">ชนิด</string>
+    <string name="ui_see_all_new_releases" formatted="false">ดู หนังสือ ใหม่ ทั้ง หมด</string>
+    <string name="ui_identify" formatted="false">ระบุ</string>
+    <string name="ui_spotify" formatted="false">Spotify</string>
+    <string name="ui_import_playlist" formatted="false">นําเข้ารายการเล่น</string>
+    <string name="ui_create_playlist" formatted="false">สร้างรายการเล่น</string>
+    <string name="ui_liked" formatted="false">ชอบ</string>
+    <string name="ui_paste" formatted="false">วาง</string>
+    <string name="ui_checked" formatted="false">ตรวจสอบแล้ว</string>
+    <string name="ui_google_account_playlist" formatted="false">รายการเล่นบัญชีของกูเกิ้ล</string>
+    <string name="ui_spotify_playlist" formatted="false">Spotifyรายการเล่น</string>
+    <string name="ui_local_playlist" formatted="false">รายการเล่นภายใน</string>
+    <string name="ui_back_to_audio_engine" formatted="false">กลับไปใช้กลไกเสียง</string>
+    <string name="ui_bluetooth_settings" formatted="false">Bluetoothตั้งค่า</string>
+    <string name="ui_scan_output_devices" formatted="false">ค้นหาอุปกรณ์ส่งออก</string>
+    <string name="ui_simultaneous_dual_audio" formatted="false">เสียงแบบนุ่มนวล</string>
+    <string name="ui_selected" formatted="false">เลือก</string>
+    <string name="ui_copy" formatted="false">คัดลอก</string>
+    <string name="ui_copy_link" formatted="false">คัดลอกลิงก์</string>
+    <string name="ui_upgrade_quality" formatted="false">คุณภาพการปรับรุ่น</string>
+    <string name="ui_fm_radio" formatted="false">รายการวิทยุ FM</string>
+    <string name="ui_next_station" formatted="false">สถานีถัดไป</string>
+    <string name="ui_minimize" formatted="false">ย่อหาย</string>
+    <string name="ui_favorite" formatted="false">รายการโปรด</string>
+    <string name="ui_more_options" formatted="false">ตัวเลือกเพิ่มเติม</string>
+    <string name="ui_previous_station" formatted="false">สถานีก่อนหน้า</string>
+    <string name="ui_sleep_timer" formatted="false">ตัวจับเวลาการนอน</string>
+    <string name="ui_audio_output_devices" formatted="false">อุปกรณ์ส่งออกเสียง</string>
+    <string name="ui_station_list" formatted="false">รายการสถานี</string>
+    <string name="ui_volume" formatted="false">ระดับเสียง</string>
+    <string name="ui_open_lyrics" formatted="false">เปิดเนื้อเพลง</string>
+    <string name="ui_mute_volume" formatted="false">ระดับเสียงmate</string>
+    <string name="ui_max_volume" formatted="false">ระดับเสียงสูงสุด</string>
+    <string name="ui_endless_queue" formatted="false">คิวที่ไม่รู้จักสิ้นสุด</string>
+    <string name="ui_repeat" formatted="false">ทําซ้ํา</string>
+    <string name="ui_refresh_stations" formatted="false">สถานีรีเฟรช</string>
+    <string name="ui_favorite_station" formatted="false">สถานีโปรด</string>
+    <string name="ui_close_ireconization" formatted="false">ปิดการใช้ iconition</string>
+    <string name="ui_cancel_voice_search" formatted="false">ยกเลิกการค้นหาเสียง</string>
+    <string name="ui_microphone" formatted="false">ไมโครโฟน</string>
+    <string name="ui_more_options_86c0a35e" formatted="false">ตัวเลือกเพิ่มเติม</string>
+    <string name="ui_voice_search" formatted="false">ค้นหาเสียง</string>
+    <string name="ui_saved" formatted="false">บันทึก</string>
+    <string name="ui_fill_search_query" formatted="false">เติมคําค้น</string>
+    <string name="ui_remove_from_history" formatted="false">ลบออกจากประวัติการใช้</string>
+    <string name="ui_itune_icon" formatted="false">iTuneไอคอน</string>
+    <string name="ui_artwork_preview" formatted="false">แสดงตัวอย่างงานศิลป์</string>
+    <string name="ui_decrease" formatted="false">ลด</string>
+    <string name="ui_increase" formatted="false">เพิ่ม</string>
+    <string name="ui_open_link" formatted="false">เปิดที่อยู่เชื่อมโยง</string>
+    <string name="ui_reset_geometry" formatted="false">ตั้งค่าเรขาคณิตใหม่</string>
+    <string name="ui_reorder_provider" formatted="false">จัดลําดับผู้ให้บริการใหม่</string>
+    <string name="ui_save_name" formatted="false">บันทึกชื่อ</string>
+    <string name="ui_editable_name" formatted="false">ชื่อที่แก้ไขได้</string>
+    <string name="ui_google" formatted="false">กูเกิ้ล</string>
+    <string name="ui_remove_account" formatted="false">ลบบัญชีผู้ใช้</string>
+    <string name="ui_reorder_source_priority" formatted="false">จัดลําดับความสําคัญของแหล่งใหม่</string>
+    <string name="ui_refresh_playlists" formatted="false">ปรับปรุงรายการเล่นใหม่</string>
+    <string name="ui_replay_poster" formatted="false">โพสต์เลอร์ของ Replay</string>
+    <string name="ui_settings" formatted="false">ตั้งค่า</string>
+    <string name="ui_artist_radio" formatted="false">รายการวิทยุศิลปิน</string>
+    <string name="ui_play_all" formatted="false">เล่นทั้งหมด</string>
+    <string name="ui_delete_playlist" formatted="false">ลบรายการเล่น</string>
+    <string name="ui_endless_queue_b15dc536" formatted="false">ไม่มีคิว</string>
+    <string name="ui_artist_info" formatted="false">ข้อมูลศิลปิน</string>
+    <string name="ui_enabled" formatted="false">เปิดใช้งาน</string>
+    <string name="ui_search_icon" formatted="false">ค้นหาไอคอน</string>
+    <string name="ui_region">ขอบเขต:%1$s</string>
+    <string name="ui_connected_devices">ถอดรหัสแล้ว (PDF)%1$s)</string>
+    <string name="ui_up_next">ถัดไป (ถัดไป)%1$s)</string>
+    <string name="ui_text_da5c3629fd">%1$s›</string>
+    <string name="ui_active_7c6a4064">%1$s•%2$sทํางาน</string>
+    <string name="ui_no_new_available_right_now">ไม่มีใหม่%1$sมีอยู่ในขณะนี้</string>
+    <string name="ui_tracks">%1$sเพลง •%2$s</string>
+    <string name="ui_songs">%1$s• เพลง%2$s•%3$s</string>
+    <string name="ui_text_c75f125c6f">%1$s•%2$s</string>
+    <string name="ui_text_0726b053ba">%1$s%2$s</string>
+    <string name="ui_text_620b6e059c">•%1$s</string>
+    <string name="ui_track_s_couldn_t_be_matched">%1$sแทร็ก สามารถ\'ให้ตรงกับ:</string>
+    <string name="ui_text_a3edb2b714">•%1$s-%2$s</string>
+    <string name="ui_d_eeda119e">%1$sD</string>
+    <string name="ui_text_fc9db15ab9">%1$s%%</string>
+    <string name="ui_db">+%1$sDB</string>
+    <string name="ui_connected">%1$sเชื่อมต่อ</string>
+    <string name="ui_open_web_player">เปิดโปรแกรมเล่นเว็บ (KDE)%1$s)</string>
+    <string name="ui_text_c79f71243f">%1$s</string>
+    <string name="ui_country">ประเทศ:%1$s(%2$s)</string>
+    <string name="ui_city_state">เมือง / รัฐ:%1$s</string>
+    <string name="ui_codec_bitrate">ตัวเข้ารหัส / อัตราส่งถ่ายข้อมูล:%1$s</string>
+    <string name="ui_language">ภาษา:%1$s</string>
+    <string name="ui_tags">ป้ายกํากับ:%1$s</string>
+    <string name="ui_stream">สายข้อมูล:%1$s</string>
+    <string name="ui_api_key_not_configured_for_please_set_it_in_settin">กุญแจ API ไม่ได้ปรับแต่งสําหรับ%1$sโปรดตั้งค่ามันในการตั้งค่า &gt; เนื้อเพลง</string>
+    <string name="ui_s_clip">%1$sคลิป</string>
+    <string name="ui_loading_more_fm_stations_loaded">กําลังโหลดสถานี FM เพิ่มเติม (Shortcut) Name%1$sบรรจุกระสุน...</string>
+    <string name="ui_found">%1$sพบ</string>
+    <string name="ui_version">รุ่น%1$s(%2$s)</string>
+    <string name="ui_of_active">%1$sของ%2$sทํางาน</string>
+    <string name="ui_text_adebc50ade">#%1$s</string>
+    <string name="ui_api_key">%1$sกุญแจ API</string>
+    <string name="ui_channel">ช่อง:%1$s</string>
+    <string name="ui_sync_issue">ปรับเทียบข้อมูลปัญหา:%1$s</string>
+    <string name="ui_enter">เข้า%1$s</string>
+    <string name="ui_are_you_sure_you_want_to_delete_all_data_playlists">คุณ แน่ ใจ ไหม ว่า ต้องการ ลบ “ออก ”?%1$sข้อมูล, รายการเล่น, สิ่ง โปรด, ประวัติศาสตร์, และ สภาพ การณ์ ใน เรื่อง นี้ จะ ถูก ลบ ออก ไป อย่าง ถาวร.</string>
+    <string name="ui_peak">ความแหลม:%1$s</string>
+    <string name="ui_welcome">ยินดีต้อนรับ%1$s</string>
+    <string name="ui_songs_played">%1$sเพลงที่เล่น</string>
+    <string name="ui_around">รอบ%1$s</string>
+    <string name="ui_when_the_world_gets_busy_you_tune_in_most_on_s_aro">เมื่อโลกได้รับยุ่ง คุณจูนในมากที่สุด%1$ss รอบ%2$s.</string>
+    <string name="ui_itune_time_travel_575a110d">iTuneการ เดิน ทาง ข้าม เวลา •%1$s</string>
+    <string name="ui_text_c1aacd9629">%1$sอะ%2$s</string>
+    <string name="ui_your_biggest_day_was">วันที่ใหญ่ที่สุดของเธอคือ%1$s.</string>
+    <string name="ui_listening_recap">%1$sกลับด้านการฟัง</string>
+    <string name="ui_busiest_day">วันที่ยุ่งที่สุด:%1$s</string>
+    <string name="ui_peak_hour_00">เวลาเต็ม:%1$s2 ทุ่ม</string>
+    <string name="ui_loading">กําลังโหลด%1$s...</string>
+    <string name="ui_about">เกี่ยวกับ%1$s</string>
+    <string name="ui_songs_9b614dc8">%1$sเพลง</string>
+    <string name="ui_current_offset_ms">ออฟเซต:%1$s</string>
+    <string name="ui_connected_session">วาระการเชื่อมต่อ:%1$s</string>
+    <string name="ui_k">%1$sk</string>
+    <string name="ui_top_result_c5e5adab">คํา ตอบ สําหรับ คํา ถาม ทดสอบ%1$s</string>
+    <string name="toast_song_not_found_in_itune">ไม่พบเพลงในiTune</string>
+    <string name="toast_playback_failed_try_again">การเล่นเพลงล้มเหลว โปรดลองใหม่อีกครั้ง</string>
+    <string name="toast_auto_sleep_timer_active_playback_paused">ตัวจับเวลาอัตโนมัติ</string>
+    <string name="toast_offline_mode_this_song_is_not_downloaded">โหมดออฟไลน์: เพลงนี้ยังไม่ได้ดาวน์โหลด</string>
+    <string name="toast_offline_mode_cannot_upgrade_quality">โหมดออฟไลน์: ไม่สามารถปรับรุ่นคุณภาพได้</string>
+    <string name="toast_upgrading_quality">คุณภาพการปรับรุ่น</string>
+    <string name="toast_no_lossless_streaming_sources_enabled_in_sources">ไม่มีแหล่งข้อมูลที่สูญเสียข้อมูล</string>
+    <string name="toast_no_higher_quality_stream_found_across_enabled_sour">ไม่พบรายการใด ๆ ที่คุณภาพสูงผ่านแหล่งกําเนิด</string>
+    <string name="toast_shuffle_is_locked_by_permanent_shuffle_in_settings">สับปะรดถูกล็อคโดยชูฟเฟิลถาวรในการตั้งค่า</string>
+    <string name="toast_microphone_permission_is_needed_to_identify_music">จําเป็น ต้อง มี การ อนุญาต ไมโคร โทรศัพท์ เพื่อ ระบุ ตัว เพลง</string>
+    <string name="toast_display_over_other_apps_permission_is_required_for">ต้องการการแสดงสิทธิ์ในการใช้งานโปรแกรมอื่น ๆ เพื่อใช้ในการจดจําแบบผุดขึ้นมา</string>
+    <string name="toast_playback_failed">การเล่นเพลงล้มเหลว</string>
+    <string name="toast_complete_google_sign_in_first">ลายเซ็นของกูเกิ้ลสมบูรณ์ก่อน</string>
+    <string name="toast_waiting_for_youtube_music_session">รอYouTube Musicวาระการใช้งาน...</string>
+    <string name="toast_couldn_t_load_tracks">สามารถ\'โหลดเพลง</string>
+    <string name="toast_copied_to_clipboard">คัดลอกไปยังคลิปบอร์ด</string>
+    <string name="toast_profile_avatar_updated">ปรับปรุงอวตารโพรไฟล์</string>
+    <string name="toast_no_tracks_found">ไม่พบเพลง</string>
+    <string name="toast_google_account_connected">บัญชีผู้ใช้ของกูเกิ้ลเชื่อมต่อ</string>
+    <string name="toast_link_copied">คัดลอกส่วนเชื่อมโยง</string>
+    <string name="toast_could_not_open_browser">ไม่สามารถเปิดเบราว์เซอร์ได้</string>
+    <string name="toast_enter_a_port_between_1024_and_65535">ป้อนพอร์ตระหว่าง 1024 ถึง 65535</string>
+    <string name="toast_cached_music_cleared">ลบเพลงที่แคชแล้ว</string>
+    <string name="toast_no_tracks_available_to_add">ไม่มีเพลงที่จะใช้เพิ่ม</string>
+    <string name="toast_enter_a_playlist_name">ป้อนชื่อรายการเล่น</string>
+    <string name="toast_system_sound_panel_opened">แผงระบบเปิด</string>
+    <string name="toast_download_started_check_notification">ดาวน์โหลดการแจ้งเตือน</string>
+    <string name="toast_playback_will_stop_after_current_track">เล่นกลับจะยุติหลังจากเพลงปัจจุบันจบ</string>
+    <string name="toast_sleep_timer_turned_off">ปิดเวลานอน</string>
+    <string name="toast_stream_url_copied">คัดลอกที่อยู่ URL ของสายข้อมูล</string>
+    <string name="toast_couldn_t_create_lyrics_card">สามารถ\'t สร้างแถบเนื้อร้อง</string>
+    <string name="toast_restored_online_lyrics">เรียกคืนเนื้อร้องออนไลน์แล้ว</string>
+    <string name="toast_lyrics_saved">บันทึกเนื้อร้องแล้ว</string>
+    <string name="toast_translation_cleared">แปลเสร็จ</string>
+    <string name="toast_please_set_your_api_key_in_settings_lyrics_first">โปรดตั้งค่ากุญแจ API ของคุณในการตั้งค่า &gt; เนื้อร้องก่อน</string>
+    <string name="toast_no_lyrics_found_for_this_song">ไม่พบเนื้อร้องของเพลงนี้</string>
+    <string name="toast_could_not_create_audio_clip">ไม่สามารถสร้างส่วนตัดเสียงได้</string>
+    <string name="toast_snippet_saved_to_music_itune_snippets">Snippet บันทึกเป็นดนตรี/iTune/ สนิปต์</string>
+    <string name="toast_playing_next">เล่นต่อไป</string>
+    <string name="toast_added_to_queue">เพิ่มไปยังคิว</string>
+    <string name="toast_download_started_check_notifications">ดาวน์โหลดการแจ้งเตือน</string>
+    <string name="toast_couldn_t_find_this_song_on_youtube_music">สามารถ\'ค้นหาเพลงนี้บนYouTube Music</string>
+    <string name="toast_couldn_t_start_mix">สามารถ\'เริ่มการผสม</string>
+    <string name="toast_couldn_t_find_tracks_on_youtube_music">สามารถ\'ค้นหาเพลงในYouTube Music</string>
+    <string name="toast_could_not_encrypt_the_password_securely_automatic">ไม่สามารถเข้ารหัสรหัสผ่านได้อย่างปลอดภัย การสํารองข้อมูลอัตโนมัติไม่ถูกเปลี่ยนแปลง</string>
+    <string name="toast_storage_permission_is_needed_to_save_backups_in_do">ต้องการสิทธิ์ในการจัดเก็บแฟ้มเพื่อบันทึกแฟ้มสํารองข้อมูลในการดาวน์โหลด</string>
+    <string name="toast_choose_an_itune_backup_file">เลือกituneสํารองข้อมูลแฟ้ม</string>
+    <string name="toast_audio_artwork_cache_cleared">ล้างแคชของงานเขียนเสียง</string>
+    <string name="toast_could_not_open_github">ไม่สามารถเปิดกิตฮับได้</string>
+    <string name="toast_profile_name_updated">ปรับปรุงชื่อโพรไฟล์</string>
+    <string name="toast_search_history_cleared">ล้างประวัติการค้นหา</string>
+    <string name="toast_listening_history_cleared">ล้างประวัติการฟังแล้ว</string>
+    <string name="toast_cached_songs_cleared">ลบเพลงที่แคชแล้ว</string>
+    <string name="toast_open_system_settings_to_grant_display_over_other_a">เปิดการตั้งค่าระบบเพื่ออนุญาตให้แสดงบนโปรแกรมอื่น ๆ</string>
+    <string name="toast_dynamic_island_geometry_reset">ตั้งค่าเรขาคณิตของเกาะแบบไม่ตายตัว</string>
+    <string name="toast_geometry_reset">ตั้งค่าเรขาคณิตใหม่</string>
+    <string name="toast_lyrics_providers_reset_to_defaults">ผู้จัดทํา November</string>
+    <string name="toast_api_key_saved">บันทึกกุญแจ API</string>
+    <string name="toast_base_url_updated">ปรับปรุงที่อยู่ URL หลัก</string>
+    <string name="toast_translation_prompt_updated">ปรับปรุงการแปลภาษา</string>
+    <string name="toast_equalizer_reset_to_flat">ตัวปรับอิควอไลเซอร์ถูกปรับให้เป็นแบบแบนราบ</string>
+    <string name="toast_dj_console_reset">ตั้งค่า DJ Console ใหม่</string>
+    <string name="toast_name_saved">บันทึกชื่อ</string>
+    <string name="toast_syncing_youtube_music_library">กําลังปรับเทียบข้อมูลYouTube Musicห้องสมุด...</string>
+    <string name="toast_signed_out_local_likes_preserved">ถูกเซ็นกํากับแล้ว (ตามท้องถิ่น)</string>
+    <string name="toast_signed_out_of_all_google_accounts">เซ็นจากทุกบัญชีของกูเกิ้ลแล้ว</string>
+    <string name="toast_discord_disconnected">ยกเลิกการเชื่อมต่อดิสโคด</string>
+    <string name="toast_enter_a_valid_signed_in_youtube_music_cookie_sapis">ใส่ลายเซ็นที่ถูกต้องYouTube Musicคุกกี้ (SAPISID และคุกกี้ของเซสชัน)</string>
+    <string name="toast_youtube_music_account_connected">YouTube Musicบัญชีที่เชื่อมต่อ</string>
+    <string name="toast_account_renamed">เปลี่ยนชื่อบัญชีผู้ใช้</string>
+    <string name="toast_account_deleted">ลบบัญชีผู้ใช้แล้ว</string>
+    <string name="toast_cannot_delete_your_only_account">ไม่สามารถลบบัญชีผู้ใช้ของคุณได้</string>
+    <string name="toast_sources_restored_to_defaults">ต้นฉบับถูกเรียกคืนกลับไปใช้ค่าปริยาย</string>
+    <string name="toast_spotify_disconnected">Spotifyยกเลิกการเชื่อมต่อ</string>
+    <string name="toast_spotify_sp_dc_token_saved">Spotifyซีดีบันทึก</string>
+    <string name="toast_spotify_connected">Spotify connectเอ็ด!</string>
+    <string name="toast_complete_spotify_sign_in_first">เสร็จสมบูรณ์Spotifyเซ็นก่อน</string>
+    <string name="toast_saved_to_gallery">บันทึกไว้ในแกลอรี่!</string>
+    <string name="toast_allow_itune_to_install_updates_to_continue">อนุญาตiTuneเข้าสู่การติดตั้งการปรับปรุงเพื่อดําเนินการต่อ</string>
+    <string name="toast_downloaded_update_apk_is_unavailable">ไม่สามารถดาวน์โหลด APK ได้</string>
+    <string name="toast_added_to_queue_next">เพิ่มไปยังคิวถัดไป</string>
+    <string name="toast_link_copied_to_clipboard">เชื่อมโยงที่คัดลอกไปยังคลิปบอร์ด</string>
+    <string name="toast_song_link_copied_to_clipboard">คัดลอกลิงก์เพลงไปยังคลิปบอร์ด</string>
+    <string name="toast_left_ishare_session">กลุ่มงาน iShare ด้านซ้าย</string>
+    <string name="toast_ishare_lan_host_started">IShare LAN Host เริ่มต้น!</string>
+    <string name="toast_scanning_lan_for_sessions">กําลังตรวจหา LAN สําหรับวาระการใช้งาน...</string>
+    <string name="toast_cache_cleared">ล้างแคชแล้ว</string>
+    <string name="toast_signed_out_successfully">เซ็นกํากับออกเรียบร้อยแล้ว</string>
+    <string name="toast_passwords_must_match_and_have_at_least_8_character">รหัสผ่านต้องตรงกัน และมีอย่างน้อย 8 ตัวอักษร</string>
+    <string name="toast_no_backup_file_found_in_storage">ไม่พบแฟ้มสํารองข้อมูลในที่เก็บ</string>
+    <string name="toast_library_settings_restored">ตั้งค่าต่าง ๆ ของไลบรารีถูกเรียกคืน!</string>
+    <string name="toast_enter_your_backup_password">ป้อนรหัสผ่านสํารองของคุณ</string>
+    <string name="toast_syncing_spotify_library">กําลังปรับเทียบข้อมูลSpotifyห้องสมุด...</string>
+    <string name="toast_spotify_connected_f5a7d96a">Spotify Connectเอ็ด!</string>
+    <string name="toast_please_enter_a_valid_sp_dc_cookie">โปรดป้อนคุกกี้ SP  DC ที่ถูกต้อง</string>
+    <string name="toast_playing">เล่น%%1$s...</string>
+    <string name="toast_upgraded_to_lossless_kbps">• ได้ รับ การ สนับสนุน ให้ สูญ เสีย%%1$sกิโลบิต/ วินาที</string>
+    <string name="toast_playing_next_0f0c851c">เล่น%%1$sต่อไป</string>
+    <string name="toast_added_to_queue_88e96c25">เพิ่ม%%1$sไปยังคิว</string>
+    <string name="toast_playing_cb1fb3de">เล่น%%1$s...</string>
+    <string name="toast_playing_next_e0082d95">เล่นต่อไป:%%1$s</string>
+    <string name="toast_couldn_t_load">สามารถ\'โหลด%%1$s</string>
+    <string name="toast_opening">การเปิด%%1$s...</string>
+    <string name="toast_couldn_t_open">สามารถ\'เปิด%%1$s</string>
+    <string name="toast_couldn_t_play">สามารถ\'เล่น%%1$s</string>
+    <string name="toast_library_pin">วงกลมของไลบรารี:%%1$s</string>
+    <string name="toast_copied">คัดลอก:%%1$s</string>
+    <string name="toast_sleep_timer_set_for_min">ตั้งเวลานอนไว้%%1$sนาที</string>
+    <string name="toast_lyrics_applied">ปรับใช้เนื้อร้อง (Inknown)%%1$s)</string>
+    <string name="toast_added_tracks_to_queue">เพิ่ม%%1$sเพลงไปยังคิว</string>
+    <string name="toast_switched_feed_to">สลับแหล่งป้อนเป็น%%1$s</string>
+    <string name="toast_provider_updated_to">ผู้จัดทําการปรับปรุง%%1$s</string>
+    <string name="toast_target_language_set_to">ภาษาเป้าหมายที่กําหนดให้ใช้%%1$s</string>
+    <string name="toast_translation_mode_set_to">ตั้งค่าโหมดการแปลภาษา%%1$s</string>
+    <string name="toast_added_source">เพิ่มแหล่ง:%%1$s</string>
+    <string name="toast_installed_extension_s">ติดตั้ง%%1$sส่วนขยาย</string>
+    <string name="toast_imported_songs">นําเข้า\'%%1$s\'(%%2$sเพลง)</string>
+    <string name="toast_couldn_t_find_on_youtube_music">สามารถ\'ค้นหา\'%%1$s\'บนYouTube Music</string>
+    <string name="toast_added_songs_to">เพิ่ม%%1$sเพลงที่จะ%%2$s</string>
+    <string name="toast_joining">เข้าร่วม%%1$s...</string>
+    <string name="toast_added_to">เพิ่มไปยัง%%1$s</string>
+    <string name="toast_itune_v_for_android_tv">iTunev%%1$sสําหรับ แอนดรอยด์ ทีวี</string>
+    <string name="toast_backup_failed">การสํารองข้อมูลล้มเหลว:%%1$s</string>
+    <string name="toast_restore_failed">การเรียกคืนล้มเหลว:%%1$s</string>
+    <string name="settings_ishare_dynamic_island_standby" formatted="false">IShare, เกาะปรับอัตโนมัติและยืนตาม</string>
+    <string name="settings_ishare" formatted="false">แบบ IShare</string>
+    <string name="settings_dynamic_island" formatted="false">เกาะทึบ</string>
+    <string name="settings_floating_water_bubble_controller_outside_itune" formatted="false">ตัวควบคุมการลอยน้ําภายนอกiTune</string>
+    <string name="settings_always_on_display" formatted="false">แสดงเสมอ</string>
+    <string name="settings_audio_engine_sound_effects" formatted="false">ลูกเล่นของกลไกเสียง</string>
+    <string name="settings_dolby_atmos" formatted="false">Dolby Atmos</string>
+    <string name="settings_text_8948f8179a" formatted="false">เสียง 8 มิติ</string>
+    <string name="settings_spatial_audio" formatted="false">สแปมเสียง</string>
+    <string name="settings_equalizer_eq" formatted="false">อิควอไลเซอร์ (EQ)</string>
+    <string name="settings_low_pass_filtering" formatted="false">การกรองแบบข้อความต่ํา</string>
+    <string name="settings_dj_studio_panel" formatted="false">แถบพาเนลของ DJ</string>
+    <string name="settings_audio_normalization" formatted="false">การ ทํา ให้ เสียง ปกติ</string>
+    <string name="settings_usb_bit_perfect_dac" formatted="false">USB บิต สมบูรณ์ DAC</string>
+    <string name="settings_pure_audio_bypass" formatted="false">ทางผ่านเสียงบริสุทธิ์</string>
+    <string name="settings_signal_pipeline" formatted="false">ท่อส่งสัญญาณ</string>
+    <string name="settings_audioengine_pillbadge_text_activeoutputname" formatted="false">${audiadicic. pill backdge.text} -&gt; Name=ปลั๊กอินName</string>
+    <string name="settings_audio_playback" formatted="false">เล่นกลับเสียง</string>
+    <string name="settings_sources" formatted="false">แหล่ง</string>
+    <string name="settings_manage_youtube_music_jiosaavn_installable_extens" formatted="false">จัดการYouTube Music.JioSaavnส่วนขยายการติดตั้งWebDAV.SMBและการเล่นรอบสําคัญ</string>
+    <string name="settings_auto_skip_when_error_occurs" formatted="false">ข้ามอัตโนมัติเมื่อเกิดข้อผิดพลาด</string>
+    <string name="settings_move_to_the_next_queued_song_if_playback_fails" formatted="false">เลื่อนไปยังเพลงถัดไป หากการเล่นล้มเหลว</string>
+    <string name="settings_download_quality" formatted="false">คุณภาพการดาวน์โหลด</string>
+    <string name="settings_default_quality_used_by_song_download_actions" formatted="false">คุณสมบัติปริยายที่ถูกใช้โดยการกระทําดาวน์โหลดเพลง</string>
+    <string name="settings_choose_the_default_audio_quality_for_downloads_a" formatted="false">เลือกคุณภาพเสียงปริยายสําหรับใช้ดาวน์โหลดผ่านโปรแกรม</string>
+    <string name="settings_lossless_audio" formatted="false">เสียงที่ไม่มีการสูญเสีย</string>
+    <string name="settings_upgrade_quality_of_cached_songs" formatted="false">เพิ่มคุณภาพเพลงแคช</string>
+    <string name="settings_streaming_quality" formatted="false">คุณภาพการสายข้อมูล</string>
+    <string name="settings_select_your_preferred_streaming_audio_quality" formatted="false">เลือกคุณภาพเสียงแบบเคลื่อนไหวที่ชื่นชอบ</string>
+    <string name="settings_pcm_output_format" formatted="false">รูปแบบการแสดงผลแบบ PCM</string>
+    <string name="settings_rebuilds_playback_at_the_current_position" formatted="false">สร้างการเล่นใหม่ในตําแหน่งปัจจุบัน</string>
+    <string name="settings_choose_the_pcm_format_requested_from_android_s_a" formatted="false">เลือกรูปแบบ PCM ที่ร้องขอมาจากแอนดรอยด์\'การส่งออกเสียงของ s USB DAC อาจแปลงมันเป็นรูปแบบที่มันรองรับ</string>
+    <string name="settings_crossfade" formatted="false">ครอสเฟด</string>
+    <string name="settings_overlap_the_fade_out_of_the_ending_track_with_th" formatted="false">กดทับการหรี่เสียงลงของเพลงที่สิ้นสุดด้วยการเริ่มต้นของเพลงถัดไป</string>
+    <string name="settings_automix" formatted="false">แปรงทาสี</string>
+    <string name="settings_afterglow" formatted="false">หลังแสงจ้า</string>
+    <string name="settings_apply_the_same_low_pass_equalizer_effect_during" formatted="false">ปรับใช้ลูกเล่นแบบ Low- Passizer แบบเดียวกันระหว่างวินาทีสุดท้ายที่เลือกไว้ของทุกเพลง หลังจากหยุดการทํางานอัตโนมัติ (AutoMix and Crossfade) แล้ว</string>
+    <string name="settings_permanent_shuffle" formatted="false">ชัฟเฟิลแบบถาวร</string>
+    <string name="settings_keep_shuffle_permanently_locked_on_in_player" formatted="false">ให้มีการสลับที่อย่างถาวรในเครื่องเล่น</string>
+    <string name="settings_pause_at_volume_0" formatted="false">หยุดชั่วคราวที่ ระดับเสียง 0</string>
+    <string name="settings_automatically_pause_playback_when_volume_reaches" formatted="false">หยุดการเล่นอัตโนมัติเมื่อเสียงถึงศูนย์</string>
+    <string name="settings_volume_bar" formatted="false">แถบปรับระดับเสียง</string>
+    <string name="settings_shown_on_the_state_volumebarside_lowercase_edge" formatted="false">แสดงบน ${sport. olumeBarside. lowercase ()? ขอบเมื่อคุณกดปุ่มปรับระดับเสียง</string>
+    <string name="settings_choose_which_edge_of_the_screen_the_in_app_volum" formatted="false">เลือกขอบจอที่แสดงแถบปรับระดับเสียงในแอป</string>
+    <string name="settings_content" formatted="false">เนื้อหา</string>
+    <string name="settings_default_content_language" formatted="false">ภาษาเนื้อหาปริยาย</string>
+    <string name="settings_language_for_moods_browse_search" formatted="false">ภาษาสําหรับ Muds, เรียกดูและค้นหา</string>
+    <string name="settings_select_the_preferred_catalog_language_used_acros" formatted="false">เลือกภาษาของแคตตาล็อกที่ต้องการใช้ระหว่างเรียกดู, Muds &amp; Genres, รายการเล่น และใหม่</string>
+    <string name="settings_default_content_country" formatted="false">ประเทศเนื้อหาปริยาย</string>
+    <string name="settings_region_for_charts_playlists_new_releases" formatted="false">ขอบเขตสําหรับแผนภูมิ, รายการเล่น &amp; เผยแพร่ใหม่</string>
+    <string name="settings_choose_the_regional_storefront_used_for_newly_ad" formatted="false">เลือกหน้าร้านในภูมิภาคที่ใช้สําหรับอัลบั้มใหม่ที่เพิ่มเข้ามา, มิวด์ส่วนภูมิภาค, และเพลย์บอลแบบมีคุณภาพ</string>
+    <string name="settings_hide_explicit_content" formatted="false">ซ่อนเนื้อหาที่หมดอายุแล้ว</string>
+    <string name="settings_filter_explicit_songs_across_moods_browse_search" formatted="false">กรองเพลงโดยตรงทั่วมูด, เรียกดูและสืบค้น</string>
+    <string name="settings_now_playing_liquid_glass" formatted="false">กําลังเล่น &amp; ของเหลวแก้ว</string>
+    <string name="settings_splash_screen" formatted="false">จับภาพหน้าจอ</string>
+    <string name="settings_app_launch_brand_animation_fluid_title_reveal" formatted="false">เผยหัวเรื่องอนิเมชั่นและของเหลวของ App</string>
+    <string name="settings_animated_cover_art" formatted="false">ภาพปกแบบเคลื่อนไหว</string>
+    <string name="settings_spotify_canvas_apple_music_tidal_community_motio" formatted="false">SpotifyCanvas, Apple Music, TDL &amp; Company</string>
+    <string name="settings_spotify_canvas_setup" formatted="false">Spotifyตั้งค่า Canvas</string>
+    <string name="settings_auto_hide_canvas_controls" formatted="false">โปรแกรมควบคุม Canvas อัตโนมัติ</string>
+    <string name="settings_minimize_controls_after_5s_while_canvas_plays_ta" formatted="false">ลดการควบคุมลง หลังจาก 5s ในขณะที่ Canvas เล่น (Tap Canvas toggle)</string>
+    <string name="settings_show_synced_lyrics_over_canvas" formatted="false">แสดงเนื้อร้องที่ปรับเทียบกันเหนือ Canvas</string>
+    <string name="settings_display_animated_synced_lyrics_above_the_song_na" formatted="false">แสดงแถบชุดลวดลายStencils</string>
+    <string name="settings_prioritize_spotify_canvas" formatted="false">จัดลําดับความสําคัญSpotifyคาวา</string>
+    <string name="settings_try_spotify_canvas_before_apple_music_tidal_comm" formatted="false">ลองSpotifyCanvas before Apple Music, TDL และชุมชน</string>
+    <string name="settings_play_animated_cover_over_cellular" formatted="false">เล่นแบบเคลื่อนไหวเหนือเซลล์</string>
+    <string name="settings_allow_looping_canvas_videos_over_mobile_data" formatted="false">อนุญาตให้วนรอบวิดีโอ Canvas มากกว่าข้อมูลมือถือ</string>
+    <string name="settings_player_type" formatted="false">ประเภทผู้เล่น</string>
+    <string name="settings_player_style" formatted="false">รูปแบบผู้เล่น</string>
+    <string name="settings_player_dynamic_coloring" formatted="false">การใช้สีแบบไม่ตายตัวของผู้เล่น</string>
+    <string name="settings_full_screen_cover_art" formatted="false">ภาพหน้าปกเต็มจอ</string>
+    <string name="settings_corner_length" formatted="false">ความยาวมุม</string>
+    <string name="settings_adjust_corner_radius_of_square_album_artwork" formatted="false">ปรับรัศมีมุมของอัลบั้มสี่เหลี่ยม</string>
+    <string name="settings_hide_quality_tag" formatted="false">ซ่อนแท็กคุณภาพ</string>
+    <string name="settings_hide_volume_bar" formatted="false">ซ่อนแถบปรับระดับเสียง</string>
+    <string name="settings_home_top_card_style" formatted="false">รูปแบบการ์ดบ้าน</string>
+    <string name="settings_liquid_glass_nav_mini_player" formatted="false">โปรแกรมเล่น November Group</string>
+    <string name="settings_glass_bar_and_mini_player_with_a_water_bubble_le" formatted="false">แถบแก้วและตัวเล่นมินิที่มีเลนส์ bubble น้ําในถือ</string>
+    <string name="settings_time_synced_lyrics" formatted="false">Name=เวลาName</string>
+    <string name="settings_follow_word_and_line_lyrics_in_real_time" formatted="false">ติด ตาม คํา พูด และ บรรทัด เนื้อ ร้อง ใน เวลา อัน ควร</string>
+    <string name="settings_app_font" formatted="false">แบบอักษรของ App</string>
+    <string name="settings_change_app_typography_player_controls_retain_the" formatted="false">เปลี่ยนรูปแบบการพิมพ์ App; ผู้เล่นควบคุมให้ตัวพิมพ์ตัวอักษรที่ออกแบบมา</string>
+    <string name="settings_choose_a_typeface_for_the_app_interface" formatted="false">เลือกประเภทพื้นผิวสําหรับส่วนติดต่อโปรแกรม</string>
+    <string name="settings_lyrics_providers" formatted="false">ผู้จัดทําเนื้อร้อง</string>
+    <string name="settings_text_2707ccbc8e" formatted="false">11 แหล่งที่มา • จัดลําดับลําดับการผิดพลาดและสลับลําดับ</string>
+    <string name="settings_liquid_glass_chrome" formatted="false">กระจกแก้วเหลว</string>
+    <string name="settings_refractive_translucent_headers_dock_cards" formatted="false">การเปลี่ยนหัวจดหมายแบบโปร่งแสง</string>
+    <string name="settings_tactile_haptics" formatted="false">บิด เบี้ยว</string>
+    <string name="settings_subtle_pulse_feedback_across_player_controls" formatted="false">การแจ้งเตือนของชีพจรแบบฉลาด</string>
+    <string name="settings_downloads_storage" formatted="false">ดาวน์โหลดและจัดเก็บข้อมูล</string>
+    <string name="settings_cellular_streaming" formatted="false">การไหลเวียนของเซลล์</string>
+    <string name="settings_audio_bandwidth_on_mobile_data" formatted="false">แถบเสียงบนข้อมูลมือถือ</string>
+    <string name="settings_control_audio_fidelity_when_streaming_away_from" formatted="false">ควบคุมความถูกต้องของเสียง เมื่อมีการไหลออกจากไวไฟ</string>
+    <string name="settings_download_over_wi_fi" formatted="false">ดาวน์โหลดผ่านวิไฟ</string>
+    <string name="settings_wait_for_wi_fi_before_automatic_downloads" formatted="false">รอ Wi-Fi ก่อนการดาวน์โหลดอัตโนมัติ</string>
+    <string name="settings_cache_songs_after_playback" formatted="false">เพลงแคชหลังเล่นแล้ว</string>
+    <string name="settings_save_a_song_to_offline_storage_after_it_finishes" formatted="false">บันทึกเพลงเพื่อใช้จัดเก็บเมื่อเล่นเสร็จ</string>
+    <string name="settings_cache_quality" formatted="false">คุณภาพแคช</string>
+    <string name="settings_lower_quality_saves_storage" formatted="false">บันทึกคุณภาพต่ํา</string>
+    <string name="settings_choose_the_quality_of_songs_saved_after_playback" formatted="false">เลือกคุณภาพของเพลงที่ถูกบันทึกหลังจากเล่นเสร็จ เตรียมเพลงจากนี้</string>
+    <string name="settings_song_storage_limit" formatted="false">จํากัดการจัดเก็บเพลง</string>
+    <string name="settings_maximum_disk_storage_allocated_for_offline_audio" formatted="false">เก็บแผ่นดิสก์สูงสุดเพื่อใช้เป็นแคชเพลงที่ออฟไลน์ ก่อนที่เพลงที่ยังไม่ได้เล่นจะถูกไล่ออก</string>
+    <string name="settings_clear_cached_songs" formatted="false">ล้างเพลงแคช</string>
+    <string name="settings_musiccachemanager_cachedtracks_size_songs_musicc" formatted="false">${MusicCacheManager.cacedTracks.size} เพลง: • ${ Music ChacheManager. formationsize (Music Cachagemanger. tototal Storature Biotes. Long Value)</string>
+    <string name="settings_automatic_downloads" formatted="false">ดาวน์โหลดอัตโนมัติ</string>
+    <string name="settings_save_newly_liked_added_tracks_offline" formatted="false">บันทึกเพลงใหม่ที่เพิ่มเข้ามาที่ออฟไลน์</string>
+    <string name="settings_clear_app_buffer_cache" formatted="false">ล้างแคชของ AppBS</string>
+    <string name="settings_remove_temporary_cover_art_network_buffers" formatted="false">ลบบัฟเฟอร์หน้าปกและหน้าปกชั่วคราวของเครือข่าย</string>
+    <string name="settings_library_listening" formatted="false">การฟังไลบรารี</string>
+    <string name="settings_sync_library" formatted="false">ปรับเทียบข้อมูลไลบรารี</string>
+    <string name="settings_keep_artists_playlists_albums_updated" formatted="false">ให้ศิลปิน, รายการเล่นและอัลบั้มปรับปรุง</string>
+    <string name="settings_listening_history" formatted="false">ประวัติการรับฟัง</string>
+    <string name="settings_shape_personalized_mixes_recently_played" formatted="false">ปรับเทียบข้อมูลส่วนบุคคลและเล่นเมื่อเร็ว ๆ นี้</string>
+    <string name="settings_keep_likes_on_this_device" formatted="false">ให้ชอบบนอุปกรณ์นี้</string>
+    <string name="settings_keep_liked_songs_in_itune_when_signed_out" formatted="false">ให้ชอบเพลงในiTuneเมื่อลงนามออก</string>
+    <string name="settings_notifications_general" formatted="false">การแจ้งให้ทราบ &amp; ทั่วไป</string>
+    <string name="settings_offline_mode" formatted="false">โหมดออฟไลน์</string>
+    <string name="settings_require_a_downloaded_copy_to_start_playback" formatted="false">ต้องการสําเนาที่ถูกดาวน์โหลดมา เพื่อเริ่มการเล่น</string>
+    <string name="settings_stop_music_on_task_clear" formatted="false">หยุดเพลงเมื่อหน้าต่างว่าง</string>
+    <string name="settings_stop_playback_when_itune_is_swiped_away_from_rec" formatted="false">หยุดการเล่นเมื่อiTuneถูกแย่งมาจากรุ่นล่าสุด</string>
+    <string name="settings_auto_sleep_timer" formatted="false">ตัวจับเวลาการนอนอัตโนมัติ</string>
+    <string name="settings_network_proxy" formatted="false">พร็อกซีเครือข่าย</string>
+    <string name="settings_profile_name" formatted="false">ชื่อโพรไฟล์</string>
+    <string name="settings_customize_your_settings_profile_display_name" formatted="false">ปรับแต่งการแสดงผลโพรไฟล์ของคุณ</string>
+    <string name="settings_news_from_dev" formatted="false">ข่าวจากเดวอน</string>
+    <string name="settings_announcements_releases_changelog" formatted="false">การประกาศ, การปล่อยและการเปลี่ยนแปลง</string>
+    <string name="settings_general_about" formatted="false">ทั่วไป</string>
+    <string name="settings_home_screen_widget" formatted="false">วิดเจ็ตจอหลัก</string>
+    <string name="settings_widget_customization" formatted="false">ปรับแต่งวิดเจ็ตเอง</string>
+    <string name="settings_choose_a_size_preview_artwork_controls_and_widge" formatted="false">เลือกขนาดตัวอย่าง, งานศิลปะ, ควบคุม และรูปแบบวิดเจ็ต</string>
+    <string name="settings_backup_restore" formatted="false">สํารองข้อมูล</string>
+    <string name="settings_automatic_daily_backup" formatted="false">สํารองข้อมูลประจําวันอัตโนมัติ</string>
+    <string name="settings_encrypted_daily_backups_downloads_itune_backups" formatted="false">• ดาวน์โหลด/iTune/ แบ็คอัพ</string>
+    <string name="settings_back_up_itune" formatted="false">ถอยกลับiTune</string>
+    <string name="settings_save_accounts_all_settings_audio_effects_library" formatted="false">บันทึกบัญชีผู้ใช้, การตั้งค่าทั้งหมด, ลูกเล่นเสียง, ข้อมูลไลบรารีและสถิติการเข้ารหัส</string>
+    <string name="settings_restore_from_backup" formatted="false">เรียกคืนข้อมูลจากการสํารองข้อมูล</string>
+    <string name="settings_restore_settings_audio_effects_accounts_or_libra" formatted="false">เรียกคืนการตั้งค่า, ลูกเล่นเสียง, บัญชีผู้ใช้ หรือข้อมูลไลบรารีจาก...itune</string>
+    <string name="settings_privacy" formatted="false">ชื่อแฟ้ม</string>
+    <string name="settings_pause_search_history" formatted="false">หยุดประวัติการใช้การค้นหา</string>
+    <string name="settings_do_not_save_new_search_queries_to_history" formatted="false">ไม่ต้องบันทึกการค้นหาใหม่ไปยังประวัติการใช้</string>
+    <string name="settings_clear_search_history" formatted="false">ล้างประวัติการค้นหา</string>
+    <string name="settings_remove_recent_queries_from_search" formatted="false">ลบรายการย่อยล่าสุดออกจากการค้นหา</string>
+    <string name="settings_pause_listening_history" formatted="false">หยุดประวัติการใช้การรับฟัง</string>
+    <string name="settings_do_not_record_played_songs_or_update_recommendat" formatted="false">ไม่ต้องบันทึกชื่อเพลงที่เล่น หรือรายการแนะนําเพิ่มเติม</string>
+    <string name="settings_clear_listening_history" formatted="false">ล้างประวัติการรับฟัง</string>
+    <string name="settings_remove_playback_history_and_reset_taste_profile" formatted="false">ลบประวัติการเล่นและรีเซ็ตโพรไฟล์รสชาติ</string>
+    <string name="settings_disable_screenshot" formatted="false">ปิดการจับภาพหน้าจอ</string>
+    <string name="settings_block_screenshots_and_screen_recording_across_ap" formatted="false">จับภาพหน้าจอและบันทึกหน้าจอผ่านโปรแกรม</string>
+    <string name="settings_best_available" formatted="false">ดีที่สุดที่มี</string>
+    <string name="settings_use_the_highest_available_source_quality" formatted="false">ใช้คุณภาพของแหล่งได้ที่นี่</string>
+    <string name="settings_maximum" formatted="false">ค่ามากที่สุด</string>
+    <string name="settings_choose_the_highest_bitrate_stream" formatted="false">เลือกสายข้อมูลอัตราส่งถ่ายข้อมูลสูงสุด</string>
+    <string name="settings_high" formatted="false">สูง</string>
+    <string name="settings_target_about_160_kbps" formatted="false">เป้าหมายประมาณ 160 กิโลบิต/ วินาที</string>
+    <string name="settings_standard" formatted="false">มาตรฐาน</string>
+    <string name="settings_target_about_128_kbps" formatted="false">เป้าหมายประมาณ 128 กิโลบิต/ วินาที</string>
+    <string name="settings_data_saver" formatted="false">โปรแกรมรักษาข้อมูล</string>
+    <string name="settings_target_about_64_kbps" formatted="false">เป้าหมายประมาณ 64 กิโลบิต/ วินาที</string>
+    <string name="settings_extreme" formatted="false">รุนแรง</string>
+    <string name="settings_maximum_fidelity_256_kbps" formatted="false">ความซื่อสัตย์สูงสุด (256+ กิโลบิต/ วินาที)</string>
+    <string name="settings_high_b1a5954a" formatted="false">สูง</string>
+    <string name="settings_high_quality_audio_160_kbps" formatted="false">เสียงคุณภาพสูง (~160 กิโลบิต/ วินาที)</string>
+    <string name="settings_medium" formatted="false">สื่อ</string>
+    <string name="settings_standard_audio_quality_128_kbps" formatted="false">คุณภาพเสียงมาตรฐาน (~128 กิโลบิต/ วินาที)</string>
+    <string name="settings_low" formatted="false">ต่ํา</string>
+    <string name="settings_data_saver_audio_48_64_kbps" formatted="false">บันทึกข้อมูลเสียง (~48-64 กิโลบิต/ วินาที)</string>
+    <string name="settings_text_bc7f1ee919" formatted="false">PCM 16 บิต</string>
+    <string name="settings_standard_integer_pcm_output_broadly_compatible_w" formatted="false">ผลส่งออกเป็นจํานวนเต็มแบบ PCM; เข้ากันได้อย่างกว้างขวางกับคลาสเสียง USB</string>
+    <string name="settings_text_6697202e38" formatted="false">ขนาด 32 บิต PCM</string>
+    <string name="settings_float_pcm_output_when_supported_by_android_and_t" formatted="false">การแสดงผลแบบ PCM แบบเลขทศนิยม เมื่อถูกรองรับโดย Android และพาธของเสียงเชื่อมต่อ</string>
+    <string name="settings_off" formatted="false">ปิด</string>
+    <string name="settings_play_tracks_cleanly_back_to_back" formatted="false">เล่นแทร็กเสียงแบบสะอาดก่อนกลับ</string>
+    <string name="settings_text_6597740315" formatted="false">2 วินาที</string>
+    <string name="settings_subtle_transition_overlap" formatted="false">การทับกันของการเปลี่ยนแปลงแบบฉลาด</string>
+    <string name="settings_text_7bd0ce5454" formatted="false">4 วินาที</string>
+    <string name="settings_short_seamless_fade" formatted="false">หรี่เสียงสั้น</string>
+    <string name="settings_text_56628a6fa5" formatted="false">6 วินาที</string>
+    <string name="settings_balanced_dj_style_transition" formatted="false">การแปลงรูปแบบ DJ แบบสมดุล</string>
+    <string name="settings_text_81e9ba46e0" formatted="false">8 วินาที</string>
+    <string name="settings_smooth_extended_blend" formatted="false">แปรงทาสี</string>
+    <string name="settings_text_e0529daa1e" formatted="false">12 วินาที</string>
+    <string name="settings_maximum_continuous_mix_blend" formatted="false">การผสมเสียงต่อเนื่องสูงสุด</string>
+    <string name="settings_off_e3de5ab0" formatted="false">ปิด</string>
+    <string name="settings_keep_normal_playback_effects_and_transitions" formatted="false">ให้คงลูกเล่นปกติและเปลี่ยนแปลงการเล่น</string>
+    <string name="settings_text_6db610cca6" formatted="false">5 วินาที</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_5_seconds" formatted="false">ใช้ Low-pass ใน 5 วินาทีสุดท้ายของเพลงแต่ละเพลง</string>
+    <string name="settings_text_65ca1d0712" formatted="false">10 วินาที</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_10_second" formatted="false">ใช้ Low-pass ใน 10 วินาทีสุดท้ายของเพลงแต่ละเพลง</string>
+    <string name="settings_text_eb4354110e" formatted="false">15 วินาที</string>
+    <string name="settings_apply_low_pass_during_each_songs_final_15_second" formatted="false">ใช้ Low-pass ระหว่าง 15 วินาทีสุดท้ายของเพลงแต่ละเพลง</string>
+    <string name="settings_right" formatted="false">ขวา</string>
+    <string name="settings_show_the_volume_bar_on_the_right_edge_default" formatted="false">แสดงแถบปรับระดับเสียงทางด้านขวา (ค่าปริยาย)</string>
+    <string name="settings_left" formatted="false">ซ้าย</string>
+    <string name="settings_show_the_volume_bar_on_the_left_edge" formatted="false">แสดงแถบปรับระดับเสียงทางด้านซ้าย</string>
+    <string name="settings_high_efficiency" formatted="false">ความเสมอภาคสูง</string>
+    <string name="settings_use_minimal_cellular_data" formatted="false">ใช้ข้อมูลเซลล์น้อยที่สุด</string>
+    <string name="settings_high_quality" formatted="false">คุณภาพสูง</string>
+    <string name="settings_aac_256_kbps_balanced_mobile_playback" formatted="false">AAC 256 กิโลบิต/ วินาที สมดุลในการเล่นเพลงเคลื่อนที่</string>
+    <string name="settings_lossless" formatted="false">ไร้การสูญเสีย</string>
+    <string name="settings_full_lossless_over_5g_lte_networks" formatted="false">ไม่มีการสูญเสียข้อมูลมากเกินกว่าเครือข่าย 5G/LTE</string>
+    <string name="settings_off_e3de5ab0_x" formatted="false">ปิด</string>
+    <string name="settings_allow_streaming_on_wi_fi_only" formatted="false">อนุญาตให้สตรีมบนไวไฟเท่านั้น</string>
+    <string name="settings_text_03a001f575" formatted="false">500 MB</string>
+    <string name="settings_compact_cache_70_songs" formatted="false">แคชแบบกะทัดรัด (~70 เพลง)</string>
+    <string name="settings_text_33015e637f" formatted="false">1GB</string>
+    <string name="settings_moderate_cache_150_songs" formatted="false">แคชของโมเด็ม (~150 เพลง)</string>
+    <string name="settings_text_d3b403ba96" formatted="false">2 จีบี</string>
+    <string name="settings_recommended_default_300_songs" formatted="false">ค่าปริยายที่แนะนํา (~300 เพลง)</string>
+    <string name="settings_text_227edb6ac4" formatted="false">5 จีบี</string>
+    <string name="settings_large_offline_collection_800_songs" formatted="false">คลังภาพขนาดใหญ่ (~800 เพลง)</string>
+    <string name="settings_text_ca3389aabc" formatted="false">10 จีบี</string>
+    <string name="settings_very_large_library_1_600_songs" formatted="false">ไลบรารีขนาดใหญ่มาก (~1,600 เพลง)</string>
+    <string name="settings_unlimited" formatted="false">ไม่จํากัด</string>
+    <string name="settings_never_evict_cached_songs" formatted="false">ไม่เคยไล่เพลงที่แคชไว้ออก</string>
+    <string name="settings_pipeline_output">%1$s○%2$s</string>
+    <string name="settings_volume_bar_side">แสดงบน%1$sขอบเมื่อคุณกดปุ่มปรับระดับเสียง</string>
+    <string name="settings_corner_radius_value">%1$dDp</string>
+    <string name="settings_active_lyrics_providers">%1$dทํางาน</string>
+    <string name="settings_cached_song_count_size">%1$d• เพลง%2$s</string>
+    <string name="library_playlist_count_one">%1$dรายการเล่น</string>
+    <string name="library_playlist_count_many">%1$dรายการเล่น</string>
+    <string name="library_album_count_one">%1$dเพิ่มอัลบั้ม</string>
+    <string name="library_album_count_many">%1$dเพิ่มอัลบั้ม</string>
+    <string name="remove_from_favorites">ลบออกจากรายการโปรด</string>
+    <string name="play_top_album">เล่นอัลบั้มบน</string>
+    <string name="open_in_spotify">เปิดในSpotify</string>
+    <string name="azerbaijani_language">Azərbaycan dili</string>
+    <string name="azerbaijani_interface">ใช้อินเทอร์เฟซของอาร์เซอร์ไบจัน</string>
+    <string name="bengali_language">বাংলা</string>
+    <string name="bengali_interface">ใช้ส่วนติดต่อเบงกอล</string>
+    <string name="bulgarian_language">Български</string>
+    <string name="bulgarian_interface">ใช้ส่วนติดต่อของบัลแกเรีย</string>
+    <string name="catalan_language">Català</string>
+    <string name="catalan_interface">ใช้ส่วนติดต่อของ Katalan</string>
+    <string name="czech_language">Čeština</string>
+    <string name="czech_interface">ใช้ส่วนติดต่อของเช็ก</string>
+    <string name="danish_language">Dansk</string>
+    <string name="danish_interface">ใช้ส่วนติดต่อแบบเดนมาร์ก</string>
+    <string name="finnish_language">Suomi</string>
+    <string name="finnish_interface">ใช้ส่วนติดต่อภาษาฟินแลนด์</string>
+    <string name="greek_language">Ελληνικά</string>
+    <string name="greek_interface">ใช้ ส่วน ประกอบ ภาษา กรีก</string>
+    <string name="hebrew_language">עברית</string>
+    <string name="hebrew_interface">ใช้ส่วนติดต่อแบบฮีบรู</string>
+    <string name="hungarian_language">Magyar</string>
+    <string name="hungarian_interface">ใช้ส่วนติดต่อฮังการี</string>
+    <string name="indonesian_language">Bahasa Indonesia</string>
+    <string name="indonesian_interface">ใช้ส่วนติดต่อของอินโดนีเซีย</string>
+    <string name="malay_language">Bahasa Melayu</string>
+    <string name="malay_interface">ใช้อินเทอร์เฟสของ มาเลย์</string>
+    <string name="norwegian_language">Norsk bokmål</string>
+    <string name="norwegian_interface">ใช้ส่วนติดต่อของนอร์เวย์</string>
+    <string name="persian_language">فارسی</string>
+    <string name="persian_interface">ใช้ส่วนติดต่อผู้ใช้ของเปอร์เซีย</string>
+    <string name="polish_language">Polski</string>
+    <string name="polish_interface">ใช้ส่วนติดต่อแบบโปแลนด์</string>
+    <string name="romanian_language">Română</string>
+    <string name="romanian_interface">ใช้ส่วนติดต่อของโรมาเนีย</string>
+    <string name="slovak_language">Slovenčina</string>
+    <string name="slovak_interface">ใช้ส่วนติดต่อ Slovak</string>
+    <string name="thai_language">ไทย</string>
+    <string name="thai_interface">อินเทอร์เฟซภาษาไทย</string>
+    <string name="turkish_language">Türkçe</string>
+    <string name="turkish_interface">ใช้ส่วนติดต่อภาษาตุรกี</string>
+    <string name="ukrainian_language">Українська</string>
+    <string name="ukrainian_interface">ใช้ส่วนติดต่อภาษายูเครน</string>
+    <string name="vietnamese_language">Tiếng Việt</string>
+    <string name="vietnamese_interface">ใช้ส่วนติดต่อภาษาเวียดนาม</string>
+    <string name="swahili_language">Kiswahili</string>
+    <string name="swahili_interface">ใช้ส่วนติดต่อแบบ สวา ฮิ ลี</string>
+    <string name="tagalog_language">Filipino</string>
+    <string name="tagalog_interface">ใช้ส่วนติดต่อของฟิลิปปินส์</string>
+</resources>
