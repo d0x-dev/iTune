@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.settings
 
+
+import androidx.compose.ui.res.stringResource
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -146,7 +148,7 @@ fun ProxySettingsDialog(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = "Network Proxy",
+                    text = stringResource(R.string.ui_network_proxy),
                     color = AppleTextPrimary,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -154,7 +156,7 @@ fun ProxySettingsDialog(
                 )
 
                 Text(
-                    text = "Route app network traffic via HTTP or SOCKS proxy",
+                    text = stringResource(R.string.ui_route_app_network_traffic_via_http_or_socks_proxy),
                     color = AppleTextSecondary,
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center,
@@ -176,7 +178,7 @@ fun ProxySettingsDialog(
                 ) {
                     Column {
                         Text(
-                            text = "Enable Proxy",
+                            text = stringResource(R.string.ui_enable_proxy),
                             color = AppleTextPrimary,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium
@@ -265,8 +267,8 @@ fun ProxySettingsDialog(
                         OutlinedTextField(
                             value = host,
                             onValueChange = { host = it; testResult = null },
-                            label = { Text("Server Host / IP", fontSize = 11.sp) },
-                            placeholder = { Text("e.g. 127.0.0.1", color = AppleTextSecondary.copy(alpha = 0.5f), fontSize = 13.sp) },
+                            label = { Text(stringResource(R.string.ui_server_host_ip), fontSize = 11.sp) },
+                            placeholder = { Text(stringResource(R.string.ui_e_g_127_0_0_1), color = AppleTextSecondary.copy(alpha = 0.5f), fontSize = 13.sp) },
                             singleLine = true,
                             modifier = Modifier.weight(1.8f),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -282,8 +284,8 @@ fun ProxySettingsDialog(
                         OutlinedTextField(
                             value = port,
                             onValueChange = { port = it.filter { c -> c.isDigit() }.take(5); testResult = null },
-                            label = { Text("Port", fontSize = 11.sp) },
-                            placeholder = { Text("8080", color = AppleTextSecondary.copy(alpha = 0.5f), fontSize = 13.sp) },
+                            label = { Text(stringResource(R.string.ui_port), fontSize = 11.sp) },
+                            placeholder = { Text(stringResource(R.string.ui_text_5e3274dc1e), color = AppleTextSecondary.copy(alpha = 0.5f), fontSize = 13.sp) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
                             modifier = Modifier.weight(1f),
@@ -302,7 +304,7 @@ fun ProxySettingsDialog(
                     OutlinedTextField(
                         value = user,
                         onValueChange = { user = it; testResult = null },
-                        label = { Text("Username (Optional)", fontSize = 11.sp) },
+                        label = { Text(stringResource(R.string.ui_username_optional), fontSize = 11.sp) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -318,7 +320,7 @@ fun ProxySettingsDialog(
                     OutlinedTextField(
                         value = pass,
                         onValueChange = { pass = it; testResult = null },
-                        label = { Text("Password (Optional)", fontSize = 11.sp) },
+                        label = { Text(stringResource(R.string.ui_password_optional), fontSize = 11.sp) },
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         singleLine = true,
@@ -367,14 +369,14 @@ fun ProxySettingsDialog(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Testing Proxy…",
+                                text = stringResource(R.string.ui_testing_proxy),
                                 color = AppleMusicRed,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
                         } else {
                             Text(
-                                text = "Test Proxy Connection",
+                                text = stringResource(R.string.ui_test_proxy_connection),
                                 color = AppleMusicRed,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.SemiBold
@@ -425,7 +427,7 @@ fun ProxySettingsDialog(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Save Proxy",
+                        text = stringResource(R.string.ui_save_proxy),
                         color = AppleMusicRed,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -450,7 +452,7 @@ fun ProxySettingsDialog(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel),
                         color = AppleTextSecondary,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Normal,
