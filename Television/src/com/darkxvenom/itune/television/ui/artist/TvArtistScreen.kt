@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.television.ui.artist
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -212,7 +214,7 @@ fun TvArtistScreen(
                     )
                     Spacer(Modifier.height(16.dp))
                     Text(
-                        text = "Loading $effectiveName…",
+                        text = stringResource(R.string.ui_loading, effectiveName),
                         color = Color.White.copy(alpha = 0.60f),
                         fontSize = 15.sp,
                         fontFamily = SFProDisplay,
@@ -364,7 +366,7 @@ fun TvArtistScreen(
                                 // Radio Button
                                 TvArtistCircleIcon(
                                     icon = Icons.Rounded.Radio,
-                                    contentDescription = "Artist Radio",
+                                    contentDescription = stringResource(R.string.ui_artist_radio),
                                     onClick = {
                                         if (topSongs.isNotEmpty()) {
                                             MusicPlayerState.playWithRadioQueue(topSongs.first(), expandPlayer = false)
@@ -380,7 +382,7 @@ fun TvArtistScreen(
                 if (topSongs.isNotEmpty()) {
                     item(key = "section_top_songs_header") {
                         Text(
-                            text = "Top Songs",
+                            text = stringResource(R.string.ui_top_songs),
                             color = Color.White,
                             fontSize = 22.sp,
                             fontFamily = SFProDisplay,
@@ -466,7 +468,7 @@ fun TvArtistScreen(
                                 .padding(horizontal = 48.dp, vertical = 28.dp),
                         ) {
                             Text(
-                                text = "About $effectiveName",
+                                text = stringResource(R.string.ui_about, effectiveName),
                                 color = Color.White,
                                 fontSize = 22.sp,
                                 fontFamily = SFProDisplay,
@@ -633,7 +635,7 @@ private fun TvArtistTrackRow(
             }
         } else {
             Text(
-                text = "$index",
+                text = stringResource(R.string.ui_text_c79f71243f, index),
                 color = Color.White.copy(alpha = 0.40f),
                 fontSize = 14.sp,
                 fontFamily = SFProDisplay,
