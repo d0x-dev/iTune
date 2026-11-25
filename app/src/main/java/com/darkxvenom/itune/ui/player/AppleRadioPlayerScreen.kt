@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.ui.player
 
+
+import androidx.compose.ui.res.stringResource
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -201,7 +203,7 @@ fun FloatingRadioMiniPlayer(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Radio,
-                        contentDescription = "FM Radio",
+                        contentDescription = stringResource(R.string.ui_fm_radio),
                         tint = AppleMusicRed,
                         modifier = Modifier.size(18.dp),
                     )
@@ -263,7 +265,7 @@ fun FloatingRadioMiniPlayer(
                 IconButton(onClick = onNextStation, modifier = Modifier.size(36.dp)) {
                     Image(
                         painter = painterResource(R.drawable.skip_next),
-                        contentDescription = "Next Station",
+                        contentDescription = stringResource(R.string.ui_next_station),
                         colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.88f)),
                         modifier = Modifier.size(22.dp),
                     )
@@ -627,7 +629,7 @@ fun AppleRadioPlayerOverlay(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.KeyboardArrowDown,
-                    contentDescription = "Minimize",
+                    contentDescription = stringResource(R.string.ui_minimize),
                     tint = Color.White.copy(alpha = 0.94f),
                     modifier = Modifier.size(32.dp),
                 )
@@ -730,7 +732,7 @@ fun AppleRadioPlayerOverlay(
                     painter = painterResource(
                         if (isFav) R.drawable.ic_star_filled else R.drawable.ic_star_outline,
                     ),
-                    contentDescription = "Favorite",
+                    contentDescription = stringResource(R.string.ui_favorite),
                     colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.94f)),
                     modifier = Modifier.size(19.dp),
                 )
@@ -766,7 +768,7 @@ fun AppleRadioPlayerOverlay(
             ) {
                 Image(
                     painter = painterResource(R.drawable.more_horiz),
-                    contentDescription = "More Options",
+                    contentDescription = stringResource(R.string.ui_more_options),
                     colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.94f)),
                     modifier = Modifier.size(21.dp),
                 )
@@ -961,7 +963,7 @@ fun AppleRadioPlayerOverlay(
                 ) {
                     Image(
                         painter = painterResource(R.drawable.skip_previous),
-                        contentDescription = "Previous Station",
+                        contentDescription = stringResource(R.string.ui_previous_station),
                         colorFilter = ColorFilter.tint(Color.White),
                         modifier = Modifier.size(50.dp),
                     )
@@ -1004,7 +1006,7 @@ fun AppleRadioPlayerOverlay(
                 ) {
                     Image(
                         painter = painterResource(R.drawable.skip_next),
-                        contentDescription = "Next Station",
+                        contentDescription = stringResource(R.string.ui_next_station),
                         colorFilter = ColorFilter.tint(Color.White),
                         modifier = Modifier.size(50.dp),
                     )
@@ -1047,7 +1049,7 @@ fun AppleRadioPlayerOverlay(
                 ) {
                     Image(
                         painter = painterResource(R.drawable.ic_menu_sleep_timer),
-                        contentDescription = "Sleep Timer",
+                        contentDescription = stringResource(R.string.ui_sleep_timer),
                         colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.90f)),
                         modifier = Modifier.size(24.dp),
                     )
@@ -1084,7 +1086,7 @@ fun AppleRadioPlayerOverlay(
                 ) {
                     Image(
                         painter = painterResource(outputIconRes),
-                        contentDescription = "Audio Output Devices",
+                        contentDescription = stringResource(R.string.ui_audio_output_devices),
                         colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.92f)),
                         contentScale = ContentScale.Fit,
                         modifier = Modifier.size(if (outputIconRes == R.drawable.ic_airbuds) 28.dp else 23.dp),
@@ -1108,7 +1110,7 @@ fun AppleRadioPlayerOverlay(
                 ) {
                     Image(
                         painter = painterResource(R.drawable.queue_music),
-                        contentDescription = "Station List",
+                        contentDescription = stringResource(R.string.ui_station_list),
                         colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.90f)),
                         modifier = Modifier.size(25.dp),
                     )
@@ -1318,7 +1320,7 @@ private fun RadioMoreOptionsPopup(
                     painter = painterResource(
                         if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_outline,
                     ),
-                    contentDescription = "Favorite",
+                    contentDescription = stringResource(R.string.ui_favorite),
                     colorFilter = ColorFilter.tint(Color.White),
                     modifier = Modifier.size(18.dp),
                 )
@@ -1359,7 +1361,7 @@ private fun RadioMoreOptionsPopup(
                             onClick = {
                                 val cb = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
                                 cb?.setPrimaryClip(ClipData.newPlainText(station.name, station.streamUrl))
-                                Toast.makeText(context, "Stream URL copied", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_stream_url_copied), Toast.LENGTH_SHORT).show()
                                 onDismiss()
                             },
                         )
@@ -1421,36 +1423,36 @@ private fun RadioMoreOptionsPopup(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Text(
-                            text = "Country: ${station.countryName} (${station.countryCode})",
+                            text = stringResource(R.string.ui_country, station.countryName, station.countryCode),
                             color = Color.White,
                             fontSize = 13.5.sp,
                         )
                         if (station.cityState.isNotBlank()) {
                             Text(
-                                text = "City / State: ${station.cityState}",
+                                text = stringResource(R.string.ui_city_state, station.cityState),
                                 color = Color.White,
                                 fontSize = 13.5.sp,
                             )
                         }
                         Text(
-                            text = "Codec / Bitrate: ${station.qualityBadge}",
+                            text = stringResource(R.string.ui_codec_bitrate, station.qualityBadge),
                             color = Color.White,
                             fontSize = 13.5.sp,
                         )
                         if (station.language.isNotBlank()) {
                             Text(
-                                text = "Language: ${station.language}",
+                                text = stringResource(R.string.ui_language, station.language),
                                 color = Color.White,
                                 fontSize = 13.5.sp,
                             )
                         }
                         Text(
-                            text = "Tags: ${station.primaryTagSummary}",
+                            text = stringResource(R.string.ui_tags, station.primaryTagSummary),
                             color = Color.White.copy(alpha = 0.72f),
                             fontSize = 12.5.sp,
                         )
                         Text(
-                            text = "Stream: ${station.streamUrl}",
+                            text = stringResource(R.string.ui_stream, station.streamUrl),
                             color = Color.White.copy(alpha = 0.62f),
                             fontSize = 11.5.sp,
                             maxLines = 2,
