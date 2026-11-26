@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">ใช้ส่วนติดต่อแบบ สวา ฮิ ลี</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">ใช้ส่วนติดต่อของฟิลิปปินส์</string>
+    <string name="developer_mode">โหมดนักพัฒนา</string>
+    <string name="developer_mode_description">บันทึกรายละเอียดข้อขัดข้องไว้ในอุปกรณ์นี้และแสดงเมื่อเปิด iTune ครั้งถัดไป</string>
+    <string name="crash_report_title">รายงานข้อขัดข้อง</string>
+    <string name="crash_report_unavailable">ไม่มีรายละเอียดข้อขัดข้อง</string>
+    <string name="crash_action_failed">ดำเนินการไม่สำเร็จ</string>
+    <string name="real_time_logs">บันทึกแบบเรียลไทม์</string>
+    <string name="real_time_logs_description">บันทึกข้อมูลการวินิจฉัยของแอปและแสดงในหน้าต่างลอย</string>
 </resources>

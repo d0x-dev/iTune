@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Use the Swahili interface</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Use the Filipino interface</string>
+    <string name="developer_mode">ڈویلپر موڈ</string>
+    <string name="developer_mode_description">کریش کی تفصیلات اس آلے پر محفوظ کریں اور اگلی بار iTune کھولنے پر دکھائیں۔</string>
+    <string name="crash_report_title">کریش رپورٹ</string>
+    <string name="crash_report_unavailable">کریش کی تفصیلات دستیاب نہیں ہیں۔</string>
+    <string name="crash_action_failed">کارروائی مکمل نہیں ہو سکی۔</string>
+    <string name="real_time_logs">لائیو لاگز</string>
+    <string name="real_time_logs_description">ایپ کے تشخیصی واقعات ریکارڈ کریں اور انہیں ایک تیرتی ہوئی ونڈو میں دکھائیں۔</string>
 </resources>

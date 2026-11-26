@@ -260,7 +260,7 @@ object BackupRestoreManager {
             com.darkxvenom.itune.audio.AudioOutputManager.reloadBackupState()
             com.darkxvenom.itune.audio.AudioEngineManager.reloadBackupState()
             com.darkxvenom.itune.island.DynamicIslandStore.reloadBackupState(app)
-            com.darkxvenom.itune.island.DynamicIslandStore.syncServiceState(app)
+            com.darkxvenom.itune.island.DynamicIslandStore.refreshOverlayPermission(app)
             com.darkxvenom.itune.data.artist.ArtistStateStore.reloadBackupState(app)
             com.darkxvenom.itune.backend.MusicCacheManager.init(app)
         }

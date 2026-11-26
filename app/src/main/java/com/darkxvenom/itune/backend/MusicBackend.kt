@@ -11,6 +11,7 @@
 
 package com.darkxvenom.itune.backend
 
+import com.darkxvenom.itune.diagnostics.LiveLogs
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -834,16 +835,19 @@ object MusicBackend {
         artist: String? = null,
     ): String? = withContext(Dispatchers.IO) {
         try {
+            LiveLogs.event("Extractor", if (forceRefresh) "Refreshing stream" else "Resolving stream")
             com.darkxvenom.itune.audio.StreamTraceStore.begin(videoId)
             if (videoId.startsWith("webdav:")) {
                 val url = videoId.removePrefix("webdav:").takeIf { it.startsWith("https://") || it.startsWith("http://") }
                 if (url != null) {
                     com.darkxvenom.itune.audio.StreamTraceStore.put(videoId, com.darkxvenom.itune.audio.StreamTrace("WebDAV", "Remote audio file", listOf("Streaming the selected file directly from its WebDAV server")))
+                    LiveLogs.event("Extractor", "Opened WebDAV stream")
                     return@withContext url
                 }
             }
             if (videoId.startsWith("smb://")) {
                 com.darkxvenom.itune.audio.StreamTraceStore.put(videoId, com.darkxvenom.itune.audio.StreamTrace("SMB", "Remote audio file", listOf("Streaming the selected file directly from its SMB share")))
+                LiveLogs.event("Extractor", "Opened SMB stream")
                 return@withContext videoId
             }
             // 1. Direct custom-source tracks (src:<configId>::<trackId>)
@@ -859,6 +863,7 @@ object MusicBackend {
                     val srcName = stream.sourceConfigId?.let { com.darkxvenom.itune.data.sources.SourceRegistry.config(it)?.displayName }
                         ?: com.darkxvenom.itune.data.sources.SourceRegistry.config(configId)?.displayName
                         ?: "Source"
+                    LiveLogs.event("Extractor", "Direct source resolved: ${stream.format.kbps ?: 0} kbps")
                     val q = stream.format.summary
                     com.darkxvenom.itune.audio.StreamTraceStore.put(
                         videoId,
@@ -894,7 +899,11 @@ object MusicBackend {
 
             val activeSources = com.darkxvenom.itune.data.sources.SourceRegistry.activeForPlayback()
             val evalSteps = mutableListOf<String>()
-            evalSteps.add("Evaluating ${activeSources.size} enabled source(s) in priority order")
+            fun traceStep(step: String) {
+                evalSteps.add(step)
+                LiveLogs.event(TAG, step)
+            }
+            traceStep("Evaluating ${activeSources.size} enabled source(s) in priority order")
 
             for ((index, source) in activeSources.withIndex()) {
                 val rank = index + 1
@@ -904,11 +913,11 @@ object MusicBackend {
                     }
                     val ytEnabled = (ytConfig?.enabled != false) && com.darkxvenom.itune.data.sources.PlaybackSources.youtubeEnabled.value
                     if (!ytEnabled) {
-                        evalSteps.add("#$rank Priority: YouTube Music is disabled in Sources")
+                        traceStep("#$rank Priority: YouTube Music is disabled in Sources")
                         continue
                     }
 
-                    evalSteps.add("#$rank Priority: Querying YouTube Music extractor...")
+                    traceStep("#$rank Priority: Querying YouTube Music extractor...")
                     com.darkxvenom.itune.audio.StreamTraceStore.put(
                         videoId,
                         com.darkxvenom.itune.audio.StreamTrace("YouTube Music", "Extracting...", evalSteps.toList())
@@ -917,8 +926,9 @@ object MusicBackend {
                     val info = try {
                         getOrLoadStreamInfo(videoId, forceRefresh = forceRefresh)
                     } catch (e: Exception) {
-                        Log.w(TAG, "YouTube extractor failed for $videoId: ${e.message}")
-                        evalSteps.add("YouTube Music extractor failed: ${e.message}")
+                        Log.w(TAG, "YouTube extractor failed for $videoId: ${e.message}", e)
+                        LiveLogs.failure("Extractor", e)
+                        traceStep("YouTube Music extractor failed: ${e.message}")
                         null
                     }
 
@@ -955,7 +965,7 @@ object MusicBackend {
                             if (chosen?.content != null && chosen.content.isNotBlank()) {
                                 val kb = chosen.averageBitrate
                                 val fmt = chosen.format?.name ?: "audio"
-                                evalSteps.add("Matched on YouTube Music (#$rank priority): $fmt @ ${if (kb > 0) "$kb kbps" else "128 kbps"}")
+                                traceStep("Matched on YouTube Music (#$rank priority): $fmt @ ${if (kb > 0) "$kb kbps" else "128 kbps"}")
                                 com.darkxvenom.itune.audio.StreamTraceStore.put(
                                     videoId,
                                     com.darkxvenom.itune.audio.StreamTrace(
@@ -968,11 +978,11 @@ object MusicBackend {
                             }
                         }
                     }
-                    evalSteps.add("No usable audio streams found on YouTube Music (#$rank priority)")
+                    traceStep("No usable audio streams found on YouTube Music (#$rank priority)")
                 } else {
                     // Non-YouTube source: JioSaavn, Tidal, Hi-Res, Addon, Extension
                     if (target.title.isNotBlank()) {
-                        evalSteps.add("#$rank Priority: Querying ${source.displayName}...")
+                        traceStep("#$rank Priority: Querying ${source.displayName}...")
                         com.darkxvenom.itune.audio.StreamTraceStore.put(
                             videoId,
                             com.darkxvenom.itune.audio.StreamTrace(source.displayName, "Searching...", evalSteps.toList())
@@ -1008,6 +1018,7 @@ object MusicBackend {
                                 val matches = if (!candidates.isNullOrEmpty()) {
                                     com.darkxvenom.itune.data.sources.TrackMatcher.ranked(candidates, target)
                                 } else emptyList()
+                                LiveLogs.event(TAG, "${source.displayName} query=$q candidates=${candidates?.size ?: 0} matches=${matches.size}")
                                 if (matches.isNotEmpty()) {
                                     stream = source.stream(matches.first().id, request)
                                     if (stream != null && stream.url.isNotBlank() && stream.url !in excludedUrls) {
@@ -1015,7 +1026,8 @@ object MusicBackend {
                                     }
                                 }
                             } catch (e: Exception) {
-                                Log.w(TAG, "Source ${source.displayName} (#$rank) query '$q' failed: ${e.message}")
+                                Log.w(TAG, "Source ${source.displayName} (#$rank) query '$q' failed: ${e.message}", e)
+                                LiveLogs.failure("Extractor", e)
                             }
                         }
 
@@ -1025,7 +1037,7 @@ object MusicBackend {
                             val kbps = stream.format.kbps ?: if (stream.format.isLossless == true) 1411 else 320
                             val codec = stream.format.codec?.uppercase(java.util.Locale.ROOT) ?: (if (stream.format.isLossless == true) "FLAC" else "AAC")
                             val q = "$kbps kbps • $codec"
-                            evalSteps.add("Matched valid stream on $srcName (#$rank priority): $q")
+                            traceStep("Matched valid stream on $srcName (#$rank priority): $q")
                             com.darkxvenom.itune.audio.StreamTraceStore.put(
                                 videoId,
                                 com.darkxvenom.itune.audio.StreamTrace(
@@ -1040,7 +1052,7 @@ object MusicBackend {
                             // STOP EXTRACTING immediately on first valid stream!
                             return@withContext stream.url
                         } else {
-                            evalSteps.add("No matching stream found on ${source.displayName} (#$rank priority)")
+                            traceStep("No matching stream found on ${source.displayName} (#$rank priority)")
                         }
                     }
                 }
@@ -1052,10 +1064,14 @@ object MusicBackend {
             }
             val ytEnabled = (ytConfig?.enabled != false) && com.darkxvenom.itune.data.sources.PlaybackSources.youtubeEnabled.value
             if (ytEnabled && activeSources.none { it.kind == com.darkxvenom.itune.data.sources.SourceKind.YOUTUBE }) {
-                evalSteps.add("Fallback: Extracting from default YouTube Music pipeline...")
+                traceStep("Fallback: Extracting from default YouTube Music pipeline...")
                 val info = try {
                     getOrLoadStreamInfo(videoId, forceRefresh = forceRefresh)
-                } catch (e: Exception) { null }
+                } catch (e: Exception) {
+                    Log.w(TAG, "YouTube fallback extraction failed for $videoId", e)
+                    LiveLogs.failure("Extractor", e)
+                    null
+                }
                 val audioStreams = info?.audioStreams
                 if (!audioStreams.isNullOrEmpty()) {
 
@@ -1076,7 +1092,7 @@ object MusicBackend {
                     if (chosen?.content != null && chosen.content.isNotBlank()) {
                         val kb = chosen.averageBitrate
                         val fmt = chosen.format?.name ?: "audio"
-                        evalSteps.add("Fallback matched on YouTube Music: $fmt @ ${if (kb > 0) "$kb kbps" else "128 kbps"}")
+                        traceStep("Fallback matched on YouTube Music: $fmt @ ${if (kb > 0) "$kb kbps" else "128 kbps"}")
                         com.darkxvenom.itune.audio.StreamTraceStore.put(
                             videoId,
                             com.darkxvenom.itune.audio.StreamTrace(
@@ -1090,7 +1106,7 @@ object MusicBackend {
                 }
             }
 
-            evalSteps.add("Finished evaluation: No playable stream found across all enabled sources")
+            traceStep("Finished evaluation: No playable stream found across all enabled sources")
             com.darkxvenom.itune.audio.StreamTraceStore.put(
                 videoId,
                 com.darkxvenom.itune.audio.StreamTrace(

@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Käytä Swahili-rajapintaa</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Käytä filippiiniläistä käyttöliittymää</string>
+    <string name="developer_mode">Kehittäjätila</string>
+    <string name="developer_mode_description">Tallenna kaatumisen tiedot tälle laitteelle ja näytä ne, kun iTune avataan seuraavan kerran.</string>
+    <string name="crash_report_title">Kaatumisraportti</string>
+    <string name="crash_report_unavailable">Kaatumisen tietoja ei ole saatavilla.</string>
+    <string name="crash_action_failed">Toimintoa ei voitu suorittaa.</string>
+    <string name="real_time_logs">Reaaliaikainen loki</string>
+    <string name="real_time_logs_description">Tallenna sovelluksen diagnostiikkatiedot ja näytä ne kelluvassa ikkunassa.</string>
 </resources>

@@ -12,6 +12,8 @@
 package com.darkxvenom.itune.data.library
 
 import android.content.Context
+import com.darkxvenom.itune.diagnostics.LiveLogs
+import com.darkxvenom.itune.diagnostics.CrashReports
 import android.content.SharedPreferences
 import androidx.compose.runtime.Immutable
 import com.darkxvenom.itune.backend.MusicBackend
@@ -111,6 +113,8 @@ data class SettingsUiState(
     val proxyPass: String = "",
     val pauseSearchHistory: Boolean = false,
     val pauseListeningHistory: Boolean = false,
+    val realTimeLogs: Boolean = false,
+    val developerMode: Boolean = false,
     val disableScreenshot: Boolean = false,
     val pauseOnZeroVolume: Boolean = false,
     val lowPassFilterEnabled: Boolean = false,
@@ -259,6 +263,8 @@ object SettingsStore {
     // Privacy & Security
     const val KEY_PAUSE_SEARCH_HISTORY = "pause_search_history"
     const val KEY_PAUSE_LISTENING_HISTORY = "pause_listening_history"
+    const val KEY_REAL_TIME_LOGS = "real_time_logs"
+    const val KEY_DEVELOPER_MODE = "developer_mode"
     const val KEY_DISABLE_SCREENSHOT = "disable_screenshot"
     const val KEY_PAUSE_ON_ZERO_VOLUME = "pause_on_zero_volume"
     const val KEY_LOW_PASS_FILTER = "low_pass_filter_enabled"
@@ -327,6 +333,17 @@ object SettingsStore {
 
     fun setBoolean(context: Context, key: String, value: Boolean) {
         ensureInit(context)
+        if (key == KEY_DEVELOPER_MODE) {
+            CrashReports.setEnabled(context.applicationContext, value)
+            if (!value) LiveLogs.setEnabled(context, false)
+            _state.value = _state.value.copy(developerMode = CrashReports.isEnabled(), realTimeLogs = LiveLogs.enabled)
+            return
+        }
+        if (key == KEY_REAL_TIME_LOGS) {
+            LiveLogs.setEnabled(context, value)
+            _state.value = _state.value.copy(realTimeLogs = LiveLogs.enabled)
+            return
+        }
         prefs?.edit()?.putBoolean(key, value)?.apply()
         val cur = _state.value
         _state.value = when (key) {
@@ -568,6 +585,7 @@ object SettingsStore {
     fun setSpotifySpdcToken(context: Context, token: String) {
         ensureInit(context)
         val trimmed = token.trim()
+        LiveLogs.event("Spotify", if (trimmed.isBlank()) "Disconnected" else "Session saved")
         EncryptedAuthPrefs.putEncrypted(
             context,
             KEY_SPOTIFY_SPDC_TOKEN,
@@ -733,7 +751,7 @@ object SettingsStore {
             soundCheck = p.getBoolean(KEY_SOUND_CHECK, true),
             animatedArtwork = p.getBoolean(KEY_ANIMATED_ARTWORK, true),
             canvasOverCellular = p.getBoolean(KEY_CANVAS_OVER_CELLULAR, false),
-            spotifySpdcToken = p.getString(KEY_SPOTIFY_SPDC_TOKEN, "") ?: "",
+            spotifySpdcToken = EncryptedAuthPrefs.getDecrypted(context, KEY_SPOTIFY_SPDC_TOKEN).orEmpty(),
             spotifyCanvasAutoHide = p.getBoolean(KEY_SPOTIFY_CANVAS_AUTO_HIDE, true),
             prioritizeSpotifyCanvas = p.getBoolean(KEY_PRIORITIZE_SPOTIFY_CANVAS, false),
             showSyncedLyricsOverCanvas = p.getBoolean(KEY_SHOW_SYNCED_LYRICS_OVER_CANVAS, true),
@@ -796,6 +814,8 @@ object SettingsStore {
             proxyPass = p.getString(KEY_PROXY_PASS, "") ?: "",
             pauseSearchHistory = p.getBoolean(KEY_PAUSE_SEARCH_HISTORY, false),
             pauseListeningHistory = p.getBoolean(KEY_PAUSE_LISTENING_HISTORY, false),
+            developerMode = CrashReports.isEnabled(),
+            realTimeLogs = LiveLogs.enabled,
             disableScreenshot = p.getBoolean(KEY_DISABLE_SCREENSHOT, false),
             pauseOnZeroVolume = p.getBoolean(KEY_PAUSE_ON_ZERO_VOLUME, false),
             lowPassFilterEnabled = p.getBoolean(KEY_LOW_PASS_FILTER, false),

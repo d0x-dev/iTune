@@ -3817,7 +3817,25 @@ private fun buildSettingsSections(
     SettingsSection(
         id = "notifications_general",
         title = context.getString(R.string.settings_notifications_general),
-        entries = listOf(
+        entries = listOfNotNull(
+            SettingsEntry.Toggle(
+                id = SettingsStore.KEY_DEVELOPER_MODE,
+                title = context.getString(R.string.developer_mode),
+                subtitle = context.getString(R.string.developer_mode_description),
+                iconRes = R.drawable.ic_settings_about,
+                keywords = listOf("developer", "crash", "logs"),
+                checked = state.developerMode,
+                onToggle = { onToggleBool(SettingsStore.KEY_DEVELOPER_MODE, it) },
+            ),
+            if (state.developerMode) SettingsEntry.Toggle(
+                id = SettingsStore.KEY_REAL_TIME_LOGS,
+                title = context.getString(R.string.real_time_logs),
+                subtitle = context.getString(R.string.real_time_logs_description),
+                iconRes = R.drawable.ic_settings_about,
+                keywords = listOf("developer", "live", "logs"),
+                checked = state.realTimeLogs,
+                onToggle = { onToggleBool(SettingsStore.KEY_REAL_TIME_LOGS, it) },
+            ) else null,
             SettingsEntry.Picker(
                 id = "app_language",
                 title = context.getString(R.string.app_language),

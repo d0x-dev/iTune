@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Utilizați interfața Swahili</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Utilizați interfața filipineză</string>
+    <string name="developer_mode">Mod dezvoltator</string>
+    <string name="developer_mode_description">Salvează detaliile erorii pe acest dispozitiv și afișează-le la următoarea deschidere a iTune.</string>
+    <string name="crash_report_title">Raport de eroare</string>
+    <string name="crash_report_unavailable">Detaliile erorii nu sunt disponibile.</string>
+    <string name="crash_action_failed">Acțiunea nu a putut fi finalizată.</string>
+    <string name="real_time_logs">Jurnale în timp real</string>
+    <string name="real_time_logs_description">Înregistrează evenimentele de diagnostic și afișează-le într-o fereastră flotantă.</string>
 </resources>

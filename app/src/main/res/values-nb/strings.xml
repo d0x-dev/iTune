@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Bruk Swahili-grensesnittet</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Bruk filippinsk grensesnitt</string>
+    <string name="developer_mode">Utviklermodus</string>
+    <string name="developer_mode_description">Lagre krasjdetaljer på denne enheten og vis dem neste gang iTune åpnes.</string>
+    <string name="crash_report_title">Krasjrapport</string>
+    <string name="crash_report_unavailable">Krasjdetaljer er utilgjengelige.</string>
+    <string name="crash_action_failed">Handlingen kunne ikke fullføres.</string>
+    <string name="real_time_logs">Sanntidslogg</string>
+    <string name="real_time_logs_description">Registrer diagnostikk fra appen og vis den i et flytende vindu.</string>
 </resources>

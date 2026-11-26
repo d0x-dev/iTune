@@ -50,6 +50,7 @@
         android:required="false" />
 
     <application
+        android:name=".diagnostics.ITuneApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -187,11 +188,6 @@
             android:name=".backend.PlaybackService"
             android:exported="false"
             android:stopWithTask="false"
-            android:foregroundServiceType="mediaPlayback" />
-
-        <service
-            android:name=".island.DynamicIslandService"
-            android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
 
         <service

@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Kiolesura cha Kiswahili</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Kutumia interface ya Filipino</string>
+    <string name="developer_mode">Hali ya msanidi programu</string>
+    <string name="developer_mode_description">Hifadhi maelezo ya hitilafu kwenye kifaa hiki na uyaonyeshe iTune itakapofunguliwa tena.</string>
+    <string name="crash_report_title">Ripoti ya hitilafu</string>
+    <string name="crash_report_unavailable">Maelezo ya hitilafu hayapatikani.</string>
+    <string name="crash_action_failed">Imeshindikana kukamilisha kitendo.</string>
+    <string name="real_time_logs">Kumbukumbu za moja kwa moja</string>
+    <string name="real_time_logs_description">Rekodi taarifa za uchunguzi wa programu na uzionyeshe katika dirisha linaloelea.</string>
 </resources>

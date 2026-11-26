@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">استفاده از رابط Swahili</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">استفاده از رابط فیلیپینی</string>
+    <string name="developer_mode">حالت توسعه‌دهنده</string>
+    <string name="developer_mode_description">جزئیات خرابی را در این دستگاه ذخیره کنید و در اجرای بعدی iTune ببینید.</string>
+    <string name="crash_report_title">گزارش خرابی</string>
+    <string name="crash_report_unavailable">جزئیات خرابی در دسترس نیست.</string>
+    <string name="crash_action_failed">انجام این کار ممکن نبود.</string>
+    <string name="real_time_logs">گزارش‌های زنده</string>
+    <string name="real_time_logs_description">رویدادهای عیب‌یابی برنامه را ثبت کنید و در یک پنجرهٔ شناور ببینید.</string>
 </resources>

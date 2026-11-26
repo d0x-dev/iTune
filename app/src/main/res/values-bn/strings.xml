@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">সোয়াহিলি ইন্টারফেস ব্যবহার করো</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">ফিলিপিনো ইন্টারফেস ব্যবহার করুন</string>
+    <string name="developer_mode">ডেভেলপার মোড</string>
+    <string name="developer_mode_description">ক্র্যাশের বিবরণ এই ডিভাইসে সংরক্ষণ করে পরের বার iTune খুললে দেখান।</string>
+    <string name="crash_report_title">ক্র্যাশ রিপোর্ট</string>
+    <string name="crash_report_unavailable">ক্র্যাশের বিবরণ পাওয়া যায়নি।</string>
+    <string name="crash_action_failed">কাজটি সম্পন্ন হয়নি।</string>
+    <string name="real_time_logs">সরাসরি লগ</string>
+    <string name="real_time_logs_description">অ্যাপের ডায়াগনস্টিক তথ্য সংগ্রহ করে ভাসমান উইন্ডোতে দেখান।</string>
 </resources>

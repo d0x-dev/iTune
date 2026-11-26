@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Použite swahilské rozhranie</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Použiť filipínske rozhranie</string>
+    <string name="developer_mode">Režim vývojára</string>
+    <string name="developer_mode_description">Uložiť podrobnosti o páde v tomto zariadení a zobraziť ich pri ďalšom spustení iTune.</string>
+    <string name="crash_report_title">Správa o páde</string>
+    <string name="crash_report_unavailable">Podrobnosti o páde nie sú k dispozícii.</string>
+    <string name="crash_action_failed">Akciu sa nepodarilo dokončiť.</string>
+    <string name="real_time_logs">Živé záznamy</string>
+    <string name="real_time_logs_description">Zaznamenáva diagnostické udalosti aplikácie a zobrazuje ich v plávajúcom okne.</string>
 </resources>

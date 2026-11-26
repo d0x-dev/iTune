@@ -11,6 +11,7 @@
 
 package com.darkxvenom.itune.data.auth
 
+import com.darkxvenom.itune.diagnostics.LiveLogs
 import android.content.Context
 import android.content.SharedPreferences
 import com.darkxvenom.itune.data.artist.ArtistInnertubeClient
@@ -450,6 +451,7 @@ object GoogleAuthStore {
     }
 
     fun signOut(context: Context) {
+        LiveLogs.event("Google", "Signed out")
         ensureInit(context)
         val app = context.applicationContext
         EncryptedAuthPrefs.putEncrypted(app, KEY_COOKIE, null)

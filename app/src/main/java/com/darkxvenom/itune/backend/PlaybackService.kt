@@ -18,6 +18,9 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import com.darkxvenom.itune.island.DynamicIslandOverlay
+import com.darkxvenom.itune.island.DynamicIslandStore
 import android.content.pm.ServiceInfo
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -84,8 +87,17 @@ class PlaybackService : Service() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var session: MediaSession? = null
     private var lastSnap: Snap? = null
+    private var island: DynamicIslandOverlay? = null
     private var foreground = false
     private var commandReceived = false
+
+    private val islandMonitor = scope.launch(start = kotlinx.coroutines.CoroutineStart.LAZY) {
+        DynamicIslandStore.refreshOverlayPermission(this@PlaybackService)
+        DynamicIslandStore.overlayAllowed.collect { allowed ->
+            island?.close()
+            island = if (allowed) DynamicIslandOverlay(this@PlaybackService).also { it.attach() } else null
+        }
+    }
 
     private val mainHandler = Handler(Looper.getMainLooper())
     private var stopping = false
@@ -169,12 +181,14 @@ class PlaybackService : Service() {
             stopping = false
             handleAction(action)
             refresh(currentSnap(), forceForeground = false)
+            if (!stopping) islandMonitor.start()
             return START_NOT_STICKY
         }
         stopping = false
         // Started by PlaybackService.sync(): must call startForeground promptly
         commandReceived = true
         refresh(currentSnap(), forceForeground = true)
+        if (!stopping) islandMonitor.start()
         return START_NOT_STICKY
     }
 
@@ -186,16 +200,19 @@ class PlaybackService : Service() {
             OnlineRadioController.pauseIfPlaying()
             shutDown()
         } else if (!MusicPlayerState.isPlaying) {
-            // Task removed while paused / idle: tear down Dynamic Island overlay immediately
-            runCatching {
-                val islandIntent = Intent(applicationContext, com.darkxvenom.itune.island.DynamicIslandService::class.java)
-                applicationContext.stopService(islandIntent)
-            }
+            island?.dismissUntilPlayback()
         }
         super.onTaskRemoved(rootIntent)
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        island?.configurationChanged()
+    }
+
     override fun onDestroy() {
+        island?.close()
+        island = null
         mainHandler.removeCallbacksAndMessages(null)
         scope.cancel()
         runCatching { session?.isActive = false }
@@ -213,10 +230,6 @@ class PlaybackService : Service() {
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
         foreground = false
         getSystemService(NotificationManager::class.java)?.cancel(NOTIFICATION_ID)
-        runCatching {
-            val islandIntent = Intent(applicationContext, com.darkxvenom.itune.island.DynamicIslandService::class.java)
-            applicationContext.stopService(islandIntent)
-        }
         stopSelf()
     }
 

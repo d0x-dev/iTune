@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Use the Swahili interface</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Use the Filipino interface</string>
+    <string name="developer_mode">Mode pengembang</string>
+    <string name="developer_mode_description">Simpan detail kerusakan di perangkat ini dan tampilkan saat iTune dibuka kembali.</string>
+    <string name="crash_report_title">Laporan kerusakan</string>
+    <string name="crash_report_unavailable">Detail kerusakan tidak tersedia.</string>
+    <string name="crash_action_failed">Tindakan tidak dapat diselesaikan.</string>
+    <string name="real_time_logs">Log waktu nyata</string>
+    <string name="real_time_logs_description">Rekam diagnostik aplikasi dan tampilkan dalam jendela mengambang.</string>
 </resources>

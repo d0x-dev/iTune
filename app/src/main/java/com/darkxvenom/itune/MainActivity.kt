@@ -12,6 +12,8 @@
 package com.darkxvenom.itune
 
 import android.content.Intent
+import com.darkxvenom.itune.diagnostics.CrashReportDialog
+import com.darkxvenom.itune.diagnostics.CrashReports
 import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
@@ -71,12 +73,28 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
+    private var showingCrashReport = false
+
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(AppLocaleManager.wrap(newBase))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val report = CrashReports.previousCrash(this)
+        if (report != null) {
+            // Display diagnostics before initializing the player or repeating a startup crash.
+            showingCrashReport = true
+            setContent {
+                ITuneTheme {
+                    CrashReportDialog(report) {
+                        CrashReports.dismiss(this)
+                        recreate()
+                    }
+                }
+            }
+            return
+        }
         AvatarManager.init(this)
         SettingsStore.ensureInit(this)
         com.darkxvenom.itune.data.sources.SourceRegistry.init(this)
@@ -98,7 +116,7 @@ class MainActivity : ComponentActivity() {
         DeveloperNewsManager.init(this)
         AppUpdateManager.checkOnAppOpen()
         DynamicIslandStore.ensureInit(this)
-        DynamicIslandStore.syncServiceState(this)
+        DynamicIslandStore.refreshOverlayPermission(this)
         AudioDownloader.ensureChannel(this)
         com.darkxvenom.itune.data.account.MultiAccountManager.init(this)
         com.darkxvenom.itune.data.festival.FestivalManager.init(this)
@@ -337,6 +355,7 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: android.content.Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        if (showingCrashReport) return
         handleIncomingShareIntent(intent)
         handleRecognitionIntent(intent)
         handleLastFmCallback(intent)
@@ -415,6 +434,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (showingCrashReport) return super.onKeyDown(keyCode, event)
         when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP, KeyEvent.KEYCODE_VOLUME_DOWN -> {
                 AppleVolumeManager.onVolumeKeyDown(this, keyCode)
@@ -459,6 +479,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        if (showingCrashReport) return super.onKeyUp(keyCode, event)
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             return true
         }
@@ -467,6 +488,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
+        if (showingCrashReport) return
         DynamicIslandForegroundTracker.setForeground(true)
         AppleVolumeManager.setForeground(true)
         SpotifyPlaylistAutoSyncManager.launchSyncOnAppOpen(this)
@@ -475,16 +497,18 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        if (showingCrashReport) return
         DynamicIslandForegroundTracker.setForeground(true)
         AppleVolumeManager.setForeground(true)
         AlwaysOnDisplayManager.setAppForeground(true)
-        DynamicIslandStore.syncServiceState(this)
+        DynamicIslandStore.refreshOverlayPermission(this)
         DeveloperNewsManager.checkOnAppOpen()
         com.darkxvenom.itune.data.festival.FestivalManager.refresh()
     }
 
     override fun onStop() {
         super.onStop()
+        if (showingCrashReport) return
         DynamicIslandForegroundTracker.setForeground(false)
         AppleVolumeManager.setForeground(false)
         AlwaysOnDisplayManager.setAppForeground(false)
@@ -493,10 +517,15 @@ class MainActivity : ComponentActivity() {
 
     override fun onUserInteraction() {
         super.onUserInteraction()
+        if (showingCrashReport) return
         AlwaysOnDisplayManager.onUserInteraction()
     }
 
     override fun onDestroy() {
+        if (showingCrashReport) {
+            super.onDestroy()
+            return
+        }
         AlwaysOnDisplayManager.unbindActivity()
         DynamicIslandForegroundTracker.setForeground(false)
         MusicPlayerState.savePlaybackSession(sync = true)
@@ -506,9 +535,6 @@ class MainActivity : ComponentActivity() {
         if (!keepAlive) {
             OnlineRadioController.release()
             MusicPlayerState.release()
-            runCatching {
-                stopService(Intent(this, com.darkxvenom.itune.island.DynamicIslandService::class.java))
-            }
         }
     }
 }

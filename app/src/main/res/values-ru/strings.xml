@@ -1171,4 +1171,11 @@
     <string name="swahili_interface">Use the Swahili interface</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Use the Filipino interface</string>
+    <string name="developer_mode">Режим разработчика</string>
+    <string name="developer_mode_description">Сохранять сведения о сбое на этом устройстве и показывать при следующем запуске iTune.</string>
+    <string name="crash_report_title">Отчёт о сбое</string>
+    <string name="crash_report_unavailable">Сведения о сбое недоступны.</string>
+    <string name="crash_action_failed">Не удалось завершить действие.</string>
+    <string name="real_time_logs">Журнал в реальном времени</string>
+    <string name="real_time_logs_description">Записывать диагностические события приложения и показывать их в плавающем окне.</string>
 </resources>

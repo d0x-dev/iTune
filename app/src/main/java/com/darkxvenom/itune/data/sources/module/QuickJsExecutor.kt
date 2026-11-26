@@ -1,5 +1,7 @@
 package com.darkxvenom.itune.data.sources.module
 
+import com.darkxvenom.itune.diagnostics.LiveLogs
+import com.darkxvenom.itune.diagnostics.DiagnosticText
 import android.util.Log
 
 import com.dokar.quickjs.QuickJs
@@ -510,6 +512,11 @@ internal object QuickJsExecutor {
 
         syncHttpClient.newCall(builder.build()).execute().use { response ->
             val responseBody = response.body?.string() ?: ""
+            if (!response.isSuccessful && LiveLogs.enabled) {
+                DiagnosticText.responseReason(responseBody, response.header("Content-Type"))?.let { reason ->
+                    LiveLogs.event("Module HTTP ${response.code}", reason)
+                }
+            }
             return response.code to responseBody
         }
     }

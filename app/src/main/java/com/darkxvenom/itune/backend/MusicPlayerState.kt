@@ -12,6 +12,7 @@
 package com.darkxvenom.itune.backend
 
 
+import com.darkxvenom.itune.diagnostics.LiveLogs
 import com.darkxvenom.itune.R
 import android.content.Context
 import android.net.Uri
@@ -681,6 +682,12 @@ object MusicPlayerState : Player.Listener {
                         if (st.upgradeCachedSongs && !st.offlineMode) upgradeCachedInBackground(track)
                     }
                 }
+                LiveLogs.event("Playback", when {
+                    preResolvedUrl != null -> "Using pre-resolved stream"
+                    track.localPlaybackUri != null -> "Opening local audio"
+                    cachedFile != null -> "Opening cached audio"
+                    else -> "Requesting stream extraction"
+                })
                 val streamUrl = preResolvedUrl ?: track.localPlaybackUri ?: if (cachedFile != null) {
                     Uri.fromFile(cachedFile).toString()
                 } else if (SettingsStore.state.value.offlineMode) {
@@ -1507,6 +1514,7 @@ object MusicPlayerState : Player.Listener {
 
     @OptIn(UnstableApi::class)
     override fun onIsPlayingChanged(isPlaying: Boolean) {
+        LiveLogs.event("Player", if (isPlaying) "Playing" else "Playback paused or interrupted")
         this.isPlaying = isPlaying
         AudioEngineManager.updatePlayingState(isPlaying)
         com.darkxvenom.itune.data.timetravel.TimeTravelPlaybackTracker.onIsPlayingChanged(isPlaying)
@@ -1667,6 +1675,12 @@ object MusicPlayerState : Player.Listener {
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {
+        LiveLogs.event("Player", when (playbackState) {
+            Player.STATE_BUFFERING -> "Buffering"
+            Player.STATE_READY -> "Ready"
+            Player.STATE_ENDED -> "Track ended"
+            else -> "Idle"
+        })
         this.playbackState = playbackState
         when (playbackState) {
             Player.STATE_BUFFERING -> {
@@ -1674,6 +1688,9 @@ object MusicPlayerState : Player.Listener {
             }
             Player.STATE_READY -> {
                 isLoading = false
+                if (LiveLogs.enabled) exoPlayer?.audioFormat?.let { format ->
+                    LiveLogs.event("Decoder", "Sample rate ${format.sampleRate} Hz, channels ${format.channelCount}, bitrate ${format.bitrate} bps")
+                }
                 durationMs = exoPlayer?.duration?.coerceAtLeast(0L) ?: 0L
                 autoSkipFailedTrackIds.clear()
                 streamRetryAttemptCount = 0
@@ -1726,6 +1743,14 @@ object MusicPlayerState : Player.Listener {
         val wasActivelyPlaying = currentPos > 3000L
 
         val httpEx = findCause<HttpDataSource.InvalidResponseCodeException>(error)
+        LiveLogs.event("Player", "Error ${error.errorCode}, HTTP ${httpEx?.responseCode ?: "n/a"}")
+        if (LiveLogs.enabled && httpEx != null && httpEx.responseBody.isNotEmpty()) {
+            val body = httpEx.responseBody
+            val excerpt = String(body, 0, minOf(body.size, 8192), Charsets.UTF_8)
+            val type = httpEx.headerFields.entries.firstOrNull { it.key.equals("Content-Type", true) }?.value?.firstOrNull()
+            val reason = com.darkxvenom.itune.diagnostics.DiagnosticText.responseReason(excerpt, type)
+            if (reason != null) LiveLogs.event("Playback HTTP ${httpEx.responseCode}", reason)
+        }
         val isHttp403 = httpEx?.responseCode == 403 ||
             error.message?.contains("403") == true ||
             error.cause?.message?.contains("403") == true ||

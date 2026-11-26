@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Use the Swahili interface</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Use the Filipino interface</string>
+    <string name="developer_mode">Mode développeur</string>
+    <string name="developer_mode_description">Enregistrer les détails du plantage sur cet appareil et les afficher au prochain démarrage d’iTune.</string>
+    <string name="crash_report_title">Rapport de plantage</string>
+    <string name="crash_report_unavailable">Les détails du plantage sont indisponibles.</string>
+    <string name="crash_action_failed">Impossible de terminer l’action.</string>
+    <string name="real_time_logs">Journaux en temps réel</string>
+    <string name="real_time_logs_description">Enregistrez les diagnostics de l’application et affichez-les dans une fenêtre flottante.</string>
 </resources>

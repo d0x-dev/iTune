@@ -11,6 +11,8 @@
 
 package com.darkxvenom.itune.backend
 
+import com.darkxvenom.itune.diagnostics.LiveLogs
+import com.darkxvenom.itune.diagnostics.DiagnosticText
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -122,8 +124,22 @@ class NewPipeDownloader private constructor(private val client: OkHttpClient) : 
             values.forEach { builder.addHeader(name, it) }
         }
         client.newCall(builder.build()).execute().use { response ->
-            if (response.code == 429) throw ReCaptchaException("reCaptcha challenge requested", request.url())
+            if (LiveLogs.enabled) {
+                LiveLogs.event("NewPipe HTTP", "${request.httpMethod()} ${response.request.url.host} → ${response.code} ${response.message}")
+            }
+            if (response.code == 429) {
+                if (LiveLogs.enabled) {
+                    DiagnosticText.responseReason(response.peekBody(8192).string(), response.header("Content-Type"))?.let {
+                        LiveLogs.event("NewPipe HTTP 429", it)
+                    }
+                }
+                throw ReCaptchaException("reCaptcha challenge requested", request.url())
+            }
             val text = response.body?.string()
+            if (LiveLogs.enabled && text != null &&
+                (!response.isSuccessful || response.request.url.pathSegments.lastOrNull() in setOf("player", "reel_item_watch"))) {
+                DiagnosticText.responseReason(text, if (response.isSuccessful) null else response.header("Content-Type"))?.let { LiveLogs.event("NewPipe response", it) }
+            }
             return Response(
                 response.code,
                 response.message,

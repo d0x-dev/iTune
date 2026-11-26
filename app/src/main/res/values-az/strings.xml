@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Swahili interfeys istifadə edin</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Filippin interfeysini istifadə edin</string>
+    <string name="developer_mode">Tərtibatçı rejimi</string>
+    <string name="developer_mode_description">Qəza təfərrüatlarını bu cihazda saxla və iTune növbəti dəfə açılanda göstər.</string>
+    <string name="crash_report_title">Qəza hesabatı</string>
+    <string name="crash_report_unavailable">Qəza təfərrüatları mövcud deyil.</string>
+    <string name="crash_action_failed">Əməliyyat tamamlana bilmədi.</string>
+    <string name="real_time_logs">Canlı jurnallar</string>
+    <string name="real_time_logs_description">Tətbiqin diaqnostika qeydlərini toplayın və üzən pəncərədə göstərin.</string>
 </resources>

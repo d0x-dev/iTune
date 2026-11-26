@@ -12,7 +12,6 @@
 package com.darkxvenom.itune.island
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color as AndroidColor
 import android.os.Build
 import android.provider.Settings
@@ -167,7 +166,7 @@ object DynamicIslandStore {
         val updated = transform(_state.value)
         _state.value = updated
         persist(context.applicationContext, updated)
-        syncServiceState(context.applicationContext)
+        refreshOverlayPermission(context.applicationContext)
     }
 
     fun resetGeometry(context: Context, isLandscape: Boolean) {
@@ -192,23 +191,12 @@ object DynamicIslandStore {
         }
     }
 
-    fun syncServiceState(context: Context) {
+    private val _overlayAllowed = MutableStateFlow(false)
+    internal val overlayAllowed = _overlayAllowed.asStateFlow()
+
+    fun refreshOverlayPermission(context: Context) {
         ensureInit(context)
-        val appCtx = context.applicationContext
-        val cfg = _state.value
-        val canDraw = canDrawOverlaysCompat(appCtx)
-        val intent = Intent(appCtx, DynamicIslandService::class.java)
-        runCatching {
-            if (cfg.enabled && canDraw) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    appCtx.startForegroundService(intent)
-                } else {
-                    appCtx.startService(intent)
-                }
-            } else {
-                appCtx.stopService(intent)
-            }
-        }
+        _overlayAllowed.value = state.value.enabled && canDrawOverlaysCompat(context)
     }
 
     private fun persist(context: Context, c: DynamicIslandConfig) {

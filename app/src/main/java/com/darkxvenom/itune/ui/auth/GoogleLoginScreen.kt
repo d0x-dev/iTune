@@ -12,6 +12,7 @@
 package com.darkxvenom.itune.ui.auth
 
 
+import com.darkxvenom.itune.diagnostics.LiveLogs
 import androidx.compose.ui.res.stringResource
 import com.darkxvenom.itune.R
 import android.annotation.SuppressLint
@@ -177,11 +178,14 @@ fun GoogleLoginScreen(
             scope.launch {
                 try {
                     withContext(Dispatchers.IO) {
+                        LiveLogs.event("Google", "Verifying session")
                         verifyAndPersistCapturedSession(appCtx, initialCaptured, mode)
                     }
                     YouTubeLibrarySyncManager.launchFullSync(appCtx)
+                    LiveLogs.event("Google", "Session verified and saved")
                     onSignedIn()
                 } catch (e: Throwable) {
+                    LiveLogs.event("Google", "Sign-in did not complete")
                     capturedOnce = false
                     Toast.makeText(context, e.message ?: context.getString(R.string.sign_in_verification_failed), Toast.LENGTH_LONG).show()
                 } finally {
@@ -317,11 +321,13 @@ fun GoogleLoginScreen(
                         webViewClient = object : WebViewClient() {
                             override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
                                 super.onPageStarted(view, url, favicon)
+                                LiveLogs.event("Google", "Sign-in page loading")
                                 pageLoading = true
                             }
 
                             override fun onPageFinished(view: WebView?, url: String?) {
                                 super.onPageFinished(view, url)
+                                LiveLogs.event("Google", "Sign-in page loaded")
                                 pageLoading = false
                                 val onMusic = url?.startsWith(MUSIC_ORIGIN) == true
                                 if (onMusic && view != null) {

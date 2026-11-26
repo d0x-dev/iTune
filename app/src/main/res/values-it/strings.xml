@@ -1167,4 +1167,11 @@
     <string name="swahili_interface">Use the Swahili interface</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Use the Filipino interface</string>
+    <string name="developer_mode">Modalità sviluppatore</string>
+    <string name="developer_mode_description">Salva i dettagli dell’arresto anomalo su questo dispositivo e mostrali al prossimo avvio di iTune.</string>
+    <string name="crash_report_title">Rapporto di arresto anomalo</string>
+    <string name="crash_report_unavailable">Dettagli non disponibili.</string>
+    <string name="crash_action_failed">Impossibile completare l’azione.</string>
+    <string name="real_time_logs">Registri in tempo reale</string>
+    <string name="real_time_logs_description">Registra la diagnostica dell’app e mostrala in una finestra mobile.</string>
 </resources>

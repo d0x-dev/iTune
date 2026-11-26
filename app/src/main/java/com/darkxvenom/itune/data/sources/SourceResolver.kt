@@ -11,6 +11,7 @@
 
 package com.darkxvenom.itune.data.sources
 
+import com.darkxvenom.itune.diagnostics.LiveLogs
 import android.net.Uri
 import android.util.Log
 import com.darkxvenom.itune.backend.MusicTrack
@@ -939,6 +940,16 @@ object SourceResolver {
                 sourceConfigId = source.configId,
             )
             val served = stream.format
+            if (LiveLogs.enabled) {
+                LiveLogs.event("Extractor", buildString {
+                    append(source.kind.label)
+                    served.kbps?.let { append(" $it kbps") }
+                    served.sampleRateHz?.let { append(" $it Hz") }
+                    served.bitDepth?.let { append(" $it-bit") }
+                    if (served.isHiRes) append(" Hi-Res")
+                    if (served.isLossless == true) append(" Lossless")
+                })
+            }
             if (!wantsLossless || served.isLossless == true || served.isDolbyAtmos || served.statesNothingLossy) {
                 TrackLog.d(
                     TAG,

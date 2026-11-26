@@ -612,6 +612,22 @@ fun TvSettingsScreen(
                 item { TvListHeader("General") }
                 item {
                     TvListRow(
+                        title = context.getString(R.string.developer_mode),
+                        value = onOff(settingsState.developerMode),
+                        onFocused = { blurb = context.getString(R.string.developer_mode_description) },
+                        onClick = { SettingsStore.setBoolean(context, SettingsStore.KEY_DEVELOPER_MODE, !settingsState.developerMode) },
+                    )
+                }
+                if (settingsState.developerMode) item {
+                    TvListRow(
+                        title = context.getString(R.string.real_time_logs),
+                        value = onOff(settingsState.realTimeLogs),
+                        onFocused = { blurb = context.getString(R.string.real_time_logs_description) },
+                        onClick = { SettingsStore.setBoolean(context, SettingsStore.KEY_REAL_TIME_LOGS, !settingsState.realTimeLogs) },
+                    )
+                }
+                item {
+                    TvListRow(
                         title = "Sleep Timer",
                         value = settingsState.sleepTimer,
                         leadingIcon = Icons.Rounded.Timer,

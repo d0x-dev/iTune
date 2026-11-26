@@ -649,7 +649,7 @@ object MultiAccountManager {
         AudioOutputManager.reloadBackupState()
         AudioEngineManager.reloadBackupState()
         DynamicIslandStore.reloadBackupState(app)
-        DynamicIslandStore.syncServiceState(app)
+        DynamicIslandStore.refreshOverlayPermission(app)
         ArtistStateStore.reloadBackupState(app)
         MusicCacheManager.init(app)
         LastFmIntegration.initialize(app)

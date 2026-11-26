@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Użyj interfejsu Suahili</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Użyj interfejsu filipińskiego</string>
+    <string name="developer_mode">Tryb programisty</string>
+    <string name="developer_mode_description">Zapisuj szczegóły awarii na tym urządzeniu i wyświetlaj je przy kolejnym uruchomieniu iTune.</string>
+    <string name="crash_report_title">Raport o awarii</string>
+    <string name="crash_report_unavailable">Szczegóły awarii są niedostępne.</string>
+    <string name="crash_action_failed">Nie udało się ukończyć operacji.</string>
+    <string name="real_time_logs">Dziennik na żywo</string>
+    <string name="real_time_logs_description">Rejestruj zdarzenia diagnostyczne aplikacji i wyświetlaj je w pływającym oknie.</string>
 </resources>

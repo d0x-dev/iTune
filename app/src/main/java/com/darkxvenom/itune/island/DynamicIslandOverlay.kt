@@ -14,10 +14,10 @@ package com.darkxvenom.itune.island
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
-import android.app.Service
 import android.content.Context
-import android.content.Intent
+import android.content.ContextWrapper
 import android.content.res.Configuration
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapShader
 import android.graphics.Canvas
@@ -32,7 +32,6 @@ import android.graphics.RectF
 import android.graphics.Shader
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.os.IBinder
 import android.os.SystemClock
 import android.provider.Settings
 import android.util.LruCache
@@ -49,7 +48,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.media3.common.Player
 import androidx.palette.graphics.Palette
-import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.darkxvenom.itune.MainActivity
@@ -86,11 +84,11 @@ private data class IslandMediaSnapshot(
 )
 
 /**
- * Zero-lag hardware-accelerated Dynamic Island overlay service with cloth-like water-drop bloom,
+ * Zero-lag hardware-accelerated Dynamic Island overlay with cloth-like water-drop bloom,
  * concentric ripple waves, adaptive album glow, seekbar scrubbing, and full transport controls.
  * Strictly renders ONLY outside the app when [DynamicIslandConfig.showOutsideAppOnly] is enabled.
  */
-class DynamicIslandService : Service() {
+internal class DynamicIslandOverlay(context: Context) : ContextWrapper(context) {
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
     private lateinit var windowManager: WindowManager
     private lateinit var islandView: DynamicIslandOverlayView
@@ -104,16 +102,14 @@ class DynamicIslandService : Service() {
     private var autoCollapseJob: Job? = null
 
     private val artCache = LruCache<String, Pair<Bitmap, Int>>(16)
-    private val imageLoader by lazy { ImageLoader(this) }
+    private val imageLoader by lazy { coil.Coil.imageLoader(this) }
 
     private val foregroundListener: (Boolean) -> Unit = { foreground ->
         isAppInForeground = foreground
         syncVisibilityAndContent()
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        DynamicIslandStore.ensureInit(this)
+    fun attach() {
         config = DynamicIslandStore.state.value
         isAppInForeground = DynamicIslandForegroundTracker.isForeground
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
@@ -198,47 +194,26 @@ class DynamicIslandService : Service() {
         }
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        config = DynamicIslandStore.state.value
-        if (!config.enabled || !canDrawOverlaysCompat(this)) {
-            stopSelf()
-            return START_NOT_STICKY
-        }
-        applyConfigToView()
-        syncVisibilityAndContent()
-        return START_NOT_STICKY
-    }
-
-    override fun onTaskRemoved(rootIntent: Intent?) {
-        val isMusicPlaying = MusicPlayerState.isPlaying
-        val stopOnTaskClear = com.darkxvenom.itune.data.library.SettingsStore.isStopMusicOnTaskClearEnabled(applicationContext)
-        if (!isMusicPlaying || stopOnTaskClear) {
-            isDismissedDueToPause = true
-            pauseDismissJob?.cancel()
-            autoCollapseJob?.cancel()
-            hideIslandImmediate()
-            stopSelf()
-        }
-        super.onTaskRemoved(rootIntent)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
+    fun configurationChanged() {
         applyConfigToView()
         updateWindowLayout()
     }
 
-    override fun onDestroy() {
+    fun dismissUntilPlayback() {
+        isDismissedDueToPause = true
+        pauseDismissJob?.cancel()
+        autoCollapseJob?.cancel()
+        hideIslandImmediate()
+    }
+
+    fun close() {
         DynamicIslandForegroundTracker.removeListener(foregroundListener)
         isDismissedDueToPause = true
         pauseDismissJob?.cancel()
         autoCollapseJob?.cancel()
         hideIslandImmediate()
         scope.cancel()
-        super.onDestroy()
     }
-
-    override fun onBind(intent: Intent?): IBinder? = null
 
     private fun resolveSafeDurationMs(track: MusicTrack?, rawDurMs: Long): Long =
         when {
@@ -370,7 +345,7 @@ class DynamicIslandService : Service() {
         scope.launch {
             val loaded = withContext(Dispatchers.IO) {
                 runCatching {
-                    val req = ImageRequest.Builder(this@DynamicIslandService)
+                    val req = ImageRequest.Builder(this@DynamicIslandOverlay)
                         .data(url)
                         .size(220)
                         .allowHardware(false)

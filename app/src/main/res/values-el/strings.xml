@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Χρήση της διεπαφής Σουαχίλι</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Χρήση της Φιλιππινέζικης διασύνδεσης</string>
+    <string name="developer_mode">Λειτουργία προγραμματιστή</string>
+    <string name="developer_mode_description">Αποθήκευση των στοιχείων κατάρρευσης σε αυτή τη συσκευή και εμφάνισή τους στο επόμενο άνοιγμα του iTune.</string>
+    <string name="crash_report_title">Αναφορά κατάρρευσης</string>
+    <string name="crash_report_unavailable">Τα στοιχεία κατάρρευσης δεν είναι διαθέσιμα.</string>
+    <string name="crash_action_failed">Η ενέργεια απέτυχε.</string>
+    <string name="real_time_logs">Καταγραφές σε πραγματικό χρόνο</string>
+    <string name="real_time_logs_description">Καταγράψτε διαγνωστικά συμβάντα της εφαρμογής και δείτε τα σε αιωρούμενο παράθυρο.</string>
 </resources>

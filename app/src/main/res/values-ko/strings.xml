@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Use the Swahili interface</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Use the Filipino interface</string>
+    <string name="developer_mode">개발자 모드</string>
+    <string name="developer_mode_description">오류 정보를 이 기기에 저장하고 다음에 iTune을 열 때 표시합니다.</string>
+    <string name="crash_report_title">비정상 종료 보고서</string>
+    <string name="crash_report_unavailable">오류 정보를 불러올 수 없습니다.</string>
+    <string name="crash_action_failed">작업을 완료할 수 없습니다.</string>
+    <string name="real_time_logs">실시간 로그</string>
+    <string name="real_time_logs_description">앱 진단 정보를 기록하고 플로팅 창에 표시합니다.</string>
 </resources>

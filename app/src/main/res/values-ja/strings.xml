@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Use the Swahili interface</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Use the Filipino interface</string>
+    <string name="developer_mode">開発者モード</string>
+    <string name="developer_mode_description">クラッシュの詳細をこの端末に保存し、次回のiTune起動時に表示します。</string>
+    <string name="crash_report_title">クラッシュレポート</string>
+    <string name="crash_report_unavailable">クラッシュの詳細を取得できません。</string>
+    <string name="crash_action_failed">操作を完了できませんでした。</string>
+    <string name="real_time_logs">リアルタイムログ</string>
+    <string name="real_time_logs_description">アプリの診断情報を記録し、フローティングウィンドウに表示します。</string>
 </resources>

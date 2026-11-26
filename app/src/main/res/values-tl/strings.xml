@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Gamitin ang interface ng Swahili</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Interface sa Filipino</string>
+    <string name="developer_mode">Mode ng developer</string>
+    <string name="developer_mode_description">I-save ang mga detalye ng pag-crash sa device na ito at ipakita ang mga ito sa susunod na pagbukas ng iTune.</string>
+    <string name="crash_report_title">Ulat ng pag-crash</string>
+    <string name="crash_report_unavailable">Walang makuhang detalye ng pag-crash.</string>
+    <string name="crash_action_failed">Hindi nakumpleto ang pagkilos.</string>
+    <string name="real_time_logs">Mga log sa real time</string>
+    <string name="real_time_logs_description">Itala ang mga diagnostic event ng app at ipakita ang mga ito sa isang lumulutang na window.</string>
 </resources>

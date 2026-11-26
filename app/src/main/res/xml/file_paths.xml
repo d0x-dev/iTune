@@ -3,4 +3,5 @@
     <cache-path name="shared_images" path="shared_images/" />
     <cache-path name="replay_shares" path="replay/" />
     <cache-path name="update_apks" path="updates/" />
+    <cache-path name="crash_reports" path="crash-reports/" />
 </paths>

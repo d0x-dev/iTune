@@ -11,6 +11,7 @@
 
 package com.darkxvenom.itune.data.lastfm
 
+import com.darkxvenom.itune.diagnostics.LiveLogs
 import android.content.Context
 import android.net.Uri
 import androidx.compose.runtime.getValue
@@ -57,6 +58,7 @@ object LastFmIntegration {
     }
 
     suspend fun beginSignIn(context: Context): Result<Unit> = runCatching {
+        LiveLogs.event("Last.fm", "Opening browser sign-in")
         val body = get(mapOf("method" to "auth.getToken", "api_key" to API_KEY))
         token = JSONObject(body).getString("token")
         val url = Uri.parse("https://www.last.fm/api/auth/").buildUpon()
@@ -68,6 +70,7 @@ object LastFmIntegration {
 
     /** Last.fm's official mobile-session exchange. The password is used for this request only. */
     suspend fun directSignIn(context: Context, usernameInput: String, password: String): Result<String> = runCatching {
+        LiveLogs.event("Last.fm", "Starting sign-in")
         val cleanUsername = usernameInput.trim()
         require(cleanUsername.isNotBlank()) { "Enter your Last.fm username" }
         require(password.isNotBlank()) { "Enter your Last.fm password" }
@@ -84,13 +87,18 @@ object LastFmIntegration {
         context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
             .putString("username", username).apply()
         EncryptedAuthPrefs.putEncrypted(context.applicationContext, "lastfm_session_key", sessionKey)
+        LiveLogs.event("Last.fm", "Session saved")
         status = "Connected as $username"
         lastNowPlaying = ""
         username
-    }.onFailure { status = it.message ?: "Last.fm sign in failed" }
+    }.onFailure {
+        LiveLogs.event("Last.fm", "Sign-in failed")
+        status = it.message ?: "Last.fm sign in failed"
+    }
     // Originally created by DxV Studio ~~ Dark | Credits: DxV Studio, AirBeats, Dark — Licensed under GPL-3.0.
 
     suspend fun completeSignIn(context: Context, returnedToken: String): Result<String> = runCatching {
+        LiveLogs.event("Last.fm", "Handling sign-in callback")
         val authToken = returnedToken.ifBlank { token }
         require(authToken.isNotBlank()) { "Missing Last.fm authorization token" }
         val params = mapOf("method" to "auth.getSession", "token" to authToken, "api_key" to API_KEY)
@@ -102,12 +110,17 @@ object LastFmIntegration {
         context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
             .putString("username", username).apply()
         EncryptedAuthPrefs.putEncrypted(context.applicationContext, "lastfm_session_key", sessionKey)
+        LiveLogs.event("Last.fm", "Session saved")
         status = "Connected as $username"
         token = ""
         username
-    }.onFailure { status = it.message ?: "Last.fm sign in failed" }
+    }.onFailure {
+        LiveLogs.event("Last.fm", "Sign-in failed")
+        status = it.message ?: "Last.fm sign in failed"
+    }
 
     fun signOut(context: Context) {
+        LiveLogs.event("Last.fm", "Signed out")
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().clear().apply()
         EncryptedAuthPrefs.putEncrypted(context.applicationContext, "lastfm_session_key", null)
         username = ""; sessionKey = ""; token = ""; lastNowPlaying = ""

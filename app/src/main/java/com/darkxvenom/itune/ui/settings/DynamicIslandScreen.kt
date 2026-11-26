@@ -160,7 +160,7 @@ fun DynamicIslandScreen(
             if (event == Lifecycle.Event.ON_RESUME) {
                 hasOverlayPermission = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context)
                 if (hasOverlayPermission && cfg.enabled) {
-                    DynamicIslandStore.syncServiceState(context)
+                    DynamicIslandStore.refreshOverlayPermission(context)
                 }
             }
         }

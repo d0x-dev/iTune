@@ -598,7 +598,10 @@ fun SpotifyIntegrationScreen(
                                         .weight(1f)
                                         .clip(RoundedCornerShape(12.dp))
                                         .background(SpotifyGreen)
-                                        .clickable { showWebLogin = true }
+                                        .clickable {
+                                            clearSpotifyWebSession()
+                                            showWebLogin = true
+                                        }
                                         .padding(vertical = 12.dp),
                                     contentAlignment = Alignment.Center,
                                 ) {

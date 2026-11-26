@@ -1174,4 +1174,11 @@
     <string name="swahili_interface">Use the Swahili interface</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Use the Filipino interface</string>
+    <string name="developer_mode">وضع المطوّر</string>
+    <string name="developer_mode_description">احفظ تفاصيل التعطّل على هذا الجهاز واعرضها عند فتح iTune في المرة التالية.</string>
+    <string name="crash_report_title">تقرير التعطّل</string>
+    <string name="crash_report_unavailable">تفاصيل التعطّل غير متاحة.</string>
+    <string name="crash_action_failed">تعذّر إكمال الإجراء.</string>
+    <string name="real_time_logs">السجلات المباشرة</string>
+    <string name="real_time_logs_description">سجّل أحداث التطبيق واعرضها في نافذة عائمة.</string>
 </resources>

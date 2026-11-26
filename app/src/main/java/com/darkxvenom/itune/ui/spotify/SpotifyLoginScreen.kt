@@ -12,6 +12,7 @@
 package com.darkxvenom.itune.ui.spotify
 
 
+import com.darkxvenom.itune.diagnostics.LiveLogs
 import androidx.compose.ui.res.stringResource
 import com.darkxvenom.itune.R
 import android.annotation.SuppressLint
@@ -26,12 +27,10 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,7 +39,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -260,8 +258,8 @@ fun SpotifyLoginScreen(
                     }
                 }
             }
-            if (pageLoading || isCapturing) {
-                LinearProgressIndicator(
+            Box(Modifier.fillMaxWidth().height(2.dp)) {
+                if (pageLoading || isCapturing) LinearProgressIndicator(
                     color = SpotifyAccent,
                     trackColor = Color.White.copy(alpha = 0.08f),
                     modifier = Modifier.fillMaxWidth().height(2.dp),
@@ -273,15 +271,11 @@ fun SpotifyLoginScreen(
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
                 factory = { ctx ->
-                    clearSpotifyWebSession()
                     WebView(ctx).apply {
                         layoutParams = ViewGroup.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.MATCH_PARENT,
                         )
-                        clearCache(true)
-                        clearHistory()
-                        clearFormData()
                         settings.apply {
                             javaScriptEnabled = true
                             domStorageEnabled = true
@@ -344,6 +338,7 @@ fun SpotifyLoginScreen(
 
                             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                                 super.onPageStarted(view, url, favicon)
+                                LiveLogs.event("Spotify", "Sign-in page loading")
                                 pageLoading = true
                                 inspectSession(url)
                             }
@@ -355,6 +350,7 @@ fun SpotifyLoginScreen(
 
                             override fun onPageFinished(view: WebView?, url: String?) {
                                 super.onPageFinished(view, url)
+                                LiveLogs.event("Spotify", "Sign-in page loaded")
                                 pageLoading = false
                                 inspectSession(url)
                             }
@@ -367,42 +363,6 @@ fun SpotifyLoginScreen(
                 onRelease = { it.destroy() },
             )
 
-            if (isCapturing) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.65f)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(Color(0xFF1C1C22))
-                            .border(0.8.dp, Color.White.copy(alpha = 0.16f), RoundedCornerShape(20.dp))
-                            .padding(horizontal = 28.dp, vertical = 22.dp),
-                    ) {
-                        CircularProgressIndicator(
-                            color = SpotifyAccent,
-                            strokeWidth = 3.dp,
-                            modifier = Modifier.size(34.dp),
-                        )
-                        Spacer(Modifier.height(14.dp))
-                        Text(
-                            text = stringResource(R.string.ui_connecting_spotify),
-                            color = Color.White,
-                            fontSize = 15.5.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            text = stringResource(R.string.ui_enabling_spotify_canvas_playlists),
-                            color = AppleTextSecondary,
-                            fontSize = 12.5.sp,
-                        )
-                    }
-                }
-            }
         }
     }
 }

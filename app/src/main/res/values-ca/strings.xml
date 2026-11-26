@@ -1166,4 +1166,11 @@
     <string name="swahili_interface">Usa la interfície de suahili</string>
     <string name="tagalog_language">Filipino</string>
     <string name="tagalog_interface">Usa la interfície filipí</string>
+    <string name="developer_mode">Mode de desenvolupador</string>
+    <string name="developer_mode_description">Desa els detalls de la fallada en aquest dispositiu i mostra’ls la propera vegada que s’obri l’iTune.</string>
+    <string name="crash_report_title">Informe de fallada</string>
+    <string name="crash_report_unavailable">Els detalls de la fallada no estan disponibles.</string>
+    <string name="crash_action_failed">No s’ha pogut completar l’acció.</string>
+    <string name="real_time_logs">Registres en temps real</string>
+    <string name="real_time_logs_description">Recull els diagnòstics de l’aplicació i mostra’ls en una finestra flotant.</string>
 </resources>
