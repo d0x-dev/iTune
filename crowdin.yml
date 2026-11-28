@@ -1,0 +1,50 @@
+project_id: 950137
+api_token_env: CROWDIN_PERSONAL_TOKEN
+base_path: .
+preserve_hierarchy: true
+
+# Crowdin language IDs for the locales currently enabled in the Android app.
+# Select one regional variant for each unqualified Android locale directory.
+export_languages:
+  - ar
+  - az
+  - bg
+  - bn
+  - ca
+  - cs
+  - da
+  - de
+  - el
+  - es-ES
+  - fa
+  - fi
+  - fr
+  - he
+  - hi
+  - hu
+  - id
+  - it
+  - ja
+  - ko
+  - ms
+  - nb
+  - nl
+  - pl
+  - pt-PT
+  - ro
+  - ru
+  - sk
+  - sv-SE
+  - sw
+  - th
+  - tl
+  - tr
+  - uk
+  - ur-PK
+  - vi
+  - zh-CN
+
+files:
+  - source: /app/src/main/res/values/strings.xml
+    type: android
+    translation: /app/src/main/res/values-%two_letters_code%/strings.xml
