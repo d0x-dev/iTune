@@ -116,7 +116,15 @@ object SourceRegistry {
                     else -> config
                 }
             }
+            .let(::ensureYoutubeEnabled)
     }
+
+    /** YouTube Music is the required last-resort catalogue provider. */
+    internal fun ensureYoutubeEnabled(configs: List<SourceConfig>): List<SourceConfig> =
+        configs.map { config ->
+            if (config.kind == SourceKind.YOUTUBE && !config.enabled) config.copy(enabled = true)
+            else config
+        }
 
     /**
      * Decodes a stored source list one entry at a time rather than as a
@@ -291,12 +299,13 @@ object SourceRegistry {
     }
 
     private fun publish(next: List<SourceConfig>, persist: Boolean = true) {
-        configs.value = next
+        val normalized = ensureYoutubeEnabled(next)
+        configs.value = normalized
         // Rebuilt against the previous map so that an untouched source keeps
         // the instance it already had, rather than being replaced by an
         // identical-but-cold one every time an unrelated row is toggled.
         val previous = instances
-        instances = next.associate { config ->
+        instances = normalized.associate { config ->
             val existing = previous[config.id]?.takeIf { it.configuredBy(config) }
             config.id to (existing ?: build(config))
         }
@@ -312,7 +321,7 @@ object SourceRegistry {
             .forEach { it.release() }
         if (persist && ::prefs.isInitialized) {
             prefs.edit()
-                .putString(KEY_SOURCES, json.encodeToString(ListSerializer(SourceConfig.serializer()), next))
+                .putString(KEY_SOURCES, json.encodeToString(ListSerializer(SourceConfig.serializer()), normalized))
                 .apply()
         }
     }

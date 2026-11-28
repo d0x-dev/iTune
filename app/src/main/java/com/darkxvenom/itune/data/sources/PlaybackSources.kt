@@ -117,7 +117,10 @@ object PlaybackSources {
                 }
             }.getOrDefault(defaults)
             _captchaGuidance.value = p.getBoolean(KEY_CAPTCHA, true)
-            _youtubeEnabled.value = p.getBoolean(KEY_YOUTUBE, true)
+            // Retain YouTube as the guaranteed final playback provider even
+            // when an older build saved the retired off switch as disabled.
+            _youtubeEnabled.value = true
+            p.edit().putBoolean(KEY_YOUTUBE, true).apply()
         }
     }
 
@@ -132,8 +135,9 @@ object PlaybackSources {
     }
 
     fun setYoutubeEnabled(enabled: Boolean) {
-        _youtubeEnabled.value = enabled
-        prefs?.edit()?.putBoolean(KEY_YOUTUBE, enabled)?.apply()
+        if (!enabled) Log.i(TAG, "YouTube Music cannot be disabled because it is the fallback provider")
+        _youtubeEnabled.value = true
+        prefs?.edit()?.putBoolean(KEY_YOUTUBE, true)?.apply()
     }
 
     fun move(id: String, offset: Int) {

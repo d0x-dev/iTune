@@ -1814,6 +1814,7 @@ private fun SettingsEntryRow(
 fun AppleGlassSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
+    enabled: Boolean = true,
 ) {
     val trackColor by animateColorAsState(
         targetValue = if (checked) SettingsAppleGreen else Color.White.copy(alpha = 0.22f),
@@ -1832,7 +1833,11 @@ fun AppleGlassSwitch(
             .clip(CircleShape)
             .background(trackColor)
             .border(0.6.dp, Color.White.copy(alpha = if (checked) 0.14f else 0.18f), CircleShape)
-            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
+            .clickable(
+                enabled = enabled,
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+            ) {
                 onCheckedChange(!checked)
             }
             .padding(2.dp),

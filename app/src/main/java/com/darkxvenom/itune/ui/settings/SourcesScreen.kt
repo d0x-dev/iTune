@@ -144,7 +144,7 @@ private fun getSourceSubtitle(config: SourceConfig): String = when (config.kind)
     SourceKind.TIDAL -> "Lossless FLAC & Hi-Res · Up to 24-bit / 192 kHz"
     SourceKind.HIRES -> "Direct Hi-Res FLAC · tracks.monochrome.st"
     SourceKind.JIOSAAVN -> "High Quality AAC · Up to 320 kbps"
-    SourceKind.YOUTUBE -> "Full music catalogue · Default fallback provider"
+    SourceKind.YOUTUBE -> "Required · Full music catalogue"
     SourceKind.ADDON -> if (config.baseUrl.isNotBlank()) config.baseUrl else "HTTP Addon Server"
     SourceKind.CUSTOM_MODULE, SourceKind.MODULE -> if (config.baseUrl.isNotBlank()) config.baseUrl else "QuickJS Extension Plugin"
 }
@@ -860,6 +860,7 @@ private fun SourceConfigRowView(
         AppleGlassSwitch(
             checked = config.enabled,
             onCheckedChange = onToggle,
+            enabled = config.kind != SourceKind.YOUTUBE,
         )
     }
 }

@@ -46,4 +46,30 @@ class SourceRegistryDefaultsTest {
         assertEquals(addon.id, sources[2].id)
         assertEquals(customTidal.id, sources.last().id)
     }
+
+    @Test
+    fun savedDisabledYouTubeProviderIsRestoredWithoutChangingPriority() {
+        val addon = SourceConfig(kind = SourceKind.ADDON, baseUrl = "https://example.com", enabled = false)
+        val jioSaavn = SourceConfig(kind = SourceKind.JIOSAAVN, enabled = false)
+        val youtube = SourceConfig(kind = SourceKind.YOUTUBE, enabled = false)
+
+        val sources = SourceRegistry.sourcesForInit(
+            listOf(addon, jioSaavn, youtube),
+            forceJioSaavnOff = false,
+        )
+
+        assertEquals(listOf(addon.id, jioSaavn.id, youtube.id), sources.map { it.id })
+        assertFalse(sources[0].enabled)
+        assertFalse(sources[1].enabled)
+        assertTrue(sources[2].enabled)
+    }
+
+    @Test
+    fun sourceUpdatesCannotDisableYouTubeMusic() {
+        val youtube = SourceConfig(kind = SourceKind.YOUTUBE, enabled = false)
+
+        val sources = SourceRegistry.ensureYoutubeEnabled(listOf(youtube))
+
+        assertTrue(sources.single().enabled)
+    }
 }
