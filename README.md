@@ -36,6 +36,7 @@
 | --- | --- |
 | [Feature catalog](FEATURES.md) | Detailed inventory of app features and platform limitations |
 | [Contributing](CONTRIBUTING.md) | Development setup and pull request guidance |
+| [Translate on Crowdin](https://crowdin.com/project/itune) | Translate and proofread the Android app |
 | [Code of Conduct](CODE_OF_CONDUCT.md) | Community participation standards |
 | [Security](SECURITY.md) | Private vulnerability reporting and secret handling |
 | [Copyright](COPYRIGHT.md) | Copyright ownership and third-party notices |

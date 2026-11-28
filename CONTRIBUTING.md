@@ -47,6 +47,18 @@ Include:
 
 Before submitting, run the relevant unit tests and `:app:assembleDebug`. If you cannot run a check, say so and explain why. Do not claim a check passed unless it did.
 
+## Translating iTune
+
+Add new English strings to `app/src/main/res/values/strings.xml`. For a new app language, update both `app/src/main/res/xml/locales_config.xml` and the language list in `crowdin.yml`. To translate or proofread existing strings, use the [iTune Crowdin project](https://crowdin.com/project/itune).
+
+The **Crowdin Android translations** workflow uploads English source updates from `main`. Its weekly and manual syncs bring Crowdin changes back in a pull request for review.
+
+To activate sync, set the repository Actions secret `CROWDIN_PERSONAL_TOKEN` using a [Crowdin API token](https://crowdin.com/settings#api-key) with access to manage the iTune project's files and translations. In the repository's Actions settings, enable **Allow GitHub Actions to create and approve pull requests** so the workflow can open translation PRs.
+
+If Crowdin still needs the translations already in GitHub, including French, select **Import existing Android translations into Crowdin** for the first manual run. This imports the existing translations for review in Crowdin. Run the workflow again with the option cleared to open the first translation PR when there are changes.
+
+GitHub may require a maintainer to approve the Android build on PRs opened by the workflow.
+
 ## Reporting defects
 
 Use GitHub Issues for ordinary bugs and feature requests. Include app version, Android version, reproduction steps, expected and actual behavior, and sanitized logs. For security vulnerabilities, follow the private process in [`SECURITY.md`](SECURITY.md) instead of opening a public issue.
